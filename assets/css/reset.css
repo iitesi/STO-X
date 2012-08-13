@@ -1,0 +1,183 @@
+@charset "utf-8";
+
+@font-face {font-family: 'QuickType II Regular';font-weight:normal;font-style:normal;src: local('QuickType II Regular'), local("QuickType II"), url("QT2_P.ttf") format("truetype");}
+@font-face {font-family: 'QuickType II Bold';font-weight:bold;font-style:normal;src: local('QuickType II Bold'), local("QuickType II"), url("QT2_B.ttf") format("truetype");}
+@font-face {font-family: 'Cambria Regular';font-weight:normal;font-style:normal;src: local('Cambria Regular'), local("Cambria"), url("CAMBRIA1.ttf") format("truetype");}
+
+
+/* 1. RESET
+-----------------------------------------------------------------------------------------------
+===============================================================================================*/
+/* http://meyerweb.com/eric/tools/css/reset/ */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{
+  margin:0;
+  padding:0;
+  border:0;
+  outline:0;
+  font-size:100%;
+  font:inherit;
+}
+/* HTML5 display-role reset for older browsers */
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{
+  display:block;
+}
+nav ul{
+  list-style:none;
+}
+table{
+  border-collapse:collapse;
+  border-spacing:0;
+}
+
+/* 2.1 BODY DEFAULTS
+--------------------------------------------------------- */
+
+html{
+	margin-bottom: 1px;
+	min-height: 100%;
+}
+body {
+	background: #F0F0F0;
+	color: #444;
+	font-family: Georgia, serif;
+	font-size: 62.5%;
+}
+html>body {
+	font-size: 16px;
+}
+p, blockquote, footer {
+	font-size: 1em;
+	line-height: 1.5;
+} /* TODO: fix me â€”oli */
+
+/* 2.2 LINK STYLES
+--------------------------------------------------------- */
+a, a:visited{
+	color: #0090D2;
+	text-decoration: none;
+}
+a:hover {color: #0063A6;}
+a:active,a:focus{
+	color: #0063A6;
+	position: relative;
+	top: 1px;
+}
+
+/* TEMPLATE COLOURS */
+.blue   {color: #0098d8}
+.red    {color: #de1638}
+.orange {color: #dd7737}
+.green1 {color: #a59e10}
+.green2 {color: #868507}
+
+
+/* 2.3 HEADINGS
+--------------------------------------------------------- */
+h1, h2, h3 {
+	font-family: 'Quicksand','Helvetica Neue',Arial, sans-serif;
+	font-weight: bold;
+}
+h1{
+	font-size: 2em;
+	letter-spacing: -2px;
+	word-spacing: 2px;
+}
+h2{
+	font-size: 1.5em;
+}
+h3 {
+	font-size: 1.25em;
+}
+h4 {
+	font-size: 1.125em;
+	line-height: 1.3333em;
+}
+h5, dt {
+	font-weight: bold;
+}
+h4, h5, h6, dt {
+	font-family: "Helvetica Neue","Bitstream Vera Sans",Arial,sans-serif;
+}
+
+
+/* 2.4 OTHER ELEMENTS
+--------------------------------------------------------- */
+hr, .hide {
+	display: none;
+}
+a img{
+	border: none;
+}
+div {
+	position: relative;
+}
+dl {
+	line-height: 1.5;
+	margin:1.5em 0;
+}
+dd { margin-bottom:0.8em; }
+li p {
+	margin: 0;
+}
+li p + p {
+	margin-top: 1.5em;
+}
+li ul, li ol, li dl, dd ol, dd ul, dd dl {
+	margin: 0 0 0 1.5em;
+}
+strong, b, figcaption em, figcaption i, caption em, caption i {
+	font-weight: bold;
+}
+em, i, cite {
+	font-style: italic;
+}
+dfn {
+	font-weight: bold;
+}
+small, .small {
+	font-size: .875em;
+}
+sup, sub {
+	line-height: 0;
+}
+abbr[title], dfn[title] {
+ border-bottom: 1px dotted #666;
+}
+address {
+	margin: 0 0 1.5em;
+	font-style: italic;
+}
+address + p {
+	margin-top: 0;
+}
+pre {
+	 /* http://perishablepress.com/press/2010/06/01/wrapping-content/ */
+	margin: 1.5em 0;
+	white-space: pre;
+	word-wrap: break-word;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -hp-pre-wrap;
+	white-space: pre-wrap;
+	white-space: pre-line;
+}
+pre,code,tt,kbd {
+	font: .9375em 'andale mono','lucida console',monospace;
+	line-height: 1.6;
+}
+/* ins/del */
+ins {
+	border-bottom: 1px dotted #47ad09;
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+del, .faint {
+	color: #777;
+}
+mark {
+	background-color:#f8fea8;
+	color: #000;
+}
