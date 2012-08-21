@@ -4,7 +4,7 @@
 	<cffunction name="call" returntype="string" output="true">
 		<cfargument name="service" 	required="true" 	type="string">
 		<cfargument name="message" 	required="true" 	type="string">
-		<cfargument name="auth" 	required="false" 	type="string" 	default="#application.auth#">
+		<cfargument name="auth" 	required="false" 	type="string" 	default="#application.sAPIAuth#">
 		
 		<!---<cfset local.timer = getTickCount()>
 		<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.service#">

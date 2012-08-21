@@ -38,8 +38,8 @@
 				<ul>
 					<cfoutput>
 						<li>
-							<cfloop array="#StructKeyArray(session.searches)#" index="local.search">
-								<a href="index.cfm?Search_ID=#rc.Search_ID#&action=air.lowfare">#session.searches[search].Heading#</a>
+							<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
+								<a href="index.cfm?Search_ID=#nSearchID#&action=air.lowfare">#session.searches[nSearchID].Heading#</a>
 							</cfloop>
 							<a href="/">New Search</a>
 						</li>
@@ -53,13 +53,17 @@
 		<p><cfoutput>#body#</cfoutput></p>
 	</div>
 	
+	<div id="waiting" style="display:none;">
+		One moment...
+	</div>
+	
 	<footer role="contentinfo">
 		<div class="inner">
 			<p id="copyright">Short's Travel Management <cfoutput>#Year(Now())#</cfoutput></p>
 		</div>
 	</footer>
 	
-	<cfdump eval=session>
+	<!---<cfdump eval=session>--->
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>

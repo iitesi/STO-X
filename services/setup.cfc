@@ -1,5 +1,5 @@
 <cfcomponent output="false">
-	
+
 	<cffunction name="setServerURL" output="false" returntype="void">
 		
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
@@ -23,21 +23,29 @@
 	<cffunction name="setPortalURL" output="false" returntype="void">
 		
 		<cfset local.sPortalURL = ''>
+		<cfset local.bDebug = 0>
 		<cfif cgi.SERVER_NAME EQ 'www.shortstravelonline.com'>
 			<cfset sPortalURL = 'https://www.shortstravel.com'>
+			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'www.shortstravel.com'>
 			<cfset sPortalURL = 'https://www.shortstravel.com'>
+			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'www.b-hives.com'>
 			<cfset sPortalURL = 'https://www.b-hive.travel'>
+			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'localhost'>
 			<cfset sPortalURL = 'http://localhost'>
+			<cfset bDebug = 1>
 		<cfelseif cgi.SERVER_NAME EQ 'localhost:8888'>
 			<cfset sPortalURL = 'http://localhost:8888'>
+			<cfset bDebug = 1>
 		<cfelseif cgi.SERVER_NAME EQ 'hermes.shortstravel.com'>
 			<cfset sPortalURL = 'https://hermes.shortstravel.com'>
+			<cfset bDebug = 0>
 		</cfif>
 		
 		<cfset application.sPortalURL = sPortalURL>
+		<cfset application.bDebug = bDebug>
 		
 		<cfreturn />
 	</cffunction>
@@ -51,6 +59,27 @@
 	
 	<cffunction name="setAccounts" output="false" returntype="void">
 		
+		<cfset local.stBranches = {
+			"149I" = "P7003154",
+			"176T" = "P7003151",
+			"17D8" = "P7003159",
+			"1AM2" = "P7003153",
+			"1CO2" = "P7003175",
+			"1H7M" = "P7003150",
+			"1H7N" = "P7003185",
+			"1M98" = "P7003155",
+			"1N32" = "P7003173",
+			"1N47" = "P7003172",
+			"1N51" = "P7003156",
+			"1N52" = "P7003157",
+			"1N63" = "P7003158",
+			"1P6O" = "P7003160",
+			"1WN9" = "P7003174",
+			"1WO0" = "P7003182",
+			"2B2C" = "P7003152",
+			"2N0D" = "P7003176"
+		}>
+		
 		<cfquery name="local.qAccounts" datasource="book">
 		SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates, Air_PassengerCodes,
 		Air_PrivateFares, Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
@@ -63,10 +92,12 @@
 			<cfset stTemp[Acct_ID] = {}>
 			<cfloop list="#qAccounts.ColumnList#" index="local.sCol">
 				<cfset stTemp[Acct_ID][sCol] = qAccounts[sCol]>
-			</cfloop> 
+			</cfloop>
+			<cfset stTemp[Acct_ID].sBranch = stBranches[PCC_Booking]> 
+			<cfset stTemp[Acct_ID].Air_PF = ListToArray(stTemp[Acct_ID].Air_PF, '~')> 
 		</cfloop>
 		
-		<cfset application.sAccounts = stTemp>
+		<cfset application.stAccounts = stTemp>
 		
 		<cfreturn />
 	</cffunction>

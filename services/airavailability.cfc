@@ -35,6 +35,11 @@
 									<com:Airport Code="#getsearch.Arrival_City#" />
 								</air:SearchDestination>
 								<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#" />
+								<air:AirLegModifiers>
+									<air:PermittedCabins>
+										<air:CabinClass Type="First"/>
+									</air:PermittedCabins>
+								</air:AirLegModifiers>								
 							</air:SearchAirLeg>
 							<cfif getsearch.Air_Type EQ 'RT'>
 								<air:SearchAirLeg>
@@ -45,6 +50,11 @@
 										<com:Airport Code="#getsearch.Depart_City#" />
 									</air:SearchDestination>
 									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#" />
+									<air:AirLegModifiers>
+										<air:PermittedCabins>
+											<air:CabinClass Type="First"/>
+										</air:PermittedCabins>
+									</air:AirLegModifiers>
 								</air:SearchAirLeg>
 							<cfelseif getsearch.Air_Type EQ 'MD'>
 								<cfloop query="getsearchlegs">
@@ -56,6 +66,11 @@
 											<com:Airport Code="#getsearchlegs.Arrival_City#" />
 										</air:SearchDestination>
 										<air:SearchDepTime PreferredTime="#DateFormat(getsearchlegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+										<air:AirLegModifiers>
+											<air:PermittedCabins>
+												<air:CabinClass Type="First"/>
+											</air:PermittedCabins>
+										</air:AirLegModifiers>	
 									</air:SearchAirLeg>
 								</cfloop>
 							</cfif>

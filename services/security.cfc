@@ -2,8 +2,8 @@
 
 <!--- session : search --->
 	<cffunction name="search" access="remote" output="false" returntype="void">
-		<cfargument name="Search_ID" required="true" type="numeric" > 
-		<cfargument name="Append" required="false" type="numeric" default="0" > 
+		<cfargument name="Search_ID" 	required="true"> 
+		<cfargument name="Append" 		required="false" default="0" > 
 		
 		<cfset local.done = 0>
 		<cfif StructKeyExists(session, 'searches')
@@ -14,7 +14,7 @@
 		</cfif>
 		
 		<cfif done EQ 0>
-			<cfif arguments.Append EQ 0>
+			<cfif NOT StructKeyExists(session, 'searches') OR NOT IsStruct(session.searches)>
 				<cfset session.searches = StructNew()>
 			</cfif>
 			
@@ -48,25 +48,27 @@
 			</cfif>
 			
 			<cfset local.tab['Search_ID'] = arguments.Search_ID>
-			<cfset tab['Air'] = getsearch.Air>
-			<cfset tab['Air_Status'] = 0>
-			<cfset tab['Car'] = getsearch.Car>
-			<cfset tab['Hotel'] = getsearch.Hotel>
-			<cfset tab['Policy_ID'] = getsearch.Policy_ID>
-			<cfset tab['Profile_ID'] = getsearch.Profile_ID>
-			<cfset tab['Value_ID'] = getsearch.Value_ID>
+			<cfset tab.Air = getsearch.Air>
+			<cfset tab.Pricing = {}>
+			<cfset tab.Car = getsearch.Car>
+			<cfset tab.Hotel = getsearch.Hotel>
+			<cfset tab.Policy_ID = getsearch.Policy_ID>
+			<cfset tab.Profile_ID = getsearch.Profile_ID>
+			<cfset tab.Value_ID = getsearch.Value_ID>
+			<cfset tab.stSegments = {}>
+			<cfset tab.stTrips = {}>
 			<cfif getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-					<cfset tab['Heading'] = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
+					<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
 				<cfelse>
-					<cfset tab['Heading'] = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+					<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				</cfif>
 			<cfelseif getsearch.Air_Type EQ 'OW'>
-				<cfset tab['Heading'] = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+				<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 			<cfelse>
 				<cfset tab.Heading = ''>
 				<cfloop query="getsearchlegs">
-					<cfset tab['Heading'] = tab['Heading']&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
+					<cfset tab.Heading = tab['Heading']&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
 				</cfloop>
 			</cfif>
 			

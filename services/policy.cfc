@@ -7,7 +7,7 @@
 
 <!--- policy : policyair --->
 	<cffunction name="policyair" access="remote" output="false" returntype="any">
-		<cfargument name="Acct_ID" required="false" type="numeric" default="#session.account.Acct_ID#"> 
+		<cfargument name="Acct_ID" required="false" type="numeric" default="#session.Acct_ID#"> 
 		<cfargument name="Search_ID" required="true" type="numeric"> 
 		
 		<cfquery name="local.getinternational" datasource="Corporate_Production" cachedwithin="#CreateTimespan(0,0,15,0)#">
@@ -37,7 +37,7 @@
 		<cfquery name="local.preferredair" datasource="book" cachedwithin="#CreateTimespan(0,0,15,0)#">
 		SELECT Vendor_Code, Vendor_Name
 		FROM Preferred_Vendors, lu_Vendors
-		WHERE Preferred_Vendors.Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Preferred_Vendors.Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Preferred_Vendors.Type = <cfqueryparam value="A" cfsqltype="cf_sql_varchar">
 		AND Preferred_Vendors.Vendor_ID = lu_Vendors.Vendor_Code
 		AND Preferred_Vendors.Type = lu_Vendors.Vendor_Type
@@ -57,7 +57,7 @@
 		Policy_CarOnlyRates, Policy_CarMaxRate,
 		Policy_CarReasonCode
 		FROM Account_Policies, Accounts
-		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Policy_ID = <cfqueryparam value="#session.Policy_ID#" cfsqltype="cf_sql_integer">
 		AND Account_Policies.Acct_ID = Accounts.Acct_ID
 		</cfquery>
@@ -71,7 +71,7 @@
 		<cfquery name="local.preferredcar" datasource="book" cachedwithin="#CreateTimespan(0,0,15,0)#">
 		SELECT Vendor_Name
 		FROM Preferred_Vendors, lu_Vendors
-		WHERE Preferred_Vendors.Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Preferred_Vendors.Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Preferred_Vendors.Type = <cfqueryparam value="C" cfsqltype="cf_sql_varchar">
 		AND Preferred_Vendors.Vendor_ID = lu_Vendors.Vendor_Code
 		AND Preferred_Vendors.Type = lu_Vendors.Vendor_Type
@@ -87,7 +87,7 @@
 		<cfquery name="local.preferredcartype" datasource="book" cachedwithin="#CreateTimespan(0,0,15,0)#">
 		SELECT Car_Size
 		FROM Policy_CarSizes
-		WHERE Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_numeric" />
+		WHERE Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_numeric" />
 		AND Policy_ID = <cfqueryparam value="#session.Policy_ID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		
@@ -103,7 +103,7 @@
 		Policy_HotelMaxRule, Policy_HotelMaxDisp,
 		Hotel_RateCodes, Policy_HotelMaxRate
 		FROM Account_Policies, Accounts
-		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Policy_ID = <cfqueryparam value="#session.Policy_ID#" cfsqltype="cf_sql_integer">
 		AND Account_Policies.Acct_ID = Accounts.Acct_ID
 		</cfquery>
@@ -117,7 +117,7 @@
 		<cfquery name="local.preferredhotels" datasource="book" cachedwithin="#CreateTimespan(0,0,15,0)#">
 		SELECT Vendor_Code, Vendor_Name
 		FROM Preferred_Vendors, LU_Vendors
-		WHERE Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Preferred_Vendors.Vendor_ID = LU_Vendors.Vendor_Code
 		AND Preferred_Vendors.Type = LU_Vendors.Vendor_Type
 		AND Type = <cfqueryparam value="H" cfsqltype="cf_sql_varchar">
@@ -133,7 +133,7 @@
 		<cfquery name="local.finditpolicy" datasource="book" cachedwithin="#CreateTimespan(0,0,15,0)#">
 		SELECT Policy_FindItDays, Policy_FindIt, Policy_FindItFee, Policy_FindItDiff
 		FROM Account_Policies, Accounts
-		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.account.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Account_Policies.Acct_ID = <cfqueryparam value="#session.Acct_ID#" cfsqltype="cf_sql_integer">
 		AND Policy_ID = <cfqueryparam value="#session.Policy_ID#" cfsqltype="cf_sql_integer">
 		AND Account_Policies.Acct_ID = Accounts.Acct_ID
 		</cfquery>

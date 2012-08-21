@@ -1,7 +1,7 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.name = 'booking'>
+	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
 	<cfset this.applicationManagement = true>
@@ -20,7 +20,7 @@
 		reload = 'reload',
 		password = 'true',
 		reloadApplicationOnEveryRequest = true,
-		generateSES = true,
+		generateSES = false,
 		SESOmitIndex = false,
 		baseURL = 'useCgiScriptName',
 		suppressImplicitService = true,
@@ -46,6 +46,7 @@
 	
 	<cffunction name="setupRequest">
 		
+		<cfset application.bDebug = 1>
 		<!---<cfset StructClear(application)>--->
 		<!---<cfset StructClear(session)>--->
 		<cfset controller( 'setup.setApplication' )>
