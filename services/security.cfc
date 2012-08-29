@@ -1,5 +1,5 @@
 <cfcomponent output="false">
-
+	
 <!--- session : search --->
 	<cffunction name="search" access="remote" output="false" returntype="void">
 		<cfargument name="Search_ID" 	required="true"> 
@@ -79,6 +79,19 @@
 				<cfset session.Acct_ID = getsearch.Acct_ID>
 			</cflock>
 		</cfif>
+		
+		<cfreturn />
+	</cffunction>
+	
+<!--- close --->
+	<cffunction name="close" output="false">
+		<cfargument name="nSearchID" 	required="true"> 
+		
+		<cfset local.temp = StructDelete(session.searches, arguments.nSearchID)>
+		<cfloop collection="#session.searches#" item="local.nSearchID">
+			<cfset rc.nSearchID = nSearchID>
+			<cfbreak>
+		</cfloop>
 		
 		<cfreturn />
 	</cffunction>
