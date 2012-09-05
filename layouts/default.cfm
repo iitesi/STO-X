@@ -17,7 +17,7 @@
 	
 	<header id="header" class="group">
 		<hgroup>
-			<cfoutput>#View('air/tabs')#</cfoutput>
+			<cfoutput>#View('main/tabs')#</cfoutput>
 		</hgroup>
 	</header>
 	
@@ -29,13 +29,13 @@
 		One moment...
 	</div>
 	
-	<footer role="contentinfo">
+	<!---<footer role="contentinfo">
 		<div class="inner">
 			<p id="copyright">Short's Travel Management <cfoutput>#Year(Now())#</cfoutput></p>
 		</div>
 	</footer>
 	
-	<!---<cfdump eval=session>--->
+	<cfdump eval=session>--->
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>

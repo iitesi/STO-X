@@ -2,45 +2,6 @@
 	position:relative;
 	float:left;
 }
-.roundtrip .grouptab.first {
-    background-image: none;
-    border-left: 1px solid #B7CFDF;
-    border-radius: 15px 0 0 15px;
-    padding-left: 10px;
-}
-.roundtrip .grouptab.last {
-    border-radius: 0 15px 15px 0;
-    border-right: 1px solid #B7CFDF;
-}
-.roundtrip .grouptab.selected {
-    background-color: #FCF9D7;
-    color: #333333;
-}
-.roundtrip .grouptab {
-    -moz-border-bottom-colors: none;
-    -moz-border-image: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background-color: #EDF3FE;
-    border-color: #B7CFDF -moz-use-text-color;
-    border-style: solid none;
-    border-width: 1px medium;
-    color: #92A9B8;
-    cursor: pointer;
-    display: inline-block;
-    font-weight: bold;
-    height: 20px;
-    line-height: 20px;
-    margin-top: 10px;
-    padding: 5px 10px 5px 15px;
-    position: relative;
-    text-align: left;
-}
-.roundtrip {
-    text-align: center;
-    white-space: nowrap;
-}
 body {
     color: #222222;
     font-family: helvetica,arial,verdana,sans-serif;
@@ -96,28 +57,25 @@ body {
 	color: #211922;
 	min-height:500px;
 }
+#content .badgeblank {
+	background-color: #FFF;
+	font-size: 11px;
+	padding: 5px;
+	float:left;
+	position: relative;
+	width: 90%;
+}
 #content .badge {
 	background-color: #FFF;
-	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	font-size: 11px;
 	padding: 5px;
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 225px;
-	color: #211922;
-	min-height:250px;
-}
-#content .list {
-	background-color: #FFF;
+	width: 90%;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
-	font-size: 11px;
-	padding: 5px;
-	margin:10px;
-	float:right;
-	position: relative;
-	width: 750px;
 	color: #211922;
+	min-height:100px;
 }
 #content .list .carrierimg {
 	padding: 10px 0 0 5px;
@@ -128,6 +86,19 @@ body {
 }
 .fade {
 	color:#999;
+}
+.bold {
+	font-weight:bold;
+}
+.large {
+	font-size:20px;
+	text-transform:uppercase;
+}
+.center {
+	text-align:center;
+}
+.right {
+	text-align:right;
 }
 .details {
 	border:1px solid #CCCCCC;
@@ -179,6 +150,8 @@ input[type="submit"] {
 	margin: 5px; 
 	padding: 4px 15px; 
 	border: 1px solid #4081af; 
+	font-size:18px;
+	font-weight:bold;
 	border-bottom-color: #20559a; 
 	color: white; 
 	text-align: center; 

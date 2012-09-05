@@ -57,19 +57,22 @@
 			<cfset tab.Value_ID = getsearch.Value_ID>
 			<cfset tab.stSegments = {}>
 			<cfset tab.stTrips = {}>
-			<cfif getsearch.Air_Type EQ 'RT'>
+			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
 					<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
 				<cfelse>
 					<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				</cfif>
-			<cfelseif getsearch.Air_Type EQ 'OW'>
+			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
 				<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' from '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
-			<cfelse>
+			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'MD'>
 				<cfset tab.Heading = ''>
 				<cfloop query="getsearchlegs">
 					<cfset tab.Heading = tab['Heading']&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
 				</cfloop>
+			<cfelseif NOT getsearch.Air AND getsearch.Car>
+				<cfset tab.Heading = ''>
+				<cfset tab.Heading = getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 			</cfif>
 			
 			<cflock timeout="30" scope="session" type="exclusive">
