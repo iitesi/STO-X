@@ -60,41 +60,62 @@ ol, ul {
 </style>
 <cfoutput>
 	<img class="logo" src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STO-Logo.gif">
-	<ul id="results-tabs">
+	<!--- Any air tabs? --->
+	<cfset bAir = 0>
+	<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
+		<cfif session.searches[nSearchID].Air>
+			<cfset bAir = 1>
+			<cfbreak>
+		</cfif>
+	</cfloop>
+	<cfif bAir>
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
-			<li id="tab-1" class="tab selected" style="max-width: 251px; margin-right: 0.5%; width: 42.4286%;">
+			<cfif session.searches[nSearchID].Air>
+				<ul id="results-tabs">
+					<li id="tab-1" class="tab selected" style="max-width: 251px; margin-right: 0.5%; width: 42.4286%;">
+						<div class="tab-border">
+							<div class="flex-wrapper">
+								<div class="flex-option">
+									<span class="flex-content">
+										<span class="vmiddle"><a href="index.cfm?Search_ID=#rc.Search_ID#&action=air.lowfare">#session.searches[rc.Search_ID].Heading#</a></span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</cfif>
+		</cfloop>
+		<ul id="results-tabs">
+			<li id="tab-1" class="tab selected" style="max-width: 170px; margin-right: 0.5%; width: 42.4286%;">
 				<div class="tab-border">
 					<div class="flex-wrapper">
 						<div class="flex-option">
 							<span class="flex-content">
-								<span class="vmiddle"><a href="index.cfm?Search_ID=#rc.Search_ID#&action=air.lowfare">#session.searches[rc.Search_ID].Heading#</a></span>
+								<span class="vmiddle">New Air Search</span>
 							</span>
 						</div>
 					</div>
 				</div>
 			</li>
-		</cfloop>
-	</ul>
-	<ul id="results-tabs">
-		<li id="tab-1" class="tab selected" style="max-width: 170px; margin-right: 0.5%; width: 42.4286%;">
-			<div class="tab-border">
-				<div class="flex-wrapper">
-					<div class="flex-option">
-						<span class="flex-content">
-							<span class="vmiddle">New Air Search</span>
-						</span>
-					</div>
-				</div>
-			</div>
-		</li>
-	</ul>
+		</ul>
+	</cfif>
 	<ul id="results-tabs">
 		<li id="tab-1" class="tab selected" style="max-width: 150px; margin-right: 0.5%; width: 42.4286%;">
 			<div class="tab-border">
 				<div class="flex-wrapper">
 					<div class="flex-option">
 						<span class="flex-content">
-							<span class="vmiddle">Search Hotels</span>
+							<span class="vmiddle">
+								<cfif NOT bAir
+								OR (StructKeyExists(session.searches[rc.Search_ID], 'Air_Selected')
+								AND session.searches[rc.Search_ID].Air_Selected)>
+									<a href="#buildURL('hotel?Search_ID=#rc.Search_ID#')#">Hotel</a>
+								<cfelse>
+									<!--- Show this tab as disabled.  Let them select air first. --->
+									Hotel
+								</cfif>
+							</span>
 						</span>
 					</div>
 				</div>
@@ -107,7 +128,16 @@ ol, ul {
 				<div class="flex-wrapper">
 					<div class="flex-option">
 						<span class="flex-content">
-							<span class="vmiddle">Search Cars</span>
+							<span class="vmiddle">
+								<cfif NOT bAir
+								OR (StructKeyExists(session.searches[rc.Search_ID], 'Air_Selected')
+								AND session.searches[rc.Search_ID].Air_Selected)>
+									<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">Car</a>
+								<cfelse>
+									<!--- Show this tab as disabled.  Let them select air first. --->
+									Car
+								</cfif>
+							</span>
 						</span>
 					</div>
 				</div>

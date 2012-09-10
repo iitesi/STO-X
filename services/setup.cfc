@@ -90,11 +90,39 @@
 		<cfset local.stTemp = {}>
 		<cfloop query="qAccounts">
 			<cfset stTemp[Acct_ID] = {}>
+			<cfset stTemp[Acct_ID].aPreferredAir = ArrayNew()> 
+			<cfset stTemp[Acct_ID].aPreferredCar = ArrayNew()> 
+			<cfset stTemp[Acct_ID].aPreferredHotel = ArrayNew()> 
+			<cfset stTemp[Acct_ID].aNonPolicyAir = ArrayNew()> 
+			<cfset stTemp[Acct_ID].aNonPolicyCar = ArrayNew()> 
+			<cfset stTemp[Acct_ID].aNonPolicyHotel = ArrayNew()> 
 			<cfloop list="#qAccounts.ColumnList#" index="local.sCol">
 				<cfset stTemp[Acct_ID][sCol] = qAccounts[sCol]>
 			</cfloop>
 			<cfset stTemp[Acct_ID].sBranch = stBranches[PCC_Booking]> 
 			<cfset stTemp[Acct_ID].Air_PF = ListToArray(stTemp[Acct_ID].Air_PF, '~')> 
+		</cfloop>
+		
+		<cfquery name="local.qOutOfPolicy" datasource="book">
+		SELECT Vendor_ID, Acct_ID, Type
+		FROM OutofPolicy_Vendors
+		</cfquery>
+		<cfloop query="qOutOfPolicy">
+			<cfif StructKeyExists(stTemp, Acct_ID)>
+				<cfset local.sType = 'aNonPolicy'&(Type EQ 'A' ? 'Air' : (Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(stTemp[Acct_ID][sType], qOutOfPolicy.Vendor_ID)>
+			</cfif>
+		</cfloop>
+		
+		<cfquery name="local.qPreferred" datasource="book">
+		SELECT Acct_ID, Vendor_ID, Type
+		FROM Preferred_Vendors
+		</cfquery>
+		<cfloop query="qPreferred">
+			<cfif StructKeyExists(stTemp, Acct_ID)>
+				<cfset local.sType = 'aPreferred'&(Type EQ 'A' ? 'Air' : (Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(stTemp[Acct_ID][sType], qPreferred.Vendor_ID)>
+			</cfif>
 		</cfloop>
 		
 		<cfset application.stAccounts = stTemp>
@@ -106,7 +134,7 @@
 		
 		<cfquery name="local.qPolicies" datasource="book">
 		SELECT Policy_ID, Acct_ID, Policy_Include, Policy_Approval, Policy_Window, Policy_AirReasonCode, Policy_AirLostSavings, 
-		Policy_AirFirstClass, Policy_AirBusinessClass, Policy_ApprovalText, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad, 
+		Policy_AirFirstClass, Policy_AirBusinessClass, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad, 
 		Policy_AirMaxRule, Policy_AirMaxDisp, Policy_AirMaxTotal, Policy_AirPrefRule, Policy_AirPrefDisp, Policy_AirAdvRule, 
 		Policy_AirAdvDisp, Policy_AirAdv, Policy_AirRefRule, Policy_AirRefDisp, Policy_AirNonRefRule, Policy_AirNonRefDisp, 
 		Policy_FindIt, Policy_FindItDays, Policy_FindItDiff, Policy_FindItFee, Policy_CarReasonCode, Policy_CarMaxRule, Policy_CarMaxDisp, 
@@ -120,9 +148,20 @@
 		<cfset local.stTemp = {}>
 		<cfloop query="qPolicies">
 			<cfset stTemp[Policy_ID] = {}>
+			<cfset stTemp[Policy_ID].aCarSizes = ArrayNew()>
 			<cfloop list="#qPolicies.ColumnList#" index="local.sCol">
 				<cfset stTemp[Policy_ID][sCol] = qPolicies[sCol]>
 			</cfloop> 
+		</cfloop>
+		
+		<cfquery name="local.qPreferredCarSizes" datasource="book">
+		SELECT Car_Size, Policy_ID
+		FROM Policy_CarSizes
+		</cfquery>
+		<cfloop query="qPreferredCarSizes">
+			<cfif StructKeyExists(stTemp, Policy_ID)>
+				<cfset ArrayAppend(stTemp[Policy_ID].aCarSizes, qPreferredCarSizes.Car_Size)>
+			</cfif>
 		</cfloop>
 		
 		<cfset application.stPolicies = stTemp>
