@@ -55,6 +55,7 @@
 			<cfset tab.Policy_ID = getsearch.Policy_ID>
 			<cfset tab.Profile_ID = getsearch.Profile_ID>
 			<cfset tab.Value_ID = getsearch.Value_ID>
+			<cfset tab.Depart_DateTime = getsearch.Depart_DateTime>
 			<cfset tab.stSegments = {}>
 			<cfset tab.stTrips = {}>
 			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
@@ -88,15 +89,16 @@
 	
 <!--- close --->
 	<cffunction name="close" output="false">
-		<cfargument name="nSearchID" 	required="true"> 
+		<cfargument name="nSearchID"> 
 		
 		<cfset local.temp = StructDelete(session.searches, arguments.nSearchID)>
+		<cfset local.nNewSearchID = ''>
 		<cfloop collection="#session.searches#" item="local.nSearchID">
-			<cfset rc.nSearchID = nSearchID>
+			<cfset nNewSearchID = nSearchID>
 			<cfbreak>
 		</cfloop>
 		
-		<cfreturn />
+		<cfreturn nNewSearchID/>
 	</cffunction>
 	
 </cfcomponent>

@@ -1,52 +1,63 @@
 function toggleDiv(div) {
-	$( '#' + div ).toggle( 'fade' );
+	$( "#" + div ).toggle( 'fade' );
 }
 function filterAir() {
-	var multicarrier = $( "#MultiCarrier:checked" ).val();
-	var policy = $( "#Policy:checked" ).val();
-	var preferred = $( "#Preferred:checked" ).val();
-	var nonstops = $( "#NonStops:checked" ).val();
+																			//console.log('start');
+	var classofservice = $( "input:radio[name=Class]:checked" ).val();
+	if (classofservice == undefined) {
+		classofservice = 'Y'
+	}
+	var fares = $( "input:radio[name=Fares]:checked" ).val();
+	if (fares == undefined) {
+		fares = 0
+	}
+	var nonstops = $( "input:checkbox[name=NonStops]:checked" ).val();
+	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
+	var singlecarrier = $( "input:checkbox[name=SingleCarrier]:checked" ).val();
 	/*
-	 * 	0	Token				DL0211DL1123UA221
+	 * 	0	Token				-23445611128
 	 * 	1	Policy				1/0
 	 * 	2 	Multiple Carriers	1/0
 	 * 	3 	Carriers			"DL","AA","UA"
 	 * 	4	Refundable			1/0
-	 * 	5	Total Price			000.00
-	 * 	6	Travel Time			000
-	 * 	7	Preferred			1/0
-	 * 	8	Cabin Class			Economy, Business, First
-	 * 	9	Stops				0/1/2
+	 * 	5	Preferred			1/0
+	 * 	6	Cabin Class			Y, C, F
+	 * 	7	Stops				0/1/2
 	 */
-//console.log('multicarrier ' + multicarrier);
-//console.log('policy ' + policy);
-//console.log('preferred ' + preferred);
-//console.log('NonStops ' + $( '#NonStops:checked').val());
 	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 		var flight = flightresults[loopcnt];
-		if ((multicarrier == 0 && flight[2] == 1) ||
-		(policy == 1 && flight[1] == 0) ||
-		(preferred == 1 && flight[7] == 0) ||
-		(nonstops == 1 && flight[9] != 0)) {
+																			//console.log(flight)
+																			//console.log(nonstops)
+		if ((classofservice != flight[6])
+		|| (fares != flight[4])
+		|| (nonstops == 'on' && flight[7] != 0)
+		|| (policy == 'on' && flight[1] != 1)
+		|| (singlecarrier == 'on' && flight[2] != 0)) {
 			$( '#' + flight[0] ).hide( 'fade' );
-//console.log('hide');
+																			//console.log('hide');
 		}
 		else {
 			carriercount = 0;
-//console.log('show');
-			$( '#' + flight[0] ).show( 'fade' );
-			//for (var i = 0; i < flight[3].length; i++) {
-			//	if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
-			//		carriercount++;
-			//	}
-			//}
-			//if (carriercount == 0) {
-			//	$( '#' + flight[0] ).hide( 'fade' );
-			//}
-			//else {
-			//	$( '#' + flight[0] ).show( 'fade' );
-			//}
+			for (var i = 0; i < flight[3].length; i++) {
+				if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
+					carriercount++;
+				}
+			}
+			if (carriercount == 0) {
+				$( '#' + flight[0] ).hide( 'fade' );
+			}
+			else {
+				$( '#' + flight[0] ).show( 'fade' );
+			}
 		}
+	}
+	return false;
+}
+
+function sortAir (sort) {
+	var sortlist = eval( 'sort' + sort );
+	for (var t = 0; t < sortlist.length; t++) {
+		$( "#lowfarecontent" ).append( $( "#" + sortlist[t] ) );
 	}
 	return false;
 }

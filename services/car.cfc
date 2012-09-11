@@ -273,39 +273,4 @@
 		<cfreturn stCars/>
 	</cffunction>
 	
-<!--- lowfare : addJavascript --->
-	<cffunction name="addJavascript" output="false">
-		<cfargument name="stTrips" 	required="true">
-		
-		<!---
-			 * 	0	Token				DL0211DL1123UA221
-			 * 	1	Policy				1/0
-			 * 	2 	Multiple Carriers	1/0
-			 * 	3 	Carriers			"DL","AA","UA"
-			 * 	4	Refundable			1/0
-			 * 	5	Total Price			000.00
-			 * 	6	Travel Time			000
-			 * 	7	Preferred			1/0
-			 * 	8	Cabin Class			Economy, Business, First
-			 * 	9	Stops				0/1/2
-		--->
-		<cfset local.aAllCabins = ['Y','C','F']>
-		<cfset local.aRefundable = [0,1]>
-		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
-			<cfset sCarriers = '"#Replace(arguments.stTrips[sTrip].Carriers, ',', '","', 'ALL')#"'>
-			<cfloop array="#aAllCabins#" index="local.sCabin">
-				<cfif StructKeyExists(arguments.stTrips[sTrip], sCabin)>
-					<cfif StructKeyExists(arguments.stTrips[sTrip][sCabin], 0)>
-						<cfset stTrips[sTrip].sJavascript = "#sTrip#,1,#(ListLen(arguments.stTrips[sTrip].Carriers) EQ 1 ? 0 : 1)#,[#sCarriers#],0,#arguments.stTrips[sTrip].LowFare#,0,0,'#sCabin#',#arguments.stTrips[sTrip].Stops#">
-					</cfif>
-					<cfif StructKeyExists(arguments.stTrips[sTrip][sCabin], 1)>
-						<cfset stTrips[sTrip].sJavascript = "#sTrip#,1,#(ListLen(arguments.stTrips[sTrip].Carriers) EQ 1 ? 0 : 1)#,[#sCarriers#],1,#arguments.stTrips[sTrip].LowFare#,0,0,'#sCabin#',#arguments.stTrips[sTrip].Stops#">
-					</cfif>
-				</cfif>
-			</cfloop>
-		</cfloop>
-		
-		<cfreturn stTrips/>
-	</cffunction>
-	
 </cfcomponent>

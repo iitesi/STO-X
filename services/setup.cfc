@@ -178,9 +178,19 @@
 		</cfquery>
 		<cfset local.stTemp = {}>
 		<cfloop query="qAirVendors">
-			<cfset stTemp[VendorCode] = ShortName>
+			<cfset stTemp[VendorCode].Name = ShortName>
+			<cfset stTemp[VendorCode].Bag1 = 0>
 		</cfloop>
-		
+		<cfquery name="local.qBagFees" datasource="Corporate_Production">
+		SELECT ShortCode, OnlineDomBag1
+		FROM OnlineCheckIn_Links, Suppliers
+		WHERE OnlineDomBag1 IS NOT NULL
+		AND OnlineDomBag1 <> 0
+		AND OnlineCheckIn_Links.AccountID = Suppliers.AccountID
+		</cfquery>
+		<cfloop query="qBagFees">
+			<cfset stTemp[ShortCode].Bag1 = OnlineDomBag1>
+		</cfloop>
 		<cfset application.stAirVendors = stTemp>
 		
 		<cfreturn />

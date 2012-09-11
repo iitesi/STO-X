@@ -50,4 +50,21 @@
 		<cfreturn />
 	</cffunction>
 	
+<!--- close --->
+	<cffunction name="close" output="false">
+		<cfargument name="rc">
+		
+		<cfset rc.nSearchID = url.Search_ID>
+		<cfset variables.fw.service('security.close', 'nNewSearchID')>
+				
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endclose" output="false">
+		<cfargument name="rc">
+		
+		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.nNewSearchID#')>
+		
+		<cfreturn />
+	</cffunction>
+	
 </cfcomponent>

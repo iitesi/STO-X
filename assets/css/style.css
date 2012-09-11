@@ -3,20 +3,24 @@
 	float:left;
 }
 body {
-    color: #222222;
-    font-family: helvetica,arial,verdana,sans-serif;
-    font-size: 13px;
+	color: #222222;
+	font-family: helvetica,arial,verdana,sans-serif;
+	font-size: 13px;
+	background-color:#fff;
 }
 #filterbar #sortbar {
 	float:left;
 	position:relative;
-	z-index:99;
+	z-index:9009;
 }
 .filterheader {
-	float:left;
 	position:relative;
 	font-weight:bold;
-	padding:0 5px 0 25px;
+	padding:0 25px 0 25px;
+	float:left;
+}
+.left {
+	float:left;
 }
 .inner {
 	margin: 0 auto;
@@ -38,7 +42,6 @@ body {
 	width: 1020px;
 }
 #content{
-	background: #FFF;
 	margin: 80px auto 0;
 	padding: 10px;
 	width: 100%;
@@ -57,14 +60,6 @@ body {
 	color: #211922;
 	min-height:500px;
 }
-#content .badgeblank {
-	background-color: #FFF;
-	font-size: 11px;
-	padding: 5px;
-	float:left;
-	position: relative;
-	width: 90%;
-}
 #content .badge {
 	background-color: #FFF;
 	font-size: 11px;
@@ -72,10 +67,10 @@ body {
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 90%;
+	width: 245px;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
-	min-height:100px;
+	min-height:300px;
 }
 #content .car {
 	background-color: #FFF;
@@ -257,4 +252,49 @@ form div input[type="submit"] {
 	position: relative;
 	right: 4px;
 	top: -29px;
+}
+/* Filters */
+.popup {
+	color: #333333;
+	font-weight: bold;
+	height: 25px;
+	line-height: 25px;
+	margin: 0 8px;
+	position: relative;
+}
+.popup-airlines {
+	border: 1px solid #B7CFDF;
+	background-color: white;
+	color: gray;
+	font-size: 13px;
+	line-height: normal;
+	width: 480px;
+	border-radius: 5px 5px 5px 5px;
+}
+.popup-classes {
+	border: 1px solid #B7CFDF;
+	background-color: white;
+	color: gray;
+	font-size: 13px;
+	line-height: normal;
+	width: 250px;
+	border-radius: 5px 5px 5px 5px;
+}
+.prefs-helptext {
+	color: gray;
+	font-size: 14px;
+	line-height: normal;
+	margin: 10px 6px;
+	padding: 8px;
+}
+div.region {
+	margin: 10px 0;
+	overflow: hidden;
+}
+div.checkbox {
+	float: left;
+	height: 20px;
+	margin: 5px;
+	overflow: hidden;
+	width: 150px;
 }

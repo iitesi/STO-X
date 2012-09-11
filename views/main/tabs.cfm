@@ -77,7 +77,10 @@ ol, ul {
 							<div class="flex-wrapper">
 								<div class="flex-option">
 									<span class="flex-content">
-										<span class="vmiddle"><a href="index.cfm?Search_ID=#rc.Search_ID#&action=air.lowfare">#session.searches[rc.Search_ID].Heading#</a></span>
+										<span class="vmiddle">
+											<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">#session.searches[nSearchID].Heading#</a>
+											<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
+										</span>
 									</span>
 								</div>
 							</div>
