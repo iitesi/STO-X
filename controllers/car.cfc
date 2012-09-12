@@ -12,7 +12,6 @@
 		<cfargument name="rc">
 		
 		<cfset rc.nStart = getTickCount()>
-		<cfset rc.sAPIAuth = application.sAPIAuth>
 		<cfset rc.nSearchID = url.Search_ID>
 		<cfset rc.stAccount = application.stAccounts[session.Acct_ID]>
 		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
@@ -39,7 +38,6 @@
 		<cfargument name="rc">
 		
 		<cfset rc.nStart = getTickCount()>
-		<cfset rc.sAPIAuth = application.sAPIAuth>
 		<cfset rc.nSearchID = url.Search_ID>
 		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
 			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#')>

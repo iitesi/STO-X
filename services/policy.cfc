@@ -1,7 +1,7 @@
 ﻿<cfcomponent output="false">
 	
 <!--- init --->
-	<cffunction name="init" access="remote" output="false" returntype="any">
+	<cffunction name="init" output="false">
 		<cfreturn this>
 	</cffunction>
 

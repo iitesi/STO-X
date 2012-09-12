@@ -2,18 +2,18 @@
 	
 <!--- doLowFare --->
 	<cffunction name="doLowFare" returntype="string" output="false">
-		<cfargument name="stAccount" 	required="true">
-		<cfargument name="stPolicy" 	required="true">
-		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="sAPIAuth" 	required="true">
-		<cfargument name="sCabins" 		required="false"	default="Y"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
-		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (list or one item) - 0, 1 --->
-		<cfargument name="bThread"		required="false"><!--- Skip threading if you need to troubleshoot an individual function --->
+		<cfargument name="airparse">
+		<cfargument name="nSearchID">
+		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
+		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
+		<cfargument name="sCabins" 		default="Y"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
+		<cfargument name="bRefundable"	default="0"><!--- Options (list or one item) - 0, 1 --->
+		<cfargument name="bThread"><!--- Skip threading if you need to troubleshoot an individual function --->
 		
 		<cfset local.sCabins = Replace(Replace(Replace(arguments.sCabins, 'Economy', 'Y'), 'Business', 'C'), 'First', 'F')>
 		<cfset local.aCabins = ListToArray(sCabins)>
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
-		
 		<cfset local.sJoinThread = ''>
 		<cfif NOT StructKeyExists(arguments, 'bThread')>
 			<cfloop array="#aCabins#" index="local.sCabin">
@@ -27,7 +27,7 @@
 							stAccount="#stAccount#"
 							stPolicy="#stPolicy#"
 							nSearchID="#nSearchID#"
-							sAPIAuth="#sAPIAuth#"
+							sAPIAuth="#application.sAPIAuth#"
 							sCabin="#sCabin#"
 							bRefundable="#bRefundable#"> 
 							
@@ -81,17 +81,18 @@
 			</cfif>
 			<!---<cfdump eval=cfthread[sJoinThread] abort>--->
 		</cfif>
-		
-		<cfset local.stTrips = addTripLowFare(session.searches[nSearchID].stTrips)>
-		<cfset stTrips = addPreferred(stTrips, stAccount)>
-		<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>
-		<cfset session.searches[nSearchID].stCarriers = getCarriers(session.searches[nSearchID].stTrips)>
-		<cfset session.searches[nSearchID].stSortFare = sortTrips(session.searches[nSearchID].stTrips, 'LowFare')>
-		<cfset session.searches[nSearchID].stSortDepart = sortTrips(session.searches[nSearchID].stTrips, 'Depart')>
-		<cfset session.searches[nSearchID].stSortArrival = sortTrips(session.searches[nSearchID].stTrips, 'Arrival')>
-		<cfset session.searches[nSearchID].stSortDuration = sortTrips(session.searches[nSearchID].stTrips, 'Duration')>
-		<cfset session.searches[nSearchID].stSortBag = sortTrips(session.searches[nSearchID].stTrips, 'LowFareBag')>
-		<cfset session.searches[nSearchID].stTrips = checkPolicy(session.searches[nSearchID].stTrips, nSearchID, stPolicy, stAccount, session.searches[nSearchID].stSortFare[1])>
+		<cfif NOT StructIsEmpty(session.searches[nSearchID].stTrips)>
+			<cfset local.stTrips = addTripLowFare(session.searches[nSearchID].stTrips)>
+			<cfset stTrips = addPreferred(stTrips, stAccount)>
+			<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>
+			<cfset session.searches[nSearchID].stCarriers = getCarriers(session.searches[nSearchID].stTrips)>
+			<cfset session.searches[nSearchID].stSortFare = sortTrips(session.searches[nSearchID].stTrips, 'LowFare')>
+			<cfset session.searches[nSearchID].stSortDepart = sortTrips(session.searches[nSearchID].stTrips, 'Depart')>
+			<cfset session.searches[nSearchID].stSortArrival = sortTrips(session.searches[nSearchID].stTrips, 'Arrival')>
+			<cfset session.searches[nSearchID].stSortDuration = sortTrips(session.searches[nSearchID].stTrips, 'Duration')>
+			<cfset session.searches[nSearchID].stSortBag = sortTrips(session.searches[nSearchID].stTrips, 'LowFareBag')>
+			<cfset session.searches[nSearchID].stTrips = checkPolicy(session.searches[nSearchID].stTrips, nSearchID, stPolicy, stAccount, session.searches[nSearchID].stSortFare[1])>
+		</cfif>
 		
 		<cfreturn >
 	</cffunction>

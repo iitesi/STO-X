@@ -12,6 +12,7 @@ body {
 	float:left;
 	position:relative;
 	z-index:9009;
+	margin: 0px auto;
 }
 .filterheader {
 	position:relative;
@@ -70,7 +71,6 @@ body {
 	width: 245px;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
-	min-height:300px;
 }
 #content .car {
 	background-color: #FFF;

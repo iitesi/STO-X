@@ -57,7 +57,7 @@ function filterAir() {
 function sortAir (sort) {
 	var sortlist = eval( 'sort' + sort );
 	for (var t = 0; t < sortlist.length; t++) {
-		$( "#lowfarecontent" ).append( $( "#" + sortlist[t] ) );
+		$( "#aircontent" ).append( $( "#" + sortlist[t] ) );
 	}
 	return false;
 }

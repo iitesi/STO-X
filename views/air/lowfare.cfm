@@ -7,15 +7,15 @@
 <cfset aRef = ["0","1"]>
 <cfset aRef = ["0"]>
 <cfoutput>
-	#View('air/filter')#<br>
-	<!---#View('air/legs')#--->
+	#View('air/legs')#
+	#View('air/filter')#
 </cfoutput>
 <br clear="both">
 <cfoutput>
-	<div id="lowfarecontent">
+	<div id="aircontent">
 		<cfloop array="#session.searches[rc.Search_ID].stSortFare#" index="sTrip">
 			<cfset stTrip = session.searches[rc.Search_ID].stTrips[sTrip]>
-			<div id="#sTrip#" class="badge">
+			<div id="#sTrip#" class="badge" style="min-height:300px;">
 				<table width="100%">
 				<tr>
 					<td width="125px" align="center">
