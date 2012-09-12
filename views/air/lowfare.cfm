@@ -1,6 +1,3 @@
-<!---<cfoutput>
-	#NumberFormat(rc.nTimer)# ms
-</cfoutput>--->
 <cfset aAllCabins = ["Y","C","F"]>
 <cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.nSearchID].Pricing)), 'f', 'F'))>
 <cfset temp = ArraySort(aMyCabins, "text", "desc")>

@@ -12,7 +12,7 @@
 		<cfargument name="sAPIAuth">
 		<cfargument name="nSearchID">
 		
-		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
+		<cfset local.bSessionStorage = 0><!--- Testing setting (1 - testing, 0 - live) --->
 		
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
@@ -117,6 +117,29 @@
 						Origin				: stAirSegment.XMLAttributes.Origin,
 						TravelTime			: stAirSegment.XMLAttributes.TravelTime
 					}>
+				</cfloop>
+			</cfif>
+		</cfloop>
+			
+		<cfreturn stSegments />
+	</cffunction>
+	
+<!--- parseHotel --->
+	<cffunction name="parseHotel" output="false">
+		<cfargument name="stResponse"	required="true">
+		
+		<cfset local.stHotels = {}>
+		<cfloop array="#arguments.stResponse#" index="local.stHotelSearchResults">
+			<cfif stHotelSearchResults.XMLName EQ 'hotel:HotelSearchResults'>
+				<cfset stHotels[stHotelSearchResults.XMLAttributes.HotelCode] = {
+					HotelChain			: stAirSegment.XMLAttributes.HotelChain,
+					HotelLocation		: stAirSegment.XMLAttributes.HotelLocation,
+					Name				: stAirSegment.XMLAttributes.Name
+				}>
+				<cfloop array="#stHotelSearchResults.XMLChildren#" index="local.stHotelProperty">
+					<cfif stHotelProperty.XMLName EQ 'hotel:HotelProperty'>
+						
+					</cfif>
 				</cfloop>
 			</cfif>
 		</cfloop>

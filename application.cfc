@@ -47,8 +47,6 @@
 	<cffunction name="setupRequest">
 		
 		<cfset application.bDebug = 1>
-		<!---<cfset StructClear(application)>--->
-		<!---<cfset StructClear(session)>--->
 		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
 		

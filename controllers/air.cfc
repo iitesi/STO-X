@@ -27,6 +27,7 @@
 				
 		<cfreturn />
 	</cffunction>
+	
 	<cffunction name="endlowfare" output="false">
 		<cfargument name="rc">
 		
@@ -60,6 +61,7 @@
 		
 		<cfset rc.nStart = getTickCount()>
 		<cfset rc.nSearchID = url.Search_ID>
+		<cfset rc.nGroup = url.Group>
 		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
 			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#')>
 		</cfif>

@@ -5,7 +5,7 @@
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="sAPIAuth" 	required="true">
+		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
 		
 		<cfset local.sJoinThread = ''>
 		

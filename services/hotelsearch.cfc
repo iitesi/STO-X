@@ -1,30 +1,25 @@
 <cfcomponent>
 	
-<!--- doAirAvailability --->
-	<cffunction name="doAirAvailability" returntype="string" output="false">
-		<cfargument name="airparse">
+<!--- doHotelSearch --->
+	<cffunction name="doHotelSearch" output="false">
 		<cfargument name="nSearchID">
-		<cfargument name="nGroup">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
 		
-		<cfset local.sMessage 			= 	prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID, arguments.nGroup)>
-		<cfset local.sResponse 			= 	arguments.airparse.callAPI('AirService', sMessage, arguments.sAPIAuth, arguments.nSearchID)>
-		<cfset local.aResponse 			= 	arguments.airparse.formatResponse(sResponse)>
-		<cfset local.stSegmentKeys 		= 	arguments.airparse.parseSegmentKeys(aResponse)>
-		<cfset stSegmentKeys 			= 	arguments.airparse.addSegmentRefs(aResponse, stSegmentKeys)>
-		<cfset local.stSegments 		= 	arguments.airparse.parseSegments(aResponse, stSegmentKeys)>
-		<cfset stSegments 				= 	arguments.airparse.mergeSegments(session.searches[nSearchID].stSegments, stSegments)>
-		<cfset local.stSegmentKeyLookUp = 	arguments.airparse.parseKeyLookUp(stSegmentKeys)>
-		<cfset local.stAvailTrips 		= 	arguments.airparse.parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
-		<cfset local.stAvailTrips 		= 	addPreferred(stAvailTrips, stAccount)>
-		<cfset local.stCarriers 		= 	getCarriers(stAvailTrips)>
+		<cfset local.sMessage 			= 	prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID)>
+		<cfset local.sResponse 			= 	callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID)>
+		<cfset local.aResponse 			= 	formatResponse(sResponse)>
+		<cfdump eval=aResponse abort>
+		<cfset local.st 				= 	parseHotels(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
 		
 		<cfset session.searches[nSearchID].stSegments = stSegments>
 		<cfset session.searches[nSearchID].stAvailTrips = stAvailTrips>
 		<cfset session.searches[nSearchID].stCarriers = stCarriers>
 		
+		<cfset session.searches[nSearchID].stSortSegments = StructKeyArray(session.searches[nSearchID].stAvailTrips)>
+		<cfset session.searches[nSearchID].stSortSegments = StructKeyArray(session.searches[nSearchID].stAvailTrips)>
+		<cfset session.searches[nSearchID].stSortSegments = StructKeyArray(session.searches[nSearchID].stAvailTrips)>
 		<cfset session.searches[nSearchID].stSortSegments = StructKeyArray(session.searches[nSearchID].stAvailTrips)>
 		
 		<cfreturn >
@@ -35,77 +30,75 @@
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="nGroup"	 	required="true">
 		
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Air_Type, Airlines, International, Depart_City, Depart_DateTime, Depart_TimeType, Arrival_City, Arrival_DateTime, Arrival_TimeType, ClassOfService
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
-		<cfif getsearch.Air_Type EQ 'MD'>
-			<cfquery name="local.getsearchlegs" datasource="book">
-			SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
-			FROM Searches_Legs
-			WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-			</cfquery>
-		</cfif>
 		
 		<cfsavecontent variable="local.message">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AvailabilitySearchReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
-							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
-							<cfif arguments.nGroup EQ 0>
-								<air:SearchAirLeg>
-									<air:SearchOrigin>
-										<com:Airport Code="#getsearch.Depart_City#" />
-									</air:SearchOrigin>
-									<air:SearchDestination>
-										<com:Airport Code="#getsearch.Arrival_City#" />
-									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#" />
-								</air:SearchAirLeg>
-							</cfif>
-							<cfif arguments.nGroup EQ 1 AND getsearch.Air_Type EQ 'RT'>
-								<air:SearchAirLeg>
-									<air:SearchOrigin>
-										<com:Airport Code="#getsearch.Arrival_City#" />
-									</air:SearchOrigin>
-									<air:SearchDestination>
-										<com:Airport Code="#getsearch.Depart_City#" />
-									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#" />
-								</air:SearchAirLeg>
-							<cfelseif arguments.nGroup NEQ 0 AND getsearch.Air_Type EQ 'MD'>
-								<cfset local.cnt = 0>
-								<cfloop query="getsearchlegs">
-									<cfset cnt++>
-									<cfif arguments.nGroup EQ cnt>
-										<air:SearchAirLeg>
-											<air:SearchOrigin>
-												<com:Airport Code="#getsearchlegs.Depart_City#" />
-											</air:SearchOrigin>
-											<air:SearchDestination>
-												<com:Airport Code="#getsearchlegs.Arrival_City#" />
-											</air:SearchDestination>
-											<air:SearchDepTime PreferredTime="#DateFormat(getsearchlegs.Depart_DateTime, 'yyyy-mm-dd')#" />
-										</air:SearchAirLeg>
-									</cfif>
-								</cfloop>
-							</cfif>
-							<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="false" AllowChangeOfAirport="false" ProhibitOvernightLayovers="false" MaxSolutions="300" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
-							</air:AirSearchModifiers>
-							<com:SearchPassenger Code="ADT" />
-							<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" />
-						</air:AvailabilitySearchReq>
+						<hot:HotelSearchAvailabilityReq TargetBranch="P7003155" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
+							<hot:HotelLocation Location="LAS" LocationType="Airport">
+							</hot:HotelLocation>
+							<hot:HotelSearchModifiers NumberOfAdults="1" NumberOfRooms="1">
+							</hot:HotelSearchModifiers>
+							<hot:HotelStay>
+								<hot:CheckinDate>2012-11-01</hot:CheckinDate>
+								<hot:CheckoutDate>2012-11-03</hot:CheckoutDate>
+							</hot:HotelStay>
+							<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
+						</hot:HotelSearchAvailabilityReq>
 					</soapenv:Body>
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
 		
 		<cfreturn message/>
+	</cffunction>
+	
+<!--- callAPI --->
+	<cffunction name="callAPI" output="false">
+		<cfargument name="sService">
+		<cfargument name="sMessage">
+		<cfargument name="sAPIAuth">
+		<cfargument name="nSearchID">
+		
+		<cfset local.bSessionStorage = 0><!--- Testing setting (1 - testing, 0 - live) --->
+		
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
+				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
+				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
+				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
+				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
+				<cfhttpparam type="header" name="Pragma" value="no-cache" />
+				<cfhttpparam type="header" name="SOAPAction" value="" />
+				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
+			</cfhttp>
+			<cfif bSessionStorage>
+				<cfset session.searches[nSearchID].sFileContent = cfhttp.filecontent>
+			</cfif>
+		<cfelse>
+			<cfset cfhttp.filecontent = session.searches[nSearchID].sFileContent>
+		</cfif>
+		
+		<cfreturn cfhttp.filecontent />
+	</cffunction>
+	
+<!--- formatResponse --->
+	<!--- Both fare and schedule search --->
+	<cffunction name="formatResponse" output="false">
+		<cfargument name="stResponse">
+		
+		<cfset local.stResponse = XMLParse(arguments.stResponse)>
+		
+		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
 	</cffunction>
 	
 <!--- sortSegments --->
