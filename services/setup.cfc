@@ -213,6 +213,24 @@
 		<cfreturn />
 	</cffunction>
 	
+	<cffunction name="setHotelVendors" output="false" returntype="void">
+		
+		<cfquery name="local.qHotelChains">
+		SELECT VendorCode, VendorName
+		FROM rhtl
+		GROUP BY VendorCode, VendorName
+		ORDER BY VendorCode, VendorName
+		</cfquery>
+		<cfset local.stTemp = {} />
+		<cfloop query="qHotelChains">
+			<cfset stTemp[VendorCode] = qHotelChains.VendorName>
+		</cfloop>
+		
+		<cfset application.stHotelVendors = stTemp>
+		
+		<cfreturn />
+	</cffunction>
+	
 	<cffunction name="setEquipment" output="false" returntype="void">
 		
 		<cfquery name="local.qEquipment">

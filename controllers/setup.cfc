@@ -31,6 +31,9 @@
 		<cfif NOT StructKeyExists(application, 'stCarVendors') OR StructIsEmpty(application.stCarVendors)>
 			<cfset variables.fw.service('setup.setCarVendors', 'void')>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'stHotelVendors') OR StructIsEmpty(application.stHotelVendors)>
+			<cfset variables.fw.service('setup.setHotelVendors', 'void')>
+		</cfif>
 		<cfif NOT StructKeyExists(application, 'stEquipment') OR StructIsEmpty(application.stEquipment)>
 			<cfset variables.fw.service('setup.setEquipment', 'void')>
 		</cfif>
