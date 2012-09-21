@@ -61,6 +61,7 @@ function sortAir (sort) {
 	}
 	return false;
 }
+
 function airPrice(search_id, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",
 		url:"services/airprice.cfc?method=doAirPrice",
@@ -73,6 +74,27 @@ function airPrice(search_id, trip_id, cabin, refundable) {
 			console.log(data);
 		},
 		error:function(test, tes, te) {
+			console.log(test);
+			console.log(tes);
+			console.log(te);
+		}
+	});
+	return false;
+}
+
+function hotelPrice(search_id, hotel, chain) {
+	$.ajax({type:"POST",
+		url:"services/hotelprice.cfc?method=doHotelPrice",
+		data:"nSearchID="+search_id+"&nHotelCode="+hotel+"&sHotelChain="+chain,
+		async: true,
+		dataType: 'json',
+		timeOut: 5000,
+		success:function(data) {	
+			$("#checkrates"+hotel).html(data);
+			console.log(data);
+		},
+		error:function(test, tes, te) {
+			console.log('broken');
 			console.log(test);
 			console.log(tes);
 			console.log(te);

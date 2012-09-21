@@ -1,3 +1,4 @@
+<cfsetting showdebugoutput="false" />
 We're on the hotel page
 
 <!---
@@ -5,6 +6,7 @@ We're on the hotel page
 	#View('hotel/filter')#
 </cfoutput>
 --->
+<!---<cfdump eval=session.searches[rc.Search_ID].stHotelProperties>--->
 
 <br clear="both">
 <cfoutput>
@@ -13,8 +15,8 @@ We're on the hotel page
 		<cfloop array="#session.searches[rc.Search_ID].stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotelProperties[sHotel]>
 			<cfset tripcount++ />
-			<!---<cfdump var="#stHotel#">--->
-			<div id="#sHotel#" style="min-height:230px;">
+			
+			<div id="#sHotel#" style="min-height:100px;">
 				<table width="600px">
 				<tr>
 					<td>
@@ -38,6 +40,9 @@ We're on the hotel page
 						<tr>
 							<td>#stHotel.HotelAddress#</td>
 						</tr>
+						<tr>
+							<td>#StructKeyExists(stHotel,'LowFare') ? stHotel.LowFare : 'Rates not found'#</td>
+						</tr>
 
 						<!---
 						<tr>
@@ -58,17 +63,33 @@ We're on the hotel page
 						</table>
 					</td>
 					<td class="fares" align="right">
-						<input type="submit" name="trigger" class="button1policy" value="Select">
+
+						<cfif NOT stHotel.RoomsReturned>
+							<script type="text/javascript">
+							hotelPrice(#rc.Search_ID#, #sHotel#, '#stHotel.HotelChain#');
+							</script>
+							<div id="checkrates#sHotel#">
+								Checking Rate<br><img src="assets/img/ajax-loader.gif">
+				<cfoutput>
+					<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">
+						http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#
+					</a><br>
+				</cfoutput>
+							</div>
+						<cfelse>
+							Rates!
+						</cfif>
+
 					</td>
 				</tr>
 
 				</table>
 			</div>
 
+			<!---
 			<cfinvoke component="services.hotelprice" method="doHotelPrice" nSearchID="#rc.Search_ID#" nHotelCode="#sHotel#" sHotelChain="#stHotel.HotelChain#" returnvariable="HotelPrices" />
-			<cfdump var="#hotelPrices#">
+			--->
 
-			I stopped<cfabort>
 		</cfloop>
 	</div>
 
