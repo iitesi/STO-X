@@ -89,9 +89,11 @@ function hotelPrice(search_id, hotel, chain) {
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
-		success:function(data) {	
-			$("#checkrates"+hotel).html(data);
-			console.log(data);
+		success:function(data) {
+			var Rate = data[0];
+			var Address = data[1];
+			$("#checkrates"+hotel).html('$'+Rate);
+			$("#address"+hotel).html(Address);
 		},
 		error:function(test, tes, te) {
 			console.log('broken');
