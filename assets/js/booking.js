@@ -92,7 +92,7 @@ function hotelPrice(search_id, hotel, chain) {
 		success:function(data) {
 			var Rate = data[0];
 			var Address = data[1];
-			$("#checkrates"+hotel).html('$'+Rate);
+			$("#checkrates"+hotel).html(Rate);
 			$("#address"+hotel).html(Address);
 		},
 		error:function(test, tes, te) {
@@ -100,6 +100,60 @@ function hotelPrice(search_id, hotel, chain) {
 			console.log(test);
 			console.log(tes);
 			console.log(te);
+		}
+	});
+	return false;
+}
+
+function hotelPhotos(property_id, photos) {
+	$.ajax({
+		url:"https://www.shortstravel.com/bookrate.cfc?method=photos",
+		data:"Property_ID="+property_id+"&Photos="+photos,
+		dataType: 'jsonp',
+		crossDomain: true,
+		beforeSend:function () {
+			$( "#details" + property_id ).removeClass('refbuttonactive');
+			$( "#rates" + property_id ).removeClass('refbuttonactive');
+			$( "#amenities" + property_id ).removeClass('refbuttonactive');
+			$( "#photos" + property_id ).addClass('refbuttonactive');
+			$( "#area" + property_id ).removeClass('refbuttonactive');
+			$( "#seerooms" + property_id ).show();
+			$( "#hiderooms" + property_id ).hide();
+			if (photos == '') {
+				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="'+serverurl+'/assets/img/ajax-loader.gif"><br>Gathering the most up to date information...</div>').show();
+			}
+			else {
+				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="'+serverurl+'/assets/img/ajax-loader.gif"><br>loading...</div>').show();
+			}
+		},
+		success:function(details) {
+			var firstimg = '';
+			var table = '<div style="border-top:1px dashed gray;"></div><div class="listtable">';
+				table += '<div class="listrow"><strong>PHOTO GALLERY</strong><a href="#" onClick="hideDetails(' + property_id + ');return false;" style="float:right;">close details</a><br><br></div>';
+				table += '<div class="listrow">';
+			var count = 0;
+			$.each(details, function(key, val) {
+				count++;
+				if (firstimg == '') {
+					table += '<div class="listcell" style="width:300px;">';
+					firstimg = val;
+				}
+				table += '<a href="#" onClick="setImage(' + count + ', ' + property_id + ');return false;"><img id="img' + property_id + count + '" src="' + val + '" border="0" width="75" height="50" style="padding:5px;" /></a>';
+			});			
+			if (firstimg != '') {
+				table += '</div>';
+				table += '<div class="listcell" style="width:400px;overflow:hidden;max-height:300px;height:300px;">';
+				table += '<img src="' + firstimg + '" id="mainImage' + property_id + '">';
+				table += '</div>';
+			}
+			else {
+				table += 'no images available at this time';
+			}
+			table += '</div>';
+			$( "#hotelrooms" + property_id).html(table).show();
+		},
+		error:function(test, tes, te) { 
+			//console.log(te);
 		}
 	});
 	return false;

@@ -13,7 +13,7 @@
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
 		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
 		<cfset stResponse = formatResponse(sResponse)>
-
+		<!--- <cfdump eval=stResponse abort> --->
 		<cfset local.stTrips = parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
 		<cfset local.stRates = structKeyExists(stTrips[nHotelCode],'Rooms') ? stTrips[nHotelCode]['Rooms'] : 'Sold Out' />
 
@@ -22,12 +22,12 @@
 			<cfset local.LowRate = 10000 />
 			<cfloop list="#RoomDescriptions#" index="local.HotelDesc" delimiters="|">
 				<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
-				<cfdump var="#stRates[HotelDesc]['HotelRate']['BaseRate']#">
 			</cfloop>
 		<cfelse>
 			<cfset local.LowRate = 'Sold Out' />
 		</cfif>
 
+		<cfset LowRate = LowRate NEQ 'Sold Out' ? dollarFormat(LowRate) : LowRate />
 		<cfset stTrips[nHotelCode]['LowFare'] = LowRate />
 		<cfset local.HotelAddress = stTrips[nHotelCode]['Property']['Address1'] />
 		<cfset HotelAddress&= Len(Trim(stTrips[nHotelCode]['Property']['Address2'])) ? ', '&stTrips[nHotelCode]['Property']['Address2'] : '' />		
@@ -57,8 +57,8 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<hot:HotelDetailsReq TargetBranch="P7003155" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
-						  <com:BillingPointOfSaleInfo OriginApplication="UAPI" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
+						<hot:HotelDetailsReq TargetBranch="P7003155" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 						  <hot:HotelProperty HotelChain="#arguments.sHotelChain#" HotelCode="#arguments.nHotelCode#">
 						  </hot:HotelProperty>
 						  <hot:HotelDetailsModifiers RateRuleDetail="Complete">
@@ -140,7 +140,6 @@
 							</cfif>
 						</cfif>
 					</cfloop>
-					<cfdump var="#RoomDescription#"><br>
 					
 					<!--- Create a struct with the Room Description --->
 					<cfset stHotels[nHotelCode]['Rooms'][RoomDescription] = {
@@ -186,7 +185,12 @@
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelProperty">
 						<cfif sHotelProperty.xmlName EQ 'hotel:PropertyAddress'>
 							<cfset stHotels[nHotelCode]['Property'].Address1 = sHotelProperty.XMLChildren.1.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.1.XMLText) : stHotels[nHotelCode]['Property'].Address1 />
-							<cfset stHotels[nHotelCode]['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : stHotels[nHotelCode]['Property'].Address2 />
+							<cftry>
+								<cfset stHotels[nHotelCode]['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : stHotels[nHotelCode]['Property'].Address2 />
+								<cfcatch>
+									<cfdump eval=sHotelProperty>
+								</cfcatch>
+							</cftry>
 						</cfif>
 						<cfif sHotelProperty.xmlName CONTAINS 'PhoneNumber'>
 							<cfset stHotels[nHotelCode]['Property'].BusinessPhone = sHotelProperty.XMLAttributes.Type EQ 'Business' ? Trim(sHotelProperty.XMLAttributes.Number) : stHotels[nHotelCode]['Property'].BusinessPhone />
@@ -206,7 +210,7 @@
 		
 		<!--- Update the struct so we know we've received rates and we don't pull them again later --->
 		<cfset stHotels[nHotelCode]['RoomsReturned'] = true />
-<br>
+
 		<cfreturn stHotels />
 	</cffunction>	
 	
