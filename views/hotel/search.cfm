@@ -1,5 +1,5 @@
 <cfsetting showdebugoutput="false" />
-We're on the hotel page
+We're on the hotel page<br /><br />
 
 <!---
 <cfoutput>
@@ -38,11 +38,8 @@ We're on the hotel page
 			<cfset stPhotos[NumberFormat(getPhotos.Property_ID,'00000')] = getPhotos.Photos />
 		</cfloop>
 
-		<!--- <cfdump var="#stPhotos#" abort> --->
-
 		<cfloop array="#session.searches[rc.Search_ID].stSortHotels#" index="sHotel">
-			<cfset stHotel = session.searches[rc.Search_ID].stHotelProperties[sHotel]>
-			<!--- <cfdump eval=stHotel> --->
+			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
 			<cfset tripcount++ />
 
 			<cfset HotelAddress = '' />
@@ -70,15 +67,17 @@ We're on the hotel page
 						<tr>
 							<td><div id="address#sHotel#">#HotelAddress#</div></td>
 						</tr>
-						<tr>
+						<!--- <tr>
 							<td>
 								<a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
 								<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
 								<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>
-								<a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a>
+								<cfif structKeyExists(stPhotos,sHotel)>
+									<a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a>
+								</cfif>
 								<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
 							</td>
-						</tr>
+						</tr> --->
 					</div>
 						<!---
 						<img class="carrierimg" src="https://www.shortstravelonline.com/book/assets/img/airlines/#(ListLen(sHotel.Carriers) EQ 1 ? sHotel.Carriers : 'Mult')#.png">
@@ -92,16 +91,16 @@ We're on the hotel page
 							<script type="text/javascript">
 							hotelPrice(#rc.Search_ID#, #sHotel#, '#stHotel.HotelChain#');
 							</script>
-							<div id="checkrates#sHotel#">								
-								<cfoutput>
-									<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">
-										<img src="assets/img/ajax-loader.gif" />
-									</a><br>
-								</cfoutput>
+							<div id="checkrates#sHotel#">
+								<img src="assets/img/ajax-loader.gif" />
 							</div>
 						<cfelse>
-							#StructKeyExists(stHotel,'LowFare') ? stHotel.LowFare : 'Rates not found'#
+							#StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate : 'Rates not found'#
 						</cfif>
+
+						<cfoutput>
+							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">Link</a><br>
+						</cfoutput>
 
 					</td>
 				</tr>

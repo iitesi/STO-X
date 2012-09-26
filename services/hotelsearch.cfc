@@ -14,17 +14,21 @@
 		<cfset local.stChains 	= 	getChains(stHotels)>
 
 		<!--- Store the hotel properties into the session --->
-		<cfset session.searches[nSearchID].stHotelProperties 	= stHotels />
+		<cfset session.searches[nSearchID].stHotels 	= stHotels />
    	<cfset session.searches[nSearchID].stHotelChains			= stChains />
 
-   	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotelProperties) />
+   	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotels) />
+
+		<!--- check Policy and add the struct into the session--->
+		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
+
 
    	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
 		<cfloop array="#session.searches[arguments.nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
 				<!--- <cfthread action="run" name="#sHotel#"> --->
-					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[arguments.nSearchID].stHotelProperties[sHotel].HotelChain#" returnvariable="HotelPrices" />
+					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[arguments.nSearchID].stHotels[sHotel].HotelChain#" returnvariable="HotelPrices" />
 				<!--- </cfthread> --->
 				<cfset threadnamelist = listAppend(threadnamelist,sHotel) />
 				<cfset count++ />
@@ -99,12 +103,8 @@
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		
-		<cfquery name="local.getsearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
-		
+		<cfset getSearch = getSearch(arguments.nSearchID) />
+
 		<cfsavecontent variable="local.message">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -209,6 +209,65 @@
 		</cfloop>
 
 		<cfreturn getRateCodes />
+	</cffunction>
+
+<!--- checkPolicy --->
+	<cffunction name="checkPolicy" output="true">
+		<cfargument name="stHotels" type="any" required="false">
+		<cfargument name="nSearchID">
+		<cfargument name="stPolicy">
+		<cfargument name="stAccount">
+		
+		<cfset local.stHotels = arguments.stHotels />
+		<cfset local.aPolicy = [] />
+		<cfset local.bActive = 1 />
+		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyHotel) GT 0 ? 1 : 0) /><!--- are they allowed to book out of policy hotels? --->
+				
+		<cfloop collection="#stHotels#" item="local.sCategory">
+
+			<cfloop collection="#stHotels[sCategory]#" item="local.sVendor">
+				<cfif sVendor EQ 'HotelChain'>
+					<cfset HotelChain = stHotels[sCategory]['HOTELCHAIN'] />
+					<cfset aPolicy = []>
+					<cfset bActive = 1>
+					
+					<!--- Preferred Chains turned on and hotel is not a preferred chain. --->
+					<cfif arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND NOT ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain)>
+						<cfset ArrayAppend(aPolicy, 'Not a preferred vendor')>
+						<cfif arguments.stPolicy.Policy_HotelPrefDisp EQ 1><!--- Only display in policy hotels? --->
+							<cfset bActive = 0>
+						</cfif>
+					</cfif>
+					<!--- Out of policy if the hotel chain is blacklisted (still shows though).  --->
+					<cfif bBlacklisted AND ArrayFindNoCase(arguments.stAccount.aNonPolicyHotel, HotelChain)>
+						<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
+					</cfif>
+
+					<cfif bActive EQ 1>
+						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0) />
+						<cfset stHotels[sCategory].aPolicies = aPolicy />
+					<cfelse>
+						<cfset temp = StructDelete(stHotels[sCategory], HotelChain) />
+						<cfset stHotels[sCategory].aPolicies = [] />
+					</cfif>
+				</cfif>
+			</cfloop>
+		</cfloop>
+		
+		<cfreturn stHotels/>
+	</cffunction>
+
+<!--- getsearch --->
+	<cffunction name="getsearch" output="false">
+		<cfargument name="nSearchID">
+
+		<cfquery name="local.getsearch" datasource="book">
+		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
+		FROM Searches
+		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
+		
+		<cfreturn getsearch />
 	</cffunction>
 
 </cfcomponent>

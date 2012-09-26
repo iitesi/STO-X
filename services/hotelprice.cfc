@@ -12,10 +12,10 @@
 		<cfset local.stTrip = session.searches[arguments.nSearchID]>
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
 		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
-		<cfset stResponse = formatResponse(sResponse)>
-		<!--- <cfdump eval=stResponse abort> --->
-		<cfset local.stTrips = parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
-		<cfset local.stRates = structKeyExists(stTrips[nHotelCode],'Rooms') ? stTrips[nHotelCode]['Rooms'] : 'Sold Out' />
+		<cfset local.stResponse = formatResponse(sResponse)>
+		
+		<cfset local.stHotels = parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
+		<cfset local.stRates = structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
 
 		<cfif isStruct(stRates)>
 			<cfset local.RoomDescriptions = structKeyList(stRates,'|') />
@@ -28,13 +28,16 @@
 		</cfif>
 
 		<cfset LowRate = LowRate NEQ 'Sold Out' ? dollarFormat(LowRate) : LowRate />
-		<cfset stTrips[nHotelCode]['LowFare'] = LowRate />
-		<cfset local.HotelAddress = stTrips[nHotelCode]['Property']['Address1'] />
-		<cfset HotelAddress&= Len(Trim(stTrips[nHotelCode]['Property']['Address2'])) ? ', '&stTrips[nHotelCode]['Property']['Address2'] : '' />		
+		<cfset stHotels[nHotelCode]['LowRate'] = LowRate />
+		<cfset local.HotelAddress = stHotels[nHotelCode]['Property']['Address1'] />
+		<cfset HotelAddress&= Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
 		<cfset NewResponse = [ LowRate:LowRate,
 													HotelAddress:HotelAddress ] />
 
-		<cfset session.searches[arguments.nSearchID].stTrips = stTrips />
+		<!--- check Policy and add the struct into the session--->
+		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
+
+		<cfset session.searches[arguments.nSearchID].stHotels = stHotels />
 				
 		<cfreturn NewResponse />
 	</cffunction>
@@ -46,7 +49,7 @@
 		<cfargument name="sHotelChain" 	required="true">
 		<cfargument name="nHotelCode" 	required="true">
 		
-		<cfquery name="local.getsearch" datasource="book">
+		<cfquery name="local.getSearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
@@ -122,7 +125,7 @@
 		<cfargument name="nHotelCode"	required="true">		
 		<cfargument name="nSearchID"	required="true">			
 		
-		<cfset local.stHotels = session.searches[nSearchID].stHotelProperties />
+		<cfset local.stHotels = session.searches[nSearchID].stHotels />
 		<cfset local.nHotelCode = arguments.nHotelCode />
 
 		<cfloop array="#arguments.stResponse#" index="local.stHotelResults">
@@ -214,4 +217,53 @@
 		<cfreturn stHotels />
 	</cffunction>	
 	
+<!--- checkPolicy --->
+	<cffunction name="checkPolicy" output="true">
+		<cfargument name="stHotels" type="any" required="false">
+		<cfargument name="nSearchID">
+		<cfargument name="stPolicy">
+		<cfargument name="stAccount">
+		
+		<cfset local.stHotels = arguments.stHotels />
+		<cfset local.bActive = 1 />
+		<cfset local.bBlacklisted = arguments.stPolicy.Policy_HotelMaxDisp /><!--- are they allowed to book out of policy hotels (regarding max rate)? --->
+				
+		<cfloop collection="#stHotels#" item="local.sCategory"><!--- Individual Hotels ---->
+			<cfset local.aPolicy = StructKeyExists(stHotels[sCategory],'aPolicies') ? stHotels[sCategory]['aPolicies'] : [] /><!--- Need to use existing array --->
+			
+			<!--- If we don't have a LowRate yet, then don't apply policy, we'll do it later --->
+			<cfif StructKeyExists(stHotels[sCategory],'LowRate')>
+				<cfset LowRate = StructKeyExists(stHotels[sCategory],'LowRate') ? stHotels[sCategory]['LowRate'] : 0 />
+
+				<cfloop collection="#stHotels[sCategory]#" item="local.sVendor">
+					
+					<cfif sVendor EQ 'HotelChain'>
+						<cfset HotelChain = stHotels[sCategory]['HOTELCHAIN'] />						
+						<cfset bActive = 1>
+						
+						<!--- Max rate turned on and hotel is above max rate. --->
+						<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate LT  arguments.stPolicy.Policy_HotelMaxRate>
+							<cfif NOT ArrayFind(aPolicy,'Too expensive')><!--- Since we're passing in the existing array, a refresh would continually add this message to the array --->
+								<cfset ArrayAppend(aPolicy, 'Too expensive')>
+							</cfif>
+							<cfif arguments.stPolicy.Policy_HotelMaxDisp EQ 1><!--- Only display in policy hotels? --->
+								<cfset bActive = 0>
+							</cfif>
+							<cfbreak />
+						</cfif>
+
+						<cfif bActive EQ 1>
+							<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
+							<cfset stHotels[sCategory].aPolicies = aPolicy>
+						<cfelse>
+							<cfset temp = StructDelete(stHotels[sCategory], HotelChain)>
+						</cfif>
+					</cfif>
+				</cfloop>
+			</cfif>
+		</cfloop>
+		
+		<cfreturn stHotels/>
+	</cffunction>
+
 </cfcomponent>
