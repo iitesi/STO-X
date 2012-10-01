@@ -18,7 +18,7 @@
 		<cfset local.stRates = structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
 
 		<cfif isStruct(stRates)>
-			<cfset local.RoomDescriptions = structKeyList(stRates,'|') />
+			<cfset local.RoomDescriptions = structKeyList(stRates,'|') /><!--- Need to use | as delimiter because hotel names have , --->
 			<cfset local.LowRate = 10000 />
 			<cfloop list="#RoomDescriptions#" index="local.HotelDesc" delimiters="|">
 				<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
@@ -27,18 +27,24 @@
 			<cfset local.LowRate = 'Sold Out' />
 		</cfif>
 
-		<cfset LowRate = LowRate NEQ 'Sold Out' ? dollarFormat(LowRate) : LowRate />
-		<cfset stHotels[nHotelCode]['LowRate'] = LowRate />
+		<cfset stHotels[nHotelCode]['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />
 		<cfset local.HotelAddress = stHotels[nHotelCode]['Property']['Address1'] />
 		<cfset HotelAddress&= Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
-		<cfset NewResponse = [ LowRate:LowRate,
-													HotelAddress:HotelAddress ] />
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
 
+		<cfset NewResponse = [ LowRate:LowRate,
+													HotelAddress:HotelAddress,
+													Policy:structKeyExists(stHotels[nHotelCode],'Policy') ? stHotels[nHotelCode]['Policy'] : 0,
+													APolicies:structKeyExists(stHotels[nHotelCode],'aPolicies') ? stHotels[nHotelCode]['aPolicies'] : [],
+													PreferredVendor:stHotels[nHotelCode].PreferredVendor
+													] />
+
+		
+
 		<cfset session.searches[arguments.nSearchID].stHotels = stHotels />
-				
+
 		<cfreturn NewResponse />
 	</cffunction>
 		
@@ -242,7 +248,7 @@
 						<cfset bActive = 1>
 						
 						<!--- Max rate turned on and hotel is above max rate. --->
-						<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate LT  arguments.stPolicy.Policy_HotelMaxRate>
+						<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate NEQ 'Sold Out' AND LowRate GT arguments.stPolicy.Policy_HotelMaxRate>
 							<cfif NOT ArrayFind(aPolicy,'Too expensive')><!--- Since we're passing in the existing array, a refresh would continually add this message to the array --->
 								<cfset ArrayAppend(aPolicy, 'Too expensive')>
 							</cfif>

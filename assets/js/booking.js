@@ -90,9 +90,20 @@ function hotelPrice(search_id, hotel, chain) {
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
-			var Rate = data[0];
+			var Rate = data[0] != 'Sold Out' ? '$'+data[0] : data[0];
 			var Address = data[1];
+			var Policy = data[2];
+			var Policies = data[3];
+			var PreferredVendor = data[4];
+			//var PolicyImage = Policy = 0 ? '<img src="assets/img/policy0.png">' : '';
+			//console.log(Policies);
 			$("#checkrates"+hotel).html(Rate);
+			if (Rate != 'Sold Out') {
+				$("#checkrates"+hotel).append('<input type="submit" class="button'+Policy+'policy" name="trigger" value="See Rooms">');//+Policy+Policies+PreferredVendor
+			}
+			else {
+				$("#checkrates"+hotel).html(Rate);//+Policy+Policies+PreferredVendor
+			}
 			$("#address"+hotel).html(Address);
 		},
 		error:function(test, tes, te) {
@@ -107,6 +118,7 @@ function hotelPrice(search_id, hotel, chain) {
 
 function hotelPhotos(property_id, photos) {
 	$.ajax({
+		//var serverurl = 'http://localhost:8888/booking'
 		url:"https://www.shortstravel.com/bookrate.cfc?method=photos",
 		data:"Property_ID="+property_id+"&Photos="+photos,
 		dataType: 'jsonp',
@@ -120,10 +132,10 @@ function hotelPhotos(property_id, photos) {
 			$( "#seerooms" + property_id ).show();
 			$( "#hiderooms" + property_id ).hide();
 			if (photos == '') {
-				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="'+serverurl+'/assets/img/ajax-loader.gif"><br>Gathering the most up to date information...</div>').show();
+				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="http://localhost:8888/booking/assets/img/ajax-loader.gif"><br>Gathering the most up to date information...</div>').show();
 			}
 			else {
-				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="'+serverurl+'/assets/img/ajax-loader.gif"><br>loading...</div>').show();
+				$("#hotelrooms" + property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br><img src="http://localhost:8888/booking/assets/img/ajax-loader.gif"><br>loading...</div>').show();
 			}
 		},
 		success:function(details) {
@@ -154,6 +166,55 @@ function hotelPhotos(property_id, photos) {
 		},
 		error:function(test, tes, te) { 
 			//console.log(te);
+		}
+	});
+	return false;
+}
+
+function showRates(search_id, property_id) {
+	$.ajax({type:"POST",
+		url:"services/hotelrooms.cfc?method=getRooms",
+		data:"nSearchID="+search_id+"&nHotelCode="+property_id,
+		async: true,
+		dataType: 'json',
+		success:function(rates) {
+			//"RATE_ID","RATE_CODE","RATE_DESC","AVERAGE_RATE","TOTAL_COST","RATE_HIC","CURRENCY","RATEORDER","RATE_ORDER","ROOM_POLICY","POLICY"
+			var table = '<div class="listtable">';
+			$.each(rates.DATA, function(key, val) {
+				table+='<div class="listrow">';
+				if (val[2] == 'USD') {
+					table += '<div class="listcell" style="padding:5px;width:100px;border-top:1px dashed gray;"><span class="cost1">$'+val[1]+'</span> per night</div>';
+				}
+				else {//non USD
+					table += '<div class="listcell" style="padding:5px;width:100px;border-top:1px dashed gray;"><span class="cost1">'+val[1]+' '+val[2]+'</span> per night</div>';
+				}					
+				//table += '<div class="listcell" style="padding:5px;width:500px;border-top:1px dashed gray;">'+val[4];// rate code
+				/* Government rates
+				if (val[5].indexOf(hotel_ratecodes) <= 0) {
+					table += '</div>';
+				}
+				else {
+					table += '<img src="../img/corprate.gif"></div>';
+				}					
+				*/
+				table += '<div class="listcell" style="padding:5px;width:80px;border-top:1px dashed gray;"><div class="button-wrapper" id="button'+property_id+'"><a href="##" onClick="submitHotel('+property_id+','+val[0]+');return false" class="button"><span>Reserve</span></a></div>';
+				/*
+				if (val[9] == 0 || val[10] == 0) {
+					table += '<font color="#C7151A">Out of Policy</font>';
+				}
+				*/
+				table += '</div></div>';
+			});
+			table += '</div>';
+			$("#hotelrooms"+property_id).html(table);
+			console.log(property_id);
+			//$("#hotelrooms"+property_id).html(table);
+			//$("#checkrates"+hotel).html('this works');
+		},
+		error:function(test, tes, te) { 
+			console.log(test);
+			console.log(tes);
+			console.log(te);
 		}
 	});
 	return false;

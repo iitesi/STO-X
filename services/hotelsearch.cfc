@@ -84,7 +84,8 @@
 							HotelAddress : HotelAddress,
 							Name : sHotelProperty.XMLAttributes.Name,
 							NegotiatedRateCode : NegotiatedRateCode,
-							RoomsReturned : false
+							RoomsReturned : false,
+							PreferredVendor : false
 						} />
 
 					</cfif>
@@ -242,6 +243,10 @@
 					<cfif bBlacklisted AND ArrayFindNoCase(arguments.stAccount.aNonPolicyHotel, HotelChain)>
 						<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 					</cfif>
+					<!--- Preferred Chain --->
+					<cfif arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain)>
+						<cfset stHotels[sCategory].PreferredVendor = true />
+					</cfif>
 
 					<cfif bActive EQ 1>
 						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0) />
@@ -254,7 +259,7 @@
 			</cfloop>
 		</cfloop>
 		
-		<cfreturn stHotels/>
+		<cfreturn stHotels />
 	</cffunction>
 
 <!--- getsearch --->
