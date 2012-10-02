@@ -105,6 +105,8 @@ function hotelPrice(search_id, hotel, chain) {
 				$("#checkrates"+hotel).html(Rate);//+Policy+Policies+PreferredVendor
 			}
 			$("#address"+hotel).html(Address);
+			$("#"+hotel).attr('data-policy',Policy);
+			$("#"+hotel).attr('data-minrate',data[0]);//Send in the rate without the $
 		},
 		error:function(test, tes, te) {
 			console.log('broken');

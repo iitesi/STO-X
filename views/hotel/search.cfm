@@ -1,17 +1,15 @@
+<cfsetting showdebugoutput="false" />
+
 <cfif NOT StructKeyExists(application, 'hotelphotos')>
 	<cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') />
 </cfif>
-<cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') />
 
-<cfsetting showdebugoutput="false" />
-We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.stAccounts[session.Acct_ID].aPreferredHotel)#</cfoutput>
-<br /><br />
 
-<!---
 <cfoutput>
 	#View('hotel/filter')#
 </cfoutput>
---->
+
+
 <!---<cfdump eval=session.searches[rc.Search_ID].stHotelProperties>--->
 
 <br clear="both">
@@ -30,7 +28,7 @@ We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.st
 			<!--- <cfdump eval=stHotel> --->
 			<cfset tripcount++ />
 
-			<cfif tripcount LT 500>
+			<cfif tripcount LT 10>
 
 				<cfset HotelAddress = '' />
 				<cfif stHotel.RoomsReturned><!--- We have the real address --->
@@ -39,7 +37,13 @@ We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.st
 				</cfif>
 				<cfset NegotiatedRateCode = stHotel['NegotiatedRateCode'] />
 				
-				<div id="#sHotel#" style="min-height:100px;">
+				<!--- We already have the rates/policy add data elements to the div --->
+				<cfset DivElements = '' />
+				<cfif stHotel.RoomsReturned>
+					<cfset DivElements = 'data-policy="'&stHotel.Policy&'"' />
+					<cfset DivElements&= 'data-minrate="'&stHotel.LowRate&'"' />
+				</cfif>
+				<div id="#sHotel#" style="min-height:100px;" data-chain="#stHotel.HotelChain#"#DivElements#>
 					<table width="600px">
 					<tr>
 						<td width="135px">
@@ -55,7 +59,7 @@ We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.st
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
 							</tr>
-							<!--- <tr>
+							<tr>
 								<td>
 									<a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
 									<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
@@ -65,7 +69,7 @@ We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.st
 									</cfif>
 									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
 								</td>
-							</tr> --->
+							</tr>
 						</div>
 							<!---
 							<img class="carrierimg" src="https://www.shortstravelonline.com/book/assets/img/airlines/#(ListLen(sHotel.Carriers) EQ 1 ? sHotel.Carriers : 'Mult')#.png">
@@ -84,8 +88,8 @@ We're on the hotel page Preferred Hotels = <cfoutput>#ArrayToList(application.st
 								</div>
 							<cfelse>
 
-								<!--- #stHotel.Policy#<br />
-								#ArrayToList(stHotel.APolicies)#<br />
+								#stHotel.Policy#<br />
+								<!--- #ArrayToList(stHotel.APolicies)#<br />
 								#stHotel.PreferredVendor#<br /> --->
 								#StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found'#
 								<input type="submit"onClick="showRates(#rc.Search_ID#,#sHotel#);return false;" class="button#stHotel.Policy#policy" name="trigger" value="See Rooms">
