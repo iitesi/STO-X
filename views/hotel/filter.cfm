@@ -2,6 +2,7 @@
 	<div>
 		<div class="filterheader">Filter By</div>
 		<button id="btnHotelChain">Hotel Chain</button>
+		<button id="btnHotelAmenities">Amenities</button>
 		<button class="radiobuttons">
 			<input type="radio" id="Policy" name="Policy" value="0" onclick="filterHotel();"><label for="Policy">In Policy</label>
 		</button>
@@ -17,6 +18,19 @@
 					<div class="checkbox">
 						<input id="Chain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterChain();">
 						<label for="Chain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
+					</div>
+				</cfloop>
+			</div>
+		</div>
+	</div>
+	<div id="AmenityDialog" class="popup">
+		<div class="popup-hotel">
+			<div class="region">
+				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
+					<!--- #Amenity# --->
+					<div class="checkbox">
+						<input id="Amenity#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" checked="checked" onclick="filterAmenity();">
+						<label for="Amenity#Amenity#">#StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'#</label>
 					</div>
 				</cfloop>
 			</div>
@@ -72,6 +86,36 @@ $(document).ready(function() {
 			hide: "fade",
 			width: 525,
 			title:	'Select your preferred hotel chains',
+			position: [100,120],
+			modal: true,
+			closeOnEscape: true,
+			buttons: {
+				/*
+				"Search": function(){
+					//filterChain();
+					$( this ).dialog( "close" );
+					return false;
+				},*/
+				"Cancel": function(){
+					$( this ).dialog( "close" );
+					return false;
+				}
+			}
+		});
+	$( "#btnHotelAmenities" )
+		.button({
+			icons: {secondary: "ui-icon-triangle-1-s"}
+		})
+		.click(function() {
+			$( "#AmenityDialog" ).dialog( "open" );
+		return false;
+	});
+	$( "#AmenityDialog" ).dialog({
+			autoOpen: false,
+			show: "fade",
+			hide: "fade",
+			width: 525,
+			title:	'Select your preferred amenities',
 			position: [100,120],
 			modal: true,
 			closeOnEscape: true,

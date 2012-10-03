@@ -9,9 +9,6 @@
 	#View('hotel/filter')#
 </cfoutput>
 
-
-<!---<cfdump eval=session.searches[rc.Search_ID].stHotelProperties>--->
-
 <br clear="both">
 <cfoutput>
 	<div class="hotel" heigth="100%">
@@ -23,10 +20,6 @@
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
-
-			<!--- <cfinvoke component="services.hotelrooms" method="rooms" nSearchID="178663" nHotelCode="34911" returnvariable="rooms" />
-			<cfdump var="#rooms#"> --->
-			<!--- <cfdump eval=stHotel> --->
 			<cfset tripcount++ />
 
 			<cfif tripcount LT 10>
@@ -44,7 +37,9 @@
 					<cfset DivElements = 'data-policy="'&stHotel.Policy&'"' />
 					<cfset DivElements&= 'data-minrate="'&stHotel.LowRate&'"' />
 				</cfif>
-				<div id="#sHotel#" style="min-height:100px;" data-chain="#stHotel.HotelChain#"#DivElements#>
+				<cfset ArraySort(stHotel.amenities,'text') />
+				<cfset hotelAmenities = ArrayToList(stHotel.amenities) />
+				<div id="#sHotel#" style="min-height:100px;" data-amenities="#hotelAmenities#" data-chain="#stHotel.HotelChain#"#DivElements#>
 					<table width="600px">
 					<tr>
 						<td width="135px">

@@ -262,5 +262,20 @@
 		
 		<cfreturn />
 	</cffunction>
+		
+	<cffunction name="setAmenities" output="false" returntype="void">
+		
+		<cfquery name="local.qAmenities">
+		SELECT code, Amenity
+		FROM RAMENITIES
+		</cfquery>
+		<cfset local.stTemp = {}>
+		<cfloop query="qAmenities">
+			<cfset stTemp[qAmenities.code] = qAmenities.Amenity>
+		</cfloop>
+		<cfset application.stAmenities = stTemp>
+		
+		<cfreturn />
+	</cffunction>
 			
 </cfcomponent>

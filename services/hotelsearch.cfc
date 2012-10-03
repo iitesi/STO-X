@@ -12,16 +12,17 @@
 		<cfset local.aResponse 	= 	formatResponse(sResponse) />
 		<cfset local.stHotels 	= 	parseHotels(aResponse) />
 		<cfset local.stChains 	= 	getChains(stHotels)>
+		<cfset local.stAmenities 	= 	getAmenities(stHotels)>
 
 		<!--- Store the hotel properties into the session --->
-		<cfset session.searches[nSearchID].stHotels 	= stHotels />
-   	<cfset session.searches[nSearchID].stHotelChains			= stChains />
+		<cfset session.searches[nSearchID].stHotels 				= stHotels />
+   	<cfset session.searches[nSearchID].stHotelChains		= stChains />
+   	<cfset session.searches[nSearchID].stAmenities	= stAmenities />
 
    	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotels) />
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
-
 
    	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
@@ -76,6 +77,16 @@
 							</cfif>
 						</cfloop>
 
+						<!--- get the Hotel Amenities which are in a separate node --->
+						<cfset local.HotelAmenities = [] />
+						<cfloop array="#sHotelProperty.XMLChildren#" index="local.sHotelAmenities">
+							<cfif sHotelAmenities.XMLName EQ 'hotel:Amenities'>
+								<cfloop from="1" to="#ArrayLen(sHotelAmenities.XMLChildren)#" index="local.sAmenity">
+									<cfset arrayAppend(HotelAmenities,sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code) />
+								</cfloop>
+							</cfif>
+						</cfloop>
+
 						<cfset FeaturedProperty = structKeyExists(sHotelProperty.XMLAttributes,'FeaturedProperty') ? sHotelProperty.XMLAttributes.FeaturedProperty : false />
 						<cfset stHotels[nHotelCode] = {
 							FeaturedProperty : FeaturedProperty,
@@ -85,7 +96,8 @@
 							Name : sHotelProperty.XMLAttributes.Name,
 							NegotiatedRateCode : NegotiatedRateCode,
 							RoomsReturned : false,
-							PreferredVendor : false
+							PreferredVendor : false,
+							Amenities : HotelAmenities
 						} />
 
 					</cfif>
@@ -275,4 +287,20 @@
 		<cfreturn getsearch />
 	</cffunction>
 
+<!--- getAmenities --->
+	<cffunction name="getAmenities" output="false">
+		<cfargument name="stHotels">
+
+		<cfset local.stAmenities = [] />
+		<cfloop list="#structKeyList(arguments.stHotels)#" index="local.sHotel">
+			<cfset local.Amenity = arguments.stHotels[sHotel]['Amenities'] />
+			<cfloop collection="#Amenity#" item="local.OneAmenity">
+				<cfif NOT ArrayFind(stAmenities,Amenity[OneAmenity])>
+					<cfset ArrayAppend(stAmenities,Amenity[OneAmenity])>
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn stAmenities />
+	</cffunction>
 </cfcomponent>
