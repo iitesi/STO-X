@@ -8,13 +8,15 @@
 	</div>
 </div>
 <cfoutput>
+	<cfset arraysort(session.searches[rc.nSearchID].stHotelChains,'text') />
 	<div id="HotelDialog" class="popup">
 		<div class="popup-hotel">
 			<div class="region">
-				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain" >
+				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain">
+					<!--- #Chain# --->
 					<div class="checkbox">
-						<input id="Chain#Chain#" type="checkbox" value="#Chain#" checked>
-						<label for="Chain#Chain#">#application.stHotelVendors[Chain]#</label>
+						<input id="Chain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterChain();">
+						<label for="Chain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
 					</div>
 				</cfloop>
 			</div>
@@ -31,7 +33,24 @@ function filterHotel() {
 	}
 };
 
+
+function filterChain() {
+	$('input[name^="HotelChain"][checked]').each(
+		function() {
+  		var SingleChain = this.value;
+  		var SingleChainResponse = this.checked;
+  		if (SingleChainResponse == true) {
+				$('[data-chain='+SingleChain+']').show(); 
+  		}
+  		else {
+				$('[data-chain='+SingleChain+']').hide();     			
+  		}
+		}
+	);
+};
+
 $(document).ready(function() {
+
 
 	$( ".radiobuttons" ).buttonset();
 	$( ".radiosort" )
@@ -57,11 +76,12 @@ $(document).ready(function() {
 			modal: true,
 			closeOnEscape: true,
 			buttons: {
+				/*
 				"Search": function(){
-					filterAir();
+					//filterChain();
 					$( this ).dialog( "close" );
 					return false;
-				},
+				},*/
 				"Cancel": function(){
 					$( this ).dialog( "close" );
 					return false;

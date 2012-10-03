@@ -17,6 +17,7 @@
 	<div class="hotel" heigth="100%">
 		<cfset tripcount = 0 />
 		<cfset stSortHotels = session.searches[rc.Search_ID].stSortHotels />
+		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />
 		
 		<cfset stPhotos = application.hotelphotos.getPhotos(stSortHotels) />
 
@@ -119,5 +120,9 @@
 			</cfif>
 		</cfloop>
 	</div>
+
+	<script type="text/javascript">
+	var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
+	</script>
 
 </cfoutput>
