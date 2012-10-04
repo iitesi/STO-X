@@ -40,6 +40,12 @@
 		<cfif NOT StructKeyExists(application, 'stAirports') OR StructIsEmpty(application.stAirports)>
 			<cfset variables.fw.service('setup.setAirports', 'void')>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'stAmenities') OR StructIsEmpty(application.stAmenities)>
+			<cfset variables.fw.service('setup.setAmenities', 'void')>
+		</cfif>
+		<cfif NOT StructKeyExists(application, 'hotelphotos')>
+			<cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') />
+		</cfif>
 		
 		<cfreturn />
 	</cffunction>

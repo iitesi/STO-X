@@ -29,7 +29,7 @@
 				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
 					<!--- #Amenity# --->
 					<div class="checkbox">
-						<input id="Amenity#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" checked="checked" onclick="filterAmenity();">
+						<input id="Amenity#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterAmenity();">
 						<label for="Amenity#Amenity#">#StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'#</label>
 					</div>
 				</cfloop>
@@ -47,21 +47,34 @@ function filterHotel() {
 	}
 };
 
-
 function filterChain() {
-	$('input[name^="HotelChain"][checked]').each(
-		function() {
-  		var SingleChain = this.value;
-  		var SingleChainResponse = this.checked;
-  		if (SingleChainResponse == true) {
-				$('[data-chain='+SingleChain+']').show(); 
-  		}
-  		else {
-				$('[data-chain='+SingleChain+']').hide();     			
-  		}
+	$('input[name^="HotelChain"][checked]').each(function() {
+		var SingleChain = this.value;
+		var SingleChainResponse = this.checked;
+		if (SingleChainResponse == true) {
+			$('[data-chain='+SingleChain+']').show(); 
 		}
-	);
+		else {
+			$('[data-chain='+SingleChain+']').hide();     			
+		}
+	});
 };
+
+/*function filterAmenity() {
+	$('input[name^="HotelAmenity"]').each(function() {
+		var SingleAmenity = this.value;
+		var SingleAmenityResponse = this.checked;
+		console.log(SingleAmenity);
+		console.log(SingleAmenityResponse);
+		if (SingleAmenityResponse == true) {
+			$('[data-amenities~='+SingleAmenity+']').show();
+		}
+		else {
+			$('[data-amenities~='+SingleAmenity+']').hide();  
+			console.log('hide');   			
+		}
+	});
+};*/
 
 $(document).ready(function() {
 

@@ -14,10 +14,10 @@
 		<cfset local.stChains 	= 	getChains(stHotels)>
 		<cfset local.stAmenities 	= 	getAmenities(stHotels)>
 
-		<!--- Store the hotel properties into the session --->
-		<cfset session.searches[nSearchID].stHotels 				= stHotels />
-   	<cfset session.searches[nSearchID].stHotelChains		= stChains />
-   	<cfset session.searches[nSearchID].stAmenities	= stAmenities />
+		<!--- Store the hotels, chains and amenities into the session --->
+		<cfset session.searches[nSearchID].stHotels 			= stHotels />
+   	<cfset session.searches[nSearchID].stHotelChains	= stChains />
+   	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
 
    	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotels) />
 
@@ -77,12 +77,18 @@
 							</cfif>
 						</cfloop>
 
+						<!--- Create a struct with each of the hotel amenities predefined. Set the value to false and set as true when we loop through the amenities --->
+						<cfset local.HotelAmenities = {} />
+						<cfloop list="#structKeyList(application.stAmenities)#" index="i">
+							<cfset HotelAmenities[i] = false />
+						</cfloop>
 						<!--- get the Hotel Amenities which are in a separate node --->
-						<cfset local.HotelAmenities = [] />
 						<cfloop array="#sHotelProperty.XMLChildren#" index="local.sHotelAmenities">
 							<cfif sHotelAmenities.XMLName EQ 'hotel:Amenities'>
 								<cfloop from="1" to="#ArrayLen(sHotelAmenities.XMLChildren)#" index="local.sAmenity">
-									<cfset arrayAppend(HotelAmenities,sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code) />
+									<cfif structKeyExists(application.stAmenities,sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code)>
+										<cfset HotelAmenities[sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code] = true />
+									</cfif>
 								</cfloop>
 							</cfif>
 						</cfloop>
@@ -295,7 +301,8 @@
 		<cfloop list="#structKeyList(arguments.stHotels)#" index="local.sHotel">
 			<cfset local.Amenity = arguments.stHotels[sHotel]['Amenities'] />
 			<cfloop collection="#Amenity#" item="local.OneAmenity">
-				<cfif NOT ArrayFind(stAmenities,Amenity[OneAmenity])>
+				<!--- Must be on the list of overall amenities and not already be in the array --->
+				<cfif structKeyExists(application.stAmenities,Amenity[OneAmenity]) AND NOT ArrayFind(stAmenities,Amenity[OneAmenity])>
 					<cfset ArrayAppend(stAmenities,Amenity[OneAmenity])>
 				</cfif>
 			</cfloop>

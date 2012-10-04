@@ -1,10 +1,5 @@
 <cfsetting showdebugoutput="false" />
 
-<cfif NOT StructKeyExists(application, 'hotelphotos')>
-	<cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') />
-</cfif>
-
-
 <cfoutput>
 	#View('hotel/filter')#
 </cfoutput>
@@ -20,6 +15,7 @@
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
+			<!--- <cfdump eval=stHotel abort> --->
 			<cfset tripcount++ />
 
 			<cfif tripcount LT 10>
@@ -37,9 +33,8 @@
 					<cfset DivElements = 'data-policy="'&stHotel.Policy&'"' />
 					<cfset DivElements&= 'data-minrate="'&stHotel.LowRate&'"' />
 				</cfif>
-				<cfset ArraySort(stHotel.amenities,'text') />
-				<cfset hotelAmenities = ArrayToList(stHotel.amenities) />
-				<div id="#sHotel#" style="min-height:100px;" data-amenities="#hotelAmenities#" data-chain="#stHotel.HotelChain#"#DivElements#>
+
+				<div id="#sHotel#" style="min-height:100px;" data-chain="#stHotel.HotelChain#"#DivElements#>
 					<table width="600px">
 					<tr>
 						<td width="135px">
