@@ -1,24 +1,31 @@
 <cfcomponent output="false">
 	
 	<cffunction name="getRooms" access="remote" returntype="any" returnformat="plain" output="false">
-	
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode" />
-		<cfargument name="HotelRateCodes" required="false" type="string">	
+		<cfargument name="HotelRateCodes" />
+		<cfargument name="stPolicy" default="#application.stPolicies[session.Acct_ID]#" />
 		
-		<cfset local.stNewHotel = StructKeyExists(session.searches[nSearchID].stHotels[nHotelCode],'Rooms') ? session.searches[nSearchID].stHotels[nHotelCode]['Rooms'] : {} />
+		<cfset local.stHotel = session.searches[nSearchID].stHotels[nHotelCode] />
+		<cfset local.stNewHotel = StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />
 		<cfset local.NegotiatedRateCode = session.searches[nSearchID].stHotels[nHotelCode]['NegotiatedRateCode'] />
-		<cfset local.RoomsData = QueryNew("Count, RoomDescription, Rate, CurrencyCode, NegotiatedRateCode", "numeric, varchar, varchar, varchar, varchar")>
+		<cfset local.RoomsData = QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,NegotiatedRateCode,Policy", "varchar,numeric,varchar,varchar,varchar,varchar,boolean")>
+		
+		<!--- If not a preferred vendor then all are out of policy. Set this one time and compare in the loop for rates --->
+		<cfset PreferredVendorPolicy = NOT ArrayFind(stHotel['apolicies'],'Not a preferred vendor') /><!--- Policy = true if it's in policy, which is why NOT is needed --->
 		
 		<cfset local.count = 0 />
 		<cfloop list="#StructKeyList(stNewHotel,'|')#" index="local.sRoom" delimiters="|">
+			<cfset Policy = PreferredVendorPolicy AND stNewHotel[sRoom]['HotelRate']['BaseRate'] LT arguments.stPolicy.Policy_HotelMaxRate /> 
 			<cfset count++ />
 			<cfset Row = QueryAddRow(RoomsData)>
-			<cfset temp = QuerySetCell(RoomsData, 'Count', count, Row)>
-			<cfset temp = QuerySetCell(RoomsData, 'RoomDescription', sRoom, Row)>
-			<cfset temp = QuerySetCell(RoomsData, 'Rate', stNewHotel[sRoom]['HotelRate']['BaseRate'], Row)>
-			<cfset temp = QuerySetCell(RoomsData, 'CurrencyCode', stNewHotel[sRoom]['HotelRate']['BaseRate'] , Row)>
-			<cfset temp = QuerySetCell(RoomsData, 'NegotiatedRateCode', NegotiatedRateCode, Row)>
+			<cfset QuerySetCell(RoomsData,'PropertyID',nHotelCode,Row)>
+			<cfset QuerySetCell(RoomsData,'Count',count,Row)>
+			<cfset QuerySetCell(RoomsData,'RoomDescription',sRoom,Row)>
+			<cfset QuerySetCell(RoomsData,'Rate',stNewHotel[sRoom]['HotelRate']['BaseRate'],Row)>
+			<cfset QuerySetCell(RoomsData,'CurrencyCode',stNewHotel[sRoom]['HotelRate']['CurrencyCode'],Row)>
+			<cfset QuerySetCell(RoomsData,'NegotiatedRateCode',NegotiatedRateCode,Row)>
+			<cfset QuerySetCell(RoomsData,'Policy',Policy,Row)>
 		</cfloop>
 
 		<cfset rates = serializeJSON(RoomsData)>
@@ -39,17 +46,6 @@
 	<cfset RoomsData[NumberFormat(count,'000')]['NegotiatedRateCode']  = NegotiatedRateCode />
 </cfloop> --->
 
-/* {
-	"COLUMNS":[
-		"RATE_ID","RATE_CODE","RATE_DESC","AVERAGE_RATE","TOTAL_COST","RATE_HIC","CURRENCY","RATEORDER","RATE_ORDER","ROOM_POLICY","POLICY"
-	],
-	"DATA":[
-		[28,"ADTADPR","ADV PURCHASE ADA DDBL TUBTUB WITH RAILS: 2 DOUBLE GRAND BEDS: FLOORS<br>",197,197,"","USD",4,4,0,"0"],
-		[27,"AKSADPR","ADV PURCHASE ADA KING SHOWERROLL IN SHOWER: 1 KING GRAND BED: FLOORS<br>",197,197,"","USD",4,4,0,"0"],
-		[26,"AKTADPR","ADV PURCHASE ADA KING TUBTUB WITH RAILS: 1 KING GRAND BED: FLOORS<br>",197,197,"","USD",4,4,0,"0"]
-	]
-} */		
-
 <!--- <cfset local.RoomsData = '{"COLUMNS":["BaseRate","CurrencyCode","RoomDescription","NegotiatedRateCode","Count"],"DATA":[' />
 <cfset count = 0 />
 <cfloop list="#StructKeyList(stNewHotel,'|')#" index="local.sRoom" delimiters="|">
@@ -60,9 +56,4 @@
 		<cfset RoomsData&=',' />
 	</cfif>
 </cfloop>
-<cfset RoomsData&=']}' />
-
-<cfset rates = serializeJSON(RoomsData)>
-
-<cfset rates = Replace(rates,'\','','ALL') />
-<cfreturn rates />  --->
+<cfset RoomsData&=']}' />--->

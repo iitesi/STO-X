@@ -20,14 +20,14 @@
 
 			<cfif tripcount LT 10>
 
-				<cfset HotelAddress = '' />
+				<cfset HotelAddress = '' /><!--- Set a default address, the original ddress returned is garbage --->
 				<cfif stHotel.RoomsReturned><!--- We have the real address --->
 					<cfset HotelAddress = stHotel['Property']['Address1'] />
 					<cfset HotelAddress&= Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
 				</cfif>
 				<cfset NegotiatedRateCode = stHotel['NegotiatedRateCode'] />
 				
-				<!--- We already have the rates/policy add data elements to the div --->
+				<!--- We already have the rates/policy add them as data elements to the div --->
 				<cfset DivElements = '' />
 				<cfif stHotel.RoomsReturned>
 					<cfset DivElements = 'data-policy="'&stHotel.Policy&'"' />
@@ -61,11 +61,6 @@
 									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
 								</td>
 							</tr>
-						</div>
-							<!---
-							<img class="carrierimg" src="https://www.shortstravelonline.com/book/assets/img/airlines/#(ListLen(sHotel.Carriers) EQ 1 ? sHotel.Carriers : 'Mult')#.png">
-							#(ListLen(sHotel.Carriers) EQ 1 ? '<br>'&application.stAirVendors[sHotel.Carriers].Name : '')#
-							--->
 							</table>
 						</td>
 						<td class="fares" align="right">
@@ -82,17 +77,21 @@
 								#stHotel.Policy#<br />
 								<!--- #ArrayToList(stHotel.APolicies)#<br />
 								#stHotel.PreferredVendor#<br /> --->
-								#StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found'#
-								<input type="submit"onClick="showRates(#rc.Search_ID#,#sHotel#);return false;" class="button#stHotel.Policy#policy" name="trigger" value="See Rooms">
+								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
+								#RateText#
+								<input type="submit" #RateText NEQ 'Sold Out' ? 'onClick="showRates(#rc.Search_ID#,#sHotel#);return false;"' : ''# class="button#stHotel.Policy#policy" name="trigger" value="#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#">
 								
 								<!---
 								<script type="text/javascript">
 								showRates(#rc.Search_ID#,#sHotel#);
 								</script>
-								<div id="hotelrooms#sHotel#">hello</div>
 								--->
 
 							</cfif>	
+
+							<!---<script type="text/javascript">
+							showRates(#rc.Search_ID#,#sHotel#);
+							</script>--->
 
 							<!--- <cfinvoke component="services.hotelrooms" method="getRooms" nSearchID="#rc.nSearchID#" nHotelCode="#sHotel#" returnvariable="HotelRooms" />
 							<cfdump var="#deSerializeJSON(HotelRooms)#"> --->
@@ -104,7 +103,11 @@
 
 						</td>
 					</tr>
-
+					<tr>
+						<td colspan="3">							
+							<div id="hotelrooms#sHotel#">hello</div>
+						</td>
+					</tr>
 					</table>
 				</div>
 			</cfif>

@@ -32,16 +32,14 @@
 		<cfset HotelAddress&= Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
 
 		<!--- check Policy and add the struct into the session--->
-		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
+		<cfset stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
 
 		<cfset NewResponse = [ LowRate:LowRate,
 													HotelAddress:HotelAddress,
 													Policy:structKeyExists(stHotels[nHotelCode],'Policy') ? stHotels[nHotelCode]['Policy'] : 0,
 													APolicies:structKeyExists(stHotels[nHotelCode],'aPolicies') ? stHotels[nHotelCode]['aPolicies'] : [],
 													PreferredVendor:stHotels[nHotelCode].PreferredVendor
-													] />
-
-		
+													] />		
 
 		<cfset session.searches[arguments.nSearchID].stHotels = stHotels />
 

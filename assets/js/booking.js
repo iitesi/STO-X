@@ -180,17 +180,15 @@ function showRates(search_id, property_id) {
 		async: true,
 		dataType: 'json',
 		success:function(rates) {
-			//"RATE_ID","RATE_CODE","RATE_DESC","AVERAGE_RATE","TOTAL_COST","RATE_HIC","CURRENCY","RATEORDER","RATE_ORDER","ROOM_POLICY","POLICY"
-			var table = '<div class="listtable">';
+			// 0 - PROPERTYID 1- COUNT 2 - ROOMDESCRIPTION 3- RATE 4 - CURRENCYCODE 5 - NEGOTIATEDRATECODE 6 - POLICY
+			var table='<div class="listtable">';
 			$.each(rates.DATA, function(key, val) {
-				table+='<div class="listrow">';
-				if (val[2] == 'USD') {
-					table += '<div class="listcell" style="padding:5px;width:100px;border-top:1px dashed gray;"><span class="cost1">$'+val[1]+'</span> per night</div>';
-				}
-				else {//non USD
-					table += '<div class="listcell" style="padding:5px;width:100px;border-top:1px dashed gray;"><span class="cost1">'+val[1]+' '+val[2]+'</span> per night</div>';
-				}					
-				//table += '<div class="listcell" style="padding:5px;width:500px;border-top:1px dashed gray;">'+val[4];// rate code
+				table+='<table>';
+				table+='<tr><td width="20%">$'+val[3];
+				table+=val[4] != 'USD' ? val[2] : '';//add the currency code if it's not USD
+				table+=' per night</td>';
+				table+='<td width="65%">'+val[2]+'</td>';
+				//table+=val[5];// rate code
 				/* Government rates
 				if (val[5].indexOf(hotel_ratecodes) <= 0) {
 					table += '</div>';
@@ -199,15 +197,14 @@ function showRates(search_id, property_id) {
 					table += '<img src="../img/corprate.gif"></div>';
 				}					
 				*/
-				table += '<div class="listcell" style="padding:5px;width:80px;border-top:1px dashed gray;"><div class="button-wrapper" id="button'+property_id+'"><a href="##" onClick="submitHotel('+property_id+','+val[0]+');return false" class="button"><span>Reserve</span></a></div>';
-				/*
-				if (val[9] == 0 || val[10] == 0) {
-					table += '<font color="#C7151A">Out of Policy</font>';
+				table+='<td width="15%"><a href="##" onClick="submitHotel('+property_id+','+val[0]+');return false" class="button">Reserve</a>';
+				if (val[6] == false) {
+					table+='<br /><font color="#C7151A">Out of Policy</font>';
 				}
-				*/
-				table += '</div></div>';
+				table+='</td>';
+				table+='</tr>';
 			});
-			table += '</div>';
+			table+='</table>';
 			$("#hotelrooms"+property_id).html(table);
 			console.log(property_id);
 			//$("#hotelrooms"+property_id).html(table);
