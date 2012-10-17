@@ -1,8 +1,10 @@
+<!--- <cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') /> --->
+
 <cfsetting showdebugoutput="false" />
 
-<cfoutput>
+<!--- <cfoutput>
 	#View('hotel/filter')#
-</cfoutput>
+</cfoutput> --->
 
 <br clear="both">
 <cfoutput>
@@ -11,7 +13,7 @@
 		<cfset stSortHotels = session.searches[rc.Search_ID].stSortHotels />
 		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />
 		
-		<cfset stPhotos = application.hotelphotos.getPhotos(stSortHotels) />
+		<cfset stPhotos = application.hotelphotos.getMainPhoto(stSortHotels) />
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
@@ -54,13 +56,15 @@
 								<td>
 									<a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
 									<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
-									<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>
-									<cfif structKeyExists(stPhotos,sHotel)>
-										<a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a>
-									</cfif>
+									<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>									
+									<a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a>									
 									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
 								</td>
 							</tr>
+							<!--- <cfset stHotelPhotos = application.hotelphotos.doHotelPhotoGallery(rc.Search_ID,sHotel,stHotel.HotelChain) />			
+							<cfloop array="#stHotelPhotos[sHotel]['aHotelPhotos']#" index="local.Photo">
+								<img src="#Photo#"><br/>
+							</cfloop> --->
 							</table>
 						</td>
 						<td class="fares" align="right">
