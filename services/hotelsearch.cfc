@@ -2,16 +2,16 @@
 	
 <!--- doHotelSearch --->
 	<cffunction name="doHotelSearch" output="false">
-		<cfargument name="nSearchID">
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
-		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
+		<cfargument name="nSearchID" />
+		<cfargument name="stAccount"	default="#application.stAccounts[session.Acct_ID]#" />
+    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#" />
+		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
-		<cfset local.sMessage		= 	prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
-		<cfset local.sResponse 	= 	callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID) />
-		<cfset local.aResponse 	= 	formatResponse(sResponse) />
-		<cfset local.stHotels 	= 	parseHotels(aResponse) />
-		<cfset local.stChains 	= 	getChains(stHotels)>
+		<cfset local.sMessage			= 	prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
+		<cfset local.sResponse 		= 	callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID) />
+		<cfset local.aResponse 		= 	formatResponse(sResponse) />
+		<cfset local.stHotels 		= 	parseHotels(aResponse) />
+		<cfset local.stChains 		= 	getChains(stHotels)>
 		<cfset local.stAmenities 	= 	getAmenities(stHotels)>
 
 		<!--- Store the hotels, chains and amenities into the session --->
@@ -54,14 +54,6 @@
 
 			<cfif sHotelResultList.XMLName EQ 'hotel:HotelSearchResult'>
 
-				<cfset NegotiatedRateCode = '' />
-				<!--- The NegotiatedRateCode is not stored in an appropriately named field, so this must be done in its own loop to accurately pull out the code  --->
-				<cfloop array="#sHotelResultList.XMLChildren#" index="local.sHotelProperty">
-					<cfif sHotelProperty.XMLName CONTAINS 'CorporateDiscountID' AND StructKeyExists(sHotelProperty.xmlAttributes,'NegotiatedRateCode') EQ true>
-						<cfset NegotiatedRateCode = sHotelProperty.xmlText />
-					</cfif>
-				</cfloop>
-
 				<!--- Loop through each properties main attributes --->
 				<cfloop array="#sHotelResultList.XMLChildren#" index="local.sHotelProperty">
 					
@@ -100,7 +92,6 @@
 							HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
 							HotelAddress : HotelAddress,
 							Name : sHotelProperty.XMLAttributes.Name,
-							NegotiatedRateCode : NegotiatedRateCode,
 							RoomsReturned : false,
 							PreferredVendor : false,
 							Amenities : HotelAmenities
@@ -164,7 +155,7 @@
 		<cfargument name="sAPIAuth">
 		<cfargument name="nSearchID">
 		
-		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
+		<cfset local.bSessionStorage = true><!--- Testing setting (true - testing, false - live) --->
 			
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
@@ -239,8 +230,8 @@
 		
 		<cfset local.stHotels = arguments.stHotels />
 		<cfset local.aPolicy = [] />
-		<cfset local.bActive = 1 />
-		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyHotel) GT 0 ? 1 : 0) /><!--- are they allowed to book out of policy hotels? --->
+		<cfset local.bActive = true />
+		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyHotel) GT 0 ? true : false) /><!--- are they allowed to book out of policy hotels? --->
 				
 		<cfloop collection="#stHotels#" item="local.sCategory">
 
@@ -248,13 +239,13 @@
 				<cfif sVendor EQ 'HotelChain'>
 					<cfset HotelChain = stHotels[sCategory]['HOTELCHAIN'] />
 					<cfset aPolicy = []>
-					<cfset bActive = 1>
+					<cfset bActive = true>
 					
 					<!--- Preferred Chains turned on and hotel is not a preferred chain. --->
 					<cfif arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND NOT ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain)>
 						<cfset ArrayAppend(aPolicy, 'Not a preferred vendor')>
 						<cfif arguments.stPolicy.Policy_HotelPrefDisp EQ 1><!--- Only display in policy hotels? --->
-							<cfset bActive = 0>
+							<cfset bActive = false>
 						</cfif>
 					</cfif>
 					<!--- Out of policy if the hotel chain is blacklisted (still shows though).  --->
@@ -262,12 +253,10 @@
 						<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 					</cfif>
 					<!--- Preferred Chain --->
-					<cfif arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain)>
-						<cfset stHotels[sCategory].PreferredVendor = true />
-					</cfif>
+					<cfset stHotels[sCategory].PreferredVendor = arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain) ? true : false />
 
-					<cfif bActive EQ 1>
-						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0) />
+					<cfif bActive>
+						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? true : false) />
 						<cfset stHotels[sCategory].aPolicies = aPolicy />
 					<cfelse>
 						<cfset temp = StructDelete(stHotels[sCategory], HotelChain) />

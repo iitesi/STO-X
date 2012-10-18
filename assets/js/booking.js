@@ -206,9 +206,6 @@ function showRates(search_id, property_id) {
 			});
 			table+='</table>';
 			$("#hotelrooms"+property_id).html(table);
-			console.log(property_id);
-			//$("#hotelrooms"+property_id).html(table);
-			//$("#checkrates"+hotel).html('this works');
 		},
 		error:function(test, tes, te) { 
 			console.log(test);

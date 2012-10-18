@@ -11,12 +11,12 @@
 	<div class="hotel" heigth="100%">
 		<cfset tripcount = 0 />
 		<cfset stSortHotels = session.searches[rc.Search_ID].stSortHotels />
-		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />
-		
+		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />		
 		<cfset stPhotos = application.hotelphotos.getMainPhoto(stSortHotels) />
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
+			<!--- <cfdump eval=session.searches[rc.Search_ID].stHotels abort> --->
 			<!--- <cfdump eval=stHotel abort> --->
 			<cfset tripcount++ />
 
@@ -27,7 +27,6 @@
 					<cfset HotelAddress = stHotel['Property']['Address1'] />
 					<cfset HotelAddress&= Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
 				</cfif>
-				<cfset NegotiatedRateCode = stHotel['NegotiatedRateCode'] />
 				
 				<!--- We already have the rates/policy add them as data elements to the div --->
 				<cfset DivElements = '' />
@@ -47,7 +46,7 @@
 						<td valign="top">
 							<table width="400px">
 							<tr>
-								<td>#tripcount# - #stHotel.HotelChain# #stHotel.Name#<font color="##FFFFFF"> #sHotel#</font> #NegotiatedRateCode#</td>
+								<td>#tripcount# - #stHotel.HotelChain# #stHotel.Name#<font color="##FFFFFF"> #sHotel#</font></td>
 							</tr>
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
@@ -84,12 +83,6 @@
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
 								#RateText#
 								<input type="submit" #RateText NEQ 'Sold Out' ? 'onClick="showRates(#rc.Search_ID#,#sHotel#);return false;"' : ''# class="button#stHotel.Policy#policy" name="trigger" value="#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#">
-								
-								<!---
-								<script type="text/javascript">
-								showRates(#rc.Search_ID#,#sHotel#);
-								</script>
-								--->
 
 							</cfif>	
 

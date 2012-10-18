@@ -143,7 +143,7 @@
 		Policy_HotelNotBooking, Policy_AirFee, Policy_AirIntFee, Policy_NonAirFee, Policy_SpecialRequestFee, Policy_AgentAirFee, 
 		Policy_AgentAirIntFee, Policy_AgentNonAirFee, Policy_ComplexFee, BookIt_MonthFee, BookIt_TransFee, Policy_AllowRequests
 		FROM Account_Policies
-		WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer" >
+		WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 		</cfquery>
 		<cfset local.stTemp = {}>
 		<cfloop query="qPolicies">

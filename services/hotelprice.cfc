@@ -2,19 +2,19 @@
 	
 <!--- doHotelPrice --->
 	<cffunction name="doHotelPrice" output="false" access="remote" returnformat="json" returntype="array">
-		<cfargument name="nSearchID" 		required="true">
-		<cfargument name="nHotelCode"		required="true">
-		<cfargument name="sHotelChain"	required="true">
-		<cfargument name="sAPIAuth" 		required="false"	default="#application.sAPIAuth#">
-		<cfargument name="stPolicy" 		required="false"	default="#application.stPolicies[session.Acct_ID]#">
-		<cfargument name="stAccount" 		required="false"	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="nSearchID" />
+		<cfargument name="nHotelCode" />
+		<cfargument name="sHotelChain" />
+		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
+    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]#">
+		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrip = session.searches[arguments.nSearchID]>
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
 		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
 		<cfset local.stResponse = formatResponse(sResponse)>
-		
 		<cfset local.stHotels = parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
+		
 		<cfset local.stRates = structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
 
 		<cfif isStruct(stRates)>
@@ -38,7 +38,7 @@
 													HotelAddress:HotelAddress,
 													Policy:structKeyExists(stHotels[nHotelCode],'Policy') ? stHotels[nHotelCode]['Policy'] : 0,
 													APolicies:structKeyExists(stHotels[nHotelCode],'aPolicies') ? stHotels[nHotelCode]['aPolicies'] : [],
-													PreferredVendor:stHotels[nHotelCode].PreferredVendor
+													PreferredVendor:structKeyExists(stHotels[nHotelCode],'PreferredVendor') ? stHotels[nHotelCode]['PreferredVendor'] : false
 													] />		
 
 		<cfset session.searches[arguments.nSearchID].stHotels = stHotels />
@@ -137,6 +137,13 @@
 			<cfloop array="#stHotelResults.XMLChildren#" index="local.sHotelPriceResult">
 				<cfif sHotelPriceResult.XMLName EQ 'hotel:HotelRateDetail'>
 					
+					<cfset RoomRateCategory = '' />
+					<cfset RoomRatePlanType = '' />
+					<cfif structKeyExists(sHotelPriceResult.XMLAttributes,'RateCategory')>
+						<cfset RoomRateCategory = sHotelPriceResult.XMLAttributes.RateCategory />
+						<cfset RoomRatePlanType = sHotelPriceResult.XMLAttributes.RatePlanType />
+					</cfif>
+
 					<!--- Need to find the room description --->
 					<cfset RoomDescription = 'No Description for Hotel' />
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">
@@ -147,11 +154,13 @@
 							</cfif>
 						</cfif>
 					</cfloop>
-					
+
 					<!--- Create a struct with the Room Description --->
 					<cfset stHotels[nHotelCode]['Rooms'][RoomDescription] = {
 						TotalIncludes : '',
 						Description : RoomDescription,
+						RoomRateCategory : RoomRateCategory,
+						RoomRatePlanType : RoomRatePlanType,
 						Commission : '',
 						CancelPolicyExist : '',
 						MealPlanExist : '',
@@ -217,7 +226,7 @@
 		
 		<!--- Update the struct so we know we've received rates and we don't pull them again later --->
 		<cfset stHotels[nHotelCode]['RoomsReturned'] = true />
-
+		
 		<cfreturn stHotels />
 	</cffunction>	
 	
