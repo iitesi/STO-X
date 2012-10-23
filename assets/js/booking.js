@@ -215,3 +215,77 @@ function showRates(search_id, property_id) {
 	});
 	return false;
 }
+
+
+function loadMap(lat, long, centerimg) {
+	var orderedpropertyids = $( "#hotellist" + $( "#sorttype" ).val() + "sort" ).val();
+		orderedpropertyids = orderedpropertyids.split(',');
+	var center = new Microsoft.Maps.Location(lat,long);
+	var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
+	map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
+	map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));
+	
+	var propertyid = 0;
+	var propertylat = 0;
+	var propertylong = 0;
+	var propertyname = '';
+	var propertyaddress = '';
+	for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
+		var propertyid = orderedpropertyids[loopcnt];
+		var property = hotelresults[propertyid];
+		var propertylat = property[19];
+		var propertylong = property[20];
+		var propertyname = property[2];
+		var propertyaddress = property[23];
+		pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
+		pins[propertyid].title = propertyname;
+		pins[propertyid].description = propertyaddress;
+		Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
+		map.entities.push(pins[propertyid]);
+	}
+	Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter);
+	return false;
+}
+function displayHotelInfo(e) {
+	if (e.targetType == "pushpin") {
+		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
+		var infoboxTitle = document.getElementById('infoboxTitle');
+		infoboxTitle.innerHTML = e.target.title;
+		var infoboxDescription = document.getElementById('infoboxDescription');
+		infoboxDescription.innerHTML = e.target.description;
+		var infobox2 = document.getElementById('infoBox');
+		infobox2.style.top = (pix.y - 60) + "px";
+		infobox2.style.left = (pix.x + 5) + "px";
+		infobox2.style.visibility = "visible";
+		document.getElementById('mapDiv').appendChild(infobox2);
+	}
+	return false;
+}
+function closeInfoBox() {
+	var infobox2 = document.getElementById('infoBox');
+	infobox2.style.visibility = "hidden";
+	return false;
+}
+function changeLatLongCenter(e) {
+	if (e.targetType == "map") {
+		var zoom = map.getZoom();
+		var infoboxvisibility = document.getElementById('infoBox').style.visibility;
+		closeInfoBox();
+		if (zoom >= 12 && infoboxvisibility == 'hidden') {
+			$("#dialog").dialog({	
+				buttons: { "Yes": function() { 
+									var point = new Microsoft.Maps.Point(e.getX(), e.getY());
+									var loc = e.target.tryPixelToLocation(point);
+									$( "#latlong" ).val(loc['latitude']+','+loc['longitude']);
+									$( "#changelatlong" ).submit();
+									$(this).dialog("close");
+								},
+							'No': function() {
+									$(this).dialog("close"); 
+								}
+						}
+			});
+		}
+	}
+	return false;
+}

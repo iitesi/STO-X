@@ -2,9 +2,10 @@
 
 <cfsetting showdebugoutput="false" />
 
-<!--- <cfoutput>
+<cfoutput>
 	#View('hotel/filter')#
-</cfoutput> --->
+	#view('hotel/map')#
+</cfoutput>
 
 <br clear="both">
 <cfoutput>
