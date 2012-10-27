@@ -13,13 +13,18 @@
 		<cfset local.stHotels 		= 	parseHotels(aResponse) />
 		<cfset local.stChains 		= 	getChains(stHotels)>
 		<cfset local.stAmenities 	= 	getAmenities(stHotels)>
-
-		<!--- Store the hotels, chains and amenities into the session --->
+		<cfset local.latlong 			= 	latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
+				
+		<!--- Store the hotels, chains, amenities and lat/long into the session --->
 		<cfset session.searches[nSearchID].stHotels 			= stHotels />
    	<cfset session.searches[nSearchID].stHotelChains	= stChains />
    	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
-
+   	<cfset session.searches[nSearchID].slatlong			= latlong />
    	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotels) />
+
+   	<cfset session.searches[nSearchID]['Hotel']			= 1 />
+		<cfset session.searches[nSearchID]['Hotel_Lat'] 	= GetToken(session.searches[nSearchID].slatlong,1,',') />
+		<cfset session.searches[nSearchID]['Hotel_Long'] = GetToken(session.searches[nSearchID].slatlong,2,',') />
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
@@ -274,7 +279,7 @@
 		<cfargument name="nSearchID">
 
 		<cfquery name="local.getsearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
+		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
@@ -299,4 +304,93 @@
 
 		<cfreturn stAmenities />
 	</cffunction>
+
+<!--- hotel : latlong --->
+	<cffunction Name="latlong" access="remote" returntype="string" output="false">
+		<cfargument Name="Hotel_Search" />
+		<cfargument Name="Hotel_Airport" />
+		<cfargument Name="Hotel_Landmark" />
+		<cfargument Name="Hotel_Address" />
+		<cfargument Name="Hotel_City" />
+		<cfargument Name="Hotel_State" />
+		<cfargument Name="Hotel_Zip" />
+		<cfargument Name="Hotel_Country" />
+		<cfargument Name="Office_ID" />
+		
+		<cfset var LatLong = '0,0'>
+		<cfset var getSpecificLongLat = ''>
+		<cfset var Search_Location = ''>
+		
+		<cfif arguments.Hotel_Search EQ 'Airport'>
+			<cfquery name="getSpecificLongLat" datasource="book">
+			SELECT Long, Lat, Geography_ID
+			FROM lu_Geography
+			WHERE Location_Display = <cfqueryparam value="#arguments.Hotel_Airport#" cfsqltype="cf_sql_varchar">
+			AND Location_Type = 125
+			AND Lat <> 0
+			AND Long <> 0
+			</cfquery>
+			<cfif getSpecificLongLat.RecordCount EQ 1>
+				<cfset LatLong = getSpecificLongLat.Lat&','&getSpecificLongLat.Long&','&getSpecificLongLat.Geography_ID>
+			<cfelseif Len(arguments.Hotel_Airport) EQ 3>
+				<cfquery name="getSpecificLongLat" datasource="book">
+				SELECT Long, Lat, Geography_ID
+				FROM lu_Geography
+				WHERE Location_Code = <cfqueryparam value="#arguments.Hotel_Airport#" cfsqltype="cf_sql_varchar">
+				AND Location_Type = 125
+				AND Lat <> 0
+				AND Long <> 0
+				</cfquery>
+				<cfif getSpecificLongLat.RecordCount EQ 1>
+					<cfset LatLong = getSpecificLongLat.Lat&','&getSpecificLongLat.Long&','&getSpecificLongLat.Geography_ID>
+				</cfif>
+			</cfif>
+		<cfelseif arguments.Hotel_Search EQ 'City'>
+			<cfquery name="getSpecificLongLat" datasource="book">
+			SELECT Long, Lat, Geography_ID
+			FROM lu_Geography
+			WHERE Location_Display = <cfqueryparam value="#arguments.Hotel_Landmark#" cfsqltype="cf_sql_varchar">
+			AND Location_Type = 126
+			AND Lat <> 0
+			AND Long <> 0
+			</cfquery>
+			<cfif getSpecificLongLat.RecordCount EQ 1 AND getSpecificLongLat.Lat NEQ '' AND getSpecificLongLat.Long NEQ ''>
+				<cfset LatLong = getSpecificLongLat.Lat&','&getSpecificLongLat.Long&','&getSpecificLongLat.Geography_ID>
+			</cfif>
+		<cfelseif arguments.Hotel_Search EQ 'Office'>
+			<cfquery name="getSpecificLongLat" datasource="book">
+			SELECT Office_Long, Office_Lat
+			FROM Account_Offices
+			WHERE Office_ID = <cfqueryparam value="#arguments.Office_ID#" cfsqltype="cf_sql_numeric">
+			</cfquery>
+			<cfif getSpecificLongLat.RecordCount EQ 1 AND getSpecificLongLat.Office_Lat NEQ '' AND getSpecificLongLat.Office_Long NEQ ''>
+				<cfset LatLong = getSpecificLongLat.Office_Lat&','&getSpecificLongLat.Office_Long&',0'>
+			</cfif>
+		</cfif>
+		<cfif LatLong EQ '0,0'>
+			<cfif arguments.Hotel_Search EQ 'Airport'>
+				<cfset Search_Location = arguments.Hotel_Airport>
+			<cfelseif arguments.Hotel_Search EQ 'City'>
+				<cfset Search_Location = arguments.Hotel_Landmark>
+			<cfelseif arguments.Hotel_Search EQ 'Office'>
+				<cfset Search_Location = ''>
+			<cfelse>
+				<cfset Search_Location = '#Trim(arguments.Hotel_Address)#,#Trim(arguments.Hotel_City)#,#Trim(arguments.Hotel_State)#,#Trim(arguments.Hotel_Zip)#,#Trim(arguments.Hotel_Country)#'>
+			</cfif>
+			<cfif Search_Location NEQ '' AND Search_Location NEQ ',,,'>
+				<cftry>
+					<cfhttp method="get" url="https://maps.google.com/maps/geo?q=#Search_Location#&output=xml&oe=utf8\&sensor=false&key=ABQIAAAAIHNFIGiwETbSFcOaab8PnBQ2kGXFZEF_VQF9vr-8nzO_JSz_PxTci5NiCJMEdaUIn3HA4o_YLE757Q" />
+					<cfset LatLong = XMLParse(cfhttp.FileContent)>
+					<cfset LatLong = LatLong.kml.Response.Placemark.Point.coordinates.XMLText>
+					<cfset LatLong = GetToken(LatLong, 2, ',')&','&GetToken(LatLong, 1, ',')&',0'>
+					<cfcatch>
+						<cfset LatLong = '0,0'>
+					</cfcatch>
+				</cftry>
+			</cfif>
+		</cfif>
+			
+		<cfreturn LatLong>
+	</cffunction>
+
 </cfcomponent>

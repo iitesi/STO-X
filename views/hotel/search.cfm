@@ -2,6 +2,33 @@
 
 <cfsetting showdebugoutput="false" />
 
+<!--- Map --->
+<script src="https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1" charset="UTF-8" type="text/javascript"></script>
+<script type="text/javascript">
+var serverurl = 'localhost:8888'; //#application.serverurl#'
+var pcc = "#session.account.PCC_Booking#";
+var hcm = "#application.HCM#";
+#rc.hotelstructure#
+var acct_id = #session.account.Acct_ID#;
+var search_id = #session.searches[1].Search_ID#;
+var depart_date = "#DateFormat(session.searches[1].Depart_DateTime, 'm/d/yyyy')#";
+var hotel_ratecodes = "#rc.policyhotel.Hotel_RateCodes#";
+var map = "";
+var pins = new Object;
+var totalproperties = <cfoutput>#ArrayLen(session['searches']['190514']['stsorthotels'])#</cfoutput>;
+$(document).ready(function() {
+	$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
+	$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
+	//overall search hotel latitude and longitude
+	loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"http://localhost:8888/booking/assets/img/center.png"</cfoutput>);
+	filterhotel();
+	stohotel();
+	toggleDiv('filterpref');
+	toggleDiv('filterchains');
+	toggleDiv('filtername');
+});
+</script>
+
 <cfoutput>
 	#View('hotel/filter')#
 	#view('hotel/map')#
