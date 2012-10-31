@@ -9,13 +9,12 @@
     <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]#">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		
-		<cfset local.stTrip = session.searches[arguments.nSearchID]>
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
-		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
+		<cfset local.stTrip 		= session.searches[arguments.nSearchID]>
+		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
+		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
 		<cfset local.stResponse = formatResponse(sResponse)>
-		<cfset local.stHotels = parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
-		
-		<cfset local.stRates = structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
+		<cfset local.stHotels 	= parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>		
+		<cfset local.stRates 		= structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
 
 		<cfif isStruct(stRates)>
 			<cfset local.RoomDescriptions = structKeyList(stRates,'|') /><!--- Need to use | as delimiter because hotel names have , --->
@@ -87,13 +86,13 @@
 	
 <!--- callAPI --->
 	<cffunction name="callAPI" returntype="string" output="true">
-		<cfargument name="sService"		required="true">
-		<cfargument name="sMessage"		required="true">
-		<cfargument name="sAPIAuth"		required="true">
-		<cfargument name="nSearchID"	required="true">
-		<cfargument name="nHotelCode"		required="true">
+		<cfargument name="sService"	/>
+		<cfargument name="sMessage"	/>
+		<cfargument name="sAPIAuth"	/>
+		<cfargument name="nSearchID" />
+		<cfargument name="nHotelCode"	/>
 		
-		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
+		<cfset local.bSessionStorage = true><!--- Testing setting (true - testing, false - live) --->
 
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID],nHotelCode)>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">

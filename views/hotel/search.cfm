@@ -26,21 +26,16 @@
  --->
 
 <cfoutput>	
-	<!--- #View('hotel/filter')# --->
-	#View('hotel/map')#
+	#View('hotel/filter')#
+	<!--- #View('hotel/map')# --->
 
 	<br clear="both">
 
 	<div class="hotel" heigth="100%">
 		<cfset tripcount = 0 />
-		<cfset stSortHotels = session.searches[rc.Search_ID].stSortHotels />
-		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />
-		<!--- <cfset HotelInformation = application.hotelphotos.HotelInformation(session.searches[rc.Search_ID].stHotels,rc.Search_ID) />
-		<cfdump eval=HotelInformation> --->
-		<cfset stHotels = session.searches[rc.Search_ID].stHotels />
-
-
-		<cfdump var="#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#" />
+		<cfset stSortHotels 	= session.searches[rc.Search_ID].stSortHotels />
+		<cfset stHotelChains	= session.searches[rc.nSearchID].stHotelChains />
+		<cfset stHotels 			= session.searches[rc.Search_ID].stHotels />
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
@@ -115,17 +110,7 @@
 
 							</cfif>	
 
-							<!---<script type="text/javascript">
-							showRates(#rc.Search_ID#,#sHotel#);
-							</script>--->
-
-							<!--- <cfinvoke component="services.hotelrooms" method="getRooms" nSearchID="#rc.nSearchID#" nHotelCode="#sHotel#" returnvariable="HotelRooms" />
-							<cfdump var="#deSerializeJSON(HotelRooms)#"> --->
-				
-
-							<cfoutput>
-								<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">Link</a><br>
-							</cfoutput>
+							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">Link</a><br>
 
 						</td>
 					</tr>
@@ -140,61 +125,51 @@
 		</cfloop>
 	</div>
 
-	<script type="text/javascript">
-	var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
-	</script>
-
-	<!--- #view('hotel/map')# --->
-
-
 	<script src="https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1" charset="UTF-8" type="text/javascript"></script>
 	<script type="text/javascript">
+	var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
+
 	var map = "";
 	var pins = new Object;
-	var totalproperties = <cfoutput>#ArrayLen(session['searches']['190514']['stsorthotels'])#</cfoutput>;
+	var totalproperties = <cfoutput>#ArrayLen(session['searches'][rc.Search_ID]['stsorthotels'])#</cfoutput>;
 
-	$(document).ready(function loadMap(lat, long, centerimg) {
+	function loadMap(lat, long, centerimg) {
 	
 		var center = new Microsoft.Maps.Location(lat,long);
 		var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
 		map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
-		map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));
+		map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));		
 		
-		<cfset orderedpropertyids = ArrayToList(session.searches[rc.Search_ID]['stSortHotels']) />
-		<cfloop list="#orderedpropertyids#" index="i">
-			<cfset propertyid = i />
-			var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels[propertyid])#;
-			console.log(hotelresults);
-		</cfloop>
+		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
+		orderedpropertyids = orderedpropertyids.split(',');	
 
-
-		var orderedpropertyids = '#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#';
-		orderedpropertyids = orderedpropertyids.split(',');		
-		
+		var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels)#;
 		for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
 			var propertyid = orderedpropertyids[loopcnt];
-			var property = HotelInformation[propertyid];
-			var propertylat = property[19];
-			var propertylong = property[20];
-			var propertyname = property[2];
-			var propertyaddress = property[23];
+			var property = hotelresults[propertyid]['HOTELINFORMATION'];
+			var propertylat = property['LATITUDE'];
+			var propertylong = property['LONGITUDE'];
+			var propertyname = property['NAME'];
+			var propertyaddress = property['HOTELADDRESS'];
+
 			pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
 			pins[propertyid].title = propertyname;
 			pins[propertyid].description = propertyaddress;
-			//Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo); shows information for specific hotel
-			map.entities.push(pins[propertyid]);
+			Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
+			map.entities.push(pins[propertyid]);			
 		}
+
 		//Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search
 		
 		return false;
-	});
+	}
 
 	$(document).ready(function() {
 		//$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
 		//$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
 		//overall search hotel latitude and longitude
 		loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"http://localhost:8888/booking/assets/img/center.png"</cfoutput>);
-		hotelstructure();
+		//hotelstructure();
 		//filterhotel();
 		//stohotel();
 		//toggleDiv('filterpref');

@@ -7,30 +7,29 @@
     <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#" />
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
-		<cfset local.sMessage			= 	prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
-		<cfset local.sResponse 		= 	callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID) />
-		<cfset local.aResponse 		= 	formatResponse(sResponse) />
-		<cfset local.stHotels 		= 	parseHotels(aResponse) />
-		<cfset local.stChains 		= 	getChains(stHotels)>
-		<cfset local.stAmenities 	= 	getAmenities(stHotels)>
-		<cfset local.latlong 			= 	latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
+		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
+		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID) />
+		<cfset local.aResponse 		= formatResponse(sResponse) />
+		<cfset local.stHotels 		= parseHotels(aResponse) />
+		<cfset local.stChains 		= getChains(stHotels)>
+		<cfset local.stHotels 		= HotelInformation(stHotels) /><!--- add signature_image, latitude and longitude --->
+		<cfset local.stAmenities 	= getAmenities(stHotels)>
+		<cfset local.latlong 			= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
 		<!--- Store the hotels, chains, amenities and lat/long into the session --->
 		<cfset session.searches[nSearchID].stHotels 			= stHotels />
    	<cfset session.searches[nSearchID].stHotelChains	= stChains />
-   	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
    	<cfset session.searches[nSearchID].slatlong				= latlong />
+   	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
    	<cfset session.searches[nSearchID].stSortHotels 	= StructKeyArray(session.searches[nSearchID].stHotels) />
 
+   	<!--- store the hotel latitude and longitude in the session --->
    	<cfset session.searches[nSearchID]['Hotel']				= 1 />
 		<cfset session.searches[nSearchID]['Hotel_Lat'] 	= GetToken(session.searches[nSearchID].slatlong,1,',') />
 		<cfset session.searches[nSearchID]['Hotel_Long'] 	= GetToken(session.searches[nSearchID].slatlong,2,',') />
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount) />
-
-		<!--- add signature_image, latitude and longitude --->
-		<cfset stHotels = HotelInformation(stHotels) />
 
    	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
@@ -98,9 +97,10 @@
 							FeaturedProperty : FeaturedProperty,
 							HotelChain : nHotelChain,
 							HotelInformation : {
-								HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
-								HotelAddress : HotelAddress,
-								Name : sHotelProperty.XMLAttributes.Name},
+									HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
+									HotelAddress : HotelAddress,
+									Name : sHotelProperty.XMLAttributes.Name
+								},
 							RoomsReturned : false,
 							PreferredVendor : false,
 							Amenities : HotelAmenities
@@ -296,11 +296,11 @@
 
 		<cfset local.stAmenities = [] />
 		<cfloop list="#structKeyList(arguments.stHotels)#" index="local.sHotel">
-			<cfset local.Amenity = arguments.stHotels[sHotel]['Amenities'] />
-			<cfloop collection="#Amenity#" item="local.OneAmenity">
+			<cfset local.stAmenity = arguments.stHotels[sHotel]['Amenities'] />
+			<cfloop collection="#stAmenity#" item="local.OneAmenity">
 				<!--- Must be on the list of overall amenities and not already be in the array --->
-				<cfif structKeyExists(application.stAmenities,Amenity[OneAmenity]) AND NOT ArrayFind(stAmenities,Amenity[OneAmenity])>
-					<cfset ArrayAppend(stAmenities,Amenity[OneAmenity])>
+				<cfif structKeyExists(application.stAmenities,OneAmenity) AND NOT ArrayFind(stAmenities,OneAmenity)>
+					<cfset stAmenity[OneAmenity] ? ArrayAppend(stAmenities,OneAmenity) : ''>
 				</cfif>
 			</cfloop>
 		</cfloop>
@@ -400,18 +400,21 @@
 	<cffunction name="HotelInformation" access="public" output="false" returntype="struct">
 		<cfargument name="stHotels">
 		<cfargument name="Search_ID">
-		
+		<cfargument name="stAmenities" default="#application.stAmenities#" />
+
 		<cfset local.stHotels = arguments.stHotels />
+		<cfset local.stAmenities = arguments.stAmenities />
 		<cfset local.PropertyIDs = [] />
+
 		<cfloop list="#StructKeyList(arguments.stHotels)#" index="sHotel">
 			<cfset ArrayAppend(PropertyIDs,sHotel)>
 		</cfloop>
-		<cfset PropertyIDs = arrayToList(PropertyIDs,"','") />
+		<cfset PropertyIDs = arrayToList(PropertyIDs) />
 
 		<cfquery name="local.HotelInformation" datasource="Book">
-		SELECT Property_ID, Signature_Image, Lat, Long
+		SELECT Property_ID, Signature_Image, Lat, Long<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
-		WHERE Property_ID in ('#PreserveSingleQuotes(PropertyIDs)#')
+		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
 		</cfquery>
 
 		<cfloop query="HotelInformation">
@@ -422,7 +425,12 @@
 			<cfset stHotelInformation['LONGITUDE'] = HotelInformation.Long />
 			<!--- add the hotel information back into the hotel structure --->
 			<cfset arguments.stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
-
+			
+			<cfset local.stHotelAmenities = stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['Amenities'] />
+			<cfloop list="#structKeyList(stHotelAmenities)#" index="local.Amenity">
+				<!--- Update query to show yes if hotel amenity is true --->
+				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformation, Amenity, 1, HotelInformation.CurrentRow) : '' />
+			</cfloop>
 		</cfloop>
 
 		<cfreturn stHotels />

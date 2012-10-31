@@ -216,8 +216,6 @@ function showRates(search_id, property_id) {
 	return false;
 }
 
-
-
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {
 		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);

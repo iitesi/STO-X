@@ -14,7 +14,6 @@
 		<div class="popup-hotel">
 			<div class="region">
 				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain">
-					<!--- #Chain# --->
 					<div class="checkbox">
 						<input id="Chain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterChain();">
 						<label for="Chain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
@@ -27,17 +26,15 @@
 		<div class="popup-hotel">
 			<div class="region">
 				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
-					<!--- #Amenity# --->
 					<div class="checkbox">
 						<input id="Amenity#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterAmenity();">
-						<label for="Amenity#Amenity#">#StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'#</label>
+						<label for="Amenity#Amenity#">#application.stAmenities[Amenity]#</label><!--- #StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'# --->
 					</div>
 				</cfloop>
 			</div>
 		</div>
 	</div>
 </cfoutput>
-
 
 <script type="application/javascript">
 function filterHotel() {
