@@ -365,8 +365,8 @@ div.checkbox {
 }
 .map {
 	width:760px;
-	height:280px;
-	float:right;
+	height:480px;
+	/*float:right;*/
 	position:relative;
 	margin:0 0 10px;
 }

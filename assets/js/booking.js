@@ -217,35 +217,7 @@ function showRates(search_id, property_id) {
 }
 
 
-function loadMap(lat, long, centerimg) {
-	var orderedpropertyids = $( "#hotellist" + $( "#sorttype" ).val() + "sort" ).val();
-		orderedpropertyids = orderedpropertyids.split(',');
-	var center = new Microsoft.Maps.Location(lat,long);
-	var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
-	map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
-	map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));
-	
-	var propertyid = 0;
-	var propertylat = 0;
-	var propertylong = 0;
-	var propertyname = '';
-	var propertyaddress = '';
-	for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
-		var propertyid = orderedpropertyids[loopcnt];
-		var property = hotelresults[propertyid];
-		var propertylat = property[19];
-		var propertylong = property[20];
-		var propertyname = property[2];
-		var propertyaddress = property[23];
-		pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
-		pins[propertyid].title = propertyname;
-		pins[propertyid].description = propertyaddress;
-		Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
-		map.entities.push(pins[propertyid]);
-	}
-	Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter);
-	return false;
-}
+
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {
 		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);

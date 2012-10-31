@@ -1,46 +1,46 @@
 <!--- <cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') /> --->
 
+
 <cfsetting showdebugoutput="false" />
 
 <!--- Map --->
-<script src="https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1" charset="UTF-8" type="text/javascript"></script>
-<script type="text/javascript">
-var serverurl = 'localhost:8888'; //#application.serverurl#'
-var pcc = "#session.account.PCC_Booking#";
-var hcm = "#application.HCM#";
-#rc.hotelstructure#
-var acct_id = #session.account.Acct_ID#;
-var search_id = #session.searches[1].Search_ID#;
-var depart_date = "#DateFormat(session.searches[1].Depart_DateTime, 'm/d/yyyy')#";
-var hotel_ratecodes = "#rc.policyhotel.Hotel_RateCodes#";
-var map = "";
-var pins = new Object;
-var totalproperties = <cfoutput>#ArrayLen(session['searches']['190514']['stsorthotels'])#</cfoutput>;
-$(document).ready(function() {
-	$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
-	$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
-	//overall search hotel latitude and longitude
-	loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"http://localhost:8888/booking/assets/img/center.png"</cfoutput>);
-	filterhotel();
-	stohotel();
-	toggleDiv('filterpref');
-	toggleDiv('filterchains');
-	toggleDiv('filtername');
-});
-</script>
 
-<cfoutput>
-	#View('hotel/filter')#
-	#view('hotel/map')#
-</cfoutput>
+<!--- hotel : hotelstructure --->
+<!--- <cffunction name="hotelstructure" access="remote" returntype="string" output="true">
+	
+	<cfset var hotelstructure = ''>
+	<cfset var HotelImage = ''>
+	
+	<cfset hotelstructure = 'var hotelresults = new Object;'>
+	<cfoutput query="hotelresults" group="Property_ID">
+		<cfif Signature_Image NEQ ''>
+			<cfset HotelImage = Signature_Image>
+		<cfelse>
+			<cfset HotelImage = application.serverurl&'/assets/img/MissingHotel.png'>
+		</cfif>
+		<cfset hotelstructure = hotelstructure&'hotelresults[#Property_ID#] = [0,0,"#Trim(Property_Name)#",#Internet#,#Business#,#Meeting#,#Transportation#,#Breakfast#,#Restaurant#,#RoomService#,"#HotelImage#",#LowChecked#,#Policy#,#SoldOut#,#LowRate#,"#Vendor_Code#","#Hotel_CityCode#","USD",0,#Lat#,#Long#,#Traveler_Preferred#,#Preferred#,"#Trim(Address)#<br>#Trim(City)#, #Trim(State)#"];'>
+	</cfoutput>
+	
+	<cfreturn hotelstructure />
+</cffunction>
+ --->
 
-<br clear="both">
-<cfoutput>
+<cfoutput>	
+	<!--- #View('hotel/filter')# --->
+	#View('hotel/map')#
+
+	<br clear="both">
+
 	<div class="hotel" heigth="100%">
 		<cfset tripcount = 0 />
 		<cfset stSortHotels = session.searches[rc.Search_ID].stSortHotels />
-		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />		
-		<cfset stPhotos = application.hotelphotos.getMainPhoto(stSortHotels) />
+		<cfset stHotelChains = session.searches[rc.nSearchID].stHotelChains />
+		<!--- <cfset HotelInformation = application.hotelphotos.HotelInformation(session.searches[rc.Search_ID].stHotels,rc.Search_ID) />
+		<cfdump eval=HotelInformation> --->
+		<cfset stHotels = session.searches[rc.Search_ID].stHotels />
+
+
+		<cfdump var="#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#" />
 
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
@@ -52,8 +52,8 @@ $(document).ready(function() {
 
 				<cfset HotelAddress = '' /><!--- Set a default address, the original ddress returned is garbage --->
 				<cfif stHotel.RoomsReturned><!--- We have the real address --->
-					<cfset HotelAddress = stHotel['Property']['Address1'] />
-					<cfset HotelAddress&= Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
+					<cfset HotelAddress = structKeyExists(stHotel,'Property') ? stHotel['Property']['Address1'] : '' />
+					<cfset HotelAddress&= structKeyExists(stHotel,'Property') AND Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
 				</cfif>
 				
 				<!--- We already have the rates/policy add them as data elements to the div --->
@@ -68,13 +68,14 @@ $(document).ready(function() {
 					<tr>
 						<td width="135px">
 							<div id="hotelimage#sHotel#" class="listcell" style="width:125px; overflow:none; border:1px solid ##FFFFFF">
-								<img width="125px" src="#StructKeyExists(stPhotos,sHotel) ? stPhotos[sHotel] : 'assets/img/MissingHotel.png'#" />
+								<cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
+								<img width="125px" src="#Signature_Image#" />
 							</div>
 						</td>
 						<td valign="top">
 							<table width="400px">
 							<tr>
-								<td>#tripcount# - #stHotel.HotelChain# #stHotel.Name#<font color="##FFFFFF"> #sHotel#</font></td>
+								<td>#tripcount# - #stHotel.HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
 							</tr>
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
@@ -84,7 +85,7 @@ $(document).ready(function() {
 									<a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
 									<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
 									<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>									
-									<a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a>									
+									<!--- <a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a> --->									
 									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
 								</td>
 							</tr>
@@ -142,5 +143,66 @@ $(document).ready(function() {
 	<script type="text/javascript">
 	var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
 	</script>
+
+	<!--- #view('hotel/map')# --->
+
+
+	<script src="https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1" charset="UTF-8" type="text/javascript"></script>
+	<script type="text/javascript">
+	var map = "";
+	var pins = new Object;
+	var totalproperties = <cfoutput>#ArrayLen(session['searches']['190514']['stsorthotels'])#</cfoutput>;
+
+	$(document).ready(function loadMap(lat, long, centerimg) {
+	
+		var center = new Microsoft.Maps.Location(lat,long);
+		var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
+		map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
+		map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));
+		
+		<cfset orderedpropertyids = ArrayToList(session.searches[rc.Search_ID]['stSortHotels']) />
+		<cfloop list="#orderedpropertyids#" index="i">
+			<cfset propertyid = i />
+			var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels[propertyid])#;
+			console.log(hotelresults);
+		</cfloop>
+
+
+		var orderedpropertyids = '#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#';
+		orderedpropertyids = orderedpropertyids.split(',');		
+		
+		for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
+			var propertyid = orderedpropertyids[loopcnt];
+			var property = HotelInformation[propertyid];
+			var propertylat = property[19];
+			var propertylong = property[20];
+			var propertyname = property[2];
+			var propertyaddress = property[23];
+			pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
+			pins[propertyid].title = propertyname;
+			pins[propertyid].description = propertyaddress;
+			//Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo); shows information for specific hotel
+			map.entities.push(pins[propertyid]);
+		}
+		//Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search
+		
+		return false;
+	});
+
+	$(document).ready(function() {
+		//$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
+		//$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
+		//overall search hotel latitude and longitude
+		loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"http://localhost:8888/booking/assets/img/center.png"</cfoutput>);
+		hotelstructure();
+		//filterhotel();
+		//stohotel();
+		//toggleDiv('filterpref');
+		//toggleDiv('filterchains');
+		//toggleDiv('filtername');
+	});
+
+	</script>
+
 
 </cfoutput>

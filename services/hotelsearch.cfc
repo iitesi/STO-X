@@ -19,15 +19,18 @@
 		<cfset session.searches[nSearchID].stHotels 			= stHotels />
    	<cfset session.searches[nSearchID].stHotelChains	= stChains />
    	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
-   	<cfset session.searches[nSearchID].slatlong			= latlong />
-   	<cfset session.searches[nSearchID].stSortHotels = StructKeyArray(session.searches[nSearchID].stHotels) />
+   	<cfset session.searches[nSearchID].slatlong				= latlong />
+   	<cfset session.searches[nSearchID].stSortHotels 	= StructKeyArray(session.searches[nSearchID].stHotels) />
 
-   	<cfset session.searches[nSearchID]['Hotel']			= 1 />
+   	<cfset session.searches[nSearchID]['Hotel']				= 1 />
 		<cfset session.searches[nSearchID]['Hotel_Lat'] 	= GetToken(session.searches[nSearchID].slatlong,1,',') />
-		<cfset session.searches[nSearchID]['Hotel_Long'] = GetToken(session.searches[nSearchID].slatlong,2,',') />
+		<cfset session.searches[nSearchID]['Hotel_Long'] 	= GetToken(session.searches[nSearchID].slatlong,2,',') />
 
 		<!--- check Policy and add the struct into the session--->
-		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount)>
+		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount) />
+
+		<!--- add signature_image, latitude and longitude --->
+		<cfset stHotels = HotelInformation(stHotels) />
 
    	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
@@ -94,9 +97,10 @@
 						<cfset stHotels[nHotelCode] = {
 							FeaturedProperty : FeaturedProperty,
 							HotelChain : nHotelChain,
-							HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
-							HotelAddress : HotelAddress,
-							Name : sHotelProperty.XMLAttributes.Name,
+							HotelInformation : {
+								HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
+								HotelAddress : HotelAddress,
+								Name : sHotelProperty.XMLAttributes.Name},
 							RoomsReturned : false,
 							PreferredVendor : false,
 							Amenities : HotelAmenities
@@ -183,7 +187,6 @@
 	</cffunction>
 	
 <!--- formatResponse --->
-	<!--- Both fare and schedule search --->
 	<cffunction name="formatResponse" output="false">
 		<cfargument name="stResponse">
 		
@@ -305,7 +308,7 @@
 		<cfreturn stAmenities />
 	</cffunction>
 
-<!--- hotel : latlong --->
+<!--- latlong --->
 	<cffunction Name="latlong" access="remote" returntype="string" output="false">
 		<cfargument Name="Hotel_Search" />
 		<cfargument Name="Hotel_Airport" />
@@ -391,6 +394,38 @@
 		</cfif>
 			
 		<cfreturn LatLong>
+	</cffunction>
+
+<!--- HotelInformation --->
+	<cffunction name="HotelInformation" access="public" output="false" returntype="struct">
+		<cfargument name="stHotels">
+		<cfargument name="Search_ID">
+		
+		<cfset local.stHotels = arguments.stHotels />
+		<cfset local.PropertyIDs = [] />
+		<cfloop list="#StructKeyList(arguments.stHotels)#" index="sHotel">
+			<cfset ArrayAppend(PropertyIDs,sHotel)>
+		</cfloop>
+		<cfset PropertyIDs = arrayToList(PropertyIDs,"','") />
+
+		<cfquery name="local.HotelInformation" datasource="Book">
+		SELECT Property_ID, Signature_Image, Lat, Long
+		FROM lu_hotels
+		WHERE Property_ID in ('#PreserveSingleQuotes(PropertyIDs)#')
+		</cfquery>
+
+		<cfloop query="HotelInformation">
+			<!--- Pull in the existing hotel information from the structure --->
+			<cfset local.stHotelInformation = arguments.stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION'] />
+			<cfset stHotelInformation['SIGNATURE_IMAGE'] = HotelInformation.Signature_Image />
+			<cfset stHotelInformation['LATITUDE'] = HotelInformation.Lat />
+			<cfset stHotelInformation['LONGITUDE'] = HotelInformation.Long />
+			<!--- add the hotel information back into the hotel structure --->
+			<cfset arguments.stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
+
+		</cfloop>
+
+		<cfreturn stHotels />
 	</cffunction>
 
 </cfcomponent>

@@ -106,28 +106,37 @@
 		<cfreturn stHotels />
 	</cffunction>	
 	
-<!--- getMainPhoto --->
-	<cffunction name="getMainPhoto" access="public" output="false" returntype="array">
+<!--- HotelInformation --->
+	<cffunction name="HotelInformation" access="public" output="false" returntype="query">
 		<cfargument name="stHotels">
+		<cfargument name="Search_ID">
 		
+		<cfset local.stHotels = arguments.stHotels />
 		<cfset local.PropertyIDs = [] />
-		<cfloop array="#arguments.stHotels#" index="sHotel">
+		<cfloop list="#StructKeyList(arguments.stHotels)#" index="sHotel">
 			<cfset ArrayAppend(PropertyIDs,sHotel)>
 		</cfloop>
 		<cfset PropertyIDs = arrayToList(PropertyIDs,"','") />
 
-		<cfquery name="local.getMainPhoto" datasource="Book">
-		SELECT Property_ID, Signature_Image
+		<cfquery name="local.HotelInformation" datasource="Book">
+		SELECT Property_ID, Signature_Image, Lat, Long
 		FROM lu_hotels
 		WHERE Property_ID in ('#PreserveSingleQuotes(PropertyIDs)#')
 		</cfquery>
 
-		<cfset local.stPhotos = {} />
-		<cfloop query="getMainPhoto">
-			<cfset stPhotos[NumberFormat(getMainPhoto.Property_ID,'00000')] = getMainPhoto.Signature_Image />
+		<cfloop query="HotelInformation">
+			<!--- Create the an array of important information for the hotel --->
+			<cfset stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION']= {
+				Signature_Image : HotelInformation.Signature_Image,
+				latitude : HotelInformation.Lat,
+				longitude : HotelInformation.Long
+				} />
+
 		</cfloop>
 
-		<cfreturn stPhotos />
+		<cfset session.searches[arguments.Search_ID].stHotels = stHotels />
+
+		<cfreturn HotelInformation />
 	</cffunction>
 
 </cfcomponent>

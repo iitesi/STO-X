@@ -28,8 +28,8 @@
 		</cfif>
 
 		<cfset stHotels[nHotelCode]['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />
-		<cfset local.HotelAddress = stHotels[nHotelCode]['Property']['Address1'] />
-		<cfset HotelAddress&= Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
+		<cfset local.HotelAddress = StructKeyExists(stHotels[nHotelCode],'Property') ? stHotels[nHotelCode]['Property']['Address1'] : ''/>
+		<cfset HotelAddress&= StructKeyExists(stHotels[nHotelCode],'Property') AND Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
@@ -226,7 +226,7 @@
 		
 		<!--- Update the struct so we know we've received rates and we don't pull them again later --->
 		<cfset stHotels[nHotelCode]['RoomsReturned'] = true />
-		
+
 		<cfreturn stHotels />
 	</cffunction>	
 	
