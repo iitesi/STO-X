@@ -12,7 +12,7 @@
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
-		<cfset local.stHotels 		= HotelInformation(stHotels) /><!--- add signature_image, latitude and longitude --->
+		<cfset local.stHotels 		= HotelInformationQuery(stHotels) /><!--- add signature_image, latitude and longitude --->
 		<cfset local.stAmenities 	= getAmenities(stHotels)>
 		<cfset local.latlong 			= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
@@ -396,8 +396,8 @@
 		<cfreturn LatLong>
 	</cffunction>
 
-<!--- HotelInformation --->
-	<cffunction name="HotelInformation" access="public" output="false" returntype="struct">
+<!--- HotelInformationQuery --->
+	<cffunction name="HotelInformationQuery" access="public" output="false" returntype="struct">
 		<cfargument name="stHotels">
 		<cfargument name="Search_ID">
 		<cfargument name="stAmenities" default="#application.stAmenities#" />
@@ -411,27 +411,30 @@
 		</cfloop>
 		<cfset PropertyIDs = arrayToList(PropertyIDs) />
 
-		<cfquery name="local.HotelInformation" datasource="Book">
+		<cfquery name="local.HotelInformationQuery" datasource="Book">
 		SELECT Property_ID, Signature_Image, Lat, Long<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
 		</cfquery>
 
-		<cfloop query="HotelInformation">
+		<cfloop query="HotelInformationQuery">
 			<!--- Pull in the existing hotel information from the structure --->
-			<cfset local.stHotelInformation = arguments.stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION'] />
-			<cfset stHotelInformation['SIGNATURE_IMAGE'] = HotelInformation.Signature_Image />
-			<cfset stHotelInformation['LATITUDE'] = HotelInformation.Lat />
-			<cfset stHotelInformation['LONGITUDE'] = HotelInformation.Long />
+			<cfset local.stHotelInformation = arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] />
+			<cfset stHotelInformation['SIGNATURE_IMAGE'] = HotelInformationQuery.Signature_Image />
+			<cfset stHotelInformation['LATITUDE'] = HotelInformationQuery.Lat />
+			<cfset stHotelInformation['LONGITUDE'] = HotelInformationQuery.Long />
 			<!--- add the hotel information back into the hotel structure --->
-			<cfset arguments.stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
+			<cfset arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
 			
-			<cfset local.stHotelAmenities = stHotels[NumberFormat(HotelInformation.Property_ID,'00000')]['Amenities'] />
+			<cfset local.stHotelAmenities = stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['Amenities'] />
 			<cfloop list="#structKeyList(stHotelAmenities)#" index="local.Amenity">
 				<!--- Update query to show yes if hotel amenity is true --->
-				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformation, Amenity, 1, HotelInformation.CurrentRow) : '' />
+				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformationQuery, Amenity, 1, HotelInformationQuery.CurrentRow) : '' />
 			</cfloop>
 		</cfloop>
+
+		<!--- Add HotelInformationQuery to the session for filtering --->
+		<cfset session.HotelInformationQuery = HotelInformationQuery />
 
 		<cfreturn stHotels />
 	</cffunction>

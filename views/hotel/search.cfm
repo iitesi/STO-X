@@ -1,29 +1,4 @@
-<!--- <cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') /> --->
-
-
 <cfsetting showdebugoutput="false" />
-
-<!--- Map --->
-
-<!--- hotel : hotelstructure --->
-<!--- <cffunction name="hotelstructure" access="remote" returntype="string" output="true">
-	
-	<cfset var hotelstructure = ''>
-	<cfset var HotelImage = ''>
-	
-	<cfset hotelstructure = 'var hotelresults = new Object;'>
-	<cfoutput query="hotelresults" group="Property_ID">
-		<cfif Signature_Image NEQ ''>
-			<cfset HotelImage = Signature_Image>
-		<cfelse>
-			<cfset HotelImage = application.serverurl&'/assets/img/MissingHotel.png'>
-		</cfif>
-		<cfset hotelstructure = hotelstructure&'hotelresults[#Property_ID#] = [0,0,"#Trim(Property_Name)#",#Internet#,#Business#,#Meeting#,#Transportation#,#Breakfast#,#Restaurant#,#RoomService#,"#HotelImage#",#LowChecked#,#Policy#,#SoldOut#,#LowRate#,"#Vendor_Code#","#Hotel_CityCode#","USD",0,#Lat#,#Long#,#Traveler_Preferred#,#Preferred#,"#Trim(Address)#<br>#Trim(City)#, #Trim(State)#"];'>
-	</cfoutput>
-	
-	<cfreturn hotelstructure />
-</cffunction>
- --->
 
 <cfoutput>	
 	#View('hotel/filter')#
