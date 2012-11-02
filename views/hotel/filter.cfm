@@ -47,32 +47,39 @@ function filterhotel() {
 	//filter
 
 	<cfoutput>
+		<!---
 		<cfloop list="#StructKeyList(application.stAmenities)#" index="amenity">
 			var #amenity# = $("###amenity#:checked").val();
 		</cfloop>
+		--->
 		var hotelresults = #serializeJSON(session.HotelInformationQuery,true)#;
-		console.log(hotelresults);
+		<!---console.log(hotelresults);--->
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
 		orderedpropertyids = orderedpropertyids.split(',');	
-	</cfoutput>
-	<!---
 		var amenities = '#StructKeyList(application.stAmenities)#';
-		amenities = amenities.split(',');
-		console.log(amenities);
-		for (var i = 0; i < amenities.length; i++) {
-			var amenity = amenities[i];
-			amenity = $("#" + amenity + ":checked").val();
-			console.log(amenity);
-		}
-	--->
+	</cfoutput>
+	/*
+	amenities = amenities.split(',');
+	for (var i = 0; i < amenities.length; i++) {
+		var amenity = amenities[i];
+		//console.log(amenity);
+		//console.log($("#" + amenity + ":checked").val());
+		amenity = $("#" + amenity + ":checked").val();
+	}
+	*/
 
 	//totals
-	var propertyid = '';
-	var property = '';
-	var propertyname = '';
 	for (var t = 1; t < orderedpropertyids.length; t++) {
-		propertyid = orderedpropertyids[t];
-
+		console.log(hotelresults.COLUMNS);
+		// start the loop with 4 because property_id, signature_image, lat, long are 1-4
+		for (var i = 4; i < hotelresults.COLUMNS.length; i++) {
+			var ColumnName = hotelresults.COLUMNS[i];
+			console.log(ColumnName);
+			console.log(hotelresults.DATA[ColumnName][0]);
+		}
+		console.log('DONE');
+		throw "stop execution";
+		/*
 		propertyname = property[2];
 
 		if ((internet == true && property[3] == 0) ||
@@ -107,6 +114,7 @@ function filterhotel() {
 				pins[propertyid].setOptions({visible: false});
 			}
 		}
+		*/
 	}
 	writePages(matchcriteriacount);
 	if (matchcriteriacount != totalproperties) {
