@@ -58,15 +58,13 @@ function filterhotel() {
 		orderedpropertyids = orderedpropertyids.split(',');	
 		var amenities = '#StructKeyList(application.stAmenities)#';
 	</cfoutput>
-	/*
 	amenities = amenities.split(',');
 	for (var i = 0; i < amenities.length; i++) {
 		var amenity = amenities[i];
-		//console.log(amenity);
-		//console.log($("#" + amenity + ":checked").val());
+		console.log(amenity);
+		console.log($("#" + amenity + ":checked").val());
 		amenity = $("#" + amenity + ":checked").val();
 	}
-	*/
 
 	//totals
 	for (var t = 1; t < orderedpropertyids.length; t++) {
