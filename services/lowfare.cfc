@@ -1,124 +1,167 @@
 <cfcomponent output="false">
 	
-<!--- doLowFare --->
-	<cffunction name="doLowFare" returntype="string" output="false">
-		<cfargument name="airparse">
-		<cfargument name="nSearchID">
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
-		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
-		<cfargument name="sCabins" 		default="Y"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
-		<cfargument name="bRefundable"	default="0"><!--- Options (list or one item) - 0, 1 --->
-		<cfargument name="bThread"><!--- Skip threading if you need to troubleshoot an individual function --->
+<!---
+doLowFare
+--->
+	<cffunction name="doLowFare" output="false">
+		<cfargument name="objUAPI"		required="true">
+		<cfargument name="objAirParse"	required="true">
+		<cfargument name="nSearchID"	required="true">
+		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
+		<cfargument name="sCabins" 		required="false"	default="Y"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
+		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (list or one item) - 0, 1 --->
+		<cfargument name="bThread"		required="false"	default="1"><!--- Skip threading if you need to troubleshoot an individual function --->
 		
-		<cfset local.sCabins = Replace(Replace(Replace(arguments.sCabins, 'Economy', 'Y'), 'Business', 'C'), 'First', 'F')>
+		<cfset local.sCabins = Replace(Replace(Replace(arguments.sCabins, 'Economy', 'Y'), 'Business', 'C'), 'First', 'F')><!--- Handles the words or codes for classes. --->
 		<cfset local.aCabins = ListToArray(sCabins)>
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sJoinThread = ''>
-		<cfif NOT StructKeyExists(arguments, 'bThread')>
+		<cfset local.bUAPICall = 0>
+
+		<cfif NOT arguments.bThread>
+			<!--- Create a thread for every combination of cabin and fares. --->
 			<cfloop array="#aCabins#" index="local.sCabin">
 				<cfloop array="#aRefundable#" index="local.bRefundable">
-					<cfif NOT StructKeyExists(session.searches[nSearchID].Pricing, sCabin)
-					OR NOT StructKeyExists(session.searches[nSearchID].Pricing[sCabin], bRefundable)>
+					<!--- Don't go back to the UAPI if we already got the data. --->
+					<cfif NOT StructKeyExists(session.searches[nSearchID].stPricing, sCabin)
+					OR NOT StructKeyExists(session.searches[nSearchID].stPricing[sCabin], bRefundable)>
+						<!--- Note that STO did go out to Apollo for results. --->
+						<cfset bUAPICall = 1>
+						<!--- Remember what threads where thrown out there. --->
 						<cfset sJoinThread = (sJoinThread EQ '' ? sCabin&bRefundable : '')>
+						<!--- Kick off the thread. --->
 						<cfthread
 							action="run"
 							name="#sCabin##bRefundable#"
-							stAccount="#stAccount#"
-							stPolicy="#stPolicy#"
-							nSearchID="#nSearchID#"
-							sAPIAuth="#application.sAPIAuth#"
+							objUAPI="#arguments.objUAPI#"
+							objAirParse="#arguments.objAirParse#"
+							stAccount="#arguments.stAccount#"
+							stPolicy="#arguments.stPolicy#"
+							nSearchID="#arguments.nSearchID#"
 							sCabin="#sCabin#"
 							bRefundable="#bRefundable#"> 
-							
-							<cfset thread.stSegments = {}>
-							<cfset thread.stTrips = {}>
-							<cfset local.sMessage = prepareSoapHeader(stAccount, stPolicy, nSearchID, sCabin, bRefundable)>
-							<cfset thread.sMessage = sMessage>
-							<cfset local.sResponse = callAPI('AirService', sMessage, sAPIAuth, nSearchID)>
-							<cfset local.aResponse = formatResponse(sResponse)>
-							<cfset local.stSegmentKeys = parseSegmentKeys(aResponse)>
-							<cfset thread.stSegments = parseSegments(aResponse, stSegmentKeys)>
-							<cfset local.stTripKeys = parseTripKeys(aResponse, thread.stSegments, stSegmentKeys)>
-							<cfset local.stFares = parseFares(aResponse)>
-							<cfset thread.stTrips = parseTrips(aResponse, thread.stSegments, stSegmentKeys, stTripKeys, stFares)>
+							<!--- Define. --->
+							<cfset thread.stSegments = 	{}>
+							<cfset thread.stTrips = 	{}>
+							<!--- Put together the SOAP message. --->
+							<cfset local.sMessage = 	prepareSoapHeader(stAccount, stPolicy, nSearchID, sCabin, bRefundable)>
+							<!--- Call the UAPI. --->
+							<cfset local.sResponse = 	arguments.objUAPI.callUAPI('AirService', sMessage, nSearchID)>
+							<!--- Format the UAPI response. --->
+							<cfset local.aResponse = 	arguments.objUAPI.formatUAPIRsp(sResponse)>
+							<!--- Create unique segment keys. --->
+							<cfset local.stSegmentKeys =arguments.objAirParse.parseSegmentKeys(aResponse)>
+							<!--- Parse the segments. --->
+							<cfset thread.stSegments = 	arguments.objAirParse.parseSegments(aResponse, stSegmentKeys)>
+							<!--- Create unique trip keys. --->
+							<cfset local.stTripKeys = 	parseTripKeys(aResponse, thread.stSegments, stSegmentKeys)>
+							<!--- Parse the fares. --->
+							<cfset local.stFares = 		parseFares(aResponse)>
+							<!--- Parse the trips. --->
+							<cfset thread.stTrips = 	parseTrips(aResponse, thread.stSegments, stSegmentKeys, stTripKeys, stFares)>
+							<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
 							<cfif StructIsEmpty(thread.stTrips)>
-								<cfset thread.aResponse = aResponse>
-								<cfset thread.sMessage = sMessage>
+								<cfset thread.aResponse = 	aResponse>
+								<cfset thread.sMessage =	sMessage>
 							</cfif>
-							
-							<cfset session.searches[nSearchID].stSegments = mergeSegments(session.searches[nSearchID].stSegments, thread.stSegments)>
-							<cfset session.searches[nSearchID].stTrips = mergeTrips(session.searches[nSearchID].stTrips, thread.stTrips)>
-							<cfset session.searches[nSearchID].Pricing[sCabin][bRefundable] = 1>
+							<!--- Merge all data into the current session structures. --->
+							<cfset session.searches[nSearchID].stSegments 						= arguments.objAirParse.mergeSegments(session.searches[nSearchID].stSegments, thread.stSegments)>
+							<cfset session.searches[nSearchID].stTrips 							= mergeTrips(session.searches[nSearchID].stTrips, thread.stTrips)>
+							<cfset session.searches[nSearchID].stPricing[sCabin][bRefundable] 	= 1>
 						</cfthread>
 					</cfif>
 				</cfloop>
 			</cfloop>
 		<cfelse>
+			<!--- Default to Y and 0 since it is for development purposes.  No looping. --->
 			<cfset local.sCabin = 'Y'>
 			<cfset local.bRefundable = 0>
-			<cfset stSegments = {}>
-			<cfset stTrips = {}>
-			<cfset local.sMessage = prepareSoapHeader(stAccount, stPolicy, nSearchID, sCabin, bRefundable)>
-			<cfset sMessage = sMessage>
-			<cfset local.sResponse = callAPI('AirService', sMessage, sAPIAuth, nSearchID)>
-			<cfset local.aResponse = formatResponse(sResponse)>
-			<cfset local.stSegmentKeys = parseSegmentKeys(aResponse)>
-			<cfset stSegments = parseSegments(aResponse, stSegmentKeys)>
-			<cfset local.stTripKeys = parseTripKeys(aResponse, stSegments, stSegmentKeys)>
-			<cfset local.stFares = parseFares(aResponse)>
-			<cfset stTrips = parseTrips(aResponse, stSegments, stSegmentKeys, stTripKeys, stFares)>
-			<cfset session.searches[nSearchID].stSegments = mergeSegments(session.searches[nSearchID].stSegments, stSegments)>
-			<cfset session.searches[nSearchID].stTrips = mergeTrips(session.searches[nSearchID].stTrips, stTrips)>
-			<cfset session.searches[nSearchID].Pricing[sCabin][bRefundable] = 1>
-			<cfabort>
+			<cfif NOT StructKeyExists(session.searches[nSearchID].stPricing, sCabin)
+			OR NOT StructKeyExists(session.searches[nSearchID].stPricing[sCabin], bRefundable)>
+				<!--- Note that STO did go out to Apollo for results. --->
+				<cfset bUAPICall = 1>
+				<!--- Define. --->
+				<cfset local.stSegments = 	{}>
+				<cfset local.stTrips = 		{}>
+				<!--- Put together the SOAP message. --->
+				<cfset local.sMessage = 	prepareSoapHeader(stAccount, stPolicy, nSearchID, sCabin, bRefundable)>
+				<!--- Call the UAPI. --->
+				<cfset local.sResponse = 	arguments.objUAPI.callUAPI('AirService', sMessage, nSearchID)>
+				<!--- Format the UAPI response. --->
+				<cfset local.aResponse = 	arguments.objUAPI.formatUAPIRsp(sResponse)>
+				<!--- Create unique segment keys. --->
+				<cfset local.stSegmentKeys =arguments.objAirParse.parseSegmentKeys(aResponse)>
+				<!--- Parse the segments. --->
+				<cfset stSegments = 		arguments.objAirParse.parseSegments(aResponse, stSegmentKeys)>
+				<!--- Create unique trip keys. --->
+				<cfset local.stTripKeys = 	parseTripKeys(aResponse, stSegments, stSegmentKeys)>
+				<!--- Parse the fares. --->
+				<cfset local.stFares = 		parseFares(aResponse)>
+				<!--- Parse the trips. --->
+				<cfset stTrips = 			parseTrips(aResponse, stSegments, stSegmentKeys, stTripKeys, stFares)>
+				<!--- Merge all data into the current session structures. --->
+				<cfset session.searches[nSearchID].stSegments 						= arguments.objAirParse.mergeSegments(session.searches[nSearchID].stSegments, stSegments)>
+				<cfset session.searches[nSearchID].stTrips 							= mergeTrips(session.searches[nSearchID].stTrips, stTrips)>
+				<cfset session.searches[nSearchID].stPricing[sCabin][bRefundable] 	= 1>
+			</cfif>
 		</cfif>
 		
+		<!--- Join only if threads where thrown out. --->
 		<cfif sJoinThread NEQ ''>
 			<cfthread action="join" name="#sJoinThread#" />
 			<cfif StructKeyExists(cfthread[sJoinThread], 'Error')>
 				<cfdump eval=cfthread[sJoinThread] abort>
 			</cfif>
-			<!---<cfdump eval=cfthread[sJoinThread] abort>--->
 		</cfif>
-		<cfif NOT StructIsEmpty(session.searches[nSearchID].stTrips)>
-			<cfset local.stTrips = addTripLowFare(session.searches[nSearchID].stTrips)>
-			<cfset stTrips = addPreferred(stTrips, stAccount)>
-			<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>
-			<cfset session.searches[nSearchID].stCarriers = getCarriers(session.searches[nSearchID].stTrips)>
-			<cfset session.searches[nSearchID].stSortFare = sortTrips(session.searches[nSearchID].stTrips, 'LowFare')>
-			<cfset session.searches[nSearchID].stSortDepart = sortTrips(session.searches[nSearchID].stTrips, 'Depart')>
-			<cfset session.searches[nSearchID].stSortArrival = sortTrips(session.searches[nSearchID].stTrips, 'Arrival')>
-			<cfset session.searches[nSearchID].stSortDuration = sortTrips(session.searches[nSearchID].stTrips, 'Duration')>
-			<cfset session.searches[nSearchID].stSortBag = sortTrips(session.searches[nSearchID].stTrips, 'LowFareBag')>
-			<cfset session.searches[nSearchID].stTrips = checkPolicy(session.searches[nSearchID].stTrips, nSearchID, stPolicy, stAccount, session.searches[nSearchID].stSortFare[1])>
+
+		<!--- Configure/reconfigure session variables with newly added trips. --->
+		<cfif bUAPICall AND NOT StructIsEmpty(session.searches[nSearchID].stTrips)>
+			<!--- Check low fare. --->
+			<cfset local.stTrips 								= addTripLowFare(session.searches[nSearchID].stTrips)>
+			<!--- Mark preferred carriers. --->
+			<cfset stTrips 										= addPreferred(stTrips, stAccount)>
+			<!--- Create javascript structure per trip. --->
+			<cfset stTrips 										= addJavascript(stTrips)>
+			<!--- Get list of all carriers returned. --->
+			<cfset session.searches[nSearchID].stCarriers 		= getCarriers(stTrips)>
+			<!--- Sort the results in different mannors. --->
+			<cfset session.searches[nSearchID].stSortFare 		= arguments.objUAPI.sortStructure(stTrips, 'LowFare')>
+			<cfset session.searches[nSearchID].stSortDepart 	= arguments.objUAPI.sortStructure(stTrips, 'Depart')>
+			<cfset session.searches[nSearchID].stSortArrival 	= arguments.objUAPI.sortStructure(stTrips, 'Arrival')>
+			<cfset session.searches[nSearchID].stSortDuration 	= arguments.objUAPI.sortStructure(stTrips, 'Duration')>
+			<cfset session.searches[nSearchID].stSortBag 		= arguments.objUAPI.sortStructure(stTrips, 'LowFareBag')>
+			<!--- Run policy on all the results --->
+			<cfset session.searches[nSearchID].stTrips 			= arguments.objAirParse.checkPolicy(stTrips, nSearchID, session.searches[nSearchID].stSortFare[1])>
 		</cfif>
-		
+
 		<cfreturn >
 	</cffunction>
 
-<!--- prepareSOAPHeader --->
+<!---
+prepareSOAPHeader
+--->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="sCabins" 		required="false"	default="Y"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
-		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (list or one item) - 0, 1 --->
+		<cfargument name="sCabins" 		required="true"><!--- Options (one item) - Economy, Y, Business, C, First, F (this is coded for a list but none of the calls actually send a list) --->
+		<cfargument name="bRefundable"	required="true"><!--- Options (one item) - 0, 1 (this is coded for a list but none of the calls actually send a list) --->
 		
-		<cfquery name="local.getsearch" datasource="book">
+		<cfquery name="local.qSearch">
 		SELECT Air_Type, Airlines, International, Depart_City, Depart_DateTime, Depart_TimeType, Arrival_City, Arrival_DateTime, Arrival_TimeType, ClassOfService
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
-		<cfif getsearch.Air_Type EQ 'MD'>
-			<cfquery name="local.getsearchlegs" datasource="book">
+		<cfif qSearch.Air_Type EQ 'MD'>
+			<cfquery name="local.qSearchLegs">
 			SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
 			FROM Searches_Legs
 			WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
 		</cfif>
 		
-		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
+		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabins)>
 		
 		<cfsavecontent variable="local.sMessage">
@@ -130,12 +173,12 @@
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<air:SearchAirLeg>
 								<air:SearchOrigin>
-									<com:Airport Code="#getsearch.Depart_City#" />
+									<com:Airport Code="#qSearch.Depart_City#" />
 								</air:SearchOrigin>
 								<air:SearchDestination>
-									<com:Airport Code="#getsearch.Arrival_City#" />
+									<com:Airport Code="#qSearch.Arrival_City#" />
 								</air:SearchDestination>
-								<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#" />
+								<air:SearchDepTime PreferredTime="#DateFormat(qSearch.Depart_DateTime, 'yyyy-mm-dd')#" />
 								<air:AirLegModifiers>
 									<air:PermittedCabins>
 										<cfloop array="#aCabins#" index="local.sCabin">
@@ -144,15 +187,15 @@
 									</air:PermittedCabins>
 								</air:AirLegModifiers>
 							</air:SearchAirLeg>
-							<cfif getsearch.Air_Type EQ 'RT'>
+							<cfif qSearch.Air_Type EQ 'RT'>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
-										<com:Airport Code="#getsearch.Arrival_City#" />
+										<com:Airport Code="#qSearch.Arrival_City#" />
 									</air:SearchOrigin>
 									<air:SearchDestination>
-										<com:Airport Code="#getsearch.Depart_City#" />
+										<com:Airport Code="#qSearch.Depart_City#" />
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#" />
+									<air:SearchDepTime PreferredTime="#DateFormat(qSearch.Arrival_DateTime, 'yyyy-mm-dd')#" />
 									<air:AirLegModifiers>
 										<air:PermittedCabins>
 											<cfloop array="#aCabins#" index="local.sCabin">
@@ -161,16 +204,16 @@
 										</air:PermittedCabins>
 									</air:AirLegModifiers>
 								</air:SearchAirLeg>
-							<cfelseif getsearch.Air_Type EQ 'MD'>
-								<cfloop query="getsearchlegs">
+							<cfelseif qSearch.Air_Type EQ 'MD'>
+								<cfloop query="qSearchLegs">
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
-											<com:Airport Code="#getsearchlegs.Depart_City#" />
+											<com:Airport Code="#qSearchLegs.Depart_City#" />
 										</air:SearchOrigin>
 										<air:SearchDestination>
-											<com:Airport Code="#getsearchlegs.Arrival_City#" />
+											<com:Airport Code="#qSearchLegs.Arrival_City#" />
 										</air:SearchDestination>
-										<air:SearchDepTime PreferredTime="#DateFormat(getsearchlegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+										<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
 										<air:AirLegModifiers>
 											<air:PermittedCabins>
 												<cfloop array="#aCabins#" index="local.sCabin">
@@ -190,7 +233,7 @@
 								</air:ProhibitedCarriers>
 							</air:AirSearchModifiers>
 							<com:SearchPassenger Code="ADT" />
-							<air:AirPricingModifiers ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
+							<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								<cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
@@ -209,116 +252,45 @@
 		<cfreturn sMessage/>
 	</cffunction>
 	
-<!--- callAPI --->
-	<cffunction name="callAPI" returntype="string" output="true">
-		<cfargument name="sService"		required="true">
-		<cfargument name="sMessage"		required="true">
-		<cfargument name="sAPIAuth"		required="true">
-		<cfargument name="nSearchID"	required="true">
-		
-		<cfset local.bSessionStorage = 0>
-		
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
-				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
-				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
-				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
-				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
-				<cfhttpparam type="header" name="Pragma" value="no-cache" />
-				<cfhttpparam type="header" name="SOAPAction" value="" />
-				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
-			</cfhttp>
-			<cfif bSessionStorage>
-				<cfset session.searches[nSearchID].sFileContent = cfhttp.filecontent>
-			</cfif>
-		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID].sFileContent>
-		</cfif>
-		
-		<cfreturn cfhttp.filecontent />
-	</cffunction>
-	
-<!--- formatResponse --->
-	<cffunction name="formatResponse" returntype="array" output="false">
+<!---
+parseFares - fare
+--->
+	<cffunction name="parseFares" output="false">
 		<cfargument name="stResponse"	required="true">
 		
-		<cfset local.stResponse = XMLParse(arguments.stResponse)>
-		
-		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
-	</cffunction>
-	
-<!--- parseSegmentKeys --->
-	<cffunction name="parseSegmentKeys" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stSegmentKeys = {}>
-		<cfset local.sIndex = ''>
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset sIndex = ''>
-					<cfloop array="#aSegmentKeys#" index="local.sCol">
-						<cfset sIndex &= stAirSegment.XMLAttributes[sCol]>
-					</cfloop>
-					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	HashNumeric(sIndex),
-						Index		: 	sIndex
+		<cfset local.stFares = {}>
+		<cfloop array="#arguments.stResponse#" index="local.stFareInfoList">
+			<cfif stFareInfoList.XMLName EQ 'air:FareInfoList'>
+				<cfloop array="#stFareInfoList.XMLChildren#" index="local.stFareInfo">
+					<cfset stFares[stFareInfo.XMLAttributes.Key] = {
+						PrivateFare			: (StructKeyExists(stFareInfo.XMLAttributes, 'PrivateFare') ? stFareInfo.XMLAttributes.PrivateFare EQ 'true' : false),
+						NegotiatedFare		: stFareInfo.XMLAttributes.NegotiatedFare EQ 'true'
 					}>
 				</cfloop>
 			</cfif>
 		</cfloop>
 			
-		<cfreturn stSegmentKeys />
-	</cffunction>
-	
-<!--- parseSegments --->
-	<cffunction name="parseSegments" output="false">
-		<cfargument name="stResponse"	required="true">
-		<cfargument name="stSegmentKeys"required="true">
-		
-		<cfset local.stSegments = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.sAPIKey = stAirSegment.XMLAttributes.Key>
-					<cfset stSegments[arguments.stSegmentKeys[sAPIKey].HashIndex] = {
-						ArrivalTime			: ParseDateTime(stAirSegment.XMLAttributes.ArrivalTime),
-						Carrier 			: stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(stAirSegment.XMLAttributes.DepartureTime),
-						Destination			: stAirSegment.XMLAttributes.Destination,
-						Equipment			: stAirSegment.XMLAttributes.Equipment,
-						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
-						Group				: stAirSegment.XMLAttributes.Group,
-						Origin				: stAirSegment.XMLAttributes.Origin,
-						TravelTime			: stAirSegment.XMLAttributes.TravelTime
-					}>
-					<!---<cfloop array="#stAirSegment.XMLChildren#" index="local.stCodeshareInfo">
-						<cfif stCodeshareInfo.XMLName EQ 'air:CodeshareInfo'>
-							<cfset stSegments[arguments.stSegmentKeys[sAPIKey].HashIndex].OperatingCarrier = stCodeshareInfo.XMLAttributes.OperatingCarrier>
-						</cfif>
-					</cfloop>--->
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn stSegments />
+		<cfreturn stFares />
 	</cffunction>
 
-<!--- lowfare : parseTripKeys --->
+<!---
+parseTripKeys - fare
+--->
 	<cffunction name="parseTripKeys" output="false">
 		<cfargument name="stResponse"	required="true">
 		<cfargument name="stSegments"	required="true">
 		<cfargument name="stSegmentKeys"required="true">
 		
 		<cfset local.stTripKeys = {}>
+		<cfset local.sIndex = ''>
+		<!--- Create list of fields that make up a distint segment. --->
 		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
+		<!--- Loop through results. --->
 		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
 			<cfif stAirPricingSolution.XMLName EQ 'air:AirPricingSolution'>
 				<cfset local.sTripKey = stAirPricingSolution.XMLAttributes.Key>
-				<cfset local.sIndex = ''>
+				<!--- Build up the distinct segment string. --->
+				<cfset sIndex = ''>
 				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.stAirSegmentRef">
 					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
 						<cfloop array="#aSegmentKeys#" index="local.stSegment">
@@ -326,6 +298,7 @@
 						</cfloop>
 					</cfif>
 				</cfloop>
+				<!--- Create a look up structure for the primary key. --->
 				<cfset stTripKeys[sTripKey] = {
 					HashIndex	: 	HashNumeric(sIndex)
 				}>
@@ -335,26 +308,9 @@
 		<cfreturn stTripKeys />
 	</cffunction>
 	
-<!--- lowfare : parseFares --->
-	<cffunction name="parseFares" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stFares = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stFareInfoList">
-			<cfif stFareInfoList.XMLName EQ 'air:FareInfoList'>
-				<cfloop array="#stFareInfoList.XMLChildren#" index="local.stFareInfo">
-					<cfset stFares[stFareInfo.XMLAttributes.Key] = {
-						PrivateFare			: stFareInfo.XMLAttributes.PrivateFare EQ 'true',
-						NegotiatedFare		: stFareInfo.XMLAttributes.NegotiatedFare EQ 'true'
-					}>
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn stFares />
-	</cffunction>
-	
-<!--- lowfare : parseTrips --->
+<!---
+parseTrips - fare
+--->
 	<cffunction name="parseTrips" output="false">
 		<cfargument name="stResponse"	required="true">
 		<cfargument name="stSegments"	required="true">
@@ -461,7 +417,7 @@
 						<cfif StructKeyExists(stTrips, sTripKey)
 						AND StructKeyExists(stTrips[sTripKey], sOverallClass)
 						AND StructKeyExists(stTrips[sTripKey][sOverallClass], bRefundable)
-						AND StructKeyExists(stTrips[sTripKey][sOverallClass][bRefundable], TotalPrice)>
+						AND StructKeyExists(stTrips[sTripKey][sOverallClass][bRefundable], 'TotalPrice')>
 							<cfset nTotal = stTrips[sTripKey][sOverallClass][bRefundable].Total>
 						</cfif>
 						<cfif nTotal GT Mid(stAirPricingNode.XMLAttributes.TotalPrice, 4)>
@@ -493,16 +449,10 @@
 		
 		<cfreturn  stTrips/>
 	</cffunction>
-	
-<!--- lowfare : sortTrips --->
-	<cffunction name="sortTrips" returntype="array" output="false">
-		<cfargument name="stTrips" 	required="true">
-		<cfargument name="sField" 	required="true">
-				
-		<cfreturn StructSort(arguments.stTrips, 'numeric', 'asc', arguments.sField )/>
-	</cffunction>
-	
-<!--- lowfare : addTripLowFare --->
+
+<!---
+addTripLowFare
+--->
 	<cffunction name="addTripLowFare" output="false">
 		<cfargument name="stTrips" 	required="true">
 		
@@ -522,11 +472,59 @@
 		
 		<cfreturn stTrips/>
 	</cffunction>
-	
-<!--- addPreferred --->
-	<cffunction name="addPreferred" output="false">
+
+<!---
+mergeTrips
+--->
+	<cffunction name="mergeTrips" output="false">
+		<cfargument name="stTrips1" 	required="true">
+		<cfargument name="stTrips2" 	required="true">
+		
+		<cfset local.stTrips = arguments.stTrips1>
+		<cfif IsStruct(stTrips) AND IsStruct(arguments.stTrips2)>
+			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
+				<cfif StructKeyExists(stTrips, sTripKey)>
+					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
+						<cfset stTrips[sTripKey][sFareKey] = arguments.stTrips2[sTripKey][sFareKey]>
+					</cfloop>
+				<cfelse>
+					<cfset stTrips[sTripKey] = arguments.stTrips2[sTripKey]>
+				</cfif>
+			</cfloop>
+		<cfelseif IsStruct(arguments.stTrips2)>
+			<cfset stTrips = arguments.stTrips2>
+		</cfif>
+		<cfif NOT IsStruct(stTrips)>
+			<cfset stTrips = {}>
+		</cfif>
+		
+		<cfreturn stTrips/>
+	</cffunction>
+
+<!---
+getCarriers
+--->
+	<cffunction name="getCarriers" output="false">
 		<cfargument name="stTrips">
-		<cfargument name="stAccount">
+		
+		<cfset local.stCarriers = []>
+		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
+			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
+				<cfif NOT ArrayFind(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
+					<cfset ArrayAppend(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
+				</cfif>
+			</cfloop>
+		</cfloop>
+		
+		<cfreturn stCarriers/>
+	</cffunction>
+
+<!---
+addPreferred
+--->
+	<cffunction name="addPreferred" output="false">
+		<cfargument name="stTrips"		required="true">
+		<cfargument name="stAccount" 	required="true">
 		
 		<cfset local.stTrips = arguments.stTrips>
 		<cfloop collection="#stTrips#" item="local.sTrip">
@@ -541,7 +539,9 @@
 		<cfreturn stTrips/>
 	</cffunction>
 	
-<!--- lowfare : addJavascript --->
+<!---
+addJavascript
+--->
 	<cffunction name="addJavascript" output="false">
 		<cfargument name="stTrips" 	required="true">
 		
@@ -573,201 +573,5 @@
 		
 		<cfreturn stTrips/>
 	</cffunction>
-	
-<!--- lowfare : mergeSegments --->
-	<cffunction name="mergeSegments" output="false">
-		<cfargument name="stSegments1" 	required="true">
-		<cfargument name="stSegments2" 	required="true">
-		
-		<cfset local.stSegments = arguments.stSegments1>
-		<cfif IsStruct(stSegments) AND IsStruct(arguments.stSegments2)>
-			<cfloop collection="#arguments.stSegments2#" item="local.sSegmentKey">
-				<cfif NOT StructKeyExists(stSegments, sSegmentKey)>
-					<cfset stSegments[sSegmentKey] = arguments.stSegments2[sSegmentKey]>	
-				</cfif>
-			</cfloop>
-		<cfelse>
-			<cfset stSegments = arguments.stSegments2>
-		</cfif>
-		<cfif NOT IsStruct(stSegments)>
-			<cfset stSegments = {}>
-		</cfif>
-		
-		<cfreturn stSegments/>
-	</cffunction>
 
-<!--- lowfare : mergeTrips --->
-	<cffunction name="mergeTrips" output="false">
-		<cfargument name="stTrips1" 	required="true">
-		<cfargument name="stTrips2" 	required="true">
-		
-		<cfset local.stTrips = arguments.stTrips1>
-		<cfif IsStruct(stTrips) AND IsStruct(arguments.stTrips2)>
-			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
-				<cfif StructKeyExists(stTrips, sTripKey)>
-					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
-						<cfset stTrips[sTripKey][sFareKey] = arguments.stTrips2[sTripKey][sFareKey]>
-					</cfloop>
-				<cfelse>
-					<cfset stTrips[sTripKey] = arguments.stTrips2[sTripKey]>
-				</cfif>
-			</cfloop>
-		<cfelseif IsStruct(arguments.stTrips2)>
-			<cfset stTrips = arguments.stTrips2>
-		</cfif>
-		<cfif NOT IsStruct(stTrips)>
-			<cfset stTrips = {}>
-		</cfif>
-		
-		<cfreturn stTrips/>
-	</cffunction>
-
-<!--- getCarriers --->
-	<cffunction name="getCarriers" output="false">
-		<cfargument name="stTrips">
-		
-		<cfset local.stCarriers = []>
-		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
-			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
-				<cfif NOT ArrayFind(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
-					<cfset ArrayAppend(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
-				</cfif>
-			</cfloop>
-		</cfloop>
-		
-		<cfreturn stCarriers/>
-	</cffunction>
-	
-<!--- checkPolicy --->
-	<cffunction name="checkPolicy" output="true">
-		<cfargument name="stTrips">
-		<cfargument name="nSearchID">
-		<cfargument name="stPolicy">
-		<cfargument name="stAccount">
-		<cfargument name="nLowFareTripKey">
-		
-		<cfset local.stTrips = arguments.stTrips>
-		<cfset local.aPolicy = {}>
-		<cfset local.bActive = 1>
-		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyAir) GT 0 ? 1 : 0)>
-		<cfset local.aCOS = ["Y","C","F"]>
-		<cfset local.aFares = ["0","1"]>
-		<cfset local.cnt = 0>
-		<cfif arguments.stPolicy.Policy_AirLowRule EQ 1
-		AND IsNumeric(arguments.stPolicy.Policy_AirLowPad)>
-			<cfset local.nLowFare = stTrips[arguments.nLowFareTripKey].Y[0].Total+arguments.stPolicy.Policy_AirLowPad>
-		</cfif>
-		
-		<cfloop collection="#stTrips#" item="local.sTripKey">
-			<cfloop array="#aCOS#" index="local.sCOS">
-				<cfloop array="#aFares#" index="local.bRef">
-					<cfif StructKeyExists(stTrips[sTripKey], sCOS)
-					AND StructKeyExists(stTrips[sTripKey][sCOS], bRef)>
-						<cfset stFare = stTrips[sTripKey][sCOS][bRef]>
-						<cfset aPolicy = []>
-						<cfset bActive = 1>
-						
-						<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
-						<cfif arguments.stPolicy.Policy_AirLowRule EQ 1
-						AND IsNumeric(arguments.stPolicy.Policy_AirLowPad)
-						AND stFare.Total GT nLowFare>
-							<cfset ArrayAppend(aPolicy, 'Not the lowest fare')>
-							<cfif arguments.stPolicy.Policy_AirLowDisp EQ 1>
-								<cfset bActive = 0>
-							</cfif>
-						</cfif>
-						<!--- Out of policy if the total fare is over the maximum allowed fare. --->
-						<cfif arguments.stPolicy.Policy_AirMaxRule EQ 1
-						AND IsNumeric(arguments.stPolicy.Policy_AirMaxTotal)
-						AND stFare.Total GT arguments.stPolicy.Policy_AirMaxTotal>
-							<cfset ArrayAppend(aPolicy, 'Fare greater than #DollarFormat(arguments.stPolicy.Policy_AirMaxTotal)#')>
-							<cfif arguments.stPolicy.Policy_AirMaxDisp EQ 1>
-								<cfset bActive = 0>
-							</cfif>
-						</cfif>
-						<!--- Don't display when non refundable --->
-						<cfif arguments.stPolicy.Policy_AirRefRule EQ 1
-						AND arguments.stPolicy.Policy_AirRefDisp EQ 1
-						AND stFare.bRef EQ 0>
-							<cfset ArrayAppend(aPolicy, 'Hide non refundable fares')>
-							<cfset bActive = 0>
-						</cfif>
-						<!--- Don't display when refundable --->
-						<cfif arguments.stPolicy.Policy_AirNonRefRule EQ 1
-						AND arguments.stPolicy.Policy_AirNonRefDisp EQ 1
-						AND stFare.bRef EQ 1>
-							<cfset ArrayAppend(aPolicy, 'Hide refundable fares')>
-							<cfset bActive = 0>
-						</cfif>
-						<!--- Out of policy if they cannot book non preferred carriers. --->
-						<cfif arguments.stPolicy.Policy_AirPrefRule EQ 1
-						AND stTrips[sTripKey].Preferred EQ 0>
-							<cfset ArrayAppend(aPolicy, 'Not a preferred carrier')>
-							<cfif arguments.stPolicy.Policy_AirPrefDisp EQ 1>
-								<cfset bActive = 0>
-							</cfif>
-						</cfif>
-						<!--- Remove first refundable fares --->
-						<cfif sCOS EQ 'F'
-						AND bRef EQ 1>
-							<cfset ArrayAppend(aPolicy, 'Hide UP fares')>
-							<cfset bActive = 0>
-						</cfif>
-						<!--- Out of policy if the carrier is blacklisted (still shows though).  --->
-						<cfif bBlacklisted
-						AND ArrayFindNoCase(arguments.stAccount.aNonPolicyAir, 'aa
-							
-							
-							
-							
-							
-							')>
-							<cfset ArrayAppend(aPolicy, 'Out of policy carrier')>
-						</cfif>
-						<cfif bActive EQ 1>
-							<cfset stTrips[sTripKey][sCOS][bRef].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
-							<cfset stTrips[sTripKey][sCOS][bRef].aPolicies = aPolicy>
-						<cfelse>
-							<cfset temp = StructDelete(stTrips[sTripKey][sCOS], bRef)>
-						</cfif>
-					</cfif>
-				</cfloop>
-			</cfloop>
-		</cfloop>
-		
-		<cfset local.bAllInactive = 0>
-		<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
-		<cfif arguments.stPolicy.Policy_AirAdvRule EQ 1
-		AND DateDiff('d', session.searches[arguments.nSearchID].Depart_DateTime, Now()) GT arguments.stPolicy.Policy_AirAdv>
-			<cfset bAllInactive = 1>
-			<cfif arguments.stPolicy.Policy_AirAdvDisp EQ 1>
-				<cfset stTrips = {}>
-			</cfif>
-			
-		</cfif>
-		
-		<!--- Departure time is too close to current time.
-		UPDATE Air_Trips
-		SET Active = <cfqueryparam value="0" cfsqltype="cf_sql_numeric" />,
-		Policy = <cfqueryparam value="0" cfsqltype="cf_sql_numeric" />
-		WHERE Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_numeric" />
-		AND Outbound_Depart <= #CreateODBCDateTime(DateAdd('h', 2, Now()))#
-		
-		UPDATE Air_Trips
-		SET Policy = <cfqueryparam value="0" cfsqltype="cf_sql_integer">,
-		Policy_Text = IsNull(Policy_Text, '')+'Out of policy carrier'
-		FROM Air_Segments
-		WHERE Air_Trips.Air_ID = Air_Segments.Air_ID
-		AND Air_Trips.Air_Type = Air_Segments.Air_Type
-		AND Air_Trips.Search_ID = Air_Segments.Search_ID
-		AND Air_Trips.Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
-		AND Carrier IN (SELECT Vendor_ID
-						FROM OutofPolicy_Vendors
-						WHERE Acct_ID = <cfqueryparam value="#search.Acct_ID#" cfsqltype="cf_sql_integer">
-						AND Type = 'A')
-		</cfquery> --->
-		
-		<cfreturn stTrips/>
-	</cffunction>
-	
 </cfcomponent>

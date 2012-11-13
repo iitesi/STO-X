@@ -52,7 +52,7 @@
 			
 			<cfset local.tab['Search_ID'] = arguments.Search_ID>
 			<cfset tab.Air = getsearch.Air>
-			<cfset tab.Pricing = {}>
+			<cfset tab.stPricing = {}>
 			<cfset tab.Car = getsearch.Car>
 			<cfset tab.Hotel = getsearch.Hotel>
 			<cfset tab.Policy_ID = getsearch.Policy_ID>

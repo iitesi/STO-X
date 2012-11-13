@@ -1,11 +1,11 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking'>
+	<cfset this.name = 'booking21'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
 	<cfset this.applicationManagement = true>
-	<cfset this.defaultdatasource = "booking">
+	<cfset this.defaultdatasource = "book">
 	
 	<cfset variables.framework = {
 		action = 'action',
@@ -29,7 +29,7 @@
 		preserveKeyURLKey = 'fw1pk',
 		maxNumContextsPreserved = 10,
 		cacheFileExists = false,
-		applicationKey = 'org.corfield.framework'
+		applicationKey = 'fw'
 	}>
 	
 	<cffunction name="setupApplication">

@@ -1,3 +1,4 @@
+
 function toggleDiv(div) {
 	$( "#" + div ).toggle( 'fade' );
 }
@@ -259,3 +260,14 @@ function changeLatLongCenter(e) {
 	}
 	return false;
 }
+$(document).ready(function() {
+	$("#overlay").jqm({
+		modal: true,
+		ajax: "@href",
+		overlayClass: "overlayBackground",
+		trigger: "a.overlayTrigger",
+		closeClass: "overlayClose",
+		target: "#overlayContent",
+		overlay:75
+	});
+});

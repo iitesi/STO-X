@@ -1,83 +1,96 @@
 <cfcomponent>
 
-	<cfset variables.fw = "">
-	<cffunction name="init" output="false" returntype="any">
+<!---
+init
+--->
+	<cfset variables.fw = ''>
+	<cffunction name="init" output="false">
 		<cfargument name="fw">
+
 		<cfset variables.fw = arguments.fw>
+
 		<cfreturn this>
 	</cffunction>
 	
-<!--- lowfare --->
+<!---
+before - do this before any air calls
+--->
+	<cffunction name="before" output="false">
+		<cfargument name="rc">
+
+		<cfif NOT StructKeyExists(session.searches, rc.Search_ID)>
+			<cfset variables.fw.redirect('main?Search_ID=#rc.Search_ID#')>
+		</cfif>
+		<!--- Clear out results if it needs to be reloaded. --->
+		<cfif StructKeyExists(rc, 'bReloadAir')>
+			<cfset session.searches[rc.Search_ID].stTrips = {}>
+			<cfset session.searches[rc.Search_ID].stSegments = {}>
+			<cfset session.searches[rc.Search_ID].stPricing = {}>
+			<cfset session.searches[rc.Search_ID].stSortArrival = []>
+			<cfset session.searches[rc.Search_ID].stSortBag = []>
+			<cfset session.searches[rc.Search_ID].stSortDepart = []>
+			<cfset session.searches[rc.Search_ID].stSortDuration = []>
+			<cfset session.searches[rc.Search_ID].stSortFare = []>
+			<cfset session.searches[rc.Search_ID].stCarriers = []>
+			<cfset session.searches[rc.Search_ID].stAvailability = {}>
+		</cfif>
+		<cfset rc.nSearchID = rc.Search_ID>
+		
+		<cfreturn />
+	</cffunction>	
+
+<!---
+lowfare
+--->
 	<cffunction name="lowfare" output="false">
 		<cfargument name="rc">
-		
-		<cfset rc.nStart = getTickCount()>
-		<cfset rc.nSearchID = url.Search_ID>
-		<cfset rc.stAccount = application.stAccounts[session.Acct_ID]>
-		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
-			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#')>
-		</cfif>
-		<cfset rc.stPolicy = application.stPolicies[session.searches[url.Search_ID].Policy_ID]>
-		<cfif StructKeyExists(rc, 'bReloadAir')>
-			<cfset session.searches[rc.nSearchID].Pricing = {}>
-			<cfset session.searches[rc.nSearchID].stTrips = {}>
-			<cfset session.searches[rc.nSearchID].stSegments = {}>
-		</cfif>
+
+		<!--- init objects --->
+		<cfset variables.fw.service('uapi.init', 'objUAPI')>
+		<cfset variables.fw.service('airparse.init', 'objAirParse')>
+		<!--- Do the search. --->
 		<cfset variables.fw.service('lowfare.doLowFare', 'void')>
 				
 		<cfreturn />
 	</cffunction>
 	
-	<cffunction name="endlowfare" output="false">
+<!---
+availability
+--->
+	<cffunction name="availability" output="true">
 		<cfargument name="rc">
 		
-		<cfset rc.nTimer = (getTickCount()-rc.nStart)>
-		
-		<cfreturn />
-	</cffunction>
-
-<!--- price --->
-	<cffunction name="price" output="false">
-		<cfargument name="rc">
-		<!--- Not used in production.  Just a wrapper to test the ajax call for pricing one itinerary. --->
-		
-		<cfset rc.nStart = getTickCount()>
-		<cfset rc.Search_ID = url.nSearchID>
-		<cfset variables.fw.service('airprice.doAirPriceTesting', 'void')>
-				
-		<cfreturn />
-	</cffunction>
-	<cffunction name="endairprice" output="false">
-		<cfargument name="rc">
-		
-		<cfset rc.nTimer = (getTickCount()-rc.nStart)>
-		
-		<cfreturn />
-	</cffunction>
-	
-<!--- availability --->
-	<cffunction name="availability" access="public" output="true">
-		<cfargument name="rc">
-		
-		<cfset rc.nStart = getTickCount()>
-		<cfset rc.nSearchID = url.Search_ID>
+		<!--- Move needed variables into the rc scope. --->
 		<cfset rc.nGroup = url.Group>
-		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
-			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#')>
-		</cfif>
-		<cfif StructKeyExists(rc, 'bReloadAir')>
-			<cfset session.searches[rc.nSearchID].stAvailability = {}>
-		</cfif>
-		<cfset variables.fw.service('airparse.init', 'airparse')>
+		<!--- init objects --->
+		<cfset variables.fw.service('uapi.init', 'objUAPI')>
+		<cfset variables.fw.service('airparse.init', 'objAirParse')>
+		<!--- Do the search. --->
 		<cfset variables.fw.service('airavailability.doAirAvailability', 'void')>
 		
 		<cfreturn />
 	</cffunction>
-	<cffunction name="endavailability" output="false">
+
+<!---
+price
+--->
+	<cffunction name="price" output="false">
 		<cfargument name="rc">
+		<!--- Not used in production.  Just a wrapper to test the ajax call for pricing one itinerary. --->
 		
-		<cfset rc.nTimer = (getTickCount()-rc.nStart)>
+		<cfset rc.Search_ID = rc.nSearchID>
+		<cfset variables.fw.service('airprice.doAirPriceTesting', 'void')>
 		
+		<cfreturn />
+	</cffunction>
+
+<!---
+details
+--->
+	<cffunction name="details" output="false">
+		<cfargument name="rc">
+		<!--- No logic needed here. --->
+
 		<cfreturn />
 	</cffunction>
 	

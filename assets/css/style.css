@@ -1,6 +1,42 @@
+.overlayWrapper {
+	display: none;
+	position: fixed;
+	margin-left: auto;
+	margin-right: auto;
+	min-width: 300px;
+	background-color: #FFF;
+	color: #333;
+	border:2px solid #ccc;
+	padding: 12px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	-moz-box-shadow: 0 0 50px #ccc;
+	-webkit-box-shadow: 0 0 50px #ccc;
+}
+.overlayBackground {
+	background-color: #000;
+}
+* html .overlayWrapper {
+	position: absolute;
+	top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(17 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+
+.roundall {
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
 .left {
 	position:relative;
 	float:left;
+}
+.textButton {
+	border:0px;
+	background:transparent;
+	color: #2E76CF;
+	text-transform: uppercase;
+	font-size: 9px;
+	font-weight: bold;
+
 }
 body {
 	color: #222222;

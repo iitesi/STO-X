@@ -3,14 +3,13 @@
 <!--- doLocations --->
 	<cffunction name="doLocations" output="false">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="sAPIAuth" 	required="true">
 		
 		<cfset local.stAccount = application.stAccounts[session.Acct_ID]>
 		<cfset local.stDates = getDates(nSearchID)>
 		<cfset local.sLatLong = getAirportLatLong(nSearchID)>
 		<cfset local.sMessage = prepareSoapHeader(nSearchID, stDates, stAccount)>
-		<cfset local.sResponse = callAPI('VehicleService', sMessage, sAPIAuth, nSearchID)>
-		<cfset local.aResponse = formatResponse(sResponse)>
+		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
 		<cfset local.stLocations = parseLocations(aResponse)>
 		<cfset stLocations = getLatLong(stLocations)>
 		<cfset stLocations.Center = sLatLong>
@@ -96,44 +95,6 @@
 		</cfsavecontent>
 		
 		<cfreturn sMessage/>
-	</cffunction>
-	
-<!--- callAPI --->
-	<cffunction name="callAPI" output="true">
-		<cfargument name="sService"		required="true">
-		<cfargument name="sMessage"		required="true">
-		<cfargument name="sAPIAuth"		required="true">
-		<cfargument name="nSearchID"	required="true">
-		
-		<cfset local.bSessionStorage = 0>
-		
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
-				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
-				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
-				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
-				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
-				<cfhttpparam type="header" name="Pragma" value="no-cache" />
-				<cfhttpparam type="header" name="SOAPAction" value="" />
-				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
-			</cfhttp>
-			<cfif bSessionStorage>
-				<cfset session.searches[nSearchID].sFileContent = cfhttp.filecontent>
-			</cfif>
-		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID].sFileContent>
-		</cfif>
-		
-		<cfreturn cfhttp.filecontent />
-	</cffunction>
-	
-<!--- formatResponse --->
-	<cffunction name="formatResponse" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stResponse = XMLParse(arguments.stResponse)>
-		
-		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
 	</cffunction>
 	
 <!--- parseLocations --->

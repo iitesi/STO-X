@@ -21,18 +21,20 @@
 	</div>
 </div>
 <cfoutput>
-	<div id="AirlinesDialog" class="popup">
-		<div class="popup-airlines">
-			<div class="region">
-				<cfloop array="#session.searches[rc.nSearchID].stCarriers#" index="Carrier" >
-					<div class="checkbox">
-						<input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked>
-						<label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label>
-					</div>
-				</cfloop>
+	<cfif structKeyExists(session.searches[rc.nSearchID], "stCarriers")>
+		<div id="AirlinesDialog" class="popup">
+			<div class="popup-airlines">
+				<div class="region">
+					<cfloop array="#session.searches[rc.nSearchID].stCarriers#" index="Carrier" >
+						<div class="checkbox">
+							<input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked>
+							<label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label>
+						</div>
+					</cfloop>
+				</div>
 			</div>
 		</div>
-	</div>
+	</cfif>
 	<div id="ClassDialog" class="popup">
 		<div class="radiobuttons">
 			<input type="radio" id="ClassY" name="Class" value="Y"><label for="ClassY">Economy</label>

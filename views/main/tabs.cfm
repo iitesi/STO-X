@@ -72,7 +72,7 @@ ol, ul {
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
 			<cfif session.searches[nSearchID].Air>
 				<ul id="results-tabs">
-					<li id="tab-1" class="tab selected" style="max-width: 251px; margin-right: 0.5%; width: 42.4286%;">
+					<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
 						<div class="tab-border">
 							<div class="flex-wrapper">
 								<div class="flex-option">
@@ -90,7 +90,7 @@ ol, ul {
 			</cfif>
 		</cfloop>
 		<ul id="results-tabs">
-			<li id="tab-1" class="tab selected" style="max-width: 170px; margin-right: 0.5%; width: 42.4286%;">
+			<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
 				<div class="tab-border">
 					<div class="flex-wrapper">
 						<div class="flex-option">
@@ -104,7 +104,7 @@ ol, ul {
 		</ul>
 	</cfif>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab selected" style="max-width: 150px; margin-right: 0.5%; width: 42.4286%;">
+		<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
 			<div class="tab-border">
 				<div class="flex-wrapper">
 					<div class="flex-option">
@@ -126,7 +126,7 @@ ol, ul {
 		</li>
 	</ul>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab selected" style="max-width: 140px; margin-right: 0.5%; width: 42.4286%;">
+		<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
 			<div class="tab-border">
 				<div class="flex-wrapper">
 					<div class="flex-option">
@@ -138,7 +138,11 @@ ol, ul {
 									<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">Car</a>
 								<cfelse>
 									<!--- Show this tab as disabled.  Let them select air first. --->
-									Car
+									<cfif session.User_ID NEQ 3605>
+										Car
+									<cfelse>
+										<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">Car</a>
+									</cfif>
 								</cfif>
 							</span>
 						</span>

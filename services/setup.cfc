@@ -1,5 +1,18 @@
 <cfcomponent output="false">
 
+<!---
+loadUAPI
+--->
+	<cffunction name="loadObjUAPI" output="false" returntype="void">
+		
+		<cfset application.objUAPI = createObject("component", "booking.services.uapi")>
+		
+		<cfreturn />
+	</cffunction>
+
+<!---
+setServerURL
+--->
 	<cffunction name="setServerURL" output="false" returntype="void">
 		
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
@@ -7,23 +20,14 @@
 		<cfreturn />
 	</cffunction>
 	
-	<cffunction name="setServerURL" output="false" returntype="void">
-		
-		<cfset local.sServerURL = ''>
-		<cfif cgi.https EQ 'on'>
-			<cfset sServerURL = 'https://'&cgi.Server_Name&'/booking'>
-		<cfelse>
-			<cfset sServerURL = 'http://'&cgi.Server_Name&'/booking'>
-		</cfif>
-		<cfset application.sServerURL = sServerURL>
-		
-		<cfreturn />
-	</cffunction>
-	
+<!---
+setPortalURL
+--->
 	<cffunction name="setPortalURL" output="false" returntype="void">
 		
 		<cfset local.sPortalURL = ''>
 		<cfset local.bDebug = 0>
+
 		<cfif cgi.SERVER_NAME EQ 'www.shortstravelonline.com'>
 			<cfset sPortalURL = 'https://www.shortstravel.com'>
 			<cfset bDebug = 0>
@@ -50,6 +54,9 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setAPIAuth - REMOVE LATER
+--->
 	<cffunction name="setAPIAuth" output="false" returntype="void">
 		
 		<cfset application.sAPIAuth = ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
@@ -57,6 +64,9 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setAccounts
+--->
 	<cffunction name="setAccounts" output="false" returntype="void">
 		
 		<cfset local.stBranches = {
@@ -99,7 +109,7 @@
 			<cfloop list="#qAccounts.ColumnList#" index="local.sCol">
 				<cfset stTemp[Acct_ID][sCol] = qAccounts[sCol]>
 			</cfloop>
-			<cfset stTemp[Acct_ID].sBranch = stBranches[PCC_Booking]> 
+			<cfset stTemp[Acct_ID].sBranch = stBranches[PCC_Booking]>
 			<cfset stTemp[Acct_ID].Air_PF = ListToArray(stTemp[Acct_ID].Air_PF, '~')> 
 		</cfloop>
 		
@@ -130,6 +140,9 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setPolicies
+--->
 	<cffunction name="setPolicies" output="false" returntype="void">
 		
 		<cfquery name="local.qPolicies" datasource="book">
@@ -169,9 +182,12 @@
 		<cfreturn />
 	</cffunction>
 		
+<!---
+setAirVendors
+--->
 	<cffunction name="setAirVendors" output="false" returntype="void">
 		
-		<cfquery name="local.qAirVendors">
+		<cfquery name="local.qAirVendors" datasource="booking">
 		SELECT VendorCode, ShortName
 		FROM RAIR
 		WHERE VendorCode NOT LIKE '%/%'
@@ -196,9 +212,12 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setCarVendors
+--->
 	<cffunction name="setCarVendors" output="false" returntype="void">
 		
-		<cfquery name="local.qCarVendors">
+		<cfquery name="local.qCarVendors" datasource="booking">
 		SELECT VendorCode, VendorName
 		FROM RCAR
 		GROUP BY VendorCode, VendorName
@@ -213,9 +232,12 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setHotelVendors
+--->
 	<cffunction name="setHotelVendors" output="false" returntype="void">
 		
-		<cfquery name="local.qHotelChains">
+		<cfquery name="local.qHotelChains" datasource="booking">
 		SELECT VendorCode, VendorName
 		FROM rhtl
 		GROUP BY VendorCode, VendorName
@@ -231,9 +253,12 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setEquipment
+--->
 	<cffunction name="setEquipment" output="false" returntype="void">
 		
-		<cfquery name="local.qEquipment">
+		<cfquery name="local.qEquipment" datasource="booking">
 		SELECT EquipmentCode, ShortName
 		FROM RAEQ
 		</cfquery>
@@ -247,9 +272,12 @@
 		<cfreturn />
 	</cffunction>
 	
+<!---
+setAirports
+--->
 	<cffunction name="setAirports" output="false" returntype="void">
 		
-		<cfquery name="local.qAirports">
+		<cfquery name="local.qAirports" datasource="booking">
 		SELECT AirportCode, AirportName
 		FROM RAPT
 		</cfquery>
@@ -263,9 +291,12 @@
 		<cfreturn />
 	</cffunction>
 		
+<!---
+setAmenities
+--->
 	<cffunction name="setAmenities" output="false" returntype="void">
 		
-		<cfquery name="local.qAmenities">
+		<cfquery name="local.qAmenities" datasource="booking">
 		SELECT code, Amenity
 		FROM RAMENITIES
 		</cfquery>

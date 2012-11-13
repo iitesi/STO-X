@@ -5,7 +5,6 @@
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
 		
 		<cfset local.sJoinThread = ''>
 		
@@ -13,8 +12,8 @@
 		<cfset local.stPolicy = application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]>
 		<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].Value_ID, session.Acct_ID)>
 		<cfset local.sMessage = prepareSoapHeader(stAccount, stPolicy, nSearchID, qCDNumbers)>
-		<cfset local.sResponse = callAPI('VehicleService', sMessage, sAPIAuth, nSearchID)>
-		<cfset local.aResponse = formatResponse(sResponse)>
+		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
 		<cfset local.stCars = parseCars(aResponse)>
 		<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aResponse, stAccount)>
 		<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, stPolicy)>
@@ -81,44 +80,6 @@
 		</cfsavecontent>
 		
 		<cfreturn sMessage/>
-	</cffunction>
-	
-<!--- callAPI --->
-	<cffunction name="callAPI" output="true">
-		<cfargument name="sService"		required="true">
-		<cfargument name="sMessage"		required="true">
-		<cfargument name="sAPIAuth"		required="true">
-		<cfargument name="nSearchID"	required="true">
-		
-		<cfset local.bSessionStorage = 0>
-		
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
-				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
-				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
-				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
-				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
-				<cfhttpparam type="header" name="Pragma" value="no-cache" />
-				<cfhttpparam type="header" name="SOAPAction" value="" />
-				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
-			</cfhttp>
-			<cfif bSessionStorage>
-				<cfset session.searches[nSearchID].sFileContent = cfhttp.filecontent>
-			</cfif>
-		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID].sFileContent>
-		</cfif>
-		
-		<cfreturn cfhttp.filecontent />
-	</cffunction>
-	
-<!--- formatResponse --->
-	<cffunction name="formatResponse" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stResponse = XMLParse(arguments.stResponse)>
-		
-		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
 	</cffunction>
 	
 <!--- parseCars --->
