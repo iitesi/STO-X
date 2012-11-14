@@ -412,7 +412,7 @@
 		<cfset PropertyIDs = arrayToList(PropertyIDs) />
 
 		<cfquery name="local.HotelInformationQuery" datasource="Book">
-		SELECT PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
+		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
 		</cfquery>

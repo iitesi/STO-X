@@ -15,8 +15,8 @@
 			<div class="region">
 				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain">
 					<div class="checkbox">
-						<input id="Chain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterChain();">
-						<label for="Chain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
+						<input id="#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterhotel();">
+						<label for="#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
 					</div>
 				</cfloop>
 			</div>
@@ -27,7 +27,7 @@
 			<div class="region">
 				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
 					<div class="checkbox">
-						<input id="#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterAmenity();">
+						<input id="#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterhotel();">
 						<label for="#Amenity#">#application.stAmenities[Amenity]#</label><!--- #StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'# --->
 					</div>
 				</cfloop>
@@ -35,6 +35,8 @@
 		</div>
 	</div>
 </cfoutput>
+
+<!--- <cfdump eval=session.HotelInformationQuery abort> --->
 
 <script type="application/javascript">
 <!---SELECT Property_ID, Signature_Image, Lat, Long, 0 AS HECL, 0 AS HAFA, 0 AS PARK, 0 AS BRFT, 0 AS FRTR, 0 AS HSPI, 0 AS SPAA, 0 AS POOL, 0 AS MEFA, 0 AS COBU, 0 AS FPRK, 0 AS RTNT, 0 AS COBR--->
@@ -47,55 +49,55 @@ function filterhotel() {
 	//filter
 
 	<cfoutput>
-		<!---
-		<cfloop list="#StructKeyList(application.stAmenities)#" index="amenity">
-			var #amenity# = $("###amenity#:checked").val();
-		</cfloop>
-		--->
 		var hotelresults = #serializeJSON(session.HotelInformationQuery,true)#;
-		<!---console.log(hotelresults);--->
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
-		orderedpropertyids = orderedpropertyids.split(',');	
-		var amenities = '#StructKeyList(application.stAmenities)#';
 	</cfoutput>
-	amenities = amenities.split(',');
-	for (var i = 0; i < amenities.length; i++) {
-		var amenity = amenities[i];
-		console.log(amenity);
-		console.log($("#" + amenity + ":checked").val());
-		amenity = $("#" + amenity + ":checked").val();
-	}
+	
+	orderedpropertyids = orderedpropertyids.split(',');	
 
-	//totals
-	for (var t = 1; t < orderedpropertyids.length; t++) {
-		console.log(hotelresults.COLUMNS);
-		// start the loop with 4 because property_id, signature_image, lat, long are 1-4
+	for (var t = 0; t < orderedpropertyids.length; t++) {
+		// start the loop with 4 because property_id, signature_image, lat, long, chain_code are 0-4
 		for (var i = 4; i < hotelresults.COLUMNS.length; i++) {
 			var ColumnName = hotelresults.COLUMNS[i];
-			console.log(ColumnName);
-			console.log(hotelresults.DATA[ColumnName][0]);
+			var propertymatch = 1;
+			if ($("#" + ColumnName + ":checked").val() != undefined) {
+				if (hotelresults.DATA[ColumnName][t] == 0) {// if the value is checked and it's not active for this property mark propertymatch as 0
+					propertymatch = 0;
+					break;
+				}
+			}
 		}
-		console.log('DONE');
-		throw "stop execution";
-		/*
-		propertyname = property[2];
 
-		if ((internet == true && property[3] == 0) ||
-		(business == true && property[4] == 0) ||
-		(meeting == true && property[5] == 0) ||
-		(transportation == true && property[6] == 0) ||
-		(breakfast == true && property[7] == 0) ||
-		(restaurant == true && property[8] == 0) ||
-		(roomservice == true && property[9] == 0) ||
-		(soldout == undefined && property[13] == 1) ||
-		($( "#Vendors" + property[15] + ":checked" ).val() == undefined) ||
-		(hotelname != '' && propertyname.indexOf(hotelname) < 0) ||
-		(travpref == 1 && property[21] == 0) ||
-		(acctpref == 1 && property[22] == 0)) {
-			$( "#hotellist" + propertyid ).hide();
-			pins[propertyid].setOptions({visible: false});
-			//console.log('hide '+propertyid)
+		/*
+		var chaincode = hotelresults.DATA['CHAIN_CODE'][t];
+			console.log(hotelresults.DATA);
+		if (propertymatch == 1) {
+			console.log($("#HotelChain" + chaincode + ":checked").val());
+			$('input[name="HotelChain" + chaincode][checked]').each(function() {
+				var SingleChain = this.value;
+				var SingleChainResponse = this.checked;
+				//console.log(SingleChain);
+				//console.log(SingleChainResponse);
+				if (SingleChainResponse == true) {
+					
+				}
+				else {
+				  			
+				}
+			});
 		}
+		*/
+
+		var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
+		if (propertymatch == 1) {
+			$("#" + propertyid ).show();			
+			//pins[propertyid].setOptions({visible: false});
+		}
+		else {
+			$("#" + propertyid ).hide();		
+		}
+
+		/*
 		else {
 			matchcriteriacount++;
 			if (matchcriteriacount >= start_from && matchcriteriacount < end_on) {
@@ -114,6 +116,7 @@ function filterhotel() {
 		}
 		*/
 	}
+	/*
 	writePages(matchcriteriacount);
 	if (matchcriteriacount != totalproperties) {
 		$( "#hotelcount" ).html(matchcriteriacount + ' of ' + totalproperties + ' total properties');
@@ -121,6 +124,7 @@ function filterhotel() {
 	else {
 		$( "#hotelcount" ).html(totalproperties +' total properties');
 	}
+	*/
 	
 	return false;
 }
