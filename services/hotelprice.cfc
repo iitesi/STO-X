@@ -231,13 +231,13 @@
 	
 <!--- checkPolicy --->
 	<cffunction name="checkPolicy" output="true">
-		<cfargument name="stHotels" type="any" required="false">
-		<cfargument name="nSearchID">
-		<cfargument name="stPolicy">
-		<cfargument name="stAccount">
+		<cfargument name="stHotels" />
+		<cfargument name="nSearchID" />
+		<cfargument name="stPolicy" />
+		<cfargument name="stAccount" />
 		
 		<cfset local.stHotels = arguments.stHotels />
-		<cfset local.bActive = 1 />
+		<cfset local.bActive = true />
 		<cfset local.bBlacklisted = arguments.stPolicy.Policy_HotelMaxDisp /><!--- are they allowed to book out of policy hotels (regarding max rate)? --->
 				
 		<cfloop collection="#stHotels#" item="local.sCategory"><!--- Individual Hotels ---->
@@ -251,7 +251,7 @@
 					
 					<cfif sVendor EQ 'HotelChain'>
 						<cfset HotelChain = stHotels[sCategory]['HOTELCHAIN'] />						
-						<cfset bActive = 1>
+						<cfset bActive = true>
 						
 						<!--- Max rate turned on and hotel is above max rate. --->
 						<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate NEQ 'Sold Out' AND LowRate GT arguments.stPolicy.Policy_HotelMaxRate>
@@ -259,23 +259,23 @@
 								<cfset ArrayAppend(aPolicy, 'Too expensive')>
 							</cfif>
 							<cfif arguments.stPolicy.Policy_HotelMaxDisp EQ 1><!--- Only display in policy hotels? --->
-								<cfset bActive = 0>
+								<cfset bActive = false>
 							</cfif>
 							<cfbreak />
 						</cfif>
 
-						<cfif bActive EQ 1>
-							<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
-							<cfset stHotels[sCategory].aPolicies = aPolicy>
+						<cfif bActive>
+							<cfset stHotels[sCategory].Policy = ArrayIsEmpty(aPolicy) ? true : false />
+							<cfset stHotels[sCategory].aPolicies = aPolicy />
 						<cfelse>
-							<cfset temp = StructDelete(stHotels[sCategory], HotelChain)>
+							<cfset StructDelete(stHotels[sCategory], HotelChain)>
 						</cfif>
 					</cfif>
 				</cfloop>
 			</cfif>
 		</cfloop>
-		
-		<cfreturn stHotels/>
+
+		<cfreturn stHotels />
 	</cffunction>
 
 </cfcomponent>

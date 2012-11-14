@@ -15,8 +15,8 @@
 			<div class="region">
 				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain">
 					<div class="checkbox">
-						<input id="#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterhotel();">
-						<label for="#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
+						<input id="HotelChain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterhotel();">
+						<label for="HotelChain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
 					</div>
 				</cfloop>
 			</div>
@@ -36,10 +36,7 @@
 	</div>
 </cfoutput>
 
-<!--- <cfdump eval=session.HotelInformationQuery abort> --->
-
 <script type="application/javascript">
-<!---SELECT Property_ID, Signature_Image, Lat, Long, 0 AS HECL, 0 AS HAFA, 0 AS PARK, 0 AS BRFT, 0 AS FRTR, 0 AS HSPI, 0 AS SPAA, 0 AS POOL, 0 AS MEFA, 0 AS COBU, 0 AS FPRK, 0 AS RTNT, 0 AS COBR--->
 function filterhotel() {
 	// pages & sortng
 	//var start_from = $( "#current_page" ).val() * 20;
@@ -49,15 +46,15 @@ function filterhotel() {
 	//filter
 
 	<cfoutput>
-		var hotelresults = #serializeJSON(session.HotelInformationQuery,true)#;
+		var hotelresults = #serializeJSON(session.searches[rc.Search_ID].HotelInformationQuery,true)#;
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
 	</cfoutput>
 	
 	orderedpropertyids = orderedpropertyids.split(',');	
 
 	for (var t = 0; t < orderedpropertyids.length; t++) {
-		// start the loop with 4 because property_id, signature_image, lat, long, chain_code are 0-4
-		for (var i = 4; i < hotelresults.COLUMNS.length; i++) {
+		// start the loop with 5 because property_id, signature_image, lat, long, chain_code, policy are 0-5
+		for (var i = 5; i < hotelresults.COLUMNS.length; i++) {
 			var ColumnName = hotelresults.COLUMNS[i];
 			var propertymatch = 1;
 			if ($("#" + ColumnName + ":checked").val() != undefined) {
@@ -68,33 +65,34 @@ function filterhotel() {
 			}
 		}
 
-		/*
+		// check chain code match
 		var chaincode = hotelresults.DATA['CHAIN_CODE'][t];
-			console.log(hotelresults.DATA);
 		if (propertymatch == 1) {
-			console.log($("#HotelChain" + chaincode + ":checked").val());
-			$('input[name="HotelChain" + chaincode][checked]').each(function() {
-				var SingleChain = this.value;
-				var SingleChainResponse = this.checked;
-				//console.log(SingleChain);
-				//console.log(SingleChainResponse);
-				if (SingleChainResponse == true) {
-					
-				}
-				else {
-				  			
-				}
-			});
+			if ($("#HotelChain" + chaincode + ":checked").val() == undefined) {
+				propertymatch = 0;
+			}
+		}
+
+		// check in policy
+		var Policy = $('input:radio[name=Policy]:checked').val();
+		var PolicyValue = hotelresults.DATA['POLICY'][t];
+		/*
+		console.log(PolicyValue);
+		if ( PolicyValue == 1) {
+			console.log(hotelresults.DATA['PROPERTY_ID'][t]);
 		}
 		*/
+		if (propertymatch == 1 && Policy == 0) {		
+				propertymatch = 0;
+		}
 
 		var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
 		if (propertymatch == 1) {
-			$("#" + propertyid ).show();			
+			$("#" + propertyid ).show('fade');
 			//pins[propertyid].setOptions({visible: false});
 		}
 		else {
-			$("#" + propertyid ).hide();		
+			$("#" + propertyid ).hide('fade');		
 		}
 
 		/*

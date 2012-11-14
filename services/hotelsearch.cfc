@@ -12,7 +12,6 @@
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
-		<cfset local.stHotels 		= HotelInformationQuery(stHotels) /><!--- add signature_image, latitude and longitude --->
 		<cfset local.stAmenities 	= getAmenities(stHotels)>
 		<cfset local.latlong 			= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
@@ -30,6 +29,7 @@
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount) />
+		<cfset local.stHotels 		= HotelInformationQuery(stHotels, arguments.nSearchID) /><!--- add signature_image, latitude and longitude --->
 
    	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
@@ -412,7 +412,7 @@
 		<cfset PropertyIDs = arrayToList(PropertyIDs) />
 
 		<cfquery name="local.HotelInformationQuery" datasource="Book">
-		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
+		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
 		</cfquery>
@@ -431,10 +431,14 @@
 				<!--- Update query to show yes if hotel amenity is true --->
 				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformationQuery, Amenity, 1, HotelInformationQuery.CurrentRow) : '' />
 			</cfloop>
+			<!--- Update policy if value is true. Don't update if false --->
+			<cfif arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['POLICY']>
+				<cfset querySetCell(HotelInformationQuery, 'POLICY', 1, HotelInformationQuery.CurrentRow) />
+			</cfif>
 		</cfloop>
 
 		<!--- Add HotelInformationQuery to the session for filtering --->
-		<cfset session.HotelInformationQuery = HotelInformationQuery />
+		<cfset session.searches[arguments.Search_ID].HotelInformationQuery = HotelInformationQuery />
 
 		<cfreturn stHotels />
 	</cffunction>
