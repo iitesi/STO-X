@@ -1,6 +1,3 @@
-<cfoutput>
-	#NumberFormat(rc.nTimer)# ms
-</cfoutput>
 <br clear="both">
 <cfoutput>
 	<div class="car" heigth="100%">
@@ -43,7 +40,14 @@
 							<cfif StructKeyExists(session.searches[rc.Search_ID].stCars[sCategory], sVendor)>
 								<cfset stRate = session.searches[rc.Search_ID].stCars[sCategory][sVendor]>
 								<!---#ArrayToList(stRate.aPolicies)#--->
+
 								<input type="submit" class="button#stRate.Policy#policy" name="trigger" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
+							<cfelse>
+								<cfif sCategory EQ 'MINI'>
+									<a href="##" onClick="loadCarRates('#sCategory#', '#sVendor#')">See Rates</a>
+								<cfelse>
+									UNAVAILABLE
+								</cfif>
 							</cfif>
 						</td>
 					</cfloop>

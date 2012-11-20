@@ -5,9 +5,9 @@
 <br clear="both">
 <cfoutput>
 	<div id="aircontent">
-		<cfloop array="#session.searches[rc.Search_ID].stSortSegments#" index="sTripKey">
-			<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[sTripKey]>
-			<div id="#sTripKey#" class="badge" style="min-height:230px;">
+		<cfloop array="#session.searches[rc.Search_ID].stSortSegments#" index="sTrip">
+			<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[sTrip]>
+			<div id="#sTrip#" class="badge" style="min-height:230px;">
 				<table width="100%">
 				<tr>
 					<td width="125px" align="center">
@@ -82,7 +82,20 @@
 				</tr>
 				</table>
 				<br><br>
-				Flight Details | Seats | Bags | Email | CouldYou?
+				<p>
+					<a href="#buildURL('air.detailsavail?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&sType=Avail')#" class="overlayTrigger" style="text-decoration:none">
+						<button type="button" class="textButton">Details</button>|
+					</a>
+					<a href="#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&nSegment=1')#" class="overlayTrigger" style="text-decoration:none" target="_blank">
+						<button type="button" class="textButton">Seats</button>|
+					</a>
+					<a href="#buildURL('air.baggage?Search_ID=#rc.nSearchID#&bSuppress=1&sCarriers=#stTrip.Carriers#')#" class="overlayTrigger" style="text-decoration:none">
+						<button type="button" class="textButton">Bags</button>|
+					</a>
+					<a href="#buildURL('air.email?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#')#" class="overlayTrigger" style="text-decoration:none">
+						<button type="button" class="textButton">Email</button>|
+					</a>
+				</p>
 			</div>
 		</cfloop>
 	</div>

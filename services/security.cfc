@@ -43,7 +43,7 @@
 				<cfset tab.bookingfor = 'Guest Traveler'>
 			<cfelse>
 				<cfquery name="local.getuser" datasource="Corporate_Production">
-				SELECT First_Name, Last_Name
+				SELECT First_Name, Last_Name, Email
 				FROM Users
 				WHERE User_ID = <cfqueryparam value="#getsearch.Profile_ID#" cfsqltype="cf_sql_integer" >
 				</cfquery>

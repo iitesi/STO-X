@@ -70,6 +70,24 @@ availability
 		
 		<cfreturn />
 	</cffunction>
+	
+<!---
+seatmap
+--->
+	<cffunction name="seatmap" output="true">
+		<cfargument name="rc">
+		
+		<!--- Move needed variables into the rc scope. --->
+		<cfset rc.sCabin = 'Y'>
+		<cfset rc.nTripID = url.nTripID>
+		<cfset rc.nSegment = url.nSegment>
+		<!--- init objects --->
+		<cfset variables.fw.service('uapi.init', 'objUAPI')>
+		<!--- Do the search. --->
+		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		
+		<cfreturn />
+	</cffunction>
 
 <!---
 price
@@ -91,6 +109,34 @@ details
 		<cfargument name="rc">
 		<!--- No logic needed here. --->
 
+		<cfreturn />
+	</cffunction>
+
+<!---
+baggage
+--->
+	<cffunction name="baggage" output="false">
+		<cfargument name="rc">
+
+		<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
+		
+		<cfreturn />
+	</cffunction>
+
+<!---
+email
+--->
+	<cffunction name="email" output="false">
+		<cfargument name="rc">
+
+		<cfif StructKeyExists(form, 'bSubmit')>
+			<cfset variables.fw.service('email.email', 'void')>
+		</cfif>
+		<cfset rc.nUserID = session.User_ID>
+		<cfset variables.fw.service('general.getUser', 'qUser')>
+		<cfset rc.nUserID = session.searches[rc.nSearchID].Profile_ID>
+		<cfset variables.fw.service('general.getUser', 'qProfile')>
+		
 		<cfreturn />
 	</cffunction>
 	

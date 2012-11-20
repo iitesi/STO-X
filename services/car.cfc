@@ -2,23 +2,22 @@
 	
 <!--- doAvailability --->
 	<cffunction name="doAvailability" output="false">
-		<cfargument name="stAccount" 	required="true">
-		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="vendor" 		required="faluse" default="">
+		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
 		
-		<cfset local.sJoinThread = ''>
-		
-		<cfset local.stAccount = application.stAccounts[session.Acct_ID]>
-		<cfset local.stPolicy = application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]>
-		<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].Value_ID, session.Acct_ID)>
-		<cfset local.sMessage = prepareSoapHeader(stAccount, stPolicy, nSearchID, qCDNumbers)>
-		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
-		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
-		<cfset local.stCars = parseCars(aResponse)>
-		<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aResponse, stAccount)>
-		<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, stPolicy)>
-		<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, stPolicy, stAccount)>
-		
+		<cfif NOT structKeyExists( session.searches[nSearchID], "stCars")
+		OR StructIsEmpty(session.searches[nSearchID].stCars)>
+			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].Value_ID, session.Acct_ID)>
+			<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers)>
+			<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+			<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
+			<cfset local.stCars = parseCars(aResponse)>
+			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aResponse, arguments.stAccount)>
+			<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, arguments.stPolicy)>
+			<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, arguments.stPolicy, arguments.stAccount)>
+		</cfif>
 		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
 		
 		<cfreturn >
@@ -44,6 +43,7 @@
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
+		<cfargument name="vendor" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="qCDNumbers" 	required="true">
 		

@@ -1,4 +1,3 @@
-
 function toggleDiv(div) {
 	$( "#" + div ).toggle( 'fade' );
 }

@@ -2,53 +2,76 @@
 	<div>
 		<div class="radiosort">
 			<div class="filterheader">Sort By</h2>
-			<input type="radio" id="fare" name="sort" /><label for="fare">Price</label>
+			<cfif rc.action NEQ 'air.availability'>
+
+				<!--- Price --->
+				<input type="radio" id="fare" name="sort" /><label for="fare">Price</label>
+
+				<!--- Price + Bag Fees --->
+				<input type="radio" id="bag" name="sort" /><label for="bag">Price + Bag Fees</label>
+			</cfif>
+
+			<!--- Duration --->
 			<input type="radio" id="duration" name="sort" checked="checked" /><label for="duration">Duration</label>
+
+			<!--- Departure --->
 			<input type="radio" id="depart" name="sort" /><label for="depart">Departure</label>
+
+			<!--- Arrival --->
 			<input type="radio" id="arrival" name="sort" /><label for="arrival">Arrival</label>
-			<input type="radio" id="bag" name="sort" /><label for="bag">Bag Fees</label>
 		</div>
 	</div>
 	<div>
 		<div class="filterheader">Filter By</h2>
+		
+		<!--- Airlines --->
 		<button id="btnAirlines">Airlines</button>
-		<button id="btnClass">Class</button>
-		<button id="btnFares">Fares</button>
-		<input type="checkbox" id="NonStops" name="NonStops"> <label for="NonStops">Non Stops</label>
-		<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
-		<input type="checkbox" id="SingleCarrier" name="SingleCarrier" checked> <label for="SingleCarrier">Single Carrier</label>
-		<!---<input type="checkbox" id="Time"> <label for="Time">Time</label>--->
-	</div>
-</div>
-<cfoutput>
-	<cfif structKeyExists(session.searches[rc.nSearchID], "stCarriers")>
-		<div id="AirlinesDialog" class="popup">
-			<div class="popup-airlines">
-				<div class="region">
-					<cfloop array="#session.searches[rc.nSearchID].stCarriers#" index="Carrier" >
-						<div class="checkbox">
-							<input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked>
-							<label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label>
-						</div>
-					</cfloop>
+		<cfif structKeyExists(session.searches[rc.nSearchID], "stCarriers")>
+			<div id="AirlinesDialog" class="popup">
+				<div class="popup-airlines">
+					<div class="region">
+						<cfloop array="#session.searches[rc.nSearchID].stCarriers#" index="Carrier" >
+							<div class="checkbox">
+								<input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked>
+								<label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label>
+							</div>
+						</cfloop>
+					</div>
 				</div>
 			</div>
-		</div>
-	</cfif>
-	<div id="ClassDialog" class="popup">
-		<div class="radiobuttons">
-			<input type="radio" id="ClassY" name="Class" value="Y"><label for="ClassY">Economy</label>
-			<input type="radio" id="ClassC" name="Class" value="C"><label for="ClassC">Business</label>
-			<input type="radio" id="ClassF" name="Class" value="F"><label for="ClassF">First</label>
-		</div>
+		</cfif>
+		<cfif rc.action NEQ 'air.availability'>
+			
+			<!--- Class --->
+			<button id="btnClass">Class</button>
+			<div id="ClassDialog" class="popup">
+				<div class="radiobuttons">
+					<input type="radio" id="ClassY" name="Class" value="Y"><label for="ClassY">Economy</label>
+					<input type="radio" id="ClassC" name="Class" value="C"><label for="ClassC">Business</label>
+					<input type="radio" id="ClassF" name="Class" value="F"><label for="ClassF">First</label>
+				</div>
+			</div>
+			
+			<!--- Fares --->
+			<button id="btnFares">Fares</button>
+			<div id="FaresDialog" class="popup">
+				<div class="radiobuttons">
+					<input type="radio" id="Fares0" name="Fares" value="0"><label for="Fares0">Non Refundable</label>
+					<input type="radio" id="Fares1" name="Fares" value="1"><label for="Fares1">Refundable</label>
+				</div>
+			</div>
+		</cfif>
+		
+		<!--- Non stops --->
+		<input type="checkbox" id="NonStops" name="NonStops"> <label for="NonStops">Non Stops</label>
+		
+		<!--- Policy --->
+		<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
+
+		<!--- Single Carrier Flights --->
+		<input type="checkbox" id="SingleCarrier" name="SingleCarrier" checked> <label for="SingleCarrier">Single Carrier</label>
 	</div>
-	<div id="FaresDialog" class="popup">
-		<div class="radiobuttons">
-			<input type="radio" id="Fares0" name="Fares" value="0"><label for="Fares0">Non Refundable</label>
-			<input type="radio" id="Fares1" name="Fares" value="1"><label for="Fares1">Refundable</label>
-		</div>
-	</div>
-</cfoutput>
+</div>
 <script type="application/javascript">
 	$(document).ready(function() {
 		$( ".radiobuttons" ).buttonset();
