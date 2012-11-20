@@ -6,7 +6,7 @@ NEED:
 	variables.stTrips
 --->
 <cfoutput>
-	<div id="#variables.sTrip#" class="badge" style="min-height:300px;">
+	<div id="#variables.sTrip#" class="badge" style="min-height:#variables.minwidth#px;">
 		<table width="100%">
 		<tr>
 			<td width="125px" align="center">
@@ -20,16 +20,20 @@ NEED:
 				#(ListLen(stTrip.Carriers) EQ 1 ? '<br>'&application.stAirVendors[stTrip.Carriers].Name : '')#
 			</td>
 			<td class="fares" align="right">
-				<cfloop array="#aMyCabins#" index="sCabin">
-					<cfloop array="#aRef#" index="sRef">
-						<cfif StructKeyExists(stTrip, sCabin)
-						AND StructKeyExists(stTrip[sCabin], sRef)>
-							#(sCabin EQ 'Y' ? 'ECONOMY' : (sCabin EQ 'C' ? 'BUSINESS' : 'FIRST'))# CLASS
-							<input type="submit" name="trigger" class="button#stTrip[sCabin][sRef].Policy#policy" value="$#NumberFormat(stTrip[sCabin][sRef].Total)#">
-							<span class="fade">#(sRef EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span> 
-						</cfif>
+				<cfif rc.action EQ 'air.lowfare'>
+					<cfloop array="#aMyCabins#" index="sCabin">
+						<cfloop array="#aRef#" index="sRef">
+							<cfif StructKeyExists(stTrip, sCabin)
+							AND StructKeyExists(stTrip[sCabin], sRef)>
+								#(sCabin EQ 'Y' ? 'ECONOMY' : (sCabin EQ 'C' ? 'BUSINESS' : 'FIRST'))# CLASS
+								<input type="submit" name="trigger" class="button#stTrip[sCabin][sRef].Policy#policy" value="$#NumberFormat(stTrip[sCabin][sRef].Total)#">
+								<span class="fade">#(sRef EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span> 
+							</cfif>
+						</cfloop>
 					</cfloop>
-				</cfloop>
+				<cfelse>
+					<input type="submit" name="trigger" class="button1policy" value="Select">
+				</cfif>
 			</td>
 		</tr>
 		<cfloop collection="#stTrip.Groups#" item="nGroup" >
@@ -96,10 +100,10 @@ NEED:
 		</table>
 		<br><br>
 		<p>
-			<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#')#" class="overlayTrigger" style="text-decoration:none">
+			<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip##(structKeyExists(rc, "Group") ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none">
 				<button type="button" class="textButton">Details</button>|
 			</a>
-			<a href="#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&nSegment=1')#" class="overlayTrigger" style="text-decoration:none" target="_blank">
+			<a href="#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&nSegment=1#(structKeyExists(rc, "Group") ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none" target="_blank">
 				<button type="button" class="textButton">Seats</button>|
 			</a>
 			<a href="#buildURL('air.baggage?Search_ID=#rc.nSearchID#&bSuppress=1&sCarriers=#stTrip.Carriers#')#" class="overlayTrigger" style="text-decoration:none">

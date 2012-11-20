@@ -52,7 +52,7 @@
 			
 			<cfset local.tab['Search_ID'] = arguments.Search_ID>
 			<cfset tab.Air = getsearch.Air>
-			<cfset tab.stPricing = {}>
+			<cfset tab.FareDetails.stPricing = {}>
 			<cfset tab.Car = getsearch.Car>
 			<cfset tab.Hotel = getsearch.Hotel>
 			<cfset tab.Policy_ID = getsearch.Policy_ID>
@@ -88,6 +88,14 @@
 			
 			<cflock timeout="30" scope="session" type="exclusive">
 				<cfset session.searches[arguments.Search_ID] = tab>
+				<cfset session.searches[arguments.Search_ID].stTrips = {}>
+				<cfset session.searches[arguments.Search_ID].stAvailTrips[0] = {}>
+				<cfset session.searches[arguments.Search_ID].stAvailTrips[1] = {}>
+				<cfset session.searches[arguments.Search_ID].stAvailTrips[2] = {}>
+				<cfset session.searches[arguments.Search_ID].stAvailTrips[3] = {}>
+				<cfset session.searches[arguments.Search_ID].FareDetails.stPricing = {}>
+				<cfset session.searches[arguments.Search_ID].AvailDetails.stGroups = {}>
+				<cfset session.searches[arguments.Search_ID].AvailDetails.stSortSegments = {}>
 				<cfset session.User_ID = getsearch.User_ID>
 				<cfset session.Username = getsearch.Username>
 				<cfset session.Acct_ID = getsearch.Acct_ID>

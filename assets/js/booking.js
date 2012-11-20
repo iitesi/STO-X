@@ -24,6 +24,7 @@ function filterAir() {
 	 * 	6	Cabin Class			Y, C, F
 	 * 	7	Stops				0/1/2
 	 */
+	 																		//console.log('ran');
 	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 		var flight = flightresults[loopcnt];
 																			//console.log(flight)
@@ -34,7 +35,7 @@ function filterAir() {
 		|| (policy == 'on' && flight[1] != 1)
 		|| (singlecarrier == 'on' && flight[2] != 0)) {
 			$( '#' + flight[0] ).hide( 'fade' );
-																			//console.log('hide');
+																			//console.log('hide - '+flight[0]);
 		}
 		else {
 			carriercount = 0;

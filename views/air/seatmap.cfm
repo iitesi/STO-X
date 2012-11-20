@@ -1,9 +1,13 @@
-<cfset stSegments = session.searches[rc.nSearchID].stTrips[rc.nTripID].Segments>
+<cfif rc.action EQ 'air.lowfare'>
+	<cfset stSegments = session.searches[rc.Search_ID].stTrips[rc.nTripID].Segments>
+<cfelse>
+	<cfset stSegments = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID].Segments>
+</cfif>
 <cfoutput>
 	<div>
 		<ul class="tabs">
 			<cfloop collection="#stSegments#" item="nSeg">
-				<li><a <cfif rc.nSegment EQ nSeg>class="active"</cfif> onClick="$('.tabcontent').html('Checking #stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber# seat availablity...');$('##overlayContent').load('#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#rc.nTripID#&nSegment=#nSeg#')#')">#stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber#</a></li>
+				<li><a <cfif rc.nSegment EQ nSeg>class="active"</cfif> onClick="$('.tabcontent').html('Checking #stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber# seat availablity...');$('##overlayContent').load('#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#rc.nTripID#&nSegment=#nSeg##(structKeyExists(rc, "nGroup") ? "&nGroup=#rc.nGroup#" : "")#')#')">#stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber#</a></li>
 			</cfloop>
 		</ul>
 		<cfif NOT structIsEmpty(rc.stSeats)>

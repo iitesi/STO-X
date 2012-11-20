@@ -23,7 +23,7 @@
 	font-weight: bold;
 	height: 20px;
 	line-height: 20px;
-	margin: 10px 0 20px 0;
+	margin: 30px 0 20px 0;
 	padding: 5px 40px 5px 40px;
 	position: relative;
 	text-align: left;

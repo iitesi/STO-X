@@ -24,15 +24,18 @@ before - do this before any air calls
 		<!--- Clear out results if it needs to be reloaded. --->
 		<cfif StructKeyExists(rc, 'bReloadAir')>
 			<cfset session.searches[rc.Search_ID].stTrips = {}>
-			<cfset session.searches[rc.Search_ID].stSegments = {}>
-			<cfset session.searches[rc.Search_ID].stPricing = {}>
-			<cfset session.searches[rc.Search_ID].stSortArrival = []>
-			<cfset session.searches[rc.Search_ID].stSortBag = []>
-			<cfset session.searches[rc.Search_ID].stSortDepart = []>
-			<cfset session.searches[rc.Search_ID].stSortDuration = []>
-			<cfset session.searches[rc.Search_ID].stSortFare = []>
-			<cfset session.searches[rc.Search_ID].stCarriers = []>
-			<cfset session.searches[rc.Search_ID].stAvailability = {}>
+			<cfset session.searches[rc.Search_ID].stAvailTrips[0] = {}>
+			<cfset session.searches[rc.Search_ID].stAvailTrips[1] = {}>
+			<cfset session.searches[rc.Search_ID].stAvailTrips[2] = {}>
+			<cfset session.searches[rc.Search_ID].stAvailTrips[3] = {}>
+			<cfset session.searches[rc.Search_ID].AvailDetails.stGroups = {}>
+			<cfset session.searches[rc.Search_ID].FareDetails.stPricing = {}>
+			<cfset session.searches[rc.Search_ID].FareDetails.stSortArrival = []>
+			<cfset session.searches[rc.Search_ID].FareDetails.stSortBag = []>
+			<cfset session.searches[rc.Search_ID].FareDetails.stSortDepart = []>
+			<cfset session.searches[rc.Search_ID].FareDetails.stSortDuration = []>
+			<cfset session.searches[rc.Search_ID].FareDetails.stSortFare = []>
+			<cfset session.searches[rc.Search_ID].FareDetails.stCarriers = []>
 		</cfif>
 		<cfset rc.nSearchID = rc.Search_ID>
 		
@@ -81,6 +84,11 @@ seatmap
 		<cfset rc.sCabin = 'Y'>
 		<cfset rc.nTripID = url.nTripID>
 		<cfset rc.nSegment = url.nSegment>
+		<cfif structKeyExists(url, "nGroup")>
+			<cfset rc.nGroup = url.nGroup>
+		<cfelse>
+			<cfset rc.nGroup = ''>
+		</cfif>
 		<!--- init objects --->
 		<cfset variables.fw.service('uapi.init', 'objUAPI')>
 		<!--- Do the search. --->

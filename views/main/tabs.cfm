@@ -10,26 +10,22 @@ ol, ul {
 	position:fixed;
 	z-index:999;
 	background-color:#FFF;
-	height:90px;
 	margin-top:-85px;
 	border-bottom:1px solid #CAC9C9;
 }
 #header .logo {
-	position:relative;
-	float:left;
-	padding:0 50px 0 20px;
+	padding:5px 0 10px 20px;
 	z-index:1000;
+	clear:right;
 }
 #results-tabs {
 	line-height:70px;
-	margin-top:20px;
 }
 #results-tabs li {
 	cursor:pointer;
 	font-size:12px;
 	font-weight:bold;
 	line-height:30px;
-	margin-top:37px;
 }
 #results-tabs li.tab {
 	color:#92A9B8;
@@ -72,7 +68,7 @@ ol, ul {
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
 			<cfif session.searches[nSearchID].Air>
 				<ul id="results-tabs">
-					<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
+					<li id="tab-1" class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
 						<div class="tab-border">
 							<div class="flex-wrapper">
 								<div class="flex-option">
@@ -90,7 +86,7 @@ ol, ul {
 			</cfif>
 		</cfloop>
 		<ul id="results-tabs">
-			<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
+			<li id="tab-1" class="tab  style="margin-right: 0.5%">
 				<div class="tab-border">
 					<div class="flex-wrapper">
 						<div class="flex-option">
@@ -104,7 +100,7 @@ ol, ul {
 		</ul>
 	</cfif>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
+		<li id="tab-1" class="tab  style="margin-right: 0.5%">
 			<div class="tab-border">
 				<div class="flex-wrapper">
 					<div class="flex-option">
@@ -126,7 +122,7 @@ ol, ul {
 		</li>
 	</ul>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab selected" style="margin-right: 0.5%">
+		<li id="tab-1" class="tab" style="margin-right: 0.5%">
 			<div class="tab-border">
 				<div class="flex-wrapper">
 					<div class="flex-option">

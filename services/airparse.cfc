@@ -16,7 +16,7 @@ parseSegmentKeys - both
 		<cfset local.stSegmentKeys = {}>
 		<cfset local.sIndex = ''>
 		<!--- Create list of fields that make up a distint segment. --->
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
+		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
 		<!--- Loop through results. --->
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
@@ -93,7 +93,234 @@ mergeSegments
 		
 		<cfreturn stSegments/>
 	</cffunction>
-	
+
+<!---
+mergeTrips
+--->
+	<cffunction name="mergeTrips" output="false">
+		<cfargument name="stTrips1" 	required="true">
+		<cfargument name="stTrips2" 	required="true">
+		
+		<cfset local.stCombinedTrips = arguments.stTrips1>
+		<cfif IsStruct(stCombinedTrips) AND IsStruct(arguments.stTrips2)>
+			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
+				<cfif StructKeyExists(stCombinedTrips, sTripKey)>
+					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
+						<cfset stCombinedTrips[sTripKey][sFareKey] = arguments.stTrips2[sTripKey][sFareKey]>
+					</cfloop>
+				<cfelse>
+					<cfset stCombinedTrips[sTripKey] = arguments.stTrips2[sTripKey]>
+				</cfif>
+			</cfloop>
+		<cfelseif IsStruct(arguments.stTrips2)>
+			<cfset stCombinedTrips = arguments.stTrips2>
+		</cfif>
+		<cfif NOT IsStruct(stCombinedTrips)>
+			<cfset stCombinedTrips = {}>
+		</cfif>
+
+		<cfreturn stCombinedTrips/>
+	</cffunction>
+
+<!--- 
+addPreferred
+--->
+	<cffunction name="addPreferred" output="false">
+		<cfargument name="stTrips">
+		<cfargument name="stAccount">
+		
+		<cfset local.stTrips = arguments.stTrips>
+		<cfloop collection="#stTrips#" item="local.sTrip">
+			<cfset stTrips[sTrip].Preferred = 0>
+			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">
+				<cfif ArrayFindNoCase(arguments.stAccount.aPreferredAir, arguments.stTrips[sTrip].Segments[nSegment].Carrier)>
+					<cfset stTrips[sTrip].Preferred = 1>
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn stTrips/>
+	</cffunction>
+
+<!---
+addGroups
+--->
+	<cffunction name="addGroups" output="false">
+		<cfargument name="stTrips" 	required="true">
+		<cfargument name="sType" 	required="false"	default="Fare">
+		
+		<cfset local.stGroups = {}>
+		<cfset local.stCarriers = {}>
+		<cfset local.stSegment = ''>
+		<cfset local.nStops = ''>
+		<cfset local.nTotalStops = ''>
+		<cfset local.nDuration = ''>
+		<cfset local.nOverrideGroup = 0>
+		<!--- Loop through all the trips --->
+		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
+			<cfset stGroups = {}>
+			<cfset stCarriers = {}>
+			<cfset nDuration = 0>
+			<cfset nTotalStops = 0>
+			<cfloop collection="#arguments.stTrips[sTrip].Segments#" item="local.nSegment">
+				<cfset stSegment = arguments.stTrips[sTrip].Segments[nSegment]>
+				<cfset nOverrideGroup = stSegment.Group>
+				<cfset stSegment.Group = nOverrideGroup>
+				<cfif NOT structKeyExists(stGroups, nOverrideGroup)>
+					<cfset stGroups[nOverrideGroup].DepartureTime 	= stSegment.DepartureTime>
+					<cfset stGroups[nOverrideGroup].Origin			= stSegment.Origin>
+					<cfset stGroups[nOverrideGroup].TravelTime		= '#int(stSegment.TravelTime/60)#h #stSegment.TravelTime%60#m'>
+					<cfset nDuration = stSegment.TravelTime + nDuration>
+					<cfset nStops = -1>
+				</cfif>
+				<cfset stGroups[nOverrideGroup].ArrivalTime	 	= stSegment.ArrivalTime>
+				<cfset stGroups[nOverrideGroup].Destination		= stSegment.Destination>
+				<cfset local.stCarriers[stSegment.Carrier] = ''>
+				<cfset nStops++>
+				<cfset stGroups[nOverrideGroup].Stops				= nStops>
+				<cfif nStops GT nTotalStops>
+					<cfset nTotalStops = nStops>
+				</cfif>
+			</cfloop>
+			<cfset stTrips[sTrip].Groups 	= stGroups>
+			<cfset stTrips[sTrip].Duration 	= nDuration>
+			<cfset stTrips[sTrip].Stops 	= nTotalStops>
+			<cfif arguments.sType EQ 'Avail'>
+				<cfset stTrips[sTrip].Depart= stGroups[nOverrideGroup].DepartureTime>
+			<cfelse>
+				<cfset stTrips[sTrip].Depart= stGroups[0].DepartureTime>
+			</cfif>
+			<cfset stTrips[sTrip].Arrival 	= stGroups[nOverrideGroup].ArrivalTime>
+			<cfset stTrips[sTrip].Carriers 	= structKeyList(stCarriers)>
+		</cfloop>
+		
+		<cfreturn stTrips/>
+	</cffunction>
+
+<!---
+addJavascript
+--->
+	<cffunction name="addJavascript" output="false">
+		<cfargument name="stTrips" 	required="true">
+		<cfargument name="sType" 	required="false"	default="Fare">
+		
+		<cfif arguments.sType EQ 'Fare'>
+			<cfset local.aAllCabins = ['Y','C','F']>
+			<cfset local.aRefundable = [0,1]>
+		</cfif>
+		<!--- Loop through all the trips --->
+		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
+			<cfset sCarriers = '"#Replace(arguments.stTrips[sTrip].Carriers, ',', '","', 'ALL')#"'>
+			<!--- If it is a fare based structure, loop through the cabins --->
+			<cfif arguments.sType EQ 'Fare'>
+				<cfloop array="#aAllCabins#" index="local.sCabin">
+					<cfloop array="#aRefundable#" index="local.bRef">
+						<cfif StructKeyExists(arguments.stTrips[sTrip], sCabin)
+						AND StructKeyExists(arguments.stTrips[sTrip][sCabin], bRef)>
+							<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], sCabin, bRef, sCarriers)>
+						</cfif>
+					</cfloop>
+				</cfloop>
+			<!--- If it is an availability structure, add javascript --->
+			<cfelse>
+				<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], 'X', 'X', sCarriers)>
+			</cfif>
+		</cfloop>
+				
+		<cfreturn stTrips/>
+	</cffunction>
+
+<!---
+addJavascriptPerTrip - used only in the above function
+--->
+	<cffunction name="addJavascriptPerTrip" output="false">
+		<cfargument name="sTrip" 	required="true">
+		<cfargument name="stTrip" 	required="true">
+		<cfargument name="sCabin" 	required="true">
+		<cfargument name="bRef" 	required="true">
+		<cfargument name="sCarriers"required="true">
+		
+		<cfset local.sJavascript = "">
+		<!---
+			 * 	0	Token				DL0211DL1123UA221
+			 * 	1	Policy				1/0
+			 * 	2 	Multiple Carriers	1/0
+			 * 	3 	Carriers			"DL","AA","UA"
+			 * 	4	Refundable			1/0
+			 * 	5	Preferred			1/0
+			 * 	6	Cabin Class			Y, C, F
+			 * 	7	Stops				0/1/2
+		--->
+		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token #arguments.sCabin##arguments.bRef# --->
+		<cfset sJavascript = ListAppend(sJavascript, 1)><!--- Policy --->
+		<cfset sJavascript = ListAppend(sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
+		<cfset sJavascript = ListAppend(sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
+		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
+		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Preferred)><!--- Preferred --->
+		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.sCabin#"')><!--- Cabin Class --->
+		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Stops)><!--- Stops --->
+		
+		<cfreturn sJavascript/>
+	</cffunction>
+
+<!---
+getCarriers
+--->
+	<cffunction name="getCarriers" output="false">
+		<cfargument name="stTrips">
+		
+		<cfset local.stCarriers = []>
+		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
+			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
+				<cfif NOT ArrayFind(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
+					<cfset ArrayAppend(stCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
+				</cfif>
+			</cfloop>
+		</cfloop>
+		
+		<cfreturn stCarriers/>
+	</cffunction>
+
+<!---
+mergeTripsToAvail
+--->
+	<cffunction name="mergeTripsToAvail" output="false">
+		<cfargument name="stTrips"		required="true">
+		<cfargument name="stAvailTrips"	required="true">
+		
+		<cfset local.stTempTrips = {}>
+		<cfset local.nGroup = ''>
+		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
+			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
+				<cfset nGroup = arguments.stTrips[sTripKey].Segments[nSegment].Group>
+				<cfif NOT structKeyExists(stTempTrips, nGroup)
+				OR NOT structKeyExists(stTempTrips[nGroup], sTripKey)>
+					<cfset stTempTrips[nGroup][sTripKey] = StructNew('linked')>
+				</cfif>
+				<cfset stTempTrips[nGroup][sTripKey][nSegment] = arguments.stTrips[sTripKey].Segments[nSegment]>
+			</cfloop>
+		</cfloop>
+		<cfset local.sIndex = ''>
+		<cfset local.nHashNumeric = ''>
+		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
+		<cfloop collection="#stTempTrips#" item="local.nGroup">
+			<cfloop collection="#stTempTrips[nGroup]#" item="local.sTripKey">
+				<cfset sIndex = ''>
+				<cfloop collection="#stTempTrips[nGroup][sTripKey]#" item="local.sSegment">
+					<cfloop array="#aSegmentKeys#" index="local.stSegment">
+						<cfset sIndex &= stTempTrips[nGroup][sTripKey][sSegment][stSegment]>
+					</cfloop>
+				</cfloop>
+				<cfset nHashNumeric = HashNumeric(sIndex)>
+				<cfif NOT structKeyExists(arguments.stAvailTrips[nGroup], nHashNumeric)>
+					<cfset arguments.stAvailTrips[nGroup][nHashNumeric].Segments = stTempTrips[nGroup][sTripKey]>
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn arguments.stAvailTrips/>
+	</cffunction>
+
 <!---
 checkPolicy
 --->

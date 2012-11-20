@@ -45,7 +45,7 @@
 	</cffunction>
 	
 	<cffunction name="setupRequest">
-		
+
 		<cfset application.bDebug = 1>
 		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
