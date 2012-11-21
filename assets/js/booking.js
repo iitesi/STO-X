@@ -3,14 +3,11 @@ function toggleDiv(div) {
 }
 function filterAir() {
 																			//console.log('start');
-	var classofservice = $( "input:radio[name=Class]:checked" ).val();
-	if (classofservice == undefined) {
-		classofservice = 'Y'
-	}
-	var fares = $( "input:radio[name=Fares]:checked" ).val();
-	if (fares == undefined) {
-		fares = 0
-	}
+	var classy = $( "#ClassY:checked" ).val();
+	var classc = $( "#ClassC:checked" ).val();
+	var classf = $( "#ClassF:checked" ).val();
+	var fare0 = $( "#Fare0:checked" ).val();
+	var fare1 = $( "#Fare1:checked" ).val();
 	var nonstops = $( "input:checkbox[name=NonStops]:checked" ).val();
 	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
 	var singlecarrier = $( "input:checkbox[name=SingleCarrier]:checked" ).val();
@@ -24,18 +21,33 @@ function filterAir() {
 	 * 	6	Cabin Class			Y, C, F
 	 * 	7	Stops				0/1/2
 	 */
+	 																		//console.log('---------------------------------------------------------------------');
+	 																		//console.log('nonstops - '+nonstops);
+	 																		//console.log('policy - '+policy);
+	 																		//console.log('singlecarrier - '+singlecarrier);
 	 																		//console.log('ran');
+	 																		//console.log(flightresults);
 	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 		var flight = flightresults[loopcnt];
 																			//console.log(flight)
-																			//console.log(nonstops)
-		if ((classofservice != flight[6])
-		|| (fares != flight[4])
+																			//console.log(classy)
+		if ((flight[6] == 'Y' && classy == undefined)
+		|| (flight[6] == 'C' && classc == undefined)
+		|| (flight[6] == 'F' && classf == undefined)
+		|| (flight[4] == 0 && fare0 == undefined)
+		|| (flight[4] == 1 && fare1 == undefined)
 		|| (nonstops == 'on' && flight[7] != 0)
 		|| (policy == 'on' && flight[1] != 1)
 		|| (singlecarrier == 'on' && flight[2] != 0)) {
 			$( '#' + flight[0] ).hide( 'fade' );
+	 																		//console.log('---------------------------------------------------------------------');
 																			//console.log('hide - '+flight[0]);
+																			//console.log('hide - classofservice Y - '+(flight[6] == 'Y' && classy == undefined));
+																			//console.log('hide - fares - '+(fares != flight[4]));
+																			//console.log('hide - nonstops - '+(nonstops == 'on' && flight[7] != 0));
+																			//console.log('hide - policy - '+(policy == 'on' && flight[1] != 1));
+																			//console.log('hide - classofservice - '+(classofservice != flight[6]));
+																			//console.log('hide - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
 		}
 		else {
 			carriercount = 0;
@@ -49,6 +61,14 @@ function filterAir() {
 			}
 			else {
 				$( '#' + flight[0] ).show( 'fade' );
+	 																		//console.log('---------------------------------------------------------------------');
+																			//console.log('show - '+flight[0]);
+																			//console.log('show - classofservice - '+(classofservice != flight[6]));
+																			//console.log('show - fares - '+(fares != flight[4]));
+																			//console.log('show - nonstops - '+(nonstops == 'on' && flight[7] != 0));
+																			//console.log('show - policy - '+(policy == 'on' && flight[1] != 1));
+																			//console.log('show - classofservice - '+(classofservice != flight[6]));
+																			//console.log('show - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
 			}
 		}
 	}

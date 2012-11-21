@@ -15,23 +15,43 @@
 		<script src="assets/js/booking.js"></script>
 	</cfif>
 </head>
+<style>
 
+#wrapper {
+	width: 100%;
+	min-width: 1000px;
+}
+
+
+/* Header
+-----------------------------------------------------------------------------*/
+
+
+
+/* Footer
+-----------------------------------------------------------------------------*/
+
+</style>
 <body>
 	<cfif NOT structKeyExists(rc, "bSuppress")>
-	
-		<header id="header" class="group">
-			<hgroup>
+		
+		<div id="wrapper">
+
+			<div id="header">
 				<cfoutput>#View('main/tabs')#</cfoutput>
-			</hgroup>
-		</header>
+			</div><!-- #header-->
+
+			<div id="content">
+				<cfoutput>#body#</cfoutput>
+			</div><!-- #content-->
+
+			<br clear="both">
+			<div id="footer">
+				Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
+			</div><!-- #footer -->
+
+		</div><!-- #wrapper -->
 		
-		<div id="content">
-			<p><cfoutput>#body#</cfoutput></p>
-		</div>
-		
-		<div id="waiting" style="display:none;">
-			One moment...
-		</div>
 	<cfelse>
 		<p><cfoutput>#body#</cfoutput></p>
 	</cfif>
@@ -40,13 +60,7 @@
 		<a href="#" class="overlayClose">close</a>
 		<div id="overlayContent">Please wait...</div>
 	</div>
-	<!---<footer role="contentinfo">
-		<div class="inner">
-			<p id="copyright">Short's Travel Management <cfoutput>#Year(Now())#</cfoutput></p>
-		</div>
-	</footer>
 	
-	<cfdump eval=session>--->
 </body>
 
 </html>

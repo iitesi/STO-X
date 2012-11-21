@@ -116,6 +116,9 @@ dl {
 	margin:1.5em 0;
 }
 dd { margin-bottom:0.8em; }
+ol, ul {
+	list-style: none outside none;
+}
 li p {
 	margin: 0;
 }

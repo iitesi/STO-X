@@ -5,7 +5,6 @@
 	white-space: nowrap;
 	width: 50%;
 	margin: 0px auto;
-
 }
 .roundtrip .grouptab {
 	-moz-border-bottom-colors: none;
@@ -23,7 +22,7 @@
 	font-weight: bold;
 	height: 20px;
 	line-height: 20px;
-	margin: 30px 0 20px 0;
+	margin: 10px 0 10px 0;
 	padding: 5px 40px 5px 40px;
 	position: relative;
 	text-align: left;

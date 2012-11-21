@@ -1,57 +1,44 @@
 <style type="text/css">
-ol, ul {
-	list-style: none outside none;
-}
-.clear {
-	clear:both;
-}
 #header {
-	width: 100%;
-	position:fixed;
-	z-index:999;
-	background-color:#FFF;
-	margin-top:-85px;
-	border-bottom:1px solid #CAC9C9;
 }
 #header .logo {
 	padding:5px 0 10px 20px;
-	z-index:1000;
 	clear:right;
 }
 #results-tabs {
-	line-height:70px;
+	background-color:rgba(0,0,0,0.3);
 }
 #results-tabs li {
 	cursor:pointer;
 	font-size:12px;
 	font-weight:bold;
-	line-height:30px;
 }
 #results-tabs li.tab {
 	color:#92A9B8;
 	position:relative;
 	float:left;
-}
-#results-tabs li.tab.selected {
-	color:#666666;
-}
-#results-tabs li.tab.selected .tab-border {
-	background-color:white;
-	background-image:none;
-	border-bottom:1px solid white;
-}
-#results-tabs li.tab .tab-border {
-	background-position:0 -584px;
-	background-repeat:repeat-x;
 	border:1px solid #CAC9C9;
 	border-radius:3px 3px 0 0;
-	height:30px;
-	line-height:30px;
+	height:40px;
+	width: 135px;
 	overflow:hidden;
-	padding:0 31px;
+	padding:10px 10px;
+	margin: 0 5px 0 5px;
 	position:relative;
 	top:1px;
 	z-index:1001;
+	background-color:rgba(255,255,255,0.5);
+	border-bottom:1px solid #CAC9C9;
+}
+#results-tabs li.tab img {
+	position:relative;
+	float:left;
+	padding:0 10px 0 0;
+}
+#results-tabs li.tab.selected {
+	color:#666666;
+	background-color:rgba(255,255,255,0.8);
+	border-bottom:1px solid white;
 }
 </style>
 <cfoutput>
@@ -68,83 +55,40 @@ ol, ul {
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
 			<cfif session.searches[nSearchID].Air>
 				<ul id="results-tabs">
-					<li id="tab-1" class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
-						<div class="tab-border">
-							<div class="flex-wrapper">
-								<div class="flex-option">
-									<span class="flex-content">
-										<span class="vmiddle">
-											<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">#session.searches[nSearchID].Heading#</a>
-											<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
-										</span>
-									</span>
-								</div>
-							</div>
-						</div>
+					<li class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
+						<!--- <a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">#session.searches[nSearchID].Heading#</a> --->
+						<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">
+							<h3>Las Vegas</h3>
+							Monday, 12-6 to 12-7
+						</a>
+						<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
 					</li>
 				</ul>
 			</cfif>
 		</cfloop>
 		<ul id="results-tabs">
-			<li id="tab-1" class="tab  style="margin-right: 0.5%">
-				<div class="tab-border">
-					<div class="flex-wrapper">
-						<div class="flex-option">
-							<span class="flex-content">
-								<span class="vmiddle">New Air Search</span>
-							</span>
-						</div>
-					</div>
-				</div>
+			<li class="tab" style="margin-right: 0.5%">
+				<a href="#buildURL('hotel?Search_ID=#rc.Search_ID#')#">
+					<img src="assets/img/air.png">
+					<h3>New Air Search</h3>
+				</a>
 			</li>
 		</ul>
 	</cfif>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab  style="margin-right: 0.5%">
-			<div class="tab-border">
-				<div class="flex-wrapper">
-					<div class="flex-option">
-						<span class="flex-content">
-							<span class="vmiddle">
-								<cfif NOT bAir
-								OR (StructKeyExists(session.searches[rc.Search_ID], 'Air_Selected')
-								AND session.searches[rc.Search_ID].Air_Selected)>
-									<a href="#buildURL('hotel?Search_ID=#rc.Search_ID#')#">Hotel</a>
-								<cfelse>
-									<!--- Show this tab as disabled.  Let them select air first. --->
-									Hotel
-								</cfif>
-							</span>
-						</span>
-					</div>
-				</div>
-			</div>
+		<li class="tab" style="margin-right: 0.5%">
+			<a href="#buildURL('hotel?Search_ID=#rc.Search_ID#')#">
+				<img src="assets/img/hotel.png">
+				<h3>Hotels in <br>Las Vegas</h3>
+			</a>
 		</li>
 	</ul>
 	<ul id="results-tabs">
-		<li id="tab-1" class="tab" style="margin-right: 0.5%">
-			<div class="tab-border">
-				<div class="flex-wrapper">
-					<div class="flex-option">
-						<span class="flex-content">
-							<span class="vmiddle">
-								<cfif NOT bAir
-								OR (StructKeyExists(session.searches[rc.Search_ID], 'Air_Selected')
-								AND session.searches[rc.Search_ID].Air_Selected)>
-									<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">Car</a>
-								<cfelse>
-									<!--- Show this tab as disabled.  Let them select air first. --->
-									<cfif session.User_ID NEQ 3605>
-										Car
-									<cfelse>
-										<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">Car</a>
-									</cfif>
-								</cfif>
-							</span>
-						</span>
-					</div>
-				</div>
-			</div>
+		<li class="tab" style="margin-right: 0.5%">
+			<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
+				<img src="assets/img/car.png">
+				<h3>Cars in <br>Las Vegas</h3>
+			</a>
 		</li>
 	</ul>
 </cfoutput>

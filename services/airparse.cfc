@@ -6,51 +6,18 @@ init
 	<cffunction name="init" output="false">
 		<cfreturn this>
 	</cffunction>
-	
-<!---
-parseSegmentKeys - both
---->
-	<cffunction name="parseSegmentKeys" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stSegmentKeys = {}>
-		<cfset local.sIndex = ''>
-		<!--- Create list of fields that make up a distint segment. --->
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
-		<!--- Loop through results. --->
-		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<!--- Build up the distinct segment string. --->
-					<cfset sIndex = ''>
-					<cfloop array="#aSegmentKeys#" index="local.sCol">
-						<cfset sIndex &= stAirSegment.XMLAttributes[sCol]>
-					</cfloop>
-					<!--- Create a look up structure for the primary key. --->
-					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	HashNumeric(sIndex),
-						Index		: 	sIndex
-					}>
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn stSegmentKeys />
-	</cffunction>
 
 <!---
 parseSegments - both
 --->
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"	required="true">
-		<cfargument name="stSegmentKeys"required="true">
 		
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.sAPIKey = stAirSegment.XMLAttributes.Key>
-					<cfset stSegments[arguments.stSegmentKeys[sAPIKey].HashIndex] = {
+					<cfset stSegments[stAirSegment.XMLAttributes.Key] = {
 						ArrivalTime			: ParseDateTime(stAirSegment.XMLAttributes.ArrivalTime),
 						Carrier 			: stAirSegment.XMLAttributes.Carrier,
 						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
@@ -211,22 +178,9 @@ addJavascript
 		<!--- Loop through all the trips --->
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
 			<cfset sCarriers = '"#Replace(arguments.stTrips[sTrip].Carriers, ',', '","', 'ALL')#"'>
-			<!--- If it is a fare based structure, loop through the cabins --->
-			<cfif arguments.sType EQ 'Fare'>
-				<cfloop array="#aAllCabins#" index="local.sCabin">
-					<cfloop array="#aRefundable#" index="local.bRef">
-						<cfif StructKeyExists(arguments.stTrips[sTrip], sCabin)
-						AND StructKeyExists(arguments.stTrips[sTrip][sCabin], bRef)>
-							<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], sCabin, bRef, sCarriers)>
-						</cfif>
-					</cfloop>
-				</cfloop>
-			<!--- If it is an availability structure, add javascript --->
-			<cfelse>
-				<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], 'X', 'X', sCarriers)>
-			</cfif>
+			<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], arguments.stTrips[sTrip].Class, arguments.stTrips[sTrip].Ref, sCarriers)>
 		</cfloop>
-				
+		
 		<cfreturn stTrips/>
 	</cffunction>
 
@@ -251,7 +205,7 @@ addJavascriptPerTrip - used only in the above function
 			 * 	6	Cabin Class			Y, C, F
 			 * 	7	Stops				0/1/2
 		--->
-		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token #arguments.sCabin##arguments.bRef# --->
+		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
 		<cfset sJavascript = ListAppend(sJavascript, 1)><!--- Policy --->
 		<cfset sJavascript = ListAppend(sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
 		<cfset sJavascript = ListAppend(sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->

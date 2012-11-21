@@ -29,18 +29,13 @@ before - do this before any air calls
 			<cfset session.searches[rc.Search_ID].stAvailTrips[2] = {}>
 			<cfset session.searches[rc.Search_ID].stAvailTrips[3] = {}>
 			<cfset session.searches[rc.Search_ID].AvailDetails.stGroups = {}>
+			<cfset session.searches[rc.Search_ID].FareDetails = {}>
 			<cfset session.searches[rc.Search_ID].FareDetails.stPricing = {}>
-			<cfset session.searches[rc.Search_ID].FareDetails.stSortArrival = []>
-			<cfset session.searches[rc.Search_ID].FareDetails.stSortBag = []>
-			<cfset session.searches[rc.Search_ID].FareDetails.stSortDepart = []>
-			<cfset session.searches[rc.Search_ID].FareDetails.stSortDuration = []>
-			<cfset session.searches[rc.Search_ID].FareDetails.stSortFare = []>
-			<cfset session.searches[rc.Search_ID].FareDetails.stCarriers = []>
 		</cfif>
 		<cfset rc.nSearchID = rc.Search_ID>
 		
 		<cfreturn />
-	</cffunction>	
+	</cffunction>
 
 <!---
 lowfare

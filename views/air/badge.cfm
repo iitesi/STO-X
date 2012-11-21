@@ -6,7 +6,7 @@ NEED:
 	variables.stTrips
 --->
 <cfoutput>
-	<div id="#variables.sTrip#" class="badge" style="min-height:#variables.minwidth#px;">
+	<div id="#variables.sTrip#" class="badge" style="min-height:#variables.minwidth#px;"><!--- #variables.id# --->
 		<table width="100%">
 		<tr>
 			<td width="125px" align="center">
@@ -21,16 +21,9 @@ NEED:
 			</td>
 			<td class="fares" align="right">
 				<cfif rc.action EQ 'air.lowfare'>
-					<cfloop array="#aMyCabins#" index="sCabin">
-						<cfloop array="#aRef#" index="sRef">
-							<cfif StructKeyExists(stTrip, sCabin)
-							AND StructKeyExists(stTrip[sCabin], sRef)>
-								#(sCabin EQ 'Y' ? 'ECONOMY' : (sCabin EQ 'C' ? 'BUSINESS' : 'FIRST'))# CLASS
-								<input type="submit" name="trigger" class="button#stTrip[sCabin][sRef].Policy#policy" value="$#NumberFormat(stTrip[sCabin][sRef].Total)#">
-								<span class="fade">#(sRef EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span> 
-							</cfif>
-						</cfloop>
-					</cfloop>
+					#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))# CLASS
+					<input type="submit" name="trigger" class="button1policy" value="$#NumberFormat(stTrip.Total)#">
+					<span class="fade">#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span> 
 				<cfelse>
 					<input type="submit" name="trigger" class="button1policy" value="Select">
 				</cfif>
@@ -76,14 +69,16 @@ NEED:
 									#stTrip.Segments[nSegment].Carrier##stTrip.Segments[nSegment].FlightNumber#
 								</td>
 								<td class="fade" valign="top">
-									Economy
+									<cfif rc.action EQ 'air.lowfare'>
+										#stTrip.Segments[nSegment].Cabin#
+									</cfif>
 								</td>
-								<td class="right fade" valign="top">
+								<!--- <td class="right fade" valign="top">
 									<cfif StructKeyExists(stTrip.Segments, nSegment+1)
 									AND stTrip.Segments[nSegment+1].Group EQ nGroup>
 										to #stTrip.Segments[nSegment].Destination#
 									</cfif>
-								</td>
+								</td> --->
 								<td class="right fade" valign="top">
 									<cfset cnt++>
 									<cfif cnt EQ 1>

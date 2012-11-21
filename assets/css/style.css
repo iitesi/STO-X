@@ -42,7 +42,9 @@ body {
 	color: #222222;
 	font-family: helvetica,arial,verdana,sans-serif;
 	font-size: 13px;
-	background-color:#fff;
+	background-image:url(../img/debut_light.png);
+	/*background-repeat: no-repeat;*/
+	background-color: #FFF;
 }
 #filterbar #sortbar {
 	float:left;
@@ -79,11 +81,16 @@ body {
 	width: 1020px;
 }
 #content{
-	margin: 80px auto 0;
+	margin: auto 0;
 	padding: 10px;
 	width: 100%;
 	font-family: 'Helvetica Neue',Arial,sans-serif;
-	min-height:500px;
+	clear:both;
+	min-height: 1000px;
+	background-color:rgba(255,255,255,0.8);
+	border-top:1px solid #CAC9C9;
+	/*opacity:0.4;
+	filter:alpha(opacity=40); /* For IE8 and earlier */*/
 }
 #content .filter {
 	background-color: #FFF;
@@ -265,6 +272,9 @@ input[type="submit"] {
 footer[role="contentinfo"]{
 	font-size: 0.85em;
 	padding-top: 15px;
+}
+#footer {
+	height: 100px;
 }
 form { 
 	position: absolute;

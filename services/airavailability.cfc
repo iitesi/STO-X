@@ -11,7 +11,7 @@ doAirAvailability
 		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy"		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
 		<cfargument name="nLegs"		required="false"	default="#ArrayLen(session.searches[url.Search_ID].Legs)#">
-		<cfargument name="bThread"		required="false"	default="0"><!--- Skip threading if you need to troubleshoot an individual function --->
+		<cfargument name="bThread"		required="false"	default="1"><!--- Skip threading if you need to troubleshoot an individual function --->
 		
 		<cfset local.bUAPICall = 0>
 
@@ -38,7 +38,7 @@ doAirAvailability
 						objAirParse="#arguments.objAirParse#"> 
 						
 						<!--- Define. --->
-						<cfset thread.stAvailTrips = {}>
+						<cfset stAvailTrips = {}>
 						<!--- Put together the SOAP message. --->
 						<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup)>
 						<!--- Call the UAPI. --->
@@ -46,11 +46,11 @@ doAirAvailability
 						<!--- Format the UAPI response. --->
 						<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
 						<!--- Create unique segment keys. --->
-						<cfset local.stSegmentKeys 		= 	objAirParse.parseSegmentKeys(aResponse)>
+						<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
 						<!--- Add in the connection references --->
 						<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
 						<!--- Parse the segments. --->
-						<cfset local.stSegments 		= 	objAirParse.parseSegments(aResponse, stSegmentKeys)>
+						<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
 						<!--- Create a look up list opposite of the stSegmentKeys --->
 						<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
 						<!--- Parse the trips. --->
@@ -63,12 +63,6 @@ doAirAvailability
 						<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
 						<!--- Create javascript structure per trip. --->
 						<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
-											
-						<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
-						<cfif StructIsEmpty(thread.stAvailTrips)>
-							<cfset thread.aResponse = 	aResponse>
-							<cfset thread.sMessage =	sMessage>
-						</cfif>
 
 						<!--- Merge information into the current session structures. --->
 						<cfset session.searches[nSearchID].stAvailTrips[nGroup] = stAvailTrips>
@@ -100,11 +94,11 @@ doAirAvailability
 				<!--- Format the UAPI response. --->
 				<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
 				<!--- Create unique segment keys. --->
-				<cfset local.stSegmentKeys 		= 	objAirParse.parseSegmentKeys(aResponse)>
+				<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
 				<!--- Add in the connection references --->
 				<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
 				<!--- Parse the segments. --->
-				<cfset local.stSegments 		= 	objAirParse.parseSegments(aResponse, stSegmentKeys)>
+				<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
 				<!--- Create a look up list opposite of the stSegmentKeys --->
 				<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
 				<!--- Parse the trips. --->
@@ -117,7 +111,6 @@ doAirAvailability
 				<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
 				<!--- Create javascript structure per trip. --->
 				<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
-
 
 				<!--- Merge information into the current session structures. --->
 				<cfset session.searches[nSearchID].stAvailTrips[nGroup] = stAvailTrips>
@@ -213,6 +206,37 @@ prepareSoapHeader
 	</cffunction>
 
 <!---
+parseSegmentKeys
+--->
+	<cffunction name="parseSegmentKeys" output="false">
+		<cfargument name="stResponse"	required="true">
+		
+		<cfset local.stSegmentKeys = {}>
+		<cfset local.sIndex = ''>
+		<!--- Create list of fields that make up a distint segment. --->
+		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
+		<!--- Loop through results. --->
+		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
+			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
+				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<!--- Build up the distinct segment string. --->
+					<cfset sIndex = ''>
+					<cfloop array="#aSegmentKeys#" index="local.sCol">
+						<cfset sIndex &= stAirSegment.XMLAttributes[sCol]>
+					</cfloop>
+					<!--- Create a look up structure for the primary key. --->
+					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
+						HashIndex	: 	HashNumeric(sIndex),
+						Index		: 	sIndex
+					}>
+				</cfloop>
+			</cfif>
+		</cfloop>
+			
+		<cfreturn stSegmentKeys />
+	</cffunction>
+
+<!---
 addSegmentRefs
 --->
 	<cffunction name="addSegmentRefs" output="false">
@@ -248,6 +272,37 @@ parseKeyLookup - schedule
 		</cfloop>
 		
 		<cfreturn stSegmentKeyLookUp />
+	</cffunction>
+
+<!---
+parseSegments
+--->
+	<cffunction name="parseSegments" output="false">
+		<cfargument name="stResponse"		required="true">
+		<cfargument name="stSegmentKeys"	required="true">
+		
+		<cfset local.stSegments = {}>
+		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
+			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
+				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset stSegments[arguments.stSegmentKeys[stAirSegment.XMLAttributes.Key].HashIndex] = {
+						ArrivalTime			: ParseDateTime(stAirSegment.XMLAttributes.ArrivalTime),
+						Carrier 			: stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						DepartureTime		: ParseDateTime(stAirSegment.XMLAttributes.DepartureTime),
+						Destination			: stAirSegment.XMLAttributes.Destination,
+						Equipment			: stAirSegment.XMLAttributes.Equipment,
+						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
+						Group				: stAirSegment.XMLAttributes.Group,
+						Origin				: stAirSegment.XMLAttributes.Origin,
+						TravelTime			: stAirSegment.XMLAttributes.TravelTime
+					}>
+				</cfloop>
+			</cfif>
+		</cfloop>
+			
+		<cfreturn stSegments />
 	</cffunction>
 
 <!---
@@ -300,6 +355,8 @@ parseConnections - schedule
 			</cfloop>
 			<cfset nHashNumeric = HashNumeric(sIndex)>
 			<cfset stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
+			<cfset stTrips[nHashNumeric].Class = 'X'>
+			<cfset stTrips[nHashNumeric].Ref = 'X'>
 		</cfloop>
 		
 		<cfreturn stTrips />

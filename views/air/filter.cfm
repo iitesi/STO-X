@@ -27,7 +27,7 @@
 		<cfif structKeyExists(session.searches[rc.nSearchID].FareDetails, "stCarriers")>
 			<!--- Airlines --->
 			<li>
-				<a href="#">Airlines</a>
+				<a href="#" class="main">Airlines</a>
 				<ul>
 					<cfoutput>
 						<cfloop array="#session.searches[rc.nSearchID].FareDetails.stCarriers#" index="Carrier" >
@@ -39,23 +39,85 @@
 		</cfif>
 
 	<cfif rc.action NEQ 'air.availability'>
-		
+		<cfloop collection="#session.searches[rc.nSearchID].stTrips#" item="sTrip">
+			<cfloop array="#aCabins#" index="sCabin">
+				<cfloop array="#aRef#" index="bRef">
+					<cfif StructKeyExists(session.searches[rc.Search_ID].stTrips[sTrip], sCabin)
+					AND StructKeyExists(session.searches[rc.Search_ID].stTrips[sTrip][sCabin], bRef)>
+						<cfset session.searches[rc.Search_ID].FareDetails[sCabin] = 1>
+						<cfset session.searches[rc.Search_ID].FareDetails[bRef] = 1>
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfloop>
 		<!--- Class --->
 		<li>
-			<a href="#">Class</a>
+			<a href="#" class="main">Class</a>
 			<ul>
-				<li><input type="radio" id="ClassY" name="Class" value="Y"><label for="ClassY">Economy</label></li>
-				<li><input type="radio" id="ClassC" name="Class" value="C"><label for="ClassC">Business</label></li>
-				<li><input type="radio" id="ClassF" name="Class" value="F"><label for="ClassF">First</label></li>
+				<li>
+					<cfif structKeyExists(session.searches[rc.Search_ID].FareDetails.stResults, "Y")
+					OR StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'YX')>
+						<input type="checkbox" id="ClassY" name="ClassY" value="Y" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'Y'>checked</cfif>><label for="ClassY">Economy</label>
+					</cfif>
+					<!--- <cfif NOT StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'YX')>
+						<cfoutput>
+							<a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&sCabins=Y')#">Find Economy Class Fares</a>
+						</cfoutput>
+					</cfif> --->
+				</li>
+				<li>
+					<cfif structKeyExists(session.searches[rc.Search_ID].FareDetails.stResults, "C")>
+						<input type="checkbox" id="ClassC" name="ClassC" value="C" <cfif structKeyExists(rc, 'sCabins') AND rc.sCabins EQ 'C'>checked</cfif>><label for="ClassC">Business</label>
+					<cfelseif StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'CX')>
+						<input type="checkbox" id="ClassC" name="ClassC" value="C" disabled><label for="ClassC">Business (no results)</label>
+					</cfif>
+					<cfif NOT StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'CX')>
+						<cfoutput>
+							<a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&sCabins=C')#">Find Business Class Fares</a>
+						</cfoutput>
+					</cfif>
+				</li>
+				<li>
+					<cfif structKeyExists(session.searches[rc.Search_ID].FareDetails.stResults, "F")>
+						<input type="checkbox" id="ClassF" name="ClassF" value="F" <cfif structKeyExists(rc, 'sCabins') AND rc.sCabins EQ 'F'>checked</cfif>><label for="ClassF">First</label>
+					<cfelseif StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'FX')>
+						<input type="checkbox" id="ClassF" name="ClassF" value="F" disabled><label for="ClassF">First (no results)</label>
+					</cfif>
+					<cfif NOT StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'FX')>
+						<cfoutput>
+							<a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&sCabins=F')#">Find First Class Fares</a>
+						</cfoutput>
+					</cfif>
+				</li>
 			</ul>
 		</li>
 
 		<!--- Fares --->
 		<li>
-			<a href="#">Fares</a>
+			<a href="#" class="main">Fares</a>
 			<ul>
-				<li><input type="radio" id="Fares0" name="Fares" value="0"><label for="Fares0">Non Refundable</label></li>
-				<li><input type="radio" id="Fares1" name="Fares" value="1"><label for="Fares1">Refundable</label></li>
+				<li>
+					<cfif structKeyExists(session.searches[rc.Search_ID].FareDetails.stResults, "0")
+					OR StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'X0')>
+						<input type="checkbox" id="Fare0" name="Fare0" value="0" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>><label for="Fare0">Non Refundable</label>
+					</cfif>
+					<!--- <cfif NOT StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'X0')>
+						<cfoutput>
+							<a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&bRefundable=0')#">Find Non Refundable Fares</a>
+						</cfoutput>
+					</cfif> --->
+				</li>
+				<li>
+					<cfif structKeyExists(session.searches[rc.Search_ID].FareDetails.stResults, "1")
+					OR StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'X1')>
+						<input type="checkbox" id="Fare1" name="Fare1" value="1" <cfif structKeyExists(rc, 'bRef') AND rc.bRef EQ 0>checked</cfif>><label for="Fare1">Refundable</label>
+					</cfif>
+					<cfif NOT StructKeyExists(session.searches[rc.nSearchID].FareDetails.stPricing, 'X1')>
+						<cfoutput>
+							<a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&bRefundable=1')#">Find Refundable Fares</a>
+						</cfoutput>
+					</cfif>
+				</li>
 			</ul>
 		</li>
 
@@ -71,7 +133,6 @@
 	<!--- Single Carrier Flights --->
 	<input type="checkbox" id="SingleCarrier" name="SingleCarrier" checked> <label for="SingleCarrier">Single Carrier</label>
 </ul>
-
 <script type="application/javascript">
 	$(document).ready(function() {
 		$( ".radiobuttons" ).buttonset();
@@ -101,7 +162,6 @@
 			.change(function() {
 				filterAir();
 			});
-		filterAir();
 		
 	});
 	</script>
@@ -115,6 +175,29 @@
 	font-family: Verdana;
 	font-size: 11px;
 }
+#nav .main {
+	color:#FFFFFF;
+	background:#0090D2;
+}
+#nav ul{
+	list-style:none;
+	position:absolute;
+	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+	width: 200px;
+}
+#nav ul li{
+	padding:5px; /* Introducing a padding between the li and the a give the illusion spaced items */
+	float:none;
+
+	background-color: #FFF;
+	font-size: 11px;
+	padding: 5px;
+	float:left;
+	position: relative;
+	width: 245px;
+	box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
+	color: #211922;
+}
 #nav li{
 	float:left;
 	margin-right:10px;
@@ -123,23 +206,7 @@
 #nav a{
 	display:block;
 	padding:5px 15px 5px 15px;
-	color:#FFFFFF;
-	background:#0090D2;
 	text-decoration:none;
-}
-#nav ul{
-	background:#0090D2;
-	background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
-	list-style:none;
-	position:absolute;
-	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
-	width: 200px;
-}
-#nav ul li{
-	background:#0090D2;
-	padding:5px; /* Introducing a padding between the li and the a give the illusion spaced items */
-	float:none;
-	color:#FFF;
 }
 #nav li:hover ul{ /* Display the dropdown on hover */
 	left:0; /* Bring back on-screen when needed */
