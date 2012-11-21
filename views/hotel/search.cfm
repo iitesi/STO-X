@@ -2,7 +2,7 @@
 
 <cfoutput>	
 	#View('hotel/filter')#
-	<!--- #View('hotel/map')# --->
+	#View('hotel/map')#
 
 	<br clear="both">
 
@@ -18,7 +18,7 @@
 			<!--- <cfdump eval=stHotel abort> --->
 			<cfset tripcount++ />
 
-			<cfif tripcount LT 10>
+			<cfif tripcount LT 100>
 
 				<cfset HotelAddress = '' /><!--- Set a default address, the original ddress returned is garbage --->
 				<cfif stHotel.RoomsReturned><!--- We have the real address --->
@@ -39,7 +39,8 @@
 						<td width="135px">
 							<div id="hotelimage#sHotel#" class="listcell" style="width:125px; overflow:none; border:1px solid ##FFFFFF">
 								<cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
-								<img width="125px" src="#Signature_Image#" />
+								Image goes here
+								<!--- <img width="125px" src="#Signature_Image#" /> --->
 							</div>
 						</td>
 						<td valign="top">
@@ -100,7 +101,7 @@
 		</cfloop>
 	</div>
 
-	<script src="https://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&s=1" charset="UTF-8" type="text/javascript"></script>
+	<script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
 	<script type="text/javascript">
 	var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
 
@@ -112,7 +113,8 @@
 	
 		var center = new Microsoft.Maps.Location(lat,long);
 		var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
-		map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
+		var map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
+		//var map = new VEMap('myMap');
 		map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));		
 		
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";

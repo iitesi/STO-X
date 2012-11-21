@@ -1,11 +1,10 @@
+<br /><br />
 <div id="filterbar">
 	<div>
 		<div class="filterheader">Filter By</div>
 		<button id="btnHotelChain">Hotel Chain</button>
 		<button id="btnHotelAmenities">Amenities</button>
-		<button class="radiobuttons">
-			<input type="radio" id="Policy" name="Policy" value="0" onclick="filterhotel();"><label for="Policy">In Policy</label>
-		</button>
+		<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
 	</div>
 </div>
 <cfoutput>
@@ -48,8 +47,7 @@ function filterhotel() {
 	<cfoutput>
 		var hotelresults = #serializeJSON(session.searches[rc.Search_ID].HotelInformationQuery,true)#;
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
-	</cfoutput>
-	
+	</cfoutput>	
 	orderedpropertyids = orderedpropertyids.split(',');	
 
 	for (var t = 0; t < orderedpropertyids.length; t++) {
@@ -73,16 +71,10 @@ function filterhotel() {
 			}
 		}
 
-		// check in policy
-		var Policy = $('input:radio[name=Policy]:checked').val();
+		// check Policy
+		var Policy = $( "input:checkbox[name=Policy]:checked" ).val();
 		var PolicyValue = hotelresults.DATA['POLICY'][t];
-		/*
-		console.log(PolicyValue);
-		if ( PolicyValue == 1) {
-			console.log(hotelresults.DATA['PROPERTY_ID'][t]);
-		}
-		*/
-		if (propertymatch == 1 && Policy == 0) {		
+		if (propertymatch == 1 && Policy == 'on' && PolicyValue != '1') {		
 				propertymatch = 0;
 		}
 
@@ -130,6 +122,12 @@ function filterhotel() {
 
 
 $(document).ready(function() {
+
+		$( "#Policy" )
+			.button()
+			.change(function() {
+				filterhotel();
+			});
 
 
 	$( ".radiobuttons" ).buttonset();
