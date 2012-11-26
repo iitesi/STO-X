@@ -1,4 +1,4 @@
-<cfif rc.action EQ 'air.lowfare'>
+<cfif rc.nGroup EQ ''>
 	<cfset stSegments = session.searches[rc.Search_ID].stTrips[rc.nTripID].Segments>
 <cfelse>
 	<cfset stSegments = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID].Segments>
@@ -7,12 +7,16 @@
 	<div>
 		<ul class="tabs">
 			<cfloop collection="#stSegments#" item="nSeg">
-				<li><a <cfif rc.nSegment EQ nSeg>class="active"</cfif> onClick="$('.tabcontent').html('Checking #stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber# seat availablity...');$('##overlayContent').load('#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#rc.nTripID#&nSegment=#nSeg##(structKeyExists(rc, "nGroup") ? "&nGroup=#rc.nGroup#" : "")#')#')">#stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber#</a></li>
+				<li><a <cfif rc.nSegment EQ nSeg>class="active"</cfif> onClick="$('.tabcontent').html('Checking #stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber# seat availablity...');$('##overlayContent').load('#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#rc.nTripID#&nSegment=#nSeg##(rc.nGroup NEQ '' ? "&nGroup=#rc.nGroup#" : "")#')#')">#stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber#</a></li>
 			</cfloop>
 		</ul>
-		<cfif NOT structIsEmpty(rc.stSeats)>
-			<cfset stExitRows = rc.stSeats.ExitRow>
-			<cfset structDelete(rc.stSeats, "ExitRow")>
+		<cfif NOT StructKeyExists(rc.stSeats, 'Error')>
+			<cfif StructKeyExists(rc.stSeats, 'ExitRow')>
+				<cfset stExitRows = rc.stSeats.ExitRow>
+				<cfset structDelete(rc.stSeats, "ExitRow")>
+			<cfelse>
+				<cfset stExitRows = {}>
+			</cfif>
 			<cfset stAisles = rc.stSeats.Aisle>
 			<cfset structDelete(rc.stSeats, "Aisle")>
 			<cfset aColumns = structKeyArray(rc.stSeats.Columns)>
@@ -104,6 +108,8 @@
 				</tr>
 				</table>
 			</div>
+		<cfelse>
+			<div class="tabcontent">#rc.stSeats.Error#</div>
 		</cfif>
 	</div>
 </cfoutput>

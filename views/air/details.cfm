@@ -1,6 +1,6 @@
 <cfset aRef = ["0","1"]>
 <cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.nSearchID].FareDetails.stPricing)), 'f', 'F'))>
-<cfif rc.action EQ 'air.lowfare'>
+<cfif NOT structKeyExists(rc, 'nGroup')>
 	<cfset stTrip = session.searches[rc.Search_ID].stTrips[rc.nTripID]>
 <cfelse>
 	<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID]>
@@ -48,9 +48,11 @@
 							</div>
 						</div>
 						<div style="display:table-cell;float:left;color:black;width:100%;">
-							<cfset cnt = 0>
+							<cfset nCnt = 0>
+							<cfset aKeys = structKeyArray(stTrip.Segments)>
 							<cfloop collection="#stTrip.Segments#" item="nSegment" >
 								<cfif stTrip.Segments[nSegment].Group EQ nGroup>
+									<cfset nCnt++>
 									<div class="roundall" style="width:90%;padding:10px;border:1px solid ##CFDAFA;background-color:##FFFFFF;">
 										</p>
 											<strong>
@@ -59,13 +61,13 @@
 											</strong>
 										</p>
 										<p>
-											#stTrip.Segments[nSegment].Origin# - 
+											<span title="#application.stAirports[stTrip.Segments[nSegment].Origin]#">#stTrip.Segments[nSegment].Origin#</a> - 
 											#DateFormat(stTrip.Segments[nSegment].DepartureTime, 'mmm d,')# at
 											#TimeFormat(stTrip.Segments[nSegment].DepartureTime, 'h:mm tt')#
 										</p>
 										<cfif stTrip.Segments[nSegment].ChangeOfPlane>
 											<p>
-													Plane Change
+												Plane Change
 											</p>						
 										</cfif>
 										<cfif stTrip.Segments[nSegment].FlightTime NEQ ''>
@@ -76,7 +78,7 @@
 											</p>						
 										</cfif>
 										<p>
-											#stTrip.Segments[nSegment].Destination# - 
+											<span title="#application.stAirports[stTrip.Segments[nSegment].Destination]#">#stTrip.Segments[nSegment].Destination#</a> - 
 											#DateFormat(stTrip.Segments[nSegment].ArrivalTime, 'mmm d,')# at
 											#TimeFormat(stTrip.Segments[nSegment].ArrivalTime, 'h:mm tt')#
 										</p>
@@ -87,13 +89,14 @@
 											</p>
 										</cfif>
 									</div>
-									<cfif structKeyExists(stTrip.Segments, nSegment+1)
-									AND stTrip.Segments[nSegment+1].Group EQ nGroup>
+									<cfif nCnt LT ArrayLen(aKeys)
+									AND stTrip.Segments[aKeys[nCnt+1]].Group EQ nGroup>
 										<div class="roundall" style="width:90%;padding:10px;margin-right:10px;margin-top:5px;margin-bottom:5px;border:1px solid ##eeeeee;background-color:##eeeeee">
-											<cfset minites = DateDiff('n', stTrip.Segments[nSegment].ArrivalTime, stTrip.Segments[nSegment+1].DepartureTime)>
+											<cfset minites = DateDiff('n', stTrip.Segments[nSegment].ArrivalTime, stTrip.Segments[aKeys[nCnt+1]].DepartureTime)>
 											Layover:
 											#int(minites/60)#h #minites%60#m
-											in #stTrip.Segments[nSegment].Destination#
+											in
+											<span title="#application.stAirports[stTrip.Segments[nSegment].Destination]#">#stTrip.Segments[nSegment].Destination#</span>
 										</div>
 									</cfif>
 								</cfif>

@@ -173,11 +173,15 @@
 	position:relative;
 	z-index:5;
 	font-family: Verdana;
-	font-size: 11px;
+	font-size: 10px;
+	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
+    transition: all 0.2s linear 0s;
 }
 #nav .main {
 	color:#FFFFFF;
-	background:#0090D2;
+	background:#F4F0F0;
+	border:1px solid #E0D6D6;
+	color: #2E76CF;
 }
 #nav ul{
 	list-style:none;

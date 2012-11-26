@@ -15,23 +15,6 @@
 		<script src="assets/js/booking.js"></script>
 	</cfif>
 </head>
-<style>
-
-#wrapper {
-	width: 100%;
-	min-width: 1000px;
-}
-
-
-/* Header
------------------------------------------------------------------------------*/
-
-
-
-/* Footer
------------------------------------------------------------------------------*/
-
-</style>
 <body>
 	<cfif NOT structKeyExists(rc, "bSuppress")>
 		
@@ -43,23 +26,23 @@
 
 			<div id="content">
 				<cfoutput>#body#</cfoutput>
+		
+				<div class="overlayWrapper" id="overlay">
+					<a href="#" class="overlayClose">close</a>
+					<div id="overlayContent">Please wait...</div>
+				</div>
+			
 			</div><!-- #content-->
 
 			<br clear="both">
 			<div id="footer">
 				Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
 			</div><!-- #footer -->
-
 		</div><!-- #wrapper -->
-		
+
 	<cfelse>
 		<p><cfoutput>#body#</cfoutput></p>
 	</cfif>
-
-	<div class="overlayWrapper" id="overlay">
-		<a href="#" class="overlayClose">close</a>
-		<div id="overlayContent">Please wait...</div>
-	</div>
 	
 </body>
 

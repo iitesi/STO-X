@@ -15,11 +15,13 @@
 }
 #results-tabs li.tab {
 	color:#92A9B8;
+	text-align: center;
 	position:relative;
 	float:left;
 	border:1px solid #CAC9C9;
 	border-radius:3px 3px 0 0;
 	height:40px;
+	line-height: 15px;
 	width: 135px;
 	overflow:hidden;
 	padding:10px 10px;
@@ -27,7 +29,7 @@
 	position:relative;
 	top:1px;
 	z-index:1001;
-	background-color:rgba(255,255,255,0.5);
+	background-color:rgba(255,255,255,0.3);
 	border-bottom:1px solid #CAC9C9;
 }
 #results-tabs li.tab img {
@@ -37,7 +39,7 @@
 }
 #results-tabs li.tab.selected {
 	color:#666666;
-	background-color:rgba(255,255,255,0.8);
+	background-color:rgba(255,255,255,0.2);
 	border-bottom:1px solid white;
 }
 </style>
@@ -56,10 +58,8 @@
 			<cfif session.searches[nSearchID].Air>
 				<ul id="results-tabs">
 					<li class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
-						<!--- <a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">#session.searches[nSearchID].Heading#</a> --->
 						<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">
-							<h3>Las Vegas</h3>
-							Monday, 12-6 to 12-7
+							#session.searches[nSearchID].Heading#
 						</a>
 						<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
 					</li>
@@ -77,9 +77,9 @@
 	</cfif>
 	<ul id="results-tabs">
 		<li class="tab" style="margin-right: 0.5%">
-			<a href="#buildURL('hotel?Search_ID=#rc.Search_ID#')#">
+			<a href="#buildURL('hotel.search?Search_ID=#rc.Search_ID#')#">
 				<img src="assets/img/hotel.png">
-				<h3>Hotels in <br>Las Vegas</h3>
+				<h3>Hotels in <br>#session.searches[nSearchID].Destination#</h3>
 			</a>
 		</li>
 	</ul>
@@ -87,7 +87,7 @@
 		<li class="tab" style="margin-right: 0.5%">
 			<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
 				<img src="assets/img/car.png">
-				<h3>Cars in <br>Las Vegas</h3>
+				<h3>Cars in <br>#session.searches[nSearchID].Destination#</h3>
 			</a>
 		</li>
 	</ul>
