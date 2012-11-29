@@ -6,7 +6,7 @@
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
-    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]#">
+    	<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrip 		= session.searches[arguments.nSearchID]>

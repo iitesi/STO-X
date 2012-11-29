@@ -48,18 +48,18 @@
 	<!--- Any air tabs? --->
 	<cfset bAir = 0>
 	<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
-		<cfif session.searches[nSearchID].Air>
+		<cfif session.searches[nSearchID].bAir>
 			<cfset bAir = 1>
 			<cfbreak>
 		</cfif>
 	</cfloop>
 	<cfif bAir>
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
-			<cfif session.searches[nSearchID].Air>
+			<cfif session.searches[nSearchID].bAir>
 				<ul id="results-tabs">
 					<li class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
 						<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">
-							#session.searches[nSearchID].Heading#
+							#session.searches[nSearchID].sHeading#
 						</a>
 						<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
 					</li>
@@ -79,7 +79,7 @@
 		<li class="tab" style="margin-right: 0.5%">
 			<a href="#buildURL('hotel.search?Search_ID=#rc.Search_ID#')#">
 				<img src="assets/img/hotel.png">
-				<h3>Hotels in <br>#session.searches[nSearchID].Destination#</h3>
+				<h3>Hotels in <br>#session.searches[nSearchID].sDestination#</h3>
 			</a>
 		</li>
 	</ul>
@@ -87,7 +87,7 @@
 		<li class="tab" style="margin-right: 0.5%">
 			<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
 				<img src="assets/img/car.png">
-				<h3>Cars in <br>#session.searches[nSearchID].Destination#</h3>
+				<h3>Cars in <br>#session.searches[nSearchID].sDestination#</h3>
 			</a>
 		</li>
 	</ul>

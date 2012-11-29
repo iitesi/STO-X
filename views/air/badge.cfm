@@ -10,12 +10,16 @@ NEED:
 		<table width="100%">
 		<tr>
 			<td width="125px" align="center">
-				<cfloop collection="#variables.stTrip.Segments#" item="nSegment" >
-					<cfif ArrayFind(application.stAccounts[session.Acct_ID].aPreferredAir, stTrip.Segments[nSegment].Carrier)>
-						<span class="medium blue bold">PREFERRED</span><br>
-						<cfbreak>
-					</cfif>
-				</cfloop>
+				<cfif stTrip.Preferred>
+					<span class="medium blue bold">PREFERRED</span><br>
+				</cfif>
+				<cfif rc.action EQ 'air.lowfare' AND stTrip.PrivateFare>
+					<span class="medium blue bold">CONTRACTED</span><br>
+				</cfif>
+				<cfif StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails, 'aPriced')
+				AND ArrayFind(session.searches[rc.nSearchID].stLowFareDetails.aPriced, variables.sTrip)>
+					<span class="medium blue bold">SELECTED</span><br>
+				</cfif>
 				<cfset sImg = (ListLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers : 'Mult')>
 				<img class="carrierimg" src="https://www.shortstravelonline.com/book/assets/img/airlines/#sImg#.png" <cfif sImg NEQ 'Mult'>title="#application.stAirVendors[sImg].Name#"<cfelse>title="Multiple Carriers"</cfif>>
 				#(ListLen(stTrip.Carriers) EQ 1 ? '<br>'&application.stAirVendors[stTrip.Carriers].Name : '')#
@@ -26,7 +30,13 @@ NEED:
 					<input type="submit" name="trigger" class="button1policy" value="$#NumberFormat(stTrip.Total)#">
 					<span class="fade">#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span> 
 				<cfelse>
-					<input type="submit" name="trigger" class="button1policy" value="Select">
+					<form method="post" action="#buildURL('air.availability')#">
+						<input type="hidden" name="bSelect" value="1"><!--- Flag to trigger the 'select' code --->
+						<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
+						<input type="hidden" name="nTrip" value="#variables.sTrip#">
+						<input type="hidden" name="Group" value="#rc.nGroup#">
+						<input type="submit" class="button1policy" value="Select">
+					</form>
 				</cfif>
 			</td>
 		</tr>
@@ -77,7 +87,7 @@ NEED:
 									</cfif>
 								</td>
 								<td class="right fade" valign="top">
-									<cfif nCnt LT ArrayLen(aKeys)
+									<cfif nCnt EQ 1
 									AND stTrip.Segments[aKeys[nCnt+1]].Group EQ nGroup>
 										to <span title="#application.stAirports[stTrip.Segments[nSegment].Destination]#">#stTrip.Segments[nSegment].Destination#</span>
 									</cfif>
@@ -98,10 +108,10 @@ NEED:
 		</table>
 		<br><br>
 		<p>
-			<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip##(structKeyExists(rc, "Group") ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none">
+			<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip##(rc.action EQ 'air.availability' ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none">
 				<button type="button" class="textButton">Details</button>|
 			</a>
-			<a href="#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&nSegment=#nFirstSeg##(structKeyExists(rc, "Group") ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none" target="_blank">
+			<a href="#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#&nSegment=#nFirstSeg##(rc.action EQ 'air.availability' ? "&nGroup=#rc.Group#" : "")#')#" class="overlayTrigger" style="text-decoration:none" target="_blank">
 				<button type="button" class="textButton">Seats</button>|
 			</a>
 			<a href="#buildURL('air.baggage?Search_ID=#rc.nSearchID#&bSuppress=1&sCarriers=#stTrip.Carriers#')#" class="overlayTrigger" style="text-decoration:none">
@@ -114,5 +124,22 @@ NEED:
 				<button type="button" class="textButton">CouldYou?</button>
 			</a>
 		</p>
+		<cfif rc.action EQ 'air.lowfare'>
+			<ul class="smallnav">
+				<li class="main">+
+					<ul>
+						<cfloop list="Y,C,F" index="sClass">
+							<cfloop list="0,1" index="bRef">
+								<cfif stTrip.Class EQ sClass AND stTrip.Ref EQ bRef>
+									<li>#(sClass EQ 'Y' ? 'Economay' : (sClass EQ 'C' ? 'Business' : 'First'))# Class - #(bRef EQ 0 ? 'Non' : '')# Refundable - $#NumberFormat(stTrip.Total)#</li>
+								<cfelse>
+									<li><a href="#buildURL('air.price?Search_ID=#rc.nSearchID#&nTrip=#sTrip#&sCabin=#sClass#&bRefundable=#bRef#')#">#(sClass EQ 'Y' ? 'Economay' : (sClass EQ 'C' ? 'Business' : 'First'))# Class - #(bRef EQ 0 ? 'Non' : '')# Refundable</a></li>
+								</cfif>
+							</cfloop>
+						</cfloop>
+					</ul>
+				</li>
+			</ul>
+		</cfif>
 	</div>
 </cfoutput>

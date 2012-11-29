@@ -91,8 +91,8 @@ setAccounts
 		}>
 		
 		<cfquery name="local.qAccounts" datasource="book">
-		SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates, Air_PassengerCodes,
-		Air_PrivateFares, Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
+		SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+		Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
 		RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
 		FROM Accounts
 		WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer" >

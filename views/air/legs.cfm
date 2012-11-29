@@ -42,19 +42,9 @@
 </style>
 <cfoutput>
 	<div class="roundtrip">
-		<cfset cnt = 0>
-		<cfloop array="#session.searches[rc.nSearchID].Legs#" index="nLeg">
-			<cfset classes = ''>
-			<cfset cnt++>
-			<cfif cnt EQ 1>
-				<cfset classes = ListAppend(classes, 'first', ' ')>
-				<cfset classes = ListAppend(classes, 'selected', ' ')>
-			</cfif>
-			<cfif cnt EQ ArrayLen(session.searches[rc.nSearchID].Legs)>
-				<cfset classes = ListAppend(classes, 'last', ' ')>
-			</cfif>
-			<div class="grouptab #classes#">
-				<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#cnt-1#')#">#nLeg#</a>
+		<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="nLeg">
+			<div class="grouptab">
+				<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#nLeg#')#">#session.searches[rc.nSearchID].stLegs[nLeg]#</a>
 			</div>
 		</cfloop>
 	</div>

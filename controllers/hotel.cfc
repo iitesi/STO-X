@@ -17,7 +17,7 @@
 		<cfif NOT StructKeyExists(session.searches, url.Search_ID)>
 			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#') />
 		</cfif>
-		<cfset rc.stPolicy = application.stPolicies[session.searches[url.Search_ID].Policy_ID] />
+		<cfset rc.stPolicy = application.stPolicies[session.searches[url.Search_ID].nPolicyID] />
 		<cfif StructKeyExists(rc, 'bReloadHotel')>
 			
 		</cfif>

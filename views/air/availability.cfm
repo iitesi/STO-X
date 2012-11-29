@@ -5,10 +5,10 @@
 <br clear="both">
 <cfoutput>
 	<div id="aircontent">
-		<cfif structKeyExists(session.searches[rc.Search_ID].AvailDetails.stSortSegments, rc.Group)>
+		<cfif structKeyExists(session.searches[rc.Search_ID].stAvailDetails.stSortSegments, rc.Group)>
 
 			<cfset variables.bLinks = 1><!--- Let the view know whether there should be active links or not --->
-			<cfloop array="#session.searches[rc.Search_ID].AvailDetails.stSortSegments[rc.Group]#" index="variables.sTrip">
+			<cfloop array="#session.searches[rc.Search_ID].stAvailDetails.stSortSegments[rc.Group]#" index="variables.sTrip">
 
 				<cfset variables.stTrip = session.searches[rc.Search_ID].stAvailTrips[rc.Group][variables.sTrip]>
 				<cfset variables.minwidth = 225>
@@ -20,12 +20,12 @@
 
 		</cfif>
 	</div>
-	<cfif structKeyExists(session.searches[rc.Search_ID].AvailDetails.stSortSegments, rc.Group)>
-		<!--- var sortarrival = #SerializeJSON(session.searches[rc.nSearchID].AvailDetails.stSortArrival)#;
-		var sortdepart = #SerializeJSON(session.searches[rc.nSearchID].AvailDetails.stSortDepart)#;
-		var sortduration = #SerializeJSON(session.searches[rc.nSearchID].AvailDetails.stSortDuration)#; --->
+	<cfif structKeyExists(session.searches[rc.Search_ID].stAvailDetails.stSortSegments, rc.Group)>
+		<!--- var sortarrival = #SerializeJSON(session.searches[rc.nSearchID].stAvailDetails.aSortArrival)#;
+		var sortdepart = #SerializeJSON(session.searches[rc.nSearchID].stAvailDetails.aSortDepart)#;
+		var sortduration = #SerializeJSON(session.searches[rc.nSearchID].stAvailDetails.aSortDuration)#; --->
 		<script type="application/javascript">
-		var flightresults = [<cfset nCount = 0><cfloop array="#session.searches[rc.Search_ID].AvailDetails.stSortSegments[rc.Group]#" index="sTrip"><cfset nCount++>[#session.searches[rc.Search_ID].stAvailTrips[rc.Group][variables.sTrip].sJavascript#]<cfif ArrayLen(session.searches[rc.Search_ID].AvailDetails.stSortSegments[rc.Group]) NEQ nCount>,</cfif></cfloop>];
+		var flightresults = [<cfset nCount = 0><cfloop array="#session.searches[rc.Search_ID].stAvailDetails.stSortSegments[rc.Group]#" index="sTrip"><cfset nCount++>[#session.searches[rc.Search_ID].stAvailTrips[rc.Group][variables.sTrip].sJavascript#]<cfif ArrayLen(session.searches[rc.Search_ID].stAvailDetails.stSortSegments[rc.Group]) NEQ nCount>,</cfif></cfloop>];
 		$(document).ready(function() {
 			filterAir();
 		});

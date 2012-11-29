@@ -5,11 +5,11 @@
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="vendor" 		required="faluse" default="">
 		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
 		<cfif NOT structKeyExists( session.searches[nSearchID], "stCars")
 		OR StructIsEmpty(session.searches[nSearchID].stCars)>
-			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].Value_ID, session.Acct_ID)>
+			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID)>
 			<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers)>
 			<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
 			<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
@@ -25,14 +25,14 @@
 	
 <!--- searchCDNumbers --->
 	<cffunction name="searchCDNumbers" output="false">
-		<cfargument name="Value_ID" 	required="true">
+		<cfargument name="nValueID" 	required="true">
 		<cfargument name="Acct_ID"		default="#session.Acct_ID#">
 		
 		<cfquery name="local.qCDNumbers" datasource="book">
 		SELECT Vendor_Code, CD_Number
 		FROM CD_Numbers
 		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
-		AND (Value_ID = <cfqueryparam value="#arguments.Value_ID#" cfsqltype="cf_sql_numeric" />
+		AND (Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_numeric" />
 		OR Value_ID IS NULL)
 		</cfquery>
 		

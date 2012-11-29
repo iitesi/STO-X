@@ -4,7 +4,7 @@
 	<cffunction name="doHotelSearch" output="false">
 		<cfargument name="nSearchID" />
 		<cfargument name="stAccount"	default="#application.stAccounts[session.Acct_ID]#" />
-    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#" />
+    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#" />
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
 		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
@@ -51,7 +51,7 @@
 	<cffunction name="parseHotels" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].Policy_ID]#">
+		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#">
 		
 		<cfset local.stHotels = {} />

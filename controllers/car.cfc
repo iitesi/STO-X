@@ -16,7 +16,7 @@
 		</cfif>
 		<cfset rc.nSearchID = url.Search_ID>
 		<cfset rc.stAccount = application.stAccounts[session.Acct_ID]>
-		<cfset rc.stPolicy = application.stPolicies[session.searches[url.Search_ID].Policy_ID]>
+		<cfset rc.stPolicy = application.stPolicies[session.searches[url.Search_ID].nPolicyID]>
 		<cfif StructKeyExists(rc, 'bReloadCar')>
 			<cfset session.searches[rc.nSearchID].stCars = {}>
 		</cfif>

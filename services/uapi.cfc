@@ -30,6 +30,8 @@ callUAPI
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
+			<!--- Place this in the session scope for debugging purposes --->
+			<cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: cfhttp.filecontent})>
 			<cfif bSessionStorage>
 				<cfset session.searches[arguments.nSearchID][arguments.sMessage].sFileContent = cfhttp.filecontent>
 			</cfif>
@@ -49,16 +51,6 @@ formatUAPIRsp
 		<cfset local.stResponse = XMLParse(arguments.stResponse)>
 		
 		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
-	</cffunction>
-
-<!---
-sortStructure
---->
-	<cffunction name="sortStructure" returntype="array" output="false">
-		<cfargument name="stStructure" 	required="true">
-		<cfargument name="sField" 	required="true">
-				
-		<cfreturn StructSort(arguments.stStructure, 'numeric', 'asc', arguments.sField )/>
 	</cffunction>
 
 </cfcomponent>

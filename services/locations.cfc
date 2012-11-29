@@ -26,7 +26,7 @@
 		<cfset local.stDates = {}>
 		<cfset stDates.PickUp_DateTime = ''>
 		<cfset stDates.DropOff_DateTime = ''>
-		<cfif session.searches[arguments.nSearchID].Air>
+		<cfif session.searches[arguments.nSearchID].bAir>
 			<!--- To Do!! --->
 		</cfif>
 		<cfif NOT IsDate(stDates.PickUp_DateTime)

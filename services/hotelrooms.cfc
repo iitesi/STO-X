@@ -4,7 +4,7 @@
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="HotelRateCodes" />
-    <cfargument name="stPolicy" default="#application.stPolicies[session.searches[arguments.nSearchID].Policy_ID]#">
+    <cfargument name="stPolicy" default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
 		
 		<cfset local.stHotel = session.searches[nSearchID].stHotels[nHotelCode] />
 		<cfset local.stNewHotel = StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />

@@ -1,6 +1,6 @@
 <cfset aRef = ["0","1"]>
-<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.nSearchID].FareDetails.stPricing)), 'f', 'F'))>
-<cfif NOT structKeyExists(rc, 'nGroup')>
+<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.nSearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
+<cfif rc.nGroup EQ ''>
 	<cfset stTrip = session.searches[rc.Search_ID].stTrips[rc.nTripID]>
 <cfelse>
 	<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID]>

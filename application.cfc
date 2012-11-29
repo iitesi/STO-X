@@ -45,6 +45,11 @@
 	</cffunction>
 	
 	<cffunction name="setupRequest">
+		
+		<cfset request.context.nSearchID = (StructKeyExists(request.context, 'Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
+		<cfset request.context.Search_ID = request.context.nSearchID>
+		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
+		<cfset request.context.Group = request.context.nGroup>
 
 		<cfset application.bDebug = 1>
 		<cfset controller( 'setup.setApplication' )>

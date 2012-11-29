@@ -8,7 +8,7 @@
 				<td heigth="100%" width="120" align="center" style="border-left:1px solid ##CCC">
 					<cfif ArrayFind(application.stAccounts[session.Acct_ID].aPreferredCar, sVendor)>
 						<span class="medium blue bold">PREFERRED</span><br>
-					<cfelseif application.stPolicies[session.searches[rc.nSearchID].Policy_ID].Policy_CarPrefRule
+					<cfelseif application.stPolicies[session.searches[rc.nSearchID].nPolicyID].Policy_CarPrefRule
 					AND NOT ArrayFind(application.stAccounts[session.Acct_ID].aPreferredCar, sVendor)>
 						<img src="assets/img/policy0.png">
 					</cfif>
@@ -26,10 +26,10 @@
 				<table width="100%" heigth="100%">
 				<tr heigth="100%">
 					<td width="150" align="center">
-						<cfif ArrayFind(application.stPolicies[session.searches[rc.nSearchID].Policy_ID].aCarSizes, sCategory)>
+						<cfif ArrayFind(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
 							<span class="medium blue bold">PREFERRED</span><br>
-						<cfelseif application.stPolicies[session.searches[rc.nSearchID].Policy_ID].Policy_CarTypeRule EQ 1
-						AND NOT ArrayFindNoCase(application.stPolicies[session.searches[rc.nSearchID].Policy_ID].aCarSizes, sCategory)>
+						<cfelseif application.stPolicies[session.searches[rc.nSearchID].nPolicyID].Policy_CarTypeRule EQ 1
+						AND NOT ArrayFindNoCase(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
 							<img src="assets/img/policy0.png">
 						</cfif>
 						<span class="medium">#sCategory#</span><br>

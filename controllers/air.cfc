@@ -18,21 +18,41 @@ before - do this before any air calls
 	<cffunction name="before" output="false">
 		<cfargument name="rc">
 
-		<cfif NOT StructKeyExists(session.searches, rc.Search_ID)>
-			<cfset variables.fw.redirect('main?Search_ID=#rc.Search_ID#')>
+		<cfif NOT StructKeyExists(session.searches, rc.nSearchID)>
+			<cfset variables.fw.redirect('main?Search_ID=#rc.nSearchID#')>
 		</cfif>
 		<!--- Clear out results if it needs to be reloaded. --->
 		<cfif StructKeyExists(rc, 'bReloadAir')>
-			<cfset session.searches[rc.Search_ID].stTrips = {}>
-			<cfset session.searches[rc.Search_ID].stAvailTrips[0] = {}>
-			<cfset session.searches[rc.Search_ID].stAvailTrips[1] = {}>
-			<cfset session.searches[rc.Search_ID].stAvailTrips[2] = {}>
-			<cfset session.searches[rc.Search_ID].stAvailTrips[3] = {}>
-			<cfset session.searches[rc.Search_ID].AvailDetails.stGroups = {}>
-			<cfset session.searches[rc.Search_ID].FareDetails = {}>
-			<cfset session.searches[rc.Search_ID].FareDetails.stPricing = {}>
+			<!--- Air - low fare search --->
+			<cfset session.searches[rc.nSearchID].stTrips = {}>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails = {}>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aCarriers = {}>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.stPricing = {}>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aPriced = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortArrival = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortBag = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortDepart = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortDuration = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortFare = []>
+			<!--- Air - availability search --->
+			<cfset session.searches[rc.nSearchID].stAvailTrips = {}>
+			<cfset session.searches[rc.nSearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
+			<cfset session.searches[rc.nSearchID].stSelected[0] = {}>
+			<cfset session.searches[rc.nSearchID].stSelected[1] = {}>
+			<cfset session.searches[rc.nSearchID].stSelected[2] = {}>
+			<cfset session.searches[rc.nSearchID].stSelected[3] = {}>
+			<cfset session.searches[rc.nSearchID].stAvailTrips[0] = {}><!--- Leg details by group --->
+			<cfset session.searches[rc.nSearchID].stAvailTrips[1] = {}>
+			<cfset session.searches[rc.nSearchID].stAvailTrips[2] = {}>
+			<cfset session.searches[rc.nSearchID].stAvailTrips[3] = {}>
+			<cfset session.searches[rc.nSearchID].stAvailDetails.stGroups = {}>
+			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[0] = []><!--- Sorting information by group --->
+			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[1] = []>
+			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[2] = []>
+			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[3] = []>
 		</cfif>
-		<cfset rc.nSearchID = rc.Search_ID>
+
 		
 		<cfreturn />
 	</cffunction>
@@ -47,7 +67,7 @@ lowfare
 		<cfset variables.fw.service('uapi.init', 'objUAPI')>
 		<cfset variables.fw.service('airparse.init', 'objAirParse')>
 		<!--- Do the search. --->
-		<cfset variables.fw.service('lowfare.doLowFare', 'void')>
+		<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
 				
 		<cfreturn />
 	</cffunction>
@@ -58,14 +78,30 @@ availability
 	<cffunction name="availability" output="true">
 		<cfargument name="rc">
 		
-		<!--- Move needed variables into the rc scope. --->
-		<cfset rc.nGroup = url.Group>
-		<!--- init objects --->
-		<cfset variables.fw.service('uapi.init', 'objUAPI')>
-		<cfset variables.fw.service('airparse.init', 'objAirParse')>
-		<!--- Do the search. --->
-		<cfset variables.fw.service('airavailability.doAirAvailability', 'void')>
+		<cfif NOT structKeyExists(rc, 'bSelect')>
+			<!--- init objects --->
+			<cfset variables.fw.service('uapi.init', 'objUAPI')>
+			<cfset variables.fw.service('airparse.init', 'objAirParse')>
+			<!--- Do the search. --->
+			<cfset variables.fw.service('airavailability.doAirAvailability', 'void')>			
+		<cfelse>
+			<!--- Select --->
+			<cfset variables.fw.service('airavailability.selectLeg', 'void')>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endavailability" output="true">
+		<cfargument name="rc">
 		
+		<cfif structKeyExists(rc, 'bSelect')
+		AND structKeyExists(session.searches[rc.nSearchID].stLegs, rc.nGroup+1)>
+			<cfset variables.fw.redirect('air.availability?Search_ID=#rc.nSearchID#&nGroup=#rc.nGroup+1#')>
+		<cfelseif structKeyExists(rc, 'bSelect')
+		AND NOT structKeyExists(session.searches[rc.nSearchID].stLegs, rc.nGroup+1)>
+			<cfset variables.fw.redirect('air.price?Search_ID=#rc.nSearchID#')>
+		</cfif>
+
 		<cfreturn />
 	</cffunction>
 	
@@ -97,11 +133,20 @@ price
 --->
 	<cffunction name="price" output="false">
 		<cfargument name="rc">
-		<!--- Not used in production.  Just a wrapper to test the ajax call for pricing one itinerary. --->
 		
-		<cfset rc.Search_ID = rc.nSearchID>
-		<cfset variables.fw.service('airprice.doAirPriceTesting', 'void')>
+		<!--- init objects --->
+		<cfset variables.fw.service('uapi.init', 'objUAPI')>
+		<cfset variables.fw.service('airparse.init', 'objAirParse')>
+		<!--- Do the pricing --->
+		<cfset variables.fw.service('airprice.doAirPrice', 'void')>
 		
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endprice" output="true">
+		<cfargument name="rc">
+		
+		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.nSearchID#&filter=all')>
+
 		<cfreturn />
 	</cffunction>
 
@@ -137,7 +182,7 @@ email
 		</cfif>
 		<cfset rc.nUserID = session.User_ID>
 		<cfset variables.fw.service('general.getUser', 'qUser')>
-		<cfset rc.nUserID = session.searches[rc.nSearchID].Profile_ID>
+		<cfset rc.nUserID = session.searches[rc.nSearchID].nProfileID>
 		<cfset variables.fw.service('general.getUser', 'qProfile')>
 		
 		<cfreturn />
