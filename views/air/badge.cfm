@@ -16,8 +16,7 @@ NEED:
 				<cfif rc.action EQ 'air.lowfare' AND stTrip.PrivateFare>
 					<span class="medium blue bold">CONTRACTED</span><br>
 				</cfif>
-				<cfif StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails, 'aPriced')
-				AND ArrayFind(session.searches[rc.nSearchID].stLowFareDetails.aPriced, variables.sTrip)>
+				<cfif StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails.stPriced, variables.sTrip)>
 					<span class="medium blue bold">SELECTED</span><br>
 				</cfif>
 				<cfset sImg = (ListLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers : 'Mult')>
@@ -120,9 +119,11 @@ NEED:
 			<a href="#buildURL('air.email?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#')#" class="overlayTrigger" style="text-decoration:none">
 				<button type="button" class="textButton">Email</button>|
 			</a>
-			<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#')#" class="overlayTrigger" style="text-decoration:none">
-				<button type="button" class="textButton">CouldYou?</button>
-			</a>
+			<cfif rc.action EQ 'air.lowfare'>
+				<a href="#buildURL('air.details?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#sTrip#')#" class="overlayTrigger" style="text-decoration:none">
+					<button type="button" class="textButton">CouldYou?</button>
+				</a>
+			</cfif>
 		</p>
 		<cfif rc.action EQ 'air.lowfare'>
 			<ul class="smallnav">

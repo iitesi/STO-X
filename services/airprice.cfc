@@ -1,11 +1,20 @@
 <cfcomponent output="false">
 	
 <!---
+init
+--->
+	<cffunction name="init" output="false">
+		
+		<cfset variables.objUAPI = CreateObject('component', 'booking.services.uapi').init()>
+		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
+		
+		<cfreturn this>
+	</cffunction>
+	
+<!---
 doAirPrice
 --->
 	<cffunction name="doAirPrice" output="false">
-		<cfargument name="objUAPI"		required="true">
-		<cfargument name="objAirParse"	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
@@ -38,33 +47,36 @@ doAirPrice
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable)>
 		<!--- Call the UAPI. --->
-		<cfset sResponse 	= arguments.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+		<cfset sResponse 	= objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
-		<cfset aResponse 	= arguments.objUAPI.formatUAPIRsp(sResponse)>
-		<cfdump eval=aResponse>
+		<cfset aResponse 	= objUAPI.formatUAPIRsp(sResponse)>
 		<!--- Parse the segments. --->
-		<cfset stSegments	= arguments.objAirParse.parseSegments(aResponse)>
+		<cfset stSegments	= objAirParse.parseSegments(aResponse)>
 		<cfif StructIsEmpty(stSegments)>
 			<cfdump eval=aResponse abort>
 		</cfif>
 		<!--- Parse the trips. --->
-		<cfset stTrips		= arguments.objAirParse.parseTrips(aResponse, stSegments)>
+		<cfset stTrips		= objAirParse.parseTrips(aResponse, stSegments)>
 		<!--- Add group node --->
-		<cfset stTrips		= arguments.objAirParse.addGroups(stTrips)>
+		<cfset stTrips		= objAirParse.addGroups(stTrips)>
 		<!--- Check low fare. --->
-		<cfset stTrips 		= arguments.objAirParse.addTotalBagFare(stTrips)>
+		<cfset stTrips 		= objAirParse.addTotalBagFare(stTrips)>
 		<!--- Mark preferred carriers. --->
-		<cfset stTrips		= arguments.objAirParse.addPreferred(stTrips, arguments.stAccount)>
+		<cfset stTrips		= objAirParse.addPreferred(stTrips, arguments.stAccount)>
 		<!--- Create javascript structure per trip. --->
-		<cfset stTrips 		= arguments.objAirParse.addJavascript(stTrips)>
-		<cfdump eval=stTrips>
+		<cfset stTrips 		= objAirParse.addJavascript(stTrips)>
 		<!--- Add trip id to the list of priced items --->
-		<cfset session.searches[arguments.nSearchID].stLowFareDetails.aPriced 		= addaPriced(session.searches[arguments.nSearchID].stLowFareDetails.aPriced, stTrips)>
+		<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.nSearchID].stLowFareDetails.stPriced, stTrips)>
 		<!--- Merge all data into the current session structures. --->
-		<cfset session.searches[arguments.nSearchID].stTrips 						= arguments.objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
-
+		<cfset session.searches[arguments.nSearchID].stTrips 						= objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
 		<!--- Finish up the results --->
-		<cfset stTrips = arguments.objAirParse.finishLowFare(arguments.nSearchID)>
+		<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
+		<!--- Clear out their results --->
+		<cfset session.searches[arguments.nSearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
+		<cfset session.searches[arguments.nSearchID].stSelected[0] = {}>
+		<cfset session.searches[arguments.nSearchID].stSelected[1] = {}>
+		<cfset session.searches[arguments.nSearchID].stSelected[2] = {}>
+		<cfset session.searches[arguments.nSearchID].stSelected[3] = {}>
 
 		<cfreturn >
 	</cffunction>
@@ -144,18 +156,18 @@ prepareSOAPHeader
 	</cffunction>
 	
 <!---
-addaPriced
+addstPriced
 --->
-	<cffunction name="addaPriced" output="false">
-		<cfargument name="aPriced" 	required="true">
+	<cffunction name="addstPriced" output="false">
+		<cfargument name="stPriced" 	required="true">
 		<cfargument name="stTrips" 	required="true">
 
-		<cfset local.aPriced = (IsStruct(arguments.aPriced) ? arguments.aPriced : [])>
+		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})>
 		<cfloop collection="#arguments.stTrips#" item="local.nTrip">
-			<cfset ArrayAppend(local.aPriced, nTrip)>
+			<cfset local.stPriced[nTrip] = ''>
 		</cfloop>
 
-		<cfreturn local.aPriced>
+		<cfreturn local.stPriced>
 	</cffunction>
 	
 </cfcomponent>

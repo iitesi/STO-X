@@ -29,8 +29,9 @@ doLowFare
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortArrival 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Arrival')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortDuration 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Duration')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortBag 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-		<!--- Run policy on all the results --->
+		<!--- Run policy on all the results 
 		<cfset session.searches[nSearchID].stTrips 							= checkPolicy(session.searches[arguments.nSearchID].stTrips, arguments.nSearchID, session.searches[nSearchID].stLowFareDetails.aSortFare[1])>
+		--->
 		
 		<cfreturn >
 	</cffunction>
@@ -264,7 +265,7 @@ addPreferred
 --->
 	<cffunction name="addPreferred" output="false">
 		<cfargument name="stTrips">
-		<cfargument name="stAccount">
+		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrips = arguments.stTrips>
 		<cfloop collection="#stTrips#" item="local.sTrip">
@@ -285,22 +286,23 @@ addGroups
 	<cffunction name="addGroups" output="false">
 		<cfargument name="stTrips" 	required="true">
 		<cfargument name="sType" 	required="false"	default="Fare">
-		
+
 		<cfset local.stGroups = {}>
 		<cfset local.aCarriers = {}>
+		<cfset local.stTrips = arguments.stTrips>
 		<cfset local.stSegment = ''>
 		<cfset local.nStops = ''>
 		<cfset local.nTotalStops = ''>
 		<cfset local.nDuration = ''>
 		<cfset local.nOverrideGroup = 0>
 		<!--- Loop through all the trips --->
-		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
+		<cfloop collection="#stTrips#" item="local.sTrip">
 			<cfset stGroups = StructNew('linked')>
 			<cfset aCarriers = {}>
 			<cfset nDuration = 0>
 			<cfset nTotalStops = 0>
-			<cfloop collection="#arguments.stTrips[sTrip].Segments#" item="local.nSegment">
-				<cfset stSegment = arguments.stTrips[sTrip].Segments[nSegment]>
+			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">11
+				<cfset stSegment = stTrips[sTrip].Segments[nSegment]>
 				<cfset nOverrideGroup = stSegment.Group>
 				<cfset stSegment.Group = nOverrideGroup>
 				<cfif NOT structKeyExists(stGroups, nOverrideGroup)>

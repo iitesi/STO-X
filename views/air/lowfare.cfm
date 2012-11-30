@@ -12,19 +12,16 @@
 			<cfset variables.bLinks = 1><!--- Let the view know whether there should be active links or not --->
 			<cfset variables.minwidth = 345>
 
-			<cfif structKeyExists(session.searches[rc.Search_ID].stLowFareDetails, 'aPriced')>
-				<cfloop array="#session.searches[rc.Search_ID].stLowFareDetails.aPriced#" index="variables.sTrip">
+			<cfloop collection="#session.searches[rc.Search_ID].stLowFareDetails.stPriced#" item="variables.sTrip">
 
-					<cfset variables.stTrip = session.searches[rc.Search_ID].stTrips[variables.sTrip]>
-								
-					#View('air/badge')#
-					
-				</cfloop>
-			</cfif>
+				<cfset variables.stTrip = session.searches[rc.Search_ID].stTrips[variables.sTrip]>
+							
+				#View('air/badge')#
+				
+			</cfloop>
 
 			<cfloop array="#session.searches[rc.Search_ID].stLowFareDetails.aSortFare#" index="variables.sTrip">
-				<cfif NOT structKeyExists(session.searches[rc.Search_ID].stLowFareDetails, 'aPriced')
-				OR NOT ArrayFind(session.searches[rc.nSearchID].stLowFareDetails.aPriced, variables.sTrip)>
+				<cfif NOT StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails.stPriced, variables.sTrip)>
 					<cfset variables.stTrip = session.searches[rc.Search_ID].stTrips[variables.sTrip]>
 								
 					#View('air/badge')#

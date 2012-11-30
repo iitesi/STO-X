@@ -62,7 +62,7 @@
 			<cfset tab.stLowFareDetails.aCarriers = {}>
 			<cfset tab.stLowFareDetails.stPricing = {}>
 			<cfset tab.stLowFareDetails.stResults = {}>
-			<cfset tab.stLowFareDetails.aPriced = []>
+			<cfset tab.stLowFareDetails.stPriced = {}>
 			<cfset tab.stLowFareDetails.aSortArrival = []>
 			<cfset tab.stLowFareDetails.aSortBag = []>
 			<cfset tab.stLowFareDetails.aSortDepart = []>
@@ -80,6 +80,7 @@
 			<cfset tab.stAvailTrips[2] = {}>
 			<cfset tab.stAvailTrips[3] = {}>
 			<cfset tab.stAvailDetails.stGroups = {}>
+			<cfset tab.stAvailDetails.stCarriers = {}>
 			<cfset tab.stAvailDetails.stSortSegments[0] = []><!--- Sorting information by group --->
 			<cfset tab.stAvailDetails.stSortSegments[1] = []>
 			<cfset tab.stAvailDetails.stSortSegments[2] = []>

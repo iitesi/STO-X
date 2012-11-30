@@ -1,4 +1,16 @@
 <cfcomponent>
+	
+<!---
+init
+--->
+	<cffunction name="init" output="false">
+
+		<cfset variables.objUAPI = CreateObject('component', 'booking.services.uapi').init()>
+		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
+		<!---<cfset variables.objLowFare = CreateObject('component', 'booking.services.lowfare').init()>--->
+		
+		<cfreturn this>
+	</cffunction>
 
 <!---
 selectLeg
@@ -12,156 +24,135 @@ selectLeg
 				
 		<cfreturn />
 	</cffunction>
+	
+<!---
+threadAvailability
+--->
+	<cffunction name="threadAvailability" output="false">
+		<cfargument name="nSearchID"	required="true">
+		<cfargument name="nGroup"		required="false"	default="">
+		<cfargument name="stLegs"		required="false"	default="#session.searches[url.Search_ID].stLegs#">
+		
+		<!--- Throw out a thread for low fare search.  This is not joined back in. --->
+		<!--- <cfset void = objLowFare.threadLowFare(objUAPI, objAirParse, arguments.nSearchID, 'LOW')> --->
+
+		<cfset local.stThreads = {}>
+		<cfset local.sThreadName = ''>
+		<cfset local.sPriority = ''>
+
+		<!--- Create a thread for every leg.  Give priority to the group specifically selected. --->
+		<cfloop collection="#arguments.stLegs#" item="local.nLeg">
+			<cfif arguments.nGroup EQ nLeg>
+				<cfset sPriority = 'HIGH'>
+			<cfelse>
+				<cfset sPriority = 'LOW'>
+			</cfif>
+			<cfset sThreadName = doAvailability(arguments.nSearchID, nLeg, sPriority)>
+			<cfif sPriority EQ 'HIGH' AND sThreadName NEQ ''>
+				<cfset stThreads[sThreadName] = ''>
+			</cfif>
+		</cfloop>
+
+		<!--- Join only if threads where thrown out. --->
+		<cfif NOT StructIsEmpty(stThreads)>
+			<cfthread action="join" name="#structKeyList(stThreads)#" />
+			<!--- <cfdump eval=cfthread abort> --->
+		</cfif>
+
+		<cfreturn >
+	</cffunction>
 
 <!---
 doAirAvailability
 --->
-	<cffunction name="doAirAvailability" output="false">
-		<cfargument name="objUAPI"		required="true">
-		<cfargument name="objAirParse"	required="true">
+	<cffunction name="doAvailability" output="false">
 		<cfargument name="nSearchID"	required="true">
 		<cfargument name="nGroup"		required="true">
-		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy"		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
-		<cfargument name="stLegs"		required="false"	default="#session.searches[url.Search_ID].stLegs#">
-		<cfargument name="bThread"		required="false"	default="1"><!--- Skip threading if you need to troubleshoot an individual function --->
-		
-		<cfset local.bUAPICall = 0>
+		<cfargument name="sPriority"	required="false"	default="NORMAL">
+		<cfargument name="stGroups"		required="false"	default="#session.searches[nSearchID].stAvailDetails.stGroups#">
 
-		<!--- <cfif NOT arguments.bThread>
-			<!--- Create a thread for every leg. --->
-			<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="local.nLeg">
-				<!--- Don't go back to the UAPI if we already got the data. --->
-				<cfif NOT StructKeyExists(session.searches[nSearchID].stAvailDetails.stGroups, nLeg)>
-
-					<cfif nLeg EQ arguments.nGroup>
-						<!--- Note that STO did go out to Apollo for results. --->
-						<cfset bUAPICall = 1>
-					</cfif>
-					
-					<!--- Kick off the thread. --->
-					<cfthread
-						action="run"
-						name="Group#nLeg#"
-						stAccount="#arguments.stAccount#"
-						stPolicy="#arguments.stPolicy#"
-						nSearchID="#arguments.nSearchID#"
-						nGroup="#arguments.nGroup#"
-						objUAPI="#arguments.objUAPI#"
-						objAirParse="#arguments.objAirParse#"> 
-						
-						<!--- Define. --->
-						<cfset stAvailTrips = {}>
-						<!--- Put together the SOAP message. --->
-						<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup)>
-						<!--- Call the UAPI. --->
-						<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, nSearchID)>
-						<!--- Format the UAPI response. --->
-						<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
-						<!--- Create unique segment keys. --->
-						<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
-						<!--- Add in the connection references --->
-						<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
-						<!--- Parse the segments. --->
-						<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
-						<!--- Create a look up list opposite of the stSegmentKeys --->
-						<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
-						<!--- Parse the trips. --->
-						<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
-						<!--- Merge with current results --->
-						<cfset stAvailTrips 			= 	objAirParse.mergeTrips(session.searches[nSearchID].stAvailTrips[nGroup], stAvailTrips)>
-						<!--- Mark preferred carriers. --->
-						<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips, stAccount)>
-						<!--- Add group node --->
-						<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
-						<!--- Create javascript structure per trip. --->
-						<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
-
-						<!--- Merge information into the current session structures. --->
-						<cfset session.searches[nSearchID].stAvailTrips[nGroup] = stAvailTrips>
-						<cfset session.searches[nSearchID].stAvailDetails.aCarriers = objAirParse.getCarriers(stAvailTrips)>
-						<cfset session.searches[nSearchID].stAvailDetails.stSortSegments[nGroup] = StructKeyArray(session.searches[nSearchID].stAvailTrips[nGroup])>
-
-						<cfset session.searches[nSearchID].stAvailDetails.stGroups[nGroup] = 1>
-					</cfthread>
-				</cfif>
-			</cfloop>
-
-			<!--- Join only if threads where thrown out. --->
-			<cfif bUAPICall>
-				<cfthread action="join" name="Group#arguments.nGroup#" />
-			</cfif>
-
-		<cfelse> --->
-			<cfset local.nLeg = arguments.nGroup>
-			<!--- Don't go back to the UAPI if we already got the data. --->
-			<cfif NOT StructKeyExists(session.searches[nSearchID].stAvailDetails.stGroups, nLeg)>
-				<!--- Note that STO did go out to Apollo for results. --->
-				<cfset bUAPICall = 1>
-				<!--- Define. --->
-				<cfset stAvailTrips = {}>
-				<!--- Put together the SOAP message. --->
-				<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup)>
-				<!--- <cfdump eval=sMessage> --->
-				<!--- Call the UAPI. --->
-				<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, nSearchID)>
-				<!--- Format the UAPI response. --->
-				<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
-				<!--- Create unique segment keys. --->
-				<cfset local.sNextRef	 		= 	objAirParse.parseNextReference(aResponse)>
-				<cfif sNextRef NEQ ''>
+		<cfset local.sThreadName = ''>
+		<!--- Don't go back to the UAPI if we already got the data. --->
+		<cfif NOT StructKeyExists(arguments.stGroups, nGroup)>
+			<!--- Name of the thread thrown out. --->
+			<cfset sThreadName = 'Group'&arguments.nGroup>
+			<!--- Kick off the thread. --->
+			<cfthread
+			action="run"
+			name="#sThreadName#"
+			priority="#arguments.sPriority#"
+			nSearchID="#arguments.nSearchID#"
+			nGroup="#arguments.nGroup#">
+				<cfset local.sNextRef = 'ROUNDONE'>
+				<cfset local.nCount = 0>
+				<cfloop condition="sNextRef NEQ ''">
+					<cfset local.nCount++>
 					<!--- Put together the SOAP message. --->
-					<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup, sNextRef)>
-					<!--- <cfdump eval=sMessage> --->
+					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.nSearchID, arguments.nGroup, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''))>
 					<!--- Call the UAPI. --->
-					<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, nSearchID)>
+					<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 					<!--- Format the UAPI response. --->
 					<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
 					<!--- Create unique segment keys. --->
-<cfdump eval=aResponse abort>
-				</cfif>
-				<!--- Create unique segment keys. --->
-				<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
-				<!--- Add in the connection references --->
-				<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
-				<!--- Parse the segments. --->
-				<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
-				<!--- Create a look up list opposite of the stSegmentKeys --->
-				<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
-				<!--- Parse the trips. --->
-				<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
+					<cfset sNextRef 				= 	objAirParse.parseNextReference(aResponse)>
+					<cfif nCount GT 3>
+						<cfset sNextRef				= ''>
+					</cfif>
+					<!--- <cfdump eval=sNextRef> --->
+					<!--- Create unique segment keys. --->
+					<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
+					<!--- Add in the connection references --->
+					<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
+					<!--- Parse the segments. --->
+					<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
+					<!--- Create a look up list opposite of the stSegmentKeys --->
+					<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
+					<!--- Parse the trips. --->
+					<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
+					<!--- Mark preferred carriers. --->
+					<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips)>
+					<!--- Add group node --->
+					<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
+					<!--- Create javascript structure per trip. --->
+					<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
+					<!--- Merge information into the current session structures. --->
+					<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
+				</cfloop>
 				<!--- Merge with current results --->
-				<cfset stAvailTrips 			= 	objAirParse.mergeTrips(session.searches[nSearchID].stAvailTrips[nGroup], stAvailTrips)>
-				<!--- Mark preferred carriers. --->
-				<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips, stAccount)>
-				<!--- Add group node --->
-				<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
-				<!--- Create javascript structure per trip. --->
-				<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
-				<!--- <cfdump eval=stAvailTrips abort> --->
-				
-				<!--- Merge information into the current session structures. --->
-				<cfset session.searches[nSearchID].stAvailTrips[nGroup] = stAvailTrips>
-				<cfset session.searches[nSearchID].stAvailDetails.aCarriers = objAirParse.getCarriers(stAvailTrips)>
-				<cfset session.searches[nSearchID].stAvailDetails.stSortSegments[nGroup] = StructKeyArray(session.searches[nSearchID].stAvailTrips[nGroup])>
+				<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] 				= 	objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
+				<!--- Add list of available carriers per leg --->
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.stCarriers[arguments.nGroup]	= objAirParse.getCarriers(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
+				<!--- Add sorting per leg --->
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.stSortSegments[arguments.nGroup]= StructKeyArray(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
+				<!--- Mark this leg as priced --->
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.stGroups[arguments.nGroup] 		= 1>
+			</cfthread>
+		</cfif>
+		<!---
+		<cfif sNextRef NEQ ''>
+			<!--- Put together the SOAP message. --->
+			<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup, sNextRef)>
+			<!--- <cfdump eval=sMessage> --->
+			<!--- Call the UAPI. --->
+			<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, nSearchID)>
+			<!--- Format the UAPI response. --->
+			<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
+			<!--- Create unique segment keys. --->
+			<cfdump eval=aResponse abort>
+		</cfif>--->
 
-				<cfset session.searches[nSearchID].stAvailDetails.stGroups[nGroup] = 1>
-			</cfif>
-
-		<!--- </cfif> --->
-
-		<cfreturn >
+		<cfreturn sThreadName>
 	</cffunction>
 
 <!---
 prepareSoapHeader
 --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
-		<cfargument name="stAccount" 	required="true">
-		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="nGroup"	 	required="true">
-		<cfargument name="sNextRef"	 	required="false" default="">
+		<cfargument name="sNextRef"	 	required="false" 	default="">
+		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stPolicy"		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
 		<cfquery name="local.getsearch">
 		SELECT Air_Type, Airlines, International, Depart_City, Depart_DateTime, Depart_TimeType, Arrival_City, Arrival_DateTime, Arrival_TimeType, ClassOfService
@@ -184,9 +175,7 @@ prepareSoapHeader
 						<air:AvailabilitySearchReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<cfif arguments.sNextRef NEQ ''>
-								<com:NextResultReference  xmlns="http://www.travelport.com/schema/common_v14_0">
-									<common_v15_0:NextResultReference>#arguments.sNextRef#</common_v15_0:NextResultReference>
-								</com:NextResultReference>
+								<com:NextResultReference>#arguments.sNextRef#</com:NextResultReference>
 							</cfif>
 							<cfif arguments.nGroup EQ 0>
 								<air:SearchAirLeg>

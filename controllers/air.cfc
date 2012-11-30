@@ -29,7 +29,7 @@ before - do this before any air calls
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.aCarriers = {}>
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.stPricing = {}>
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.stResults = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aPriced = []>
+			<cfset session.searches[rc.nSearchID].stLowFareDetails.stPriced = {}>
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortArrival = []>
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortBag = []>
 			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortDepart = []>
@@ -63,12 +63,11 @@ lowfare
 	<cffunction name="lowfare" output="false">
 		<cfargument name="rc">
 
-		<!--- init objects --->
-		<cfset variables.fw.service('uapi.init', 'objUAPI')>
-		<cfset variables.fw.service('airparse.init', 'objAirParse')>
-		<!--- Do the search. --->
-		<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
-				
+			<!--- Throw out a thread for availability --->
+			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>	
+			<!--- Do the low fare search. --->
+			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
+
 		<cfreturn />
 	</cffunction>
 	
@@ -79,11 +78,10 @@ availability
 		<cfargument name="rc">
 		
 		<cfif NOT structKeyExists(rc, 'bSelect')>
-			<!--- init objects --->
-			<cfset variables.fw.service('uapi.init', 'objUAPI')>
-			<cfset variables.fw.service('airparse.init', 'objAirParse')>
-			<!--- Do the search. --->
-			<cfset variables.fw.service('airavailability.doAirAvailability', 'void')>			
+			<!--- Throw out a thread for low fare --->
+			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
+			<!--- Do the availability search. --->
+			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>			
 		<cfelse>
 			<!--- Select --->
 			<cfset variables.fw.service('airavailability.selectLeg', 'void')>
@@ -94,11 +92,13 @@ availability
 	<cffunction name="endavailability" output="true">
 		<cfargument name="rc">
 		
-		<cfif structKeyExists(rc, 'bSelect')
-		AND structKeyExists(session.searches[rc.nSearchID].stLegs, rc.nGroup+1)>
-			<cfset variables.fw.redirect('air.availability?Search_ID=#rc.nSearchID#&nGroup=#rc.nGroup+1#')>
-		<cfelseif structKeyExists(rc, 'bSelect')
-		AND NOT structKeyExists(session.searches[rc.nSearchID].stLegs, rc.nGroup+1)>
+		<cfif structKeyExists(rc, 'bSelect')>
+			<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="local.nLeg">
+				<cfdump eval=session.searches[rc.nSearchID].stSelected[nLeg]>
+				<cfif structIsEmpty(session.searches[rc.nSearchID].stSelected[nLeg])>
+					<cfset variables.fw.redirect('air.availability?Search_ID=#rc.nSearchID#&nGroup=#nLeg#')>
+				</cfif>
+			</cfloop>
 			<cfset variables.fw.redirect('air.price?Search_ID=#rc.nSearchID#')>
 		</cfif>
 
@@ -134,9 +134,6 @@ price
 	<cffunction name="price" output="false">
 		<cfargument name="rc">
 		
-		<!--- init objects --->
-		<cfset variables.fw.service('uapi.init', 'objUAPI')>
-		<cfset variables.fw.service('airparse.init', 'objAirParse')>
 		<!--- Do the pricing --->
 		<cfset variables.fw.service('airprice.doAirPrice', 'void')>
 		

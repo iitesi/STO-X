@@ -11,12 +11,12 @@
 	-moz-border-left-colors: none;
 	-moz-border-right-colors: none;
 	-moz-border-top-colors: none;
-	background-color: #EDF3FE;
-	border-color: #B7CFDF -moz-use-text-color;
+	background-color: #F4F0F0;
+	border-color: #E0D6D6 -moz-use-text-color;
 	border-image: none;
 	border-style: solid none;
 	border-width: 1px medium;
-	color: #92A9B8;
+	color: #2E76CF;
 	cursor: pointer;
 	display: inline-block;
 	font-weight: bold;
@@ -28,12 +28,14 @@
 	text-align: left;
 }
 .roundtrip .grouptab.first {
-	border-left: 1px solid #B7CFDF;
+	border-left: 1px solid #E0D6D6;
+	border-right: 1px solid #E0D6D6;
 	border-radius: 15px 0 0 15px;
 }
 .roundtrip .grouptab.last {
 	border-radius: 0 15px 15px 0;
-	border-right: 1px solid #B7CFDF;
+	border-right: 1px solid #E0D6D6;
+	border-left: 1px solid #E0D6D6;
 }
 .roundtrip .grouptab.selected {
 	background-color: #FCF9D7;
@@ -42,9 +44,15 @@
 </style>
 <cfoutput>
 	<div class="roundtrip">
+		<cfset nCount = ArrayLen(StructKeyArray(session.searches[rc.nSearchID].stLegs))-1>
 		<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="nLeg">
-			<div class="grouptab">
-				<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#nLeg#')#">#session.searches[rc.nSearchID].stLegs[nLeg]#</a>
+			<div class="grouptab <cfif nLeg EQ 0>first</cfif> <cfif nLeg EQ nCount>last</cfif> <cfif rc.nGroup EQ nLeg>selected</cfif>">
+				<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#nLeg#')#">
+					<cfif NOT StructIsEmpty(session.searches[rc.nSearchID].stSelected[nLeg])>
+						<img src="assets/img/checkmark.png">
+					</cfif>
+					#session.searches[rc.nSearchID].stLegs[nLeg]#
+				</a>
 			</div>
 		</cfloop>
 	</div>

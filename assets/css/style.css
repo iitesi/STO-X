@@ -65,12 +65,12 @@
 	width: 200px;
 }
 #nav ul li{
-	padding:5px; /* Introducing a padding between the li and the a give the illusion spaced items */
+	padding: 0.4em 1em;
 	float:none;
 
 	background-color: #FFF;
 	font-size: 11px;
-	padding: 5px;
+	padding: 0.4em 1em;
 	float:left;
 	position: relative;
 	width: 245px;
@@ -84,8 +84,10 @@
 }
 #nav a{
 	display:block;
-	padding:5px 15px 5px 15px;
+	padding: 0.4em 1em;
 	text-decoration:none;
+	display: block;
+    line-height: 1.2;
 }
 #nav li:hover ul{ /* Display the dropdown on hover */
 	left:0; /* Bring back on-screen when needed */

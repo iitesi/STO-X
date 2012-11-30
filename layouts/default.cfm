@@ -7,8 +7,8 @@
 	<cfif NOT structKeyExists(rc, "bSuppress")>
 		<link href="assets/css/reset.css" rel="stylesheet" media="screen" />
 		<link href="assets/css/style.css" rel="stylesheet" media="screen" />
-		<!--- <link href="assets/css/custom-theme/jquery-ui-1.9.2.custom.css" rel="stylesheet" > --->
-		<link href="assets/css/custom-theme/jquery-ui-1.8.23.custom.css" rel="stylesheet" >
+		<link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" >
+		<!--- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/pepper-grinder/jquery-ui.css" rel="stylesheet" > --->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 		<script src="assets/js/jqModal.js"></script>
