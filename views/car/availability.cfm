@@ -26,11 +26,11 @@
 				<table width="100%" heigth="100%">
 				<tr heigth="100%">
 					<td width="150" align="center">
-						<cfif ArrayFind(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
+						<cfif ArrayFindNoCase(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
 							<span class="medium blue bold">PREFERRED</span><br>
 						<cfelseif application.stPolicies[session.searches[rc.nSearchID].nPolicyID].Policy_CarTypeRule EQ 1
 						AND NOT ArrayFindNoCase(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
-							<img src="assets/img/policy0.png">
+							<img alt="N" src="assets/img/policy0.png">
 						</cfif>
 						<span class="medium">#sCategory#</span><br>
 						<img alt="#sCategory#" src="assets/img/cars/#sCategory#.png" style="padding-top:10px;"><br>
@@ -58,4 +58,6 @@
 		</cfif>
 	</cfloop>
 </cfoutput>
+<cfdump eval=application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes>
+<cfdump eval=session.searches[rc.Search_ID].stCarCategories>
 <cfdump eval=session.searches[rc.Search_ID].stCars>

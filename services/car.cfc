@@ -3,7 +3,7 @@
 <!--- doAvailability --->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="vendor" 		required="faluse" default="">
+		<cfargument name="vendor" 		required="false"	default="">
 		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
@@ -43,7 +43,7 @@
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
-		<cfargument name="vendor" 	required="true">
+<!---		<cfargument name="vendor" 	required="true"> --->
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="qCDNumbers" 	required="true">
 		
@@ -63,7 +63,7 @@
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
 								PickupLocation="#getsearch.Arrival_City#"
-								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T08:00:00.000+01:00"
+								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T08:00:00.000+01:00" 
 								PickupLocationType="Airport"
 								ReturnLocation="#getsearch.Arrival_City#"
 								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T17:00:00.000+01:00" />
@@ -72,7 +72,7 @@
 								<cfloop query="arguments.qCDNumbers">
 									<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
 								</cfloop>
-							</veh:VehicleSearchModifiers>
+							</veh:VehicleSearchModifiers>  
 						</veh:VehicleSearchAvailabilityReq>
 					</soapenv:Body>
 				</soapenv:Envelope>
