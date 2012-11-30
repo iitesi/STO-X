@@ -5,7 +5,6 @@ init
 --->
 	<cffunction name="init" output="false">
 		
-		<cfset variables.objUAPI = CreateObject('component', 'booking.services.uapi').init()>
 		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
 		
 		<cfreturn this>
@@ -47,9 +46,9 @@ doAirPrice
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable)>
 		<!--- Call the UAPI. --->
-		<cfset sResponse 	= objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
-		<cfset aResponse 	= objUAPI.formatUAPIRsp(sResponse)>
+		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 		<!--- Parse the segments. --->
 		<cfset stSegments	= objAirParse.parseSegments(aResponse)>
 		<cfif StructIsEmpty(stSegments)>

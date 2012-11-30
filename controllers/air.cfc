@@ -78,6 +78,7 @@ availability
 		<cfargument name="rc">
 		
 		<cfif NOT structKeyExists(rc, 'bSelect')>
+			<cfset rc.sPriority = 'LOW'>
 			<!--- Throw out a thread for low fare --->
 			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
 			<!--- Do the availability search. --->

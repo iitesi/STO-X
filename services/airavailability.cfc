@@ -5,9 +5,7 @@ init
 --->
 	<cffunction name="init" output="false">
 
-		<cfset variables.objUAPI = CreateObject('component', 'booking.services.uapi').init()>
 		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
-		<!---<cfset variables.objLowFare = CreateObject('component', 'booking.services.lowfare').init()>--->
 		
 		<cfreturn this>
 	</cffunction>
@@ -32,9 +30,6 @@ threadAvailability
 		<cfargument name="nSearchID"	required="true">
 		<cfargument name="nGroup"		required="false"	default="">
 		<cfargument name="stLegs"		required="false"	default="#session.searches[url.Search_ID].stLegs#">
-		
-		<!--- Throw out a thread for low fare search.  This is not joined back in. --->
-		<!--- <cfset void = objLowFare.threadLowFare(objUAPI, objAirParse, arguments.nSearchID, 'LOW')> --->
 
 		<cfset local.stThreads = {}>
 		<cfset local.sThreadName = ''>
@@ -90,9 +85,9 @@ doAirAvailability
 					<!--- Put together the SOAP message. --->
 					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.nSearchID, arguments.nGroup, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''))>
 					<!--- Call the UAPI. --->
-					<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+					<cfset local.sResponse 			= 	application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 					<!--- Format the UAPI response. --->
-					<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
+					<cfset local.aResponse 			= 	application.objUAPI.formatUAPIRsp(sResponse)>
 					<!--- Create unique segment keys. --->
 					<cfset sNextRef 				= 	objAirParse.parseNextReference(aResponse)>
 					<cfif nCount GT 3>
@@ -128,18 +123,6 @@ doAirAvailability
 				<cfset session.searches[arguments.nSearchID].stAvailDetails.stGroups[arguments.nGroup] 		= 1>
 			</cfthread>
 		</cfif>
-		<!---
-		<cfif sNextRef NEQ ''>
-			<!--- Put together the SOAP message. --->
-			<cfset local.sMessage 			= 	prepareSoapHeader(stAccount, stPolicy, nSearchID, nGroup, sNextRef)>
-			<!--- <cfdump eval=sMessage> --->
-			<!--- Call the UAPI. --->
-			<cfset local.sResponse 			= 	objUAPI.callUAPI('AirService', sMessage, nSearchID)>
-			<!--- Format the UAPI response. --->
-			<cfset local.aResponse 			= 	objUAPI.formatUAPIRsp(sResponse)>
-			<!--- Create unique segment keys. --->
-			<cfdump eval=aResponse abort>
-		</cfif>--->
 
 		<cfreturn sThreadName>
 	</cffunction>
@@ -250,7 +233,7 @@ parseSegmentKeys
 					</cfloop>
 					<!--- Create a look up structure for the primary key. --->
 					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	HashNumeric(sIndex),
+						HashIndex	: 	application.objUAPI.HashNumeric(sIndex),
 						Index		: 	sIndex
 					}>
 				</cfloop>
@@ -377,7 +360,7 @@ parseConnections - schedule
 					<cfset sIndex &= stSegmentIndex[nIndex][sSegment][stSegment]>
 				</cfloop>
 			</cfloop>
-			<cfset nHashNumeric = HashNumeric(sIndex)>
+			<cfset nHashNumeric = application.objUAPI.hashNumeric(sIndex)>
 			<cfset stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
 			<cfset stTrips[nHashNumeric].Class = 'X'>
 			<cfset stTrips[nHashNumeric].Ref = 'X'>

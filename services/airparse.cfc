@@ -200,7 +200,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						</cfloop>
 					</cfif>
 				</cfloop>
-				<cfset sTripKey = HashNumeric(sIndex&sOverallClass&bRefundable)>
+				<cfset sTripKey = application.objUAPI.hashNumeric(sIndex&sOverallClass&bRefundable)>
 				<cfset stTrips[sTripKey] = stTrip>
 			</cfif>
 		</cfloop>
@@ -478,7 +478,7 @@ mergeTripsToAvail
 						<cfset sIndex &= stTempTrips[nGroup][sTripKey][sSegment][stSegment]>
 					</cfloop>
 				</cfloop>
-				<cfset nHashNumeric = HashNumeric(sIndex)>
+				<cfset nHashNumeric = application.objUAPI.hashNumeric(sIndex)>
 				<cfif NOT structKeyExists(arguments.stAvailTrips[nGroup], nHashNumeric)>
 					<cfset arguments.stAvailTrips[nGroup][nHashNumeric].Segments = stTempTrips[nGroup][sTripKey]>
 				</cfif>

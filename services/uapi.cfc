@@ -33,7 +33,7 @@ callUAPI
 			</cfhttp>
 			<cfset local.nTotal = getTickCount() - dStart>
 			<!--- Place this in the session scope for debugging purposes --->
-			<cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: cfhttp.filecontent, aa : nTotal})>
+			<!--- <cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: cfhttp.filecontent, aa : nTotal})> --->
 			<cfif bSessionStorage>
 				<cfset session.searches[arguments.nSearchID][arguments.sMessage].sFileContent = cfhttp.filecontent>
 			</cfif>
@@ -53,6 +53,15 @@ formatUAPIRsp
 		<cfset local.stResponse = XMLParse(arguments.stResponse)>
 		
 		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
+	</cffunction>
+
+<!---
+hashNumeric
+--->
+	<cffunction name="hashNumeric" output="false">
+		<cfargument name="sStringToHash"	required="true">
+		
+		<cfreturn createObject("java", "java.lang.String").init(arguments.sStringToHash).hashCode() />
 	</cffunction>
 
 </cfcomponent>

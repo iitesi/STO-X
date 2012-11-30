@@ -5,9 +5,7 @@ init
 --->
 	<cffunction name="init" output="false">
 		
-		<cfset variables.objUAPI = CreateObject('component', 'booking.services.uapi').init()>
 		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
-		<!--- <cfset variables.objAirAvailability = CreateObject('component', 'booking.services.airavailability').init()> --->
 		
 		<cfreturn this>
 	</cffunction>
@@ -20,9 +18,6 @@ threadLowFare
 		<cfargument name="sPriority"			required="false"	default="HIGH">
 		<cfargument name="sCabins" 				required="false"	default="X"><!--- Options (list or one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable"			required="false"	default="X"><!--- Options (list or one item) - 0, 1 --->
-		
-		<!--- Throw out threads for the availability for each leg.  This is not joined back in. --->
-		<!--- <cfset void = objAirAvailability.threadAvailability(arguments.nSearchID)> --->
 
 		<cfset local.sCabins = Replace(Replace(Replace(arguments.sCabins, 'Economy', 'Y'), 'Business', 'C'), 'First', 'F')><!--- Handles the words or codes for classes. --->
 		<cfset local.aCabins = ListToArray(sCabins)>
@@ -44,9 +39,6 @@ threadLowFare
 			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 
-		<!--- Finish up the results --->
-		<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
-
 		<cfreturn >
 	</cffunction>
 	
@@ -66,20 +58,22 @@ doLowFare
 			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
 			<!--- Kick off the thread. --->
-			<cfthread
+			<!--- <cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
 				nSearchID="#arguments.nSearchID#"
 				sCabin="#arguments.sCabin#"
-				bRefundable="#arguments.bRefundable#">
+				bRefundable="#arguments.bRefundable#"> --->
 				<!--- <cfset thread.arguments = arguments> --->
 				<!--- Put together the SOAP message. --->
 				<cfset local.sMessage = 	prepareSoapHeader(arguments.nSearchID, arguments.sCabin, arguments.bRefundable)>
+				<cfset local.sMessage = 	'test'>
+				<cfdump eval=local abort>
 				<!--- Call the UAPI. --->
-				<cfset local.sResponse = 	objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+				<cfset local.sResponse = 	application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 				<!--- Format the UAPI response. --->
-				<cfset local.aResponse = 	objUAPI.formatUAPIRsp(sResponse)>
+				<cfset local.aResponse = 	application.objUAPI.formatUAPIRsp(sResponse)>
 				<!--- Parse the segments. --->
 				<cfset local.stSegments = 	objAirParse.parseSegments(aResponse)>
 				<!--- Parse the trips. --->
@@ -94,7 +88,9 @@ doLowFare
 				<!--- Merge all data into the current session structures. --->
 				<cfset session.searches[arguments.nSearchID].stTrips = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
 				<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = ''>
-			</cfthread>
+				<!--- Finish up the results --->
+				<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
+			<!--- </cfthread> --->
 			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 
