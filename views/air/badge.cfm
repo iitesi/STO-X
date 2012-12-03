@@ -34,7 +34,7 @@ NEED:
 						<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
 						<input type="hidden" name="nTrip" value="#variables.sTrip#">
 						<input type="hidden" name="Group" value="#rc.nGroup#">
-						<input type="submit" class="button1policy" value="Select">
+						<input type="submit" class="button#stTrip.Policy#policy" value="Select">
 					</form>
 				</cfif>
 			</td>

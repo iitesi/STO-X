@@ -36,7 +36,6 @@ threadLowFare
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 
 		<cfreturn >
@@ -58,18 +57,16 @@ doLowFare
 			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
 			<!--- Kick off the thread. --->
-			<!--- <cfthread
+			<cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
 				nSearchID="#arguments.nSearchID#"
 				sCabin="#arguments.sCabin#"
-				bRefundable="#arguments.bRefundable#"> --->
+				bRefundable="#arguments.bRefundable#">
 				<!--- <cfset thread.arguments = arguments> --->
 				<!--- Put together the SOAP message. --->
 				<cfset local.sMessage = 	prepareSoapHeader(arguments.nSearchID, arguments.sCabin, arguments.bRefundable)>
-				<cfset local.sMessage = 	'test'>
-				<cfdump eval=local abort>
 				<!--- Call the UAPI. --->
 				<cfset local.sResponse = 	application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 				<!--- Format the UAPI response. --->
@@ -90,7 +87,7 @@ doLowFare
 				<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = ''>
 				<!--- Finish up the results --->
 				<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
-			<!--- </cfthread> --->
+			</cfthread>
 			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 

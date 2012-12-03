@@ -51,7 +51,8 @@ threadAvailability
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<!--- <cfdump eval=cfthread abort> --->
+			<cfdump eval=stThreads>
+			<cfdump eval=cfthread abort>
 		</cfif>
 
 		<cfreturn >

@@ -27,7 +27,7 @@
 		<td>
 			<!--- airrlines --->
 			<li>
-				<a href="#" class="main">Airlines</a>
+				<input type="checkbox" id="Airlines" name="Airlines"> <label for="Airlines">Airlines</label>
 				<ul>
 					<cfoutput>
 						<cfif rc.action NEQ 'air.availability'>
@@ -56,7 +56,7 @@
 				</cfloop>
 				<!--- Class --->
 				<li>
-					<a href="#" class="main">Class</a>
+					<input type="checkbox" id="Classes" name="Classes"> <label for="Classes">Class</label>
 					<cfoutput>
 						<ul>
 							<li>
@@ -100,7 +100,7 @@
 
 				<!--- Fares --->
 				<li>
-					<a href="#" class="main">Fares</a>
+					<input type="checkbox" id="Fares" name="Fares"> <label for="Fares">Fares</label>
 					<cfoutput>
 						<ul>
 							<li>
@@ -162,7 +162,9 @@ $(document).ready(function() {
 		.change(function() {
 			filterAir();
 		});
-	$( "#Class" ).button();
+	$( "#Classes" ).button();
+	$( "#Fares" ).button();
+	$( "#Airlines" ).button();
 	$( "#SingleCarrier" ).button()
 		.change(function() {
 			filterAir();

@@ -42,32 +42,18 @@
 	left:-10px; /* Bring back on-screen when needed */
 }
 #nav{
-	margin-bottom:10px;
-	float:left;
-	width:100%;
-	position:relative;
-	z-index:5;
-	font-family: Verdana;
-	font-size: 10px;
-	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
-    transition: all 0.2s linear 0s;
-}
-#nav .main {
-	color:#FFFFFF;
-	background:#F4F0F0;
-	border:1px solid #E0D6D6;
-	color: #2E76CF;
 }
 #nav ul{
 	list-style:none;
 	position:absolute;
 	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
 	width: 200px;
+	z-index:999;
+	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
 }
 #nav ul li{
 	padding: 0.4em 1em;
 	float:none;
-
 	background-color: #FFF;
 	font-size: 11px;
 	padding: 0.4em 1em;
