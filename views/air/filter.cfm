@@ -10,7 +10,7 @@
 <!---
 PRICE
 --->
-						<input type="radio" id="fare" name="sort" /><label for="fare">Price</label>
+						<input type="radio" id="fare" name="sort" <cfif rc.action NEQ 'air.lowfare'>checked="checked"</cfif> /><label for="fare">Price</label>
 <!---
 PRICE + BAGS
 --->
@@ -19,7 +19,7 @@ PRICE + BAGS
 <!---
 DURATION
 --->
-					<input type="radio" id="duration" name="sort" checked="checked" /><label for="duration">Duration</label>
+					<input type="radio" id="duration" name="sort" <cfif rc.action NEQ 'air.availability'>checked="checked"</cfif> /><label for="duration">Duration</label>
 <!---
 DEPARTURE
 --->

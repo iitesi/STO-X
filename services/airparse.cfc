@@ -15,8 +15,6 @@ doLowFare
 		
 		<!--- Check low fare. --->
 		<cfset session.searches[nSearchID].stTrips							= addTotalBagFare(session.searches[nSearchID].stTrips)>
-		<!--- Create javascript structure per trip. --->
-		<cfset session.searches[nSearchID].stTrips 							= addJavascript(session.searches[nSearchID].stTrips)>
 		<!--- Update the results that are available. --->
 		<cfset session.searches[nSearchID].stLowFareDetails.stResults 		= findResults(session.searches[arguments.nSearchID].stTrips)>
 		<!--- Get list of all carriers returned. --->
@@ -24,6 +22,8 @@ doLowFare
 		<!--- Run policy on all the results --->
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[nSearchID].stTrips 							= checkPolicy(session.searches[arguments.nSearchID].stTrips, arguments.nSearchID, session.searches[nSearchID].stLowFareDetails.aSortFare[1])>
+		<!--- Create javascript structure per trip. --->
+		<cfset session.searches[nSearchID].stTrips 							= addJavascript(session.searches[nSearchID].stTrips)><!--- Policy needs to be checked prior --->
 		<!--- Sort the results in different mannors. --->
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Depart')>
@@ -420,7 +420,7 @@ addJavascriptPerTrip - used only in the above function
 			 * 	7	Stops				0/1/2
 		--->
 		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
-		<cfset sJavascript = ListAppend(sJavascript, 1)><!--- Policy --->
+		<cfset sJavascript = ListAppend(sJavascript, (ArrayIsEmpty(arguments.stTrip.aPolicies) ? 1 : 0))><!--- Policy --->
 		<cfset sJavascript = ListAppend(sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
 		<cfset sJavascript = ListAppend(sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
 		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
@@ -566,25 +566,10 @@ checkPolicy
 			<cfif bBlacklisted>
 				<cfloop array="#stTrip.Carriers#" item="local.sCarrier">
 					<cfif ArrayFindNoCase(arguments.stAccount.aNonPolicyAir, sCarrier)>
-					<cfset ArrayAppend(aPolicy, 'Out of policy carrier')>
-				</cfif>
+						<cfset ArrayAppend(aPolicy, 'Out of policy carrier')>
+					</cfif>
 				</cfloop>
-				
 			</cfif>
-			<!---
-			UPDATE Air_Trips
-			SET Policy = <cfqueryparam value="0" cfsqltype="cf_sql_integer">,
-			Policy_Text = IsNull(Policy_Text, '')+'Out of policy carrier'
-			FROM Air_Segments
-			WHERE Air_Trips.Air_ID = Air_Segments.Air_ID
-			AND Air_Trips.Air_Type = Air_Segments.Air_Type
-			AND Air_Trips.Search_ID = Air_Segments.Search_ID
-			AND Air_Trips.Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
-			AND Carrier IN (SELECT Vendor_ID
-							FROM OutofPolicy_Vendors
-							WHERE Acct_ID = <cfqueryparam value="#search.Acct_ID#" cfsqltype="cf_sql_integer">
-							AND Type = 'A')
-			</cfquery> --->
 			<!--- Departure time is too close to current time. --->
 			<cfif DateDiff('h', Now(), stTrip.Depart) LTE 2>
 				<cfset ArrayAppend(aPolicy, 'Departure time is within 2 hours')>
