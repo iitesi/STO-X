@@ -6,99 +6,99 @@
 	<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID]>
 </cfif>
 <cfoutput>
-	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;font-family: verdana;width:#280*2#px">
+	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:#300*2#px">
 		<table>
 		<tr>
 			<cfloop collection="#stTrip.Groups#" item="nGroup" >
 				<cfset stGroup = stTrip.Groups[nGroup]>
-				<td>
-					<div class="roundall" style="padding:10px;margin:10px;display:table-cell;float:left;color:black;width:250px;background-color:##BED3FC;">
-						<div style="display:table;padding:10px;">
-							<div style="display:table-row">
-								<div style="table-cell;float:left;">
+				<td valign="top">
+					<div class="roundall" style="padding:10px;margin:10px;display:table-cell;float:left;color:black;width:290px;background-color:##BED3FC;">
+						<table>
+							<tr>
+								<td colspan="2">
 									<strong>#application.stAirports[stGroup.Origin]# (#stGroup.Origin#)</strong><br><br>
 									<strong>#application.stAirports[stGroup.Destination]# (#stGroup.Destination#)</strong><br><br>
-								</div>
-							</div>
-							<div style="display:table-row">
-								<div style="table-cell;float:left; width:30%;">
+								</td>
+							</tr>
+							<tr>
+								<td width="40%">
 									Departs
-								</div>
-								<div style="table-cell;float:left;">
+								</td>
+								<td>
 									#DateFormat(stGroup.DepartureTime, 'ddd, mmm d,')#
 									#TimeFormat(stGroup.DepartureTime, 'h:mm tt')#
-								</div>
-							</div>
-							<div style="display:table-row">
-								<div style="table-cell; float:left; width:30%;">
+								</td>
+							</tr>
+							<tr>
+								<td>
 									Arrives
-								</div>
-								<div style="table-cell;float:left;">
+								</td>
+								<td>
 									#DateFormat(stGroup.ArrivalTime, 'ddd, mmm d,')#
 									#TimeFormat(stGroup.ArrivalTime, 'h:mm tt')#
-								</div>
-							</div>
-							<div style="display:table-row">
-								<div style="table-cell;float:left; width:30%;">
+								</td>
+							</tr>
+							<tr>
+								<td>
 									Duration
-								</div>
-								<div style="table-cell;float:left;">
+								</td>
+								<td>
 									#stGroup.TravelTime#
-								</div><br><br>
-							</div>
-						</div>
+								</td>
+							</tr>
+						</table><br><br>
 						<div style="display:table-cell;float:left;color:black;width:100%;">
 							<cfset nCnt = 0>
-							<cfset aKeys = structKeyArray(stTrip.Segments)>
-							<cfloop collection="#stTrip.Segments#" item="nSegment" >
-								<cfif stTrip.Segments[nSegment].Group EQ nGroup>
-									<cfset nCnt++>
-									<div class="roundall" style="width:90%;padding:10px;border:1px solid ##CFDAFA;background-color:##FFFFFF;">
-										</p>
-											<strong>
-												#application.stAirVendors[stTrip.Segments[nSegment].Carrier].Name#
-												###stTrip.Segments[nSegment].FlightNumber#
-											</strong>
-										</p>
+							<cfset aKeys = structKeyArray(stGroup.Segments)>
+							<cfloop collection="#stGroup.Segments#" item="nSegment" >
+								<cfset nCnt++>
+								<cfset stSegment = stGroup.Segments[nSegment]>
+								<div class="roundall" style="width:90%;padding:10px;border:1px solid ##CFDAFA;background-color:##FFFFFF;">
+									</p>
+										<strong>
+											#application.stAirVendors[stSegment.Carrier].Name#
+											###stSegment.FlightNumber#
+										</strong>
+									</p>
+									<p>
+										<span title="#application.stAirports[stSegment.Origin]#">#stSegment.Origin#</a> - 
+										#DateFormat(stSegment.DepartureTime, 'mmm d,')# at
+										#TimeFormat(stSegment.DepartureTime, 'h:mm tt')#
+									</p>
+									<cfif stSegment.ChangeOfPlane>
 										<p>
-											<span title="#application.stAirports[stTrip.Segments[nSegment].Origin]#">#stTrip.Segments[nSegment].Origin#</a> - 
-											#DateFormat(stTrip.Segments[nSegment].DepartureTime, 'mmm d,')# at
-											#TimeFormat(stTrip.Segments[nSegment].DepartureTime, 'h:mm tt')#
-										</p>
-										<cfif stTrip.Segments[nSegment].ChangeOfPlane>
-											<p>
-												Plane Change
-											</p>						
-										</cfif>
-										<cfif stTrip.Segments[nSegment].FlightTime NEQ ''>
-											<p class="fade">
-												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												Flight Time 
-												#int(stTrip.Segments[nSegment].FlightTime/60)#h #stTrip.Segments[nSegment].FlightTime%60#m
-											</p>						
-										</cfif>
-										<p>
-											<span title="#application.stAirports[stTrip.Segments[nSegment].Destination]#">#stTrip.Segments[nSegment].Destination#</a> - 
-											#DateFormat(stTrip.Segments[nSegment].ArrivalTime, 'mmm d,')# at
-											#TimeFormat(stTrip.Segments[nSegment].ArrivalTime, 'h:mm tt')#
-										</p>
-										<cfif stTrip.Segments[nSegment].Equipment NEQ ''>
-											<p class="fade">
-												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												on #application.stEquipment[stTrip.Segments[nSegment].Equipment]#
-											</p>
-										</cfif>
-									</div>
-									<cfif nCnt LT ArrayLen(aKeys)
-									AND stTrip.Segments[aKeys[nCnt+1]].Group EQ nGroup>
-										<div class="roundall" style="width:90%;padding:10px;margin-right:10px;margin-top:5px;margin-bottom:5px;border:1px solid ##eeeeee;background-color:##eeeeee">
-											<cfset minites = DateDiff('n', stTrip.Segments[nSegment].ArrivalTime, stTrip.Segments[aKeys[nCnt+1]].DepartureTime)>
-											Layover:
-											#int(minites/60)#h #minites%60#m
-											in
-											<span title="#application.stAirports[stTrip.Segments[nSegment].Destination]#">#stTrip.Segments[nSegment].Destination#</span>
-										</div>
+											Plane Change
+										</p>						
 									</cfif>
+									<cfif stSegment.FlightTime NEQ ''>
+										<p class="fade">
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											Flight Time 
+											#int(stSegment.FlightTime/60)#h #stSegment.FlightTime%60#m
+										</p>						
+									</cfif>
+									<p>
+										<span title="#application.stAirports[stSegment.Destination]#">#stSegment.Destination#</a> - 
+										#DateFormat(stSegment.ArrivalTime, 'mmm d,')# at
+										#TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#
+									</p>
+									<cfif stSegment.Equipment NEQ ''
+									AND StructKeyExists(application.stEquipment, stSegment.Equipment)>
+										<p class="fade">
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											on #application.stEquipment[stSegment.Equipment]#
+										</p>
+									</cfif>
+								</div>
+								<cfif nCnt LT ArrayLen(aKeys)
+								AND stGroup.Segments[aKeys[nCnt+1]].Group EQ nGroup>
+									<div class="roundall" style="width:90%;padding:10px;margin-right:10px;margin-top:5px;margin-bottom:5px;border:1px solid ##eeeeee;background-color:##eeeeee">
+										<cfset minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime)>
+										Layover:
+										#int(minites/60)#h #minites%60#m
+										in 
+										<span title="#application.stAirports[stSegment.Destination]#">#stSegment.Destination#</span>
+									</div>
 								</cfif>
 							</cfloop>
 							</td>

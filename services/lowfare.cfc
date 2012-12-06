@@ -36,6 +36,7 @@ threadLowFare
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
+			<!--- <cfdump var="#cfthread#" abort> --->
 		</cfif>
 
 		<cfreturn >
@@ -52,6 +53,7 @@ doLowFare
 		<cfargument name="stPricing" 	required="false"	default="#session.searches[nSearchID].stLowFareDetails.stPricing#">
 		
 		<cfset local.sThreadName = ''>
+		<cfset local[sThreadName] = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable)>
 			<!--- Name of the thread thrown out. --->
@@ -69,6 +71,7 @@ doLowFare
 				<cfset local.sMessage = 	prepareSoapHeader(arguments.nSearchID, arguments.sCabin, arguments.bRefundable)>
 				<!--- Call the UAPI. --->
 				<cfset local.sResponse = 	application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+				<!--- <cfdump var="#sResponse#" abort="true"> --->
 				<!--- Format the UAPI response. --->
 				<cfset local.aResponse = 	application.objUAPI.formatUAPIRsp(sResponse)>
 				<!--- Parse the segments. --->
@@ -77,6 +80,8 @@ doLowFare
 				<cfset local.stTrips = 		objAirParse.parseTrips(aResponse, stSegments)>
 				<!--- Add group node --->
 				<cfset stTrips	= 			objAirParse.addGroups(stTrips)>
+				<!--- Add group node --->
+				<cfset stTrips	= 			objAirParse.addPreferred(stTrips)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
 				<cfif StructIsEmpty(stTrips)>
 					<cfset thread.aResponse = 	aResponse>
@@ -88,11 +93,11 @@ doLowFare
 				<!--- Finish up the results --->
 				<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
 			</cfthread>
-			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 
 		<cfreturn sThreadName>
 	</cffunction>
+
 
 <!---
 prepareSOAPHeader

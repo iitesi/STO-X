@@ -47,10 +47,6 @@ before - do this before any air calls
 			<cfset session.searches[rc.nSearchID].stAvailTrips[2] = {}>
 			<cfset session.searches[rc.nSearchID].stAvailTrips[3] = {}>
 			<cfset session.searches[rc.nSearchID].stAvailDetails.stGroups = {}>
-			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[0] = []><!--- Sorting information by group --->
-			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[1] = []>
-			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[2] = []>
-			<cfset session.searches[rc.nSearchID].stAvailDetails.stSortSegments[3] = []>
 		</cfif>
 
 		
@@ -64,7 +60,7 @@ lowfare
 		<cfargument name="rc">
 
 			<!--- Throw out a thread for availability --->
-			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>	
+			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>
 			<!--- Do the low fare search. --->
 			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
 
@@ -92,17 +88,53 @@ availability
 	</cffunction>
 	<cffunction name="endavailability" output="true">
 		<cfargument name="rc">
-		
-		<cfif structKeyExists(rc, 'bSelect')>
-			<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="local.nLeg">
-				<cfdump eval=session.searches[rc.nSearchID].stSelected[nLeg]>
-				<cfif structIsEmpty(session.searches[rc.nSearchID].stSelected[nLeg])>
-					<cfset variables.fw.redirect('air.availability?Search_ID=#rc.nSearchID#&nGroup=#nLeg#')>
+
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfloop collection="#session.searches[arguments.rc.Search_ID].stLegs#" item="local.nLeg">
+				<cfif structIsEmpty(session.searches[arguments.rc.Search_ID].stSelected[nLeg])>
+					<cfset variables.fw.redirect('air.availability?Search_ID=#arguments.rc.Search_ID#&nGroup=#nLeg#')>
 				</cfif>
 			</cfloop>
-			<cfset variables.fw.redirect('air.price?Search_ID=#rc.nSearchID#')>
+			<cfset variables.fw.redirect('air.price?Search_ID=#arguments.rc.Search_ID#')>
 		</cfif>
 
+		<cfreturn />
+	</cffunction>
+
+<!---
+popup
+--->	
+	<cffunction name="popup" output="true">
+		<cfargument name="rc">
+		
+		<cfset rc.bSuppress = 1>
+		<cfif rc.sDetails EQ 'seatmap'>
+			<!--- Move needed variables into the rc scope. --->
+			<cfset rc.sCabin = 'Y'>
+			<cfset rc.nTripID = url.nTripID>
+			<cfif structKeyExists(url, "nSegment")>
+				<cfset rc.nSegment = url.nSegment>
+			</cfif>
+			<cfif structKeyExists(url, "nGroup")>
+				<cfset rc.nGroup = url.nGroup>
+			<cfelse>
+				<cfset rc.nGroup = ''>
+			</cfif>
+			<!--- init objects --->
+			<cfset variables.fw.service('uapi.init', 'objUAPI')>
+			<!--- Do the search. --->
+			<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		<cfelseif rc.sDetails EQ 'details'>
+			<!--- do nothing --->
+		<cfelseif rc.sDetails EQ 'baggage'>
+			<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
+		<cfelseif rc.sDetails EQ 'email'>
+			<cfset rc.nUserID = session.User_ID>
+			<cfset variables.fw.service('general.getUser', 'qUser')>
+			<cfset rc.nUserID = session.searches[rc.nSearchID].nProfileID>
+			<cfset variables.fw.service('general.getUser', 'qProfile')>
+		</cfif>
+		
 		<cfreturn />
 	</cffunction>
 	
@@ -113,6 +145,7 @@ seatmap
 		<cfargument name="rc">
 		
 		<!--- Move needed variables into the rc scope. --->
+		<cfset rc.bSuppress = 1>
 		<cfset rc.sCabin = 'Y'>
 		<cfset rc.nTripID = url.nTripID>
 		<cfset rc.nSegment = url.nSegment>
@@ -126,6 +159,25 @@ seatmap
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 		
+		<cfreturn />
+	</cffunction>
+	
+<!---
+email
+--->
+	<cffunction name="email" output="true">
+		<cfargument name="rc">
+		
+		<cfset rc.bSuppress = 1>
+		<cfset variables.fw.service('email.email', 'void')>
+		
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endemail" output="true">
+		<cfargument name="rc">
+
+		<cfset variables.fw.redirect('air.lowfare?Search_ID=#arguments.rc.Search_ID#')>
+
 		<cfreturn />
 	</cffunction>
 
@@ -145,44 +197,6 @@ price
 		
 		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.nSearchID#&filter=all')>
 
-		<cfreturn />
-	</cffunction>
-
-<!---
-details
---->
-	<cffunction name="details" output="false">
-		<cfargument name="rc">
-		<!--- No logic needed here. --->
-
-		<cfreturn />
-	</cffunction>
-
-<!---
-baggage
---->
-	<cffunction name="baggage" output="false">
-		<cfargument name="rc">
-
-		<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
-		
-		<cfreturn />
-	</cffunction>
-
-<!---
-email
---->
-	<cffunction name="email" output="false">
-		<cfargument name="rc">
-
-		<cfif StructKeyExists(form, 'bSubmit')>
-			<cfset variables.fw.service('email.email', 'void')>
-		</cfif>
-		<cfset rc.nUserID = session.User_ID>
-		<cfset variables.fw.service('general.getUser', 'qUser')>
-		<cfset rc.nUserID = session.searches[rc.nSearchID].nProfileID>
-		<cfset variables.fw.service('general.getUser', 'qProfile')>
-		
 		<cfreturn />
 	</cffunction>
 	

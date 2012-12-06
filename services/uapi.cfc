@@ -16,13 +16,13 @@ callUAPI
 		<cfargument name="nSearchID">
 		
 		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
-		
+		<cfset local.scfhttp = 'rockstar'&RandRange(1, 1000000)>
+		<cfset local.dStart = getTickCount()>
 		<cfif NOT bSessionStorage
 		OR (bSessionStorage
 			AND (NOT StructKeyExists(session.searches[nSearchID], arguments.sMessage)
 				OR NOT StructKeyExists(session.searches[nSearchID][arguments.sMessage], 'sFileContent')))>
-			<cfset local.dStart = getTickCount()>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#scfhttp#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
@@ -31,17 +31,17 @@ callUAPI
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfset local.nTotal = getTickCount() - dStart>
 			<!--- Place this in the session scope for debugging purposes --->
-			<!--- <cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: cfhttp.filecontent, aa : nTotal})> --->
 			<cfif bSessionStorage>
-				<cfset session.searches[arguments.nSearchID][arguments.sMessage].sFileContent = cfhttp.filecontent>
+				<cfset session.searches[arguments.nSearchID][arguments.sMessage].sFileContent = local[scfhttp].filecontent>
 			</cfif>
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[arguments.nSearchID][arguments.sMessage].sFileContent>
+			<cfset local[scfhttp].filecontent = session.searches[arguments.nSearchID][arguments.sMessage].sFileContent>
 		</cfif>
-		
-		<cfreturn cfhttp.filecontent />
+		<cfset local.nTotal = getTickCount() - dStart>
+		<cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: local[scfhttp].filecontent, _nMS : nTotal, _dTimestamp : Now()})>
+			
+		<cfreturn local[scfhttp].filecontent />
 	</cffunction>
 
 <!---

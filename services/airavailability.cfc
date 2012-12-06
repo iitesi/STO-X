@@ -51,8 +51,8 @@ threadAvailability
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<cfdump eval=stThreads>
-			<cfdump eval=cfthread abort>
+			<!--- <cfdump eval=stThreads>
+			<cfdump eval=cfthread abort> --->
 		</cfif>
 
 		<cfreturn >
@@ -105,21 +105,23 @@ doAirAvailability
 					<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
 					<!--- Parse the trips. --->
 					<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
-					<!--- Mark preferred carriers. --->
-					<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips)>
 					<!--- Add group node --->
 					<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
+					<!--- Mark preferred carriers. --->
+					<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips)>
 					<!--- Create javascript structure per trip. --->
 					<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
+					<!--- Run policy on all the results --->
+					<cfset stAvailTrips				= 	objAirParse.checkPolicy(stAvailTrips, arguments.nSearchID, '', 'Avail')>
 					<!--- Merge information into the current session structures. --->
 					<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
 				</cfloop>
-				<!--- Merge with current results --->
-				<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] 				= 	objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
 				<!--- Add list of available carriers per leg --->
 				<cfset session.searches[arguments.nSearchID].stAvailDetails.stCarriers[arguments.nGroup]	= objAirParse.getCarriers(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
 				<!--- Add sorting per leg --->
-				<cfset session.searches[arguments.nSearchID].stAvailDetails.stSortSegments[arguments.nGroup]= StructKeyArray(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.aSortDepart[arguments.nGroup] 	= StructSort(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Depart')>
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.aSortArrival[arguments.nGroup] 	= StructSort(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Arrival')>
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.aSortDuration[arguments.nGroup]	= StructSort(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Duration')>
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.nSearchID].stAvailDetails.stGroups[arguments.nGroup] 		= 1>
 			</cfthread>

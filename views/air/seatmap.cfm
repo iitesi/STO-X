@@ -1,30 +1,57 @@
-<cfif rc.nGroup EQ ''>
-	<cfset stSegments = session.searches[rc.Search_ID].stTrips[rc.nTripID].Segments>
-<cfelse>
-	<cfset stSegments = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID].Segments>
-</cfif>
+
 <cfoutput>
-	<div>
+	<div id="seatcontent">
+		<cfif rc.nGroup EQ ''>
+			<cfif NOT StructKeyExists(rc, 'nSegment')>
+				<cfloop collection="#session.searches[rc.nSearchID].stTrips[rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+					<cfset rc.nSegment = nSegment>
+					<cfbreak>
+				</cfloop>
+			</cfif>
+			<cfset stGroups = session.searches[rc.nSearchID].stTrips[rc.nTripID].Groups>
+		<cfelse>
+			<cfif NOT StructKeyExists(rc, 'nSegment')>
+				<cfloop collection="#session.searches[rc.nSearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+					<cfset rc.nSegment = nSegment>
+					<cfbreak>
+				</cfloop>
+			</cfif>
+			<cfset stGroups = session.searches[rc.nSearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups>
+		</cfif>
 		<ul class="tabs">
-			<cfloop collection="#stSegments#" item="nSeg">
-				<li><a <cfif rc.nSegment EQ nSeg>class="active"</cfif> onClick="$('.tabcontent').html('Checking #stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber# seat availablity...');$('##overlayContent').load('#buildURL('air.seatmap?Search_ID=#rc.nSearchID#&bSuppress=1&nTripID=#rc.nTripID#&nSegment=#nSeg##(rc.nGroup NEQ '' ? "&nGroup=#rc.nGroup#" : "")#')#')">#stSegments[nSeg].Carrier##stSegments[nSeg].FlightNumber#</a></li>
+			<cfset sURL = 'Search_ID=#rc.nSearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
+			<cfloop collection="#stGroups#" item="nGroup">
+				<cfloop collection="#stGroups[nGroup].Segments#" item="nSegment">
+					<li><a <cfif rc.nSegment EQ nSegment>class="active"</cfif> onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#nSegment#');">#stGroups[nGroup].Segments[nSegment].Carrier##stGroups[nGroup].Segments[nSegment].FlightNumber# (#stGroups[nGroup].Segments[nSegment].Origin# to #stGroups[nGroup].Segments[nSegment].Destination#)</a></li>
+					<cfif rc.nSegment EQ nSegment>
+						<cfset stSegments = stGroups[nGroup].Segments[nSegment]>
+					</cfif>
+				</cfloop>
 			</cfloop>
 		</ul>
-		<cfif NOT StructKeyExists(rc.stSeats, 'Error')>
-			<cfif StructKeyExists(rc.stSeats, 'ExitRow')>
-				<cfset stExitRows = rc.stSeats.ExitRow>
-				<cfset structDelete(rc.stSeats, "ExitRow")>
-			<cfelse>
-				<cfset stExitRows = {}>
-			</cfif>
-			<cfset stAisles = rc.stSeats.Aisle>
-			<cfset structDelete(rc.stSeats, "Aisle")>
-			<cfset aColumns = structKeyArray(rc.stSeats.Columns)>
-			<cfset ArraySort(aColumns, 'text', 'desc')>
-			<cfset structDelete(rc.stSeats, "Columns")>
-			<cfset aRows = structKeyArray(rc.stSeats)>
-			<cfset ArraySort(aRows, "numeric")>
-			<div class="tabcontent">
+		<br><br>
+		<div id="seats">
+			<strong>
+				<img class="carrierimg" src="assets/img/airlines/#stSegments.Carrier#.png" style="float:left;padding-right:20px;">
+				#application.stAirVendors[stSegments.Carrier].Name# Flt ###stSegments.FlightNumber# <br>
+				#application.stAirports[stSegments.Origin]# (#stSegments.Origin#) to #application.stAirports[stSegments.Destination]# (#stSegments.Destination#) <br>
+				#DateFormat(stSegments.DepartureTime, 'ddd, mmm d')# - #TimeFormat(stSegments.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegments.ArrivalTime, 'h:mm tt')#
+			</strong>
+			<br><br>
+			<cfif NOT StructKeyExists(rc.stSeats, 'Error')>
+				<cfif StructKeyExists(rc.stSeats, 'ExitRow')>
+					<cfset stExitRows = rc.stSeats.ExitRow>
+					<cfset structDelete(rc.stSeats, "ExitRow")>
+				<cfelse>
+					<cfset stExitRows = {}>
+				</cfif>
+				<cfset stAisles = rc.stSeats.Aisle>
+				<cfset structDelete(rc.stSeats, "Aisle")>
+				<cfset aColumns = structKeyArray(rc.stSeats.Columns)>
+				<cfset ArraySort(aColumns, 'text', 'desc')>
+				<cfset structDelete(rc.stSeats, "Columns")>
+				<cfset aRows = structKeyArray(rc.stSeats)>
+				<cfset ArraySort(aRows, "numeric")>
 				<table class="popUpTable">
 				<!---
 				Display wing
@@ -102,14 +129,15 @@
 					<td class="paddingright">Preferred</td>
 					<td class="seat Occupied"></td>
 					<td class="paddingright">Occupied</td>
+					<td class="seat Unknown"></td>
 					<td class="paddingright">Unknown</td>
 					<td class="seat NoSeat"></td>
 					<td class="paddingright">No Seat</td>
 				</tr>
 				</table>
-			</div>
-		<cfelse>
-			<div class="tabcontent">#rc.stSeats.Error#</div>
-		</cfif>
+			<cfelse>
+				<div id="seatcontent">#rc.stSeats.Error#</div>
+			</cfif>
+		</div>
 	</div>
 </cfoutput>

@@ -1,6 +1,13 @@
 function toggleDiv(div) {
 	$( "#" + div ).toggle( 'fade' );
 }
+/*
+	Submits the air.availability form.
+*/
+function submitAvailability (nTripKey) {
+	$("#nTrip").val(nTripKey);
+	$("#availabilityForm").submit();
+}
 function filterAir() {
 																			//console.log('start');
 	var classy = $( "#ClassY:checked" ).val();

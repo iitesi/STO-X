@@ -3,7 +3,7 @@
 	overflow: hidden;
 	text-align: center;
 	white-space: nowrap;
-	width: 50%;
+	width: 100%;
 	margin: 0px auto;
 }
 .roundtrip .grouptab {
@@ -30,10 +30,12 @@
 .roundtrip .grouptab.first {
 	border-left: 1px solid #E0D6D6;
 	border-right: 1px solid #E0D6D6;
-	border-radius: 15px 0 0 15px;
+	border-top-left-radius:15px;
+	border-bottom-left-radius:15px;
 }
 .roundtrip .grouptab.last {
-	border-radius: 0 15px 15px 0;
+	border-top-right-radius:15px;
+	border-bottom-right-radius:15px;
 	border-right: 1px solid #E0D6D6;
 	border-left: 1px solid #E0D6D6;
 }
@@ -46,14 +48,14 @@
 	<div class="roundtrip">
 		<cfset nCount = ArrayLen(StructKeyArray(session.searches[rc.nSearchID].stLegs))-1>
 		<cfloop collection="#session.searches[rc.nSearchID].stLegs#" item="nLeg">
-			<div class="grouptab <cfif nLeg EQ 0>first</cfif> <cfif nLeg EQ nCount>last</cfif> <cfif rc.nGroup EQ nLeg>selected</cfif>">
-				<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#nLeg#')#">
+			<a href="#buildURL('air.availability?Search_ID=#rc.nSearchID#&Group=#nLeg#')#">
+				<div class="grouptab <cfif nLeg EQ 0>first</cfif> <cfif nLeg EQ nCount>last</cfif> <cfif rc.nGroup EQ nLeg>selected</cfif>">
 					<cfif NOT StructIsEmpty(session.searches[rc.nSearchID].stSelected[nLeg])>
 						<img src="assets/img/checkmark.png">
 					</cfif>
 					#session.searches[rc.nSearchID].stLegs[nLeg]#
-				</a>
-			</div>
+				</div>
+			</a>
 		</cfloop>
 	</div>
 </cfoutput>

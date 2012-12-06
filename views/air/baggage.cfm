@@ -1,7 +1,10 @@
-<table width="475" align="center" class="popUpTable">
+<table width="100%" align="center" class="popUpTable">
 <cfoutput query="rc.qBaggage">
 	<tr>
-		<td colspan="3"><h3>#Name# Baggage Fees (one-way):</h3></td>
+		<td colspan="3">
+			<img class="carrierimg" src="assets/img/airlines/#ShortCode#.png" style="float:left;padding-right:20px;">
+			<h3>#Name# Baggage Fees (one-way):</h3>
+		</td>
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>

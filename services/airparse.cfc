@@ -15,23 +15,21 @@ doLowFare
 		
 		<!--- Check low fare. --->
 		<cfset session.searches[nSearchID].stTrips							= addTotalBagFare(session.searches[nSearchID].stTrips)>
-		<!--- Mark preferred carriers. --->
-		<cfset session.searches[nSearchID].stTrips 							= addPreferred(session.searches[nSearchID].stTrips, application.stAccounts[session.Acct_ID])>
 		<!--- Create javascript structure per trip. --->
 		<cfset session.searches[nSearchID].stTrips 							= addJavascript(session.searches[nSearchID].stTrips)>
 		<!--- Update the results that are available. --->
 		<cfset session.searches[nSearchID].stLowFareDetails.stResults 		= findResults(session.searches[arguments.nSearchID].stTrips)>
 		<!--- Get list of all carriers returned. --->
 		<cfset session.searches[nSearchID].stLowFareDetails.aCarriers 		= getCarriers(session.searches[arguments.nSearchID].stTrips)>
+		<!--- Run policy on all the results --->
+		<cfset session.searches[nSearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Total')>
+		<cfset session.searches[nSearchID].stTrips 							= checkPolicy(session.searches[arguments.nSearchID].stTrips, arguments.nSearchID, session.searches[nSearchID].stLowFareDetails.aSortFare[1])>
 		<!--- Sort the results in different mannors. --->
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Depart')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortArrival 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Arrival')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortDuration 	= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'Duration')>
 		<cfset session.searches[nSearchID].stLowFareDetails.aSortBag 		= StructSort(session.searches[arguments.nSearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-		<!--- Run policy on all the results 
-		<cfset session.searches[nSearchID].stTrips 							= checkPolicy(session.searches[arguments.nSearchID].stTrips, arguments.nSearchID, session.searches[nSearchID].stLowFareDetails.aSortFare[1])>
-		--->
 		
 		<cfreturn >
 	</cffunction>
@@ -268,11 +266,11 @@ addPreferred
 		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrips = arguments.stTrips>
-		<cfloop collection="#stTrips#" item="local.sTrip">
-			<cfset stTrips[sTrip].Preferred = 0>
-			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">
-				<cfif ArrayFindNoCase(arguments.stAccount.aPreferredAir, arguments.stTrips[sTrip].Segments[nSegment].Carrier)>
-					<cfset stTrips[sTrip].Preferred = 1>
+		<cfloop collection="#stTrips#" item="local.sTripKey">
+			<cfset stTrips[sTripKey].Preferred = 0>
+			<cfloop array="#arguments.stTrips[sTripKey].Carriers#" index="local.sCarrier">
+				<cfif ArrayFindNoCase(arguments.stAccount.aPreferredAir, sCarrier)>
+					<cfset stTrips[sTripKey].Preferred = 1>
 				</cfif>
 			</cfloop>
 		</cfloop>
@@ -301,17 +299,19 @@ addGroups
 			<cfset aCarriers = {}>
 			<cfset nDuration = 0>
 			<cfset nTotalStops = 0>
-			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">11
+			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">
 				<cfset stSegment = stTrips[sTrip].Segments[nSegment]>
 				<cfset nOverrideGroup = stSegment.Group>
 				<cfset stSegment.Group = nOverrideGroup>
 				<cfif NOT structKeyExists(stGroups, nOverrideGroup)>
+					<cfset stGroups[nOverrideGroup].Segments 		= StructNew('linked')>
 					<cfset stGroups[nOverrideGroup].DepartureTime 	= stSegment.DepartureTime>
 					<cfset stGroups[nOverrideGroup].Origin			= stSegment.Origin>
 					<cfset stGroups[nOverrideGroup].TravelTime		= '#int(stSegment.TravelTime/60)#h #stSegment.TravelTime%60#m'>
 					<cfset nDuration = stSegment.TravelTime + nDuration>
 					<cfset nStops = -1>
 				</cfif>
+				<cfset stGroups[nOverrideGroup].Segments[nSegment]= stSegment>
 				<cfset stGroups[nOverrideGroup].ArrivalTime	 	= stSegment.ArrivalTime>
 				<cfset stGroups[nOverrideGroup].Destination		= stSegment.Destination>
 				<cfset local.aCarriers[stSegment.Carrier] = ''>
@@ -330,7 +330,8 @@ addGroups
 				<cfset stTrips[sTrip].Depart= stGroups[0].DepartureTime>
 			</cfif>
 			<cfset stTrips[sTrip].Arrival 	= stGroups[nOverrideGroup].ArrivalTime>
-			<cfset stTrips[sTrip].Carriers 	= structKeyList(aCarriers)>
+			<cfset stTrips[sTrip].Carriers 	= structKeyArray(aCarriers)>
+			<cfset StructDelete(stTrips[sTrip], 'Segments')>
 		</cfloop>
 		
 		<cfreturn stTrips/>
@@ -344,7 +345,7 @@ addTotalBagFare
 		
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
 			<cfif NOT StructKeyExists(stTrips[sTrip], 'TotalBag')>
-				<cfset stTrips[sTrip].TotalBag = stTrips[sTrip].Total + application.stAirVendors[GetToken(stTrips[sTrip].Carriers, 1, ',')].Bag1>
+				<cfset stTrips[sTrip].TotalBag = stTrips[sTrip].Total + application.stAirVendors[stTrips[sTrip].Carriers[1]].Bag1>
 			</cfif>
 		</cfloop>
 		
@@ -390,7 +391,7 @@ addJavascript
 		</cfif>
 		<!--- Loop through all the trips --->
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
-			<cfset sCarriers = '"#Replace(arguments.stTrips[sTrip].Carriers, ',', '","', 'ALL')#"'>
+			<cfset sCarriers = '"#Replace(ArrayToList(arguments.stTrips[sTrip].Carriers), ',', '","', 'ALL')#"'>
 			<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], arguments.stTrips[sTrip].Class, arguments.stTrips[sTrip].Ref, sCarriers)>
 		</cfloop>
 		
@@ -438,9 +439,9 @@ getCarriers
 		
 		<cfset local.aCarriers = []>
 		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
-			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
-				<cfif NOT ArrayFind(aCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
-					<cfset ArrayAppend(aCarriers, arguments.stTrips[sTripKey].Segments[nSegment].Carrier)>
+			<cfloop array="#arguments.stTrips[sTripKey].Carriers#" index="local.sCarrier">
+				<cfif NOT ArrayFind(aCarriers, sCarrier)>
+					<cfset ArrayAppend(aCarriers, sCarrier)>
 				</cfif>
 			</cfloop>
 		</cfloop>
@@ -495,6 +496,7 @@ checkPolicy
 		<cfargument name="stTrips"			required="true">
 		<cfargument name="nSearchID"		required="true">
 		<cfargument name="nLowFareTripKey"	required="true">
+		<cfargument name="sType" 			required="false"	default="Fare">
 		<cfargument name="stAccount"		required="false"	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
@@ -503,44 +505,54 @@ checkPolicy
 		<cfset local.aPolicy = []>
 		<cfset local.bActive = 1>
 		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyAir) GT 0 ? 1 : 0)>
-		<cfset local.nLowFare = stTrips[arguments.nLowFareTripKey].Total+arguments.stPolicy.Policy_AirLowPad>
+		<cfif arguments.sType EQ 'Fare'>			
+			<cfset local.nLowFare = stTrips[arguments.nLowFareTripKey].Total+arguments.stPolicy.Policy_AirLowPad>
+		</cfif>
 		
 		<cfloop collection="#stTrips#" item="local.nTripKey">
 			<cfset stTrip = stTrips[nTripKey]>
 			<cfset aPolicy = []>
 			<cfset bActive = 1>
 			
-			<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
-			<cfif arguments.stPolicy.Policy_AirLowRule EQ 1
-			AND IsNumeric(arguments.stPolicy.Policy_AirLowPad)
-			AND stTrip.Total GT nLowFare>
-				<cfset ArrayAppend(aPolicy, 'Not the lowest fare')>
-				<cfif arguments.stPolicy.Policy_AirLowDisp EQ 1>
+			<cfif arguments.sType EQ 'Fare'>
+				<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
+				<cfif arguments.stPolicy.Policy_AirLowRule EQ 1
+				AND IsNumeric(arguments.stPolicy.Policy_AirLowPad)
+				AND stTrip.Total GT nLowFare>
+					<cfset ArrayAppend(aPolicy, 'Not the lowest fare')>
+					<cfif arguments.stPolicy.Policy_AirLowDisp EQ 1>
+						<cfset bActive = 0>
+					</cfif>
+				</cfif>
+				<!--- Out of policy if the total fare is over the maximum allowed fare. --->
+				<cfif arguments.stPolicy.Policy_AirMaxRule EQ 1
+				AND IsNumeric(arguments.stPolicy.Policy_AirMaxTotal)
+				AND stTrip.Total GT arguments.stPolicy.Policy_AirMaxTotal>
+					<cfset ArrayAppend(aPolicy, 'Fare greater than #DollarFormat(arguments.stPolicy.Policy_AirMaxTotal)#')>
+					<cfif arguments.stPolicy.Policy_AirMaxDisp EQ 1>
+						<cfset bActive = 0>
+					</cfif>
+				</cfif>
+				<!--- Don't display when non refundable --->
+				<cfif arguments.stPolicy.Policy_AirRefRule EQ 1
+				AND arguments.stPolicy.Policy_AirRefDisp EQ 1
+				AND stTrip.Ref EQ 0>
+					<cfset ArrayAppend(aPolicy, 'Hide non refundable fares')>
 					<cfset bActive = 0>
 				</cfif>
-			</cfif>
-			<!--- Out of policy if the total fare is over the maximum allowed fare. --->
-			<cfif arguments.stPolicy.Policy_AirMaxRule EQ 1
-			AND IsNumeric(arguments.stPolicy.Policy_AirMaxTotal)
-			AND stTrip.Total GT arguments.stPolicy.Policy_AirMaxTotal>
-				<cfset ArrayAppend(aPolicy, 'Fare greater than #DollarFormat(arguments.stPolicy.Policy_AirMaxTotal)#')>
-				<cfif arguments.stPolicy.Policy_AirMaxDisp EQ 1>
+				<!--- Don't display when refundable --->
+				<cfif arguments.stPolicy.Policy_AirNonRefRule EQ 1
+				AND arguments.stPolicy.Policy_AirNonRefDisp EQ 1
+				AND stTrip.Ref EQ 1>
+					<cfset ArrayAppend(aPolicy, 'Hide refundable fares')>
 					<cfset bActive = 0>
 				</cfif>
-			</cfif>
-			<!--- Don't display when non refundable --->
-			<cfif arguments.stPolicy.Policy_AirRefRule EQ 1
-			AND arguments.stPolicy.Policy_AirRefDisp EQ 1
-			AND stTrip.Ref EQ 0>
-				<cfset ArrayAppend(aPolicy, 'Hide non refundable fares')>
-				<cfset bActive = 0>
-			</cfif>
-			<!--- Don't display when refundable --->
-			<cfif arguments.stPolicy.Policy_AirNonRefRule EQ 1
-			AND arguments.stPolicy.Policy_AirNonRefDisp EQ 1
-			AND stTrip.Ref EQ 1>
-				<cfset ArrayAppend(aPolicy, 'Hide refundable fares')>
-				<cfset bActive = 0>
+				<!--- Remove first refundable fares --->
+				<cfif stTrip.Class EQ 'F'
+				AND stTrip.Ref EQ 1>
+					<cfset ArrayAppend(aPolicy, 'Hide UP fares')>
+					<cfset bActive = 0>
+				</cfif>
 			</cfif>
 			<!--- Out of policy if they cannot book non preferred carriers. --->
 			<cfif arguments.stPolicy.Policy_AirPrefRule EQ 1
@@ -550,23 +562,34 @@ checkPolicy
 					<cfset bActive = 0>
 				</cfif>
 			</cfif>
-			<!--- Remove first refundable fares --->
-			<cfif stTrip.Class EQ 'F'
-			AND stTrip.Ref EQ 1>
-				<cfset ArrayAppend(aPolicy, 'Hide UP fares')>
+			<!--- Out of policy if the carrier is blacklisted (still shows though). --->
+			<cfif bBlacklisted>
+				<cfloop array="#stTrip.Carriers#" item="local.sCarrier">
+					<cfif ArrayFindNoCase(arguments.stAccount.aNonPolicyAir, sCarrier)>
+					<cfset ArrayAppend(aPolicy, 'Out of policy carrier')>
+				</cfif>
+				</cfloop>
+				
+			</cfif>
+			<!---
+			UPDATE Air_Trips
+			SET Policy = <cfqueryparam value="0" cfsqltype="cf_sql_integer">,
+			Policy_Text = IsNull(Policy_Text, '')+'Out of policy carrier'
+			FROM Air_Segments
+			WHERE Air_Trips.Air_ID = Air_Segments.Air_ID
+			AND Air_Trips.Air_Type = Air_Segments.Air_Type
+			AND Air_Trips.Search_ID = Air_Segments.Search_ID
+			AND Air_Trips.Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
+			AND Carrier IN (SELECT Vendor_ID
+							FROM OutofPolicy_Vendors
+							WHERE Acct_ID = <cfqueryparam value="#search.Acct_ID#" cfsqltype="cf_sql_integer">
+							AND Type = 'A')
+			</cfquery> --->
+			<!--- Departure time is too close to current time. --->
+			<cfif DateDiff('h', Now(), stTrip.Depart) LTE 2>
+				<cfset ArrayAppend(aPolicy, 'Departure time is within 2 hours')>
 				<cfset bActive = 0>
 			</cfif>
-			<!--- Out of policy if the carrier is blacklisted (still shows though).
-			<cfif bBlacklisted
-			AND ArrayFindNoCase(arguments.stAccount.aNonPolicyAir, 'aa
-				
-				
-				
-				
-				
-				')>
-				<cfset ArrayAppend(aPolicy, 'Out of policy carrier')>
-			</cfif>  --->
 			<cfif bActive EQ 1>
 				<cfset stTrips[nTripKey].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
 				<cfset stTrips[nTripKey].aPolicies = aPolicy>
@@ -584,27 +607,6 @@ checkPolicy
 				<cfset stTrips = {}>
 			</cfif>
 		</cfif>
-		
-		<!--- Departure time is too close to current time.
-		UPDATE Air_Trips
-		SET Active = <cfqueryparam value="0" cfsqltype="cf_sql_numeric" />,
-		Policy = <cfqueryparam value="0" cfsqltype="cf_sql_numeric" />
-		WHERE Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_numeric" />
-		AND Outbound_Depart <= #CreateODBCDateTime(DateAdd('h', 2, Now()))#
-		
-		UPDATE Air_Trips
-		SET Policy = <cfqueryparam value="0" cfsqltype="cf_sql_integer">,
-		Policy_Text = IsNull(Policy_Text, '')+'Out of policy carrier'
-		FROM Air_Segments
-		WHERE Air_Trips.Air_ID = Air_Segments.Air_ID
-		AND Air_Trips.Air_Type = Air_Segments.Air_Type
-		AND Air_Trips.Search_ID = Air_Segments.Search_ID
-		AND Air_Trips.Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
-		AND Carrier IN (SELECT Vendor_ID
-						FROM OutofPolicy_Vendors
-						WHERE Acct_ID = <cfqueryparam value="#search.Acct_ID#" cfsqltype="cf_sql_integer">
-						AND Type = 'A')
-		</cfquery> --->
 		
 		<cfreturn stTrips/>
 	</cffunction>

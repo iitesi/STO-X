@@ -40,7 +40,7 @@
 #results-tabs li.tab.selected {
 	color:#666666;
 	background-color:rgba(255,255,255,0.2);
-	border-bottom:1px solid white;
+	border-bottom:1px solid #F8F7F7;
 }
 </style>
 <cfoutput>
@@ -57,11 +57,13 @@
 		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
 			<cfif session.searches[nSearchID].bAir>
 				<ul id="results-tabs">
-					<li class="tab <cfif rc.action CONTAINS 'air.'>selected</cfif>" style="margin-right: 0.5%">
+					<li class="tab <cfif rc.action CONTAINS 'air.' AND rc.nSearchID EQ nSearchID>selected</cfif>" style="margin-right: 0.5%">
 						<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">
 							#session.searches[nSearchID].sHeading#
 						</a>
-						<a style="float:right;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#">x</a>
+						<cfif ArrayLen(StructKeyArray(session.searches)) GT 1>
+							<a style="position:absolute;top:0px;left:140px;z-index:1005;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#"><img src="assets/img/close.png"></a>
+						</cfif>
 					</li>
 				</ul>
 			</cfif>

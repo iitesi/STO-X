@@ -4,7 +4,7 @@
 	<cffunction name="doSeatMap" output="false">
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="nTripID"	 	required="true">
-		<cfargument name="nSegment"		required="true">
+		<cfargument name="nSegment"		required="false"	default="">
 		<cfargument name="nGroup"		required="false"    default="">
 		<cfargument name="sCabin" 		required="false"	default="Y">
 		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
@@ -22,14 +22,42 @@
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="nTripID" 		required="true">
-		<cfargument name="nSegment" 	required="true">
+		<cfargument name="nSegment" 	required="false"	default="">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="nGroup" 		required="false"	default="">
 		
 		<cfif arguments.nGroup EQ ''>
-			<cfset local.stSegment = session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Segments[arguments.nSegment]>
+			<cfif arguments.nSegment EQ ''>
+				<cfloop collection="#session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
+					<cfset local.stSegment = session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Groups[0].Segments[nSegment]>
+					<cfbreak>
+				</cfloop>
+			<cfelse>
+				<cfloop collection="#session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Groups#" index="local.nGroup">
+					<cfloop collection="#session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Groups[nGroup].Segments#" index="local.nSegment">
+						<cfif arguments.nSegment EQ nSegment>
+							<cfset local.stSegment = session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Groups[nGroup].Segments[nSegment]>
+							<cfbreak>
+						</cfif>
+					</cfloop>
+				</cfloop>
+			</cfif>
 		<cfelse>
-			<cfset local.stSegment = session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Segments[arguments.nSegment]>
+			<cfif arguments.nSegment EQ ''>
+				<cfloop collection="#session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
+					<cfset local.stSegment = session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[0].Segments[nSegment]>
+					<cfbreak>
+				</cfloop>
+			<cfelse>
+				<cfloop collection="#session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups#" index="local.nGroup">
+					<cfloop collection="#session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments#" index="local.nSegment">
+						<cfif arguments.nSegment EQ nSegment>
+							<cfset local.stSegment = session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments[nSegment]>
+							<cfbreak>
+						</cfif>
+					</cfloop>
+				</cfloop>
+			</cfif>
 		</cfif>
 
 		<cfsavecontent variable="local.sMessage">

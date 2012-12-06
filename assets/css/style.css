@@ -78,15 +78,28 @@
 #nav li:hover ul{ /* Display the dropdown on hover */
 	left:0; /* Bring back on-screen when needed */
 }
+.error {
+	margin: 0 auto;
+	width: 90%;
+	text-align: center;
+	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
+	padding: 3px 15px 3px 15px;
+	border: 1px solid #FCEFA1;
+	color: #2E76CF;
+	background-color: #FCF9D7;
+}
 .overlayWrapper {
+	margin-right: auto;
+	margin-left: auto;
+	top: 10%;
+	left: 10%;
 	display: none;
 	position: fixed;
-	margin-left: auto;
-	margin-right: auto;
 	min-width: 200px;
+	min-height: 300px;
 	background-color: #FFF;
 	color: #333;
-	border:2px solid #ccc;
+	border:2px solid pink;
 	padding: 12px;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
@@ -190,11 +203,11 @@ body {
 #content .badge {
 	background-color: #FFF;
 	font-size: 11px;
-	padding: 5px;
+	padding: 10px;
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 245px;
+	width: 235px;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 }
@@ -208,51 +221,6 @@ body {
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 	min-height:70px;
-}
-#content .car .button1policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px; 
-	border: 1px solid #4081af; 
-	font-size:16px;
-	font-weight:bold;
-	border-bottom-color: #20559a; 
-	color: white; 
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #0090D2; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-}
-#content .car .button0policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px; 
-	border: 1px solid #999999; 
-	font-size:16px;
-	font-weight:bold;
-	border-bottom-color: #999999; 
-	color: #000000; 
-	text-align: center;  
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #0090D2; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #cccccc 20%, #cccccc 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 }
 #content .list .carrierimg {
 	padding: 10px 0 0 5px;
@@ -289,6 +257,9 @@ body {
 }
 .details td {
 	padding:4px;
+}
+.green {
+	color:#6EC601;
 }
 .destination {
 	border-top:1px solid #CCCCCC;
@@ -329,7 +300,7 @@ body {
 	khtml-border-radius: 10px; 
 	border-radius: 10px; 
 }
-input[type="submit"] {
+.button1policy {
 	display: block; 
 	margin: 5px; 
 	padding: 4px 15px; 
@@ -345,9 +316,31 @@ input[type="submit"] {
 	-moz-border-radius: 4px; 
 	khtml-border-radius: 4px; 
 	border-radius: 4px; 
-	background-color: #0090D2; 
+	background-color: #0090D2;
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
 	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+}
+.button0policy {
+	display: block; 
+	margin: 5px; 
+	padding: 4px 15px; 
+	border: 1px solid #666666; 
+	font-size:18px;
+	font-weight:bold;
+	color: white; 
+	text-align: center; 
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
+	text-decoration: none; 
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px; 
+	khtml-border-radius: 4px; 
+	border-radius: 4px; 
+	background-color: #CCCCCC; 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #2e76cf)); 
+	background: -moz-linear-gradient(center top, #999999 20%, #999999 100%); 
 	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
 	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
@@ -360,7 +353,6 @@ footer[role="contentinfo"]{
 	height: 100px;
 }
 form { 
-	position: absolute;
 	right: 20px;
 	top: -8px;
 	z-index: 400;
@@ -453,51 +445,6 @@ div.checkbox {
 	color: #211922;
 	min-height:70px;
 }
-#content .hotel .button1policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px; 
-	border: 1px solid #4081af; 
-	font-size:16px;
-	font-weight:bold;
-	border-bottom-color: #20559a; 
-	color: white; 
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #0090D2; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-}
-#content .hotel .button0policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px; 
-	border: 1px solid #999999; 
-	font-size:16px;
-	font-weight:bold;
-	border-bottom-color: #999999; 
-	color: #000000; 
-	text-align: center;  
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #0090D2; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #cccccc 20%, #cccccc 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-}
 
 #mapdiv {
 	width:760px;
@@ -527,43 +474,7 @@ div.checkbox {
  * 				TABS
  * ------------------------------------------ 
  */
-ul.tabs {
-	margin:7px;
-	padding:0px;
-}
-ul.tabs li {
-	list-style:none;
-	display:inline;
-}
-ul.tabs li a {
-	background-color:#0090D2;
-	color:#FFF;
-	padding:8px 14px 8px 14px;
-	text-decoration:none;
-	font-size:10px;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	font-weight:bold;
-	text-transform:uppercase;
-	border:1px solid #0090D2;
-}
-ul.tabs li a:hover {
-	background-color:#2f343a;
-	color:#FFFFFF;
-	border-color:#2f343a;
-	cursor: hand;
-}  
-ul.tabs li a.active {
-	background-color:#ffffff;
-	color:#2f343a;
-	border:1px solid #0090D2;
-	border-bottom: 1px solid #ffffff;
-}
-.tabcontent {
-	min-width: 500px;
-	min-height: 150px;
-	padding: 25px;
-	border: 4px solid #0090D2;  
-}
+
 /* 
  * ------------------------------------------ 
  * 				SEAT MAPS
@@ -587,7 +498,7 @@ ul.tabs li a.active {
 .Occupied, .Reserved, .Protected, .RBDRestriction,  .AdvancedBoardingPass{
 	background-image:url(../img/occupied.png);
 }
-.InterlineCheckin, .Codeshare, .PartnerAirline, .AdvSeatSelection {
+.InterlineCheckin, .Codeshare, .PartnerAirline, .AdvSeatSelection, .Unknown {
 	background-image:url(../img/unknown.png);
 }
 .NoSeat, .Blocked {
