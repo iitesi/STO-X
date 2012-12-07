@@ -18,11 +18,13 @@
 				<td>&nbsp;</td>
 				<td><label for="Email_Name">Your Name *</label></td>
 				<td><input type="text" name="Email_Name" id="Email_Name" size="40" value="#rc.qUser.First_Name# #rc.qUser.Last_Name#" disabled></td>
+				<input type="hidden" name="Email_Name" value="#rc.qUser.First_Name# #rc.qUser.Last_Name#">
 			</tr>
 			<tr height="23">
 				<td>&nbsp;</td>
 				<td><label for="Email_Address">Your Email *</label></td>
 				<td><input type="text" name="Email_Address" id="Email_Address" size="40" value="#rc.qUser.Email#" disabled></td>
+				<input type="hidden" name="Email_Address" value="#rc.qUser.Email#">
 			</tr>
 			<tr height="23">
 				<td>&nbsp;</td>

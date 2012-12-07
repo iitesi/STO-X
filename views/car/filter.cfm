@@ -18,7 +18,7 @@
 			</cfloop>
 		</div>
 	</div>
-	<div id="CategoryDialog" class="popup">
+	<!--- <div id="CategoryDialog" class="popup">
 		<div class="popup-category">
 			<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
 				<div class="checkbox">
@@ -27,10 +27,39 @@
 				</div>
 			</cfloop>
 		</div>
-	</div>
+	</div> --->
 </cfoutput>
 
+
+<ul id="nav">
+	<table>
+	<tr>
+		<td>
+			<div class="filterheader">Filter By</h2>
+		</td>
+		<td>
+<!---
+AIRLINES
+--->
+			<li>
+				<input type="checkbox" id="Categories" name="Categories"> <label for="Categories">Categories</label>
+				<ul>
+					<cfoutput>
+						<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
+							<div class="checkbox">
+								<input id="Cat#Category#" type="checkbox" checked="checked" name="Cat#Category#" value="#Category#" onclick="filtercategories();">
+								<label for="Cat#category#">#Category#</label>
+							</div>
+						</cfloop>
+					</cfoutput>
+				</ul>
+			</li>
+		</td>
+	</tr>
+	</table>
+</ul>
 <script type="application/javascript">
+
 function filtercategories() {
 	<cfoutput>
 		<cfset lcategories = "" >
@@ -99,6 +128,7 @@ function filtervendor() {
 
 $(document).ready(function() {
 
+	$( "#Categories" ).button();
 	$( "#Policy" )
 		.button()
 		.change(function() {
