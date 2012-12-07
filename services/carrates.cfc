@@ -1,26 +1,22 @@
 <cfcomponent output="false">
 	
-<!--- doAvailability --->
-	<cffunction name="doAvailability" output="false">
+<!--- doCarRates --->
+	<cffunction name="doCarRates" output="false" access="remote">
 		<cfargument name="nSearchID" 	required="true">
-		<cfargument name="vendor" 		required="false"	default="">
+		<cfargument name="sVendor" 		required="false"	default="">
+		<cfargument name="sCategory" 	required="false"	default="">
 		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[nSearchID].nPolicyID]#">
 		
-		<cfset structDelete(session.searches[nSearchID], "stCars")>
-		<cfif NOT structKeyExists( session.searches[nSearchID], "stCars")
-		OR StructIsEmpty(session.searches[nSearchID].stCars)>
-			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID)>
-			<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers)>
-			<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
-			<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
-			<cfset local.stCars = parseCars(aResponse)>
-			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aResponse, arguments.stAccount)>
-			<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, arguments.stPolicy)>
-			<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, arguments.stPolicy, arguments.stAccount)>
-		</cfif>
+		<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID, arguments.sVendor)>
+		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers,  arguments.sVendor,  arguments.sCategory)>
+		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
 		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
-		
+		<cfdump var="#local.sMessage#">
+		<cfdump var="#local.sResponse#">
+		<cfdump var="#local.aResponse#">
+		<cfabort>
 		<cfreturn >
 	</cffunction>
 	
@@ -28,6 +24,7 @@
 	<cffunction name="searchCDNumbers" output="false">
 		<cfargument name="nValueID" 	required="true">
 		<cfargument name="Acct_ID"		default="#session.Acct_ID#">
+		<cfargument name="sVendor" 		required="false"	default="">
 		
 		<cfquery name="local.qCDNumbers" datasource="book">
 		SELECT Vendor_Code, CD_Number
@@ -35,6 +32,7 @@
 		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
 		AND (Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_numeric" />
 		OR Value_ID IS NULL)
+		AND Vendor_Code = <cfqueryparam value="#arguments.sVendor#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		
 		<cfreturn qCDNumbers>
@@ -44,9 +42,10 @@
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
-<!---		<cfargument name="vendor" 	required="true"> --->
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="qCDNumbers" 	required="true">
+		<cfargument name="sVendor"	 	required="true">
+		<cfargument name="sCategory" 	required="true">
 		
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
@@ -69,7 +68,7 @@
 								ReturnLocation="#getsearch.Arrival_City#"
 								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T17:00:00.000+01:00" />
 							<veh:VehicleSearchModifiers>
-								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
+								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" Category="TEST"/>
 								<cfloop query="arguments.qCDNumbers">
 									<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
 								</cfloop>

@@ -244,6 +244,25 @@ function showRates(search_id, property_id) {
 	return false;
 }
 
+function loadCarRates(nsearch_id, svendor, scategory) {
+	$.ajax({type:"POST",
+		url:"services/carrates.cfc?method=doCarRates",
+		data:"nSearchID="+nsearch_id+"&sVendor="+svendor+"&sCategory="+scategory,
+		async: true,
+		dataType: 'json',
+		timeOut: 5000,
+		success:function(data) {
+		},
+		error:function(test, tes, te) {
+			console.log('broken');
+			console.log(test);
+			console.log(tes);
+			console.log(te);
+		}
+	});
+	return false;
+}
+
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {
 		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
