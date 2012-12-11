@@ -16,17 +16,17 @@
 				<cfset local.sFullMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
 				<cfset local.sFullResponse = application.objUAPI.callUAPI('VehicleService', sFullMessage, nSearchID)>
 				<cfset local.aFullResponse = application.objUAPI.formatUAPIRsp(sFullResponse)>
-				<cfset local.stCars = parseCars(local.aFullResponse)>
+				<cfset thread.stCars = parseCars(local.aFullResponse)>
 			</cfthread>
 			<cfthread name="PolicyRequest">
 				<cfset local.bFullRequest = false>
 				<cfset local.sPolicyMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
 				<cfset local.sPolicyResponse = application.objUAPI.callUAPI('VehicleService', sPolicyMessage, nSearchID)>
-				<cfset local.aPolicyResponse = application.objUAPI.formatUAPIRsp(sPolicyResponse)>
+				<cfset thread.aPolicyResponse = application.objUAPI.formatUAPIRsp(sPolicyResponse)>
 			</cfthread>
 			
 			<cfthread action="join" name="FullRequest,PolicyRequest" />
-			<cfset local.stCars = parsePolicyCars(local.stCars, aPolicyResponse)>
+			<cfset local.stCars = parsePolicyCars(FullRequest.stCars, PolicyRequest.aPolicyResponse)>
 			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aFullResponse, arguments.stAccount)>
 			<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, arguments.stPolicy)>
 			<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, arguments.stPolicy, arguments.stAccount)>
