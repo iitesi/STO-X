@@ -100,9 +100,11 @@ function filtervendor() {
 			<cfset lvendors = listappend(lvendors, #Vendor#) >
 		</cfloop>
 		var lvendors = '#lvendors#';
+		var lsubcategories = '#lsubcategories#';
 	</cfoutput>	
 	lcategories = lcategories.split(',');	
 	lvendors = lvendors.split(',');	
+	lsubcategories = lsubcategories.split(',');	
 
 	for (var i = 0; i < lvendors.length; i++) {
 		var VendorCode = lvendors[i];	
@@ -113,13 +115,18 @@ function filtervendor() {
 
 		for (var t = 0; t < lcategories.length; t++) {
 			var CategoryName = lcategories[t];
-			if (Vendormatch == 1) {
-				$("#VenTitle" + VendorCode ).show('fade');
-				$("#Ven" + VendorCode + CategoryName).show('fade');
-			}
-			else {
-				$("#VenTitle" + VendorCode ).hide('fade');		
-				$("#Ven" + VendorCode + CategoryName).hide('fade');
+			for (var s = 0; s < lsubcategories.length; s++) {
+				var SubCategoryName = lsubcategories[s];
+				if ($("#Ven" + VendorCode + CategoryName + SubCategoryName) != null) {
+					if (Vendormatch == 1) {
+						$("#VenTitle" + VendorCode ).show('fade');
+						$("#Ven" + VendorCode + CategoryName + SubCategoryName).show('fade');
+					}
+					else {
+						$("#VenTitle" + VendorCode ).hide('fade');		
+						$("#Ven" + VendorCode + CategoryName + SubCategoryName).hide('fade');
+					}
+				}
 			}
 		}
 	}

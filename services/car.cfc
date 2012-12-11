@@ -11,11 +11,23 @@
 		<cfif NOT structKeyExists( session.searches[nSearchID], "stCars")
 		OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID)>
-			<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers)>
-			<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
-			<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
-			<cfset local.stCars = parseCars(aResponse)>
-			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aResponse, arguments.stAccount)>
+			<cfthread name="FullRequest">
+				<cfset local.bFullRequest = true>
+				<cfset local.sFullMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
+				<cfset local.sFullResponse = application.objUAPI.callUAPI('VehicleService', sFullMessage, nSearchID)>
+				<cfset local.aFullResponse = application.objUAPI.formatUAPIRsp(sFullResponse)>
+				<cfset local.stCars = parseCars(local.aFullResponse)>
+			</cfthread>
+			<cfthread name="PolicyRequest">
+				<cfset local.bFullRequest = false>
+				<cfset local.sPolicyMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
+				<cfset local.sPolicyResponse = application.objUAPI.callUAPI('VehicleService', sPolicyMessage, nSearchID)>
+				<cfset local.aPolicyResponse = application.objUAPI.formatUAPIRsp(sPolicyResponse)>
+			</cfthread>
+			
+			<cfthread action="join" name="FullRequest,PolicyRequest" />
+			<cfset local.stCars = parsePolicyCars(local.stCars, aPolicyResponse)>
+			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aFullResponse, arguments.stAccount)>
 			<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, arguments.stPolicy)>
 			<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, arguments.stPolicy, arguments.stAccount)>
 		</cfif>
@@ -44,9 +56,9 @@
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
-<!---		<cfargument name="vendor" 	required="true"> --->
 		<cfargument name="nSearchID" 	required="true">
 		<cfargument name="qCDNumbers" 	required="true">
+		<cfargument name="bFullRequest" required="false"		default="false">
 		
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
@@ -64,15 +76,17 @@
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
 								PickupLocation="#getsearch.Arrival_City#"
-								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T08:00:00.000+01:00" 
+								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T#TimeFormat(getsearch.Depart_DateTime,'HH:mm:ss')#" 
 								PickupLocationType="Airport"
 								ReturnLocation="#getsearch.Arrival_City#"
-								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T17:00:00.000+01:00" />
+								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T#TimeFormat(getsearch.Arrival_DateTime,'HH:mm:ss')#" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
-								<cfloop query="arguments.qCDNumbers">
-									<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
-								</cfloop>
+								<cfif NOT(arguments.bFullRequest) >
+									<cfloop query="arguments.qCDNumbers">
+										<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
+									</cfloop>
+								</cfif>
 							</veh:VehicleSearchModifiers>  
 						</veh:VehicleSearchAvailabilityReq>
 					</soapenv:Body>
@@ -112,6 +126,40 @@
 							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCategory = stVehicleRate.XMLAttributes.RateCategory>
 							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCode = stVehicleRate.XMLAttributes.RateCode>
 						</cfif>
+					</cfif>
+				</cfloop>
+			</cfif>
+		</cfloop>
+		
+		<cfreturn stCars />
+	</cffunction>
+	
+<!--- parsePolicyCars --->
+	<cffunction name="parsePolicyCars" output="false">
+		<cfargument name="stCars"	required="true">
+		<cfargument name="stResponse"	required="true">
+		
+		<cfset local.sVendorClass = ''>
+		<cfset local.sVendorCode = ''>
+		<cfloop array="#arguments.stResponse#" index="local.stVehicle">
+			<cfif stVehicle.XMLName EQ 'vehicle:Vehicle'>
+				<cfset sVendorClass = stVehicle.XMLAttributes.VehicleClass>
+				<cfset sVendorCode = stVehicle.XMLAttributes.VendorCode>
+				<cfset sVendorCategory = stVehicle.XMLAttributes.Category>
+				<cfset stCars[sVendorClass][sVendorCategory][sVendorCode] = {
+					DoorCount			: 	(StructKeyExists(stVehicle.XMLAttributes, 'DoorCount') ? stVehicle.XMLAttributes.DoorCount : ''),
+					Location			: 	stVehicle.XMLAttributes.Location,
+					TransmissionType	: 	stVehicle.XMLAttributes.TransmissionType,
+					Category			: 	stVehicle.XMLAttributes.Category,
+					VendorLocationKey	: 	stVehicle.XMLAttributes.VendorLocationKey
+				}>
+				<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">
+					<cfif stVehicleRate.XMLName EQ 'vehicle:VehicleRate'>
+						<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].Policy = RandRange(0,1)>
+						<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].EstimatedTotalAmount = stVehicleRate.XMLAttributes.EstimatedTotalAmount>
+						<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateAvailability = stVehicleRate.XMLAttributes.RateAvailability>
+						<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCategory = stVehicleRate.XMLAttributes.RateCategory>
+						<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCode = stVehicleRate.XMLAttributes.RateCode>
 					</cfif>
 				</cfloop>
 			</cfif>

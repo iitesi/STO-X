@@ -46,7 +46,7 @@
 							</td>
 							<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
 								<td heigth="100%" width="120" align="center" style="border-left:1px solid ##CCC">
-									<div id=Ven#sVendor##sCategory##ssubCategory#>
+									<div id=Ven#sVendor##sCategory##UCase(ssubCategory)#>
 										<cfif StructKeyExists(session.searches[rc.Search_ID].stCars[sCategory][ssubCategory], sVendor)>
 											<cfset stRate = session.searches[rc.Search_ID].stCars[sCategory][ssubCategory][sVendor]>
 									<!---#ArrayToList(stRate.aPolicies)#--->
