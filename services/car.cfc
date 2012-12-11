@@ -94,7 +94,8 @@
 			<cfif stVehicle.XMLName EQ 'vehicle:Vehicle'>
 				<cfset sVendorClass = stVehicle.XMLAttributes.VehicleClass>
 				<cfset sVendorCode = stVehicle.XMLAttributes.VendorCode>
-				<cfset stCars[sVendorClass][sVendorCode] = {
+				<cfset sVendorCategory = stVehicle.XMLAttributes.Category>
+				<cfset stCars[sVendorClass][sVendorCategory][sVendorCode] = {
 					DoorCount			: 	(StructKeyExists(stVehicle.XMLAttributes, 'DoorCount') ? stVehicle.XMLAttributes.DoorCount : ''),
 					Location			: 	stVehicle.XMLAttributes.Location,
 					TransmissionType	: 	stVehicle.XMLAttributes.TransmissionType,
@@ -103,13 +104,13 @@
 				}>
 				<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">
 					<cfif stVehicleRate.XMLName EQ 'vehicle:VehicleRate'>
-						<cfif NOT StructKeyExists(stCars[sVendorClass][sVendorCode], 'EstimatedTotalAmount')
-						OR stCars[sVendorClass][sVendorCode].EstimatedTotalAmount GT stVehicleRate.XMLAttributes.EstimatedTotalAmount>
-							<cfset stCars[sVendorClass][sVendorCode].Policy = RandRange(0,1)>
-							<cfset stCars[sVendorClass][sVendorCode].EstimatedTotalAmount = stVehicleRate.XMLAttributes.EstimatedTotalAmount>
-							<cfset stCars[sVendorClass][sVendorCode].RateAvailability = stVehicleRate.XMLAttributes.RateAvailability>
-							<cfset stCars[sVendorClass][sVendorCode].RateCategory = stVehicleRate.XMLAttributes.RateCategory>
-							<cfset stCars[sVendorClass][sVendorCode].RateCode = stVehicleRate.XMLAttributes.RateCode>
+						<cfif NOT StructKeyExists(stCars[sVendorClass][sVendorCategory][sVendorCode], 'EstimatedTotalAmount')
+						OR stCars[sVendorClass][sVendorCategory][sVendorCode].EstimatedTotalAmount GT stVehicleRate.XMLAttributes.EstimatedTotalAmount>
+							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].Policy = RandRange(0,1)>
+							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].EstimatedTotalAmount = stVehicleRate.XMLAttributes.EstimatedTotalAmount>
+							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateAvailability = stVehicleRate.XMLAttributes.RateAvailability>
+							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCategory = stVehicleRate.XMLAttributes.RateCategory>
+							<cfset stCars[sVendorClass][sVendorCategory][sVendorCode].RateCode = stVehicleRate.XMLAttributes.RateCode>
 						</cfif>
 					</cfif>
 				</cfloop>
@@ -199,7 +200,8 @@
 		<cfset local.nDays = DateDiff('d', getsearch.Depart_DateTime, getSearch.Arrival_DateTime)>
 		
 		<cfloop collection="#stCars#" item="local.sCategory">
-			<cfloop collection="#stCars[sCategory]#" item="local.sVendor">
+			<cfloop collection="#stCars[sCategory]#" item="local.sType">
+			<cfloop collection="#stCars[sCategory][sType]#" item="local.sVendor">
 				<cfset aPolicy = []>
 				<cfset bActive = 1>
 				<!--- Out of policy if they cannot book non preferred vendors. --->
@@ -224,11 +226,12 @@
 					<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 				</cfif>
 				<cfif bActive EQ 1>
-					<cfset stCars[sCategory][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
-					<cfset stCars[sCategory][sVendor].aPolicies = aPolicy>
+					<cfset stCars[sCategory][sType][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
+					<cfset stCars[sCategory][sType][sVendor].aPolicies = aPolicy>
 				<cfelse>
-					<cfset temp = StructDelete(stCars[sCategory], sVendor)>
+					<cfset temp = StructDelete(stCars[sCategory][sType], sVendor)>
 				</cfif>
+			</cfloop>
 			</cfloop>
 		</cfloop>
 		
