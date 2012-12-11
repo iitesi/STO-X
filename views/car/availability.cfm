@@ -71,4 +71,5 @@
 <cfdump eval=application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes>
 <cfdump eval=session.searches[rc.Search_ID].stCarVendors>
 <cfdump eval=session.searches[rc.Search_ID].stCarCategories>
+<cfdump eval=session.searches[rc.Search_ID].fstCars>
 <cfdump eval=session.searches[rc.Search_ID].stCars>

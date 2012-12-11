@@ -11,23 +11,23 @@
 		<cfif NOT structKeyExists( session.searches[nSearchID], "stCars")
 		OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID)>
-			<cfthread name="FullRequest">
+			<cfthread name="FullRequest" stAccount="#arguments.stAccount#" stPolicy="#arguments.stPolicy#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
 				<cfset local.bFullRequest = true>
-				<cfset local.sFullMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
+				<cfset local.sFullMessage = prepareSoapHeader(stAccount,stPolicy, nSearchID, qCDNumbers, bFullRequest)>
 				<cfset local.sFullResponse = application.objUAPI.callUAPI('VehicleService', sFullMessage, nSearchID)>
-				<cfset local.aFullResponse = application.objUAPI.formatUAPIRsp(sFullResponse)>
-				<cfset thread.stCars = parseCars(local.aFullResponse)>
+				<cfset thread.aFullResponse = application.objUAPI.formatUAPIRsp(sFullResponse)>
+				<cfset thread.stCars = parseCars(thread.aFullResponse)>
 			</cfthread>
-			<cfthread name="PolicyRequest">
+			<cfthread name="PolicyRequest" stAccount="#arguments.stAccount#" stPolicy="#arguments.stPolicy#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
 				<cfset local.bFullRequest = false>
-				<cfset local.sPolicyMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers, bFullRequest)>
+				<cfset local.sPolicyMessage = prepareSoapHeader(stAccount, stPolicy, nSearchID, qCDNumbers, bFullRequest)>
 				<cfset local.sPolicyResponse = application.objUAPI.callUAPI('VehicleService', sPolicyMessage, nSearchID)>
 				<cfset thread.aPolicyResponse = application.objUAPI.formatUAPIRsp(sPolicyResponse)>
 			</cfthread>
 			
 			<cfthread action="join" name="FullRequest,PolicyRequest" />
 			<cfset local.stCars = parsePolicyCars(FullRequest.stCars, PolicyRequest.aPolicyResponse)>
-			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, aFullResponse, arguments.stAccount)>
+			<cfset session.searches[nSearchID].stCarVendors = sortVendors(stCars, FullRequest.aFullResponse, arguments.stAccount)>
 			<cfset session.searches[nSearchID].stCarCategories = sortCategories(stCars, arguments.nSearchID, arguments.stPolicy)>
 			<cfset session.searches[nSearchID].stCars = checkPolicy(stCars, arguments.nSearchID, arguments.stPolicy, arguments.stAccount)>
 		</cfif>
@@ -76,10 +76,10 @@
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
 								PickupLocation="#getsearch.Arrival_City#"
-								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T#TimeFormat(getsearch.Depart_DateTime,'HH:mm:ss')#" 
+								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T08:00:00" 
 								PickupLocationType="Airport"
 								ReturnLocation="#getsearch.Arrival_City#"
-								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T#TimeFormat(getsearch.Arrival_DateTime,'HH:mm:ss')#" />
+								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T17:00:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
 								<cfif NOT(arguments.bFullRequest) >
