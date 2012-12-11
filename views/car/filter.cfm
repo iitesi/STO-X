@@ -1,88 +1,88 @@
 <div id="filterbar">
 	<div>
 		<div class="filterheader">Filter By</div>
-		<button id="btnCarVendor">Vendor</button>
-		<button id="btnCarCategory">Category</button>
-		<button id="btnCarPrice">Price</button>
-		<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
 	</div>
 </div>
-<cfoutput>
-	<div id="VendorDialog" class="popup">
-		<div class="popup-Vendor">
-			<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="VendorCode">
-				<div class="checkbox">
-					<input id="Vendor#VendorCode#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onclick="filtervendor();">
-					<label for="Vendor#VendorCode#">#StructKeyExists(application.stCarVendors,VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#</label>
-				</div>
-			</cfloop>
-		</div>
-	</div>
-	<!--- <div id="CategoryDialog" class="popup">
-		<div class="popup-category">
-			<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
-				<div class="checkbox">
-					<input id="Cat#Category#" type="checkbox" checked="checked" name="Cat#Category#" value="#Category#" onclick="filtercategories();">
-					<label for="Cat#category#">#Category#</label>
-				</div>
-			</cfloop>
-		</div>
-	</div> --->
-</cfoutput>
-
-
 <ul id="nav">
 	<table>
-	<tr>
-		<td>
-			<div class="filterheader">Filter By</h2>
-		</td>
-		<td>
-<!---
-AIRLINES
---->
+		<tr>
 			<li>
-				<input type="checkbox" id="Categories" name="Categories"> <label for="Categories">Categories</label>
+				<input type="checkbox" id="btnCarVendor" name="btnCarVendor">
+				<label for="btnCarVendor">
+					Vendors
+				</label>
 				<ul>
 					<cfoutput>
-						<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
+						<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="VendorCode">
 							<div class="checkbox">
-								<input id="Cat#Category#" type="checkbox" checked="checked" name="Cat#Category#" value="#Category#" onclick="filtercategories();">
-								<label for="Cat#category#">#Category#</label>
+								<input id="Vendor#VendorCode#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onclick="filtervendor();">
+								<label for="Vendor#VendorCode#">
+									#StructKeyExists(application.stCarVendors,VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#
+								</label>
 							</div>
 						</cfloop>
 					</cfoutput>
 				</ul>
 			</li>
-		</td>
-	</tr>
+			</td> 
+		</tr>
 	</table>
 </ul>
+<ul id="nav">
+	<table>
+		<li>
+			<input type="checkbox" id="btnCarCategory" name="btnCarCategory">
+			<label for="btnCarCategory">
+				Categories
+			</label>
+			<ul>
+				<cfoutput>
+					<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
+						<div class="checkbox">
+							<input id="Cat#Category#" type="checkbox" checked="checked" name="Cat#Category#" value="#Category#" onclick="filtercategories();">
+							<label for="Cat#category#">
+								#Category#
+							</label>
+						</div>
+					</cfloop>
+				</cfoutput>
+			</ul>
+		</li>
+		</td> </tr> 
+	</table>
+</ul>
+
 <script type="application/javascript">
 
 function filtercategories() {
 	<cfoutput>
 		<cfset lcategories = "" >
-		<cfset numberofitems = 0 >
 		<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
 			<cfset lcategories = listappend(lcategories, #Category#) >
 		</cfloop>
+		<cfset lsubcategories = arraytolist(asubcategories) >
 		var lcategories = '#lcategories#';
+		var lsubcategories = '#lsubcategories#';
 	</cfoutput>	
 	lcategories = lcategories.split(',');	
+	lsubcategories = lsubcategories.split(',');	
 
 	for (var t = 0; t < lcategories.length; t++) {
 		var CategoryName = lcategories[t];
 		var Categorymatch = 1;
 		if ($("#Cat" + CategoryName + ":checked").val() == undefined) {
-				Categorymatch = 0;
+			Categorymatch = 0;
 		}
 
-		if (Categorymatch == 1) {
-			$("#" + CategoryName ).show('fade');
-		}
-		else {
-			$("#" + CategoryName ).hide('fade');		
+		for (var s = 0; s < lsubcategories.length; s++) {
+			var SubCategoryName = lsubcategories[s];
+			if ($("#" + CategoryName + SubCategoryName) != null) {
+				if (Categorymatch == 1) {
+					$("#" + CategoryName + SubCategoryName ).show('fade');
+				} else {
+					$("#" + CategoryName + SubCategoryName ).hide('fade');		
+				}
+			}		
 		}
 	}
 	return false;
