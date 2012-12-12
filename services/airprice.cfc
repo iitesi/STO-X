@@ -43,12 +43,12 @@ doAirPrice
 
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable)>
-	<cfdump var="#sMessage#">
+	<!--- <cfdump var="#sMessage#"> --->
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
-	<cfdump var="#aResponse#">
+	<!--- <cfdump var="#aResponse#"> --->
 		<!--- Parse the segments. --->
 		<cfset stSegments	= objAirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
@@ -60,8 +60,6 @@ doAirPrice
 			<cfset stTrips 		= objAirParse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
 			<cfset stTrips		= objAirParse.addPreferred(stTrips, arguments.stAccount)>
-			<!--- Create javascript structure per trip. --->
-			<cfset stTrips 		= objAirParse.addJavascript(stTrips)>
 			<!--- <cfdump var="#stTrips#" abort> --->
 			<!--- Add trip id to the list of priced items --->
 			<cfset local.nTripKey= getTripKey(stTrips)>

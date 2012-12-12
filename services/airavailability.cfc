@@ -51,8 +51,8 @@ threadAvailability
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<!--- <cfdump eval=stThreads>
-			<cfdump eval=cfthread abort> --->
+			<!--- <cfdump eval=stThreads> --->
+			<!--- <cfdump eval=cfthread abort> --->
 		</cfif>
 
 		<cfreturn >
@@ -109,10 +109,10 @@ doAirAvailability
 					<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
 					<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips)>
-					<!--- Create javascript structure per trip. --->
-					<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
 					<!--- Run policy on all the results --->
 					<cfset stAvailTrips				= 	objAirParse.checkPolicy(stAvailTrips, arguments.nSearchID, '', 'Avail')>
+					<!--- Create javascript structure per trip. --->
+					<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
 					<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
 				</cfloop>

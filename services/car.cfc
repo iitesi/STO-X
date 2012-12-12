@@ -114,6 +114,7 @@
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
 								<cfif IsQuery(arguments.qCDNumbers) >
 									<cfloop query="arguments.qCDNumbers">
+										<!--- Can have up to 10 --->
 										<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
 									</cfloop>
 								</cfif>
