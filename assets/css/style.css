@@ -47,8 +47,9 @@
 	list-style:none;
 	position:absolute;
 	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
-	width: 200px;
+	min-width: 150px;
 	z-index:999;
+	background-color: #FFFFFF;
 	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
 }
 #nav ul li{
@@ -59,7 +60,7 @@
 	padding: 0.4em 1em;
 	float:left;
 	position: relative;
-	width: 245px;
+	min-width: 245px;
 	box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
 	color: #211922;
 }
@@ -221,6 +222,7 @@ body {
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 	min-height:70px;
+	clear:both;
 }
 #content .list .carrierimg {
 	padding: 10px 0 0 5px;

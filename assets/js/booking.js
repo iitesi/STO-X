@@ -251,25 +251,6 @@ function showRates(search_id, property_id) {
 	return false;
 }
 
-function loadCarRates(nsearch_id, svendor, scategory) {
-	$.ajax({type:"POST",
-		url:"services/carrates.cfc?method=doCarRates",
-		data:"nSearchID="+nsearch_id+"&sVendor="+svendor+"&sCategory="+scategory,
-		async: true,
-		dataType: 'json',
-		timeOut: 5000,
-		success:function(data) {
-		},
-		error:function(test, tes, te) {
-			console.log('broken');
-			console.log(test);
-			console.log(tes);
-			console.log(te);
-		}
-	});
-	return false;
-}
-
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {
 		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
@@ -313,6 +294,51 @@ function changeLatLongCenter(e) {
 	}
 	return false;
 }
+/*
+--------------------------------------------------------------------------------------------------------------------
+CAR SECTION
+--------------------------------------------------------------------------------------------------------------------
+*/
+function filterCar() {
+	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
+	
+	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
+		var car = carresults[loopcnt];
+																							//console.log(car)
+		if (($( "#btnCategory" + car[1] ).is(':checked') == false)
+		|| ($( "#btnVendor" + car[2] ).is(':checked') == false)
+		|| (policy == 'on' && car[3] != 1)) {
+			$( "#" + car[0] ).hide();
+		}
+		else {
+			$( "#" + car[0] ).show();
+		}
+	}
+	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
+		var category = carcategories[loopcnt];
+																							//console.log(category);
+		if (($( "#btnCategory" + category[0] ).is(':checked') == false)
+		|| (policy == 'on' && category[1] != 1)) {
+			$( '#row' + category ).hide();
+		}
+		else {
+			$( '#row' + category ).show();
+		}
+	}
+	for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
+		var vendor = carvendors[loopcnt];
+																							//console.log(category);
+		if (($( "#btnVendor" + vendor[0] ).is(':checked') == false)
+		|| (policy == 'on' && vendor[1] != 1)) {
+			$( '#vendor' + vendor[0] ).hide();
+		}
+		else {
+			$( '#vendor' + vendor[0] ).show();
+		}
+	}
+
+	return false;
+}
 $(document).ready(function() {
 	$("#overlay").jqm({
 		modal: true,
@@ -323,4 +349,5 @@ $(document).ready(function() {
 		target: "#overlayContent",
 		overlay:75
 	});
+	
 });

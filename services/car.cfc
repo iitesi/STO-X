@@ -10,7 +10,7 @@
 		OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.stThreads = {}>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
-			<cfif NOT qCDNumbers.RecordCount>
+			<cfif qCDNumbers.RecordCount>
 				<cfset stThreads.stCorporateRates = ''>
 				<cfthread
 				name="stCorporateRates"
@@ -33,6 +33,7 @@
 			</cfthread>
 			
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
+			<!--- <cfdump var="#cfthread#" abort> --->
 			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
 				<cfset local.stCars = mergeCars(stCorporateRates.stCars, stPublicRates.stCars)>
 			<cfelse>
@@ -76,11 +77,25 @@
 		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
 		<cfquery name="local.getsearch">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
+		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Air_Type
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		
+		<cfif session.searches[arguments.nSearchID].bAir EQ 1>
+			<cfset local.dPickUp = session.searches[arguments.nSearchID].stItinerary.Air.Groups[0].ArrivalTime>
+			<cfif getsearch.Air_Type EQ 'RT'>
+				<cfset local.dDropOff = session.searches[arguments.nSearchID].stItinerary.Air.Groups[1].DepartureTime>
+			<cfelseif getsearch.Air_Type EQ 'OW'>
+				<cfset local.dDropOff = getsearch.Arrival_DateTime>
+			<cfelseif getsearch.Air_Type EQ 'MD'>
+				<!--- Not allowed at this time --->
+			</cfif>
+		<cfelse>
+			<cfset local.dPickUp = getsearch.Depart_DateTime>
+			<cfset local.dDropOff = getsearch.Arrival_DateTime>
+		</cfif>
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -91,10 +106,10 @@
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
 								PickupLocation="#getsearch.Arrival_City#"
-								PickupDateTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#T08:00:00" 
+								PickupDateTime="#DateFormat(dPickUp, 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
 								PickupLocationType="Airport"
 								ReturnLocation="#getsearch.Arrival_City#"
-								ReturnDateTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#T17:00:00" />
+								ReturnDateTime="#DateFormat(dDropOff, 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
 								<cfif IsQuery(arguments.qCDNumbers) >
@@ -117,7 +132,8 @@
 		<cfargument name="stResponse"	required="true">
 		<cfargument name="bCorporate"	required="false"	default="0">
 		
-		<cfset local.aClassCategories = ['CompactCar','CompactSUV','EconomyCar','FullsizeCar', 'FullsizeSUV', 'FullsizeVan', 'IntermediateCar','IntermediateSUV','IntermediateVan','LuxuryCar','LuxurySUV','MiniVan','PremiumCar','PremiumSUV','PremiumVan','StandardCar','StandardSUV','StandardVan']>
+		<!--- If you update this list, update it in getCategories too --->
+		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
 		<cfset local.stCars = {}>
 		<cfset local.sVendorClassCategory = ''>
 		<cfset local.sVendorCode = ''>
@@ -180,42 +196,8 @@ mergeCars
 		<cfif NOT IsStruct(stCars)>
 			<cfset stCars = {}>
 		</cfif>
-		
+
 		<cfreturn stCars/>
-	</cffunction>
-	
-<!--- sortVendors --->
-	<cffunction name="sortVendors" output="false">
-		<cfargument name="stCars"			required="true">
-		<cfargument name="stResponse"		required="true">
-		<cfargument name="stAccount">
-		
-		<cfset local.stCarVendors = StructNew('linked')>
-		<!--- Find preferred vendors first --->
-		<cfset local.aPreferredCar = arguments.stAccount.aPreferredCar>
-		<cfloop collection="#arguments.stCars#" item="local.sCategory">
-			<cfloop collection="#arguments.stCars[sCategory]#" item="local.sVendor">
-				<cfif ArrayFindNoCase(aPreferredCar, sVendor)
-				AND NOT StructKeyExists(stCarVendors, sVendor)>
-					<cfset stCarVendors[sVendor] = ''>
-				</cfif>
-			</cfloop>
-		</cfloop>
-		<!--- Add all other vendors in order of lowest to highest rates --->
-		<cfloop array="#arguments.stResponse#" index="local.stVehicle">
-			<cfif stVehicle.XMLName EQ 'vehicle:Vehicle'>
-				<cfset sVendorCode = stVehicle.XMLAttributes.VendorCode>
-				<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">
-					<cfif stVehicleRate.XMLName EQ 'vehicle:VehicleRate'>
-						<cfif NOT StructKeyExists(stCarVendors, sVendorCode)>
-							<cfset stCarVendors[sVendorCode] = ''>
-						</cfif>
-					</cfif>
-				</cfloop>
-			</cfif>
-		</cfloop>
-		
-		<cfreturn stCarVendors />
 	</cffunction>
 	
 <!--- checkPolicy --->
@@ -249,20 +231,20 @@ mergeCars
 						<cfset bActive = 0>
 					</cfif>
 				</cfif>
-				<!--- Out of policy if the car type is not allowed.
+				<!--- Out of policy if the car type is not allowed.--->
 				<cfif arguments.stPolicy.Policy_CarTypeRule EQ 1
 				AND NOT ArrayFindNoCase(arguments.stPolicy.aCarSizes, sCategory)>
 					<cfset ArrayAppend(aPolicy, 'Car type not preferred')>
-					<cfif arguments.stPolicy.Policy_CarPrefDisp EQ 1>
+					<cfif arguments.stPolicy.Policy_CarTypeDisp EQ 1>
 						<cfset bActive = 0>
 					</cfif>
-				</cfif>  --->
+				</cfif>
 				<!--- Out of policy if the car vendor is blacklisted (still shows though).  --->
 				<cfif bBlacklisted
 				AND ArrayFindNoCase(arguments.stAccount.aNonPolicyCar, sVendor)>
 					<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 				</cfif>
-				<cfif bActive EQ 1>
+				<cfif bActive>
 					<cfset stCars[sCategory][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
 					<cfset stCars[sCategory][sVendor].aPolicies = aPolicy>
 				<cfelse>
@@ -270,7 +252,7 @@ mergeCars
 				</cfif>
 			</cfloop>
 		</cfloop>
-		
+
 		<cfreturn stCars/>
 	</cffunction>
 
@@ -289,7 +271,7 @@ addJavascript
 				<cfset sJavascript = ListAppend(sJavascript, '"#sClassCategory#"')><!--- Class and Category --->
 				<cfset sJavascript = ListAppend(sJavascript, '"#sVendor#"')><!--- Vendor --->
 				<cfset sJavascript = ListAppend(sJavascript, stCar.Policy)><!--- Policy --->
-				<cfset sJavascript = ListAppend(sJavascript, (Left(stCar.EstimatedTotalAmount, 3) EQ 'USD' ? Mid(stCar.EstimatedTotalAmount, 4) : stCar.EstimatedTotalAmount))><!--- Amount --->
+				<cfset sJavascript = ListAppend(sJavascript, (Left(stCar.EstimatedTotalAmount, 3) EQ 'USD' ? Replace(Mid(stCar.EstimatedTotalAmount, 4), ',', '', 'ALL') : Replace(stCar.EstimatedTotalAmount, ',', '', 'ALL')))><!--- Amount --->
 				<cfset stCars[sClassCategory][sVendor].sJavascript = LCase(sJavascript)>
 			</cfloop>
 		</cfloop>
@@ -327,13 +309,17 @@ getCategories
 	<cffunction name="getCategories" output="false">
 		<cfargument name="stCars" 	required="true">
 		
+		<!--- If you update this list, update it in parseCars too --->
+		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
 		<cfset local.stCars = arguments.stCars>
-		<cfset local.stCarCategories = {}>
-		<cfloop collection="#stCars#" item="local.sClassCategory">
-			<cfset stCarVendors[sClassCategory] = ''>
+		<cfset local.stCarCategories = StructNew('linked')>
+		<cfloop array="#aClassCategories#" index="local.sCategory">
+			<cfif StructKeyExists(stCars, sCategory)>
+				<cfset stCarCategories[sCategory] = ''>
+			</cfif>
 		</cfloop>
 		
-		<cfreturn stCarVendors/>
+		<cfreturn stCarCategories/>
 	</cffunction>
 	
 </cfcomponent>

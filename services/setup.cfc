@@ -169,7 +169,7 @@ setPolicies
 		
 		<cfquery name="local.qPreferredCarSizes" datasource="book">
 		SELECT Car_Size, Policy_ID
-		FROM Policy_CarSizes
+		FROM Policy_CarCategories
 		</cfquery>
 		<cfloop query="qPreferredCarSizes">
 			<cfif StructKeyExists(stTemp, Policy_ID)>

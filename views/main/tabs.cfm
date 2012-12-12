@@ -79,18 +79,32 @@
 	</cfif>
 	<ul id="results-tabs">
 		<li class="tab" style="margin-right: 0.5%">
-			<a href="#buildURL('hotel.search?Search_ID=#rc.Search_ID#')#">
+			<cfif (session.searches[nSearchID].bAir
+			AND StructKeyExists(session.searches[nSearchID].stItinerary, 'Air'))
+			OR NOT session.searches[nSearchID].bAir>
+				<a href="#buildURL('hotel.search?Search_ID=#rc.Search_ID#')#">
+					<img src="assets/img/hotel.png">
+					<h3>Hotels in <br>#session.searches[nSearchID].sDestination#</h3>
+				</a>
+			<cfelse>
 				<img src="assets/img/hotel.png">
 				<h3>Hotels in <br>#session.searches[nSearchID].sDestination#</h3>
-			</a>
+			</cfif>
 		</li>
 	</ul>
 	<ul id="results-tabs">
 		<li class="tab" style="margin-right: 0.5%">
-			<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
+			<cfif (session.searches[nSearchID].bAir
+			AND StructKeyExists(session.searches[nSearchID].stItinerary, 'Air'))
+			OR NOT session.searches[nSearchID].bAir>
+				<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
+					<img src="assets/img/car.png">
+					<h3>Cars in <br>#session.searches[nSearchID].sDestination#</h3>
+				</a>
+			<cfelse>
 				<img src="assets/img/car.png">
 				<h3>Cars in <br>#session.searches[nSearchID].sDestination#</h3>
-			</a>
+			</cfif>
 		</li>
 	</ul>
 </cfoutput>
