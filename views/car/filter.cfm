@@ -5,31 +5,28 @@
 </div>
 <ul id="nav">
 	<table>
-		<tr>
-			<li>
-				<input type="checkbox" id="btnCarVendor" name="btnCarVendor">
-				<label for="btnCarVendor">
-					Vendors
-				</label>
-				<ul>
-					<cfoutput>
-						<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="VendorCode">
-							<div class="checkbox">
-								<input id="Vendor#VendorCode#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onclick="filtervendor();">
-								<label for="Vendor#VendorCode#">
-									#StructKeyExists(application.stCarVendors,VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#
-								</label>
-							</div>
-						</cfloop>
-					</cfoutput>
-				</ul>
-			</li>
-			</td> 
-		</tr>
-	</table>
-</ul>
-<ul id="nav">
-	<table>
+	<tr>
+		<td>
+		<li>
+			<input type="checkbox" id="btnCarVendor" name="btnCarVendor">
+			<label for="btnCarVendor">
+				Vendors
+			</label>
+			<ul>
+				<cfoutput>
+					<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="VendorCode">
+						<div class="checkbox">
+							<input id="Vendor#LCase(VendorCode)#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onClick="filterCar()">
+							<label for="#LCase(VendorCode)#">
+								#StructKeyExists(application.stCarVendors, VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#
+							</label>
+						</div>
+					</cfloop>
+				</cfoutput>
+			</ul>
+		</li>
+		</td>
+		<td>
 		<li>
 			<input type="checkbox" id="btnCarCategory" name="btnCarCategory">
 			<label for="btnCarCategory">
@@ -37,167 +34,61 @@
 			</label>
 			<ul>
 				<cfoutput>
-					<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
+					<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory">
 						<div class="checkbox">
-							<input id="Cat#Category#" type="checkbox" checked="checked" name="Cat#Category#" value="#Category#" onclick="filtercategories();">
-							<label for="Cat#category#">
-								#Category#
+							<input id="Category#LCase(sCategory)#" type="checkbox" checked="checked" name="sCategory" value="#sCategory#" onClick="filterCar()">
+							<label for="#LCase(sCategory)#">
+								#sCategory#
 							</label>
 						</div>
 					</cfloop>
 				</cfoutput>
 			</ul>
 		</li>
-		</td> </tr> 
+		</td>
+	</tr> 
 	</table>
 </ul>
 
 <script type="application/javascript">
 
-function filtercategories() {
-	<cfoutput>
-		<cfset lcategories = "" >
-		<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
-			<cfset lcategories = listappend(lcategories, #Category#) >
-		</cfloop>
-		<cfset lsubcategories = arraytolist(asubcategories) >
-		var lcategories = '#lcategories#';
-		var lsubcategories = '#lsubcategories#';
-	</cfoutput>	
-	lcategories = lcategories.split(',');	
-	lsubcategories = lsubcategories.split(',');	
-
-	for (var t = 0; t < lcategories.length; t++) {
-		var CategoryName = lcategories[t];
-		var Categorymatch = 1;
-		if ($("#Cat" + CategoryName + ":checked").val() == undefined) {
-			Categorymatch = 0;
-		}
-
-		for (var s = 0; s < lsubcategories.length; s++) {
-			var SubCategoryName = lsubcategories[s];
-			if ($("#" + CategoryName + SubCategoryName) != null) {
-				if (Categorymatch == 1) {
-					$("#" + CategoryName + SubCategoryName ).show('fade');
-				} else {
-					$("#" + CategoryName + SubCategoryName ).hide('fade');		
-				}
-			}		
-		}
-	}
-	return false;
-}
-
-function filtervendor() {
-	<cfoutput>
-		<cfset lcategories = "" >
-		<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="Category">
-			<cfset lcategories = listappend(lcategories, #Category#) >
-		</cfloop>
-		var lcategories = '#lcategories#';
-		<cfset lvendors = "" >
-		<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="Vendor">
-			<cfset lvendors = listappend(lvendors, #Vendor#) >
-		</cfloop>
-		var lvendors = '#lvendors#';
-		var lsubcategories = '#lsubcategories#';
-	</cfoutput>	
-	lcategories = lcategories.split(',');	
-	lvendors = lvendors.split(',');	
-	lsubcategories = lsubcategories.split(',');	
-
-	for (var i = 0; i < lvendors.length; i++) {
-		var VendorCode = lvendors[i];	
-		var Vendormatch = 1;
-		if ($("#Vendor" + VendorCode + ":checked").val() == undefined) {
-			Vendormatch = 0;
-		}
-
-		for (var t = 0; t < lcategories.length; t++) {
-			var CategoryName = lcategories[t];
-			for (var s = 0; s < lsubcategories.length; s++) {
-				var SubCategoryName = lsubcategories[s];
-				if ($("#Ven" + VendorCode + CategoryName + SubCategoryName) != null) {
-					if (Vendormatch == 1) {
-						$("#VenTitle" + VendorCode ).show('fade');
-						$("#Ven" + VendorCode + CategoryName + SubCategoryName).show('fade');
-					}
-					else {
-						$("#VenTitle" + VendorCode ).hide('fade');		
-						$("#Ven" + VendorCode + CategoryName + SubCategoryName).hide('fade');
-					}
-				}
-			}
-		}
-	}
-	return false;
-}
-
 $(document).ready(function() {
-
-	$( "#Categories" ).button();
-	$( "#Policy" )
-		.button()
-		.change(function() {
-			filtercar();
-		});
-
 	$( "#btnCarVendor" )
-		.button({
-			icons: {secondary: "ui-icon-triangle-1-s"}
-		})
+		.button()
 		.click(function() {
-			$( "#VendorDialog" ).dialog( "open" );
+			filterCar();
 		return false;
 	});
-	$( "#VendorDialog" ).dialog({
-			autoOpen: false,
-			show: "fade",
-			hide: "fade",
-			width: 525,
-			title:	'Select your preferred car vendor',
-			position: [100,120],
-			modal: true,
-			closeOnEscape: true,
-			buttons: {
-				"Cancel": function(){
-					$( this ).dialog( "close" );
-					return false;
-				}
-			}
-		});
 	$( "#btnCarCategory" )
-		.button({
-			icons: {secondary: "ui-icon-triangle-1-s"}
-		})
+		.button()
 		.click(function() {
-			$( "#CategoryDialog" ).dialog( "open" );
+			filterCar();
 		return false;
 	});
-	$( "#CategoryDialog" ).dialog({
-			autoOpen: false,
-			show: "fade",
-			hide: "fade",
-			width: 525,
-			title:	'Select your preferred categories',
-			position: [100,120],
-			modal: true,
-			closeOnEscape: true,
-			buttons: {
-				"Cancel": function(){
-					$( this ).dialog( "close" );
-					return false;
+});
+
+var carresults = [<cfset nCount = 0><cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory"><cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor"><cfif nCount NEQ 0>,</cfif><cfset nCount++><cfif structKeyExists(session.searches[rc.Search_ID].stCars[sCategory], sVendor)><cfoutput>[#session.searches[rc.Search_ID].stCars[sCategory][sVendor].sJavascript#]</cfoutput><cfelse><cfoutput>['#LCase(sCategory)##LCase(sVendor)#','#LCase(sCategory)#','#LCase(sVendor)#',0,0]</cfoutput></cfif></cfloop></cfloop>];
+var carcategories = [<cfset nCount = 0><cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory"><cfif nCount NEQ 0>,</cfif><cfset nCount++><cfoutput>'#LCase(sCategory)#'</cfoutput></cfloop>];
+var carvendors = [<cfset nCount = 0><cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor"><cfif nCount NEQ 0>,</cfif><cfset nCount++><cfoutput>'#LCase(sVendor)#'</cfoutput></cfloop>];
+
+function filterCar() {
+	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
+		var category = carcategories[loopcnt];
+		if ($( "#Category" + category ).is(':checked') == false) {
+			$( '#row' + category ).hide();
+		}
+		else {
+			for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
+				var car = carresults[loopcnt];
+				console.log(car)
+				if ($( "#Vendor" + car[2] ).is(':checked') == false) {
+					$( "#" + car[0] ).hide();
+					$( "#" + car[2] + 'e' ).hide();
 				}
 			}
-		});
-	$( "#btnClass" )
-		.button({
-			icons: {secondary: "ui-icon-triangle-1-s"}
-		})
-		.click(function() {
-			$( "#ClassDialog" ).dialog( "open" );
-		return false;
-	});
-	
-});
+			$( '#row' + category ).show();
+		}
+	}
+	return false;
+}
 </script>

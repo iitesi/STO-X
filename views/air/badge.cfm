@@ -15,7 +15,7 @@
 				<cfif bDisplayFare>
 					#(stTrip.Policy ? '' : '<span class="red bold" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
 					#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
-					<input type="submit" name="nTripID" class="button#stTrip.Policy#policy" value="$#NumberFormat(stTrip.Total)#">
+					<input type="submit" class="button#stTrip.Policy#policy" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
 					<span class="fade">#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
 				<cfelse>
 					<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
@@ -81,8 +81,8 @@
 			<ul class="smallnav">
 				<li class="main">+
 					<ul>
-						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economay Class - Non Refundable</a></li>							
-						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economay Class - Refundable</a></li>							
+						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>							
+						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>							
 						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>							
 						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>							
 						<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>							

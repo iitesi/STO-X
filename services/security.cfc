@@ -57,6 +57,7 @@
 			<cfset tab.nPolicyID = getsearch.Policy_ID>
 			<cfset tab.nValueID = getsearch.Value_ID>
 			<cfset tab.stLegs = StructNew('linked')>
+			<cfset tab.stItinerary = {}>
 			<!--- Air - low fare search --->
 			<cfset tab.stTrips = {}>
 			<cfset tab.stLowFareDetails = {}>

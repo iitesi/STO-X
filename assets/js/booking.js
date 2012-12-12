@@ -8,6 +8,13 @@ function submitAvailability (nTripKey) {
 	$("#nTrip").val(nTripKey);
 	$("#availabilityForm").submit();
 }
+/*
+	Submits the air.lowfare form.
+*/
+function submitLowFare (nTripKey) {
+	$("#nTrip").val(nTripKey);
+	$("#lowfareForm").submit();
+}
 function filterAir() {
 																			//console.log('start');
 	var classy = $( "#ClassY:checked" ).val();

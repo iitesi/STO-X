@@ -9,6 +9,26 @@ init
 		
 		<cfreturn this>
 	</cffunction>
+
+<!---
+selectAir
+--->
+	<cffunction name="selectAir" output="false">
+		<cfargument name="nSearchID">
+		<cfargument name="nGroup">
+		<cfargument name="nTrip">
+
+		<!--- Move over the information into the stItinerary --->
+		<cfset session.searches[arguments.nSearchID].stItinerary.Air = session.searches[arguments.nSearchID].stTrips[arguments.nTrip]>
+		<!--- Loop through the searches structure and delete all other searches --->
+		<cfloop collection="#session.searches#" index="local.nKey">
+			<cfif IsNumeric(nKey) AND nKey NEQ arguments.nSearchID>
+				<cfset StructDelete(session.searches, nKey)>
+			</cfif>
+		</cfloop>
+
+		<cfreturn />
+	</cffunction>
 	
 <!---
 threadLowFare

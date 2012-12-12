@@ -4,6 +4,13 @@
 </cfoutput>
 <br clear="both">
 <cfoutput>
+	<cfoutput>
+		<form method="post" action="#buildURL('air.lowfare')#" id="lowfareForm">
+			<input type="hidden" name="bSelect" value="1">
+			<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
+			<input type="hidden" name="nTrip" id="nTrip" value="">
+		</form>	
+	</cfoutput>
 	<cfif structKeyExists(session.searches[rc.Search_ID], 'sUserMessage')>
 		<div id="usermessage" class="error">#session.searches[rc.Search_ID].sUserMessage#</div>
 		<cfset structDelete(session.searches[rc.Search_ID], 'sUserMessage')>

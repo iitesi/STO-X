@@ -59,10 +59,32 @@ lowfare
 	<cffunction name="lowfare" output="false">
 		<cfargument name="rc">
 
+		<cfif NOT structKeyExists(rc, 'bSelect')>
 			<!--- Throw out a thread for availability --->
 			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>
 			<!--- Do the low fare search. --->
-			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
+			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>		
+		<cfelse>
+			<!--- Select --->
+			<cfset variables.fw.service('lowfare.selectAir', 'void')>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endlowfare" output="false">
+		<cfargument name="rc">
+
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfif session.searches[arguments.rc.Search_ID].bHotel
+			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.rc.Search_ID#')>
+			</cfif>
+			<cfif session.searches[arguments.rc.Search_ID].bCar
+			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Search_ID#')>
+			</cfif>
+			<cfset variables.fw.redirect('main.default?Search_ID=#arguments.rc.Search_ID#')>
+		</cfif>
 
 		<cfreturn />
 	</cffunction>
