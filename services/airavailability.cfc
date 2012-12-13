@@ -295,11 +295,21 @@ parseSegments
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.dArrivalGMT = stAirSegment.XMLAttributes.ArrivalTime>
+					<cfset local.dArrivalTime = GetToken(dArrivalGMT, 1, '.')>
+					<cfset local.dArrivalOffset = GetToken(GetToken(dArrivalGMT, 2, '-'), 1, ':')>
+					<cfset local.dDepartGMT = stAirSegment.XMLAttributes.DepartureTime>
+					<cfset local.dDepartTime = GetToken(dDepartGMT, 1, '.')>
+					<cfset local.dDepartOffset = GetToken(GetToken(dDepartGMT, 2, '-'), 1, ':')>
 					<cfset stSegments[arguments.stSegmentKeys[stAirSegment.XMLAttributes.Key].HashIndex] = {
-						ArrivalTime			: ParseDateTime(stAirSegment.XMLAttributes.ArrivalTime),
+						Arrival				: dArrivalGMT,
+						ArrivalTime			: ParseDateTime(dArrivalTime),
+						ArrivalGMT			: ParseDateTime(DateAdd('h', dArrivalOffset, dArrivalTime)),
 						Carrier 			: stAirSegment.XMLAttributes.Carrier,
 						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(stAirSegment.XMLAttributes.DepartureTime),
+						Departure			: dDepartGMT,
+						DepartureTime		: ParseDateTime(dDepartTime),
+						DepartureGMT		: ParseDateTime(DateAdd('h', dDepartOffset, dDepartTime)),
 						Destination			: stAirSegment.XMLAttributes.Destination,
 						Equipment			: stAirSegment.XMLAttributes.Equipment,
 						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,

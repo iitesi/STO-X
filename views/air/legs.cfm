@@ -44,6 +44,16 @@
 	color: #333333;
 }
 </style>
+<ul class="smallnav">
+	<li class="main">Display As
+		<cfoutput>
+			<ul>
+				<li><a href="?action=air.availability&Search_ID=#rc.nSearchID#&nGroup=#rc.nGroup#">Badge</a></li>							
+				<li><a href="?action=air.timeline&Search_ID=#rc.nSearchID#&nGroup=#rc.nGroup#">Timeline</a></li>							
+			</ul>
+		</cfoutput>
+	</li>
+</ul>
 <cfoutput>
 	<div class="roundtrip">
 		<cfset nCount = ArrayLen(StructKeyArray(session.searches[rc.nSearchID].stLegs))-1>

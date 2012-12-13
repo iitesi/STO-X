@@ -38,7 +38,7 @@
 								<span class="medium blue bold">PREFERRED</span><br>
 							</cfif>
 							<span class="medium"><!--- #sCategory# ---></span><br>
-							<img alt="#sCategory#" src="assets/img/cars/#Left(sCategory, Len(sCategory)-3)#.png" style="padding-top:10px;"><br>
+							<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br>
 						</div>
 					</td>
 
