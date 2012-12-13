@@ -44,7 +44,7 @@
 		</cfloop>
 		<!--- <cfthread action="join" name="#threadnamelist#"> --->
 
-		<cfreturn >
+		<cfreturn />
 	</cffunction>
 	
 <!--- parseHotels --->
@@ -132,6 +132,7 @@
 						<hot:HotelSearchAvailabilityReq TargetBranch="P7003155" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<hot:HotelLocation Location="#getsearch.Arrival_City#" LocationType="Airport">
+								<!--- <com:VendorLocation ProviderCode="1V"  VendorCode="RD" VendorLocationID="86291"/> ---> <!--- 1V - apollo --->
 							</hot:HotelLocation>
 							<hot:HotelSearchModifiers NumberOfAdults="1" NumberOfRooms="1">
 								#getRateCodes()#
@@ -164,7 +165,7 @@
 		<cfargument name="sAPIAuth">
 		<cfargument name="nSearchID">
 		
-		<cfset local.bSessionStorage = true><!--- Testing setting (true - testing, false - live) --->
+		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 			
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID], 'sFileContent')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">

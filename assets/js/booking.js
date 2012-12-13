@@ -130,18 +130,12 @@ function hotelPrice(search_id, hotel, chain) {
 			var Policy = data[2];
 			var Policies = data[3];
 			var PreferredVendor = data[4];
-			//var PolicyImage = Policy = 0 ? '<img src="assets/img/policy0.png">' : '';
-			//console.log(Policies);
-			$("#checkrates"+hotel).html(Rate);
-			if (Rate != 'Sold Out') {
-				$("#checkrates"+hotel).append('<input type="submit" class="button'+Policy+'policy" name="trigger" value="See Rooms">');//+Policy+Policies+PreferredVendor
-			}
-			else {
-				$("#checkrates"+hotel).html(Rate);//+Policy+Policies+PreferredVendor
+			$("#checkrates"+hotel).html('<a href="?action=hotel.rooms&Search_ID='+search_id+'&PropertyID='+hotel+'" class="overlayTrigger"><button type="button" class="textButton">See Rooms</button></a>');
+			// if it's Sold Out overwrite existing html with the Sold Out message
+			if (Rate == 'Sold Out') {
+				$("#checkrates"+hotel).html(Rate);
 			}
 			$("#address"+hotel).html(Address);
-			$("#"+hotel).attr('data-policy',Policy);
-			$("#"+hotel).attr('data-minrate',data[0]);//Send in the rate without the $
 		},
 		error:function(test, tes, te) {
 			console.log('broken');
@@ -208,6 +202,7 @@ function hotelPhotos(property_id, photos) {
 	return false;
 }
 
+/*
 function showRates(search_id, property_id) {
 	$.ajax({type:"POST",
 		url:"services/hotelrooms.cfc?method=getRooms",
@@ -224,14 +219,13 @@ function showRates(search_id, property_id) {
 				table+=' per night</td>';
 				table+='<td width="65%">'+val[2]+'</td>';
 				//table+=val[5];// rate code
-				/* Government rates
+				Government rates
 				if (val[5].indexOf(hotel_ratecodes) <= 0) {
 					table += '</div>';
 				}
 				else {
 					table += '<img src="../img/corprate.gif"></div>';
 				}					
-				*/
 				table+='<td width="15%"><a href="##" onClick="submitHotel('+property_id+','+val[0]+');return false" class="button">Reserve</a>';
 				if (val[6] == false) {
 					table+='<br /><font color="#C7151A">Out of Policy</font>';
@@ -250,6 +244,7 @@ function showRates(search_id, property_id) {
 	});
 	return false;
 }
+*/
 
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {

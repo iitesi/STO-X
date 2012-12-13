@@ -92,7 +92,7 @@
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode"	/>
 		
-		<cfset local.bSessionStorage = true><!--- Testing setting (true - testing, false - live) --->
+		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID],nHotelCode)>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">

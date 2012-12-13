@@ -28,7 +28,7 @@
 			<cfset QuerySetCell(RoomsData,'Policy',Policy,Row)>
 		</cfloop>
 
-		<cfset rates = serializeJSON(RoomsData)>
+		<cfset rates = RoomsData><!--- serializeJSON() when using jQuery --->
 		
 		<cfreturn rates />
 

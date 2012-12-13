@@ -81,10 +81,11 @@ function filterhotel() {
 		var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
 		if (propertymatch == 1) {
 			$("#" + propertyid ).show('fade');
-			//pins[propertyid].setOptions({visible: false});
+			pins[propertyid].setOptions({visible: true});
 		}
 		else {
-			$("#" + propertyid ).hide('fade');		
+			$("#" + propertyid ).hide('fade');
+			pins[propertyid].setOptions({visible: false});		
 		}
 
 		/*
@@ -152,19 +153,7 @@ $(document).ready(function() {
 			title:	'Select your preferred hotel chains',
 			position: [100,120],
 			modal: true,
-			closeOnEscape: true,
-			buttons: {
-				/*
-				"Search": function(){
-					//filterChain();
-					$( this ).dialog( "close" );
-					return false;
-				},*/
-				"Cancel": function(){
-					$( this ).dialog( "close" );
-					return false;
-				}
-			}
+			closeOnEscape: true
 		});
 	$( "#btnHotelAmenities" )
 		.button({
@@ -182,19 +171,7 @@ $(document).ready(function() {
 			title:	'Select your preferred amenities',
 			position: [100,120],
 			modal: true,
-			closeOnEscape: true,
-			buttons: {
-				/*
-				"Search": function(){
-					//filterChain();
-					$( this ).dialog( "close" );
-					return false;
-				},*/
-				"Cancel": function(){
-					$( this ).dialog( "close" );
-					return false;
-				}
-			}
+			closeOnEscape: true
 		});
 	$( "#btnClass" )
 		.button({
@@ -207,41 +184,3 @@ $(document).ready(function() {
 	
 });
 </script>
-<!---
-function filterHotel() {
-	var Policy = $('input:radio[name=Policy]:checked').val()
-	if (Policy == 0) {			
-		$('[data-policy="0"]').toggle(); 
-	}
-};
-
-function filterChain() {
-	$('input[name^="HotelChain"][checked]').each(function() {
-		var SingleChain = this.value;
-		var SingleChainResponse = this.checked;
-		if (SingleChainResponse == true) {
-			$('[data-chain='+SingleChain+']').show(); 
-		}
-		else {
-			$('[data-chain='+SingleChain+']').hide();     			
-		}
-	});
-};
-
-
-function filterAmenity() {
-	$('input[name^="HotelAmenity"]').each(function() {
-		var SingleAmenity = this.value;
-		var SingleAmenityResponse = this.checked;
-		console.log(SingleAmenity);
-		console.log(SingleAmenityResponse);
-		if (SingleAmenityResponse == true) {
-			$('[data-amenities~='+SingleAmenity+']').show();
-		}
-		else {
-			$('[data-amenities~='+SingleAmenity+']').hide();  
-			console.log('hide');   			
-		}
-	});
-};
---->

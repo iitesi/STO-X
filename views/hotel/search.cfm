@@ -13,7 +13,7 @@
 		<cfset stHotels 			= session.searches[rc.Search_ID].stHotels />
 
 		<cfloop array="#stSortHotels#" index="sHotel">
-			<cfset stHotel = session.searches[rc.Search_ID].stHotels[sHotel]>
+			<cfset stHotel = stHotels[sHotel] />
 			<!--- <cfdump eval=session.searches[rc.Search_ID].stHotels abort> --->
 			<!--- <cfdump eval=stHotel abort> --->
 			<cfset tripcount++ />
@@ -25,15 +25,8 @@
 					<cfset HotelAddress = structKeyExists(stHotel,'Property') ? stHotel['Property']['Address1'] : '' />
 					<cfset HotelAddress&= structKeyExists(stHotel,'Property') AND Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
 				</cfif>
-				
-				<!--- We already have the rates/policy add them as data elements to the div --->
-				<cfset DivElements = '' />
-				<cfif stHotel.RoomsReturned>
-					<cfset DivElements = 'data-policy="'&stHotel.Policy&'"' />
-					<cfset DivElements&= 'data-minrate="'&stHotel.LowRate&'"' />
-				</cfif>
 
-				<div id="#sHotel#" style="min-height:100px;" data-chain="#stHotel.HotelChain#"#DivElements#>
+				<div id="#sHotel#" style="min-height:100px;">
 					<table width="600px">
 					<tr>
 						<td width="135px">
@@ -82,17 +75,14 @@
 								#stHotel.PreferredVendor#<br /> --->
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
 								#RateText#
-								<input type="submit" #RateText NEQ 'Sold Out' ? 'onClick="showRates(#rc.Search_ID#,#sHotel#);return false;"' : ''# class="button#stHotel.Policy#policy" name="trigger" value="#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#">
+								<a href="?action=hotel.rooms&Search_ID=#rc.Search_ID#&PropertyID=#sHotel#" class="overlayTrigger">
+									<button type="button" class="textButton">#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#</button>
+								</a>
 
 							</cfif>	
 
 							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">Link</a><br>
 
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3">							
-							<div id="hotelrooms#sHotel#">hello</div>
 						</td>
 					</tr>
 					</table>
@@ -114,16 +104,17 @@
 		var center = new Microsoft.Maps.Location(lat,long);
 		var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
 		var map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
-		//var map = new VEMap('myMap');
 		map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));		
 		
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
 		orderedpropertyids = orderedpropertyids.split(',');	
 
 		var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels)#;
+		console.log(hotelresults);
 		for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
 			var propertyid = orderedpropertyids[loopcnt];
 			var property = hotelresults[propertyid]['HOTELINFORMATION'];
+			console.log(property);
 			var propertylat = property['LATITUDE'];
 			var propertylong = property['LONGITUDE'];
 			var propertyname = property['NAME'];
