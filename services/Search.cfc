@@ -118,6 +118,19 @@
 				</cfif>
 				<cfset local.stinsertdata.ClassOfService = form.flight_cabin>
 				<cfset local.stinsertdata.Airlines = form.flight_airline>
+				
+<!--- Add in dates for car & hotel for up sell --->
+				<cfset local.stinsertdata.Hotel_Radius = 25>
+				<cfset local.stinsertdata.Hotel_Location = local.stinsertdata.Arrival_City>
+				<cfset local.stinsertdata.CheckIn_Date = CreateODBCDateTime(form.flight_departdate)>
+				<cfset local.stinsertdata.CheckOut_Date = CreateODBCDateTime(form.flight_returndate)>
+				<cfset local.stinsertdata.Rooms = 1>
+				<cfset local.stinsertdata.Car_PickupLocation = local.stinsertdata.Arrival_City>
+				<cfset local.stinsertdata.Car_PickupDateTime = local.stinsertdata.Depart_DateTime>
+				<cfset local.stinsertdata.Car_DropoffLocation = local.stinsertdata.Car_PickupLocation>
+				<cfset local.stinsertdata.Car_DropoffDateTime = local.stinsertdata.Arrival_DateTime>
+				<cfset local.stinsertdata.Cars = 1>
+
 			</cfcase>
 			<cfcase value="flightcar">
 				<cfset local.stinsertdata.Air = 1>
@@ -136,6 +149,15 @@
 				<cfset local.stinsertdata.Car_DropoffLocation = local.stinsertdata.Car_PickupLocation>
 				<cfset local.stinsertdata.Car_DropoffDateTime = local.stinsertdata.Arrival_DateTime>
 				<cfset local.stinsertdata.Cars = form.flightcar_cars>
+				
+<!--- Add in dates for hotel for up sell --->
+
+				<cfset local.stinsertdata.Hotel_Radius = 25>
+				<cfset local.stinsertdata.Hotel_Location = local.stinsertdata.Arrival_City>
+				<cfset local.stinsertdata.CheckIn_Date = CreateODBCDateTime(form.flightcar_departdate)>
+				<cfset local.stinsertdata.CheckOut_Date = CreateODBCDateTime(form.flightcar_returndate)>
+				<cfset local.stinsertdata.Rooms = 1>
+
 			</cfcase>
 			<cfcase value="flighthotel">
 				<cfset local.stinsertdata.Air = 1>
@@ -154,6 +176,15 @@
 				<cfset local.stinsertdata.CheckIn_Date = CreateODBCDateTime(form.flighthotel_departdate)>
 				<cfset local.stinsertdata.CheckOut_Date = CreateODBCDateTime(form.flighthotel_returndate)>
 				<cfset local.stinsertdata.Rooms = form.flighthotel_rooms>
+				
+<!--- Add in dates for car for up sell --->
+
+				<cfset local.stinsertdata.Car_PickupLocation = local.stinsertdata.Arrival_City>
+				<cfset local.stinsertdata.Car_PickupDateTime = local.stinsertdata.Depart_DateTime>
+				<cfset local.stinsertdata.Car_DropoffLocation = local.stinsertdata.Car_PickupLocation>
+				<cfset local.stinsertdata.Car_DropoffDateTime = local.stinsertdata.Arrival_DateTime>
+				<cfset local.stinsertdata.Cars = 1>
+
 			</cfcase>
 			<cfcase value="hotelcar">
 				<cfset local.stinsertdata.Hotel = 1>
@@ -270,8 +301,8 @@
            ,Hotel_Location
            ,Car_PickupLocation
            ,Car_PickupDateTime
-           ,Car_DropoffLocation
-           ,Car_DropoffDateTime
+            ,Car_DropoffLocation
+			,Car_DropoffDateTime
            ,Cars)
      VALUES
            (<cfqueryparam value="#local.stinsertdata.Username#"  cfsqltype="cf_sql_varchar">,
@@ -287,10 +318,10 @@
            <cfqueryparam value="#local.stinsertdata.Hotel#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.BookIt#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Depart_TimeType#"  cfsqltype="cf_sql_varchar">,
-           <cfqueryparam value="#local.stinsertdata.Depart_DateTime#"  cfsqltype="cf_sql_varchar">,
+           <cfqueryparam value="#local.stinsertdata.Depart_DateTime#"  cfsqltype="cf_sql_timestamp">,
            <cfqueryparam value="#local.stinsertdata.Depart_City#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Arrival_TimeType#"  cfsqltype="cf_sql_varchar">,
-           <cfqueryparam value="#local.stinsertdata.Arrival_DateTime#"  cfsqltype="cf_sql_varchar">,
+           <cfqueryparam value="#local.stinsertdata.Arrival_DateTime#"  cfsqltype="cf_sql_timestamp">,
            <cfqueryparam value="#local.stinsertdata.Arrival_City#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Air_Heading#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Car_Heading#"  cfsqltype="cf_sql_varchar">,
@@ -312,7 +343,7 @@
            <cfqueryparam value="#local.stinsertdata.Travelers#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Server_Name#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Primary_Acct#"  cfsqltype="cf_sql_integer">,
-           <cfqueryparam value="#local.stinsertdata.Access_Timestamp#"  cfsqltype="cf_sql_varchar">,
+           <cfqueryparam value="#local.stinsertdata.Access_Timestamp#"  cfsqltype="cf_sql_timestamp">,
            <cfqueryparam value="#local.stinsertdata.View_State#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.IP_Address#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Search_Refundable#"  cfsqltype="cf_sql_varchar">,
@@ -333,8 +364,8 @@
            <cfqueryparam value="#local.stinsertdata.HotelAddOn#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Airlines#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.ClassOfService#"  cfsqltype="cf_sql_varchar">,
-           <cfqueryparam value="#local.stinsertdata.CheckIn_Date#"  cfsqltype="cf_sql_datetime">,
-           <cfqueryparam value="#local.stinsertdata.CheckOut_Date#"  cfsqltype="cf_sql_datetime">,
+           <cfqueryparam value="#local.stinsertdata.CheckIn_Date#"  cfsqltype="cf_sql_timestamp" NULL="#NOT len(local.stinsertdata.CheckIn_Date)#" >,
+           <cfqueryparam value="#local.stinsertdata.CheckOut_Date#"  cfsqltype="cf_sql_timestamp" NULL="#NOT len(local.stinsertdata.CheckOut_Date)#" >,
            <cfqueryparam value="#local.stinsertdata.Air_ID1#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Air_ID2#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Air_ID3#"  cfsqltype="cf_sql_integer">,
@@ -343,9 +374,9 @@
            <cfqueryparam value="#local.stinsertdata.Car_Viewed#"  cfsqltype="cf_sql_integer">,
            <cfqueryparam value="#local.stinsertdata.Hotel_Location#"  cfsqltype="cf_sql_varchar">,
            <cfqueryparam value="#local.stinsertdata.Car_PickupLocation#"  cfsqltype="cf_sql_varchar">,
-           <cfqueryparam value="#local.stinsertdata.Car_PickupDateTime#"  cfsqltype="cf_sql_datetime">,
+           <cfqueryparam value="#local.stinsertdata.Car_PickupDateTime#"  cfsqltype="cf_sql_timestamp" NULL="#NOT len(local.stinsertdata.Car_PickupDateTime)#" >,
            <cfqueryparam value="#local.stinsertdata.Car_DropoffLocation#"  cfsqltype="cf_sql_varchar">,
-           <cfqueryparam value="#local.stinsertdata.Car_DropoffDateTime#"  cfsqltype="cf_sql_datetime">,
+           <cfqueryparam value="#local.stinsertdata.Car_DropoffDateTime#"  cfsqltype="cf_sql_timestamp" NULL="#NOT len(local.stinsertdata.Car_DropoffDateTime)#" >,
            <cfqueryparam value="#local.stinsertdata.Cars#"  cfsqltype="cf_sql_integer">)
 		</cfquery>
 	</cffunction>
