@@ -28,6 +28,12 @@
 			<cfset QuerySetCell(RoomsData,'Policy',Policy,Row)>
 		</cfloop>
 
+		<cfquery name="RoomsData" dbtype="query">
+		SELECT PropertyID, Count, RoomDescription, Rate, CurrencyCode, RoomRateCategory, RoomRatePlanType, Policy
+		FROM RoomsData
+		ORDER BY Rate
+		</cfquery>
+
 		<cfset rates = RoomsData><!--- serializeJSON() when using jQuery --->
 		
 		<cfreturn rates />

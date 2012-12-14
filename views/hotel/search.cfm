@@ -11,12 +11,10 @@
 		<cfset stSortHotels 	= session.searches[rc.Search_ID].stSortHotels />
 		<cfset stHotelChains	= session.searches[rc.nSearchID].stHotelChains />
 		<cfset stHotels 			= session.searches[rc.Search_ID].stHotels />
-
+		
 		<cfloop array="#stSortHotels#" index="sHotel">
 			<cfset stHotel = stHotels[sHotel] />
-			<!--- <cfdump eval=session.searches[rc.Search_ID].stHotels abort> --->
-			<!--- <cfdump eval=stHotel abort> --->
-			<cfset tripcount++ />
+			<cfset tripcount++ />		
 
 			<cfif tripcount LT 100>
 
@@ -26,7 +24,21 @@
 					<cfset HotelAddress&= structKeyExists(stHotel,'Property') AND Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />		
 				</cfif>
 
+				<cfset PropertyID = sHotel />
+				<cfset HotelChain = stHotel.HotelChain />
+
 				<div id="#sHotel#" style="min-height:100px;">
+
+					<cfset RoomRatePlanType = '' />
+					<cfif structKeyExists(stHotel,'Rooms')>
+						<cfloop list="#StructKeyList(stHotel.Rooms,'|')#" index="OneRoom" delimiters="|">
+							<cfif Len(Trim(stHotel.Rooms[OneRoom].RoomRatePlanType))>
+								<cfset RoomRatePlanType = stHotel.Rooms[OneRoom].RoomRatePlanType />
+								<cfbreak />
+							</cfif>
+						</cfloop>		
+					</cfif>
+
 					<table width="600px">
 					<tr>
 						<td width="135px">
@@ -39,21 +51,29 @@
 						<td valign="top">
 							<table width="400px">
 							<tr>
-								<td>#tripcount# - #stHotel.HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
+								<td>#tripcount# - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
 							</tr>
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
 							</tr>
 							<tr>
 								<td>
-									<a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
+									<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#PropertyID#&RoomRatePlanType=#RoomRatePlanType#&HotelChain=#HotelChain#'>
+									<a href="?action=hotel.popup&sDetails=Details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
+									<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Rooms</button>|</a>
+									<a href="?action=hotel.popup&sDetails=Amenities&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Amenities</button>|</a>
+									<a href="?action=hotel.popup&sDetails=Photos&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Photos</button></a>
+									<a href="?action=hotel.popup&sDetails=Area&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Area</button></a>
+
+
+									<!--- <a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
 									<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
 									<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>									
 									<!--- <a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a> --->									
-									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a>
+									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a> --->
 								</td>
 							</tr>
-							<!--- <cfset stHotelPhotos = application.hotelphotos.doHotelPhotoGallery(rc.Search_ID,sHotel,stHotel.HotelChain) />			
+							<!--- <cfset stHotelPhotos = application.hotelphotos.doHotelPhotoGallery(rc.Search_ID,sHotel,HotelChain) />			
 							<cfloop array="#stHotelPhotos[sHotel]['aHotelPhotos']#" index="local.Photo">
 								<img src="#Photo#"><br/>
 							</cfloop> --->
@@ -63,17 +83,14 @@
 
 							<cfif NOT stHotel.RoomsReturned>
 								<script type="text/javascript">
-								hotelPrice(#rc.Search_ID#, #sHotel#, '#stHotel.HotelChain#');
+								hotelPrice(#rc.Search_ID#, #sHotel#, '#HotelChain#');
 								</script>
 								<div id="checkrates#sHotel#">
 									<img src="assets/img/ajax-loader.gif" />
 								</div>
 							<cfelse>
-
-								#stHotel.Policy#<br />
-								<!--- #ArrayToList(stHotel.APolicies)#<br />
-								#stHotel.PreferredVendor#<br /> --->
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
+								#stHotel.Policy#<br />
 								#RateText#
 								<a href="?action=hotel.rooms&Search_ID=#rc.Search_ID#&PropertyID=#sHotel#" class="overlayTrigger">
 									<button type="button" class="textButton">#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#</button>
@@ -81,7 +98,7 @@
 
 							</cfif>	
 
-							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#stHotel.HotelChain#" target="_blank">Link</a><br>
+							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br>
 
 						</td>
 					</tr>
@@ -110,16 +127,13 @@
 		orderedpropertyids = orderedpropertyids.split(',');	
 
 		var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels)#;
-		console.log(hotelresults);
 		for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
 			var propertyid = orderedpropertyids[loopcnt];
 			var property = hotelresults[propertyid]['HOTELINFORMATION'];
-			console.log(property);
 			var propertylat = property['LATITUDE'];
 			var propertylong = property['LONGITUDE'];
 			var propertyname = property['NAME'];
 			var propertyaddress = property['HOTELADDRESS'];
-
 			pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
 			pins[propertyid].title = propertyname;
 			pins[propertyid].description = propertyaddress;

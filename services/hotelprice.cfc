@@ -6,14 +6,14 @@
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
-    	<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
+    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrip 		= session.searches[arguments.nSearchID]>
 		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
 		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
 		<cfset local.stResponse = formatResponse(sResponse)>
-		<cfset local.stHotels 	= parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>		
+		<cfset local.stHotels 	= parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
 		<cfset local.stRates 		= structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
 
 		<cfif isStruct(stRates)>
@@ -136,12 +136,8 @@
 			<cfloop array="#stHotelResults.XMLChildren#" index="local.sHotelPriceResult">
 				<cfif sHotelPriceResult.XMLName EQ 'hotel:HotelRateDetail'>
 					
-					<cfset RoomRateCategory = '' />
-					<cfset RoomRatePlanType = '' />
-					<cfif structKeyExists(sHotelPriceResult.XMLAttributes,'RateCategory')>
-						<cfset RoomRateCategory = sHotelPriceResult.XMLAttributes.RateCategory />
-						<cfset RoomRatePlanType = sHotelPriceResult.XMLAttributes.RatePlanType />
-					</cfif>
+					<cfset RoomRateCategory = structKeyExists(sHotelPriceResult.XMLAttributes,'RateCategory') ? sHotelPriceResult.XMLAttributes.RateCategory : '' />
+					<cfset RoomRatePlanType = structKeyExists(sHotelPriceResult.XMLAttributes,'RatePlanType') ? sHotelPriceResult.XMLAttributes.RatePlanType : '' />
 
 					<!--- Need to find the room description --->
 					<cfset RoomDescription = 'No Description for Hotel' />

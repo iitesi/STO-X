@@ -96,7 +96,7 @@
 						<cfset stHotels[nHotelCode] = {
 							FeaturedProperty : FeaturedProperty,
 							HotelChain : nHotelChain,
-							HotelInformation : {
+							HOTELINFORMATION : {
 									HotelLocation : sHotelProperty.XMLAttributes.HotelLocation,
 									HotelAddress : HotelAddress,
 									Name : sHotelProperty.XMLAttributes.Name
@@ -407,7 +407,7 @@
 		<cfset local.stAmenities = arguments.stAmenities />
 		<cfset local.PropertyIDs = [] />
 
-		<cfloop list="#StructKeyList(arguments.stHotels)#" index="sHotel">
+		<cfloop list="#StructKeyList(stHotels)#" index="sHotel">
 			<cfset ArrayAppend(PropertyIDs,sHotel)>
 		</cfloop>
 		<cfset PropertyIDs = arrayToList(PropertyIDs) />
@@ -420,12 +420,12 @@
 
 		<cfloop query="HotelInformationQuery">
 			<!--- Pull in the existing hotel information from the structure --->
-			<cfset local.stHotelInformation = arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] />
+			<cfset local.stHotelInformation = stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] />
 			<cfset stHotelInformation['SIGNATURE_IMAGE'] = HotelInformationQuery.Signature_Image />
 			<cfset stHotelInformation['LATITUDE'] = HotelInformationQuery.Lat />
 			<cfset stHotelInformation['LONGITUDE'] = HotelInformationQuery.Long />
 			<!--- add the hotel information back into the hotel structure --->
-			<cfset arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
+			<cfset stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
 			
 			<cfset local.stHotelAmenities = stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['Amenities'] />
 			<cfloop list="#structKeyList(stHotelAmenities)#" index="local.Amenity">
@@ -433,7 +433,7 @@
 				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformationQuery, Amenity, 1, HotelInformationQuery.CurrentRow) : '' />
 			</cfloop>
 			<!--- Update policy if value is true. Don't update if false --->
-			<cfif arguments.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['POLICY']>
+			<cfif stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['POLICY']>
 				<cfset querySetCell(HotelInformationQuery, 'POLICY', 1, HotelInformationQuery.CurrentRow) />
 			</cfif>
 		</cfloop>

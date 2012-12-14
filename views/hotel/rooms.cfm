@@ -10,7 +10,7 @@
 		<td width="65%">#rates.RoomDescription#</td>
 		<td width="15%">#rates.RoomRateCategory# <a href="##" onClick="submitHotel(#rates.PropertyID#&'RoomNumber');return false" class="button#PolicyFlag#policy">Reserve</a>
 			<cfif rates.Policy EQ false>
-				<br /><font color="##C7151A">Out of Policy</font>
+				<font color="##C7151A">Out of Policy</font>
 			</cfif></td>
 	</tr>
 </cfoutput>
