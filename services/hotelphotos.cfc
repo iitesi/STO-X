@@ -34,7 +34,7 @@
 					<hot:HotelMediaLinksReq TargetBranch="P7003155" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0" xmlns:com="http://www.travelport.com/schema/common_v15_0" 
 					SecureLinks="true" SizeCode="T" RichMedia="false" Gallery="false">
 						<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
-						<hot:HotelProperty HotelChain="ES" HotelCode="24448"/>
+						<hot:HotelProperty HotelChain="#arguments.sHotelChain#" HotelCode="#arguments.nHotelCode#"/>
 					</hot:HotelMediaLinksReq>
 					</soapenv:Body>
 				</soapenv:Envelope>
@@ -54,7 +54,7 @@
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
-		<cfif NOT bSessionStorage OR (NOT StructKeyExists(session.searches[nSearchID], 'sPhotoContent') AND NOT StructKeyExists(session.searches[nSearchID][nHotelCode], 'aHotelPhotos'))>
+		<cfif NOT bSessionStorage OR (NOT StructKeyExists(session.searches[nSearchID]['STHOTELS'][nHotelCode], 'stHotelPhotos') AND NOT StructKeyExists(session.searches[nSearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos'))>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -64,11 +64,9 @@
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfif bSessionStorage>
-				<cfset session.searches[nSearchID].sPhotoContent = cfhttp.filecontent />
-			</cfif>
+			<cfset session.searches[nSearchID]['STHOTELS'][nHotelCode].stHotelPhotos = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID].sPhotoContent />
+			<cfset cfhttp.filecontent = session.searches[nSearchID]['STHOTELS'][nHotelCode].stHotelPhotos />
 		</cfif>
 
 		<cfreturn cfhttp.filecontent />
