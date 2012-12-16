@@ -134,6 +134,8 @@ function hotelPrice(search_id, hotel, chain) {
 			// if it's Sold Out overwrite existing html with the Sold Out message
 			if (Rate == 'Sold Out') {
 				$("#checkrates"+hotel).html(Rate);
+				$("#DetailLinks"+hotel).html('');
+				console.log(hotel + 'clear details');
 			}
 			$("#address"+hotel).html(Address);
 		},

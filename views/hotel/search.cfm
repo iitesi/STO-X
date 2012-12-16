@@ -44,8 +44,7 @@
 						<td width="135px">
 							<div id="hotelimage#sHotel#" class="listcell" style="width:125px; overflow:none; border:1px solid ##FFFFFF">
 								<cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
-								Image goes here
-								<!--- <img width="125px" src="#Signature_Image#" /> --->
+								<img width="125px" src="#Signature_Image#" />
 							</div>
 						</td>
 						<td valign="top">
@@ -56,27 +55,17 @@
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
 							</tr>
-							<tr>
-								<td>
-									<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#PropertyID#&RoomRatePlanType=#RoomRatePlanType#&HotelChain=#HotelChain#'>
-									<a href="?action=hotel.popup&sDetails=Details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
-									<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Rooms</button>|</a>
-									<a href="?action=hotel.popup&sDetails=Amenities&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Amenities</button>|</a>
-									<a href="?action=hotel.popup&sDetails=Photos&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Photos</button></a>
-									<a href="?action=hotel.popup&sDetails=Area&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Area</button></a>
-
-
-									<!--- <a title="Details" id="details#sHotel#" class="linkbutton roundleft" onClick="hotelDetails(#sHotel#, 'details');return false;">Details</a>
-									<a title="Rooms" id="rates#sHotel#" class="linkbutton" onClick="showRates(#sHotel#);return false;">Rooms</a>
-									<a title="Amenities" id="amenities#sHotel#" class="linkbutton" onClick="hotelAmenities(#sHotel#);return false;">Amenities</a>									
-									<!--- <a title="Photos" id="photos#sHotel#" class="linkbutton" onClick="hotelPhotos(#sHotel#, '#stPhotos[sHotel]#');return false;">Photos</a> --->									
-									<a title="Area" id="area#sHotel#" class="linkbutton roundright" onClick="hotelDetails(#sHotel#, 'area');return false;">Area</a> --->
-								</td>
-							</tr>
-							<!--- <cfset stHotelPhotos = application.hotelphotos.doHotelPhotoGallery(rc.Search_ID,sHotel,HotelChain) />			
-							<cfloop array="#stHotelPhotos[sHotel]['aHotelPhotos']#" index="local.Photo">
-								<img src="#Photo#"><br/>
-							</cfloop> --->
+							<cfif NOT stHotel.RoomsReturned OR (StructKeyExists(stHotel,'LowRate') AND stHotel.LowRate NEQ 'Sold Out')>
+								<tr id="DetailLinks#sHotel#">
+									<td>
+										<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#PropertyID#&RoomRatePlanType=#RoomRatePlanType#&HotelChain=#HotelChain#'>
+										<a href="?action=hotel.popup&sDetails=Details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
+										<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Rooms</button>|</a>
+										<a href="?action=hotel.popup&sDetails=Amenities&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Amenities</button>|</a>
+										<a href="?action=hotel.popup&sDetails=Photos&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Photos</button></a>
+									</td>
+								</tr>
+							</cfif>
 							</table>
 						</td>
 						<td class="fares" align="right">
