@@ -27,7 +27,7 @@
 			</tr>
 		</cfif>
 		<tr>
-			<td><strong>Details</strong> - #HotelDetails.Details#</td>
+			<td><strong>Details</strong> - #replace(HotelDetails.Details,'|',' ','all')#</td>
 		</tr>
 		</table>
 	</div>

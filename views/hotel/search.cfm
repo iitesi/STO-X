@@ -79,15 +79,11 @@
 								</div>
 							<cfelse>
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
-								#stHotel.Policy#<br />
+								<!--- #stHotel.Policy#<br /> --->
 								#RateText#
-								<a href="?action=hotel.rooms&Search_ID=#rc.Search_ID#&PropertyID=#sHotel#" class="overlayTrigger">
-									<button type="button" class="textButton">#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#</button>
-								</a>
-
+								<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#</button></a>
 							</cfif>	
-
-							<a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br>
+							<!--- <a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br> --->
 
 						</td>
 					</tr>

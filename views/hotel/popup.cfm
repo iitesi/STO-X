@@ -1,3 +1,4 @@
+<cfsetting showdebugoutput="false" />
 <style type="text/css">
 #details-tabs {
 	background-color:rgba(0,0,0,0.3);
