@@ -1,10 +1,10 @@
-<cfsetting showdebugoutput="false" />
+<!--- <cfsetting showdebugoutput="false" /> --->
 
 <cfoutput>	
 	#View('hotel/filter')#
 	#View('hotel/map')#
 
-	<form method="post" action="#buildURL('hotel.search')#" id="hotelForm">
+	<form method="post" action="#buildURL('hotel.search')#&Search_ID=#rc.nSearchID#" id="hotelForm">
 		<input type="hidden" name="bSelect" value="1">
 		<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
 		<input type="hidden" name="sHotel" id="sHotel" value="">
