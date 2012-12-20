@@ -18,6 +18,7 @@ doAirPrice
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip"		required="false"	default="">
+		<cfargument name="nCouldYou"	required="false"	default="0">
 		<cfargument name="stAccount" 	required="false"	default="#application.stAccounts[session.Acct_ID]#">
 
 		<cfset local.stSegment = {}>
@@ -43,7 +44,7 @@ doAirPrice
 		</cfif>
 
 		<!--- Put together the SOAP message. --->
-		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable)>
+		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
@@ -95,6 +96,7 @@ prepareSOAPHeader
 		<cfargument name="stSelected" 	required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="nCouldYou"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
@@ -118,8 +120,8 @@ prepareSOAPHeader
 												Key="#nCount#T"
 												Origin="#stSegment.Origin#"
 												Destination="#stSegment.Destination#"
-												DepartureTime="#DateFormat(stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
-												ArrivalTime="#DateFormat(stSegment.ArrivalTime, 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
+												DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
+												ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
 												Group="#nGroup#"
 												FlightNumber="#stSegment.FlightNumber#"
 												Carrier="#stSegment.Carrier#"

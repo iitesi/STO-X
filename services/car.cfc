@@ -10,6 +10,7 @@ selectCar
 
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Car = session.searches[arguments.nSearchID].stCars[arguments.sCategory][arguments.sVendor]>
+		<cfset session.searches[arguments.nSearchID].stItinerary.Car.VendorCode = arguments.sVendor>
 
 		<cfreturn />
 	</cffunction>
@@ -166,7 +167,6 @@ selectCar
 						VehicleClass		: 	stVehicle.XMLAttributes.VehicleClass,
 						Category			: 	stVehicle.XMLAttributes.Category,
 						VendorLocationKey	: 	stVehicle.XMLAttributes.VendorLocationKey,
-						VendorCode			: 	stVehicle.XMLAttributes.VendorCode,
 						Corporate 			:	(bCorporate EQ 1 ? true : false)
 					}>
 					<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">
