@@ -32,4 +32,3 @@
 		</table>
 	</div>
 </cfoutput>
-<cfabort>

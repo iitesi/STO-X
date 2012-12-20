@@ -4,9 +4,15 @@
 	#View('hotel/filter')#
 	#View('hotel/map')#
 
+	<form method="post" action="#buildURL('hotel.search')#" id="hotelForm">
+		<input type="hidden" name="bSelect" value="1">
+		<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
+		<input type="hidden" name="sHotel" id="sHotel" value="">
+	</form>
+
 	<br clear="both">
 
-	<div class="hotel" heigth="100%">
+	<div class="hotel" height="100%">
 		<cfset tripcount = 0 />
 		<cfset stSortHotels 	= session.searches[rc.Search_ID].stSortHotels />
 		<cfset stHotelChains	= session.searches[rc.nSearchID].stHotelChains />
@@ -16,7 +22,7 @@
 			<cfset stHotel = stHotels[sHotel] />
 			<cfset tripcount++ />		
 
-			<cfif tripcount LT 100>
+			<cfif tripcount LT 10>
 
 				<cfset HotelAddress = '' /><!--- Set a default address, the original ddress returned is garbage --->
 				<cfif stHotel.RoomsReturned><!--- We have the real address --->
@@ -55,10 +61,10 @@
 							<tr>
 								<td><div id="address#sHotel#">#HotelAddress#</div></td>
 							</tr>
+							<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#PropertyID#&RoomRatePlanType=#RoomRatePlanType#&HotelChain=#HotelChain#'>
 							<cfif NOT stHotel.RoomsReturned OR (StructKeyExists(stHotel,'LowRate') AND stHotel.LowRate NEQ 'Sold Out')>
 								<tr id="DetailLinks#sHotel#">
 									<td>
-										<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#PropertyID#&RoomRatePlanType=#RoomRatePlanType#&HotelChain=#HotelChain#'>
 										<a href="?action=hotel.popup&sDetails=Details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
 										<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Rooms</button>|</a>
 										<a href="?action=hotel.popup&sDetails=Amenities&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Amenities</button>|</a>
@@ -68,15 +74,13 @@
 							</cfif>
 							</table>
 						</td>
-						<td class="fares" align="right">
+						<td class="fares" align="right" id="checkrates#sHotel#">
 
 							<cfif NOT stHotel.RoomsReturned>
 								<script type="text/javascript">
 								hotelPrice(#rc.Search_ID#, #sHotel#, '#HotelChain#');
 								</script>
-								<div id="checkrates#sHotel#">
-									<img src="assets/img/ajax-loader.gif" />
-								</div>
+								<img src="assets/img/ajax-loader.gif" />
 							<cfelse>
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
 								<!--- #stHotel.Policy#<br /> --->

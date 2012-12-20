@@ -17,4 +17,3 @@
 		</table>
 	</div>
 </cfoutput>
-<cfabort>

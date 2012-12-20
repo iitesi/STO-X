@@ -25,5 +25,16 @@
 				
 		<cfreturn />
 	</cffunction>
+
+<!---
+popup
+--->	
+	<cffunction name="popup" output="true">
+		<cfargument name="rc">
+		
+		<cfset rc.bSuppress = 1>
+		
+		<cfreturn />
+	</cffunction>
 	
 </cfcomponent>

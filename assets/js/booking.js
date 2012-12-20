@@ -199,6 +199,13 @@ function changeLatLongCenter(e) {
 	}
 	return false;
 }
+
+/*Submits the hotel.search form.*/
+function submitHotel (sHotel) {
+	$("#sHotel").val(sHotel);
+	$("#hotelForm").submit();
+}
+
 /*
 --------------------------------------------------------------------------------------------------------------------
 CAR SECTION
