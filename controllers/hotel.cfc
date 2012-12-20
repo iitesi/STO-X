@@ -13,27 +13,31 @@
 	<cffunction name="search" output="false">
 		<cfargument name="rc" />
 		
-		<cfif NOT StructKeyExists(session.searches, rc.nSearchID)>
-			<cfset variables.fw.redirect('main?Search_ID=#rc.nSearchID#') />
+		<cfif NOT structKeyExists(rc, 'bSelect')>
+			<cfif NOT StructKeyExists(session.searches, rc.nSearchID)>
+				<cfset variables.fw.redirect('main?Search_ID=#rc.nSearchID#') />
+			</cfif>
+			<cfset rc.stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID] />
+			<cfif StructKeyExists(rc, 'bReloadHotel')>
+				
+			</cfif>
+			<cfset variables.fw.service('hotelsearch.doHotelSearch', 'void') />
+		<cfelse>
+			<!--- Select --->
+			<cfset variables.fw.service('hotel.selectHotel', 'void')>
 		</cfif>
-		<cfset rc.stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID] />
-		<cfif StructKeyExists(rc, 'bReloadHotel')>
-			
-		</cfif>
-		<cfset variables.fw.service('hotelsearch.doHotelSearch', 'void') />
 				
 		<cfreturn />
 	</cffunction>
-
-<!--- 
-HOTELSELECTION
---->
-	<cffunction name="hotelSelection" output="false">
+	<cffunction name="endsearch" output="false">
 		<cfargument name="rc">
 
-		<cfif structKeyExists(rc, 'bSelect')>
-			<!--- Select --->
-			<cfset variables.fw.service('hotel.selectHotel', 'void')>
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfif session.searches[arguments.rc.Search_ID].bCar
+			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Search_ID#')>
+			</cfif>
+			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Search_ID#')>
 		</cfif>
 
 		<cfreturn />
