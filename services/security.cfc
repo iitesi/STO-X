@@ -49,6 +49,7 @@
 			<cfset tab.bAir = getsearch.Air>
 			<cfset tab.bCar = getsearch.Car>
 			<cfset tab.bHotel = getsearch.Hotel>
+			<cfset tab.sAirType = getsearch.Air_Type>
 			<cfset tab.dDepart = getsearch.Depart_DateTime>
 			<cfset tab.sBookingFor = ''>
 			<cfset tab.sDestination = ''>

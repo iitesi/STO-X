@@ -72,7 +72,12 @@ $(document).ready(function() {
 	$( "#btnCarVendor" ).button().click(function() { filterCar(); });
 	$( "#btnCarCategory" ).button().click(function() { filterCar(); });
 	$( "#Policy" ).button().change(function() { filterCar(); });
-	filterCar();
+	var nCount = filterCar();
+	if (nCount == 0) {
+		$( "#Policy" ).prop('checked', false);
+		$( "#Policy" ).button( "refresh" );
+		filterCar();
+	}
 });
 <cfoutput>
 	var carresults = [
@@ -106,7 +111,4 @@ $(document).ready(function() {
 		</cfloop>];
 
 </cfoutput>
-
-
-
 </script>

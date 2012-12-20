@@ -29,25 +29,25 @@
 			</tr>
 			<tr>
 				<td> </td>
-				<td class="fade medium" title="#application.stAirports[stGroup.Origin]#">
+				<td class="fade medium upper" title="#application.stAirports[stGroup.Origin]#">
 					<strong>#stGroup.Origin#</strong>
 				</td>
 				<td> </td>
-				<td class="fade right medium" title="#application.stAirports[stGroup.Destination]#">
+				<td class="fade right medium upper" title="#application.stAirports[stGroup.Destination]#">
 					<strong>#stGroup.Destination#</strong>
 				</td>
 			</tr>
 			<tr>
-				<td class="bold medium">
+				<td class="bold medium upper">
 					<strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong>
 				</td>
-				<td class="bold medium">
+				<td class="bold medium upper">
 					<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
 				</td>
 				<td class="bold large center">
 					-
 				</td>
-				<td class="bold right medium">
+				<td class="bold right medium upper">
 					<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong>
 				</td>
 			</tr>

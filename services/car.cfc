@@ -1,4 +1,18 @@
 <cfcomponent output="false">
+
+<!---
+selectCar
+--->
+	<cffunction name="selectCar" output="false">
+		<cfargument name="nSearchID">
+		<cfargument name="sCategory">
+		<cfargument name="sVendor">
+
+		<!--- Move over the information into the stItinerary --->
+		<cfset session.searches[arguments.nSearchID].stItinerary.Car = session.searches[arguments.nSearchID].stCars[arguments.sCategory][arguments.sVendor]>
+
+		<cfreturn />
+	</cffunction>
 	
 <!--- doAvailability --->
 	<cffunction name="doAvailability" output="false">
@@ -95,6 +109,8 @@
 			<cfset local.dPickUp = getsearch.Depart_DateTime>
 			<cfset local.dDropOff = getsearch.Arrival_DateTime>
 		</cfif>
+		<cfset session.searches[arguments.nSearchID].dPickUp = dPickUp>
+		<cfset session.searches[arguments.nSearchID].dDropOff = dDropOff>
 
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
@@ -150,6 +166,7 @@
 						VehicleClass		: 	stVehicle.XMLAttributes.VehicleClass,
 						Category			: 	stVehicle.XMLAttributes.Category,
 						VendorLocationKey	: 	stVehicle.XMLAttributes.VendorLocationKey,
+						VendorCode			: 	stVehicle.XMLAttributes.VendorCode,
 						Corporate 			:	(bCorporate EQ 1 ? true : false)
 					}>
 					<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">

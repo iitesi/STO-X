@@ -31,6 +31,7 @@ doAirPrice
 		<cfset stSelected[2].Groups = StructNew("linked")>
 		<cfset stSelected[3].Groups = StructNew("linked")>
 		<cfset local.stSegments = {}>
+		<cfset local.nTripKey = ''>
 
 		<cfif arguments.nTrip EQ ''>
 			<!--- Selected outbound and return then wanting a price --->
@@ -43,7 +44,6 @@ doAirPrice
 
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable)>
-	<!--- <cfdump var="#sMessage#"> --->
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
@@ -62,7 +62,7 @@ doAirPrice
 			<cfset stTrips		= objAirParse.addPreferred(stTrips, arguments.stAccount)>
 			<!--- <cfdump var="#stTrips#" abort> --->
 			<!--- Add trip id to the list of priced items --->
-			<cfset local.nTripKey= getTripKey(stTrips)>
+			<cfset nTripKey		= getTripKey(stTrips)>
 			<!--- Add trip id to the list of priced items --->
 			<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.nSearchID].stLowFareDetails.stPriced, nTripKey)>
 			<!--- Merge all data into the current session structures. --->
@@ -84,7 +84,7 @@ doAirPrice
 		<cfset session.searches[arguments.nSearchID].stSelected[2] = {}>
 		<cfset session.searches[arguments.nSearchID].stSelected[3] = {}>
 
-		<cfreturn >
+		<cfreturn nTripKey>
 	</cffunction>
 
 <!---

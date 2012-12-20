@@ -83,7 +83,7 @@ lowfare
 			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Car')>
 				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Search_ID#')>
 			</cfif>
-			<cfset variables.fw.redirect('main.default?Search_ID=#arguments.rc.Search_ID#')>
+			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Search_ID#')>
 		</cfif>
 
 		<cfreturn />

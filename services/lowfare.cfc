@@ -20,6 +20,7 @@ selectAir
 
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Air = session.searches[arguments.nSearchID].stTrips[arguments.nTrip]>
+		<cfset session.searches[arguments.nSearchID].stItinerary.Air.nTrip = arguments.nTrip>
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
 			<cfif IsNumeric(nKey) AND nKey NEQ arguments.nSearchID>

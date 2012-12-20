@@ -15,6 +15,14 @@ function submitLowFare (nTripKey) {
 	$("#nTrip").val(nTripKey);
 	$("#lowfareForm").submit();
 }
+/*
+	Submits the car.availability form.
+*/
+function submitCarAvailability (sCategory, sVendor) {
+	$("#sCategory").val(sCategory);
+	$("#sVendor").val(sVendor);
+	$("#carAvailabilityForm").submit();
+}
 function filterAir() {
 																			//console.log('start');
 	var classy = $( "#ClassY:checked" ).val();
@@ -213,7 +221,8 @@ CAR SECTION
 */
 function filterCar() {
 	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
-	
+	var nCount = 0;
+
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
 																							//console.log(car)
@@ -224,6 +233,7 @@ function filterCar() {
 		}
 		else {
 			$( "#" + car[0] ).show();
+			nCount++;
 		}
 	}
 	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
@@ -249,7 +259,7 @@ function filterCar() {
 		}
 	}
 
-	return false;
+	return nCount;
 }
 $(document).ready(function() {
 	$("#overlay").jqm({

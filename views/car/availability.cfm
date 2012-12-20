@@ -1,5 +1,11 @@
 <br clear="both">
 <cfoutput>
+	<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
+		<input type="hidden" name="bSelect" value="1">
+		<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
+		<input type="hidden" name="sCategory" id="sCategory" value="">
+		<input type="hidden" name="sVendor" id="sVendor" value="">
+	</form>	
 	#view('car/filter')#
 	<div class="car">
 		<table>
@@ -37,7 +43,6 @@
 							<cfif ArrayFind(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
 								<span class="medium blue bold">PREFERRED</span><br>
 							</cfif>
-							<span class="medium"><!--- #sCategory# ---></span><br>
 							<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br>
 						</div>
 					</td>
@@ -50,7 +55,7 @@
 									<cfif stRate.Corporate>
 										CORPORATE
 									</cfif>
-									<input type="submit" class="button#stRate.Policy#policy" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
+									<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
 								<cfelse>
 									UNAVAILABLE
 								</cfif>
