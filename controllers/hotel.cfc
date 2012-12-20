@@ -24,7 +24,7 @@
 			<cfset variables.fw.service('hotelsearch.doHotelSearch', 'void') />
 		<cfelse>
 			<!--- Select --->
-			<cfset variables.fw.service('hotel.selectHotel', 'void')>
+			<cfset variables.fw.service('hotelsearch.selectHotel', 'void')>
 		</cfif>
 				
 		<cfreturn />

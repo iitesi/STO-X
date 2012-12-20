@@ -1,4 +1,13 @@
 <cfcomponent>
+<!---
+init
+--->
+	<!--- <cffunction name="init" output="false">
+		
+		<cfset variables.objHotelSearch = CreateObject('component', 'booking.services.hotelsearch').init()>
+		
+		<cfreturn this>
+	</cffunction> --->
 	
 <!--- doHotelSearch --->
 	<cffunction name="doHotelSearch" output="false">
@@ -31,18 +40,16 @@
 		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount) />
 		<cfset local.stHotels 		= HotelInformationQuery(stHotels, arguments.nSearchID) /><!--- add signature_image, latitude and longitude --->
 
-   	<cfset local.threadnamelist = '' />
    	<cfset local.count = 0 />
 		<cfloop array="#session.searches[arguments.nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<!--- <cfthread action="run" name="#sHotel#"> --->
+				<cfthread action="run" name="#sHotel#">
+					<!--- <cfset objHotelSearch.doHotelPrice(nSearchID="#arguments.nSearchID#", nHotelCode="#sHotel#", sHotelChain="#session.searches[arguments.nSearchID].stHotels[sHotel].HotelChain#" )> --->
 					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[arguments.nSearchID].stHotels[sHotel].HotelChain#" returnvariable="HotelPrices" />
-				<!--- </cfthread> --->
-				<cfset threadnamelist = listAppend(threadnamelist,sHotel) />
+				</cfthread>
 				<cfset count++ />
 			</cfif>
 		</cfloop>
-		<!--- <cfthread action="join" name="#threadnamelist#"> --->
 
 		<cfreturn />
 	</cffunction>

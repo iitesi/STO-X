@@ -9,7 +9,7 @@
 			#(stItinerary.Air.Ref EQ 0 ? 'No Refunds' : 'Refundable')#
 			</td>
 		</tr>
-		<cfif rc.nY1TripKey NEQ ''>
+		<cfif rc.nY1TripKey NEQ ''><!--- They may not have business class returned on a flight --->
 			<cfset nFareDiff = session.searches[rc.nSearchID].stTrips[rc.nY1TripKey].Total-stItinerary.Air.Total>
 			<tr>
 				<td colspan="2">&nbsp;</td>
