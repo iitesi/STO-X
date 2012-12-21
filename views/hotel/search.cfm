@@ -1,4 +1,4 @@
-<!--- <cfsetting showdebugoutput="false" /> --->
+<cfsetting showdebugoutput="false" />
 
 <cfoutput>	
 	#View('hotel/filter')#

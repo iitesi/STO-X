@@ -49,7 +49,7 @@ doAirPrice
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
-	<!--- <cfdump var="#aResponse#"> --->
+		<!--- <cfdump var="#aResponse#"> --->
 		<!--- Parse the segments. --->
 		<cfset stSegments	= objAirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
@@ -64,16 +64,18 @@ doAirPrice
 			<!--- <cfdump var="#stTrips#" abort> --->
 			<!--- Add trip id to the list of priced items --->
 			<cfset nTripKey		= getTripKey(stTrips)>
-			<!--- Add trip id to the list of priced items --->
-			<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.nSearchID].stLowFareDetails.stPriced, nTripKey)>
-			<!--- Merge all data into the current session structures. --->
-			<cfset session.searches[arguments.nSearchID].stTrips 						= objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
-			<!--- Finish up the results --->
-			<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
-			<!--- <cfdump var="#session.searches[arguments.nSearchID].stTrips#" abort> --->
-			<!--- Clear out their results --->
-			<cfif arguments.sCabin NEQ stTrips[nTripKey].Class>
-				<cfset session.searches[arguments.nSearchID].sUserMessage = 'Pricing returned '&(stTrips[nTripKey].Class EQ 'Y' ? 'economy' : (stTrips[nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
+			<cfif arguments.nCouldYou EQ 0>
+				<!--- Add trip id to the list of priced items --->
+				<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.nSearchID].stLowFareDetails.stPriced, nTripKey)>
+				<!--- Merge all data into the current session structures. --->
+				<cfset session.searches[arguments.nSearchID].stTrips 						= objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
+				<!--- Finish up the results --->
+				<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>			
+				<!--- <cfdump var="#session.searches[arguments.nSearchID].stTrips#" abort> --->
+				<!--- Clear out their results --->
+				<cfif arguments.sCabin NEQ stTrips[nTripKey].Class>
+					<cfset session.searches[arguments.nSearchID].sUserMessage = 'Pricing returned '&(stTrips[nTripKey].Class EQ 'Y' ? 'economy' : (stTrips[nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
+				</cfif>
 			</cfif>
 		<cfelse>
 			<cfset session.searches[arguments.nSearchID].sUserMessage = 'Fare type selected is unavailable for pricing.'>

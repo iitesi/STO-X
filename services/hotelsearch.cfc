@@ -455,19 +455,22 @@ init
 selectHotel
 --->
 	<cffunction name="selectHotel" output="false">
-		<cfargument name="nSearchID">
-		<cfargument name="nHotelID">
-		<cfargument name="nRoom">
+		<cfargument name="nHotelID" default="#listFirst(form.sHotel)#">
+		<cfargument name="nRoom" default="#listLast(form.sHotel)#">
+		<cfargument name="nSearchID" default="#url.Search_ID#">
 
 		<!--- Move over the information into the stItinerary --->
-		<cfset session.searches[arguments.nSearchID].stItinerary.Hotel = session.searches[arguments.nSearchID].stTrips[arguments.nTrip]>
+		<cfset session.searches[arguments.nSearchID].stItinerary.Hotel = {
+			HotelID:nHotelID, 
+			RoomDescription: session.searches[arguments.nSearchID].stHotels[arguments.nHotelID]['Rooms'][arguments.nRoom]
+		} />
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
 			<cfif IsNumeric(nKey) AND nKey NEQ arguments.nSearchID>
 				<cfset StructDelete(session.searches, nKey)>
 			</cfif>
 		</cfloop>
-
+		
 		<cfreturn />
 	</cffunction>
 
