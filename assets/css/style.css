@@ -216,6 +216,7 @@ body {
 	background-color: #FFF;
 	font-size: 11px;
 	padding: 5px;
+	width: 1000px;
 	margin:10px;
 	float:left;
 	position: relative;
@@ -223,6 +224,21 @@ body {
 	color: #211922;
 	min-height:70px;
 	clear:both;
+}
+.summarydiv {
+	font-size: 11px;
+	padding: 5px;
+	margin:10px;
+	float:left;
+	position: relative;
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	color: #211922;
+	min-height:70px;
+	clear:both;
+	border:4px solid #FFF;
+}
+.background {
+	background-color: #E3EEF4;
 }
 #content .list .carrierimg {
 	padding: 10px 0 0 5px;

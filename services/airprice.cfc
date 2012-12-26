@@ -19,7 +19,6 @@ doAirPrice
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip"		required="false"	default="">
 		<cfargument name="nCouldYou"	required="false"	default="0">
-		<cfargument name="stAccount" 	required="false"	default="#application.stAccounts[session.Acct_ID]#">
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -44,19 +43,16 @@ doAirPrice
 		</cfif>
 
 		<!--- Put together the SOAP message. --->
-		<cfset sMessage 	= prepareSoapHeader(arguments.stAccount, stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
+		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 		<!--- <cfdump var="#aResponse#"> --->
 
-		
-
 		<!--- THIS IS BAD. I NEEDED IT FOR COULD YOU --->
 		<!--- <cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()> --->
 		<!--- THIS IS BAD. I NEEDED IT FOR COULD YOU --->
-
 
 		<cfif arguments.nCouldYou EQ 0>
 			<!--- Parse the segments. --->
@@ -106,11 +102,11 @@ doAirPrice
 prepareSOAPHeader
 --->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
-		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stSelected" 	required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nCouldYou"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="stAccount" 	required="true"		default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>

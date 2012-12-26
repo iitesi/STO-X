@@ -1,74 +1,149 @@
 <cfoutput>
 	<cfif bAir>
 		<cfset bAirPolicy = (ArrayLen(stItinerary.Air.aPolicies) GT 0 ? false : true)>
-		<table width="100%">
+		<table width="1000">
 		<tr>
-			<td colspan="2">
-			<strong>FLIGHT</strong>
-			#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
-			<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#">edit</a></span>
-			<br><br>
+<!--- 
+HEADING
+--->
+			<td class="bold large" width="150">
+				<strong>FLIGHT</strong>
+				<!--- <span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#">edit</a></span> --->
+			</td>
+<!--- 
+DETAILS
+--->
+			<cfloop collection="#stItinerary.Air.Groups#" item="nGroup" >
+				<td>
+					#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
+					<table width="300">
+					<cfset stGroup = stItinerary.Air.Groups[nGroup]>
+					<tr>
+						<td class="medium" colspan="4">
+							<strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d')#</strong>
+						</td>
+					</tr>
+					<cfloop collection="#stGroup.Segments#" item="nSegment" >
+						<cfset stSegment = stGroup.Segments[nSegment]>
+						<tr>
+							<td>#stSegment.Carrier#</td>
+							<td>#stSegment.FlightNumber#</td>
+							<td>#stSegment.Origin# to #stSegment.Destination#</td>
+							<td>#TimeFormat(stSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#</td>
+						</tr>
+					</cfloop>
+					</table>
+				</td>
+			</cfloop>
+<!--- 
+COST
+--->			
+			<td width="150" class="right">
+				<span class="blue bold large">#DollarFormat(stItinerary.Air.Total)#</span>
 			</td>
 		</tr>
 		<tr>
-		<cfloop collection="#stItinerary.Air.Groups#" item="nGroup" >
-			<td width="50%">
-				<table width="100%">
-				<cfset stGroup = stItinerary.Air.Groups[nGroup]>
-				<tr>
-					<td class="medium" colspan="4">
-						<strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d')#</strong>
-					</td>
-				</tr>
-				<cfloop collection="#stGroup.Segments#" item="nSegment" >
-					<cfset stSegment = stGroup.Segments[nSegment]>
-					<tr>
-						<td>#stSegment.Carrier#</td>
-						<td>#stSegment.FlightNumber#</td>
-						<td>#stSegment.Origin# to #stSegment.Destination#</td>
-						<td>#TimeFormat(stSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#</td>
-					</tr>
-				</cfloop>
-				</table>
+			<td class="bold large" width="150">
 			</td>
-		</cfloop>
-		</tr>			
+<!--- 
+QUESTIONS
+--->
+			<td>
+				<!---
+				If they are out of policy
+				AND they want to capture reason codes
+				--->
+				<cfif NOT bAirPolicy
+				AND stPolicy.Policy_AirReasonCode EQ 1>
+					<select name="Air_ReasonCode1" id="Air_ReasonCode1">
+					<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
+					<cfloop query="rc.qOutOfPolicy">
+						<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+					</cfloop>
+					</select>
+				</cfif>
+				<!---
+				If the fare is higher than the lowest
+				AND they are in policy OR the above drop down isn't showing
+				AND they want to capture lost savings
+				--->
+				<cfif stItinerary.Air.Total GT nLowestFare
+				AND (bAirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
+				AND stPolicy.Policy_AirLostSavings EQ 1>
+					<select name="LostSavings" id="LostSavings">
+					<option value="">SELECT REASON FOR NOT BOOKING THE LOWEST FARE</option>
+					<cfloop query="rc.qOutOfPolicy">
+						<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+					</cfloop>
+					</select>
+				<!---
+				If the fare is the same
+				--->
+				<cfelseif stItinerary.Air.Total EQ nLowestFare>
+					<input type="hidden" name="LostSavings" value="C">
+				</cfif>
+
+				<!--- <cfif rc.segmentsair.Carrier NEQ 'WN'
+				AND NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E')> --->
+					<p>
+						<select name="Seat" id="Seat">
+						<option value="">GENERAL SEAT SELECTION</option>
+						<option value="A">Aisle</option>
+						<option value="W">Window</option>
+						</select>
+					</p>
+				<!--- cfelse>
+					<input type="hidden" name="Seat#i#" value="">
+				</cfif> --->
+				<p>
+					<select name="Service_Requests" id="Service_Requests">
+					<option value=""></option>
+					<option value="BLND">Blind</option>
+					<option value="DEAF">Deaf</option>
+					<option value="UMNR">Unaccompanied Minor</option>
+					<option value="WCHR">Wheelchair</option>
+					</select>
+				</p>
+<!---
+SPECIAL REQUEST
+--->
+				<!--- <cfif rc.policyair.Policy_AllowRequests EQ 1>
+					<p>
+						<label for="Special_Requests#i#">Special Requests</label>
+						<textarea name="Special_Requests#i#" id="Special_Requests#i#" cols="50" rows="1">#variables.travelers[i]['Special_Requests']#</textarea>
+						<cfif ListFindNoCase(rc.errors, 'Special_Requests#i#', ',')><img src="#application.serverurl#/assets/img/error.png" width="19"></cfif>
+					</p>
+					<cfif rc.processfees GT 0>
+						<p>
+							<label for=""></label>
+							By entering special requests you will be charged
+						</p>
+						<p>
+							<label for=""></label>
+							an offline fee of #DollarFormat(rc.processfees)#.
+						</p>
+					</cfif>
+				</cfif> --->
+<!---
+FREQUENT PROGRAM NUMBER
+---><!--- 
+			<input type="hidden" name="Carriers" value="#rc.segmentsair.Carriers#">
+			<cfloop query="rc.segmentsair">
+				<p>
+					<label for="Air_FF#Carrier##i#" style="text-transform:capitalize;">#LCase(Carrier_Name)# Frequent Flyer Number</label>
+					<input type="text" name="Air_FF#Carrier##i#" id="Air_FF#Carrier##i#" size="18" maxlength="20" <cfif StructKeyExists(variables.travelers[i], 'Air_FF#Carrier#')>value="#variables.travelers[i]['Air_FF'&Carrier]#"</cfif>>
+					<cfif ListFindNoCase(rc.errors, 'Air_FF#Carrier##i#', ',')><img src="#application.serverurl#/assets/img/error.png" width="19"></cfif>
+				</p>
+			</cfloop>
+		</cfoutput> --->
+			</td>
+			<td width="150">
+			</td>
+		</tr>
 		</table>
-		<!---
-		If they are out of policy
-		AND they want to capture reason codes
-		--->
-		<cfif NOT bAirPolicy
-		AND stPolicy.Policy_AirReasonCode EQ 1>
-			<select name="Air_ReasonCode1" id="Air_ReasonCode1">
-			<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
-			<cfloop query="rc.qOutOfPolicy">
-				<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-			</cfloop>
-			</select>
-		</cfif>
-		<!---
-		If the fare is higher than the lowest
-		AND they are in policy OR the above drop down isn't showing
-		AND they want to capture lost savings
-		--->
-		<cfif stItinerary.Air.Total GT nLowestFare
-		AND (bAirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
-		AND stPolicy.Policy_AirLostSavings EQ 1>
-			<select name="LostSavings" id="LostSavings">
-			<option value="">SELECT REASON FOR NOT BOOKING THE LOWEST FARE</option>
-			<cfloop query="rc.qOutOfPolicy">
-				<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-			</cfloop>
-			</select>
-		<!---
-		If the fare is the same
-		--->
-		<cfelseif stItinerary.Air.Total EQ nLowestFare>
-			<input type="hidden" name="LostSavings" value="C">
-		</cfif>
+		<!--- 
 		<cfif NOT bAirPolicy>
 			<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#">Search Flights Inside Policy</a></span>
-		</cfif>
+		</cfif> --->
 	</cfif>
 </cfoutput>

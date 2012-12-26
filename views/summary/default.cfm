@@ -5,15 +5,44 @@
 <cfset bHotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
 <cfset bCar = (structKeyExists(stItinerary, 'Car') ? true : false)>
 <style type="text/css">
-.paymenttable {
-	
+form { 
+	right: 20px;
+	top: -8px;
+	z-index: 400;
 }
-.paymenttd {
-	padding:10px 20px 10px 10px;
+form div{
+	max-height: 33px;
+	position: relative;
+	width: 275px;
+}
+select {
+	margin-top:8px;
+	border:1px solid rgba(0,0,0,0.3);
+	padding:8px;
+	font-family:"Merriweather",Georgia,Times,serif,Times,serif;
+}
+form div input[type="submit"] { 
+	cursor: pointer;
+	float: right;
+	margin: 0px !important;
+	padding: 4px 6px !important;
+	position: relative;
+	right: 4px;
+	top: -29px;
+}
+input[type="text"] {
+	background: #fff;
+	border:1px solid rgba(0,0,0,0.3);
+	padding:8px;
+}
+textarea {
+	background: #fff;
+	border:1px solid rgba(0,0,0,0.3);
+	padding:8px;
 }
 </style>
 <cfoutput>
-	<table width="100%" class="paymenttable">
+	<!--- <table width="100%" class="paymenttable">
 	<tr>
 		<td width="600" class="paymenttd">
 			Could You Goes Here!
@@ -22,44 +51,36 @@
 			#View('summary/tripsummary')#
 		</td>
 	</tr>
-	</table>
+	</table> --->
+	<br><br>
+	#View('summary/traveler')#
 	<cfif bAir>
 		<br><br>
-		<table width="100%" class="paymenttable" bgcolor="##E3EEF4">
-		<tr>
-			<td width="600" class="paymenttd">
-				#View('summary/air')#
-			</td>
-			<td width="400" class="paymenttd">
-				#View('summary/airoptions')#
-			</td>
-		</tr>
-		</table>
+		<div class="summarydiv background">
+			#View('summary/air')#
+		</div>
 	</cfif>
-	<cfif bHotel>
+	<!--- <cfif bHotel>
 		<br><br>
-		<table width="100%" class="paymenttable" bgcolor="##E3EEF4">
-		<tr>
-			<td width="600" class="paymenttd">
-				#View('summary/hotel')#
-			</td>
-			<td width="400" class="paymenttd">
+		<div class="car">
+			<table width="100%" class="paymenttable" bgcolor="##E3EEF4">
+			<tr>
+				<td width="600" class="paymenttd">
+					#View('summary/hotel')#
+				</td>
+				<td width="400" class="paymenttd">
 
-			</td>
-		</tr>
-		</table>
+				</td>
+			</tr>
+			</table>
+		</div>
 	</cfif>
-	<br><br>
-	<table width="100%" class="paymenttable" bgcolor="##E3EEF4">
-	<tr>
-		<td width="600" class="paymenttd">
+	<br><br>--->
+	<cfif bCar>
+		<div class="summarydiv background">
 			#View('summary/car')#
-		</td>
-		<td width="400" class="paymenttd">
-
-		</td>
-	</tr>
-	</table>
+		</div>
+	</cfif>
 </cfoutput>
 <!--- <cfdump var="#rc.stFees#"> --->
-<cfdump var="#session.searches[rc.nsearchid].stitinerary.Air#">
+<!--- <cfdump var="#session.searches[rc.nsearchid].stitinerary.Air#"> --->
