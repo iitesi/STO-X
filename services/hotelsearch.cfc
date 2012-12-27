@@ -16,8 +16,10 @@ init
     <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#" />
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
-		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, arguments.nSearchID) />
-		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID) />
+		<cfset local.nSearchID 		= arguments.nSearchID />
+
+		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID) />
+		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, nSearchID) />
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
@@ -37,21 +39,22 @@ init
 		<cfset session.searches[nSearchID]['Hotel_Long'] 	= GetToken(session.searches[nSearchID].slatlong,2,',') />
 
 		<!--- check Policy and add the struct into the session--->
-		<cfset stHotels = checkPolicy(stHotels, arguments.nSearchID, stPolicy, stAccount) />
-		<cfset local.stHotels 		= HotelInformationQuery(stHotels, arguments.nSearchID) /><!--- add signature_image, latitude and longitude --->
+		<cfset stHotels = checkPolicy(stHotels, nSearchID, stPolicy, stAccount) />
+		<cfset local.stHotels 		= HotelInformationQuery(stHotels, nSearchID) /><!--- add signature_image, latitude and longitude --->
 
-		<cfset local.threadnamelist = '' />
+		<cfset local.aThreads = [] />
    	<cfset local.count = 0 />
-		<cfloop array="#session.searches[arguments.nSearchID].stSortHotels#" index="local.sHotel">
+		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<!--- <cfthread action="run" name="#sHotel#"> --->
-					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[arguments.nSearchID].stHotels[sHotel].HotelChain#" returnvariable="HotelPrices" />
+				<!--- <cfthread name="#sHotel#"> --->
+					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[nSearchID].stHotels[sHotel].HotelChain#" returnvariable="HotelPrices" />
 				<!--- </cfthread> --->
-				<cfset threadnamelist = listAppend(threadnamelist,sHotel) />
+				<cfset arrayAppend(aThreads,sHotel)>
 				<cfset count++ />
 			</cfif>
 		</cfloop>
-		<!--- <cfthread action="join" name="#threadnamelist#"> --->
+		<!--- <cfthread action="join" name="#arraytoList(aThreads)#" />
+		<cfdump var="#cfthread#" abort> --->
 
 		<cfreturn />
 	</cffunction>
@@ -154,8 +157,8 @@ init
 								<RateCategory>All</RateCategory>--->
 							</hot:HotelSearchModifiers>
 							<hot:HotelStay>
-								<hot:CheckinDate>#DateFormat(getSearch.Depart_DateTime,'yyyy-mm-dd')#</hot:CheckinDate>
-								<hot:CheckoutDate>#DateFormat(getSearch.Arrival_DateTime,'yyyy-mm-dd')#</hot:CheckoutDate>
+								<hot:CheckinDate>#DateFormat(getSearch.CheckIn_Date,'yyyy-mm-dd')#</hot:CheckinDate>
+								<hot:CheckoutDate>#DateFormat(getSearch.CheckOut_Date,'yyyy-mm-dd')#</hot:CheckoutDate>
 							</hot:HotelStay>
 							<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
 						</hot:HotelSearchAvailabilityReq>
@@ -277,7 +280,7 @@ init
 						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? true : false) />
 						<cfset stHotels[sCategory].aPolicies = aPolicy />
 					<cfelse>
-						<cfset temp = StructDelete(stHotels[sCategory], HotelChain) />
+						<cfset StructDelete(stHotels[sCategory], HotelChain) />
 						<cfset stHotels[sCategory].aPolicies = [] />
 					</cfif>
 				</cfif>
@@ -292,7 +295,7 @@ init
 		<cfargument name="nSearchID">
 
 		<cfquery name="local.getsearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
+		SELECT CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
@@ -461,11 +464,23 @@ selectHotel
 		<cfargument name="nRoom" default="#listLast(form.sHotel)#">
 		<cfargument name="nSearchID" default="#url.Search_ID#">
 
+		<cfset getSearch = getSearch(arguments.nSearchID) />
+		<cfset local.Nights = DateDiff('d',getSearch.CheckIn_Date,getSearch.CheckOut_Date) />
+		<cfset local.RoomDescription = session.searches[arguments.nSearchID].stHotels[arguments.nHotelID]['Rooms'][arguments.nRoom] />
+
+		<!--- Initialize or overwrite the CouldYou hotel section --->
+		<cfset session.searches[url.Search_ID].CouldYou.Hotel = {} />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Hotel = {
 			HotelID:nHotelID, 
-			RoomDescription: session.searches[arguments.nSearchID].stHotels[arguments.nHotelID]['Rooms'][arguments.nRoom]
+			HotelChain:session.searches[arguments.nSearchID].stHotels[arguments.nHotelID].HotelChain,
+			CheckIn:getSearch.CheckIn_Date, 
+			CheckOut:getSearch.CheckOut_Date,
+			Nights:Nights,
+			TotalRate:Nights * RoomDescription.HotelRate.BaseRate,
+			RoomDescription: RoomDescription
 		} />
+		
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
 			<cfif IsNumeric(nKey) AND nKey NEQ arguments.nSearchID>

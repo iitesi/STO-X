@@ -18,19 +18,16 @@ selectCar
 <!--- doAvailability --->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="nCouldYou"	default="0">
 		
 		<cfset StructDelete(session.searches[nSearchID], 'stCars')>
 
-		<cfif NOT structKeyExists(session.searches[nSearchID], "stCars")
-		OR StructIsEmpty(session.searches[nSearchID].stCars)>
+		<cfif NOT structKeyExists(session.searches[nSearchID], "stCars") OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.stThreads = {}>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
 			<cfif qCDNumbers.RecordCount>
 				<cfset stThreads.stCorporateRates = ''>
-				<cfthread
-				name="stCorporateRates"
-				nSearchID="#arguments.nSearchID#"
-				qCDNumbers="#qCDNumbers#">
+				<cfthread name="stCorporateRates" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
 					<cfset local.sMessage	= prepareSoapHeader(nSearchID, qCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
@@ -38,9 +35,7 @@ selectCar
 				</cfthread>
 			</cfif>
 			<cfset stThreads.stPublicRates = ''>
-			<cfthread
-			name="stPublicRates"
-			nSearchID="#arguments.nSearchID#">
+			<cfthread name="stPublicRates" nSearchID="#arguments.nSearchID#">
 				<cfset local.sMessage	= prepareSoapHeader(nSearchID)>
 				<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 				<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
@@ -63,8 +58,9 @@ selectCar
 		</cfif>
 
 		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
+		<cfset CarAvailability = arguments.nCouldYou NEQ 0 ? stCars : '' />
 		
-		<cfreturn >
+		<cfreturn CarAvailability>
 	</cffunction>
 
 <!--- searchCDNumbers --->
@@ -90,6 +86,7 @@ selectCar
 		<cfargument name="bFullRequest" required="false"	default="false">
 		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
+		<cfargument name="nCouldYou"		default="0">
 		
 		<cfquery name="local.getsearch">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Air_Type
@@ -123,10 +120,10 @@ selectCar
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
 								PickupLocation="#getsearch.Arrival_City#"
-								PickupDateTime="#DateFormat(dPickUp, 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
+								PickupDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dPickUp), 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
 								PickupLocationType="Airport"
 								ReturnLocation="#getsearch.Arrival_City#"
-								ReturnDateTime="#DateFormat(dDropOff, 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
+								ReturnDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dDropOff), 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
 								<cfif IsQuery(arguments.qCDNumbers) >

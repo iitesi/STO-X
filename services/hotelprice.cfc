@@ -5,22 +5,28 @@
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
+		<cfargument name="nCouldYou"	default="0">
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
     <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 		
 		<cfset local.stTrip 		= session.searches[arguments.nSearchID]>
-		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode)>
-		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
+		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode, arguments.nCouldYou)>
+		<!--- <cfdump var="#sMessage#"> --->
+		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode, arguments.nCouldYou)>
+		<!--- <cfdump var="#sResponse#"> --->
 		<cfset local.stResponse = formatResponse(sResponse)>
+		<!--- <cfdump var="#stResponse#"> --->
 		<cfset local.stHotels 	= parseHotelRooms(stResponse, arguments.nHotelCode, arguments.nSearchID)>
 		<cfset local.stRates 		= structKeyExists(stHotels[nHotelCode],'Rooms') ? stHotels[nHotelCode]['Rooms'] : 'Sold Out' />
+		<!--- <cfdump var="#stRates#"> --->
 
 		<cfif isStruct(stRates)>
 			<cfset local.RoomDescriptions = structKeyList(stRates,'|') /><!--- Need to use | as delimiter because hotel names have , --->
 			<cfset local.LowRate = 10000 />
 			<cfloop list="#RoomDescriptions#" index="local.HotelDesc" delimiters="|">
 				<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
+				<!--- <cfdump var="#stRates[HotelDesc]['HotelRate']['BaseRate']#"> --->
 			</cfloop>
 		<cfelse>
 			<cfset local.LowRate = 'Sold Out' />
@@ -28,7 +34,7 @@
 
 		<cfset stHotels[nHotelCode]['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />
 		<cfset local.HotelAddress = StructKeyExists(stHotels[nHotelCode],'Property') ? stHotels[nHotelCode]['Property']['Address1'] : ''/>
-		<cfset HotelAddress&= StructKeyExists(stHotels[nHotelCode],'Property') AND Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
+		<cfset HotelAddress			 &= StructKeyExists(stHotels[nHotelCode],'Property') AND Len(Trim(stHotels[nHotelCode]['Property']['Address2'])) ? ', '&stHotels[nHotelCode]['Property']['Address2'] : '' />		
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
@@ -51,6 +57,7 @@
 		<cfargument name="nSearchID" 		required="true">
 		<cfargument name="sHotelChain" 	required="true">
 		<cfargument name="nHotelCode" 	required="true">
+		<cfargument name="nCouldYou"		default="0">
 		
 		<cfquery name="local.getSearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
@@ -69,8 +76,8 @@
 						  </hot:HotelProperty>
 						  <hot:HotelDetailsModifiers RateRuleDetail="Complete">
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(getSearch.Depart_DateTime,'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(getSearch.Arrival_DateTime,'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,getSearch.Depart_DateTime),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,getSearch.Arrival_DateTime),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						    <hot:RateCategory>All</hot:RateCategory>
 						  </hot:HotelDetailsModifiers>
@@ -91,8 +98,13 @@
 		<cfargument name="sAPIAuth"	/>
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode"	/>
+		<cfargument name="nCouldYou" default="0" />
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
+
+		<cfif arguments.nCouldYou NEQ 0>
+			<cfset local.bSessionStorage = false />
+		</cfif>
 
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID],nHotelCode)>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
@@ -199,7 +211,9 @@
 							<cftry>
 								<cfset stHotels[nHotelCode]['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : stHotels[nHotelCode]['Property'].Address2 />
 								<cfcatch>
-									<cfdump eval=sHotelProperty>
+									<cfmail to="mbusche@shortstravel.com" from="mbusche@shortstravel.com" subject="error" type="html">									
+										<cfdump var="#sHotelProperty#">
+									</cfmail>
 								</cfcatch>
 							</cftry>
 						</cfif>

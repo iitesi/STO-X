@@ -273,3 +273,48 @@ $(document).ready(function() {
 	});
 	
 });
+
+/*
+CouldYou
+*/
+
+function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) {
+	$.ajax({type:"POST",
+		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
+		data:"nSearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate,
+		async: true,
+		dataType: 'json',
+		timeOut: 5000,
+		success:function(data) {			
+			var AirTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
+			AirTotal+=data
+			$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
+		},
+		error:function(test, tes, te) {
+			console.log(test);
+			console.log(tes);
+			console.log(te);
+		}
+	});
+	return false;
+}
+
+function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
+	$.ajax({type:"POST",
+		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
+		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights,
+		async: true,
+		dataType: 'json',
+		timeOut: 5000,
+		success:function(data) {
+			var HotelTotal = '$' + data;
+			$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
+		},
+		error:function(test, tes, te) {
+			console.log(test);
+			console.log(tes);
+			console.log(te);
+		}
+	});
+	return false;
+}
