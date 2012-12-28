@@ -42,6 +42,26 @@
 
 		<cfreturn />
 	</cffunction>
+	
+<!--- skip --->
+	<cffunction name="skip" output="false">
+		<cfargument name="rc" />
+		
+		<cfset variables.fw.service('hotelsearch.skipHotel', 'void')>
+				
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endskip" output="false">
+		<cfargument name="rc">
+
+		<cfif session.searches[arguments.rc.Search_ID].bCar
+		AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Car')>
+			<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Search_ID#')>
+		</cfif>
+		<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Search_ID#')>
+
+		<cfreturn />
+	</cffunction>
 
 <!---
 popup

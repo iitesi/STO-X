@@ -491,4 +491,15 @@ selectHotel
 		<cfreturn />
 	</cffunction>
 
+<!---
+skiptHotel
+--->
+	<cffunction name="skipHotel" output="false">
+		<cfargument name="nSearchID">
+
+		<cfset session.searches[arguments.nSearchID].bHotel = 0 />
+		
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

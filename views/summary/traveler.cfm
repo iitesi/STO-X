@@ -1,9 +1,42 @@
+
+<cfset stTraveler 	= (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
+<cfset sType 		= (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
+<cfoutput>
+	<div class="summarydiv">
+<!---
+SUMMARY OF TRAVELER
+--->			
+		<div id="travelerSummary"> </div>
+<!---
+TRAVELER FORM
+--->	
+		<div id="travelerForm" style="display:none;"> </div>
+	</div>
+</cfoutput>
+<!--- <cfdump var="#session.searches[rc.nSearchID].stTravelers#"> --->
 <script type="text/javascript">
+function showTravelerSummary(nTraveler) {
+	var nSearchID = $( "#nSearchID" ).val();
+	$.ajax({
+		type: 'POST',
+		url: 'services/traveler.cfc',
+		data: {
+			method: 'showTravelerSummary',
+			nSearchID: nSearchID,
+			nTraveler: nTraveler
+		},
+		dataType: 'json',
+		success: function(data) {
+			$( "#travelerSummary" ).html(data).show();
+			$( "#travelerForm" ).hide();
+		}
+	});
+}
 function showForm(nTraveler) {
 	var nSearchID = $( "#nSearchID" ).val();
 	$.ajax({
 		type: 'POST',
-		url: 'services/summary.cfc',
+		url: 'services/traveler.cfc',
 		data: {
 			method: 'setTravelerForm',
 			nTraveler: nTraveler,
@@ -11,18 +44,19 @@ function showForm(nTraveler) {
 		},
 		dataType: 'json',
 		success: function(data) {
-			$( "#traveler" + nTraveler + "summary" ).hide();
-			$( "#traveler" + nTraveler + "form" ).show();
-			$( "#traveler" + nTraveler + "form" ).html(data);
+			$( "#travelerForm" ).html(data);
+			$( "#travelerForm" ).show();
+			$( "#travelerSummary" ).hide();
 		}
 	});
 }
-function addTraveler(nTraveler) {
-	var User_ID = $( "#User_ID" + nTraveler ).val();
+function changeTraveler(nTraveler) {
+	console.log('ran')
 	var nSearchID = $( "#nSearchID" ).val();
+	var User_ID = $( "#User_ID" ).val();
 	$.ajax({
 		type: 'POST',
-		url: 'services/summary.cfc',
+		url: 'services/traveler.cfc',
 		data: {
 			method: 'getUser',
 			nTraveler: nTraveler,
@@ -50,7 +84,7 @@ function saveTraveler(nTraveler) {
 	var Gender = $( "#Gender" + nTraveler ).val();
 	$.ajax({
 		type: 'POST',
-		url: 'services/summary.cfc',
+		url: 'services/traveler.cfc',
 		data: {
 			method: 'saveTraveler',
 			nTraveler: nTraveler,
@@ -69,51 +103,13 @@ function saveTraveler(nTraveler) {
 		},
 		dataType: 'json',
 		success: function(data) {
-			console.log(data)
+			$( "#traveler" + nTraveler + "summary" ).html(data);
 			$( "#traveler" + nTraveler + "summary" ).show();
 			$( "#traveler" + nTraveler + "form" ).hide();
-			$( "#traveler" + nTraveler + "summary" ).html(data);
 		}
 	});
 }
+$(document).ready(function() {
+	showTravelerSummary(1);
+});
 </script>
-<cfoutput>
-	<input type="hidden" name="nSearchID" id="nSearchID" value="#rc.nSearchID#">
-	<table>
-	<tr>
-		<cfloop from="1" to="4" index="nTraveler">
-			<td valign="top" width="200">
-				<div class="summarydiv" style="float:left;position:relative;width:200px">
-					<!--- <cfdump var="#session.searches[rc.nSearchID].stTravelers#" abort="true"> --->
-					<cfset stTraveler = (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
-					<cfset Type = (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
-<!---
-SUMMARY OF TRAVELER
---->			
-					<div id="traveler#nTraveler#summary">
-						<cfif Type NEQ 'New'>
-							<h3>#stTraveler.Last_Name#/#stTraveler.First_Name# #stTraveler.Middle_Name#</h3><br>
-							<a href="##" onClick="showForm(#nTraveler#);" style="float:right">edit</a>
-							#stTraveler.Phone_Number#<br>
-							#stTraveler.Wireless_Phone#<br>
-							#stTraveler.Email#<br>
-							#stTraveler.CCEmail#<br>
-							#DateFormat(stTraveler.Birthdate, 'mmmm d, yyyy')#<br>
-							#(stTraveler.Gender EQ 'F' ? 'Female' : 'Male')#
-						<cfelse>
-							<a href="##" onClick="showForm(#nTraveler#);" style="float:right">+ Add Traveler</a>
-						</cfif>
-					</div>
-<!---
-TRAVELER FORM
---->	
-					<div id="traveler#nTraveler#form" style="display:none;">
-						
-					</div>
-				</div>
-			</td>
-		</div>
-	</cfloop>
-	</tr>
-	</table>
-</cfoutput>

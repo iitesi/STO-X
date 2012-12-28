@@ -18,10 +18,16 @@ form div{
 select {
 	margin-top:8px;
 	border:1px solid rgba(0,0,0,0.3);
-	padding:8px;
+	padding:2px;
 	font-family:"Merriweather",Georgia,Times,serif,Times,serif;
 }
-form div input[type="submit"] { 
+input[type="text"] {
+	margin-top:8px;
+	background: #fff;
+	padding:2px;
+	border:1px solid rgba(0,0,0,0.3);
+}
+input[type="submit"] { 
 	cursor: pointer;
 	float: right;
 	margin: 0px !important;
@@ -30,57 +36,26 @@ form div input[type="submit"] {
 	right: 4px;
 	top: -29px;
 }
-input[type="text"] {
-	background: #fff;
-	border:1px solid rgba(0,0,0,0.3);
-	padding:8px;
-}
 textarea {
 	background: #fff;
 	border:1px solid rgba(0,0,0,0.3);
 	padding:8px;
 }
+.fulldiv {
+	width:1000px;
+	position: relative;
+	float: left;
+}
 </style>
 <cfoutput>
-	<!--- <table width="100%" class="paymenttable">
-	<tr>
-		<td width="600" class="paymenttd">
-			Could You Goes Here!
-		</td>
-		<td width="400" class="paymenttd">
-			#View('summary/tripsummary')#
-		</td>
-	</tr>
-	</table> --->
-	<br><br>
-	#View('summary/traveler')#
-	<cfif bAir>
-		<br><br>
-		<div class="summarydiv background">
+	<input type="hidden" id="nSearchID" value="#rc.nSearchID#">
+	<input type="hidden" id="nTraveler" value="1">
+	<cfset nTraveler = 1>
+	<div id="travelef" class="tab_content" style="display: block;">
+		<p>
+            #View('summary/traveler')#
+            #View('summary/payment')#
 			#View('summary/air')#
-		</div>
-	</cfif>
-	<!--- <cfif bHotel>
-		<br><br>
-		<div class="car">
-			<table width="100%" class="paymenttable" bgcolor="##E3EEF4">
-			<tr>
-				<td width="600" class="paymenttd">
-					#View('summary/hotel')#
-				</td>
-				<td width="400" class="paymenttd">
-
-				</td>
-			</tr>
-			</table>
-		</div>
-	</cfif>
-	<br><br>--->
-	<cfif bCar>
-		<div class="summarydiv background">
-			#View('summary/car')#
-		</div>
-	</cfif>
+		</p>
+	</div>	
 </cfoutput>
-<!--- <cfdump var="#rc.stFees#"> --->
-<!--- <cfdump var="#session.searches[rc.nsearchid].stitinerary.Air#"> --->

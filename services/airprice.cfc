@@ -65,7 +65,7 @@ doAirPrice
 				<!--- Check low fare. --->
 				<cfset stTrips 		= objAirParse.addTotalBagFare(stTrips)>
 				<!--- Mark preferred carriers. --->
-				<cfset stTrips		= objAirParse.addPreferred(stTrips, arguments.stAccount)>
+				<cfset stTrips		= objAirParse.addPreferred(stTrips)>
 				<!--- <cfdump var="#stTrips#" abort> --->
 				<!--- Add trip id to the list of priced items --->
 				<cfset nTripKey		= getTripKey(stTrips)>

@@ -14,5 +14,5 @@ getUser
 		
 		<cfreturn qUser />
 	</cffunction>
-		
+
 </cfcomponent>

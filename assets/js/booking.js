@@ -23,6 +23,18 @@ function submitCarAvailability (sCategory, sVendor) {
 	$("#sVendor").val(sVendor);
 	$("#carAvailabilityForm").submit();
 }
+/*
+	Shows and hides the manual payment form
+*/
+function showManualCreditCard(type) {
+	var option = $( "#" + type + "FOP_ID" ).val();
+	if (option == 'Manual') {
+		$( "#" + type + "Manual" ).show();
+	}
+	else {
+		$( "#" + type + "Manual" ).hide();
+	}
+}
 function filterAir() {
 																			//console.log('start');
 	var classy = $( "#ClassY:checked" ).val();

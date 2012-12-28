@@ -3,6 +3,7 @@
 <cfoutput>	
 	#View('hotel/filter')#
 	#View('hotel/map')#
+	<a href="#buildURL('hotel.skip?Search_ID=#rc.nSearchID#')#">Continue without hotel</a>
 
 	<form method="post" action="#buildURL('hotel.search')#&Search_ID=#rc.nSearchID#" id="hotelForm">
 		<input type="hidden" name="bSelect" value="1">

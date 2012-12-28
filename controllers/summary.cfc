@@ -13,6 +13,10 @@ default
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 		
+		<cfif NOT StructKeyExists(session.searches[url.Search_ID], 'stTravelers')>
+			<cfset session.searches[url.Search_ID].stTravelers = {}>
+		</cfif>
+
 		<cfset variables.fw.service('summary.determinFees', 'stFees')>
 		<cfset variables.fw.service('summary.getOutOfPolicy', 'qOutOfPolicy')>
 		<cfif session.Acct_ID EQ 235>
