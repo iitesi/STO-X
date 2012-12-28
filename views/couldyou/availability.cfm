@@ -1,15 +1,14 @@
-
 <script type="text/javascript">
-function couldYouCar(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
+function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
 	$.ajax({type:"POST",
-		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
-		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights,
+		url:"services/couldyou.cfc?method=doCarPriceCouldYou",
+		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
-			var HotelTotal = '$' + data;
-			$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
+			var CarTotal = '$' + data;
+			$("#Air"+startdate).append('<a href="##" title="Car - '+CarTotal+'">'+viewDay+'</a>' + ' Car - ' + CarTotal + '<br />');
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -21,17 +20,19 @@ function couldYouCar(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
 }
 </script>
 
-<!--- <cfdump eval=session.searches[url.Search_ID].CouldYou> --->
-
-<cfset AirSelection = session.searches[url.Search_ID].stItinerary.Air />
-<cfset OriginDate = AirSelection.Depart>
+<cfif session.searches[url.Search_ID].bAir EQ 1>
+	<cfset AirSelection = session.searches[url.Search_ID].stItinerary.Air />
+	<cfset OriginDate = AirSelection.Depart>
+</cfif>
  
-<cfset HotelSelection = session.searches[url.Search_ID].stItinerary.Hotel />
-<!--- <cfdump eval=HotelSelection> --->
-<cfset HotelChain = session.searches[rc.Search_ID].stHotels[HotelSelection.HotelID].HotelChain />
+<cfif session.searches[url.Search_ID].bCar EQ 1>
+	<cfset HotelSelection = session.searches[url.Search_ID].stItinerary.Hotel /> 	
+	<cfset HotelChain = session.searches[rc.Search_ID].stHotels[HotelSelection.HotelID].HotelChain />
+</cfif>
 
-<cfset CarSelection = session.searches[url.Search_ID].stItinerary.Car />
-<!--- <cfdump eval=CarSelection> --->
+<cfif session.searches[url.Search_ID].bHotel EQ 1>
+	<cfset CarSelection = session.searches[url.Search_ID].stItinerary.Car />
+</cfif>
 
 <cfset TableSize = 1200 />
 <cfoutput>
@@ -82,6 +83,7 @@ function couldYouCar(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
 								<script type="text/javascript">
 								couldYouAir(#url.Search_ID#, '#AirSelection.nTrip#', '#AirSelection.Class#', '#AirSelection.Ref#', '#datediff("d",DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"m/d/yyyy"),DateFormat(OriginDate,"m/d/yyyy"))#', '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#',#viewDay#);
 								couldYouHotel(#url.Search_ID#, '#HotelSelection.HotelID#', '#HotelSelection.HotelChain#', #viewDay#, #HotelSelection.Nights#, '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#');
+								/*couldYouCar(#url.Search_ID#, '#CarSelection.VendorCode#', '#CarSelection.VehicleClass##CarSelection.Category#', #viewDay#, #HotelSelection.Nights#, '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#');*/
 								</script>
 							</cfif>
 						</cfif>&nbsp;</td>
@@ -99,14 +101,16 @@ function couldYouCar(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
 
 	</tr>
 	</table>
+</cfoutput>
 
-
-	<!--- 
-	<table width="400px">
+	
+<cfoutput>
+	<!--- <table width="800px">
 	<tr>
 		<td>Date</td>
 		<td>Air</td>
 		<td>Hotel</td>
+		<td>Car</td>
 		<td>Total</td>
 	</tr>
 	<cfloop from="-7" to="7" index="AddDays">
@@ -115,29 +119,31 @@ function couldYouCar(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
 			<cfif AddDays NEQ 0>
 				<cfinvoke component="booking.services.couldyou" method="doAirPriceCouldYou" nSearchID="#url.Search_ID#" nTrip="#AirSelection.nTrip#" sCabin="#AirSelection.Class#" bRefundable="#AirSelection.Ref#" nTripDay="#AddDays#" returnvariable="nTotalPrice">
 				<cfinvoke component="booking.services.couldyou" method="doHotelPriceCouldYou" nSearchID="#url.Search_ID#" nHotelCode="#HotelSelection.HotelID#" sHotelChain="#HotelChain#" nTripDay="#AddDays#" nNights="#HotelSelection.Nights#" returnvariable="nhotelprice">
+				<cfinvoke component="booking.services.couldyou" method="doCarPriceCouldYou" nSearchID="#url.Search_ID#" nTripDay="#AddDays#" nNights="#HotelSelection.Nights#" sCarChain="#CarSelection.VendorCode#" sCarType="#CarSelection.VehicleClass##CarSelection.Category#" returnvariable="nCarPrice">
 				<td>#nTotalPrice#</td>
 				<td>#nhotelprice#</td>
-				<td>#nTotalPrice + nhotelprice#</td>
+				<td>#nCarPrice#</td>
+				<td>#isNumeric(nTotalPrice) ? nTotalPrice + nhotelprice + nCarPrice : nTotalPrice#</td>
 			<cfelse>
 				<td>#AirSelection.Total#</td>
 				<td>#HotelSelection.TotalRate#</td>
+				<td>#Mid(CarSelection.EstimatedTotalAmount,4)#</td>
 				<td>#AirSelection.Total + HotelSelection.TotalRate#</td>
 			</cfif>
 		</tr>
 	</cfloop>
 	</table>
-	--->
-
-	<!--- <cfloop from="-7" to="7" index="AddDays">
+ --->
+	<cfloop from="-7" to="7" index="AddDays">
 		#DateFormat(DateAdd('d',AddDays,OriginDate),'yyyymmdd')#<cfif AddDays EQ 0> - ORIGINAL</cfif>
 			<cfif AddDays NEQ 0>
 				<cfinvoke component="booking.services.couldyou" method="doCarPriceCouldYou" nSearchID="#url.Search_ID#" nTripDay="#AddDays#" nNights="#HotelSelection.Nights#" 
 				sCarChain="#CarSelection.VendorCode#" sCarType="#CarSelection.VehicleClass##CarSelection.Category#"
-				returnvariable="nTotalPrice">
-				<!--- #nTotalPrice# --->
+				returnvariable="nCarPrice">
+				<cfdump eval=nCarPrice><br />
 			<cfelse>
-				car total
+				car total<br />
 			</cfif>
 		</tr>
-	</cfloop> --->
+	</cfloop>
 </cfoutput>

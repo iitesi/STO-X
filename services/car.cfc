@@ -8,6 +8,8 @@ selectCar
 		<cfargument name="sCategory">
 		<cfargument name="sVendor">
 
+		<!--- Initialize or overwrite the CouldYou car section --->
+		<cfset session.searches[arguments.nSearchID].CouldYou.Car = {} />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Car = session.searches[arguments.nSearchID].stCars[arguments.sCategory][arguments.sVendor]>
 		<cfset session.searches[arguments.nSearchID].stItinerary.Car.VendorCode = arguments.sVendor>
@@ -26,28 +28,27 @@ selectCar
 			<cfset local.stThreads = {}>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
 			<cfif qCDNumbers.RecordCount>
-				<cfset stThreads.stCorporateRates = ''>
-				<cfthread name="stCorporateRates" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
-					<cfset local.sMessage	= prepareSoapHeader(nSearchID, qCDNumbers)>
+				<cfset stThreads['stCorporateRates'&arguments.nCouldYou] = ''>
+				<cfthread name="stCorporateRates#arguments.nCouldYou#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
+					<cfset local.sMessage		= prepareSoapHeader(nSearchID, qCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>
 				</cfthread>
 			</cfif>
-			<cfset stThreads.stPublicRates = ''>
-			<cfthread name="stPublicRates" nSearchID="#arguments.nSearchID#">
-				<cfset local.sMessage	= prepareSoapHeader(nSearchID)>
+			<cfset stThreads['stPublicRates'&arguments.nCouldYou] = ''>
+			<cfthread name="stPublicRates#arguments.nCouldYou#" nSearchID="#arguments.nSearchID#">
+				<cfset local.sMessage		= prepareSoapHeader(nSearchID)>
 				<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 				<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 				<cfset thread.stCars  	= parseCars(aResponse, 0)>
 			</cfthread>
 			
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
-			<!--- <cfdump var="#cfthread#" abort> --->
 			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
-				<cfset local.stCars = mergeCars(stCorporateRates.stCars, stPublicRates.stCars)>
+				<cfset local.stCars = mergeCars(cfthread['stCorporateRates'&arguments.nCouldYou].stCars, cfthread['stPublicRates'&arguments.nCouldYou].stCars)>
 			<cfelse>
-				<cfset local.stCars = stPublicRates.stCars>
+				<cfset local.stCars = cfthread['stPublicRates'&arguments.nCouldYou].stCars>
 			</cfif>
 
 			<cfset stCars = checkPolicy(stCars, arguments.nSearchID)>

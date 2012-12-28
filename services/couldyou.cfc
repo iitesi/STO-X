@@ -87,8 +87,8 @@ doCarPriceCouldYou
 		<cfset local.CouldYouDate = DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Car,CouldYouDate)>
-			<cfinvoke component="booking.services.car" method="doAvailability" nSearchID="#arguments.nSearchID#" nCouldYou="#arguments.nTripDay#" returnvariable="CarAvailability">
-			<cfset CarStruct = CarAvailability[arguments.sCarType][arguments.sCarChain] />
+			<cfinvoke component="booking.services.car" method="doAvailability" nSearchID="#arguments.nSearchID#" nCouldYou="#arguments.nTripDay#" returnvariable="CarAvailability">			
+			<cfset local.CarStruct = CarAvailability[arguments.sCarType][arguments.sCarChain] />
 			<cfset local.nCarPrice = Mid(CarStruct.EstimatedTotalAmount,4) />
 			<cfset session.searches[nSearchID].CouldYou.Car[CouldYouDate] = nCarPrice />
 		<cfelse>
