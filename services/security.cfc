@@ -46,9 +46,9 @@
 
 			<cfset local.tab = {}>
 			<!--- Search related items --->
-			<cfset tab.bAir = getsearch.Air>
-			<cfset tab.bCar = getsearch.Car>
-			<cfset tab.bHotel = getsearch.Hotel>
+			<cfset tab.bAir = getsearch.Air EQ 1 ? true : false>
+			<cfset tab.bCar = getsearch.Car EQ 1 ? true : false>
+			<cfset tab.bHotel = getsearch.Hotel EQ 1 ? true : false>
 			<cfset tab.sAirType = getsearch.Air_Type>
 			<cfset tab.dDepart = getsearch.Depart_DateTime>
 			<cfset tab.sBookingFor = ''>

@@ -24,20 +24,22 @@ selectCar
 		
 		<cfset StructDelete(session.searches[nSearchID], 'stCars')>
 
+		<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
+
 		<cfif NOT structKeyExists(session.searches[nSearchID], "stCars") OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.stThreads = {}>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
 			<cfif qCDNumbers.RecordCount>
-				<cfset stThreads['stCorporateRates'&arguments.nCouldYou] = ''>
-				<cfthread name="stCorporateRates#arguments.nCouldYou#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
+				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
+				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
 					<cfset local.sMessage		= prepareSoapHeader(nSearchID, qCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>
 				</cfthread>
 			</cfif>
-			<cfset stThreads['stPublicRates'&arguments.nCouldYou] = ''>
-			<cfthread name="stPublicRates#arguments.nCouldYou#" nSearchID="#arguments.nSearchID#">
+			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
+			<cfthread name="stPublicRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#">
 				<cfset local.sMessage		= prepareSoapHeader(nSearchID)>
 				<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 				<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
@@ -46,9 +48,9 @@ selectCar
 			
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
 			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
-				<cfset local.stCars = mergeCars(cfthread['stCorporateRates'&arguments.nCouldYou].stCars, cfthread['stPublicRates'&arguments.nCouldYou].stCars)>
+				<cfset local.stCars = mergeCars(cfthread['stCorporateRates'&nUniqueThreadName].stCars, cfthread['stPublicRates'&nUniqueThreadName].stCars)>
 			<cfelse>
-				<cfset local.stCars = cfthread['stPublicRates'&arguments.nCouldYou].stCars>
+				<cfset local.stCars = cfthread['stPublicRates'&nUniqueThreadName].stCars>
 			</cfif>
 
 			<cfset stCars = checkPolicy(stCars, arguments.nSearchID)>

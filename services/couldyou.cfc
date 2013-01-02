@@ -15,9 +15,9 @@ doAirPriceCouldYou
 		<cfset local.nTripDay = arguments.nTripDay />
 		<cfset local.stTrip = '' />
 		<cfset local.nTotalPrice = 0 />
-		<cfset CouldYouDate = DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart)) />
 
-		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
+		<!--- <cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)> --->
 			<cfinvoke component="booking.services.airprice" method="doAirPrice" nSearchID="#arguments.nSearchID#"
 			nTrip="#arguments.nTrip#" sCabin="#arguments.sCabin#" bRefundable="#arguments.bRefundable#" nCouldYou="#arguments.nTripDay#" returnvariable="nTripKey">			
 
@@ -26,19 +26,14 @@ doAirPriceCouldYou
 					<cfset stTrip = Element.XMLChildren.1.XMLAttributes />
 				  <cfset nTotalPrice = Mid(stTrip.TotalPrice, 4)>
 				</cfif>
-			</cfloop>		
-			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice />
-		<cfelse>
+			</cfloop>
+
+			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice /> <!--- --->
+		<!--- <cfelse>
 			<cfset nTotalPrice = session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
-		</cfif>
+		</cfif>	 --->
 
-		<cfif nTotalPrice EQ 0>
-			<cfset nTotalPrice = 'Flight Does not Operate' />
-		</cfif>
-
-		<cfif isNumeric(nTotalPrice) AND structKeyExists(session.searches[nSearchID].CouldYou.Hotel,CouldYouDate)>
-			<cfset nTotalPrice+=session.searches[nSearchID].CouldYou.Hotel[CouldYouDate] />			
-		</cfif>
+		<cfset nTotalPrice = doTotalPrice(arguments.nSearchID,arguments.nTripDay) />
 		
 		<cfreturn nTotalPrice>
 	</cffunction>
@@ -54,7 +49,7 @@ doHotelPriceCouldYou
 		<cfargument name="nNights">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 
-		<cfset local.CouldYouDate = DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Hotel.CheckIn) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Hotel.CheckIn)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Hotel,CouldYouDate)>
 			<cfinvoke component="booking.services.hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#arguments.nHotelCode#" sHotelChain="#arguments.sHotelChain#" nCouldYou="#arguments.nTripDay#" returnvariable="hotelprice">
@@ -64,11 +59,7 @@ doHotelPriceCouldYou
 			<cfset nhotelprice = session.searches[nSearchID].CouldYou.Hotel[CouldYouDate] />
 		</cfif> 
 		
-		<cfif structKeyExists(session.searches[nSearchID].CouldYou,'Air') AND structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
-			<cfif isNumeric(session.searches[nSearchID].CouldYou.Air[CouldYouDate]) AND session.searches[nSearchID].CouldYou.Air[CouldYouDate] NEQ 0>
-				<cfset nhotelprice+=session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
-			</cfif>
-		</cfif>
+		<cfset nhotelprice = doTotalPrice(arguments.nSearchID,arguments.nTripDay) />
 
 		<cfreturn nhotelprice>
 	</cffunction>
@@ -84,7 +75,7 @@ doCarPriceCouldYou
 		<cfargument name="sCarType">
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
 
-		<cfset local.CouldYouDate = DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Car,CouldYouDate)>
 			<cfinvoke component="booking.services.car" method="doAvailability" nSearchID="#arguments.nSearchID#" nCouldYou="#arguments.nTripDay#" returnvariable="CarAvailability">			
@@ -93,15 +84,55 @@ doCarPriceCouldYou
 			<cfset session.searches[nSearchID].CouldYou.Car[CouldYouDate] = nCarPrice />
 		<cfelse>
 			<cfset nCarPrice = session.searches[nSearchID].CouldYou.Car[CouldYouDate] />
-		</cfif> 
-		
-		<!--- <cfif structKeyExists(session.searches[nSearchID].CouldYou,'Air') AND structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
-			<cfif isNumeric(session.searches[nSearchID].CouldYou.Air[CouldYouDate]) AND session.searches[nSearchID].CouldYou.Air[CouldYouDate] NEQ 0>
-				<cfset nhotelprice+=session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
-			</cfif>
-		</cfif> --->
+		</cfif>
+
+		<cfset nCarPrice = doTotalPrice(arguments.nSearchID,arguments.nTripDay) />
 
 		<cfreturn nCarPrice>
+	</cffunction>
+
+<!---
+doTotalPrice
+--->
+	<cffunction name="doTotalPrice" output="false">
+		<cfargument name="nSearchID">
+		<cfargument name="nTripDay"		default="0">
+
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,session.searches[arguments.nSearchID].stItinerary.Air.Depart)) />
+		<cfset local.bAir 				= session['Searches'][arguments.nSearchID]['bAir'] />
+		<cfset local.bCar 				= session['Searches'][arguments.nSearchID]['bCar'] />
+		<cfset local.bHotel				= session['Searches'][arguments.nSearchID]['bHotel'] />
+
+		<cfset local.aTypes = [] />
+		<cfset bAir ? arrayAppend(aTypes,'Air') : '' />
+		<cfset bCar ? arrayAppend(aTypes,'Car') : '' />
+		<cfset bHotel ? arrayAppend(aTypes,'Hotel') : '' />
+
+		<cfset local.nTypes 			= arrayLen(aTypes) />
+		<cfset local.count 				= 0 />
+		<cfset local.nTotalPrice 	= 0 />
+		<cfloop array="#aTypes#" index="Type">
+			<cfif structKeyExists(session.searches[nSearchID].CouldYou,Type) AND structKeyExists(session.searches[nSearchID].CouldYou[Type],CouldYouDate)>
+				<cfif isNumeric(nTotalPrice)>					
+					<cfif isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
+						<cfset nTotalPrice+=session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />1 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+					<cfelse>
+						<cfset nTotalPrice = session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />2 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+					</cfif>
+				<cfelse>
+					<cfif NOT isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
+						<cfset nTotalPrice&= session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />3 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+					</cfif>
+				</cfif>
+				<cfset count++ />
+			</cfif>
+		</cfloop>
+
+		<cfif nTypes NEQ count>
+			<cfset nTotalPrice = '' />
+		</cfif>
+
+		<cfreturn nTotalPrice />
 	</cffunction>
 	
 </cfcomponent>

@@ -300,7 +300,8 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) 
 		success:function(data) {			
 			var AirTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			AirTotal+=data
-			$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
+			//$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
+			$("#Air"+startdate).html(AirTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -319,8 +320,32 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) 
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
-			var HotelTotal = '$' + data;
-			$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
+			var HotelTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
+			HotelTotal+=data
+			//$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
+			$("#Air"+startdate).html(HotelTotal);
+		},
+		error:function(test, tes, te) {
+			console.log(test);
+			console.log(tes);
+			console.log(te);
+		}
+	});
+	return false;
+}
+
+function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
+	$.ajax({type:"POST",
+		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
+		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights,
+		async: true,
+		dataType: 'json',
+		timeOut: 5000,
+		success:function(data) {
+			var CarTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
+			CarTotal+=data
+			//$("#Air"+startdate).append('<a href="##" title="Car - '+CarTotal+'">'+viewDay+'</a>' + ' Car - ' + CarTotal + '<br />');
+			$("#Air"+startdate).html(CarTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
