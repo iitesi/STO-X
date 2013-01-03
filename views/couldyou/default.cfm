@@ -1,21 +1,28 @@
-<cfdump var="#session.searches[url.Search_ID].CouldYou#">
+<!--- <cfdump var="#session.searches[url.Search_ID].CouldYou#"> --->
+<!--- <cfdump var="#session.searches[url.Search_ID].stItinerary#"> --->
 
+<cfset SelectedTotal = 0 />
+<!--- Air --->
 <cfif session.searches[url.Search_ID].bAir EQ 1>
 	<cfset AirSelection = session.searches[url.Search_ID].stItinerary.Air />
 	<cfset OriginDate = AirSelection.Depart>
+	<cfset SelectedTotal+= AirSelection.Total />
 </cfif>
- 
+<!--- Car --->
 <cfif session.searches[url.Search_ID].bCar EQ 1>
 	<cfset HotelSelection = session.searches[url.Search_ID].stItinerary.Hotel /> 	
 	<cfset HotelChain = session.searches[rc.Search_ID].stHotels[HotelSelection.HotelID].HotelChain />
+	<cfset SelectedTotal+= HotelSelection.TotalRate />
 </cfif>
-
+<!--- Hotel --->
 <cfif session.searches[url.Search_ID].bHotel EQ 1>
 	<cfset CarSelection = session.searches[url.Search_ID].stItinerary.Car />
+	<cfset SelectedTotal+= Mid(CarSelection.EstimatedTotalAmount,4) />
 </cfif>
 
 <cfset TableSize = 1200 />
 <cfoutput>
+	Current Total - #DollarFormat(SelectedTotal)#<br />
 	<table width="#TableSize#px">
 	<tr>
 	
@@ -60,12 +67,12 @@
 						<cfif Start AND viewDay LTE DaysInMonth(calendarDate) AND NOT Done>
 							#viewDay# 
 							<cfset DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy')) />
-							<!--- #CreateDate(Year(calendarDate), Month(calendarDate),viewDay)# --->
+							<cfset viewDate = DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd") />
 							<cfif Len(Trim(tdName))><br />
 								<script type="text/javascript">
-								couldYouAir(#url.Search_ID#, '#AirSelection.nTrip#', '#AirSelection.Class#', '#AirSelection.Ref#', '#datediff("d",DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"m/d/yyyy"),DateFormat(OriginDate,"m/d/yyyy"))#', '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#',#DateDifference#);
-								couldYouHotel(#url.Search_ID#, '#HotelSelection.HotelID#', '#HotelSelection.HotelChain#', #DateDifference#, #HotelSelection.Nights#, '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#');
-								couldYouCar(#url.Search_ID#, '#CarSelection.VendorCode#', '#CarSelection.VehicleClass##CarSelection.Category#', #DateDifference#, #HotelSelection.Nights#, '#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd")#');
+								couldYouAir(#url.Search_ID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);
+								couldYouHotel(#url.Search_ID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);
+								couldYouCar(#url.Search_ID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#, #HotelSelection.Nights#,#viewDate#,#SelectedTotal#);
 								</script>
 							</cfif>
 						</cfif>&nbsp;</td>

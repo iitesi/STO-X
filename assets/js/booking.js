@@ -290,10 +290,10 @@ $(document).ready(function() {
 CouldYou
 */
 
-function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) {
+function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
-		data:"nSearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate,
+		data:"nSearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -301,7 +301,7 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) 
 			var AirTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			AirTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
-			$("#Air"+startdate).append('<br>Air -' + AirTotal);
+			$("#Air"+startdate).html(AirTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -315,7 +315,7 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) 
 function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
-		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights,
+		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -323,7 +323,7 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) 
 			var HotelTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			HotelTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
-			$("#Air"+startdate).append('<br>Hotel -' + HotelTotal);
+			$("#Air"+startdate).html(HotelTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -337,7 +337,7 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) 
 function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
-		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights,
+		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -345,7 +345,7 @@ function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
 			var CarTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			CarTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Car - '+CarTotal+'">'+viewDay+'</a>' + ' Car - ' + CarTotal + '<br />');
-			$("#Air"+startdate).append('<br>Car -' + CarTotal);
+			$("#Air"+startdate).html(CarTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
