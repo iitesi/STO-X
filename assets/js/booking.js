@@ -312,7 +312,7 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,c
 	return false;
 }
 
-function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) {
+function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
 		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
@@ -334,7 +334,7 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) 
 	return false;
 }
 
-function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
+function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
 		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
