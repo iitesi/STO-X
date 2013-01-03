@@ -17,7 +17,7 @@ doAirPriceCouldYou
 		<cfset local.nTotalPrice = 0 />
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,session.searches[nSearchID].stItinerary.Air.Depart)) />
 
-		<!--- <cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)> --->
+		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
 			<cfinvoke component="booking.services.airprice" method="doAirPrice" nSearchID="#arguments.nSearchID#"
 			nTrip="#arguments.nTrip#" sCabin="#arguments.sCabin#" bRefundable="#arguments.bRefundable#" nCouldYou="#arguments.nTripDay#" returnvariable="nTripKey">			
 
@@ -29,9 +29,9 @@ doAirPriceCouldYou
 			</cfloop>
 
 			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice /> <!--- --->
-		<!--- <cfelse>
+		<cfelse>
 			<cfset nTotalPrice = session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
-		</cfif>	 --->
+		</cfif>	
 
 		<cfset nTotalPrice = doTotalPrice(arguments.nSearchID,arguments.nTripDay) />
 		
@@ -115,13 +115,13 @@ doTotalPrice
 			<cfif structKeyExists(session.searches[nSearchID].CouldYou,Type) AND structKeyExists(session.searches[nSearchID].CouldYou[Type],CouldYouDate)>
 				<cfif isNumeric(nTotalPrice)>					
 					<cfif isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
-						<cfset nTotalPrice+=session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />1 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+						<cfset nTotalPrice+=session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
 					<cfelse>
-						<cfset nTotalPrice = session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />2 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+						<cfset nTotalPrice = session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
 					</cfif>
 				<cfelse>
 					<cfif NOT isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
-						<cfset nTotalPrice&= session.searches[nSearchID].CouldYou[Type][CouldYouDate] /><br />3 <cfdump var="#session.searches[nSearchID].CouldYou[Type][CouldYouDate]#">
+						<cfset nTotalPrice&= session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
 					</cfif>
 				</cfif>
 				<cfset count++ />

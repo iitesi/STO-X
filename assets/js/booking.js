@@ -301,7 +301,7 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay) 
 			var AirTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			AirTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
-			$("#Air"+startdate).html(AirTotal);
+			$("#Air"+startdate).append('<br>Air -' + AirTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -323,7 +323,7 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate) 
 			var HotelTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			HotelTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
-			$("#Air"+startdate).html(HotelTotal);
+			$("#Air"+startdate).append('<br>Hotel -' + HotelTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);
@@ -345,7 +345,7 @@ function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate) {
 			var CarTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
 			CarTotal+=data
 			//$("#Air"+startdate).append('<a href="##" title="Car - '+CarTotal+'">'+viewDay+'</a>' + ' Car - ' + CarTotal + '<br />');
-			$("#Air"+startdate).html(CarTotal);
+			$("#Air"+startdate).append('<br>Car -' + CarTotal);
 		},
 		error:function(test, tes, te) {
 			console.log(test);

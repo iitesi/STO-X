@@ -25,48 +25,48 @@ selectCar
 		<cfset StructDelete(session.searches[nSearchID], 'stCars')>
 
 		<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
+		<cfset local.nCouldYou = arguments.nCouldYou />
 
-		<cfif NOT structKeyExists(session.searches[nSearchID], "stCars") OR StructIsEmpty(session.searches[nSearchID].stCars)>
+		<cfif NOT structKeyExists(session.searches[nSearchID], 'stCars') OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.stThreads = {}>
 			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
 			<cfif qCDNumbers.RecordCount>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
-				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#">
-					<cfset local.sMessage		= prepareSoapHeader(nSearchID, qCDNumbers)>
+				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#" nCouldYou="#nCouldYou#">
+					<cfset local.sMessage		= prepareSoapHeader(arguments.nSearchID, nCouldYou, qCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>
 				</cfthread>
-				<cffile action="append" file="c:\file.txt" output="Corporate Rates sMessage" />
-				<cffile action="append" file="c:\file.txt" output="#prepareSoapHeader(nSearchID, qCDNumbers)#" />
 			</cfif>
+			
 			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
-			<cfthread name="stPublicRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#">
-				<cfset local.sMessage		= prepareSoapHeader(nSearchID)>
+			<cfthread name="stPublicRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" nCouldYou="#nCouldYou#">
+				<cfset local.sMessage		= prepareSoapHeader(arguments.nSearchID, arguments.nCouldYou)>
 				<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 				<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 				<cfset thread.stCars  	= parseCars(aResponse, 0)>
 			</cfthread>
 
-			<cffile action="append" file="c:\file.txt" output="Public Rates sMessage" />
-			<cffile action="append" file="c:\file.txt" output="#prepareSoapHeader(nSearchID, qCDNumbers)#" />
-			
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
+			<!--- <cfdump var="#cfthread#" abort> --->
 			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
 				<cfset local.stCars = mergeCars(cfthread['stCorporateRates'&nUniqueThreadName].stCars, cfthread['stPublicRates'&nUniqueThreadName].stCars)>
 			<cfelse>
 				<cfset local.stCars = cfthread['stPublicRates'&nUniqueThreadName].stCars>
 			</cfif>
 
-			<cfset stCars = checkPolicy(stCars, arguments.nSearchID)>
-			<cfset session.searches[nSearchID].stCarVendors = getVendors(stCars)>
-			<cfset session.searches[nSearchID].stCarCategories = getCategories(stCars)>
-			<cfset session.searches[nSearchID].stCars = addJavascript(stCars)>
+			<cfif nCouldYou EQ 0>				
+				<cfset stCars = checkPolicy(stCars, arguments.nSearchID)>
+				<cfset session.searches[nSearchID].stCarVendors = getVendors(stCars)>
+				<cfset session.searches[nSearchID].stCarCategories = getCategories(stCars)>
+				<cfset session.searches[nSearchID].stCars = addJavascript(stCars)>
+			</cfif>
 			<!--- <cfdump var="#stCars#" abort> --->
 		</cfif>
 
 		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
-		<cfset CarAvailability = arguments.nCouldYou NEQ 0 ? stCars : '' />
+		<cfset CarAvailability = nCouldYou NEQ 0 ? stCars : '' />
 		
 		<cfreturn CarAvailability>
 	</cffunction>
@@ -89,12 +89,12 @@ selectCar
 
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="nSearchID" 		required="true">
+		<cfargument name="nCouldYou"		required="false"	default="0">
 		<cfargument name="qCDNumbers" 	required="false"	default="">
 		<cfargument name="bFullRequest" required="false"	default="false">
-		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
-		<cfargument name="nCouldYou"		default="0">
+		<cfargument name="stAccount"		required="false"	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stPolicy" 		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
 		<cfquery name="local.getsearch">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Air_Type
@@ -117,8 +117,6 @@ selectCar
 		</cfif>
 		<cfset session.searches[arguments.nSearchID].dPickUp = dPickUp>
 		<cfset session.searches[arguments.nSearchID].dDropOff = dDropOff>
-		
-		<cffile action="append" file="c:\file.txt" output="#arguments.nCouldYou#" />
 
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
