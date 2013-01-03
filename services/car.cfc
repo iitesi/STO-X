@@ -37,6 +37,8 @@ selectCar
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>
 				</cfthread>
+				<cffile action="append" file="c:\file.txt" output="Corporate Rates sMessage" />
+				<cffile action="append" file="c:\file.txt" output="#prepareSoapHeader(nSearchID, qCDNumbers)#" />
 			</cfif>
 			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
 			<cfthread name="stPublicRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#">
@@ -45,6 +47,9 @@ selectCar
 				<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 				<cfset thread.stCars  	= parseCars(aResponse, 0)>
 			</cfthread>
+
+			<cffile action="append" file="c:\file.txt" output="Public Rates sMessage" />
+			<cffile action="append" file="c:\file.txt" output="#prepareSoapHeader(nSearchID, qCDNumbers)#" />
 			
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
 			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
@@ -112,6 +117,8 @@ selectCar
 		</cfif>
 		<cfset session.searches[arguments.nSearchID].dPickUp = dPickUp>
 		<cfset session.searches[arguments.nSearchID].dDropOff = dDropOff>
+		
+		<cffile action="append" file="c:\file.txt" output="#arguments.nCouldYou#" />
 
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
