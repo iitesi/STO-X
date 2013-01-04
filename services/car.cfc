@@ -19,8 +19,9 @@ selectCar
 	
 <!--- doAvailability --->
 	<cffunction name="doAvailability" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="nSearchID">
 		<cfargument name="nCouldYou"	default="0">
+		<cfargument name="stPolicy"		default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
 		<cfset StructDelete(session.searches[nSearchID], 'stCars')>
 
@@ -29,11 +30,14 @@ selectCar
 
 		<cfif NOT structKeyExists(session.searches[nSearchID], 'stCars') OR StructIsEmpty(session.searches[nSearchID].stCars)>
 			<cfset local.stThreads = {}>
-			<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
-			<cfif qCDNumbers.RecordCount>
+			<cfif NOT StructKeyExists(stPolicy, 'stCDNumbers')>
+				<cfset stPolicy.stCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID)>
+				<cfset application.stPolicies[session.searches[url.Search_ID].nPolicyID].stCDNumbers = stPolicy.stCDNumbers>
+			</cfif>
+			<cfif NOT structIsEmpty(stPolicy.stCDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
-				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" qCDNumbers="#qCDNumbers#" nCouldYou="#nCouldYou#">
-					<cfset local.sMessage		= prepareSoapHeader(arguments.nSearchID, nCouldYou, qCDNumbers)>
+				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" stCDNumbers="#stPolicy.stCDNumbers#">
+					<cfset local.sMessage	= prepareSoapHeader(nSearchID, stCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>
@@ -56,7 +60,7 @@ selectCar
 				<cfset local.stCars = cfthread['stPublicRates'&nUniqueThreadName].stCars>
 			</cfif>
 
-			<cfif nCouldYou EQ 0>				
+			<cfif arguments.nCouldYou EQ 0>
 				<cfset stCars = checkPolicy(stCars, arguments.nSearchID)>
 				<cfset session.searches[nSearchID].stCarVendors = getVendors(stCars)>
 				<cfset session.searches[nSearchID].stCarCategories = getCategories(stCars)>
@@ -77,21 +81,27 @@ selectCar
 		<cfargument name="Acct_ID"		required="false"	default="#session.Acct_ID#">
 		
 		<cfquery name="local.qCDNumbers">
-		SELECT Vendor_Code, CD_Number
+		SELECT Vendor_Code, CD_Number, DB_Number, DB_Type
 		FROM CD_Numbers
 		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
 		AND (Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_numeric" />
 		OR Value_ID IS NULL)
 		</cfquery>
+		<cfset local.stCDNumbers = {}>
+		<cfloop query="qCDNumbers">
+			<cfset stCDNumbers[Vendor_Code].CD = CD_Number>
+			<cfset stCDNumbers[Vendor_Code].DB = DB_Number>
+			<cfset stCDNumbers[Vendor_Code].DBType = DB_Type>
+		</cfloop>
 		
-		<cfreturn qCDNumbers>
+		<cfreturn stCDNumbers>
 	</cffunction>
 
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="nSearchID" 		required="true">
 		<cfargument name="nCouldYou"		required="false"	default="0">
-		<cfargument name="qCDNumbers" 	required="false"	default="">
+		<cfargument name="stCDNumbers" 	required="false"	default="">
 		<cfargument name="bFullRequest" required="false"	default="false">
 		<cfargument name="stAccount"		required="false"	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
@@ -134,10 +144,10 @@ selectCar
 								ReturnDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dDropOff), 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
-								<cfif IsQuery(arguments.qCDNumbers) >
-									<cfloop query="arguments.qCDNumbers">
+								<cfif IsStruct(arguments.stCDNumbers) >
+									<cfloop collection="#arguments.stCDNumbers#" index="local.sVendorCode">
 										<!--- Can have up to 10 --->
-										<veh:RateModifiers DiscountNumber="#arguments.qCDNumbers.CD_Number#" VendorCode="#arguments.qCDNumbers.Vendor_Code#" />
+										<veh:RateModifiers DiscountNumber="#arguments.stCDNumbers[sVendorCode].CD#" VendorCode="#sVendorCode#" />
 									</cfloop>
 								</cfif>
 							</veh:VehicleSearchModifiers>  

@@ -8,16 +8,19 @@
 <!--- 
 HEADING
 --->
-				<td class="bold large" width="150">
-					<strong>FLIGHT</strong>
-					<!--- <span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#">edit</a></span> --->
+				<td colspan="5">
+					<span class="bold large">FLIGHT</span>
+					#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
+					<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
 				</td>
+			</tr>
+			<tr>
 <!--- 
 DETAILS
 --->
 				<cfloop collection="#stItinerary.Air.Groups#" item="nGroup" >
 					<td>
-						#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
+						
 						<table width="300">
 						<cfset stGroup = stItinerary.Air.Groups[nGroup]>
 						<tr>
@@ -40,17 +43,21 @@ DETAILS
 <!--- 
 COST
 --->			
-				<td width="150" class="right">
-					<span class="blue bold large">#DollarFormat(stItinerary.Air.Total)#</span>
+				<td width="100">
+					<cfset bTotalTrip = bTotalTrip + stItinerary.Air.Total>
+					<span class="blue bold large">#DollarFormat(stItinerary.Air.Total)#</span><br>
+					<span class="blue">
+						#(stItinerary.Air.Class EQ 'Y' ? 'Economy' : (stItinerary.Air.Class EQ 'C' ? 'Business' : 'First'))#<br>
+						#(stItinerary.Air.Ref ? 'Refundable' : 'Nonrefundable')#
+					</span>
+
 				</td>
 			</tr>
 			<tr>
-				<td class="bold large" width="150">
-				</td>
-<!--- 
-QUESTIONS
+				<td colspan="#nGroup+1#">
+<!---
+OUT OF POLICY
 --->
-				<td>
 					<!---
 					If they are out of policy
 					AND they want to capture reason codes
@@ -64,6 +71,10 @@ QUESTIONS
 						</cfloop>
 						</select>
 					</cfif>
+
+<!---
+NOT LOWEST FARE
+--->
 					<!---
 					If the fare is higher than the lowest
 					AND they are in policy OR the above drop down isn't showing
@@ -84,66 +95,47 @@ QUESTIONS
 					<cfelseif stItinerary.Air.Total EQ nLowestFare>
 						<input type="hidden" name="LostSavings" value="C">
 					</cfif>
-
-					<!--- <cfif rc.segmentsair.Carrier NEQ 'WN'
-					AND NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E')> --->
-						<p>
-							<select name="Seat" id="Seat">
-							<option value="">GENERAL SEAT SELECTION</option>
-							<option value="A">Aisle</option>
-							<option value="W">Window</option>
-							</select>
-						</p>
-					<!--- cfelse>
-						<input type="hidden" name="Seat#i#" value="">
-					</cfif> --->
-					<p>
-						<select name="Service_Requests" id="Service_Requests">
-						<option value=""></option>
-						<option value="BLND">Blind</option>
-						<option value="DEAF">Deaf</option>
-						<option value="UMNR">Unaccompanied Minor</option>
-						<option value="WCHR">Wheelchair</option>
-						</select>
-					</p>
 <!---
 SPECIAL REQUEST
 --->
-					<!--- <cfif rc.policyair.Policy_AllowRequests EQ 1>
-						<p>
-							<label for="Special_Requests#i#">Special Requests</label>
-							<textarea name="Special_Requests#i#" id="Special_Requests#i#" cols="50" rows="1">#variables.travelers[i]['Special_Requests']#</textarea>
-							<cfif ListFindNoCase(rc.errors, 'Special_Requests#i#', ',')><img src="#application.serverurl#/assets/img/error.png" width="19"></cfif>
-						</p>
-						<cfif rc.processfees GT 0>
-							<p>
-								<label for=""></label>
-								By entering special requests you will be charged
-							</p>
-							<p>
-								<label for=""></label>
-								an offline fee of #DollarFormat(rc.processfees)#.
-							</p>
-						</cfif>
-					</cfif> --->
+					<cfif stPolicy.Policy_AllowRequests EQ 1>
+						<textarea name="Special_Requests" id="Special_Requests" cols="55" rows="1" placeholder="Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#" style="height:15px;"></textarea>
+					</cfif>
+<!---
+GENERAL SEAT ASSIGNMENTS
+--->
+					<cfif NOT ArrayFind(stItinerary.Air.Carriers, 'WN')><!--- NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E') --->
+						<select name="Seats" id="Seats">
+						<option value="">GENERAL SEAT SELECTION</option>
+						<option value="A" <cfif stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
+						<option value="W" <cfif stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
+						</select>
+					<cfelse>
+						<input type="hidden" name="Seat#i#" value="">
+					</cfif>
 <!---
 FREQUENT PROGRAM NUMBER
 --->
-				<cfloop array="#stItinerary.Air.Carriers#" item="sCarrier">
-					<p>
-						<input type="text" name="Air_FF#sCarrier##nTraveler#" id="Air_FF#sCarrier##nTraveler#" size="18" maxlength="20" placeholder="#sCarrier# Frequent Flyer Number">
-					</p>
-				</cfloop>
+					<cfloop array="#stItinerary.Air.Carriers#" item="sCarrier">
+						<strong>#sCarrier# ##</strong>
+						<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20" placeholder="Frequent Flyer Number">
+					</cfloop>
+<!---
+ADDITIONAL REQUESTS
+--->
+					<select name="Service_Requests" id="Service_Requests">
+					<option value="">SPECIAL REQUESTS</option>
+					<option value="BLND">Blind</option>
+					<option value="DEAF">Deaf</option>
+					<option value="UMNR">Unaccompanied Minor</option>
+					<option value="WCHR">Wheelchair</option>
+					</select>
 
 				</td>
-				<td width="150">
+				<td>
 				</td>
 			</tr>
 			</table>
-			<!--- 
-			<cfif NOT bAirPolicy>
-				<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#">Search Flights Inside Policy</a></span>
-			</cfif> --->
 		</div>
 	</cfif>
 </cfoutput>

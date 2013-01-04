@@ -19,6 +19,7 @@ doAirPrice
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip"		required="false"	default="">
 		<cfargument name="nCouldYou"	required="false"	default="0">
+		<cfargument name="bSaveAirPrice"required="false"	default="0">
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -48,6 +49,7 @@ doAirPrice
 		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
+		
 		<!--- <cfdump var="#aResponse#"> --->
 
 		<!--- THIS IS BAD. I NEEDED IT FOR COULD YOU --->
@@ -66,9 +68,12 @@ doAirPrice
 				<cfset stTrips 		= objAirParse.addTotalBagFare(stTrips)>
 				<!--- Mark preferred carriers. --->
 				<cfset stTrips		= objAirParse.addPreferred(stTrips)>
-				<!--- <cfdump var="#stTrips#" abort> --->
 				<!--- Add trip id to the list of priced items --->
 				<cfset nTripKey		= getTripKey(stTrips)>
+				<!--- Save XML if needed - aircreate --->
+				<cfif arguments.bSaveAirPrice>
+					<cfset stTrips[nTripKey].sXML = sResponse>
+				</cfif>	
 				<cfif arguments.nCouldYou EQ 0>
 					<!--- Add trip id to the list of priced items --->
 					<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.nSearchID].stLowFareDetails.stPriced, nTripKey)>
@@ -92,7 +97,7 @@ doAirPrice
 			<cfset session.searches[arguments.nSearchID].stSelected[2] = {}>
 			<cfset session.searches[arguments.nSearchID].stSelected[3] = {}>
 		<cfelse>
-			<cfset nTripKey = aResponse />			
+			<cfset nTripKey = aResponse />	
 		</cfif>
 
 		<cfreturn nTripKey>

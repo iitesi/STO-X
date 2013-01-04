@@ -3,7 +3,7 @@
 <!---
 getUser
 --->
-	<cffunction name="getUser" access="remote" output="false">
+	<cffunction name="getUser" output="false" access="remote" returnformat="plain">
 		<cfargument name="nSearchID"	default="#url.Search_ID#">
 		<cfargument name="Acct_ID" 		default="#session.Acct_ID#">
 		<cfargument name="User_ID" 		default="#session.searches[url.Search_ID].nProfileID#">
@@ -15,9 +15,11 @@ getUser
 		<cfif IsNumeric(arguments.User_ID)
 		AND (NOT StructKeyExists(stTravelers, arguments.nTraveler)
 			OR stTravelers[arguments.nTraveler].User_ID NEQ arguments.User_ID)>
+			<cfset local.stTravelers[arguments.nTraveler] = {}>
 			<!--- Preload general information --->
 			<cfquery name="local.qUser" datasource="Corporate_Production">
-			SELECT Users.First_Name, Users.Middle_Name, Users.NoMiddleName, Users.Last_Name, Personal_Contact_Info.Birthdate, Users.Email, Users.Gender, Biz_Contact_Info.Phone_Number, Personal_Contact_Info.Wireless_Phone, CASE WHEN Airline_Prefs.Window_Aisle = 1 THEN 'W' ELSE 'A' END AS Window_Aisle
+			SELECT Users.First_Name, Users.Middle_Name, Users.NoMiddleName, Users.Last_Name, Personal_Contact_Info.Birthdate, Users.Email, Users.Gender, Biz_Contact_Info.Phone_Number,
+			Personal_Contact_Info.Wireless_Phone, CASE WHEN Airline_Prefs.Window_Aisle = 1 THEN 'W' ELSE 'A' END AS Window_Aisle
 			FROM Users, Users_Accounts
 			LEFT OUTER JOIN Personal_Contact_Info ON Users_Accounts.User_ID = Personal_Contact_Info.User_ID
 			LEFT OUTER JOIN Biz_Contact_Info ON Users_Accounts.User_ID = Biz_Contact_Info.User_ID
@@ -32,7 +34,10 @@ getUser
 			<cfloop list="#qUser.columnList#" index="local.sColumn">
 				<cfset stTravelers[arguments.nTraveler][sColumn] = qUser[sColumn]>
 			</cfloop>
-
+			<cfif stTravelers[arguments.nTraveler].NoMiddleName EQ ''>
+				<cfset stTravelers[arguments.nTraveler].NoMiddleName = 0>
+			</cfif>
+			
 			<!--- Setup all frequent account numbers --->
 			<cfquery name="local.qFFAccounts" datasource="Corporate_Production">
 			SELECT ShortCode, CustType, Name, Acct_Num
@@ -103,10 +108,41 @@ getUser
 			<cfset stTravelers[arguments.nTraveler].Type = (arguments.User_ID NEQ 0 ? 'Profiled' : 'Guest')>
 			
 		</cfif>
-		
 		<cfset session.searches[arguments.nSearchID].stTravelers = stTravelers>
 
-		<cfreturn >
+		<cfreturn serializeJSON(true)>
+	</cffunction>
+
+<!---
+getUser
+--->
+	<cffunction name="getFFs" output="false" access="remote" returnformat="plain">
+		<cfargument name="nSearchID"	default="#url.Search_ID#">
+		<cfargument name="nTraveler" 	default="1">
+
+		<cfset local.stTravelers = session.searches[arguments.nSearchID].stTravelers>
+		<cfset local.stFFAccounts = {}>
+		<cfif StructKeyExists(stTravelers, arguments.nTraveler)
+		AND StructKeyExists(stTravelers[arguments.nTraveler], 'stFFAccounts')>
+			<cfset stFFAccounts = stTravelers[arguments.nTraveler].stFFAccounts>
+		</cfif>
+
+		<cfreturn UCase(serializeJSON(stFFAccounts))>
+	</cffunction>
+
+<!---
+getUser
+--->
+	<cffunction name="getTraveler" output="false" access="remote" returnformat="plain">
+		<cfargument name="nSearchID"	default="#url.Search_ID#">
+		<cfargument name="nTraveler" 	default="1">
+
+		<cfset local.stTraveler = {}>
+		<cfif StructKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
+			<cfset stTraveler = session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler]>
+		</cfif>
+
+		<cfreturn UCase(serializeJSON(stTraveler))>
 	</cffunction>
 	
 <!--- 
@@ -313,149 +349,251 @@ setTravelerForm
 	<cffunction name="setTravelerForm" output="false" access="remote" returnformat="plain">
 		<cfargument name="nSearchID">
 		<cfargument name="nTraveler">
+		<cfargument name="bCollapse">
 		
-		<cfif structKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
+		<cfif StructKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
 			<cfset local.stTraveler = session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler]>
 			<cfset local.qOUs = getOUs(stTraveler.Value_ID)>
 		<cfelse>
 			<cfset local.stTraveler.Type = 'NEW'>
 			<cfset local.stTraveler.User_ID = ''>
+			<cfset local.stTraveler.NoMiddleName = 0>
 			<cfset local.qOUs = getOUs(session.searches[arguments.nSearchID].nValueID)>
 		</cfif>
+		<cfif stTraveler.NoMiddleName EQ ''>
+			<cfset stTraveler.NoMiddleName = 0>
+		</cfif>
+		<cfset local.qAllTravelers = getAllTravelers()>
+		<cfset local.bFormShown = false>
 		<cfsavecontent variable="local.sForm">
 			<cfoutput>
-				<table width="400">
-				<cfset local.qAllTravelers = getAllTravelers()>
-				<tr>
-					<td colspan="2">
+				<table width="500" height="290">
+				<tr height="23">
+					<td>
+						<label for="User_ID">Change Traveler</label>
+					</td>
+					<td>
 						<select name="User_ID" id="User_ID" onChange="changeTraveler(#arguments.nTraveler#);">
 						<option value="">SELECT A TRAVELER</option>
-						<option value="0">GUEST TRAVELER</option>
+						<option value="0" <cfif stTraveler.User_ID EQ 0>selected</cfif>>GUEST TRAVELER</option>
 						<cfloop query="qAllTravelers">
 							<option value="#qAllTravelers.User_ID#" <cfif stTraveler.User_ID EQ qAllTravelers.User_ID>selected</cfif>>#qAllTravelers.Last_Name#/#qAllTravelers.First_Name# #qAllTravelers.Middle_Name#</option>
 						</cfloop>
 						</select>
 					</td>
 				</tr>
-				<cfif stTraveler.Type EQ 'Profile'>
-					<tr>
+				<cfset bNameFilledOutProperly = false>
+				<cfif stTraveler.Type EQ 'Profiled'
+				AND stTraveler.First_Name NEQ ''
+				AND stTraveler.Last_Name NEQ ''
+				AND (stTraveler.Middle_Name NEQ '' OR stTraveler.NoMiddleName)>
+					<cfset bNameFilledOutProperly = true>
+				</cfif>
+				<cfif NOT bNameFilledOutProperly>
+					<tr height="23">
 						<td>
-							<label for="First_Name#arguments.nTraveler#">First Name</label>
+							<label for="First_Name">First Name</label>
 						</td>
 						<td>
-							<input type="text" name="First_Name#arguments.nTraveler#" id="First_Name#arguments.nTraveler#" value="#stTraveler.First_Name#">
+							<cfif (arguments.bCollapse AND stTraveler.First_Name NEQ '') OR stTraveler.Type EQ 'Profiled'>
+								#stTraveler.First_Name#
+								<input type="hidden" name="First_Name" id="First_Name" value="#stTraveler.First_Name#">
+							<cfelse>
+								<input type="text" name="First_Name" id="First_Name" value="#stTraveler.First_Name#">
+								<cfset local.bFormShown = true>
+							</cfif>
 						</td>
 					</tr>
-					<tr>
+					<tr height="23">
 						<td>
-							<label for="Middle_Name#arguments.nTraveler#">Middle Name</label>
+							<label for="Middle_Name">Middle Name</label>
 						</td>
 						<td>
-							<input type="text" name="Middle_Name#arguments.nTraveler#" id="Middle_Name#arguments.nTraveler#" value="#stTraveler.Middle_Name#">
+							<cfif (arguments.bCollapse AND (stTraveler.Middle_Name NEQ '' OR stTraveler.NoMiddleName))
+							OR (stTraveler.Type EQ 'Profiled' AND (stTraveler.Middle_Name NEQ '' OR stTraveler.NoMiddleName))>
+								#stTraveler.Middle_Name# <cfif stTraveler.NoMiddleName><em>No middle name</em></cfif>
+								<input type="hidden" name="Middle_Name" id="Middle_Name" value="#stTraveler.Middle_Name#">
+							<cfelse>
+								<input type="text" name="Middle_Name" id="Middle_Name" value="#stTraveler.Middle_Name#">
+								<input type="checkbox" name="NoMiddleName" value="1" <cfif stTraveler.NoMiddleName>checked</cfif>>
+								No middle name
+								<cfset local.bFormShown = true>
+							</cfif>
 						</td>
 					</tr>
-					<tr>
+					<tr height="23">
 						<td>
-							<label for="Last_Name#arguments.nTraveler#">Last Name</label>
+							<label for="Last_Name">Last Name</label>
 						</td>
 						<td>
-							<input type="text" name="Last_Name#arguments.nTraveler#" id="Last_Name#arguments.nTraveler#" value="#stTraveler.Last_Name#">
+							<cfif (arguments.bCollapse AND stTraveler.Last_Name NEQ '') OR stTraveler.Type EQ 'Profiled'>
+								#stTraveler.Last_Name#
+								<input type="hidden" name="Last_Name" id="Last_Name" value="#stTraveler.Last_Name#">
+							<cfelse>
+								<input type="text" name="Last_Name" id="Last_Name" value="#stTraveler.Last_Name#">
+								<cfset local.bFormShown = true>
+							</cfif>
 						</td>
 					</tr>
 				<cfelse>
-					<input type="hidden" name="First_Name#arguments.nTraveler#" id="First_Name#arguments.nTraveler#" value="#stTraveler.First_Name#">
-					<input type="hidden" name="Middle_Name#arguments.nTraveler#" id="Middle_Name#arguments.nTraveler#" value="#stTraveler.Middle_Name#">
-					<input type="hidden" name="Last_Name#arguments.nTraveler#" id="Last_Name#arguments.nTraveler#" value="#stTraveler.Last_Name#">
+					<input type="hidden" name="First_Name" value="#stTraveler.First_Name#">
+					<input type="hidden" name="Middle_Name" value="#stTraveler.Middle_Name#">
+					<input type="hidden" name="NoMiddleName" value="#stTraveler.NoMiddleName#">
+					<input type="hidden" name="Last_Name" value="#stTraveler.Last_Name#">
 				</cfif>
-				<tr>
+				<tr height="23">
 					<td>
-						<label for="Phone_Number#arguments.nTraveler#">Business Phone</label>
+						<label for="Phone_Number">Business Phone</label>
 					</td>
 					<td>
-						<input type="text" name="Phone_Number#arguments.nTraveler#" id="Phone_Number#arguments.nTraveler#" value="#stTraveler.Phone_Number#">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label for="Wireless_Phone#arguments.nTraveler#">Wireless Phone</label>
-					</td>
-					<td>
-						<input type="text" name="Wireless_Phone#arguments.nTraveler#" id="Wireless_Phone#arguments.nTraveler#" value="#stTraveler.Wireless_Phone#">
+						<cfif arguments.bCollapse AND stTraveler.Phone_Number NEQ ''>
+							#stTraveler.Phone_Number#
+							<input type="hidden" name="Phone_Number" id="Phone_Number" value="#stTraveler.Phone_Number#">
+						<cfelse>
+							<input type="text" name="Phone_Number" id="Phone_Number" value="#stTraveler.Phone_Number#">
+							<cfset local.bFormShown = true>
+						</cfif>
 					</td>
 				</tr>
-				<tr>
+				<tr height="23">
 					<td>
-						<label for="Email#arguments.nTraveler#">Email</label>
+						<label for="Wireless_Phone">Wireless Phone</label>
 					</td>
 					<td>
-						<input type="text" name="Email#arguments.nTraveler#" id="Email#arguments.nTraveler#" value="#stTraveler.Email#">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label for="CCEmail#arguments.nTraveler#">CC Emails</label>
-					</td>
-					<td>
-						<input type="text" name="CCEmail#arguments.nTraveler#" id="CCEmail#arguments.nTraveler#" value="#stTraveler.CCEmail#">
+						<cfif arguments.bCollapse AND stTraveler.Wireless_Phone NEQ ''>
+							#stTraveler.Wireless_Phone#
+							<input type="hidden" name="Wireless_Phone" id="Wireless_Phone" value="#stTraveler.Wireless_Phone#">
+						<cfelse>
+							<input type="text" name="Wireless_Phone" id="Wireless_Phone" value="#stTraveler.Wireless_Phone#">
+							<cfset local.bFormShown = true>
+						</cfif>
 					</td>
 				</tr>
-				<tr>
+				<tr height="23">
 					<td>
-						<label for="Month#nTraveler#">Birthday</label>
+						<label for="Email">Email</label>
 					</td>
 					<td>
-						<select name="Month#arguments.nTraveler#" id="Month#arguments.nTraveler#">
-						<option value=""></option>
-						<cfloop from="1" to="12" index="i">
-							<option value="#i#" <cfif IsDate(stTraveler.Birthdate) AND Month(stTraveler.Birthdate) EQ i>selected</cfif>>#MonthAsString(i)#</option>
-						</cfloop>
-						</select>
-						<select name="Day#nTraveler#">
-						<option value=""></option>
-						<cfloop from="1" to="31" index="i">
-							<option value="#i#" <cfif IsDate(stTraveler.Birthdate) AND Day(stTraveler.Birthdate) EQ i>selected</cfif>>#i#</option>
-						</cfloop>
-						</select>
-						<select name="Year#nTraveler#">
-						<option value=""></option>
-						<cfloop from="#Year(Now())-100#" to="#Year(Now())#" index="i">
-							<option value="#i#" <cfif IsDate(stTraveler.Birthdate) AND Year(stTraveler.Birthdate) EQ i>selected</cfif>>#i#</option>
-						</cfloop>
-						</select>
+						<cfif arguments.bCollapse AND stTraveler.Email NEQ ''>
+							#stTraveler.Email#
+							<input type="hidden" name="Email" id="Email" value="#stTraveler.Email#">
+						<cfelse>
+							<input type="text" name="Email" id="Email" value="#stTraveler.Email#" size="50">
+							<cfset local.bFormShown = true>
+						</cfif>
 					</td>
 				</tr>
-				<tr>
+				<tr height="23">
 					<td>
-						<label for="Gender#arguments.nTraveler#">Gender</label>
+						<label for="CCEmail">CC Emails</label>
 					</td>
 					<td>
-						<select name="Gender#arguments.nTraveler#" id="Gender#arguments.nTraveler#">
-						<option value="M" <cfif stTraveler.Gender EQ 'M'>selected</cfif>>Male</option>
-						<option value="F" <cfif stTraveler.Gender EQ 'F'>selected</cfif>>Female</option>
-						</select>
+						<cfif arguments.bCollapse AND stTraveler.CCEmail NEQ ''>
+							#stTraveler.CCEmail#
+							<input type="hidden" name="CCEmail" id="CCEmail" value="#stTraveler.CCEmail#">
+						<cfelse>
+							<input type="text" name="CCEmail" id="CCEmail" value="#stTraveler.CCEmail#" size="50">
+							<cfset local.bFormShown = true>
+						</cfif>
 					</td>
 				</tr>
+				<tr height="23">
+					<td>
+						<label for="Month">Birthday</label>
+					</td>
+					<td>
+						<cfif arguments.bCollapse AND IsDate(stTraveler.Birthdate)>
+							#DateFormat(stTraveler.Birthdate, 'm/d/****')#
+							<input type="hidden" name="Month" id="Month" value="#Month(stTraveler.Birthdate)#">
+							<input type="hidden" name="Day" id="Month" value="#Day(stTraveler.Birthdate)#">
+							<input type="hidden" name="Year" id="Year" value="#Year(stTraveler.Birthdate)#">
+						<cfelse>
+							<select name="Month" id="Month">
+							<option value=""></option>
+							<cfloop from="1" to="12" index="i">
+								<option value="#i#" <cfif IsDate(stTraveler.Birthdate) AND Month(stTraveler.Birthdate) EQ i>selected</cfif>>#MonthAsString(i)#</option>
+							</cfloop>
+							</select>
+							<select name="Day">
+							<option value=""></option>
+							<cfloop from="1" to="31" index="i">
+								<option value="#i#" <cfif IsDate(stTraveler.Birthdate) AND Day(stTraveler.Birthdate) EQ i>selected</cfif>>#i#</option>
+							</cfloop>
+							</select>
+							<select name="Year">
+							<option value=""></option>
+							<cfif IsDate(stTraveler.Birthdate)>
+								<option value="****" selected>****</option>
+							</cfif>
+							<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
+								<option value="#i#">#i#</option>
+							</cfloop>
+							</select>
+							<cfset local.bFormShown = true>
+						</cfif>
+					</td>
+				</tr>
+				<tr height="23">
+					<td>
+						<label for="Gender">Gender</label>
+					</td>
+					<td>
+						<cfif arguments.bCollapse AND stTraveler.Gender NEQ ''>
+							#(stTraveler.Gender EQ 'F' ? 'Female' : 'Male')#
+							<input type="hidden" name="Gender" id="Gender" value="#stTraveler.Gender#">
+						<cfelse>
+							<select name="Gender" id="Gender">
+							<option value=""></option>
+							<option value="M" <cfif stTraveler.Gender EQ 'M'>selected</cfif>>Male</option>
+							<option value="F" <cfif stTraveler.Gender EQ 'F'>selected</cfif>>Female</option>
+							</select>
+							<cfset local.bFormShown = true>
+						</cfif>
+					</td>
+				</tr>
+				<!--- <cfdump var="#stTraveler.stOUs#"> --->
 				<cfoutput query="qOUs" group="OU_ID">
-					<tr>
+					<tr height="23">
 						<td>
-							<label for="OU_ID#qOUs.OU_ID##arguments.nTraveler#">#qOUs.OU_Name#</label>
+							<label for="#qOUs.OU_Type##qOUs.OU_Position#">#qOUs.OU_Name#</label><!--- Sort1 OR UDID55 --->
 						</td>
 						<td>
-							<select name="OU_ID#qOUs.OU_ID##arguments.nTraveler#" id="OU_ID#qOUs.OU_ID##arguments.nTraveler#">
-							<option value=""></option>
-							<cfoutput>
-								<option value="#qOUs.Value_Report#" <cfif StructKeyExists(stTraveler.stOUs, qOUs.OU_ID) AND stTraveler.stOUs[qOUs.OU_ID].Value_ID EQ qOUs.Value_ID>selected</cfif>>#qOUs.Value_Display#</option>
-							</cfoutput>
-							</select>
+							<cfif arguments.bCollapse AND StructKeyExists(stTraveler.stOUs, qOUs.OU_ID) AND stTraveler.stOUs[qOUs.OU_ID].Value_ID NEQ ''>
+								#stTraveler.stOUs[qOUs.OU_ID].Value_Display#
+								<input type="hidden" name="#qOUs.OU_Type##qOUs.OU_Position#" id="#qOUs.OU_Type##qOUs.OU_Position#" value="#stTraveler.stOUs[qOUs.OU_ID].Value_ID#">
+							<cfelse>
+								<cfif qOUs.OU_Freeform>
+									<input type="text" name="#qOUs.OU_Type##qOUs.OU_Position#" id="#qOUs.OU_Type##qOUs.OU_Position#" <cfif StructKeyExists(stTraveler.stOUs, qOUs.OU_ID)>value="#stTraveler.stOUs[qOUs.OU_ID].Value_ID#"</cfif> size="#(qOUs.OU_Max GT 20 ? 20 : qOUs.OU_Max+1)#" maxlength="#qOUs.OU_Max#">
+								<cfelse>
+									<select name="#qOUs.OU_Type##qOUs.OU_Position#" id="#qOUs.OU_Type##qOUs.OU_Position#">
+									<option value=""></option>
+									<cfoutput>
+										<option value="#qOUs.Value_Report#" <cfif StructKeyExists(stTraveler.stOUs, qOUs.OU_ID) AND stTraveler.stOUs[qOUs.OU_ID].Value_ID EQ qOUs.Value_ID>selected</cfif>>#qOUs.Value_Display#</option>
+									</cfoutput>
+									</select>
+								</cfif>
+								<cfset local.bFormShown = true>
+							</cfif>
 						</td>
 					</tr>
+					<input type="hidden" name="#qOUs.OU_Type##qOUs.OU_Position#_Required" value="#qOUs.OU_Required#">
 				</cfoutput>
-				<tr>
-					<td colspan="2">
-						<input type="submit" value="Save" onClick="saveTraveler(#nTraveler#);">
-					</td>
-				</tr>
+				<cfif stTraveler.Type EQ 'Profiled' AND bFormShown>
+					<tr height="23">
+						<td colspan="2" align="right">
+							<input type="checkbox" name="bSaveChanges" value="1" checked> Save changes to profile
+						</td>
+					</tr>
+				</cfif>
+				<cfif arguments.bCollapse AND stTraveler.Type EQ 'Profiled'>
+					<tr height="23">
+						<td colspan="2">
+							<a href="##" onClick="setTravelerForm(#nTraveler#, 0);">Edit All Traveler Information</a>
+						</td>
+					</tr>
+				</cfif>
 				</table>
+				<!--- <cfdump var="#stTraveler#"> --->
 			</cfoutput>
 		</cfsavecontent>
 

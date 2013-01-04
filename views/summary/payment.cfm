@@ -2,7 +2,7 @@
 	<div class="summarydiv">
 		<cfset stTraveler 	= (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
 		<cfset sType 		= (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
-		<h2>PAYMENT INFORMATION</h2>
+		<h2 style="width:500px">PAYMENT INFORMATION</h2>
 <!---
 AIR PAYMENT
 --->
@@ -26,7 +26,7 @@ AIR PAYMENT
 				</select>
 			</p>
 			<div id="AirManual" style="display:none">
-				<table width="100%">
+				<table>
 				<tr>
 					<td><label for="AirCC_Code">Card Type</label></td>
 					<td><select name="AirCC_Code" id="AirCC_Code">
@@ -149,6 +149,28 @@ HOTEL PAYMENT
 				</tr>
 				</table>
 			</div>
+		</cfif>
+<!---
+CAR PAYMENT
+--->
+		<cfif bCar>
+			<p>
+				<br><h4>Car Payment</h4>
+				<select name="CarFOP_ID" id="CarFOP_ID">
+				<cfif StructKeyExists(stPolicy, 'stCDNumbers')
+				AND StructKeyExists(stPolicy.stCDNumbers, stItinerary.Car.VendorCode)>
+					<cfset stCD = stPolicy.stCDNumbers[stItinerary.Car.VendorCode]>
+					<cfif stCD.DB NEQ ''>
+						<option value="DB_#stCD.DB#">Direct Bill</option>
+					</cfif>
+					<cfif stCD.CD NEQ ''>
+						<option value="CD_#stCD.CD#">Individual Pay at Counter</option>
+					</cfif>
+				<cfelse>
+					<option>Present Card at Counter</option>
+				</cfif>
+				</select>
+			</p>
 		</cfif>
 	</div>
 </cfoutput>

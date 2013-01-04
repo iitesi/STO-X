@@ -39,7 +39,7 @@ parseSegments
 --->
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"	required="true">
-		2012-12-26T12:02:00.000-08:00
+		
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<!---
@@ -76,6 +76,47 @@ parseSegments
 	</cffunction>
 
 <!---
+parseTripForPurchase
+--->
+	<cffunction name="parseTripForPurchase" output="false">
+		<cfargument name="sXML">
+
+		<cfset local.sXML = XMLParse(arguments.sXML)>
+		<cfset sXML = sXML.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren>
+		<cfset local.stSegments = {}>
+		<cfset local.stPriceSolution = {}>
+		<!--- Move all AirSegment nodes into stSegments --->
+		<cfloop array="#sXML#" index="local.stAirItinerary">
+			<cfif stAirItinerary.XMLName EQ 'air:AirItinerary'>
+				<cfloop array="#stAirItinerary.XMLChildren#" index="local.stAirSegment">
+					<cfif stAirSegment.XMLName EQ 'air:AirSegment'>
+						<!--- Get segment information --->
+						<cfset stSegments[stAirSegment.XMLAttributes.Key] = stAirSegment>
+					</cfif>
+				</cfloop>
+			</cfif>
+		</cfloop>
+		<!--- Get AirPricingSolution node --->
+		<cfloop array="#sXML#" item="local.stAirPriceResult" index="local.nAirPriceResult">
+			<cfif stAirPriceResult.XMLName EQ 'air:AirPriceResult'>
+				<cfset stPriceSolution = stAirPriceResult>
+				<cfloop array="#stPriceSolution.XMLChildren#" item="local.stAirPricingSolution" index="local.nAirPricingSolution">
+					<cfif stAirPricingSolution.XMLName EQ 'air:AirPricingSolution'>
+						<cfloop array="#stAirPricingSolution.XMLChildren#" item="local.stChildren" index="local.nChildren">
+							<cfif stChildren.XMLName EQ 'air:AirSegmentRef'>
+								<!--- Replace the SegmentRef with the air segment details --->
+								<cfset stPriceSolution.XMLChildren[nAirPricingSolution].XMLChildren[nChildren] = stSegments[stChildren.XMLAttributes.Key]>
+							</cfif>
+						</cfloop>
+					</cfif>
+				</cfloop>
+			</cfif>
+		</cfloop>
+
+		<cfreturn stPriceSolution />
+	</cffunction>
+
+<!---
 parseNextReference
 --->
 	<cffunction name="parseNextReference" output="false">
@@ -95,8 +136,8 @@ parseNextReference
 parseTrips
 --->
 	<cffunction name="parseTrips" output="false">
-		<cfargument name="stResponse"	required="true">
-		<cfargument name="stSegments"	required="true">
+		<cfargument name="stResponse"		required="true">
+		<cfargument name="stSegments"		required="true">
 		
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
