@@ -565,3 +565,14 @@ div.checkbox {
 .wingmiddle {
 	background-color:#CCCCCC;
 }
+/*
+HOTEL
+*/
+.calendarDay {
+	vertical-align: text-top;
+	border: 1px solid #E6E9F3;
+	text-align: center;
+	width: 14%;
+	height: 100%;
+	line-height: 100%;
+}

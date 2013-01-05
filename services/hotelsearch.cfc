@@ -469,7 +469,8 @@ selectHotel
 		<cfset local.RoomDescription = session.searches[arguments.nSearchID].stHotels[arguments.nHotelID]['Rooms'][arguments.nRoom] />
 
 		<!--- Initialize or overwrite the CouldYou hotel section --->
-		<cfset session.searches[url.Search_ID].CouldYou.Hotel = {} />
+		<cfset session.searches[arguments.nSearchID].CouldYou.Hotel = {} />
+		<cfset session.searches[arguments.nSearchID]['bHotel'] = true />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Hotel = {
 			HotelID:nHotelID, 

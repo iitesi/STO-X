@@ -175,7 +175,6 @@ function hotelPrice(search_id, hotel, chain) {
 	return false;
 }
 
-
 function displayHotelInfo(e) {
 	if (e.targetType == "pushpin") {
 		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
@@ -286,9 +285,25 @@ $(document).ready(function() {
 	
 });
 
-/*
-CouldYou
-*/
+/* CouldYou */
+
+/* This creates the Total and updates the ID in the DOM. It's the same for all 3 callbacks. */
+function getTotal(data,startdate) {
+	var Total = data['DAY'] + '<br />';
+	if (data['NTOTALPRICE'] != undefined) {
+		Total+= $.isNumeric(data['NTOTALPRICE']) ? '$' : '';
+		Total+=data['NTOTALPRICE'];
+	}
+	$("#Air"+startdate).attr('style','background-color:#' + data['SCOLOR'] + ';');
+	$("#Air"+startdate).html(Total);
+	return false;
+}
+
+function logError(test,tes,te) {
+	console.log(test);
+	console.log(tes);
+	console.log(te);	
+}
 
 function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
 	$.ajax({type:"POST",
@@ -297,16 +312,11 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,c
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
-		success:function(data) {			
-			var AirTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
-			AirTotal+=data
-			//$("#Air"+startdate).append('<a href="##" title="Air - '+AirTotal+'">'+viewDay+'</a>' + ' Air - ' + AirTotal + '<br />');
-			$("#Air"+startdate).html(AirTotal);
+		success:function(data) {
+			getTotal(data,startdate)
 		},
 		error:function(test, tes, te) {
-			console.log(test);
-			console.log(tes);
-			console.log(te);
+			logError(test,tes,te)
 		}
 	});
 	return false;
@@ -320,37 +330,27 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,c
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
-			var HotelTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
-			HotelTotal+=data
-			//$("#Air"+startdate).append('<a href="##" title="Hotel - '+HotelTotal+'">'+viewDay+'</a>' + ' Hotel - ' + HotelTotal + '<br />');
-			$("#Air"+startdate).html(HotelTotal);
+			getTotal(data,startdate)
 		},
 		error:function(test, tes, te) {
-			console.log(test);
-			console.log(tes);
-			console.log(te);
+			logError(test,tes,te)
 		}
 	});
 	return false;
 }
 
-function couldYouCar(search_id,carchain,cartype,viewDay,nights,startdate,currenttotal) {
+function couldYouCar(search_id,carchain,cartype,viewDay,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
-		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
+		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
-			var CarTotal = $.isNumeric(data) ? '$' : ''; //if the value is numeric add a $
-			CarTotal+=data
-			//$("#Air"+startdate).append('<a href="##" title="Car - '+CarTotal+'">'+viewDay+'</a>' + ' Car - ' + CarTotal + '<br />');
-			$("#Air"+startdate).html(CarTotal);
+			getTotal(data,startdate)
 		},
 		error:function(test, tes, te) {
-			console.log(test);
-			console.log(tes);
-			console.log(te);
+			logError(test,tes,te)
 		}
 	});
 	return false;

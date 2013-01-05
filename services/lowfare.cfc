@@ -20,6 +20,7 @@ selectAir
 
 		<!--- Initialize or overwrite the CouldYou air section --->
 		<cfset session.searches[arguments.nSearchID].CouldYou.Air = {} />
+		<cfset session.searches[arguments.nSearchID]['bAir'] = true />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Air = session.searches[arguments.nSearchID].stTrips[arguments.nTrip]>
 		<cfset session.searches[arguments.nSearchID].stItinerary.Air.nTrip = arguments.nTrip>

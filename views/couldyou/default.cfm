@@ -3,18 +3,18 @@
 
 <cfset SelectedTotal = 0 />
 <!--- Air --->
-<cfif session.searches[url.Search_ID].bAir EQ 1>
+<cfif session.searches[url.Search_ID].bAir EQ 1>Air
 	<cfset AirSelection = session.searches[url.Search_ID].stItinerary.Air />
 	<cfset OriginDate = AirSelection.Depart>
 	<cfset SelectedTotal+= AirSelection.Total />
 </cfif>
 <!--- Car --->
-<cfif session.searches[url.Search_ID].bCar EQ 1>
+<cfif session.searches[url.Search_ID].bCar EQ 1>Car
 	<cfset CarSelection = session.searches[url.Search_ID].stItinerary.Car />
 	<cfset SelectedTotal+= Mid(CarSelection.EstimatedTotalAmount,4) />
 </cfif>
 <!--- Hotel --->
-<cfif session.searches[url.Search_ID].bHotel EQ 1>
+<cfif session.searches[url.Search_ID].bHotel EQ 1>Hotel
 	<cfset HotelSelection = session.searches[url.Search_ID].stItinerary.Hotel /> 	
 	<cfset HotelChain = session.searches[rc.Search_ID].stHotels[HotelSelection.HotelID].HotelChain />
 	<cfset SelectedTotal+= HotelSelection.TotalRate />
@@ -22,7 +22,7 @@
 
 <cfset TableSize = 1200 />
 <cfoutput>
-	Current Total - #DollarFormat(SelectedTotal)#<br />
+	<br />Current Total - #DollarFormat(SelectedTotal)#<br />
 	<table width="#TableSize#px">
 	<tr>
 	
@@ -63,19 +63,24 @@
 							<cfset tdName = ' id="Air#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'yyyymmdd')#"' />
 						</cfif>
 						
-						<td valign="top" width="14%" style="border:1px solid ##E6E9F3; text-align:center;"#tdName#>
+						<td class="calendarDay"#tdName#>
 						<cfif Start AND viewDay LTE DaysInMonth(calendarDate) AND NOT Done>
 							#viewDay# 
 							<cfset DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy')) />
 							<cfset viewDate = DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd") />
 							<cfif Len(Trim(tdName))><br />
+								<img src="assets/img/ajax-loader.gif" />
 								<script type="text/javascript">
 								<cfif session.searches[url.Search_ID].bAir EQ 1>couldYouAir(#url.Search_ID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);</cfif>
 								<cfif session.searches[url.Search_ID].bHotel EQ 1>couldYouHotel(#url.Search_ID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>
-								<cfif session.searches[url.Search_ID].bCar EQ 1>couldYouCar(#url.Search_ID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#, #HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>
+								<cfif session.searches[url.Search_ID].bCar EQ 1>couldYouCar(#url.Search_ID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#,#viewDate#,#SelectedTotal#);</cfif>
 								</script>
 							</cfif>
-						</cfif>&nbsp;</td>
+							<!--- Existing trip Start Day --->
+							<cfif DateFormat(OriginDate,'yyyymmdd') EQ viewDate>
+								<br />#DollarFormat(SelectedTotal)#
+							</cfif>
+						</cfif></td>
 						<cfset Done = Start AND viewDay EQ DaysInMonth(calendarDate) ? true : false>
 					</cfloop>
 				</tr>

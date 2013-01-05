@@ -10,6 +10,7 @@ selectCar
 
 		<!--- Initialize or overwrite the CouldYou car section --->
 		<cfset session.searches[arguments.nSearchID].CouldYou.Car = {} />
+		<cfset session.searches[arguments.nSearchID]['bCar'] = true />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.nSearchID].stItinerary.Car = session.searches[arguments.nSearchID].stCars[arguments.sCategory][arguments.sVendor]>
 		<cfset session.searches[arguments.nSearchID].stItinerary.Car.VendorCode = arguments.sVendor>
@@ -36,8 +37,8 @@ selectCar
 			</cfif>
 			<cfif NOT structIsEmpty(stPolicy.stCDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
-				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" stCDNumbers="#stPolicy.stCDNumbers#">
-					<cfset local.sMessage	= prepareSoapHeader(nSearchID, stCDNumbers)>
+				<cfthread name="stCorporateRates#nUniqueThreadName#" nSearchID="#arguments.nSearchID#" stCDNumbers="#stPolicy.stCDNumbers#" nCouldYou="#nCouldYou#">
+					<cfset local.sMessage	= prepareSoapHeader(nSearchID, arguments.nCouldYou, stCDNumbers)>
 					<cfset local.sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.nSearchID)>
 					<cfset local.aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
 					<cfset thread.stCars  	= parseCars(aResponse, 1)>

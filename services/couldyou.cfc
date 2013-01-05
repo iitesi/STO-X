@@ -104,20 +104,21 @@ doTotalPrice
 		<cfargument name="nTripDay"		default="0" />
 		<cfargument name="nTotal" />
 		
-		<cfset local.Search 			= getSearch(arguments.nSearchID) />
+		<cfset local.nSearchID 		= arguments.nSearchID />
+		<cfset local.Search 			= getSearch(nSearchID) />
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
-		<cfset local.bAir 				= session['Searches'][arguments.nSearchID]['bAir'] />
-		<cfset local.bCar 				= session['Searches'][arguments.nSearchID]['bCar'] />
-		<cfset local.bHotel				= session['Searches'][arguments.nSearchID]['bHotel'] />
+		<cfset local.bAir 				= session['Searches'][nSearchID]['bAir'] />
+		<cfset local.bCar 				= session['Searches'][nSearchID]['bCar'] />
+		<cfset local.bHotel				= session['Searches'][nSearchID]['bHotel'] />
 		<cfset local.count 				= 0 />
 		<cfset local.nTotalPrice 	= 0 />
-		<cfset local.aTotalPrice 	= [] />
+		<cfset local.stTotalPrice = {} />
 
 		<cfset local.aTypes = [] />
 		<cfset bAir ? arrayAppend(aTypes,'Air') : '' />
 		<cfset bCar ? arrayAppend(aTypes,'Car') : '' />
 		<cfset bHotel ? arrayAppend(aTypes,'Hotel') : '' />
-		<cfset local.nTypes 			= arrayLen(aTypes) />
+		<cfset local.nTypes = arrayLen(aTypes) />
 
 		<cfloop array="#aTypes#" index="Type">
 			<cfif structKeyExists(session.searches[nSearchID].CouldYou,Type) AND structKeyExists(session.searches[nSearchID].CouldYou[Type],CouldYouDate)>
@@ -135,26 +136,27 @@ doTotalPrice
 				<cfset count++ />
 			</cfif>
 		</cfloop>
-
-		<cfif nTypes NEQ count>
+		<!--- Min Weekday fare - 99CC99 --->
+		<cfif nTypes EQ count>
+			<cfset stTotalPrice.nTotalPrice = nTotalPrice />
+			<cfif isNumeric(nTotalPrice)>
+				<cfif nTotalPrice GTE nTotal>
+					<cfset stTotalPrice.sDifference = 'Higher/Same' />
+					<cfset stTotalPrice.sColor = 'FFCCCC' />
+				<cfelse>
+					<cfset stTotalPrice.sDifference = 'Lower' />
+					<cfset stTotalPrice.sColor = 'A3C8ED' />
+				</cfif>
+			<cfelse>
+				<cfset stTotalPrice.sDifference = 'Not available' />
+				<cfset stTotalPrice.sColor = 'CCCCCC' />
+			</cfif>	
+		<cfelse>
 			<cfset nTotalPrice = '' />
 		</cfif>
+		<cfset stTotalPrice.Day = DateFormat(CouldYouDate,'d') />
 
-		<cfset arrayAppend(aTotalPrice,nTotalPrice) />
-
-		<cfif isNumeric(nTotalPrice)>
-			<cfif nTotalPrice GT nTotal>
-				<cfset arrayAppend(aTotalPrice,'Higher') />
-			<cfelseif nTotalPrice EQ nTotal>
-				<cfset arrayAppend(aTotalPrice,'Same') />
-			<cfelse>
-				<cfset arrayAppend(aTotalPrice,'Lower') />
-			</cfif>
-		<cfelse>
-			<cfset arrayAppend(aTotalPrice,'Not available') />
-		</cfif>
-
-		<cfreturn aTotalPrice />
+		<cfreturn stTotalPrice />
 	</cffunction>
 	
 <!--- getsearch --->
