@@ -17,7 +17,6 @@ init
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
 		<cfset local.nSearchID 		= arguments.nSearchID />
-
 		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID) />
 		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, nSearchID) />
 		<cfset local.aResponse 		= formatResponse(sResponse) />
@@ -42,19 +41,22 @@ init
 		<cfset stHotels = checkPolicy(stHotels, nSearchID, stPolicy, stAccount) />
 		<cfset local.stHotels 		= HotelInformationQuery(stHotels, nSearchID) /><!--- add signature_image, latitude and longitude --->
 
+		<cfset local.sHotelChain = session.searches[nSearchID].stHotels[sHotel].HotelChain />
 		<cfset local.aThreads = [] />
    	<cfset local.count = 0 />
 		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<!--- <cfthread name="#sHotel#"> --->
-					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#session.searches[nSearchID].stHotels[sHotel].HotelChain#" returnvariable="HotelPrices" />
+				<!--- <cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#"> --->
+					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#" returnvariable="HotelPrices" />
 				<!--- </cfthread> --->
 				<cfset arrayAppend(aThreads,sHotel)>
 				<cfset count++ />
+			<cfelse>
+				<cfbreak />
 			</cfif>
 		</cfloop>
-		<!--- <cfthread action="join" name="#arraytoList(aThreads)#" />
-		<cfdump var="#cfthread#" abort> --->
+		<!--- <cfthread action="join" name="#arraytoList(aThreads)#" /> --->
+		<!--- <cfdump var="#cfthread#" abort> --->
 
 		<cfreturn />
 	</cffunction>

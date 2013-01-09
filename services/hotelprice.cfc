@@ -25,8 +25,9 @@
 			<cfset local.RoomDescriptions = structKeyList(stRates,'|') /><!--- Need to use | as delimiter because hotel names have , --->
 			<cfset local.LowRate = 10000 />
 			<cfloop list="#RoomDescriptions#" index="local.HotelDesc" delimiters="|">
-				<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
-				<!--- <cfdump var="#stRates[HotelDesc]['HotelRate']['BaseRate']#"> --->
+				<cfif structKeyExists(stRates[HotelDesc].HotelRate,'BaseRate')>
+					<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
+				</cfif>
 			</cfloop>
 		<cfelse>
 			<cfset local.LowRate = 'Sold Out' />
@@ -171,9 +172,10 @@
 						Commission : '',
 						CancelPolicyExist : '',
 						MealPlanExist : '',
-						RateChangeIndicator : ''
+						RateChangeIndicator : '',
+						HotelRate : {}
 					} />
-
+					
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">	
 						<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
 							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes = sHotelRate.XMLAttributes.Name EQ 'Total Includes' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes />
@@ -191,7 +193,6 @@
 							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.EffectiveRate = sHotelRate.XMLAttributes.EffectiveDate />
 							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.ExpireRate = sHotelRate.XMLAttributes.ExpireDate />
 						</cfif>
-
 					</cfloop>
 				</cfif>
 
