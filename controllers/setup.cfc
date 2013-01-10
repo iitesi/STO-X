@@ -13,6 +13,9 @@
 		<cfif NOT StructKeyExists(application, 'objUAPI')>
 			<cfset variables.fw.service('setup.loadObjUAPI', 'void')>
 		</cfif>
+		<!--- <cfif NOT StructKeyExists(application, 'objAirPrice')> --->
+			<cfset variables.fw.service('setup.loadObjects', 'void')>
+		<!--- </cfif> --->
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>
 			<cfset variables.fw.service('setup.setServerURL', 'void')>
 		</cfif>

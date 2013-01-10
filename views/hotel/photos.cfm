@@ -1,5 +1,4 @@
-<cfinvoke component="services.hotelphotos" method="doHotelPhotoGallery" nSearchID="#url.Search_ID#" nHotelCode="#PropertyID#" sHotelChain="#HotelChain#" />
-
+<cfset application.objHotelPhotos.doHotelPhotoGallery(url.Search_ID,PropertyID,HotelChain) />
 <cfset aHotelPhotos = session.searches[url.Search_ID].stHotels[PropertyID].aHotelPhotos />
 
 <cfoutput>

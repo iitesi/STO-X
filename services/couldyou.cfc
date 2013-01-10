@@ -19,8 +19,7 @@ doAirPriceCouldYou
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',arguments.nTripDay,Search.Depart_DateTime)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
-			<cfinvoke component="booking.services.airprice" method="doAirPrice" nSearchID="#arguments.nSearchID#"
-			nTrip="#arguments.nTrip#" sCabin="#arguments.sCabin#" bRefundable="#arguments.bRefundable#" nCouldYou="#arguments.nTripDay#" returnvariable="nTripKey">			
+			<cfset nTripKey = application.objAirPrice.doAirPrice(arguments.nSearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
 
 			<cfloop array="#nTripKey#" index="Element">
 				<cfif Element.xmlName EQ 'air:AirPriceResult'>
@@ -29,7 +28,7 @@ doAirPriceCouldYou
 				</cfif>
 			</cfloop>
 
-			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice /> <!--- --->
+			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice />
 		<cfelse>
 			<cfset nTotalPrice = session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
 		</cfif>	
@@ -55,7 +54,7 @@ doHotelPriceCouldYou
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Hotel,CouldYouDate)>
-			<cfinvoke component="booking.services.hotelprice" method="doHotelPrice" nSearchID="#arguments.nSearchID#" nHotelCode="#arguments.nHotelCode#" sHotelChain="#arguments.sHotelChain#" nCouldYou="#arguments.nTripDay#" returnvariable="hotelprice">
+			<cfset hotelprice = application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain,arguments.nHotelCode) />
 			<cfset local.nhotelprice = hotelprice[1] * arguments.nNights />
 			<cfset session.searches[nSearchID].CouldYou.Hotel[CouldYouDate] = nhotelprice />
 		<cfelse>
@@ -83,7 +82,7 @@ doCarPriceCouldYou
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Car,CouldYouDate)>
-			<cfinvoke component="booking.services.car" method="doAvailability" nSearchID="#arguments.nSearchID#" nCouldYou="#arguments.nTripDay#" returnvariable="CarAvailability">			
+			<cfset CarAvailability = application.objCar.doAvailability(arguments.nSearchID,arguments.nTripDay) />
 			<cfset local.CarStruct = CarAvailability[arguments.sCarType][arguments.sCarChain] />
 			<cfset local.nCarPrice = Mid(CarStruct.EstimatedTotalAmount,4) />
 			<cfset session.searches[nSearchID].CouldYou.Car[CouldYouDate] = nCarPrice />
@@ -152,7 +151,7 @@ doTotalPrice
 				<cfset stTotalPrice.sColor = 'CCCCCC' />
 			</cfif>	
 		<cfelse>
-			<cfset nTotalPrice = '' />
+			<cfset nTotalPrice = '<img src="assets/img/ajax-loader.gif" />' /><!--- return the loading image if it's not completed --->
 		</cfif>
 		<cfset stTotalPrice.Day = DateFormat(CouldYouDate,'d') />
 

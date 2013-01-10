@@ -11,7 +11,7 @@
 	</cfloop>		
 </cfif>
 
-<cfinvoke component="services.hoteldetails" method="doHotelDetails" nSearchID="#url.Search_ID#" nHotelCode="#PropertyID#" sHotelChain="#HotelChain#" sRatePlanType="#RoomRatePlanType#" returnvariable="HotelDetails">
+<cfset HotelDetails = application.objHotelDetails.doHotelDetails(url.Search_ID,PropertyID,HotelChain,RoomRatePlanType) />
 
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">

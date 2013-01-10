@@ -1,5 +1,4 @@
-<!--- call the hotelrooms component --->
-<cfinvoke component="services.hotelrooms" method="getRooms" nSearchID="#Search_ID#" nHotelCode="#PropertyID#" returnvariable="rates">
+<cfset rates = application.objHotelRooms.getRooms(url.Search_ID,PropertyID) />
 
 <div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">
 <table width="600px">
