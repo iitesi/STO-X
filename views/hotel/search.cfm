@@ -75,7 +75,7 @@
 							</cfif>
 							</table>
 						</td>
-						<td class="fares" align="right" id="checkrates#sHotel#">
+						<td class="fares" align="center" id="checkrates#sHotel#">
 
 							<cfif NOT stHotel.RoomsReturned>
 								<script type="text/javascript">
@@ -84,12 +84,11 @@
 								<img src="assets/img/ajax-loader.gif" />
 							<cfelse>
 								<cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
-								<!--- #stHotel.Policy#<br /> --->
 								#RateText#
-								<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">#RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out'#</button></a>
+								<cfset RateText = RateText NEQ 'Sold Out' ? 'See Rooms' : 'Sold Out' />
+								<a href="?action=hotel.popup&sDetails=Rooms&#sURL#" class="overlayTrigger"><button type="button" class="textButton">#RateText#</button></a>
 							</cfif>	
 							<!--- <a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br> --->
-
 						</td>
 					</tr>
 					</table>

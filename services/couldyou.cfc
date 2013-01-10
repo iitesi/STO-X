@@ -149,9 +149,7 @@ doTotalPrice
 			<cfelse>
 				<cfset stTotalPrice.sDifference = 'Not available' />
 				<cfset stTotalPrice.sColor = 'CCCCCC' />
-			</cfif>	
-		<cfelse>
-			<cfset nTotalPrice = '<img src="assets/img/ajax-loader.gif" />' /><!--- return the loading image if it's not completed --->
+			</cfif>
 		</cfif>
 		<cfset stTotalPrice.Day = DateFormat(CouldYouDate,'d') />
 

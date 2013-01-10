@@ -157,7 +157,7 @@ function hotelPrice(search_id, hotel, chain) {
 			var Policies = data[3];
 			var PreferredVendor = data[4];
 			var sURL = 'Search_ID='+search_id+'&PropertyID='+hotel+'&RoomRatePlanType=&HotelChain='+chain;
-			$("#checkrates"+hotel).html('<a href="?action=hotel.popup&sDetails=Rooms&'+sURL+'" class="overlayTrigger"><button type="button" class="textButton">See Rooms</button></a>');
+			$("#checkrates"+hotel).html(Rate + '<a href="?action=hotel.popup&sDetails=Rooms&'+sURL+'" class="overlayTrigger"><button type="button" class="textButton">See Rooms</button></a>');
 			// if it's Sold Out overwrite existing html with the Sold Out message
 			if (Rate == 'Sold Out') {
 				$("#checkrates"+hotel).html(Rate);
@@ -287,15 +287,15 @@ $(document).ready(function() {
 
 /* CouldYou */
 
-/* This creates the Total and updates the ID in the DOM. It's the same for all 3 callbacks. */
+/* This creates the Total and updates the ID in the DOM if a struct was returned. It's the same for all 3 callbacks. */
 function getTotal(data,startdate) {
-	var Total = data['DAY'] + '<br />';
 	if (data['NTOTALPRICE'] != undefined) {
+		var Total = data['DAY'] + '<br />';
 		Total+= $.isNumeric(data['NTOTALPRICE']) ? '$' : '';
 		Total+=data['NTOTALPRICE'];
+		$("#Air"+startdate).attr('style','background-color:#' + data['SCOLOR'] + ';');
+		$("#Air"+startdate).html(Total);
 	}
-	$("#Air"+startdate).attr('style','background-color:#' + data['SCOLOR'] + ';');
-	$("#Air"+startdate).html(Total);
 	return false;
 }
 

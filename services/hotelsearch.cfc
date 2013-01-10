@@ -37,10 +37,12 @@
    	<cfset local.count = 0 />
 		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#">
-					<cfset application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain) />
-				</cfthread>
-				<cfset arrayAppend(aThreads,sHotel)>
+				<cfif NOT session.searches[nSearchID].stHotels[sHotel]['RoomsReturned']><!--- if rooms were already returned, don't check again --->
+					<cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#">
+						<cfset application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain) />
+					</cfthread>
+					<cfset arrayAppend(aThreads,sHotel)>					
+				</cfif>
 				<cfset count++ />
 			<cfelse>
 				<cfbreak />
