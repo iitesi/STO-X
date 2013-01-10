@@ -106,9 +106,10 @@
 		<cfif arguments.nCouldYou NEQ 0>
 			<cfset local.bSessionStorage = false />
 		</cfif>
+		<cfset local.httpname = 'http'&arguments.nHotelCode /><!--- need a unique name for each result --->
 
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID],nHotelCode)>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="#httpname#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
@@ -118,6 +119,7 @@
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
 			
+			<cfset cfhttp.filecontent = variables[httpname].filecontent />
 			<cfset session.searches[nSearchID][nHotelCode] = cfhttp.filecontent />
 		<cfelse>
 			<cfset cfhttp.filecontent = session.searches[nSearchID][nHotelCode] />
@@ -153,7 +155,7 @@
 					<cfset RoomRatePlanType = structKeyExists(sHotelPriceResult.XMLAttributes,'RatePlanType') ? sHotelPriceResult.XMLAttributes.RatePlanType : '' />
 
 					<!--- Need to find the room description --->
-					<cfset RoomDescription = 'No Description for Hotel' />
+					<cfset local.RoomDescription = 'No Description for Hotel' />
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">
 						<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
 							<cfif sHotelRate.XMLAttributes.Name EQ 'Description'>
@@ -163,37 +165,41 @@
 						</cfif>
 					</cfloop>
 
-					<!--- Create a struct with the Room Description --->
-					<cfset stHotels[nHotelCode]['Rooms'][RoomDescription] = {
-						TotalIncludes : '',
-						Description : RoomDescription,
-						RoomRateCategory : RoomRateCategory,
-						RoomRatePlanType : RoomRatePlanType,
-						Commission : '',
-						CancelPolicyExist : '',
-						MealPlanExist : '',
-						RateChangeIndicator : '',
-						HotelRate : {}
-					} />
-					
-					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">	
-						<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes = sHotelRate.XMLAttributes.Name EQ 'Total Includes' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].Commission = sHotelRate.XMLAttributes.Name EQ 'Commission' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].Commission />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].CancelPolicyExist = sHotelRate.XMLAttributes.Name EQ 'Cancel Policy Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].CancelPolicyExist />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].MealPlanExist = sHotelRate.XMLAttributes.Name EQ 'Meal Plan Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].MealPlanExist />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].RateChangeIndicator = sHotelRate.XMLAttributes.Name EQ 'Rate Change Indicator' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].RateChangeIndicator />							
-						</cfif>
+					<cfif RoomDescription NEQ 'No Description for Hotel'>
+						
+						<!--- Create a struct with the Room Description --->
+						<cfset local.stHotels[nHotelCode]['Rooms'][RoomDescription] = {
+							TotalIncludes : '',
+							Description : RoomDescription,
+							RoomRateCategory : RoomRateCategory,
+							RoomRatePlanType : RoomRatePlanType,
+							Commission : '',
+							CancelPolicyExist : '',
+							MealPlanExist : '',
+							RateChangeIndicator : '',
+							HotelRate : {}
+						} />
+						
+						<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">	
+							<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes = sHotelRate.XMLAttributes.Name EQ 'Total Includes' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].TotalIncludes />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].Commission = sHotelRate.XMLAttributes.Name EQ 'Commission' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].Commission />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].CancelPolicyExist = sHotelRate.XMLAttributes.Name EQ 'Cancel Policy Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].CancelPolicyExist />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].MealPlanExist = sHotelRate.XMLAttributes.Name EQ 'Meal Plan Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].MealPlanExist />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].RateChangeIndicator = sHotelRate.XMLAttributes.Name EQ 'Rate Change Indicator' ? sHotelRate.XMLChildren.1.XMLText : stHotels[nHotelCode]['Rooms'][RoomDescription].RateChangeIndicator />							
+							</cfif>
 
-						<cfif sHotelRate.XMLName EQ 'hotel:HotelRateByDate'>
-							<cfset local.CurrencyCode = left(sHotelRate.XMLAttributes.Base,3) />
-							<cfset local.Rate = mid(sHotelRate.XMLAttributes.Base,4) />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.CurrencyCode = CurrencyCode />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.BaseRate = Rate />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.EffectiveRate = sHotelRate.XMLAttributes.EffectiveDate />
-							<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.ExpireRate = sHotelRate.XMLAttributes.ExpireDate />
-						</cfif>
-					</cfloop>
+							<cfif sHotelRate.XMLName EQ 'hotel:HotelRateByDate'>
+								<cfset local.CurrencyCode = left(sHotelRate.XMLAttributes.Base,3) />
+								<cfset local.Rate = mid(sHotelRate.XMLAttributes.Base,4) />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.CurrencyCode = CurrencyCode />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.BaseRate = Rate />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.EffectiveRate = sHotelRate.XMLAttributes.EffectiveDate />
+								<cfset stHotels[nHotelCode]['Rooms'][RoomDescription].HotelRate.ExpireRate = sHotelRate.XMLAttributes.ExpireDate />
+							</cfif>
+						</cfloop>
+
+					</cfif>
 				</cfif>
 
 				<cfif sHotelPriceResult.XMLName EQ 'hotel:HotelProperty'>

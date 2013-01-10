@@ -1,13 +1,4 @@
 <cfcomponent>
-<!---
-init
---->
-	<!--- <cffunction name="init" output="false">
-		
-		<cfset variables.objHotelSearch = CreateObject('component', 'booking.services.hotelsearch').init()>
-		
-		<cfreturn this>
-	</cffunction> --->
 	
 <!--- doHotelSearch --->
 	<cffunction name="doHotelSearch" output="false">
@@ -46,16 +37,16 @@ init
    	<cfset local.count = 0 />
 		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<!--- <cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#"> --->
-					<cfinvoke component="hotelprice" method="doHotelPrice" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#" returnvariable="HotelPrices" />
-				<!--- </cfthread> --->
+				<cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#">
+					<cfset application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain) />
+				</cfthread>
 				<cfset arrayAppend(aThreads,sHotel)>
 				<cfset count++ />
 			<cfelse>
 				<cfbreak />
 			</cfif>
 		</cfloop>
-		<!--- <cfthread action="join" name="#arraytoList(aThreads)#" /> --->
+		<cfthread action="join" name="#arraytoList(aThreads)#" />
 		<!--- <cfdump var="#cfthread#" abort> --->
 
 		<cfreturn />
