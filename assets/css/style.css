@@ -1,3 +1,108 @@
+body {
+	color: #222222;
+	font-family: helvetica,arial,verdana,sans-serif;
+	font-size: 13px;
+	background-image:url(../img/background.png);
+	background-color: #FFF;
+}
+#header-wrap { 
+	background:linear-gradient(to bottom, #3E3E3E 0%, #212121 100%) repeat scroll 0 0 transparent;
+	height: 45px;
+	position:fixed;
+	width:100%;
+	z-index:20;
+}
+.header { 
+	display: block;
+	float: none;
+	padding: 1px 0 0 0;
+	width:100%;
+	white-space:nowrap;
+}
+.logo {
+	float:left;
+	margin: 55px 0 0 30px;
+}
+.nav {
+	font-family:sans-serif;
+	line-height:26px;
+	font-size:14px;
+	width:auto;
+}
+.nav a {
+	font-family:"Bree Serif",serif;
+	font-size:14px;
+	margin:5px 20px 5px 20px;
+	padding: 0 13px;
+	line-height: 26px;
+	display: block;
+	color:#D6D6D6;
+	float: left;
+	border-right: 1px solid #000;
+}
+.nav a.tabactive-clr {
+	background-color: #FCFCFC;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	color:#000;
+}
+.nav a:hover {
+	background-color: #2E76CF ;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	cursor: pointer;
+	color:#fff;
+	text-decoration:none;
+}
+#content{
+	margin: auto 0;
+	padding: 10px;
+	min-width: 95%;
+	clear:both;
+	min-height: 1000px;
+	overflow: hidden;
+	/*background-color:rgba(255,255,255,0.3);*/
+	/*border:1px solid #CAC9C9;*/
+	/*opacity:0.4;
+	filter:alpha(opacity=40); /* For IE8 and earlier */*/
+}
+
+#nav .filterheader {
+	position:relative;
+	font-weight:bold;
+	font-size: 14px;
+	padding:0 25px 0 5px;
+	float:left;
+}
+#nav ul{
+	list-style:none;
+	position:absolute;
+	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+	min-width: 150px;
+	z-index:999;
+	background-color: #FFFFFF;
+	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
+}
+#nav ul li{
+	float:none;
+	background-color: #FFF;
+	font-size: 11px;
+	float:left;
+	position: relative;
+	min-width: 245px;
+	box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
+	color: #211922;
+}
+#nav li{
+	float:left;
+	margin-right:10px;
+	position:relative;
+}
+#nav li:hover ul{ /* Display the dropdown on hover */
+	left:0; /* Bring back on-screen when needed */
+}
 .smallnav{
 	width:100%;
 	font-family:"Merriweather",Georgia,Times,serif,Times,serif;
@@ -40,44 +145,6 @@
 }
 .smallnav li:hover ul{ /* Display the dropdown on hover */
 	left:-10px; /* Bring back on-screen when needed */
-}
-#nav{
-}
-#nav ul{
-	list-style:none;
-	position:absolute;
-	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
-	min-width: 150px;
-	z-index:999;
-	background-color: #FFFFFF;
-	font: 0.875em/28px "Merriweather",Georgia,Times,serif,Times,serif;
-}
-#nav ul li{
-	padding: 0.4em 1em;
-	float:none;
-	background-color: #FFF;
-	font-size: 11px;
-	padding: 0.4em 1em;
-	float:left;
-	position: relative;
-	min-width: 245px;
-	box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
-	color: #211922;
-}
-#nav li{
-	float:left;
-	margin-right:10px;
-	position:relative;
-}
-#nav a{
-	display:block;
-	padding: 0.4em 1em;
-	text-decoration:none;
-	display: block;
-    line-height: 1.2;
-}
-#nav li:hover ul{ /* Display the dropdown on hover */
-	left:0; /* Bring back on-screen when needed */
 }
 .error {
 	margin: 0 auto;
@@ -135,26 +202,6 @@
 	font-weight: bold;
 
 }
-body {
-	color: #222222;
-	font-family: helvetica,arial,verdana,sans-serif;
-	font-size: 13px;
-	background-image:url(../img/background.png);
-	/*background-repeat: no-repeat;*/
-	background-color: #FFF;
-}
-#filterbar #sortbar {
-	float:left;
-	position:relative;
-	z-index:9009;
-	margin: 0px auto;
-}
-.filterheader {
-	position:relative;
-	font-weight:bold;
-	padding:0 25px 0 25px;
-	float:left;
-}
 .left {
 	float:left;
 }
@@ -176,18 +223,6 @@ body {
 	height:35px;
 	background-color:#0090D2;
 	width: 1020px;
-}
-#content{
-	margin: auto 0;
-	padding: 10px;
-	width: 90%;
-	font-family: 'Helvetica Neue',Arial,sans-serif;
-	clear:both;
-	min-height: 1000px;
-	background-color:rgba(255,255,255,0.3);
-	border:1px solid #CAC9C9;
-	/*opacity:0.4;
-	filter:alpha(opacity=40); /* For IE8 and earlier */*/
 }
 #content .filter {
 	background-color: #FFF;
@@ -212,11 +247,10 @@ body {
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 }
-#content .car {
+.carrow {
 	background-color: #FFF;
 	font-size: 11px;
 	padding: 5px;
-	width: 1000px;
 	margin:10px;
 	float:left;
 	position: relative;
@@ -333,51 +367,6 @@ body {
 	khtml-border-radius: 10px; 
 	border-radius: 10px; 
 }
-.button1policy {
-	display: block; 
-	position: relative;
-	padding: 4px 15px 0 15px; 
-	border: 1px solid #4081af; 
-	font-weight:bold;
-	border-bottom-color: #20559a; 
-	color: white; 
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #0090D2;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-	overflow: hidden;
-}
-.button0policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px; 
-	border: 1px solid #666666; 
-	font-weight:bold;
-	color: white; 
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #CCCCCC; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #999999 20%, #999999 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-	overflow: hidden;
-}
 footer[role="contentinfo"]{
 	font-size: 0.85em;
 	padding-top: 15px;
@@ -385,6 +374,11 @@ footer[role="contentinfo"]{
 #footer {
 	height: 100px;
 }
+/* 
+ * ------------------------------------------ 
+ * 				FORMS
+ * ------------------------------------------ 
+ */
 form div input[type="submit"] { 
 	cursor: pointer;
 	float: right;
@@ -403,6 +397,53 @@ input {
 	box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 	-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 	-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
+}
+.button1policy {
+	display: block; 
+	position: relative;
+	padding: 4px 15px 4px 15px; 
+	border: 1px solid #4081af; 
+	font-weight:bold;
+	border-bottom-color: #20559a; 
+	color: white; 
+	font-size: 16px;
+	text-align: center; 
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
+	text-decoration: none; 
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px; 
+	khtml-border-radius: 4px; 
+	border-radius: 4px; 
+	background-color: #0090D2;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
+	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+	overflow: hidden;
+}
+.button0policy {
+	display: block; 
+	margin: 5px; 
+	padding: 4px 15px 4px 15px; 
+	border: 1px solid #666666; 
+	font-weight:bold;
+	color: white; 
+	font-size: 16px;
+	text-align: center; 
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
+	text-decoration: none; 
+	-webkit-border-radius: 4px; 
+	-moz-border-radius: 4px; 
+	khtml-border-radius: 4px; 
+	border-radius: 4px; 
+	background-color: #CCCCCC; 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #999999)); 
+	background: -moz-linear-gradient(center top, #999999 20%, #999999 100%); 
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+	overflow: hidden;
 }
 select {
 	background-color: #FFFFFF;
@@ -428,7 +469,7 @@ textarea {
 	-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 	-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
 }
-input:hover, input:focus,
+input[type="text"]:hover, input[type="text"]:focus,
 textarea:hover, textarea:focus,
 select:hover, select:focus { 
 	border-color: #C9C9C9; 
@@ -532,7 +573,48 @@ div.checkbox {
  * 				TABS
  * ------------------------------------------ 
  */
-
+#header {
+}
+#header .logo {
+	padding:5px 0 10px 20px;
+	clear:right;
+}
+#results-tabs {
+	background-color:rgba(0,0,0,0.3);
+}
+#results-tabs li {
+	cursor:pointer;
+	font-size:12px;
+}
+#results-tabs li.tab {
+	color:#92A9B8;
+	text-align: center;
+	position:relative;
+	float:left;
+	border:1px solid #CAC9C9;
+	border-radius:3px 3px 0 0;
+	height:40px;
+	line-height: 15px;
+	width: 135px;
+	overflow:hidden;
+	padding:10px 10px;
+	margin: 0 5px 0 5px;
+	position:relative;
+	top:1px;
+	z-index:1001;
+	background-color:rgba(255,255,255,0.3);
+	border-bottom:1px solid #CAC9C9;
+}
+#results-tabs li.tab img {
+	position:relative;
+	float:left;
+	padding:0 10px 0 0;
+}
+#results-tabs li.tab.selected {
+	color:#666666;
+	background-color:rgba(255,255,255,0.2);
+	border-bottom:1px solid #F8F7F7;
+}
 /* 
  * ------------------------------------------ 
  * 				SEAT MAPS

@@ -7,7 +7,7 @@
 		<input type="hidden" name="sVendor" id="sVendor" value="">
 	</form>	
 	#view('car/filter')#
-	<div class="car">
+	<div class="carrow">
 		<table>
 		<tr>
 			<td>
@@ -35,7 +35,7 @@
 		<cfset stCar = session.searches[rc.Search_ID].stCars[sCategory]>
 		<cfif NOT StructIsEmpty(stCar)>
 
-			<div id="row#LCase(sCategory)#" class="car">
+			<div id="row#LCase(sCategory)#" class="carrow">
 				<table>
 				<tr>
 					<td>
@@ -54,7 +54,7 @@
 									<cfset stRate = session.searches[rc.Search_ID].stCars[sCategory][sVendor]>
 									<cfif stRate.Corporate>
 										CORPORATE
-									</cfif>
+									</cfif><br>
 									<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
 								<cfelse>
 									UNAVAILABLE

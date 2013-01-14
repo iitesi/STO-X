@@ -25,6 +25,32 @@ function setTravelerForm(nTraveler, bCollapse) {
 		}
 	});
 }
+function setPaymentForm(nTraveler) {
+	var nSearchID = $( "#nSearchID" ).val();
+	var bAir = $( "#bAir" ).val();
+	var bCar = $( "#bCar" ).val();
+	var bHotel = $( "#bHotel" ).val();
+	var bCD = $( "#bCD" ).val();
+	var bDB = $( "#bDB" ).val();
+	$.ajax({
+		type: 'POST',
+		url: 'services/traveler.cfc',
+		data: {
+			method: 'setPaymentForm',
+			nTraveler: nTraveler,
+			nSearchID: nSearchID,
+			bAir: bAir,
+			bCar: bCar,
+			bHotel: bHotel,
+			bCD: bCD,
+			bDB: bDB
+		},
+		dataType: 'json',
+		success: function(data) {
+			$( "#paymentForm" ).html(data);
+		}
+	});
+}
 function setOtherFields(nTraveler) {
 	var nSearchID = $( "#nSearchID" ).val();
 	$.ajax({
@@ -56,11 +82,19 @@ function setOtherFields(nTraveler) {
 			&& typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
 				stHotelFFs = traveler['STFFACCOUNTS']['H'];
 			}
+			var stFOPs = new Object();
+			if (typeof traveler['STFOPS'] != 'undefined') {
+				stFOPs = traveler['STFOPS'];
+			}
 			var sSeat = '';
 			if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
 				sSeat = traveler['WINDOW_AISLE'];
 			}
 			//logic to update form fields
+			for (var i = 0; i < stFOPs.length; i++) {
+				console.log(stFOPs[i]);
+				
+			}
 			for (var i = 0; i < sCarriers.length; i++) {
 				if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
 					$( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
@@ -76,7 +110,6 @@ function setOtherFields(nTraveler) {
 				$( "#Car_FF" ).val('');
 			}
 			$( "#Seats" ).val(sSeat);
-			console.log(sSeat)
 		}
 	});
 }
@@ -96,6 +129,7 @@ function changeTraveler(nTraveler) {
 		dataType: 'json',
 		success: function(data) {
 			setTravelerForm(nTraveler, 1);
+			setPaymentForm(nTraveler);
 			setOtherFields(nTraveler);
 		},
 		error: function(data, dat, da) {
@@ -105,6 +139,7 @@ function changeTraveler(nTraveler) {
 }
 $(document).ready(function() {
 	setTravelerForm(1, 1);
+	setPaymentForm(1);
 	setOtherFields(1);
 });
 </script>

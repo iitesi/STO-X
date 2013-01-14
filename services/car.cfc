@@ -102,8 +102,8 @@ selectCar
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="nSearchID" 		required="true">
 		<cfargument name="nCouldYou"		required="false"	default="0">
-		<cfargument name="stCDNumbers" 	required="false"	default="">
-		<cfargument name="bFullRequest" required="false"	default="false">
+		<cfargument name="stCDNumbers" 		required="false"	default="">
+		<cfargument name="bFullRequest" 	required="false"	default="false">
 		<cfargument name="stAccount"		required="false"	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy" 		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
 		
@@ -128,7 +128,7 @@ selectCar
 		</cfif>
 		<cfset session.searches[arguments.nSearchID].dPickUp = dPickUp>
 		<cfset session.searches[arguments.nSearchID].dDropOff = dDropOff>
-
+		
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">

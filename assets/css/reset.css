@@ -1,9 +1,5 @@
 @charset "utf-8";
 
-@font-face {font-family: 'QuickType II Regular';font-weight:normal;font-style:normal;src: local('QuickType II Regular'), local("QuickType II"), url("QT2_P.ttf") format("truetype");}
-@font-face {font-family: 'QuickType II Bold';font-weight:bold;font-style:normal;src: local('QuickType II Bold'), local("QuickType II"), url("QT2_B.ttf") format("truetype");}
-@font-face {font-family: 'Cambria Regular';font-weight:normal;font-style:normal;src: local('Cambria Regular'), local("Cambria"), url("CAMBRIA1.ttf") format("truetype");}
-
 
 /* 1. RESET
 -----------------------------------------------------------------------------------------------
@@ -39,7 +35,6 @@ html{
 body {
 	background: #F0F0F0;
 	color: #444;
-	font-family: Georgia, serif;
 	font-size: 62.5%;
 }
 html>body {
@@ -73,10 +68,7 @@ a:active,a:focus{
 
 /* 2.3 HEADINGS
 --------------------------------------------------------- */
-h1, h2, h3 {
-	font-family: 'Quicksand','Helvetica Neue',Arial, sans-serif;
-	font-weight: bold;
-}
+
 h1{
 	font-size: 2em;
 	letter-spacing: -2px;
@@ -87,16 +79,18 @@ h2{
 }
 h3 {
 	font-size: 1.25em;
+	font-weight: bold;
 }
 h4 {
-	font-size: 1.125em;
+	font-size: 1.555em;
 	line-height: 1.3333em;
+	font-weight: bold;
+	font-family:"Bree Serif",serif;
 }
 h5, dt {
 	font-weight: bold;
 }
 h4, h5, h6, dt {
-	font-family: "Helvetica Neue","Bitstream Vera Sans",Arial,sans-serif;
 }
 
 

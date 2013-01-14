@@ -101,16 +101,16 @@
 			<!--- Round trip tab --->
 			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-					<cfset tab.sHeading = '<h3>'&getsearch.Depart_City&'-'&getsearch.Arrival_City&'</h3> '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
+					<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
 				<cfelse>
-					<cfset tab.sHeading = '<h3>'&getsearch.Depart_City&'-'&getsearch.Arrival_City&'</h3> '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+					<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				</cfif>
 				<cfset tab.sDestination = application.stAirports[getsearch.Arrival_City]>
 				<cfset tab.stLegs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				<cfset tab.stLegs[1] = getsearch.Arrival_City&' to '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d')>
 			<!--- One way trip tab --->
 			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
-				<cfset tab.sHeading = '<h3>'&getsearch.Depart_City&'-'&getsearch.Arrival_City&'</h3> '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+				<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				<cfset tab.sDestination = application.stAirports[getsearch.Arrival_City]>
 				<cfset tab.stLegs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 			<!--- Multi destination trip tab --->

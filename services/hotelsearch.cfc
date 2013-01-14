@@ -4,27 +4,27 @@
 	<cffunction name="doHotelSearch" output="false">
 		<cfargument name="nSearchID" />
 		<cfargument name="stAccount"	default="#application.stAccounts[session.Acct_ID]#" />
-    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#" />
+		<cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#" />
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
 		<cfset local.nSearchID 		= arguments.nSearchID />
-		<cfset local.sMessage			= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID) />
+		<cfset local.sMessage		= prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID) />
 		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, nSearchID) />
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
 		<cfset local.stAmenities 	= getAmenities(stHotels)>
-		<cfset local.latlong 			= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
+		<cfset local.latlong 		= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
 		<!--- Store the hotels, chains, amenities and lat/long into the session --->
-		<cfset session.searches[nSearchID].stHotels 			= stHotels />
-   	<cfset session.searches[nSearchID].stHotelChains	= stChains />
-   	<cfset session.searches[nSearchID].slatlong				= latlong />
-   	<cfset session.searches[nSearchID].stAmenities		= stAmenities />
-   	<cfset session.searches[nSearchID].stSortHotels 	= StructKeyArray(session.searches[nSearchID].stHotels) />
+		<cfset session.searches[nSearchID].stHotels 		= stHotels />
+		<cfset session.searches[nSearchID].stHotelChains	= stChains />
+		<cfset session.searches[nSearchID].slatlong			= latlong />
+		<cfset session.searches[nSearchID].stAmenities		= stAmenities />
+		<cfset session.searches[nSearchID].stSortHotels 	= StructKeyArray(session.searches[nSearchID].stHotels) />
 
-   	<!--- store the hotel latitude and longitude in the session --->
-   	<cfset session.searches[nSearchID]['Hotel']				= 1 />
+		<!--- store the hotel latitude and longitude in the session --->
+		<cfset session.searches[nSearchID]['Hotel']			= 1 />
 		<cfset session.searches[nSearchID]['Hotel_Lat'] 	= GetToken(session.searches[nSearchID].slatlong,1,',') />
 		<cfset session.searches[nSearchID]['Hotel_Long'] 	= GetToken(session.searches[nSearchID].slatlong,2,',') />
 
@@ -34,7 +34,7 @@
 
 		<cfset local.sHotelChain = session.searches[nSearchID].stHotels[sHotel].HotelChain />
 		<cfset local.aThreads = [] />
-   	<cfset local.count = 0 />
+		<cfset local.count = 0 />
 		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
 			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
 				<cfif NOT session.searches[nSearchID].stHotels[sHotel]['RoomsReturned']><!--- if rooms were already returned, don't check again --->

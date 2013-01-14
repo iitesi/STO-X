@@ -9,7 +9,7 @@
 HEADING
 --->
 				<td colspan="5">
-					<span class="bold large">FLIGHT</span>
+					<h4>FLIGHT</h4>
 					#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
 					<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
 				</td>

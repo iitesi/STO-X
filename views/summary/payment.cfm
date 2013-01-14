@@ -1,6 +1,7 @@
 <cfoutput>
 	<div class="summarydiv">
-		<cfset stTraveler 	= (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
+		<div id="paymentForm"> </div>
+		<!--- <cfset stTraveler 	= (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
 		<cfset sType 		= (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
 		<h2 style="width:500px">PAYMENT INFORMATION</h2>
 <!---
@@ -171,6 +172,6 @@ CAR PAYMENT
 				</cfif>
 				</select>
 			</p>
-		</cfif>
+		</cfif> --->
 	</div>
 </cfoutput>

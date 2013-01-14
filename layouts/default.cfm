@@ -8,6 +8,7 @@
 		<link href="assets/css/reset.css" rel="stylesheet" media="screen" />
 		<link href="assets/css/style.css" rel="stylesheet" media="screen" />
 		<link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" >
+		<link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
 		<!--- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/pepper-grinder/jquery-ui.css" rel="stylesheet" > --->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
@@ -19,8 +20,23 @@
 	<cfif NOT structKeyExists(rc, "bSuppress")>
 		
 		<div id="wrapper">
-
-			<div id="header">
+			<div class="headerbar">
+				<div id="header-wrap">
+					<div class="header">
+						<div class="clearfix nav">
+							<cfoutput>#View('main/tabs')#</cfoutput>
+						</div>
+						<div class="clearfix login-tab">
+						<div class="clearDiv"></div>
+					</div>
+				</div>
+			</div>
+		
+				<a href="http://www.ithelpdesksoftware.com/">
+					<img class="logo" src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STO-Logo.gif" style="background-color:##FFFFFF">
+				</a>
+		<br><br>	
+			<!--- <div id="header">
 				<cfparam name="rc.filter" default="">
 				<ul id="nav">
 					<li style="float:right;position:absolute;padding:0;">
@@ -34,7 +50,7 @@
 					</li>
 				</ul>
 				<cfoutput>#View('main/tabs')#</cfoutput>
-			</div><!-- #header-->
+			</div><!-- #header--> --->
 
 			<div id="content">
 				<cfoutput>#body#</cfoutput>

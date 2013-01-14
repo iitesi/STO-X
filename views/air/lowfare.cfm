@@ -27,15 +27,18 @@
 		<cfif structKeyExists(session.searches[rc.Search_ID].stLowFareDetails, "aSortFare")>
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset bSelected = true>
+			<cfset nCount = 0>
 			<cfloop collection="#session.searches[rc.Search_ID].stLowFareDetails.stPriced#" item="nTripKey">
 				<cfset stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
+				<cfset nCount++>
 				#View('air/badge')#
 			</cfloop>
 			<!--- Display standard fare based search --->
 			<cfset bSelected = false>
 			<cfloop array="#session.searches[rc.Search_ID].stLowFareDetails.aSortFare#" index="nTripKey">
-				<cfif NOT StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails.stPriced, nTripKey)>
+				<cfif NOT StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails.stPriced, nTripKey) AND nCount LTE 50>
 					<cfset stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
+					<cfset nCount++>
 					#View('air/badge')#
 				</cfif>
 			</cfloop>

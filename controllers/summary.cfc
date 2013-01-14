@@ -22,8 +22,8 @@ default
 		<cfif session.Acct_ID EQ 235>
 			<cfset variables.fw.service('summary.getTXExceptionCodes', 'qTXExceptionCodes')>
 		</cfif>
-		<cfset variables.fw.service('summary.getUser', 'qUser')>
-		<cfset variables.fw.service('summary.getAllTravelers', 'qAllTravelers')>
+		<cfset variables.fw.service('traveler.getUser', 'qUser')>
+		<cfset variables.fw.service('traveler.getAllTravelers', 'qAllTravelers')>
 
 		<cfset local.stY1 = {}>
 		<cfset stY1.sCabin = 'Y'>
