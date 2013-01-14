@@ -4,6 +4,8 @@
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
+	<cfset this.sessionStorage = 'Sessions'>
+	<cfset this.sessionCluster = true>
 	<cfset this.applicationManagement = true>
 	<cfset this.defaultdatasource = "book">
 
