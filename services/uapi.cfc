@@ -15,7 +15,7 @@ callUAPI
 		<cfargument name="sMessage">
 		<cfargument name="nSearchID">
 		
-		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
+		<cfset local.bSessionStorage = 0><!--- Testing setting (1 - testing, 0 - live) --->
 		<cfset local.scfhttp = 'rockstar'&RandRange(1, 1000000)>
 		<cfset local.dStart = getTickCount()>
 		<cfif NOT bSessionStorage
