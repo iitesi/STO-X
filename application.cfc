@@ -51,6 +51,37 @@
 		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
 		<cfset request.context.Group = request.context.nGroup>
 
+		<cfif structKeyExists(url, 'bClear')>
+			<cfset session.searches[request.context.nSearchID].stTrips = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortFare = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortFare = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips = {}>
+			<cfset session.searches[request.context.nSearchID].stCars = {}>
+			<cfset session.searches[request.context.nSearchID].stTrips = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aCarriers = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.stPricing = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.stPriced = {}>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortArrival = []>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortBag = []>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortDepart = []>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortDuration = []>
+			<cfset session.searches[request.context.nSearchID].stLowFareDetails.aSortFare = []>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips = {}>
+			<cfset session.searches[request.context.nSearchID].stSelected = StructNew('linked')>
+			<cfset session.searches[request.context.nSearchID].stSelected[0] = {}>
+			<cfset session.searches[request.context.nSearchID].stSelected[1] = {}>
+			<cfset session.searches[request.context.nSearchID].stSelected[2] = {}>
+			<cfset session.searches[request.context.nSearchID].stSelected[3] = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips[0] = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips[1] = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips[2] = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailTrips[3] = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailDetails.stGroups = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailDetails.stCarriers = {}>
+		</cfif>
+		
 		<cfset application.bDebug = 1>
 		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
