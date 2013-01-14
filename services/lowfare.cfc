@@ -75,11 +75,8 @@ doLowFare
 		<cfargument name="bRefundable"	required="true">
 		<cfargument name="sPriority"	required="true">
 		<cfargument name="stPricing" 	required="false"	default="#session.searches[nSearchID].stLowFareDetails.stPricing#">
-		<cfargument name="bClear"		required="false" 	default="0"><!--- Load testing purposes, clear struct out on initial load with url.bClear --->
 		
-		<cfif arguments.bClear>
-			<cfset arguments.stPricing = {}> 
-		</cfif>
+		<cfset arguments.stPricing = {}> 
 		<cfset local.sThreadName = ''>
 		<cfset local[sThreadName] = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
