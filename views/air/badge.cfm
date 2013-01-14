@@ -4,9 +4,9 @@
 	<cfset sCacheFileName = '/cache/'&rc.nSearchID&'/'&Hash(stTrip.toString())&'.html'>
 	<cfset nOverallStart = getTickCount('nano') - nOverallStart>
 	<!--- #nOverallStart#<br> --->
-	<!--- <cfif NOT directoryExists('/cache/'&rc.nSearchID)>
+	<cfif NOT directoryExists('/cache/'&rc.nSearchID)>
 		<cfdirectory action="create" directory="/cache/#rc.nSearchID#">
-	</cfif> --->
+	</cfif>
 
 </cfoutput>
 <cfif NOT fileExists(sCacheFileName)>
