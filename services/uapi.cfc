@@ -20,8 +20,8 @@ callUAPI
 		<cfset local.dStart = getTickCount()>
 		<cfif NOT bSessionStorage
 		OR (bSessionStorage
-			AND (NOT StructKeyExists(session.searches[nSearchID], arguments.sMessage)
-				OR NOT StructKeyExists(session.searches[nSearchID][arguments.sMessage], 'sFileContent')))>
+			AND (NOT StructKeyExists(application, arguments.sMessage)
+				OR NOT StructKeyExists(application[arguments.sMessage], 'sFileContent')))>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#scfhttp#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -33,10 +33,10 @@ callUAPI
 			</cfhttp>
 			<!--- Place this in the session scope for debugging purposes --->
 			<cfif bSessionStorage>
-				<cfset session.searches[arguments.nSearchID][arguments.sMessage].sFileContent = local[scfhttp].filecontent>
+				<cfset application[arguments.sMessage].sFileContent = local[scfhttp].filecontent>
 			</cfif>
 		<cfelse>
-			<cfset local[scfhttp].filecontent = session.searches[arguments.nSearchID][arguments.sMessage].sFileContent>
+			<cfset local[scfhttp].filecontent = application[arguments.sMessage].sFileContent>
 		</cfif>
 		<cfset local.nTotal = getTickCount() - dStart>
 		<cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: local[scfhttp].filecontent, _nMS : nTotal, _dTimestamp : Now()})>
