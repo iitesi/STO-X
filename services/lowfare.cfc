@@ -76,7 +76,6 @@ doLowFare
 		<cfargument name="sPriority"	required="true">
 		<cfargument name="stPricing" 	required="false"	default="#session.searches[nSearchID].stLowFareDetails.stPricing#">
 		
-		<cfset arguments.stPricing = {}> 
 		<cfset local.sThreadName = ''>
 		<cfset local[sThreadName] = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
