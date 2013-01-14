@@ -61,7 +61,7 @@ lowfare
 
 		<cfif NOT structKeyExists(rc, 'bSelect')>
 			<!--- Throw out a thread for availability --->
-			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>
+			<!--- <cfset variables.fw.service('airavailability.threadAvailability', 'void')> --->
 			<!--- Do the low fare search. --->
 			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>		
 		<cfelse>
@@ -98,7 +98,7 @@ availability
 		<cfif NOT structKeyExists(rc, 'bSelect')>
 			<cfset rc.sPriority = 'LOW'>
 			<!--- Throw out a thread for low fare --->
-			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
+			<!--- <cfset variables.fw.service('lowfare.threadLowFare', 'void')> --->
 			<!--- Do the availability search. --->
 			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>			
 		<cfelse>
