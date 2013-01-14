@@ -79,7 +79,8 @@
 			<cfset session.searches[request.context.nSearchID].stAvailTrips[2] = {}>
 			<cfset session.searches[request.context.nSearchID].stAvailTrips[3] = {}>
 			<cfset session.searches[request.context.nSearchID].stAvailDetails.stGroups = {}>
-			<cfset session.searches[request.context.nSearchID].stAvailDetails.stCarriers = {}>
+			<cfset session.searches[request.context.nSearchID].stAvailDetails.stCarriers[0] = []>
+			<cfset session.searches[request.context.nSearchID].stAvailDetails.stCarriers[1] = []>
 		</cfif>
 		
 		<cfset application.bDebug = 1>
