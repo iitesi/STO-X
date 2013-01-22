@@ -139,14 +139,10 @@ prepareSoapHeader
 		<cfargument name="sNextRef"	 	required="false" 	default="">
 		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
 		<cfargument name="stPolicy"		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
+		<cfargument name="stSearch" 			required="false"	default="#session.searches[url.Search_ID]#">
 		
-		<cfquery name="local.getsearch">
-		SELECT Air_Type, Airlines, International, Depart_City, Depart_DateTime, Depart_TimeType, Arrival_City, Arrival_DateTime, Arrival_TimeType, ClassOfService
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
-		<cfif getsearch.Air_Type EQ 'MD'>
-			<cfquery name="local.getsearchlegs">
+		<cfif arguments.stSearch.sAirType EQ 'MD'>
+			<cfquery name="local.qSearchLegs">
 			SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
 			FROM Searches_Legs
 			WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
@@ -166,37 +162,37 @@ prepareSoapHeader
 							<cfif arguments.nGroup EQ 0>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
-										<com:Airport Code="#getsearch.Depart_City#" />
+										<com:Airport Code="#arguments.stSearch.sDepartCity#" />
 									</air:SearchOrigin>
 									<air:SearchDestination>
-										<com:Airport Code="#getsearch.Arrival_City#" />
+										<com:Airport Code="#arguments.stSearch.sArrivalCity#" />
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Depart_DateTime, 'yyyy-mm-dd')#" />
+									<air:SearchDepTime PreferredTime="#DateFormat(arguments.stSearch.dDepartDate, 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
 							</cfif>
-							<cfif arguments.nGroup EQ 1 AND getsearch.Air_Type EQ 'RT'>
+							<cfif arguments.nGroup EQ 1 AND arguments.stSearch.sAirType EQ 'RT'>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
-										<com:Airport Code="#getsearch.Arrival_City#" />
+										<com:Airport Code="#arguments.stSearch.sArrivalCity#" />
 									</air:SearchOrigin>
 									<air:SearchDestination>
-										<com:Airport Code="#getsearch.Depart_City#" />
+										<com:Airport Code="#arguments.stSearch.sDepartCity#" />
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(getsearch.Arrival_DateTime, 'yyyy-mm-dd')#" />
+									<air:SearchDepTime PreferredTime="#DateFormat(arguments.stSearch.dArrivalDate, 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
-							<cfelseif arguments.nGroup NEQ 0 AND getsearch.Air_Type EQ 'MD'>
+							<cfelseif arguments.nGroup NEQ 0 AND arguments.stSearch.sAirType EQ 'MD'>
 								<cfset local.cnt = 0>
-								<cfloop query="getsearchlegs">
+								<cfloop query="qSearchLegs">
 									<cfset cnt++>
 									<cfif arguments.nGroup EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
-												<com:Airport Code="#getsearchlegs.Depart_City#" />
+												<com:Airport Code="#qSearchLegs.Depart_City#" />
 											</air:SearchOrigin>
 											<air:SearchDestination>
-												<com:Airport Code="#getsearchlegs.Arrival_City#" />
+												<com:Airport Code="#qSearchLegs.Arrival_City#" />
 											</air:SearchDestination>
-											<air:SearchDepTime PreferredTime="#DateFormat(getsearchlegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+											<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
 										</air:SearchAirLeg>
 									</cfif>
 								</cfloop>

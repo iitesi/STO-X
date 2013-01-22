@@ -1,5 +1,5 @@
 <cfparam name="rc.filter" default="">
-<ul id="nav">
+<ul id="filter">
 	<table>
 	<tr>
 		<td>

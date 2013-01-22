@@ -1,14 +1,12 @@
 <cfset nOverallStart = getTickCount('nano')>
-
 <cfoutput>
 	<cfset sCacheFileName = '/cache/'&rc.nSearchID&'/'&Hash(stTrip.toString())&'.html'>
 	<cfset nOverallStart = getTickCount('nano') - nOverallStart>
-	<!--- #nOverallStart#<br> --->
 	<cfif NOT directoryExists('/cache/'&rc.nSearchID)>
 		<cfdirectory action="create" directory="/cache/#rc.nSearchID#">
 	</cfif>
-
 </cfoutput>
+
 <cfif NOT fileExists(sCacheFileName)>
 	<cfsavecontent variable="sBadge" trim="#true#">
 		<cfoutput>
@@ -111,13 +109,13 @@
 </cfif>
 <cfoutput>
 	<cfif nCount GT 5>
-		<div id="#nTripKey#" class="badge" style="min-height:#variables.minheight#px;">
+		<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
 		</div>
 		<script type="text/javascript">
 		$("###nTripKey#").load("#sCacheFileName#");
 		</script>
 	<cfelse>
-		<div id="#nTripKey#" class="badge" style="min-height:#variables.minheight#px;">
+		<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
 			#sBadge#
 		</div>
 	</cfif>

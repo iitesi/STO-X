@@ -14,7 +14,8 @@
 		<cfargument name="rc" />
 		
 		<cfif NOT structKeyExists(rc, 'bSelect')>
-			<cfif NOT StructKeyExists(session.searches, rc.nSearchID)>
+			<cfif NOT StructKeyExists(session, 'searches')
+			OR NOT StructKeyExists(session.searches, rc.nSearchID)>
 				<cfset variables.fw.redirect('main?Search_ID=#rc.nSearchID#') />
 			</cfif>
 			<cfset rc.stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID] />

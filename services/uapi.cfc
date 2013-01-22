@@ -15,14 +15,15 @@ callUAPI
 		<cfargument name="sMessage">
 		<cfargument name="nSearchID">
 		
-		<cfset local.bSessionStorage = 0><!--- Testing setting (1 - testing, 0 - live) --->
+		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
 		<cfset local.scfhttp = 'rockstar'&RandRange(1, 1000000)>
 		<cfset local.dStart = getTickCount()>
+
 		<cfif NOT bSessionStorage
 		OR (bSessionStorage
-			AND (NOT StructKeyExists(application, 'sMessage')
-				OR NOT StructKeyExists(application.sMessage, arguments.sMessage)
-				OR NOT StructKeyExists(application.sMessage[arguments.sMessage], 'sFileContent')))>
+			AND (NOT StructKeyExists(session, 'aMessage')
+				OR NOT StructKeyExists(session.aMessage, arguments.sMessage)
+				OR NOT StructKeyExists(session.aMessage[arguments.sMessage], 'sFileContent')))>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#scfhttp#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -33,15 +34,15 @@ callUAPI
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
 			<!--- Place this in the session scope for debugging purposes --->
-			<cfif bSessionStorage>
-				<cfset application.sMessage[arguments.sMessage].sFileContent = local[scfhttp].filecontent>
-			</cfif>
+			<!--- <cfif bSessionStorage> --->
+				<cfset session.aMessage[arguments.sMessage].sFileContent = local[scfhttp].filecontent>
+			<!--- </cfif> --->
 		<cfelse>
-			<cfset local[scfhttp].filecontent = application.sMessage[arguments.sMessage].sFileContent>
+			<cfset local[scfhttp].filecontent = session.aMessage[arguments.sMessage].sFileContent>
 		</cfif>
 		<cfset local.nTotal = getTickCount() - dStart>
 		<cfset ArrayAppend(session.aMessages, {Message: arguments.sMessage, Response: local[scfhttp].filecontent, _nMS : nTotal, _dTimestamp : Now()})>
-		
+
 		<cfreturn local[scfhttp].filecontent />
 	</cffunction>
 

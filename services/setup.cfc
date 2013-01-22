@@ -15,12 +15,12 @@ loadObjects
 --->
 	<cffunction name="loadObjects" output="false" returntype="void">
 		
-		<cfset application.objAirPrice 			= createObject("component", "booking.services.airprice")>
-		<cfset application.objCar			 			= createObject("component", "booking.services.car")>
+		<cfset application.objAirPrice 		= createObject("component", "booking.services.airprice")>
+		<cfset application.objCar			= createObject("component", "booking.services.car")>
 		<cfset application.objHotelDetails 	= createObject("component", "booking.services.hoteldetails")>
 		<cfset application.objHotelPhotos 	= createObject("component", "booking.services.hotelphotos")>
-		<cfset application.objHotelPrice 		= createObject("component", "booking.services.hotelprice")>
-		<cfset application.objHotelRooms	 	= createObject("component", "booking.services.hotelrooms")>
+		<cfset application.objHotelPrice 	= createObject("component", "booking.services.hotelprice")>
+		<cfset application.objHotelRooms	= createObject("component", "booking.services.hotelrooms")>
 		
 		<cfreturn />
 	</cffunction>

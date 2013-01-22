@@ -65,4 +65,10 @@ Summary
 	<a href="#buildURL('summary?Search_ID=#rc.Search_ID#')#">
 		Summary/Purchase
 	</a>
+<!---
+Reload Air
+--->
+	<a href="#buildURL('air.lowfare?Search_ID=#rc.Search_ID#&bReloadAir=')#">
+		Reload Air
+	</a>
 </cfoutput>

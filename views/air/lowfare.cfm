@@ -13,37 +13,39 @@
 		<div id="usermessage" class="error">#session.searches[rc.Search_ID].sUserMessage#</div>
 		<cfset structDelete(session.searches[rc.Search_ID], 'sUserMessage')>
 	</cfif>
-	<cfset bDisplayFare = true>
-	<cfset nLegs = ArrayLen(StructKeyArray(session.searches[rc.Search_ID].stLegs))>
+	<cfset variables.bDisplayFare = true>
+	<cfset variables.nLegs = ArrayLen(StructKeyArray(session.searches[rc.Search_ID].stLegs))>
 	<cfif nLegs EQ 2>
-		<cfset minheight = 345>
+		<cfset variables.minheight = 345>
 	<cfelseif nLegs EQ 1>
-		<cfset minheight = 225>
+		<cfset variables.minheight = 225>
 	<cfelseif nLegs EQ 3>
-		<cfset minheight = 395>
+		<cfset variables.minheight = 395>
 	</cfif>
-	<cfset nDisplayGroup = ''>
+	<cfset variables.nDisplayGroup = ''>
 	<div id="aircontent">
 		<cfif structKeyExists(session.searches[rc.Search_ID].stLowFareDetails, "aSortFare")>
 			<!--- Display selected badges (selected via schedule search) --->
-			<cfset bSelected = true>
-			<cfset nCount = 0>
-			<cfloop collection="#session.searches[rc.Search_ID].stLowFareDetails.stPriced#" item="nTripKey">
-				<cfset stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
+			<cfset variables.bSelected = true>
+			<cfset variables.nCount = 0>
+			<cfloop collection="#session.searches[rc.Search_ID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+				<cfset variables.stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
 				<cfset nCount++>
 				#View('air/badge')#
 			</cfloop>
 			<!--- Display standard fare based search --->
 			<cfset bSelected = false>
-			<cfloop array="#session.searches[rc.Search_ID].stLowFareDetails.aSortFare#" index="nTripKey">
+			<cfloop array="#session.searches[rc.Search_ID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
 				<cfif NOT StructKeyExists(session.searches[rc.nSearchID].stLowFareDetails.stPriced, nTripKey) AND nCount LTE 50>
-					<cfset stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
+					<cfset variables.stTrip = session.searches[rc.Search_ID].stTrips[nTripKey]>
 					<cfset nCount++>
 					#View('air/badge')#
 				</cfif>
 			</cfloop>
 		</cfif>
 	</div>
+	<!--- <cfdump var="#session.searches[rc.nsearchid].sttrips#">
+	<cfdump var="#session.searches[rc.nsearchid].stLowFareDetails.stpricing#"> --->
 	<cfif structKeyExists(session.searches[rc.Search_ID].stLowFareDetails, "aSortFare")>
 		<script type="application/javascript">
 		var sortarrival = #SerializeJSON(session.searches[rc.nSearchID].stLowFareDetails.aSortArrival)#;

@@ -20,37 +20,15 @@
 	<cfif NOT structKeyExists(rc, "bSuppress")>
 		
 		<div id="wrapper">
-			<div class="headerbar">
-				<div id="header-wrap">
-					<div class="header">
-						<div class="clearfix nav">
-							<cfoutput>#View('main/tabs')#</cfoutput>
-						</div>
-						<div class="clearfix login-tab">
-						<div class="clearDiv"></div>
-					</div>
+			<div class="header">
+				<div class="clearfix nav">
+					<cfoutput>#View('main/tabs')#</cfoutput>
 				</div>
 			</div>
-		
-				<a href="http://www.ithelpdesksoftware.com/">
-					<img class="logo" src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STO-Logo.gif" style="background-color:##FFFFFF">
-				</a>
-		<br><br>	
-			<!--- <div id="header">
-				<cfparam name="rc.filter" default="">
-				<ul id="nav">
-					<li style="float:right;position:absolute;padding:0;">
-						<a href="#" class="main"></a>
-						<ul>
-							<cfoutput>
-								<li><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#&bReloadAir=1')#">Reload Air</a></li>
-								<li><a href="#buildURL('main.logs?Search_ID=#rc.nSearchID#')#" target="_blank">View Logs</a></li>
-							</cfoutput>
-						</ul>
-					</li>
-				</ul>
-				<cfoutput>#View('main/tabs')#</cfoutput>
-			</div><!-- #header--> --->
+
+			<img class="logo" src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STO-Logo.gif">
+			
+			<br class="clearfix">
 
 			<div id="content">
 				<cfoutput>#body#</cfoutput>
@@ -60,13 +38,15 @@
 					<div id="overlayContent">Please wait...</div>
 				</div>
 			
-			</div><!-- #content-->
+			</div>
 
-			<br clear="both">
+			<br class="clearfix">
+
 			<div id="footer">
 				Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
-			</div><!-- #footer -->
-		</div><!-- #wrapper -->
+			</div>
+
+		</div>
 
 	<cfelse>
 		<p><cfoutput>#body#</cfoutput></p>

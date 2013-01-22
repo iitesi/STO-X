@@ -117,6 +117,23 @@ parseTripForPurchase
 	</cffunction>
 
 <!---
+parseSearchID
+--->
+	<cffunction name="parseSearchID" output="false">
+		<cfargument name="sResponse"	required="true">
+		
+		<cfset local.stResponse = XMLParse(arguments.sResponse)>
+		<cfset local.sLowFareSearchID = ''>
+
+		<cfset stResponse = stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLAttributes>
+		<cfif structKeyExists(stResponse, "sLowFareSearchID")>
+			<cfset sLowFareSearchID = stResponse.SearchID>
+		</cfif>
+
+		<cfreturn sLowFareSearchID />
+	</cffunction>
+
+<!---
 parseNextReference
 --->
 	<cffunction name="parseNextReference" output="false">

@@ -31,7 +31,8 @@
 			
 			<cfquery name="local.getsearch" datasource="book">
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,
-			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime
+			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
+			Arrival_TimeType, ClassOfService
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
@@ -50,7 +51,15 @@
 			<cfset tab.bCar = getsearch.Car EQ 1 ? true : false>
 			<cfset tab.bHotel = getsearch.Hotel EQ 1 ? true : false>
 			<cfset tab.sAirType = getsearch.Air_Type>
-			<cfset tab.dDepart = getsearch.Depart_DateTime>
+			<cfset tab.sDepartCity = getsearch.Depart_City>
+			<cfset tab.dDepartDate = getsearch.Depart_DateTime>
+			<cfset tab.sDepartType = getsearch.Depart_TimeType>
+			<cfset tab.sArrivalCity = getsearch.Arrival_City>
+			<cfset tab.dArrivalDate = getsearch.Arrival_DateTime>
+			<cfset tab.sArrivalType = getsearch.Arrival_TimeType>
+			<cfset tab.sAirlines = getsearch.Airlines>
+			<cfset tab.bInternational = getsearch.International EQ 1 ? true : false>
+			<cfset tab.sCOS = getsearch.ClassOfService>
 			<cfset tab.sBookingFor = ''>
 			<cfset tab.sDestination = ''>
 			<cfset tab.sHeading = ''>

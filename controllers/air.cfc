@@ -18,7 +18,8 @@ before - do this before any air calls
 	<cffunction name="before" output="false">
 		<cfargument name="rc">
 
-		<cfif NOT StructKeyExists(session.searches, rc.nSearchID)>
+		<cfif NOT StructKeyExists(session, 'searches')
+		OR NOT StructKeyExists(session.searches, rc.nSearchID)>
 			<cfset variables.fw.redirect('main?Search_ID=#rc.nSearchID#')>
 		</cfif>
 		<!--- Clear out results if it needs to be reloaded. --->
