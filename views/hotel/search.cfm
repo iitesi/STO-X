@@ -1,3 +1,5 @@
+<!--- <cfdump var="#session.searches[rc.nSearchID]#"> --->
+<!--- <cfset structDelete(session.searches,214484) /> --->
 <cfsetting showdebugoutput="false" />
 
 <cfoutput>	

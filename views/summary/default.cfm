@@ -1,6 +1,8 @@
-<cfoutput>
-	<a href="?action=couldyou&Search_ID=#url.Search_ID#">CouldYou</a>
-</cfoutput>
+<cfif application.stAccounts[session.Acct_ID].CouldYou>
+	<cfoutput>
+		<a href="?action=couldyou&Search_ID=#url.Search_ID#">CouldYou</a>
+	</cfoutput>	
+</cfif>
 <cfset stItinerary = session.searches[rc.nSearchID].stItinerary>
 <cfset stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID]>
 <cfset nLowestFare = session.searches[rc.nSearchID].stTrips[session.searches[rc.nSearchID].stLowFareDetails.aSortFare[1]].Total>

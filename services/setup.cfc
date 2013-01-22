@@ -105,12 +105,14 @@ setAccounts
 			"2N0D" = "P7003176"
 		}>
 		
+		<!--- CouldYou is in the Corporate_Production accounts table --->
 		<cfquery name="local.qAccounts" datasource="book">
-		SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+		SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
 		Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-		RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
-		FROM Accounts
-		WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer" >
+		RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
+		FROM Accounts, Zeus.Corporate_Production.dbo.Accounts CPAccounts
+		WHERE Accounts.Active = 1
+		AND Accounts.Acct_ID = CPAccounts.Acct_ID
 		</cfquery>
 		<cfset local.stTemp = {}>
 		<cfloop query="qAccounts">

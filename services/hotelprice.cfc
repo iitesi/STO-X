@@ -56,11 +56,7 @@
 		<cfargument name="nHotelCode" 	required="true">
 		<cfargument name="nCouldYou"		default="0">
 		
-		<cfquery name="local.getSearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
+		<cfset local.Search = session.searches[arguments.nSearchID] />
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -73,8 +69,8 @@
 						  </hot:HotelProperty>
 						  <hot:HotelDetailsModifiers RateRuleDetail="Complete">
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,getSearch.Depart_DateTime),'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,getSearch.Arrival_DateTime),'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,Search.dDepartDate),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,Search.dArrivalDate),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						    <hot:RateCategory>All</hot:RateCategory>
 						  </hot:HotelDetailsModifiers>
@@ -97,7 +93,7 @@
 		<cfargument name="nHotelCode"	/>
 		<cfargument name="nCouldYou" default="0" />
 		
-		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
+		<cfset local.bSessionStorage = false /><!--- Testing setting (true - testing, false - live) --->
 
 		<cfif arguments.nCouldYou NEQ 0>
 			<cfset local.bSessionStorage = false />
