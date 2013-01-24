@@ -3,7 +3,7 @@
 		<div class="filterheader">Filter By</div>
 	</div>
 </div>
-<ul id="nav">
+<ul id="filter">
 	<table>
 	<tr>
 <!---

@@ -11,10 +11,6 @@
 	<cffunction name="before" output="false">
 		<cfargument name="rc">
 		
-		<cfif NOT StructKeyExists(session, 'searches')
-		OR NOT StructKeyExists(session.searches, rc.nSearchID)>
-			<cfset variables.fw.redirect('main?Search_ID=#url.Search_ID#')>
-		</cfif>
 		<cfif StructKeyExists(rc, 'bReloadCar')>
 			<cfset session.searches[rc.nSearchID].stCars = {}>
 		</cfif>

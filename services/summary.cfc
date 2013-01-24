@@ -27,6 +27,72 @@ getOUs
 	</cffunction>
 
 <!---
+saveSummary
+--->
+	<cffunction name="saveSummary" output="false">
+
+		
+		<cfset local.stItinerary = session.searches[arguments.nSearchID].stItinerary>
+		<cfset local.stTraveler = StructCopy(session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler])>
+
+		<!--- Personal Information --->
+		<cfset stTraveler.First_Name = (arguments.First_Name NEQ '' ? arguments.First_Name : 'error')>
+		<cfif (arguments.NoMiddleName EQ 0 AND arguments.Middle_Name EQ '')
+		OR (arguments.NoMiddleName EQ 1 AND arguments.Middle_Name NEQ '')>
+			<cfset stTraveler.Middle_Name = 'error'>
+		<cfelse>
+			<cfset stTraveler.Middle_Name = arguments.Middle_Name>
+		</cfif>
+		<cfset stTraveler.NoMiddleName = arguments.NoMiddleName>
+		<cfset stTraveler.Last_Name = (arguments.Last_Name NEQ '' ? arguments.Last_Name : 'error')>
+		<cfset stTraveler.Phone_Number = (arguments.Phone_Number NEQ '' ? arguments.Phone_Number : 'error')>
+		<cfset stTraveler.Wireless_Phone = (arguments.Wireless_Phone NEQ '' ? arguments.Wireless_Phone : 'error')>
+		<cfset stTraveler.Email = (IsValid('Email', arguments.Email) ? arguments.Email : 'error')>
+		<cfset arguments.CCEmail = Replace(arguments.CCEmail, ' ', '', 'ALL')>
+		<cfset arguments.CCEmail = Replace(arguments.CCEmail, ',', ';', 'ALL')>
+		<cfset local.sTempEmails = ''>
+		<cfset local.sTempError = 0>
+		<cfloop list="#arguments.CCEmail#" delimiters=";" index="local.sEmail">
+			<cfif IsValid('Email', sEmail)>
+				<cfset sTempEmails = ListAppend(sTempEmails, sEmail, ';')>
+			<cfelse>
+				<cfset sTempError = 1>
+			</cfif>
+		</cfloop>
+		<cfset stTraveler.CCEmail = (NOT sTempError ? sTempEmails : 'error')>
+		<cfset local.dBirthday = arguments.Month&'/'&arguments.Day&'/'&(arguments.Year EQ '****' AND IsDate(stTraveler.Birthday) ? Year(stTraveler.Birthday) : arguments.Year)>
+		<cfset stTraveler.Birthdate = (IsDate(dBirthday) ? CreateODBCDate(dBirthday) : 'error')>
+		<cfset stTraveler.Gender = (arguments.Gender NEQ '' ? arguments.Gender : 'error')>
+
+		<!--- Org Units --->
+
+		<!--- Air Payment --->
+		
+		<!--- Car Payment --->
+
+		<!--- Hotel Payment --->
+
+		<!--- Air Options --->
+		<cfset stTraveler.Window_Aisle = arguments.Seats>
+		<cfloop array="#stItinerary.Air.Carriers#" index="nCarrierKey" item="sCarrier">
+			<cfset stTraveler.Air_FF[sCarrier] = arguments['Air_FF#sCarrier#']>
+		</cfloop>
+		<cfset stTraveler.Car_FF[stItinerary.Air.CarVendor] = arguments.Car_FF>
+		
+		<!--- Car Options --->
+
+		<!--- Hotel Options --->
+
+
+<cfdump var="#stTraveler#">
+<cfdump var="#arguments#">	
+		
+		<cfabort>
+
+		<cfreturn qAllTravelers />
+	</cffunction>
+
+<!---
 getAllTravelers
 --->
 	<cffunction name="getAllTravelers" output="false">

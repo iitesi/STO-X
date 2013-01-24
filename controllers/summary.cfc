@@ -13,8 +13,12 @@ default
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 		
-		<cfif NOT StructKeyExists(session.searches[url.Search_ID], 'stTravelers')>
-			<cfset session.searches[url.Search_ID].stTravelers = {}>
+		<cfif structKeyExists(rc, 'btnConfirm')>
+			<cfset variables.fw.service('summary.saveSummary', 'void')>
+		</cfif>
+
+		<cfif NOT StructKeyExists(session.searches[rc.nSearchID], 'stTravelers')>
+			<cfset session.searches[rc.nSearchID].stTravelers = {}>
 		</cfif>
 
 		<cfset variables.fw.service('summary.determinFees', 'stFees')>
@@ -25,7 +29,7 @@ default
 		<cfset variables.fw.service('traveler.getUser', 'qUser')>
 		<cfset variables.fw.service('traveler.getAllTravelers', 'qAllTravelers')>
 
-		<cfset local.stY1 = {}>
+		<!--- <cfset local.stY1 = {}>
 		<cfset stY1.sCabin = 'Y'>
 		<cfset stY1.bRefundable = 1>
 		<cfset stY1.nTrip = session.searches[rc.nSearchID].stItinerary.Air.nTrip>
@@ -35,7 +39,7 @@ default
 		<cfset stC0.sCabin = 'C'>
 		<cfset stC0.bRefundable = 0>
 		<cfset stC0.nTrip = session.searches[rc.nSearchID].stItinerary.Air.nTrip>
-		<cfset variables.fw.service('airprice.doAirPrice', 'nC0TripKey', stC0)>
+		<cfset variables.fw.service('airprice.doAirPrice', 'nC0TripKey', stC0)> --->
 
 		<cfreturn />
 	</cffunction>

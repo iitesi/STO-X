@@ -1,4 +1,4 @@
-
+<cfsetting showdebugoutput="false">
 <cfoutput>
 	<div id="seatcontent">
 		<cfif rc.nGroup EQ ''>
@@ -19,17 +19,58 @@
 			<cfset stGroups = session.searches[rc.nSearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups>
 		</cfif>
 		<ul class="tabs">
-			<cfset sURL = 'Search_ID=#rc.nSearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
-			<cfloop collection="#stGroups#" item="nGroup">
-				<cfloop collection="#stGroups[nGroup].Segments#" item="nSegment">
-					<li><a <cfif rc.nSegment EQ nSegment>class="active"</cfif> onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#nSegment#');">#stGroups[nGroup].Segments[nSegment].Carrier##stGroups[nGroup].Segments[nSegment].FlightNumber# (#stGroups[nGroup].Segments[nSegment].Origin# to #stGroups[nGroup].Segments[nSegment].Destination#)</a></li>
-					<cfif rc.nSegment EQ nSegment>
-						<cfset stSegments = stGroups[nGroup].Segments[nSegment]>
-					</cfif>
+			<table>
+			<tr height="30">
+				<cfset sURL = 'Search_ID=#rc.nSearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
+				<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
+					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
+						<td>
+							<li>
+								<a <cfif rc.nSegment EQ sSegKey>class="active"</cfif> onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');">
+									#stSegment.Carrier##stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
+								</a>
+							</li>
+						</td>
+					</cfloop>
 				</cfloop>
-			</cfloop>
+			</tr>
+			<cfset sCurrentSeat = ''>
+			<cfset sNextSegKey = ''>
+			<cfset bFound = 0>
+			<cfset nSegmentCount = 0>
+			<cfif rc.bSelection>
+				<tr>
+					<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
+						<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
+							<cfset nSegmentCount++>
+							<td>
+								Seat: <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.nSearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled>
+							</td>
+							<cfif bFound EQ 1>
+								<cfset bFound = 0>
+								<cfset sNextSegKey = sSegKey>
+							</cfif>
+							<cfif rc.nSegment EQ sSegKey>
+								<cfset bFound = 1>
+								<cfset stSegments = stSegment>
+								<cfset sCurrentSeat = session.searches[rc.nSearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']>
+							</cfif>
+						</cfloop>
+					</cfloop>
+				</tr>
+				<cfif sNextSegKey NEQ ''>
+					<tr>
+						<td colspan="#nSegmentCount#" align="right">
+							<br><br>
+							<a onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sNextSegKey#&bSelection=1');">
+								Next Segment >>
+							</a>
+						</td>
+					</tr>
+				</cfif>
+			</cfif>
+			</table>
 		</ul>
-		<br><br>
 		<div id="seats">
 			<strong>
 				<img class="carrierimg" src="assets/img/airlines/#stSegments.Carrier#.png" style="float:left;padding-right:20px;">
@@ -91,7 +132,12 @@
 								<cfset sDesc = Replace(sDesc, ',', ', ')>
 								<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 								<tr>
-									<td class="seat #rc.stSeats[nRow][sColumn].Avail#" title="#sDesc#"></td>
+									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+										<cfif rc.bSelection
+										AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+											<a href="##" onClick="selectSeats('#stSegments.Carrier#', #stSegments.FlightNumber#, '#nRow##sColumn#', '#stSegments.Origin#', '#stSegments.Destination#');return false;" style="text-decoration:none;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
+										</cfif>
+									</td>
 								</tr>
 							</cfloop>
 							</table>
@@ -123,6 +169,8 @@
 				<br><br>
 				<table class="popUpTable">
 				<tr>
+					<td class="seat currentseat"></td>
+					<td class="paddingright">Seat Selected</td>
 					<td class="seat Available"></td>
 					<td class="paddingright">Available</td>
 					<td class="seat Preferential"></td>

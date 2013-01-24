@@ -48,6 +48,7 @@
 	
 	<cffunction name="setupRequest">
 		<!--- <cfset void = structdelete(session.searches, 209349)> --->
+
 		<cfset request.context.nSearchID = (request.context.keyExists('Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
 		<cfset request.context.nSearchID = (StructKeyExists(request.context, 'Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
 		<cfset request.context.Search_ID = request.context.nSearchID>
@@ -90,6 +91,12 @@
 		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
 		
+		<cfif (NOT StructKeyExists(session, 'searches')
+		OR NOT StructKeyExists(session.searches, request.context.nSearchID))
+		AND request.context.action NEQ 'main.default'>
+			<cfset redirect('main?Search_ID=#request.context.nSearchID#')>
+		</cfif>
+
 	</cffunction>
 	
 	<cffunction name="onRequestEnd">

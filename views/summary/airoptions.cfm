@@ -1,4 +1,4 @@
-<cfoutput>
+<!--- <cfoutput>
 	<cfif bAir>
 		<table with="100%">
 		<tr>
@@ -42,4 +42,4 @@
 		</cfif>
 		</table>
 	</cfif>
-</cfoutput>
+</cfoutput> --->

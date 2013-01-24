@@ -69,7 +69,6 @@
 	<cffunction name="close" output="false">
 		<cfargument name="rc">
 		
-		<cfset rc.nSearchID = url.Search_ID>
 		<cfset variables.fw.service('security.close', 'nNewSearchID')>
 				
 		<cfreturn />

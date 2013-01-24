@@ -107,6 +107,9 @@ getUser
 			<!--- Mark appropriate type --->
 			<cfset stTravelers[arguments.nTraveler].Type = (arguments.User_ID NEQ 0 ? 'Profiled' : 'Guest')>
 			
+			<!--- Create defaults --->
+			<cfset stTravelers[arguments.nTraveler].stSeats = {}>
+
 		</cfif>
 		<cfset session.searches[arguments.nSearchID].stTravelers = stTravelers>
 
@@ -324,6 +327,23 @@ getAllTravelers
 		</cfstoredproc> 
 
 		<cfreturn qAllTravelers />
+	</cffunction>
+
+<!---
+setSeat
+--->
+	<cffunction name="setSeat" output="false" access="remote" returnformat="plain">
+		<cfargument name="nSearchID">
+		<cfargument name="nTraveler">
+		<cfargument name="sCarrier">
+		<cfargument name="nFlightNumber">
+		<cfargument name="sOrigin">
+		<cfargument name="sDestination">
+		<cfargument name="sSeat">
+		
+		<cfset session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler].stSeats['#arguments.sCarrier##arguments.nFlightNumber##arguments.sOrigin##arguments.sDestination#'] = arguments.sSeat>
+
+		<cfreturn true/>
 	</cffunction>
 
 <!---

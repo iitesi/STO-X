@@ -47,7 +47,7 @@ OUT OF POLICY
 					<!--- All accounts when out of policy --->
 					<cfif NOT bCarPolicy
 					AND stPolicy.Policy_CarReasonCode EQ 1>
-						<select name="Car_ReasonCode1" id="Car_ReasonCode1">
+						<select name="Car_ReasonCode" id="Car_ReasonCode">
 						<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
 						<option value="S">>Required car size sold out</option>

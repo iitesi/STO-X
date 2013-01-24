@@ -55,21 +55,31 @@ COST
 			</tr>
 			<tr>
 				<td colspan="#nGroup+1#">
+					<table width="100%">
+
 <!---
 OUT OF POLICY
 --->
+					<cfset nTD = 0>
+					<tr>
 					<!---
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
 					<cfif NOT bAirPolicy
 					AND stPolicy.Policy_AirReasonCode EQ 1>
-						<select name="Air_ReasonCode1" id="Air_ReasonCode1">
-						<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
-						<cfloop query="rc.qOutOfPolicy">
-							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-						</cfloop>
-						</select>
+							<td>
+								Reason for booking outside of policy
+							</td>
+							<td>
+								<select name="Air_ReasonCode1" id="Air_ReasonCode1">
+								<option value=""></option>
+								<cfloop query="rc.qOutOfPolicy">
+									<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+								</cfloop>
+								</select>
+							</td>
+							<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					</cfif>
 
 <!---
@@ -83,12 +93,18 @@ NOT LOWEST FARE
 					<cfif stItinerary.Air.Total GT nLowestFare
 					AND (bAirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
 					AND stPolicy.Policy_AirLostSavings EQ 1>
-						<select name="LostSavings" id="LostSavings">
-						<option value="">SELECT REASON FOR NOT BOOKING THE LOWEST FARE</option>
-						<cfloop query="rc.qOutOfPolicy">
-							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-						</cfloop>
-						</select>
+							<td>
+								Reason for not booking the lowest fare
+							</td>
+							<td>
+								<select name="LostSavings" id="LostSavings">
+								<option value=""></option>
+								<cfloop query="rc.qOutOfPolicy">
+									<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+								</cfloop>
+								</select>
+							</td>
+						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					<!---
 					If the fare is the same
 					--->
@@ -96,20 +112,38 @@ NOT LOWEST FARE
 						<input type="hidden" name="LostSavings" value="C">
 					</cfif>
 <!---
-SPECIAL REQUEST
---->
-					<cfif stPolicy.Policy_AllowRequests EQ 1>
-						<textarea name="Special_Requests" id="Special_Requests" cols="55" rows="1" placeholder="Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#" style="height:15px;"></textarea>
-					</cfif>
-<!---
 GENERAL SEAT ASSIGNMENTS
 --->
-					<cfif NOT ArrayFind(stItinerary.Air.Carriers, 'WN')><!--- NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E') --->
-						<select name="Seats" id="Seats">
-						<option value="">GENERAL SEAT SELECTION</option>
-						<option value="A" <cfif stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
-						<option value="W" <cfif stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
-						</select>
+					<cfif NOT ArrayFind(stItinerary.Air.Carriers, 'WN')
+					AND NOT ArrayFind(stItinerary.Air.Carriers, 'FL')><!--- NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E') --->
+							<td>
+								General Seat Selection
+							</td>
+							<td>
+								<select name="Seats" id="Seats">
+								<option value="">GENERAL SEAT SELECTION</option>
+								<option value="A" <cfif stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
+								<option value="W" <cfif stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
+								</select>
+							</td>
+						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
+							<td>
+								Specific Seat Seletion
+							</td>
+							<td>
+								<a href="?action=air.popup&sDetails=seatmap&Search_ID=#rc.nSearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
+									Seat Maps
+									<cfloop collection="#stItinerary.Air.Groups#" index="nGroupKey" item="stGroup">
+										<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
+											<cfset sFieldName = '#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#'>
+											<cfparam name="session.searches[#rc.nSearchID#].stTravelers[nTraveler].stSeats.#sFieldName#" default="">
+											<input type="text" name="Seat#sFieldName#_view" id="Seat#sFieldName#_view" size="3" maxlength="4" value="#session.searches[rc.nSearchID].stTravelers[nTraveler].stSeats[sFieldName]#" disabled>
+											<input type="hidden" name="Seat#sFieldName#" id="Seat#sFieldName#" value="#session.searches[rc.nSearchID].stTravelers[nTraveler].stSeats[sFieldName]#">
+										</cfloop>
+									</cfloop>
+								</a>
+							</td>
+						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					<cfelse>
 						<input type="hidden" name="Seat#i#" value="">
 					</cfif>
@@ -117,20 +151,43 @@ GENERAL SEAT ASSIGNMENTS
 FREQUENT PROGRAM NUMBER
 --->
 					<cfloop array="#stItinerary.Air.Carriers#" item="sCarrier">
-						<strong>#sCarrier# ##</strong>
-						<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20" placeholder="Frequent Flyer Number">
+							<td>
+								#sCarrier# Frequent Flyer Number
+							</td>
+							<td>
+								<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20">
+							</td>
+						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					</cfloop>
+<!---
+SPECIAL REQUEST
+--->
+					<cfif stPolicy.Policy_AllowRequests EQ 1>
+							<td>
+								Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#
+							</td>
+							<td>
+								<textarea name="Special_Requests" id="Special_Requests" cols="40" rows="1" placeholder="" style="height:15px;"></textarea>
+							</td>
+						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
+					</cfif>
 <!---
 ADDITIONAL REQUESTS
 --->
-					<select name="Service_Requests" id="Service_Requests">
-					<option value="">SPECIAL REQUESTS</option>
-					<option value="BLND">Blind</option>
-					<option value="DEAF">Deaf</option>
-					<option value="UMNR">Unaccompanied Minor</option>
-					<option value="WCHR">Wheelchair</option>
-					</select>
-
+						<td>
+							Special Requests
+						</td>
+						<td>
+							<select name="Service_Requests" id="Service_Requests">
+							<option value="">SPECIAL REQUESTS</option>
+							<option value="BLND">Blind</option>
+							<option value="DEAF">Deaf</option>
+							<option value="UMNR">Unaccompanied Minor</option>
+							<option value="WCHR">Wheelchair</option>
+							</select>
+						</td>
+					</tr>
+					</table>
 				</td>
 				<td>
 				</td>

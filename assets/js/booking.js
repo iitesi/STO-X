@@ -35,6 +35,40 @@ function showManualCreditCard(type) {
 		$( "#" + type + "Manual" ).hide();
 	}
 }
+/*
+	Select seats from the summary page
+*/
+function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, sDestination) {
+
+	var nSearchID = $( "#nSearchID" ).val();
+	var nTraveler = $( "#nTraveler" ).val();
+	var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination).val();
+
+	$( "#" + oldSeat ).removeClass('currentseat');
+	$( "#" + sSeat ).addClass('currentseat');
+
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination + "_view").val(sSeat);
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination + "_popup").val(sSeat);
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination ).val(sSeat);
+
+	$.ajax({
+		type: 'POST',
+		url: 'services/traveler.cfc',
+		data: {
+			method: 'setSeat',
+			nSearchID: nSearchID,
+			nTraveler: nTraveler,
+			sCarrier: sCarrier,
+			nFlightNumber: nFlightNumber,
+			sOrigin: sOrigin,
+			sDestination: sDestination,
+			sSeat: sSeat
+		},
+		dataType: 'json'
+	});
+	
+	return false;
+}
 function filterAir() {
 																			//console.log('start');
 	var classy = $( "#ClassY:checked" ).val();

@@ -25,10 +25,10 @@
 			<table align="right">
 			<tr>
 				<td>
-					<input type="submit" class="button0policy" value="ADD A TRAVELER">
+					<input type="submit" name="btnAdd" class="button0policy" value="ADD A TRAVELER">
 				</td>
 				<td style="padding-left:20px;">
-					<input type="submit" class="button1policy" value="CONFIRM YOUR PURCHASE">
+					<input type="submit" name="btnConfirm" class="button1policy" value="CONFIRM YOUR PURCHASE">
 				</td>
 			</tr>
 			</table>
