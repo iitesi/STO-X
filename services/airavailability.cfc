@@ -10,7 +10,7 @@ init
 		<cfargument name="uapi">
 		<cfargument name="airparse">
 
-		<cfset setgetUAPI(arguments.uapi)>
+		<cfset setUAPI(arguments.uapi)>
 		<cfset setAirParse(arguments.airparse)>
 		
 		<cfreturn this>

@@ -40,7 +40,7 @@
 		<cfset application.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
 		<cfset application.bf.loadBeans( expandPath('config/coldspring.xml') )>
 		<cfset setBeanFactory(application.bf)>
-		
+
 	</cffunction>
 	
 	<cffunction name="setupSession">

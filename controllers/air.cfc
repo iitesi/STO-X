@@ -58,9 +58,9 @@ lowfare
 
 		<cfif NOT structKeyExists(rc, 'bSelect')>
 			<!--- Throw out a thread for availability --->
-			<cfset getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+			<cfset variables.fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
-			<cfset getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+			<cfset variables.fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
 			<cfset variables.fw.service('lowfare.selectAir', 'void')>
