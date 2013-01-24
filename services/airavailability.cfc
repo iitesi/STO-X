@@ -1,15 +1,21 @@
-<cfcomponent>
-	
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="uapi">
+	<cfproperty name="airparse">
+
 <!---
 init
 --->
 	<cffunction name="init" output="false">
+		<cfargument name="uapi">
+		<cfargument name="airparse">
 
-		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
+		<cfset setgetUAPI(arguments.uapi)>
+		<cfset setAirParse(arguments.airparse)>
 		
 		<cfreturn this>
 	</cffunction>
-
+	
 <!---
 selectLeg
 --->
@@ -68,7 +74,7 @@ doAirAvailability
 		<cfargument name="stGroups"		required="false"	default="#session.searches[nSearchID].stAvailDetails.stGroups#">
 
 		<cfset local.sThreadName = ''>
-		<!--- Don't go back to the UAPI if we already got the data. --->
+		<!--- Don't go back to the getUAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stGroups, nGroup)>
 			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = 'Group'&arguments.nGroup>
@@ -85,12 +91,12 @@ doAirAvailability
 					<cfset local.nCount++>
 					<!--- Put together the SOAP message. --->
 					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.nSearchID, arguments.nGroup, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''))>
-					<!--- Call the UAPI. --->
-					<cfset local.sResponse 			= 	application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
-					<!--- Format the UAPI response. --->
-					<cfset local.aResponse 			= 	application.objUAPI.formatUAPIRsp(sResponse)>
+					<!--- Call the getUAPI. --->
+					<cfset local.sResponse 			= 	getgetUAPI().callgetUAPI('AirService', sMessage, arguments.nSearchID)>
+					<!--- Format the getUAPI response. --->
+					<cfset local.aResponse 			= 	getgetUAPI().formatgetUAPIRsp(sResponse)>
 					<!--- Create unique segment keys. --->
-					<cfset sNextRef 				= 	objAirParse.parseNextReference(aResponse)>
+					<cfset sNextRef 				= 	getAirParse().parseNextReference(aResponse)>
 					<cfif nCount GT 3>
 						<cfset sNextRef				= ''>
 					</cfif>
@@ -106,18 +112,18 @@ doAirAvailability
 					<!--- Parse the trips. --->
 					<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
 					<!--- Add group node --->
-					<cfset stAvailTrips				= 	objAirParse.addGroups(stAvailTrips, 'Avail')>
+					<cfset stAvailTrips				= 	getAirParse().addGroups(stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
-					<cfset stAvailTrips 			= 	objAirParse.addPreferred(stAvailTrips)>
+					<cfset stAvailTrips 			= 	getAirParse().addPreferred(stAvailTrips)>
 					<!--- Run policy on all the results --->
-					<cfset stAvailTrips				= 	objAirParse.checkPolicy(stAvailTrips, arguments.nSearchID, '', 'Avail')>
+					<cfset stAvailTrips				= 	getAirParse().checkPolicy(stAvailTrips, arguments.nSearchID, '', 'Avail')>
 					<!--- Create javascript structure per trip. --->
-					<cfset stAvailTrips				= 	objAirParse.addJavascript(stAvailTrips, 'Avail')>
+					<cfset stAvailTrips				= 	getAirParse().addJavascript(stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
-					<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
+					<cfset session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup] = getAirParse().mergeTrips(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], stAvailTrips)>
 				</cfloop>
 				<!--- Add list of available carriers per leg --->
-				<cfset session.searches[arguments.nSearchID].stAvailDetails.stCarriers[arguments.nGroup]	= objAirParse.getCarriers(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
+				<cfset session.searches[arguments.nSearchID].stAvailDetails.stCarriers[arguments.nGroup]	= getAirParse().getCarriers(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup])>
 				<!--- Add sorting per leg --->
 				<cfset session.searches[arguments.nSearchID].stAvailDetails.aSortDepart[arguments.nGroup] 	= StructSort(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Depart')>
 				<cfset session.searches[arguments.nSearchID].stAvailDetails.aSortArrival[arguments.nGroup] 	= StructSort(session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Arrival')>
@@ -232,7 +238,7 @@ parseSegmentKeys
 					</cfloop>
 					<!--- Create a look up structure for the primary key. --->
 					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	application.objUAPI.HashNumeric(sIndex),
+						HashIndex	: 	getUAPI.HashNumeric(sIndex),
 						Index		: 	sIndex
 					}>
 				</cfloop>
@@ -369,7 +375,7 @@ parseConnections - schedule
 					<cfset sIndex &= stSegmentIndex[nIndex][sSegment][stSegment]>
 				</cfloop>
 			</cfloop>
-			<cfset nHashNumeric = application.objUAPI.hashNumeric(sIndex)>
+			<cfset nHashNumeric = getUAPI.hashNumeric(sIndex)>
 			<cfset stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
 			<cfset stTrips[nHashNumeric].Class = 'X'>
 			<cfset stTrips[nHashNumeric].Ref = 'X'>

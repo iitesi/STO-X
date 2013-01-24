@@ -1,9 +1,15 @@
-<cfcomponent output="false">
-	
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="uapi">
+
 <!---
 init
 --->
 	<cffunction name="init" output="false">
+		<cfargument name="uapi">
+
+		<cfset setUAPI(arguments.uapi)>
+		
 		<cfreturn this>
 	</cffunction>
 	
@@ -262,7 +268,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						</cfloop>
 					</cfif>
 				</cfloop>
-				<cfset sTripKey = application.objUAPI.hashNumeric(sIndex&sOverallClass&bRefundable)>
+				<cfset sTripKey = getUAPI().hashNumeric(sIndex&sOverallClass&bRefundable)>
 				<cfset stTrips[sTripKey] = stTrip>
 			</cfif>
 		</cfloop>
@@ -543,7 +549,7 @@ mergeTripsToAvail
 						<cfset sIndex &= stTempTrips[nGroup][sTripKey][sSegment][stSegment]>
 					</cfloop>
 				</cfloop>
-				<cfset nHashNumeric = application.objUAPI.hashNumeric(sIndex)>
+				<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
 				<cfif NOT structKeyExists(arguments.stAvailTrips[nGroup], nHashNumeric)>
 					<cfset arguments.stAvailTrips[nGroup][nHashNumeric].Segments = stTempTrips[nGroup][sTripKey]>
 				</cfif>

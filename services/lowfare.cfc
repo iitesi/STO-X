@@ -1,11 +1,17 @@
-<cfcomponent output="false">
-	
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="uapi">
+	<cfproperty name="airparse">
+
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		
-		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
+		<cfargument name="uapi">
+		<cfargument name="airparse">
+
+		<cfset setUAPI(arguments.uapi)>
+		<cfset setAirParse(arguments.airparse)>
 		
 		<cfreturn this>
 	</cffunction>
@@ -60,6 +66,7 @@ threadLowFare
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
+				<!--- <cfdump var="#cfthread#" abort> --->
 			<!--- If sMessage is defined then no results pulled back.  cfdump for dev purposes only. --->
 			<!--- <cfloop collection="#cfthread#" index="local.sKey">
 				<cfif structKeyExists(cfthread[sKey], 'sMessage')>
@@ -103,28 +110,28 @@ doLowFare
 				<cfset sMessage 	= prepareSoapHeader(arguments.nSearchID, arguments.sCabin, arguments.bRefundable, arguments.sLowFareSearchID)>
 				<!--- <cfdump var="#sMessage#"> --->
 				<!--- Call the UAPI. --->
-				<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.nSearchID)>
+				<cfset sResponse 	= getUAPI().callUAPI('AirService', sMessage, arguments.nSearchID)>
 				<!--- Get the next reference key --->
-				<cfset thread.sLowFareSearchID = objAirParse.parseSearchID(sResponse)>
+				<cfset thread.sLowFareSearchID = getAirParse().parseSearchID(sResponse)>
 				<!--- <cfdump var="#sLowFareSearchID#" abort> --->
 				<!--- <cfdump var="#sResponse#"> --->
 				<!--- Format the UAPI response. --->
-				<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
+				<cfset aResponse 	= getUAPI().formatUAPIRsp(sResponse)>
 				<!--- Parse the segments. --->
-				<cfset stSegments 	= objAirParse.parseSegments(aResponse)>
+				<cfset stSegments 	= getAirParse().parseSegments(aResponse)>
 				<!--- Parse the trips. --->
-				<cfset stTrips 		= objAirParse.parseTrips(aResponse, stSegments)>
+				<cfset stTrips 		= getAirParse().parseTrips(aResponse, stSegments)>
 				<!--- Add group node --->
-				<cfset stTrips 		= objAirParse.addGroups(stTrips)>
+				<cfset stTrips 		= getAirParse().addGroups(stTrips)>
 				<!--- Add group node --->
-				<cfset stTrips 		= objAirParse.addPreferred(stTrips)>
+				<cfset stTrips 		= getAirParse().addPreferred(stTrips)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
 				<cfif NOT StructIsEmpty(stTrips)>
 					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.nSearchID].stTrips = objAirParse.mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
+					<cfset session.searches[arguments.nSearchID].stTrips = getAirParse().mergeTrips(session.searches[arguments.nSearchID].stTrips, stTrips)>
 					<cfset session.searches[arguments.nSearchID].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = ''>
 					<!--- Finish up the results --->
-					<cfset void = objAirParse.finishLowFare(arguments.nSearchID)>
+					<cfset void = getAirParse().finishLowFare(arguments.nSearchID)>
 				<cfelse>
 					<cfset thread.aResponse = aResponse>
 					<cfset thread.sMessage = sMessage>

@@ -1,0 +1,18 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	
+	<bean id="uapi" class="booking.services.uapi" />
+	<bean id="airparse" class="booking.services.airparse" >
+		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+	</bean>
+	<bean id="lowfare" class="booking.services.lowfare" >
+		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+	</bean>
+	<bean id="airavailability" class="booking.services.airavailability" >
+		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+	</bean>
+	
+</beans>
