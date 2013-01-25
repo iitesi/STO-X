@@ -11,13 +11,13 @@
 		<cfset local.RoomsData = QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,RoomRateCategory,RoomRatePlanType,Policy", "varchar,numeric,varchar,varchar,varchar,varchar,varchar,boolean")>
 		
 		<!--- If not a preferred vendor then all are out of policy. Set this one time and compare in the loop for rates --->
-		<cfset PreferredVendorPolicy = NOT ArrayFind(stHotel['apolicies'],'Not a preferred vendor') /><!--- Policy = true if it's in policy, which is why NOT is needed --->
+		<cfset local.PreferredVendorPolicy = NOT ArrayFind(stHotel['apolicies'],'Not a preferred vendor') /><!--- Policy = true if it's in policy, which is why NOT is needed --->
 		
 		<cfset local.count = 0 />
 		<cfloop list="#StructKeyList(stNewHotel,'|')#" index="local.sRoom" delimiters="|">
-			<cfset Policy = PreferredVendorPolicy AND stNewHotel[sRoom]['HotelRate']['BaseRate'] LT arguments.stPolicy.Policy_HotelMaxRate /> 
-			<cfset count++ />
-			<cfset Row = QueryAddRow(RoomsData)>
+			<cfset local.Policy = PreferredVendorPolicy AND stNewHotel[sRoom]['HotelRate']['BaseRate'] LT arguments.stPolicy.Policy_HotelMaxRate /> 
+			<cfset local.count++ />
+			<cfset local.Row = QueryAddRow(RoomsData)>
 			<cfset QuerySetCell(RoomsData,'PropertyID',nHotelCode,Row)>
 			<cfset QuerySetCell(RoomsData,'Count',count,Row)>
 			<cfset QuerySetCell(RoomsData,'RoomDescription',sRoom,Row)>
@@ -28,13 +28,13 @@
 			<cfset QuerySetCell(RoomsData,'Policy',Policy,Row)>
 		</cfloop>
 
-		<cfquery name="RoomsData" dbtype="query">
+		<cfquery name="local.RoomsData" dbtype="query">
 		SELECT PropertyID, Count, RoomDescription, Rate, CurrencyCode, RoomRateCategory, RoomRatePlanType, Policy
 		FROM RoomsData
 		ORDER BY Rate
 		</cfquery>
 
-		<cfset rates = RoomsData><!--- serializeJSON() when using jQuery --->
+		<cfset local.rates = RoomsData><!--- serializeJSON() when using jQuery --->
 		
 		<cfreturn rates />
 

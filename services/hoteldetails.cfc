@@ -114,7 +114,7 @@
 						<cfloop from="1" to="#arrayLen(sHotelDescription.XMLChildren)#" index="local.OneDescription">
 							<cfset arrayAppend(Descriptions,trim(sHotelDescription.XMLChildren[OneDescription].XMLText)) />
 						</cfloop>
-						<cfset DescriptionStruct[trim(sHotelDescription.XMLAttributes.Name)] = arrayToList(Descriptions,'|') />
+						<cfset local.DescriptionStruct[trim(sHotelDescription.XMLAttributes.Name)] = arrayToList(Descriptions,'|') />
 					</cfif>
 				</cfif>
 			</cfloop>
@@ -125,28 +125,28 @@
 					<cfloop from="1" to="#arrayLen(stHotelResults.XMLChildren)#" index="local.OneDescription">
 						<cfset arrayAppend(Descriptions,trim(stHotelResults.XMLChildren[OneDescription].XMLText)) />
 					</cfloop>
-					<cfset DescriptionStruct[trim(stHotelResults.XMLAttributes.Name)] = arrayToList(Descriptions,'|') />
+					<cfset local.DescriptionStruct[trim(stHotelResults.XMLAttributes.Name)] = arrayToList(Descriptions,'|') />
 				</cfif>
 			</cfif>
 		</cfloop>
 
 		<cfoutput>
-			<cfset CheckIn = '' />
-			<cfset CheckOut = '' />
-			<cfset Commission = '' />
-			<cfloop list="#structKeyList(DescriptionStruct)#" index="i">
-				<cfset DeleteKey = false />
-				<cfset NoSpaceName = replace(i,' ','','all') />
+			<cfset local.CheckIn = '' />
+			<cfset local.CheckOut = '' />
+			<cfset local.Commission = '' />
+			<cfloop list="#structKeyList(DescriptionStruct)#" index="local.i">
+				<cfset local.DeleteKey = false />
+				<cfset local.NoSpaceName = replace(i,' ','','all') />
 				<cfif uCase(NoSpaceName) EQ 'CHECKIN'>
-					<cfset CheckIn = MilitaryToStandardTime(DescriptionStruct[i]) />
+					<cfset local.CheckIn = MilitaryToStandardTime(DescriptionStruct[i]) />
 					<cfset structDelete(DescriptionStruct,i) /><!--- These fields are stored in individual columns. Don't need to store them twice --->
 				</cfif>
 				<cfif uCase(NoSpaceName) EQ 'CHECKOUT'>
-					<cfset CheckOut = MilitaryToStandardTime(DescriptionStruct[i]) />
+					<cfset local.CheckOut = MilitaryToStandardTime(DescriptionStruct[i]) />
 					<cfset structDelete(DescriptionStruct,i) />
 				</cfif>
 				<cfif uCase(NoSpaceName) EQ 'COMMISSION'>
-					<cfset Commission = replace(replace(replace(uCase(DescriptionStruct[i]),'COMMISSION',''),'AMT',''),'-','') />
+					<cfset local.Commission = replace(replace(replace(uCase(DescriptionStruct[i]),'COMMISSION',''),'AMT',''),'-','') />
 					<cfset structDelete(DescriptionStruct,i) />
 				</cfif>
 				<cfif uCase(replace(NoSpaceName,' ','','all')) EQ 'CHECKINCHECKOUT'>
@@ -155,7 +155,7 @@
 			</cfloop>
 		</cfoutput>
 
-		<cfset DetailsArray = [] />
+		<cfset local.DetailsArray = [] />
 		<cfloop list="#structKeyList(DescriptionStruct)#" index="local.i">
 			<cfset arrayAppend(DetailsArray,i&' - '&DescriptionStruct[i]) />
 		</cfloop>
@@ -180,7 +180,7 @@
 		
 		<cfset local.HotelDetails = '' />
 
-		<cfquery name="HotelDetails" datasource="book">
+		<cfquery name="local.HotelDetails" datasource="book">
 		SELECT Details,CheckIn,CheckOut
 		FROM lu_hotels
 		WHERE Property_ID = <cfqueryparam value="#arguments.PropertyID#" cfsqltype="cf_sql_integer">
@@ -197,12 +197,12 @@
 		<cfset local.StandardTime = '' />
 		<cfset local.MilitaryTime = Time />
 
-		<cfif Len(Trim(MilitaryTime))>
-			<cfif MilitaryTime LT 1200>
-				<cfset StandardTime = MilitaryTime&'AM' />
+		<cfif Len(Trim(local.MilitaryTime))>
+			<cfif local.MilitaryTime LT 1200>
+				<cfset local.StandardTime = MilitaryTime&'AM' />
 			<cfelse>
-				<cfset StandardTime = MilitaryTime GT 1200 ? (MilitaryTime - 1200) : '1200' />
-				<cfset StandardTime&='PM' />
+				<cfset local.StandardTime = MilitaryTime GT 1200 ? (MilitaryTime - 1200) : '1200' />
+				<cfset local.StandardTime&='PM' />
 			</cfif>			
 		</cfif>
 

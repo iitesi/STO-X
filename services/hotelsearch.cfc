@@ -14,6 +14,7 @@
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
 		<cfset local.stAmenities 	= getAmenities(stHotels)>
+		<cfset local.getSearch = getSearch(arguments.nSearchID) />
 		<cfset local.latlong 		= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
 		<!--- Store the hotels, chains, amenities and lat/long into the session --->
@@ -29,26 +30,26 @@
 		<cfset session.searches[nSearchID]['Hotel_Long'] 	= GetToken(session.searches[nSearchID].slatlong,2,',') />
 
 		<!--- check Policy and add the struct into the session--->
-		<cfset stHotels = checkPolicy(stHotels, nSearchID, stPolicy, stAccount) />
+		<cfset local.stHotels = checkPolicy(stHotels, nSearchID, stPolicy, stAccount) />
 		<cfset local.stHotels 		= HotelInformationQuery(stHotels, nSearchID) /><!--- add signature_image, latitude and longitude --->
 
-		<cfset local.sHotelChain = session.searches[nSearchID].stHotels[sHotel].HotelChain />
 		<cfset local.aThreads = [] />
 		<cfset local.count = 0 />
 		<cfloop array="#session.searches[nSearchID].stSortHotels#" index="local.sHotel">
-			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<cfif NOT session.searches[nSearchID].stHotels[sHotel]['RoomsReturned']><!--- if rooms were already returned, don't check again --->
+			<cfif local.count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later  OR structKeyExists(session.searches[nSearchID],'sFileContent') --->
+				<cfif NOT session.searches[nSearchID].stHotels[local.sHotel]['RoomsReturned']><!--- if rooms were already returned, don't check again --->
+					<cfset local.sHotelChain = session.searches[nSearchID].stHotels[sHotel].HotelChain />
 					<cfthread name="#sHotel#" nSearchID="#nSearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#">
 						<cfset application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain) />
 					</cfthread>
-					<cfset arrayAppend(aThreads,sHotel)>					
+					<cfset arrayAppend(local.aThreads,sHotel)>					
 				</cfif>
-				<cfset count++ />
+				<cfset local.count++ />
 			<cfelse>
 				<cfbreak />
 			</cfif>
 		</cfloop>
-		<cfthread action="join" name="#arraytoList(aThreads)#" />
+		<cfthread action="join" name="#arraytoList(local.aThreads)#" />
 		<!--- <cfdump var="#cfthread#" abort> --->
 
 		<cfreturn />
@@ -73,34 +74,34 @@
 					
 					<cfif structKeyExists(sHotelProperty,'XMLAttributes') AND structKeyExists(sHotelProperty.XMLAttributes,'HotelCode')>
 						<!--- Set this as a variable because we'll need it later --->
-						<cfset nHotelCode = sHotelProperty.XMLAttributes.HotelCode />
-						<cfset nHotelChain = sHotelProperty.XMLAttributes.HotelChain />
+						<cfset local.nHotelCode = sHotelProperty.XMLAttributes.HotelCode />
+						<cfset local.nHotelChain = sHotelProperty.XMLAttributes.HotelChain />
 
 						<!--- get the Hotel Property Address which is in a separate node --->
 						<cfloop array="#sHotelProperty.XMLChildren#" index="local.sHotelAddress">
 							<cfif sHotelAddress.XMLName EQ 'hotel:PropertyAddress'>
-								<cfset HotelAddress = sHotelAddress.XMLChildren.1.XMLText />
+								<cfset local.HotelAddress = sHotelAddress.XMLChildren.1.XMLText />
 							</cfif>
 						</cfloop>
 
 						<!--- Create a struct with each of the hotel amenities predefined. Set the value to false and set as true when we loop through the amenities --->
 						<cfset local.HotelAmenities = {} />
-						<cfloop list="#structKeyList(application.stAmenities)#" index="i">
-							<cfset HotelAmenities[i] = false />
+						<cfloop list="#structKeyList(application.stAmenities)#" index="local.i">
+							<cfset local.HotelAmenities[local.i] = false />
 						</cfloop>
 						<!--- get the Hotel Amenities which are in a separate node --->
 						<cfloop array="#sHotelProperty.XMLChildren#" index="local.sHotelAmenities">
 							<cfif sHotelAmenities.XMLName EQ 'hotel:Amenities'>
 								<cfloop from="1" to="#ArrayLen(sHotelAmenities.XMLChildren)#" index="local.sAmenity">
 									<cfif structKeyExists(application.stAmenities,sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code)>
-										<cfset HotelAmenities[sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code] = true />
+										<cfset local.HotelAmenities[sHotelAmenities.XMLChildren[sAmenity].XMLAttributes.code] = true />
 									</cfif>
 								</cfloop>
 							</cfif>
 						</cfloop>
 
-						<cfset FeaturedProperty = structKeyExists(sHotelProperty.XMLAttributes,'FeaturedProperty') ? sHotelProperty.XMLAttributes.FeaturedProperty : false />
-						<cfset stHotels[nHotelCode] = {
+						<cfset local.FeaturedProperty = structKeyExists(sHotelProperty.XMLAttributes,'FeaturedProperty') ? sHotelProperty.XMLAttributes.FeaturedProperty : false />
+						<cfset local.stHotels[nHotelCode] = {
 							FeaturedProperty : FeaturedProperty,
 							HotelChain : nHotelChain,
 							HOTELINFORMATION : {
@@ -129,7 +130,7 @@
 		<cfargument name="stPolicy" 	required="true">
 		<cfargument name="nSearchID" 	required="true">
 		
-		<cfset getSearch = getSearch(arguments.nSearchID) />
+		<cfset local.getSearch = getSearch(arguments.nSearchID) />
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -227,9 +228,9 @@
 		<cfset local.getRateCodes = '' />
 		<cfset local.count = 0 />
 
-		<cfloop list="#sHotelRateCodes#" index="RateCode" delimiters="|">
+		<cfloop list="#sHotelRateCodes#" delimiters="|" index="local.RateCode">
 			<cfif count LT 3>
-				<cfset getRateCodes&='<com:CorporateDiscountID NegotiatedRateCode="true">'&RateCode&'</com:CorporateDiscountID>' />
+				<cfset local.getRateCodes&='<com:CorporateDiscountID NegotiatedRateCode="true">'&RateCode&'</com:CorporateDiscountID>' />
 			</cfif>
 			<cfset count++ />
 		</cfloop>
@@ -253,15 +254,15 @@
 
 			<cfloop collection="#stHotels[sCategory]#" item="local.sVendor">
 				<cfif sVendor EQ 'HotelChain'>
-					<cfset HotelChain = stHotels[sCategory]['HOTELCHAIN'] />
-					<cfset aPolicy = []>
-					<cfset bActive = true>
+					<cfset local.HotelChain = stHotels[sCategory]['HOTELCHAIN'] />
+					<cfset local.aPolicy = []>
+					<cfset local.bActive = true>
 					
 					<!--- Preferred Chains turned on and hotel is not a preferred chain. --->
 					<cfif arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND NOT ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain)>
 						<cfset ArrayAppend(aPolicy, 'Not a preferred vendor')>
 						<cfif arguments.stPolicy.Policy_HotelPrefDisp EQ 1><!--- Only display in policy hotels? --->
-							<cfset bActive = false>
+							<cfset local.bActive = false>
 						</cfif>
 					</cfif>
 					<!--- Out of policy if the hotel chain is blacklisted (still shows though).  --->
@@ -269,14 +270,14 @@
 						<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 					</cfif>
 					<!--- Preferred Chain --->
-					<cfset stHotels[sCategory].PreferredVendor = arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain) ? true : false />
+					<cfset local.stHotels[sCategory].PreferredVendor = arguments.stPolicy.Policy_HotelPrefRule EQ 1 AND ArrayFindNoCase(arguments.stAccount.aPreferredHotel, HotelChain) ? true : false />
 
 					<cfif bActive>
-						<cfset stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? true : false) />
-						<cfset stHotels[sCategory].aPolicies = aPolicy />
+						<cfset local.stHotels[sCategory].Policy = (ArrayIsEmpty(aPolicy) ? true : false) />
+						<cfset local.stHotels[sCategory].aPolicies = aPolicy />
 					<cfelse>
-						<cfset StructDelete(stHotels[sCategory], HotelChain) />
-						<cfset stHotels[sCategory].aPolicies = [] />
+						<cfset StructDelete(local.stHotels[sCategory], HotelChain) />
+						<cfset local.stHotels[sCategory].aPolicies = [] />
 					</cfif>
 				</cfif>
 			</cfloop>
@@ -285,17 +286,17 @@
 		<cfreturn stHotels />
 	</cffunction>
 
-<!--- getsearch --->
-	<cffunction name="getsearch" output="false">
+<!--- getSearch --->
+	<cffunction name="getSearch" output="false">
 		<cfargument name="nSearchID">
 
-		<cfquery name="local.getsearch" datasource="book">
+		<cfquery name="local.getSearch" datasource="book">
 		SELECT CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		
-		<cfreturn getsearch />
+		<cfreturn getSearch />
 	</cffunction>
 
 <!--- getAmenities --->
@@ -412,12 +413,12 @@
 
 		<cfset local.stHotels = arguments.stHotels />
 		<cfset local.stAmenities = arguments.stAmenities />
-		<cfset local.PropertyIDs = [] />
+		<cfset local.aPropertyIDs = [] />
 
-		<cfloop list="#StructKeyList(stHotels)#" index="sHotel">
-			<cfset ArrayAppend(PropertyIDs,sHotel)>
+		<cfloop list="#StructKeyList(stHotels)#" index="local.sHotel">
+			<cfset ArrayAppend(local.aPropertyIDs,sHotel)>
 		</cfloop>
-		<cfset PropertyIDs = arrayToList(PropertyIDs) />
+		<cfset local.PropertyIDs = arrayToList(local.aPropertyIDs) />
 
 		<cfquery name="local.HotelInformationQuery" datasource="Book">
 		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
@@ -428,16 +429,16 @@
 		<cfloop query="HotelInformationQuery">
 			<!--- Pull in the existing hotel information from the structure --->
 			<cfset local.stHotelInformation = stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] />
-			<cfset stHotelInformation['SIGNATURE_IMAGE'] = HotelInformationQuery.Signature_Image />
-			<cfset stHotelInformation['LATITUDE'] = HotelInformationQuery.Lat />
-			<cfset stHotelInformation['LONGITUDE'] = HotelInformationQuery.Long />
+			<cfset local.stHotelInformation['SIGNATURE_IMAGE'] = HotelInformationQuery.Signature_Image />
+			<cfset local.stHotelInformation['LATITUDE'] = HotelInformationQuery.Lat />
+			<cfset local.stHotelInformation['LONGITUDE'] = HotelInformationQuery.Long />
 			<!--- add the hotel information back into the hotel structure --->
-			<cfset stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
+			<cfset local.stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['HOTELINFORMATION'] = stHotelInformation />
 			
 			<cfset local.stHotelAmenities = stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['Amenities'] />
 			<cfloop list="#structKeyList(stHotelAmenities)#" index="local.Amenity">
 				<!--- Update query to show yes if hotel amenity is true --->
-				<cfset stHotelAmenities[Amenity] ? querySetCell(HotelInformationQuery, Amenity, 1, HotelInformationQuery.CurrentRow) : '' />
+				<cfset local.stHotelAmenities[Amenity] ? querySetCell(HotelInformationQuery, Amenity, 1, HotelInformationQuery.CurrentRow) : '' />
 			</cfloop>
 			<!--- Update policy if value is true. Don't update if false --->
 			<cfif stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['POLICY']>
@@ -459,7 +460,7 @@ selectHotel
 		<cfargument name="nRoom" default="#listLast(form.sHotel)#">
 		<cfargument name="nSearchID" default="#url.Search_ID#">
 
-		<cfset getSearch = getSearch(arguments.nSearchID) />
+		<cfset local.getSearch = getSearch(arguments.nSearchID) />
 		<cfset local.Nights = DateDiff('d',getSearch.CheckIn_Date,getSearch.CheckOut_Date) />
 		<cfset local.RoomDescription = session.searches[arguments.nSearchID].stHotels[arguments.nHotelID]['Rooms'][arguments.nRoom] />
 

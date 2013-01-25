@@ -23,20 +23,20 @@
 			<cfset local.LowRate = 10000 />
 			<cfloop list="#RoomDescriptions#" index="local.HotelDesc" delimiters="|">
 				<cfif structKeyExists(stRates[HotelDesc].HotelRate,'BaseRate')>
-					<cfset LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
+					<cfset local.LowRate = min(stRates[HotelDesc]['HotelRate']['BaseRate'],LowRate) />
 				</cfif>
 			</cfloop>
 		<cfelse>
 			<cfset local.LowRate = 'Sold Out' />
 		</cfif>
 
-		<cfset stHotels['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />
+		<cfset local.stHotels['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />
 		<cfset local.HotelAddress = StructKeyExists(stHotels,'Property') ? stHotels['Property']['Address1'] : ''/>
-		<cfset HotelAddress			 &= StructKeyExists(stHotels,'Property') AND Len(Trim(stHotels['Property']['Address2'])) ? ', '&stHotels['Property']['Address2'] : '' />		
+		<cfset local.HotelAddress&= StructKeyExists(stHotels,'Property') AND Len(Trim(stHotels['Property']['Address2'])) ? ', '&stHotels['Property']['Address2'] : '' />		
 
-		<cfset stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
+		<cfset local.stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
 
-		<cfset NewResponse = [ LowRate:LowRate,
+		<cfset local.NewResponse = [ LowRate:LowRate,
 													HotelAddress:HotelAddress,
 													Policy:structKeyExists(stHotels,'Policy') ? stHotels['Policy'] : 0,
 													APolicies:structKeyExists(stHotels,'aPolicies') ? stHotels['aPolicies'] : [],
@@ -142,15 +142,15 @@
 			<cfloop array="#stHotelResults.XMLChildren#" index="local.sHotelPriceResult">
 				<cfif sHotelPriceResult.XMLName EQ 'hotel:HotelRateDetail'>
 					
-					<cfset RoomRateCategory = structKeyExists(sHotelPriceResult.XMLAttributes,'RateCategory') ? sHotelPriceResult.XMLAttributes.RateCategory : '' />
-					<cfset RoomRatePlanType = structKeyExists(sHotelPriceResult.XMLAttributes,'RatePlanType') ? sHotelPriceResult.XMLAttributes.RatePlanType : '' />
+					<cfset local.RoomRateCategory = structKeyExists(sHotelPriceResult.XMLAttributes,'RateCategory') ? sHotelPriceResult.XMLAttributes.RateCategory : '' />
+					<cfset local.RoomRatePlanType = structKeyExists(sHotelPriceResult.XMLAttributes,'RatePlanType') ? sHotelPriceResult.XMLAttributes.RatePlanType : '' />
 
 					<!--- Need to find the room description --->
 					<cfset local.RoomDescription = 'No Description for Hotel' />
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">
 						<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
 							<cfif sHotelRate.XMLAttributes.Name EQ 'Description'>
-								<cfset RoomDescription = sHotelRate.XMLChildren.1.XMLText />
+								<cfset local.RoomDescription = sHotelRate.XMLChildren.1.XMLText />
 								<cfbreak />
 							</cfif>
 						</cfif>
@@ -173,20 +173,20 @@
 						
 						<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelRate">	
 							<cfif sHotelRate.XMLName EQ 'hotel:RoomRateDescription'>
-								<cfset stHotels['Rooms'][RoomDescription].TotalIncludes = sHotelRate.XMLAttributes.Name EQ 'Total Includes' ? sHotelRate.XMLChildren.1.XMLText : stHotels['Rooms'][RoomDescription].TotalIncludes />
-								<cfset stHotels['Rooms'][RoomDescription].Commission = sHotelRate.XMLAttributes.Name EQ 'Commission' ? sHotelRate.XMLChildren.1.XMLText : stHotels['Rooms'][RoomDescription].Commission />
-								<cfset stHotels['Rooms'][RoomDescription].CancelPolicyExist = sHotelRate.XMLAttributes.Name EQ 'Cancel Policy Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels['Rooms'][RoomDescription].CancelPolicyExist />
-								<cfset stHotels['Rooms'][RoomDescription].MealPlanExist = sHotelRate.XMLAttributes.Name EQ 'Meal Plan Exist' ? sHotelRate.XMLChildren.1.XMLText : stHotels['Rooms'][RoomDescription].MealPlanExist />
-								<cfset stHotels['Rooms'][RoomDescription].RateChangeIndicator = sHotelRate.XMLAttributes.Name EQ 'Rate Change Indicator' ? sHotelRate.XMLChildren.1.XMLText : stHotels['Rooms'][RoomDescription].RateChangeIndicator />							
+								<cfset local.stHotels['Rooms'][RoomDescription].TotalIncludes = sHotelRate.XMLAttributes.Name EQ 'Total Includes' ? sHotelRate.XMLChildren.1.XMLText : local.stHotels['Rooms'][RoomDescription].TotalIncludes />
+								<cfset local.stHotels['Rooms'][RoomDescription].Commission = sHotelRate.XMLAttributes.Name EQ 'Commission' ? sHotelRate.XMLChildren.1.XMLText : local.stHotels['Rooms'][RoomDescription].Commission />
+								<cfset local.stHotels['Rooms'][RoomDescription].CancelPolicyExist = sHotelRate.XMLAttributes.Name EQ 'Cancel Policy Exist' ? sHotelRate.XMLChildren.1.XMLText : local.stHotels['Rooms'][RoomDescription].CancelPolicyExist />
+								<cfset local.stHotels['Rooms'][RoomDescription].MealPlanExist = sHotelRate.XMLAttributes.Name EQ 'Meal Plan Exist' ? sHotelRate.XMLChildren.1.XMLText : local.stHotels['Rooms'][RoomDescription].MealPlanExist />
+								<cfset local.stHotels['Rooms'][RoomDescription].RateChangeIndicator = sHotelRate.XMLAttributes.Name EQ 'Rate Change Indicator' ? sHotelRate.XMLChildren.1.XMLText : local.stHotels['Rooms'][RoomDescription].RateChangeIndicator />							
 							</cfif>
 
 							<cfif sHotelRate.XMLName EQ 'hotel:HotelRateByDate'>
 								<cfset local.CurrencyCode = left(sHotelRate.XMLAttributes.Base,3) />
 								<cfset local.Rate = mid(sHotelRate.XMLAttributes.Base,4) />
-								<cfset stHotels['Rooms'][RoomDescription].HotelRate.CurrencyCode = CurrencyCode />
-								<cfset stHotels['Rooms'][RoomDescription].HotelRate.BaseRate = Rate />
-								<cfset stHotels['Rooms'][RoomDescription].HotelRate.EffectiveRate = sHotelRate.XMLAttributes.EffectiveDate />
-								<cfset stHotels['Rooms'][RoomDescription].HotelRate.ExpireRate = sHotelRate.XMLAttributes.ExpireDate />
+								<cfset local.stHotels['Rooms'][RoomDescription].HotelRate.CurrencyCode = CurrencyCode />
+								<cfset local.stHotels['Rooms'][RoomDescription].HotelRate.BaseRate = Rate />
+								<cfset local.stHotels['Rooms'][RoomDescription].HotelRate.EffectiveRate = sHotelRate.XMLAttributes.EffectiveDate />
+								<cfset local.stHotels['Rooms'][RoomDescription].HotelRate.ExpireRate = sHotelRate.XMLAttributes.ExpireDate />
 							</cfif>
 						</cfloop>
 
@@ -194,7 +194,7 @@
 				</cfif>
 
 				<cfif sHotelPriceResult.XMLName EQ 'hotel:HotelProperty'>
-					<cfset stHotels['Property'] = {
+					<cfset local.stHotels['Property'] = {
 						Address1 : '',
 						Address2 : '',
 						BusinessPhone : '',
@@ -205,9 +205,9 @@
 
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelProperty">
 						<cfif sHotelProperty.xmlName EQ 'hotel:PropertyAddress'>
-							<cfset stHotels['Property'].Address1 = sHotelProperty.XMLChildren.1.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.1.XMLText) : stHotels['Property'].Address1 />
+							<cfset local.stHotels['Property'].Address1 = sHotelProperty.XMLChildren.1.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.1.XMLText) : local.stHotels['Property'].Address1 />
 							<cftry>
-								<cfset stHotels['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : stHotels['Property'].Address2 />
+								<cfset local.stHotels['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : local.stHotels['Property'].Address2 />
 								<cfcatch>
 									<cfmail to="mbusche@shortstravel.com" from="mbusche@shortstravel.com" subject="error" type="html">									
 										<cfdump var="#sHotelProperty#">
@@ -216,12 +216,12 @@
 							</cftry>
 						</cfif>
 						<cfif sHotelProperty.xmlName CONTAINS 'PhoneNumber'>
-							<cfset stHotels['Property'].BusinessPhone = sHotelProperty.XMLAttributes.Type EQ 'Business' ? Trim(sHotelProperty.XMLAttributes.Number) : stHotels['Property'].BusinessPhone />
-							<cfset stHotels['Property'].FaxPhone = sHotelProperty.XMLAttributes.Type EQ 'Fax' ? Trim(sHotelProperty.XMLAttributes.Number) : stHotels['Property'].FaxPhone />
+							<cfset local.stHotels['Property'].BusinessPhone = sHotelProperty.XMLAttributes.Type EQ 'Business' ? Trim(sHotelProperty.XMLAttributes.Number) : local.stHotels['Property'].BusinessPhone />
+							<cfset local.stHotels['Property'].FaxPhone = sHotelProperty.XMLAttributes.Type EQ 'Fax' ? Trim(sHotelProperty.XMLAttributes.Number) : local.stHotels['Property'].FaxPhone />
 						</cfif>
 						<cfif sHotelProperty.xmlName CONTAINS 'Distance'>
-							<cfset stHotels['Property'].Direction = StructKeyExists(sHotelProperty.XMLAttributes,'Direction') ? Trim(sHotelProperty.XMLAttributes.Direction) : stHotels['Property'].Direction />
-							<cfset stHotels['Property'].Distance = StructKeyExists(sHotelProperty.XMLAttributes,'Value') ? Trim(sHotelProperty.XMLAttributes.Value) : stHotels['Property'].Distance />
+							<cfset local.stHotels['Property'].Direction = StructKeyExists(sHotelProperty.XMLAttributes,'Direction') ? Trim(sHotelProperty.XMLAttributes.Direction) : local.stHotels['Property'].Direction />
+							<cfset local.stHotels['Property'].Distance = StructKeyExists(sHotelProperty.XMLAttributes,'Value') ? Trim(sHotelProperty.XMLAttributes.Value) : local.stHotels['Property'].Distance />
 						</cfif>
 						
 					</cfloop>
@@ -232,9 +232,9 @@
 		</cfloop>
 		
 		<!--- Update the struct so we know we've received rates and we don't pull them again later --->
-		<cfset stHotels['RoomsReturned'] = true />
+		<cfset local.stHotels['RoomsReturned'] = true />
 
-		<cfreturn stHotels />
+		<cfreturn local.stHotels />
 	</cffunction>	
 	
 <!--- checkPolicy --->
@@ -252,13 +252,13 @@
 		
 		<!--- If we don't have a LowRate yet, then don't apply policy, we'll do it later --->
 		<cfif StructKeyExists(stHotels,'LowRate')>
-			<cfset LowRate = StructKeyExists(stHotels,'LowRate') ? stHotels['LowRate'] : 0 />
+			<cfset local.LowRate = StructKeyExists(stHotels,'LowRate') ? stHotels['LowRate'] : 0 />
 
 			<cfloop collection="#stHotels#" item="local.sVendor">
 				
 				<cfif sVendor EQ 'HotelChain'>
-					<cfset HotelChain = stHotels['HOTELCHAIN'] />						
-					<cfset bActive = true>
+					<cfset local.HotelChain = stHotels['HOTELCHAIN'] />						
+					<cfset local.bActive = true>
 					
 					<!--- Max rate turned on and hotel is above max rate. --->
 					<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate NEQ 'Sold Out' AND LowRate GT arguments.stPolicy.Policy_HotelMaxRate>
@@ -266,14 +266,14 @@
 							<cfset ArrayAppend(aPolicy, 'Too expensive')>
 						</cfif>
 						<cfif arguments.stPolicy.Policy_HotelMaxDisp EQ 1><!--- Only display in policy hotels? --->
-							<cfset bActive = false>
+							<cfset local.bActive = false>
 						</cfif>
 						<cfbreak />
 					</cfif>
 
 					<cfif bActive>
-						<cfset stHotels.Policy = ArrayIsEmpty(aPolicy) ? true : false />
-						<cfset stHotels.aPolicies = aPolicy />
+						<cfset local.stHotels.Policy = ArrayIsEmpty(aPolicy) ? true : false />
+						<cfset local.stHotels.aPolicies = aPolicy />
 					<cfelse>
 						<cfset StructDelete(stHotels, HotelChain)>
 					</cfif>

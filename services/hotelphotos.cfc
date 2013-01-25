@@ -93,13 +93,13 @@
 
 		<cfloop array="#arguments.stResponse#" index="local.stHotelPhoto">
 			<cfif stHotelPhoto.XMLName EQ 'common_v15_0:MediaItem'>
-				<cfset HotelPhoto = stHotelPhoto.XMLAttributes.url />
-				<cfset ArrayAppend(aHotelPhotos, HotelPhoto) />				
+				<cfset local.HotelPhoto = stHotelPhoto.XMLAttributes.url />
+				<cfset ArrayAppend(local.aHotelPhotos, HotelPhoto) />				
 			</cfif>			
 		</cfloop>
 		
 		<!--- Update the struct so we know we've received photos and we don't pull them again later --->
-		<cfset stHotels[nHotelCode]['aHotelPhotos'] = aHotelPhotos />
+		<cfset local.stHotels[nHotelCode]['aHotelPhotos'] = aHotelPhotos />
 
 		<cfreturn stHotels />
 	</cffunction>	
@@ -110,11 +110,11 @@
 		<cfargument name="Search_ID">
 		
 		<cfset local.stHotels = arguments.stHotels />
-		<cfset local.PropertyIDs = [] />
-		<cfloop list="#StructKeyList(arguments.stHotels)#" index="sHotel">
-			<cfset ArrayAppend(PropertyIDs,sHotel)>
+		<cfset local.aPropertyIDs = [] />
+		<cfloop list="#StructKeyList(arguments.stHotels)#" index="local.sHotel">
+			<cfset ArrayAppend(local.aPropertyIDs,sHotel)>
 		</cfloop>
-		<cfset PropertyIDs = arrayToList(PropertyIDs,"','") />
+		<cfset local.PropertyIDs = arrayToList(local.aPropertyIDs,"','") />
 
 		<cfquery name="local.HotelInformation" datasource="Book">
 		SELECT Property_ID, Signature_Image, Lat, Long
