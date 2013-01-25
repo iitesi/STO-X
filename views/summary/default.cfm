@@ -17,7 +17,9 @@
 		<input type="hidden" id="bHotel" value="#bHotel#">
 		<input type="hidden" name="nTraveler" id="nTraveler" value="1">
 		<input type="hidden" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
-		<input type="hidden" id="sCarVendor" value="#stItinerary.Car.VendorCode#">
+		<cfif bCar>
+			<input type="hidden" id="sCarVendor" value="#stItinerary.Car.VendorCode#">			
+		</cfif>
 		<cfif StructKeyExists(stPolicy, 'stCDNumbers')
 		AND StructKeyExists(stPolicy.stCDNumbers, stItinerary.Car.VendorCode)>
 			<cfset variables.stCD = stPolicy.stCDNumbers[stItinerary.Car.VendorCode]>
@@ -50,8 +52,9 @@
 				#View('summary/hotel')#
 				<br class="clearfix">
 				 --->
-
-				#View('summary/car')#
+				<cfif bCar>
+					#View('summary/car')#					
+				</cfif>
 				
 				<br class="clearfix">
 

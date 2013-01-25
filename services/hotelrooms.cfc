@@ -30,7 +30,7 @@
 
 		<cfquery name="local.RoomsData" dbtype="query">
 		SELECT PropertyID, Count, RoomDescription, Rate, CurrencyCode, RoomRateCategory, RoomRatePlanType, Policy
-		FROM RoomsData
+		FROM local.RoomsData
 		ORDER BY Rate
 		</cfquery>
 

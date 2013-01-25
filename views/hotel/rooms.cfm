@@ -2,7 +2,7 @@
 
 <div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">
 <table width="600px">
-<cfoutput query="rates">
+<cfoutput query="rates" maxrows="10">
 	<cfset PolicyFlag = rates.Policy ? 1 : 0 />
 	<tr>
 		<td width="20%">#DollarFormat(rates.Rate)# #rates.CurrencyCode NEQ 'USD' ? rates.CurrencyCode : ''# per night</td>
