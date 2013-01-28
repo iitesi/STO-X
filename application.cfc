@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking27'>
+	<cfset this.name = 'booking2'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
@@ -36,10 +36,10 @@
 	
 	<cffunction name="setupApplication">
 		
+		<cfset bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
+		<cfset bf.loadBeans( expandPath('config/coldspring.xml') )>
+		<cfset setBeanFactory(bf)>
 		<cfset controller( 'setup.setApplication' )>
-		<cfset application.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
-		<cfset application.bf.loadBeans( expandPath('/booking/config/coldspring.xml') )>
-		<cfset setBeanFactory(application.bf)>
 		
 	</cffunction>
 	
@@ -50,17 +50,10 @@
 	</cffunction>
 	
 	<cffunction name="setupRequest">
-		<!--- <cfset void = structdelete(session.searches, 209349)> --->
-<!--- <cfdump var="#application.fw.cache#"> --->
-		<!--- <cfset var beanFactory = new ioc("/model")> --->
-
 		<cfset request.context.nSearchID = (request.context.keyExists('Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
-		<cfset request.context.nSearchID = (StructKeyExists(request.context, 'Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
-		<cfset request.context.Search_ID = request.context.nSearchID>
 		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
-		<cfset request.context.Group = request.context.nGroup>
+		<cfset request.context.Filter = (StructKeyExists(session, 'searches') AND StructKeyExists(session.searches, request.context.nSearchID) ? session.searches[request.context.nSearchID].getFilter() : '')>
 
-		<!--- <cfadmin action="restart" type="server" password="r3dr0ck3t" remoteClients="[]"> --->
 		<cfset application.bDebug = 1>
 		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
