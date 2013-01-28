@@ -11,44 +11,6 @@ init
 
 		<cfreturn this>
 	</cffunction>
-	
-<!---
-before - do this before any air calls
---->
-	<cffunction name="before" output="false">
-		<cfargument name="rc">
-
-		<!--- Clear out results if it needs to be reloaded. --->
-		<cfif StructKeyExists(rc, 'bReloadAir')>
-			<!--- Air - low fare search --->
-			<cfset session.searches[rc.nSearchID].stTrips = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aCarriers = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.stPricing = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.stResults = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.stPriced = {}>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortArrival = []>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortBag = []>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortDepart = []>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortDuration = []>
-			<cfset session.searches[rc.nSearchID].stLowFareDetails.aSortFare = []>
-			<!--- Air - availability search --->
-			<cfset session.searches[rc.nSearchID].stAvailTrips = {}>
-			<cfset session.searches[rc.nSearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-			<cfset session.searches[rc.nSearchID].stSelected[0] = {}>
-			<cfset session.searches[rc.nSearchID].stSelected[1] = {}>
-			<cfset session.searches[rc.nSearchID].stSelected[2] = {}>
-			<cfset session.searches[rc.nSearchID].stSelected[3] = {}>
-			<cfset session.searches[rc.nSearchID].stAvailTrips[0] = {}><!--- Leg details by group --->
-			<cfset session.searches[rc.nSearchID].stAvailTrips[1] = {}>
-			<cfset session.searches[rc.nSearchID].stAvailTrips[2] = {}>
-			<cfset session.searches[rc.nSearchID].stAvailTrips[3] = {}>
-			<cfset session.searches[rc.nSearchID].stAvailDetails.stGroups = {}>
-		</cfif>
-
-		
-		<cfreturn />
-	</cffunction>
 
 <!---
 lowfare
@@ -56,31 +18,32 @@ lowfare
 	<cffunction name="lowfare" output="false">
 		<cfargument name="rc">
 
-		<cfif NOT structKeyExists(rc, 'bSelect')>
+	    <cfif NOT structKeyExists(rc, 'bSelect')>
 			<!--- Throw out a thread for availability --->
-			<cfset variables.fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
-			<cfset variables.fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
-			<cfset variables.fw.service('lowfare.selectAir', 'void')>
+            <cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endlowfare" output="false">
-		<cfargument name="rc">
+		<cfargument name="Filter">
+		<cfargument name="bSelect">
 
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfif session.searches[arguments.rc.Search_ID].bHotel
-			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.rc.Search_ID#')>
+		<cfif structKeyExists(arguments, 'bSelect')>
+			<cfif arguments.Filter.getHotel()
+			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.Filter.getSearchID()#')>
 			</cfif>
-			<cfif session.searches[arguments.rc.Search_ID].bCar
-			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Car')>
-				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Search_ID#')>
+			<cfif arguments.Filter.getCar()
+			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Search_ID#')>
+			<cfset variables.fw.redirect('summary?Search_ID=#arguments.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
@@ -95,12 +58,12 @@ availability
 		<cfif NOT structKeyExists(rc, 'bSelect')>
 			<cfset rc.sPriority = 'LOW'>
 			<!--- Throw out a thread for low fare --->
-			<cfset variables.fw.service('lowfare.threadLowFare', 'void')>
+			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 			<!--- Do the availability search. --->
-			<cfset variables.fw.service('airavailability.threadAvailability', 'void')>			
+			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
-			<cfset variables.fw.service('airavailability.selectLeg', 'void')>
+			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<cfreturn />
@@ -149,9 +112,9 @@ popup
 		<cfelseif rc.sDetails EQ 'baggage'>
 			<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
 		<cfelseif rc.sDetails EQ 'email'>
-			<cfset rc.nUserID = session.User_ID>
+			<cfset rc.UserID = session.User_ID>
 			<cfset variables.fw.service('general.getUser', 'qUser')>
-			<cfset rc.nUserID = session.searches[rc.nSearchID].nProfileID>
+			<cfset rc.UserID = session.searches[rc.nSearchID].ProfileID>
 			<cfset variables.fw.service('general.getUser', 'qProfile')>
 		</cfif>
 		
