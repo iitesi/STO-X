@@ -7,17 +7,6 @@
 		<cfreturn this>
 	</cffunction>
 	
-<!--- before --->
-	<cffunction name="before" output="false">
-		<cfargument name="rc">
-		
-		<cfif StructKeyExists(rc, 'bReloadCar')>
-			<cfset session.searches[rc.nSearchID].stCars = {}>
-		</cfif>
-				
-		<cfreturn />
-	</cffunction>
-	
 <!--- availability --->
 	<cffunction name="availability" output="false">
 		<cfargument name="rc">
@@ -32,14 +21,15 @@
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endavailability" output="false">
-		<cfargument name="rc">
+		<cfargument name="Filter">
+		<cfargument name="bSelect">
 
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfif session.searches[arguments.rc.Search_ID].bHotel
-			AND NOT StructKeyExists(session.searches[arguments.rc.Search_ID].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.rc.Search_ID#')>
+		<cfif structKeyExists(arguments.Filter, 'bSelect')>
+			<cfif arguments.Filter.getHotel()
+			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?Search_ID=#session.searches[arguments.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Search_ID#')>
+			<cfset variables.fw.redirect('summary?Search_ID=#session.searches[arguments.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
