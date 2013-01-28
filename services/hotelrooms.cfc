@@ -3,7 +3,6 @@
 	<cffunction name="getRooms" access="remote" returntype="any" returnformat="plain" output="false">
 		<cfargument name="nSearchID" />
 		<cfargument name="nHotelCode" />
-		<cfargument name="HotelRateCodes" />
     <cfargument name="stPolicy" default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
 		
 		<cfset local.stHotel = session.searches[nSearchID].stHotels[nHotelCode] />
@@ -34,9 +33,26 @@
 		ORDER BY Rate
 		</cfquery>
 
-		<cfset local.rates = RoomsData><!--- serializeJSON() when using jQuery --->
+		<cfset local.rates = serializeJSON(RoomsData)>
 		
 		<cfreturn rates />
+
+	</cffunction>
+	
+	<cffunction name="getAmenities" access="remote" returntype="any" returnformat="plain" output="false">
+		<cfargument name="nSearchID" />
+		<cfargument name="nHotelCode" />
+		
+		<cfset local.stHotel = session.searches[nSearchID].stHotels[nHotelCode]['Amenities'] />
+		<cfset local.stAmenities = [] />
+		<cfloop list="#structKeyList(stHotel)#" index="local.Amenity">
+			<cfset arrayAppend(local.stAmenities,application.stAmenities[Amenity]) />
+		</cfloop>
+		<cfset arraySort(local.stAmenities,'text') />
+
+		<cfset local.stAmenities = serializeJSON(local.stAmenities)>
+		
+		<cfreturn local.stAmenities />
 
 	</cffunction>
 	

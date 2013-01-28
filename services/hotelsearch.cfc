@@ -452,9 +452,7 @@
 		<cfreturn stHotels />
 	</cffunction>
 
-<!---
-selectHotel
---->
+<!--- selectHotel --->
 	<cffunction name="selectHotel" output="false">
 		<cfargument name="nHotelID" default="#listFirst(form.sHotel)#">
 		<cfargument name="nRoom" default="#listLast(form.sHotel)#">
@@ -488,9 +486,7 @@ selectHotel
 		<cfreturn />
 	</cffunction>
 
-<!---
-skiptHotel
---->
+<!--- skipHotel --->
 	<cffunction name="skipHotel" output="false">
 		<cfargument name="nSearchID">
 

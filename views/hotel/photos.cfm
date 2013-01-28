@@ -13,7 +13,7 @@
 				<td><img src="#Photo#" /></td>
 			<cfif count % 4 EQ 0>
 				</tr>
-			</cfif>			
+			</cfif>
 		</cfloop>
 		</table>
 	</div>

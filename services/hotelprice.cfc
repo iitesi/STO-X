@@ -12,8 +12,10 @@
 		
 		<cfset local.nHotelCode	= arguments.nHotelCode />
 		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, nHotelCode, arguments.nCouldYou)>
+		<!--- <cffile action="append" file="c:\text.txt" output="#sMessage#"> --->
 		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, nHotelCode, arguments.nCouldYou)>
 		<cfset local.stResponse = formatResponse(sResponse)>
+		<!--- <cffile action="append" file="c:\text.txt" output="#stResponse#"> --->
 		<cfset local.stHotels 	= parseHotelRooms(stResponse, nHotelCode, arguments.nSearchID)>
 		<cfset local.stRates 		= structKeyExists(stHotels,'Rooms') ? stHotels['Rooms'] : 'Sold Out' />
 		<!--- <cfdump var="#stRates#"> --->
@@ -93,7 +95,7 @@
 		<cfargument name="nHotelCode"	/>
 		<cfargument name="nCouldYou" default="0" />
 		
-		<cfset local.bSessionStorage = false /><!--- Testing setting (true - testing, false - live) --->
+		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
 		<cfif arguments.nCouldYou NEQ 0>
 			<cfset local.bSessionStorage = false />

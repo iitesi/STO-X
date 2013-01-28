@@ -12,11 +12,9 @@
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode) />
 		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode) />
 		<cfset local.stResponse = formatResponse(sResponse) />
-		<cfset local.stHotels = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.nSearchID) />
-
-		<cfset session.searches[arguments.nSearchID].stHotels = stHotels />
+		<cfset local.aHotelPhotos = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.nSearchID) />
 		
-		<cfreturn stHotels />
+		<cfreturn local.aHotelPhotos />
 	</cffunction>
 		
 <!--- prepareSoapHeader --->
@@ -82,7 +80,7 @@
 	</cffunction>
 	
 <!--- parseHotelPhotos --->
-	<cffunction name="parseHotelPhotos" returntype="struct" output="false">
+	<cffunction name="parseHotelPhotos" returntype="array" output="false">
 		<cfargument name="stResponse"	required="true">		
 		<cfargument name="nHotelCode"	required="true">		
 		<cfargument name="nSearchID"	required="true">			
@@ -99,9 +97,9 @@
 		</cfloop>
 		
 		<!--- Update the struct so we know we've received photos and we don't pull them again later --->
-		<cfset local.stHotels[nHotelCode]['aHotelPhotos'] = aHotelPhotos />
+		<cfset session.searches[arguments.nSearchID].stHotels[nHotelCode]['aHotelPhotos'] = aHotelPhotos />
 
-		<cfreturn stHotels />
+		<cfreturn aHotelPhotos />
 	</cffunction>	
 	
 <!--- HotelInformation --->

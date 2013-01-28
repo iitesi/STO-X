@@ -181,7 +181,7 @@
 		<cfset local.HotelDetails = '' />
 
 		<cfquery name="local.HotelDetails" datasource="book">
-		SELECT Details,CheckIn,CheckOut
+		SELECT replace(CAST(Details AS VARCHAR(5000)),'|',' ') AS Details, CheckIn, CheckOut
 		FROM lu_hotels
 		WHERE Property_ID = <cfqueryparam value="#arguments.PropertyID#" cfsqltype="cf_sql_integer">
 		AND #arguments.Type#_DateTime > #CreateODBCDateTime(DateAdd('m', -1, Now()))#
