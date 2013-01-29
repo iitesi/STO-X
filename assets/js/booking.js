@@ -469,6 +469,62 @@ function submitHotel (sHotel) {
 	$("#hotelForm").submit();
 }
 
+//PAGES
+function writePages(number_of_items) {
+	
+	//calculate the number of pages that are needed
+	var number_of_pages = Math.ceil(number_of_items/20);
+	//set current page
+	var current_page = $('#current_page').val();
+	//reset current page if they are on a page that isn't available
+	if (current_page > number_of_pages - 1) {
+		current_page = 0;
+		$('#current_page').val(0);
+	}
+	//define variable
+	var navigation_html = '';
+	//create html for the previous link
+	if (current_page != 0) {
+		navigation_html += '<a class=prev_page href="javascript:previous();"><< Previous Page</a> ';
+	}
+	//create html for the numbered links
+	if (number_of_pages > 1) {
+		var current_link = 0;
+		while(number_of_pages > current_link){
+			navigation_html += ' <a class=page_link href="javascript:go_to_page(' + current_link +')" longdesc="' + current_link +'">'+ (current_link + 1) +'</a> ';
+			current_link++;
+		}
+	}
+	//create html for the next link
+	if (($('#current_page').val() != number_of_pages-1) && (number_of_pages > 0)) {
+ 	   navigation_html += ' <a class=next_page href="javascript:next();">Next Page >></a>';   
+	}
+	//write the html to the navigation div
+    $('#page_navigation').html(navigation_html);   
+    $('#page_navigation2').html(navigation_html);   
+    //add active_page class to the active page link   
+    $('#page_navigation .page_link').eq(current_page).addClass('active_page');   
+    $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');   
+	return false;
+}
+
+function previous() {
+	new_page = parseInt($('#current_page').val()) - 1;
+	$('#current_page').val(new_page);
+	filterhotel();
+}
+
+function next() {
+	new_page = parseInt($('#current_page').val()) + 1;
+	$('#current_page').val(new_page);
+	filterhotel();
+}
+
+function go_to_page(new_page) {
+	$('#current_page').val(new_page);
+	filterhotel();
+}
+
 /*
 --------------------------------------------------------------------------------------------------------------------
 CAR SECTION

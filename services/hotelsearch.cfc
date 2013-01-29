@@ -31,7 +31,7 @@
 
 		<!--- check Policy and add the struct into the session--->
 		<cfset local.stHotels = checkPolicy(stHotels, nSearchID, stPolicy, stAccount) />
-		<cfset local.stHotels 		= HotelInformationQuery(stHotels, nSearchID) /><!--- add signature_image, latitude and longitude --->
+		<cfset local.stHotels = HotelInformationQuery(stHotels, nSearchID) /><!--- add signature_image, latitude and longitude --->
 
 		<cfset local.aThreads = [] />
 		<cfset local.count = 0 />
@@ -412,18 +412,15 @@
 		<cfargument name="stAmenities" default="#application.stAmenities#" />
 
 		<cfset local.stHotels = arguments.stHotels />
+		<cfset local.aHotels = session.searches[arguments.Search_ID]['stSortHotels'] />
 		<cfset local.stAmenities = arguments.stAmenities />
-		<cfset local.aPropertyIDs = [] />
-
-		<cfloop list="#StructKeyList(stHotels)#" index="local.sHotel">
-			<cfset ArrayAppend(local.aPropertyIDs,sHotel)>
-		</cfloop>
-		<cfset local.PropertyIDs = arrayToList(local.aPropertyIDs) />
+		<cfset local.PropertyIDs = arrayToList(local.aHotels) />
 
 		<cfquery name="local.HotelInformationQuery" datasource="Book">
 		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
+		ORDER BY CASE <cfloop array="#local.aHotels#" index="count" item="property">WHEN Property_ID = '#property#' THEN #count# </cfloop>END
 		</cfquery>
 
 		<cfloop query="HotelInformationQuery">

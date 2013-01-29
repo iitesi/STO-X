@@ -27,7 +27,7 @@
 				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
 					<div class="checkbox">
 						<input id="#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterhotel();">
-						<label for="#Amenity#">#application.stAmenities[Amenity]#</label><!--- #StructKeyExists(application.stAmenities,Amenity) ? application.stAmenities[Amenity] : 'No Amenity found'# --->
+						<label for="#Amenity#">#application.stAmenities[Amenity]#</label>
 					</div>
 				</cfloop>
 			</div>
@@ -38,18 +38,16 @@
 <script type="application/javascript">
 function filterhotel() {
 	// pages & sortng
-	//var start_from = $( "#current_page" ).val() * 20;
-	//var end_on = start_from + 20;
-	//var matchcriteriacount = 0;
-
-	//filter
+	var start_from = $( "#current_page" ).val() * 20;
+	var end_on = start_from + 20;
+	var matchcriteriacount = 0;
 
 	<cfoutput>
 		var hotelresults = #serializeJSON(session.searches[rc.Search_ID].HotelInformationQuery,true)#;
 		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
 	</cfoutput>	
-	orderedpropertyids = orderedpropertyids.split(',');	
-
+	orderedpropertyids = orderedpropertyids.split(',');
+	
 	for (var t = 0; t < orderedpropertyids.length; t++) {
 		// start the loop with 5 because property_id, signature_image, lat, long, chain_code, policy are 0-5
 		for (var i = 5; i < hotelresults.COLUMNS.length; i++) {
@@ -81,46 +79,50 @@ function filterhotel() {
 		var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
 		if (propertymatch == 1) {
 			$("#" + propertyid ).show('fade');
-			pins[propertyid].setOptions({visible: true});
+				//pins[propertyid].setOptions({visible: true});
+				matchcriteriacount++;
+				if (matchcriteriacount >= start_from && matchcriteriacount < end_on) {
+					$("#"+propertyid ).show('fade');
+					$("#number"+propertyid).html(matchcriteriacount);
+					//pins[propertyid].setOptions({visible:true, text:'' + matchcriteriacount + '', zIndex:1000});
+					//loadImage(property[10], propertyid);
+					//if (property[11] == 0) {
+						//getHotelRates(propertyid, property[15], property[16], hcm);
+					//}
+				}
+				else {
+					$("#" + propertyid ).hide('fade');
+					//pins[propertyid].setOptions({visible: false});
+				}
 		}
 		else {
 			$("#" + propertyid ).hide('fade');
-			pins[propertyid].setOptions({visible: false});		
+			//pins[propertyid].setOptions({visible: false});		
 		}
-
-		/*
-		else {
-			matchcriteriacount++;
-			if (matchcriteriacount >= start_from && matchcriteriacount < end_on) {
-				$( "#hotellist" + propertyid ).show();
-				$( "#number" + propertyid ).html('<strong>' + matchcriteriacount + ' - </strong>');
-				pins[propertyid].setOptions({visible:true, text:'' + matchcriteriacount + '', zIndex:1000});
-				loadImage(property[10], propertyid);
-				if (property[11] == 0) {
-					getHotelRates(propertyid, property[15], property[16], hcm);
-				}
-			}
-			else {
-				$( "#hotellist" + propertyid ).hide();
-				pins[propertyid].setOptions({visible: false});
-			}
-		}
-		*/
 	}
-	/*
+	
+
 	writePages(matchcriteriacount);
 	if (matchcriteriacount != totalproperties) {
 		$( "#hotelcount" ).html(matchcriteriacount + ' of ' + totalproperties + ' total properties');
 	}
 	else {
 		$( "#hotelcount" ).html(totalproperties +' total properties');
-	}
-	*/
+	}	
 	
 	return false;
 }
 
-
+function sortHotel(sort) {
+	$( "#current_page" ).val(0);
+	$( "#sorttype" ).val(sort);
+	var order = $( "#hotellist" + sort + "sort" ).val();
+	order = order.split(',');
+	for (var t = 0; t < order.length; t++) {
+		$( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
+	}
+	filterhotel();
+}	
 
 $(document).ready(function() {
 
@@ -129,7 +131,6 @@ $(document).ready(function() {
 			.change(function() {
 				filterhotel();
 			});
-
 
 	$( ".radiobuttons" ).buttonset();
 	$( ".radiosort" )
