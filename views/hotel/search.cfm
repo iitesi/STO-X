@@ -6,6 +6,14 @@
 	#View('hotel/filter')#
 	#View('hotel/map')#
 	<a href="#buildURL('hotel.skip?Search_ID=#rc.nSearchID#')#">Continue without hotel</a>
+	
+	<div id="infoBox" style="visibility:hidden; position:absolute; top:0px; left:0px; width:260px; z-index:10000; font-family:Arial; font-size:10px">
+		<div id="infoboxText" style="background-color:White; border-style:solid; border-width:medium; border-color:DarkOrange; min-height:100px; position:absolute; top:0px; left:23px; width:240px; ">
+			<b id="infoboxTitle" style="position:absolute; top:10px; left:10px; width:220px;"></b>
+			<img src="assets/img/close.png" alt="close" onclick="closeInfoBox()" style="position:absolute;top:10px; right:10px;" />
+			<a id="infoboxDescription" style="position:absolute; top:30px; left:10px; width:220px; color:##000000;"></a>
+		</div>
+	</div> 
 
 	<form method="post" action="#buildURL('hotel.search')#&Search_ID=#rc.nSearchID#" id="hotelForm">
 		<input type="hidden" name="bSelect" value="1">
@@ -51,7 +59,7 @@
 					<td width="135px">
 						<div id="hotelimage#sHotel#" class="listcell" style="width:125px; overflow:none; border:1px solid ##FFFFFF">
 							<cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
-							<img width="125px" src="#Signature_Image#" />
+							<!--- <img width="125px" src="#Signature_Image#" /> --->image
 						</div>
 					</td>
 					<td valign="top">
@@ -78,7 +86,7 @@
 
 						<cfif NOT stHotel.RoomsReturned>
 							<script type="text/javascript">
-							hotelPrice(#rc.Search_ID#, '#sHotel#', '#HotelChain#');
+							<!--- hotelPrice(#rc.Search_ID#, '#sHotel#', '#HotelChain#'); --->
 							</script>
 							<img src="assets/img/ajax-loader.gif" />
 						<cfelse>
@@ -103,58 +111,254 @@
 			</div>
 		</cfloop>
 	</div>
-
-	<script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
-	<script type="text/javascript">
-		var hotelchains = [<cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop>];
-
-		var map = "";
-		var pins = new Object;
-		var totalproperties = <cfoutput>#ArrayLen(session['searches'][rc.Search_ID]['stsorthotels'])#</cfoutput>;
-
-		function loadMap(lat, long, centerimg) {
-		
-			var center = new Microsoft.Maps.Location(lat,long);
-			var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
-			var map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
-			map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));		
-			
-			var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
-			orderedpropertyids = orderedpropertyids.split(',');	
-
-			var hotelresults = #serialize(session.searches[rc.Search_ID].stHotels)#;
-			for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
-				var propertyid = orderedpropertyids[loopcnt];
-				var property = hotelresults[propertyid]['HOTELINFORMATION'];
-				var propertylat = property['LATITUDE'];
-				var propertylong = property['LONGITUDE'];
-				var propertyname = property['NAME'];
-				var propertyaddress = property['HOTELADDRESS'];
-				pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
-				pins[propertyid].title = propertyname;
-				pins[propertyid].description = propertyaddress;
-				Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
-				map.entities.push(pins[propertyid]);
-			}
-			//Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search			
-			return false;
-		}
-
-		$(document).ready(function() {
-			//$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
-			//$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
-			//overall search hotel latitude and longitude
-			loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"http://localhost:8888/booking/assets/img/center.png"</cfoutput>);
-			//hotelstructure();
-			//filterhotel();
-			//stohotel();
-			//toggleDiv('filterpref');
-			//toggleDiv('filterchains');
-			//toggleDiv('filtername');
-		});
-	</script>
 </cfoutput>
 
+<script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript">
-$( filterhotel() );
+var hotelchains = [<cfoutput><cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop></cfoutput>];
+
+var map = "";
+var pins = new Object;
+var totalproperties = <cfoutput>#ArrayLen(session['searches'][rc.Search_ID]['stsorthotels'])#</cfoutput>;
+var searchid = <cfoutput>#rc.Search_ID#</cfoutput>;
+
+function loadMap(lat, long, centerimg) {
+
+	var center = new Microsoft.Maps.Location(lat,long);
+	var mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
+	var map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
+	map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));	
+	
+	var orderedpropertyids = "<cfoutput>#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#</cfoutput>";
+	orderedpropertyids = orderedpropertyids.split(',');	
+	var hotelresults = <cfoutput>#serialize(session.searches[rc.Search_ID].stHotels)#</cfoutput>;
+	
+	for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
+		var propertyid = orderedpropertyids[loopcnt];
+		var property = hotelresults[propertyid]['HOTELINFORMATION'];
+		var propertylat = property['LATITUDE'];
+		var propertylong = property['LONGITUDE'];
+		var propertyname = property['Name'];
+		var propertyaddress = property['HotelAddress'];
+		pins[propertyid] = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(propertylat,propertylong), {text:loopcnt, visible:true});
+		pins[propertyid].title = propertyname;
+		pins[propertyid].description = propertyaddress;
+		Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
+		map.entities.push(pins[propertyid]);
+	}
+	//Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search			
+	return false;
+}
+
+$(document).ready(function() {
+	//$("##Hotel_Airport").autocomplete({ source: airports, minLength: 3 });
+	//$("##Hotel_Landmark").autocomplete({ source: landmarks, minLength: 3 });
+	//overall search hotel latitude and longitude
+	loadMap(<cfoutput>#session.searches[rc.nSearchID].Hotel_Lat#,#session.searches[rc.nSearchID].Hotel_Long#,"assets/img/center.png"</cfoutput>);
+	//hotelstructure();
+	filterhotel();
+});
+
+function displayHotelInfo(e) {
+	if (e.targetType == "pushpin") {
+		//var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
+		var infoboxTitle = $('#infoboxTitle')[0];
+		infoboxTitle.innerHTML = e.target.title;
+		var infoboxDescription = $('#infoboxDescription')[0];
+		infoboxDescription.innerHTML = e.target.description;
+		var infobox2 = $('#infoBox')[0];
+		//infobox2.style.top = (pix.y - 60) + "px";
+		//infobox2.style.left = (pix.x + 5) + "px";
+		infobox2.style.visibility = "visible";
+		document.getElementById('mapDiv').appendChild(infobox2);
+	}
+	return false;
+}
+
+function closeInfoBox() {
+	var infobox2 = $('#infoBox')[0];
+	infobox2.style.visibility = "hidden";
+	return false;
+}
+
+function changeLatLongCenter(e) {
+	if (e.targetType == "map") {
+		var zoom = map.getZoom();
+		var infoboxvisibility = document.getElementById('infoBox').style.visibility;
+		closeInfoBox();
+		if (zoom >= 12 && infoboxvisibility == 'hidden') {
+			$("#dialog").dialog({	
+				buttons: { "Yes": function() { 
+									var point = new Microsoft.Maps.Point(e.getX(), e.getY());
+									var loc = e.target.tryPixelToLocation(point);
+									$( "#latlong" ).val(loc['latitude']+','+loc['longitude']);
+									$( "#changelatlong" ).submit();
+									$(this).dialog("close");
+								},
+							'No': function() {
+									$(this).dialog("close"); 
+								}
+						}
+			});
+		}
+	}
+	return false;
+}
+
+function filterhotel() {
+	// pages & sortng
+	var start_from = $( "#current_page" ).val() * 20;
+	var end_on = start_from + 20;
+	var matchcriteriacount = 0;
+
+	<cfoutput>
+		var hotelresults = #serializeJSON(session.searches[rc.Search_ID].HotelInformationQuery,true)#;
+		var orderedpropertyids = "#ArrayToList(session.searches[rc.Search_ID]['stSortHotels'])#";
+	</cfoutput>	
+	orderedpropertyids = orderedpropertyids.split(',');
+	
+	for (var t = 0; t < orderedpropertyids.length; t++) {
+		// start the loop with 5 because property_id, signature_image, lat, long, chain_code, policy are 0-5
+		for (var i = 5; i < hotelresults.COLUMNS.length; i++) {
+			var ColumnName = hotelresults.COLUMNS[i];
+			var propertymatch = 1;
+			if ($("#" + ColumnName + ":checked").val() != undefined) {
+				if (hotelresults.DATA[ColumnName][t] == 0) {// if the value is checked and it's not active for this property mark propertymatch as 0
+					propertymatch = 0;
+					break;
+				}
+			}
+		}
+
+		// check chain code match
+		var chaincode = hotelresults.DATA['CHAIN_CODE'][t];
+		if (propertymatch == 1) {
+			if ($("#HotelChain" + chaincode + ":checked").val() == undefined) {
+				propertymatch = 0;
+			}
+		}
+
+		// check Policy
+		var Policy = $( "input:checkbox[name=Policy]:checked" ).val();
+		var PolicyValue = hotelresults.DATA['POLICY'][t];
+		if (propertymatch == 1 && Policy == 'on' && PolicyValue != '1') {		
+				propertymatch = 0;
+		}
+
+		var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
+		if (propertymatch == 1) {
+			$("#" + propertyid ).show('fade');
+				pins[propertyid].setOptions({visible: true});
+				matchcriteriacount++;
+				if (matchcriteriacount >= start_from && matchcriteriacount < end_on) {
+					$("#"+propertyid ).show('fade');
+					$("#number"+propertyid).html(matchcriteriacount);
+					pins[propertyid].setOptions({visible:true, text:'' + matchcriteriacount + '', zIndex:1000});
+					//loadImage(hotelresults.DATA['SIGNATURE_IMAGE'][t], propertyid);
+					//hotelPrice(searchid, propertyid, hotelresults.DATA['CHAIN_CODE'][t]);
+				}
+				else {
+					$("#" + propertyid ).hide('fade');
+					pins[propertyid].setOptions({visible: false});
+				}
+		}
+		else {
+			$("#" + propertyid ).hide('fade');
+			pins[propertyid].setOptions({visible: false});		
+		}
+	}
+	
+	writePages(matchcriteriacount);
+	if (matchcriteriacount != totalproperties) {
+		$( "#hotelcount" ).html(matchcriteriacount + ' of ' + totalproperties + ' total properties');
+	}
+	else {
+		$( "#hotelcount" ).html(totalproperties +' total properties');
+	}	
+	
+	return false;
+}
+
+function loadImage(image, property_id) {
+	$( "#hotelimage" + property_id ).html('');
+	var img = new Image();
+	$(img).load(function () {
+		$(img).hide();
+		$( "#hotelimage" + property_id ).html(img);
+		$(img).fadeIn('slow');
+	}).attr('src', image)
+	.attr('style','max-width: 125px;');
+	return false;
+}
+function sortHotel(sort) {
+	$( "#current_page" ).val(0);
+	$( "#sorttype" ).val(sort);
+	var order = $( "#hotellist" + sort + "sort" ).val();
+	order = order.split(',');
+	for (var t = 0; t < order.length; t++) {
+		$( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
+	}
+	filterhotel();
+}	
+
+$(document).ready(function() {
+
+		$( "#Policy" )
+			.button()
+			.change(function() {
+				filterhotel();
+			});
+
+	$( ".radiobuttons" ).buttonset();
+	$( ".radiosort" )
+		.buttonset()
+		.change(function(event) {
+			sortAir($( "input:radio[name=sort]:checked" ).attr('id'));
+		});
+	$( "#btnHotelChain" )
+		.button({
+			icons: {secondary: "ui-icon-triangle-1-s"}
+		})
+		.click(function() {
+			$( "#HotelDialog" ).dialog( "open" );
+		return false;
+	});
+	$( "#HotelDialog" ).dialog({
+			autoOpen: false,
+			show: "fade",
+			hide: "fade",
+			width: 525,
+			title:	'Select your preferred hotel chains',
+			position: [100,120],
+			modal: true,
+			closeOnEscape: true
+		});
+	$( "#btnHotelAmenities" )
+		.button({
+			icons: {secondary: "ui-icon-triangle-1-s"}
+		})
+		.click(function() {
+			$( "#AmenityDialog" ).dialog( "open" );
+		return false;
+	});
+	$( "#AmenityDialog" ).dialog({
+			autoOpen: false,
+			show: "fade",
+			hide: "fade",
+			width: 525,
+			title:	'Select your preferred amenities',
+			position: [100,120],
+			modal: true,
+			closeOnEscape: true
+		});
+	$( "#btnClass" )
+		.button({
+			icons: {secondary: "ui-icon-triangle-1-s"}
+		})
+		.click(function() {
+			$( "#ClassDialog" ).dialog( "open" );
+		return false;
+	});
+	
+});
 </script>

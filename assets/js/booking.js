@@ -213,50 +213,6 @@ function hotelPrice(search_id, hotel, chain) {
 	return false;
 }
 
-function displayHotelInfo(e) {
-	if (e.targetType == "pushpin") {
-		var pix = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
-		var infoboxTitle = document.getElementById('infoboxTitle');
-		infoboxTitle.innerHTML = e.target.title;
-		var infoboxDescription = document.getElementById('infoboxDescription');
-		infoboxDescription.innerHTML = e.target.description;
-		var infobox2 = document.getElementById('infoBox');
-		infobox2.style.top = (pix.y - 60) + "px";
-		infobox2.style.left = (pix.x + 5) + "px";
-		infobox2.style.visibility = "visible";
-		document.getElementById('mapDiv').appendChild(infobox2);
-	}
-	return false;
-}
-function closeInfoBox() {
-	var infobox2 = document.getElementById('infoBox');
-	infobox2.style.visibility = "hidden";
-	return false;
-}
-function changeLatLongCenter(e) {
-	if (e.targetType == "map") {
-		var zoom = map.getZoom();
-		var infoboxvisibility = document.getElementById('infoBox').style.visibility;
-		closeInfoBox();
-		if (zoom >= 12 && infoboxvisibility == 'hidden') {
-			$("#dialog").dialog({	
-				buttons: { "Yes": function() { 
-									var point = new Microsoft.Maps.Point(e.getX(), e.getY());
-									var loc = e.target.tryPixelToLocation(point);
-									$( "#latlong" ).val(loc['latitude']+','+loc['longitude']);
-									$( "#changelatlong" ).submit();
-									$(this).dialog("close");
-								},
-							'No': function() {
-									$(this).dialog("close"); 
-								}
-						}
-			});
-		}
-	}
-	return false;
-}
-
 function showRates(search_id,property_id) {
 	$.ajax({
 		url:"services/hotelrooms.cfc?method=getRooms",
