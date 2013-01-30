@@ -30,11 +30,7 @@
 		<cfargument name="nHotelCode" />
 		<cfargument name="sRatePlanType" />
 		
-		<cfquery name="local.getSearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
+		<cfset local.Search = session.searches[arguments.nSearchID] />
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -47,8 +43,8 @@
 						  	<hot:HotelProperty HotelChain="#arguments.sHotelChain#" HotelCode="#arguments.nHotelCode#">
 						    </hot:HotelProperty>
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(getSearch.Depart_DateTime,'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(getSearch.Arrival_DateTime,'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(Search.dDepartDate,'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(Search.dArrivalDate,'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						  </hot:HotelRulesLookup>
 						</hot:HotelRulesReq>

@@ -19,6 +19,7 @@
 		<input type="hidden" name="bSelect" value="1">
 		<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
 		<input type="hidden" name="sHotel" id="sHotel" value="">
+		<input type="hidden" name="sRoomDescription" id="sRoomDescription" value="">
 		<input type="hidden" id="current_page" value="0" />
 	</form>
 
@@ -86,7 +87,7 @@
 
 						<cfif NOT stHotel.RoomsReturned>
 							<script type="text/javascript">
-							<!--- hotelPrice(#rc.Search_ID#, '#sHotel#', '#HotelChain#'); --->
+							hotelPrice(#rc.Search_ID#, '#sHotel#', '#HotelChain#');
 							</script>
 							<img src="assets/img/ajax-loader.gif" />
 						<cfelse>
@@ -101,6 +102,8 @@
 								</div>									
 							</cfif>
 						</cfif>	
+						<!--- <cfinvoke component="services.hotelrooms" method="getRooms" nSearchID="#rc.Search_ID#" nHotelCode="#sHotel#" returnvariable="hotel">
+						<cfdump var="#hotel#" abort> --->
 						<!--- <a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&nSearchID=#rc.Search_ID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br> --->
 					</td>
 				</tr>

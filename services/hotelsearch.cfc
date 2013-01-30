@@ -451,8 +451,8 @@
 
 <!--- selectHotel --->
 	<cffunction name="selectHotel" output="false">
-		<cfargument name="nHotelID" default="#listFirst(form.sHotel)#">
-		<cfargument name="nRoom" default="#listLast(form.sHotel)#">
+		<cfargument name="nHotelID" default="#form.sHotel#">
+		<cfargument name="nRoom" default="#form.sRoomDescription#">
 		<cfargument name="nSearchID" default="#url.Search_ID#">
 
 		<cfset local.getSearch = getSearch(arguments.nSearchID) />

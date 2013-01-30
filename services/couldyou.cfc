@@ -50,8 +50,8 @@ doHotelPriceCouldYou
 		<cfargument name="nTotal" />
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#" />
 
-		<cfset local.Search 			= getSearch(arguments.nSearchID) />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
+		<cfset local.Search = session.searches[arguments.nSearchID] />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Hotel,CouldYouDate)>
 			<cfset local.hotelprice = application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain,arguments.nHotelCode) />
@@ -78,8 +78,8 @@ doCarPriceCouldYou
 		<cfargument name="nTotal" />
 		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#" />
 
-		<cfset local.Search 			= getSearch(arguments.nSearchID) />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
+		<cfset local.Search = session.searches[arguments.nSearchID] />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
 
 		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Car,CouldYouDate)>
 			<cfset local.CarAvailability = application.objCar.doAvailability(arguments.nSearchID,arguments.nTripDay) />
@@ -104,8 +104,8 @@ doTotalPrice
 		<cfargument name="nTotal" />
 		
 		<cfset local.nSearchID 		= arguments.nSearchID />
-		<cfset local.Search 			= getSearch(nSearchID) />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
+		<cfset local.Search 			= session.searches[arguments.nSearchID] />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
 		<cfset local.bAir 				= session['Searches'][nSearchID]['bAir'] />
 		<cfset local.bCar 				= session['Searches'][nSearchID]['bCar'] />
 		<cfset local.bHotel				= session['Searches'][nSearchID]['bHotel'] />
@@ -154,19 +154,6 @@ doTotalPrice
 		<cfset local.stTotalPrice.Day = DateFormat(CouldYouDate,'d') />
 
 		<cfreturn stTotalPrice />
-	</cffunction>
-	
-<!--- getsearch --->
-	<cffunction name="getsearch" output="false">
-		<cfargument name="nSearchID">
-
-		<cfquery name="local.getsearch" datasource="book" cachedwithin="#createTimeSpan(1,0,0,0)#">
-		SELECT Depart_DateTime
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
-		
-		<cfreturn getsearch />
 	</cffunction>
 
 </cfcomponent>
