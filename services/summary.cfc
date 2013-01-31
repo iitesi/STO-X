@@ -135,10 +135,10 @@ determinFees
 			</cfif>
 			<cfset local.stCities = {}>
 			<cfset local.nSegments = 0>
-			<cfloop collection="#arguments.stItinerary.Air.Groups#" item="local.nGroup">
-				<cfloop collection="#arguments.stItinerary.Air.Groups[nGroup].Segments#" item="local.sSegment">
-					<cfset stCities[arguments.stItinerary.Air.Groups[nGroup].Segments[sSegment].Origin] = ''>
-					<cfset stCities[arguments.stItinerary.Air.Groups[nGroup].Segments[sSegment].Destination] = ''>
+			<cfloop collection="#arguments.stItinerary.Air.Groups#" item="local.Group">
+				<cfloop collection="#arguments.stItinerary.Air.Groups[Group].Segments#" item="local.sSegment">
+					<cfset stCities[arguments.stItinerary.Air.Groups[Group].Segments[sSegment].Origin] = ''>
+					<cfset stCities[arguments.stItinerary.Air.Groups[Group].Segments[sSegment].Destination] = ''>
 					<cfset nSegments++>
 				</cfloop>
 			</cfloop>

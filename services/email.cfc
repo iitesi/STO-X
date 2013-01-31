@@ -6,7 +6,7 @@ email
 	<cffunction name="email" output="false">
 		<cfargument name="SearchID">
 		<cfargument name="nTripID">
-		<cfargument name="nGroup">
+		<cfargument name="Group">
 		<cfargument name="Email_Name">
 		<cfargument name="Email_Address">
 		<cfargument name="To_Address">
@@ -30,10 +30,10 @@ email
 				</head>
 				<body>
 					<!--- <cfoutput> --->
-					<cfif arguments.nGroup EQ ''>
+					<cfif arguments.Group EQ ''>
 						<cfset local.stTrip = session.searches[arguments.SearchID].stTrips[arguments.nTripID]>
 					<cfelse>
-						<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTripID]>
+						<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID]>
 					</cfif>
 					<table width="700" align="center" style="padding:15px;">
 					<cfif arguments.Email_Message NEQ ''>
@@ -47,8 +47,8 @@ email
 					<tr>
 						<td colspan="6"><h3>Itinerary</h3></td>
 					</tr>
-					<cfloop collection="#stTrip.Groups#" item="nGroup" >
-						<cfset stGroup = stTrip.Groups[nGroup]>
+					<cfloop collection="#stTrip.Groups#" item="Group" >
+						<cfset stGroup = stTrip.Groups[Group]>
 						<tr>
 							<td colspan="6">&nbsp;</td>
 						</tr>
@@ -62,7 +62,7 @@ email
 								<td>#stGroup.Segments[nSegment].Destination#</td>
 								<td>#TimeFormat(stGroup.Segments[nSegment].DepartureTime, 'h:mmt')#</td>
 								<td>#TimeFormat(stGroup.Segments[nSegment].ArrivalTime, 'h:mmt')#</td>
-								<cfif arguments.nGroup EQ ''>
+								<cfif arguments.Group EQ ''>
 									<td>#stGroup.Segments[nSegment].Cabin#</td>
 								</cfif>
 							</tr>

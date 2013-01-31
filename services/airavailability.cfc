@@ -21,10 +21,10 @@ selectLeg
 --->
 	<cffunction name="selectLeg" output="false">
 		<cfargument name="SearchID">
-		<cfargument name="nGroup">
+		<cfargument name="Group">
 		<cfargument name="nTrip">
 
-		<cfset session.searches[arguments.SearchID].stSelected[arguments.nGroup] = session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTrip]>
+		<cfset session.searches[arguments.SearchID].stSelected[arguments.Group] = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTrip]>
 				
 		<cfreturn />
 	</cffunction>
@@ -36,7 +36,7 @@ threadAvailability
 		<cfargument name="Filter"	required="true">
 		<cfargument name="Account"  required="true">
 		<cfargument name="Policy"   required="true">
-		<cfargument name="nGroup"	required="false"	default="">
+		<cfargument name="Group"	required="false">
 
 		<cfset local.stThreads = {}>
 		<cfset local.sThreadName = ''>
@@ -44,7 +44,7 @@ threadAvailability
 
 		<!--- Create a thread for every leg.  Give priority to the group specifically selected. --->
 		<cfloop collection="#arguments.Filter.getLegs()#" item="local.nLeg">
-			<cfif arguments.nGroup EQ nLeg>
+			<cfif arguments.Group EQ nLeg>
 				<cfset sPriority = 'HIGH'>
 			<cfelse>
 				<cfset sPriority = 'LOW'>
@@ -70,7 +70,7 @@ doAirAvailability
 --->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="Filter"   	required="true">
-		<cfargument name="nGroup"		required="true">
+		<cfargument name="Group"		required="true">
 		<cfargument name="Account"      required="true">
 		<cfargument name="Policy"       required="true">
 		<cfargument name="sPriority"	required="false"	default="NORMAL">
@@ -78,16 +78,16 @@ doAirAvailability
 
 		<cfset local.sThreadName = ''>
 		<!--- Don't go back to the getUAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stGroups, nGroup)>
+		<cfif NOT StructKeyExists(arguments.stGroups, Group)>
 			<!--- Name of the thread thrown out. --->
-			<cfset sThreadName = 'Group'&arguments.nGroup>
+			<cfset sThreadName = 'Group'&arguments.Group>
 			<!--- Kick off the thread. --->
 			<cfthread
 			action="run"
 			name="#sThreadName#"
 			priority="#arguments.sPriority#"
 			Filter="#arguments.Filter#"
-			nGroup="#arguments.nGroup#"
+			Group="#arguments.Group#"
 			Account="#arguments.Account#"
 			Policy="#arguments.Policy#">
 				<cfset local.sNextRef = 'ROUNDONE'>
@@ -95,7 +95,7 @@ doAirAvailability
 				<cfloop condition="sNextRef NEQ ''">
 					<cfset local.nCount++>
 					<!--- Put together the SOAP message. --->
-					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.Filter, arguments.nGroup, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''), arguments.Account)>
+					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.Filter, arguments.Group, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''), arguments.Account)>
 					<!---<cfdump var="#sMessage#" abort>--->
 					<!--- Call the getUAPI. --->
 					<cfset local.sResponse 			= 	getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
@@ -126,16 +126,16 @@ doAirAvailability
 					<!--- Create javascript structure per trip. --->
 					<cfset stAvailTrips				= 	getAirParse().addJavascript(stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup], stAvailTrips)>
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], stAvailTrips)>
 				</cfloop>
 				<!--- Add list of available carriers per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.nGroup]	= getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup])>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group]	= getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
 				<!--- Add sorting per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.nGroup] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Depart')>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.nGroup] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Arrival')>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.nGroup]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.nGroup], 'numeric', 'asc', 'Duration')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
 				<!--- Mark this leg as priced --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.nGroup] 		= 1>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] 		= 1>
 			</cfthread>
 		</cfif>
 
@@ -147,7 +147,7 @@ prepareSoapHeader
 --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
 		<cfargument name="Filter"   	required="true">
-		<cfargument name="nGroup"	 	required="true">
+		<cfargument name="Group"	 	required="true">
 		<cfargument name="sNextRef"	 	required="true">
 		<cfargument name="Account"      required="true">
 
@@ -169,7 +169,7 @@ prepareSoapHeader
 							<cfif arguments.sNextRef NEQ ''>
 								<com:NextResultReference>#arguments.sNextRef#</com:NextResultReference>
 							</cfif>
-							<cfif arguments.nGroup EQ 0>
+							<cfif arguments.Group EQ 0>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
 										<com:Airport Code="#arguments.Filter.getDepartCity()#" />
@@ -180,7 +180,7 @@ prepareSoapHeader
 									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
 							</cfif>
-							<cfif arguments.nGroup EQ 1 AND arguments.Filter.getAirType() EQ 'RT'>
+							<cfif arguments.Group EQ 1 AND arguments.Filter.getAirType() EQ 'RT'>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
 										<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
@@ -190,11 +190,11 @@ prepareSoapHeader
 									</air:SearchDestination>
 									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDate(), 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
-							<cfelseif arguments.nGroup NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
+							<cfelseif arguments.Group NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
 								<cfset local.cnt = 0>
 								<cfloop query="qSearchLegs">
 									<cfset cnt++>
-									<cfif arguments.nGroup EQ cnt>
+									<cfif arguments.Group EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
 												<com:Airport Code="#qSearchLegs.Depart_City#" />

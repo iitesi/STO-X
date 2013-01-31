@@ -145,20 +145,69 @@
             <div class="container">
 
                 <div class="one-third column">
-                    <h3>About Us</h3>
-                    <p>Quisque placerat, turpis a rutrum rhoncus, sem orci tempor nibh, tristique semper lorem diam vitae nulla. Sed do eiusmod tempor incididunt ut labore.</p>
-
-                    <h3>Sign up Our Newsletter</h3>
-                    <form class="form">
-                        <div class="form-item">
-                            <input type="text" placeholder="Enter your email...">
-                        </div>
-                    </form>
+                    <h3>Air Policy</h3>
+					<ul>
+						<cfoutput>
+							<cfif rc.Policy.Policy_AirLowRule EQ 1>
+						        <li>Book lowest fare<cfif rc.Policy.Policy_AirLowPad GT 5> within $#NumberFormat(rc.Policy.Policy_AirLowPad)#</cfif></li>
+							</cfif>
+							<cfif rc.Policy.Policy_AirMaxRule EQ 1>
+	                            <li>Max fare allowed $#NumberFormat(rc.Policy.Policy_AirMaxTotal)#</li>
+							</cfif>
+							<cfif rc.Policy.Policy_AirAdvRule EQ 1>
+	                            <li>Advance purchase of #rc.Policy.Policy_AirAdv# day<cfif rc.Policy.Policy_AirAdv GT 1>s</cfif></li>
+							</cfif>
+							<cfif rc.Policy.Policy_AirRefDisp EQ 1>
+	                            <li>Book refundable tickets</li>
+							</cfif>
+							<cfif rc.Policy.Policy_AirNonRefDisp EQ 1>
+	                            <li>Book non refundable tickets</li>
+							</cfif>
+							<cfif rc.Policy.Policy_AirPrefRule EQ 1>
+								<cfif rc.Policy.Policy_AirPrefDisp EQ 1>
+	                                <li>Must book preferred carrier</li>
+								<cfelse>
+	                                <li>Book preferred carrier</li>
+								</cfif>
+							</cfif>
+						</cfoutput>
+				    </ul>
+                    <h3>Hotel Policy</h3>
+                    <ul>
+						<cfoutput>
+							<cfif rc.Policy.Policy_HotelMaxRule EQ 1>
+                                <li>Max rate allowed $#NumberFormat(rc.Policy.Policy_HotelMaxRate)#</li>
+							</cfif>
+							<cfif rc.Policy.Policy_HotelPrefRule EQ 1>
+                                <li>Book preferred chain</li>
+							</cfif>
+						</cfoutput>
+					</ul>
+					<h3>Car Policy</h3>
+                    <ul>
+						<cfoutput>
+							<cfif rc.Policy.Policy_CarMaxRule EQ 1>
+                                <li>Max daily rate allowed $#NumberFormat(rc.Policy.Policy_CarMaxRate)#</li>
+							</cfif>
+							<cfif rc.Policy.Policy_CarTypeRule EQ 1>
+                                <li>Book specific car types</li>
+							</cfif>
+							<cfif rc.Policy.Policy_CarPrefRule EQ 1>
+								<cfif rc.Policy.Policy_CarPrefDisp EQ 1>
+                                    <li>Must book preferred vendor</li>
+								<cfelse>
+                                    <li>Book preferred vendor</li>
+								</cfif>
+							</cfif>
+						</cfoutput>
+					</ul>
                 </div>
 
                 <div class="one-third column">
-                    <h3>Recent Tweets</h3>
-
+                    <h3>Unused Tickets</h3>
+					<script type="text/javascript">
+                        getUnusedTickets(3605,1);
+					</script>
                 </div>
 
                 <div class="one-third column">
@@ -175,15 +224,15 @@
             <div class="container">
 
                 <div class="eight columns">
-                    Copyright Joiee 2012. All Rights Reserved.
+                    Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
                 </div>
                 <div class="eight columns">
-                    <ul class="footer-nav">
+                    <!---<ul class="footer-nav">
                         <li><a href="#">Home</a></li>
                         <li><a href="#">Portfolio</a></li>
                         <li class="active"><a href="#">Blog</a></li>
                         <li><a href="#">Contact</a></li>
-                    </ul>
+                    </ul>--->
                 </div>
 
             </div>

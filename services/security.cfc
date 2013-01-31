@@ -110,6 +110,7 @@
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
 
+			<cfset session.UserID = getSearch.User_ID>
 			<cfset session.AcctID = getSearch.Acct_ID>
 			<cfset session.PolicyID = getSearch.Policy_ID>
 			<cfset session.filters[arguments.SearchID] = searchfilter>
@@ -131,7 +132,7 @@
 			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
 
 		</cfif>
-
+		<cfset session.UserID = 3605>
 		<cfreturn />
 	</cffunction>
 	

@@ -18,11 +18,11 @@ HEADING
 <!--- 
 DETAILS
 --->
-				<cfloop collection="#stItinerary.Air.Groups#" item="nGroup" >
+				<cfloop collection="#stItinerary.Air.Groups#" item="Group" >
 					<td>
 						
 						<table width="300">
-						<cfset stGroup = stItinerary.Air.Groups[nGroup]>
+						<cfset stGroup = stItinerary.Air.Groups[Group]>
 						<tr>
 							<td class="medium" colspan="4">
 								<strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d')#</strong>
@@ -54,7 +54,7 @@ COST
 				</td>
 			</tr>
 			<tr>
-				<td colspan="#nGroup+1#">
+				<td colspan="#Group+1#">
 					<table width="100%">
 
 <!---
@@ -131,9 +131,9 @@ GENERAL SEAT ASSIGNMENTS
 								Specific Seat Seletion
 							</td>
 							<td>
-								<a href="?action=air.popup&sDetails=seatmap&SearchID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
+								<a href="?action=air.popup&sDetails=seatmap&SearchID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&Group=&bSelection=1" class="overlayTrigger" target="_blank">
 									Seat Maps
-									<cfloop collection="#stItinerary.Air.Groups#" index="nGroupKey" item="stGroup">
+									<cfloop collection="#stItinerary.Air.Groups#" index="GroupKey" item="stGroup">
 										<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 											<cfset sFieldName = '#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#'>
 											<cfparam name="session.searches[#rc.SearchID#].stTravelers[nTraveler].stSeats.#sFieldName#" default="">

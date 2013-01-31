@@ -2,7 +2,7 @@
 	<div>
 		<cfif rc.bSelection EQ 0>
 			<ul id="details-tabs">
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#nGroup#'>
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#Group#'>
 				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=air.popup&sDetails=details&#sURL#')">
 					<li <cfif rc.sDetails EQ 'details'>class="selected"</cfif>>
 						Details

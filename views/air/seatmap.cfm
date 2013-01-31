@@ -1,7 +1,7 @@
 <cfsetting showdebugoutput="false">
 <cfoutput>
 	<div id="seatcontent">
-		<cfif rc.nGroup EQ ''>
+		<cfif rc.Group EQ ''>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
 				<cfloop collection="#session.searches[rc.SearchID].stTrips[rc.nTripID].Groups[0].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
@@ -11,18 +11,18 @@
 			<cfset stGroups = session.searches[rc.SearchID].stTrips[rc.nTripID].Groups>
 		<cfelse>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
-				<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+				<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
 					<cfbreak>
 				</cfloop>
 			</cfif>
-			<cfset stGroups = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups>
+			<cfset stGroups = session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID].Groups>
 		</cfif>
 		<ul class="tabs">
 			<table>
 			<tr height="30">
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
-				<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
+				<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
 					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 						<td>
 							<li>
@@ -40,7 +40,7 @@
 			<cfset nSegmentCount = 0>
 			<cfif rc.bSelection>
 				<tr>
-					<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
+					<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
 						<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 							<cfset nSegmentCount++>
 							<td>

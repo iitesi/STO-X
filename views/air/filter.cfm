@@ -45,7 +45,7 @@ AIRLINES
 						<cfif rc.action NEQ 'air.availability'>
 							<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
 						<cfelse>
-							<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.nGroup]>
+							<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.Group]>
 						</cfif>
 						<cfloop array="#aCarriers#" index="Carrier" >
 							<li><span><input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked> <label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label></span></li>

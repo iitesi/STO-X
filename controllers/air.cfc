@@ -73,9 +73,9 @@ availability
 		<cfargument name="rc">
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfloop collection="#session.searches[arguments.rc.SearchID].Legs#" item="local.nLeg">
+			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
 				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg])>
-					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&nGroup=#nLeg#')>
+					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg#')>
 				</cfif>
 			</cfloop>
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
@@ -97,11 +97,6 @@ popup
 			<cfset rc.nTripID = url.nTripID>
 			<cfif structKeyExists(url, "nSegment")>
 				<cfset rc.nSegment = url.nSegment>
-			</cfif>
-			<cfif structKeyExists(url, "nGroup")>
-				<cfset rc.nGroup = url.nGroup>
-			<cfelse>
-				<cfset rc.nGroup = ''>
 			</cfif>
 			<cfparam name="rc.bSelection" default="0">
 			<!--- init objects --->
@@ -133,11 +128,6 @@ seatmap
 		<cfset rc.sCabin = 'Y'>
 		<cfset rc.nTripID = url.nTripID>
 		<cfset rc.nSegment = url.nSegment>
-		<cfif structKeyExists(url, "nGroup")>
-			<cfset rc.nGroup = url.nGroup>
-		<cfelse>
-			<cfset rc.nGroup = ''>
-		</cfif>
 		<!--- init objects --->
 		<cfset variables.fw.service('uapi.init', 'objUAPI')>
 		<!--- Do the search. --->

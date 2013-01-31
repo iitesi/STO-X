@@ -40,34 +40,52 @@ function showManualCreditCard(type) {
 */
 function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, Destination) {
 
-	var SearchID = $( "#SearchID" ).val();
-	var nTraveler = $( "#nTraveler" ).val();
-	var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
+    var SearchID = $( "#SearchID" ).val();
+    var nTraveler = $( "#nTraveler" ).val();
+    var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
 
-	$( "#" + oldSeat ).removeClass('currentseat');
-	$( "#" + sSeat ).addClass('currentseat');
+    $( "#" + oldSeat ).removeClass('currentseat');
+    $( "#" + sSeat ).addClass('currentseat');
 
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
+    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
+    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
+    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
 
-	$.ajax({
-		type: 'POST',
-		url: 'services/traveler.cfc',
-		data: {
-			method: 'setSeat',
-			SearchID: SearchID,
-			nTraveler: nTraveler,
-			sCarrier: sCarrier,
-			nFlightNumber: nFlightNumber,
-			sOrigin: sOrigin,
-			Destination: Destination,
-			sSeat: sSeat
-		},
-		dataType: 'json'
-	});
-	
-	return false;
+    $.ajax({
+        type: 'POST',
+        url: 'services/traveler.cfc',
+        data: {
+            method: 'setSeat',
+            SearchID: SearchID,
+            nTraveler: nTraveler,
+            sCarrier: sCarrier,
+            nFlightNumber: nFlightNumber,
+            sOrigin: sOrigin,
+            Destination: Destination,
+            sSeat: sSeat
+        },
+        dataType: 'json'
+    });
+
+    return false;
+}
+function getUnusedTickets(userid, acctid) {
+
+    $.ajax({type:"POST",
+        url: 'services/reports.cfc',
+        data:"SearchID="+userid+"&nTrip="+acctid,
+        dataType: 'json',
+        success:function(data) {
+            console.log(data);
+        },
+        error:function(test, tes, te) {
+            console.log(test);
+            console.log(tes);
+            console.log(te);
+        }
+    });
+
+    return false;
 }
 function filterAir() {
 																			//console.log('start');

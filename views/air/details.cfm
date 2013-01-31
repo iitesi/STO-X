@@ -1,16 +1,16 @@
 <cfset aRef = ["0","1"]>
 <cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.SearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
-<cfif rc.nGroup EQ ''>
+<cfif rc.Group EQ ''>
 	<cfset stTrip = session.searches[rc.SearchID].stTrips[rc.nTripID]>
 <cfelse>
-	<cfset stTrip = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID]>
+	<cfset stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID]>
 </cfif>
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:#300*2#px">
 		<table>
 		<tr>
-			<cfloop collection="#stTrip.Groups#" item="nGroup" >
-				<cfset stGroup = stTrip.Groups[nGroup]>
+			<cfloop collection="#stTrip.Groups#" item="Group" >
+				<cfset stGroup = stTrip.Groups[Group]>
 				<td valign="top">
 					<div class="roundall" style="padding:10px;margin:10px;display:table-cell;float:left;color:black;width:290px;background-color:##BED3FC;">
 						<table>
@@ -91,7 +91,7 @@
 									</cfif>
 								</div>
 								<cfif nCnt LT ArrayLen(aKeys)
-								AND stGroup.Segments[aKeys[nCnt+1]].Group EQ nGroup>
+								AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group>
 									<div class="roundall" style="width:90%;padding:10px;margin-right:10px;margin-top:5px;margin-bottom:5px;border:1px solid ##eeeeee;background-color:##eeeeee">
 										<cfset minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime)>
 										Layover:

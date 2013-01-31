@@ -129,7 +129,7 @@ body {
     color:#FFFFFF;
     border-radius: 4px;
     padding: 6px 20px 6px;
-    margin: 0 20px 0 20px;
+    margin: 0 20px 10px 20px;
 }
 /*
 ----------------------------------------------------------------------------------------------------------
@@ -141,6 +141,9 @@ body {
 	float:left;
 	position: relative;
 	overflow: auto;
+}
+.overlayTrigger .divider {
+    padding: 5px;
 }
 .overlayWrapper {
 	margin-right: auto;
@@ -325,6 +328,7 @@ ul.tabs li a.active {
 	float:left;
 	margin-right:10px;
 	position:relative;
+    list-style: none;
 }
 .smallnav a{
 	display:block;
@@ -468,9 +472,6 @@ ul.tabs li a.active {
 footer[role="contentinfo"]{
 	font-size: 0.85em;
 	padding-top: 15px;
-}
-#footer {
-	height: 100px;
 }
 
 .button1policy {

@@ -1,10 +1,10 @@
 <div class="page-header">
 	<cfoutput>
 		<h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#UCase(rc.Filter.getHeading())#</a></h1>
-		#View('air/legs')#
 	</cfoutput>
 </div>
 <cfoutput>
+	#View('air/legs')#
 	#View('air/filter')#
 </cfoutput>
 <br clear="both">

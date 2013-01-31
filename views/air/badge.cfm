@@ -32,8 +32,8 @@
 						</cfif>
 					</td>
 				</tr>
-				<cfloop collection="#stTrip.Groups#" item="nGroup" >
-					<cfset stGroup = stTrip.Groups[nGroup]>
+				<cfloop collection="#stTrip.Groups#" item="Group" >
+					<cfset stGroup = stTrip.Groups[Group]>
 					<tr>
 						<td> </td>
 						<td title="#application.stAirports[stGroup.Origin]#">
@@ -77,13 +77,13 @@
 				</cfloop>
 				</table>
 				<br><br>
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&nGroup=#nDisplayGroup#'>
-				<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+				<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger">Details <span class="divider">/</span></a>
 				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-					<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank"><button type="button" class="textButton">Seats</button>|</a>
+					<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank">Seats <span class="divider">/</span></a>
 				</cfif>
-				<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Bags</button>|</a>
-				<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Email</button></a>
+				<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger">Bags <span class="divider">/</span></a>
+				<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger">Email</a>
 				<cfif bDisplayFare>
 					<ul class="smallnav">
 						<li class="main">+

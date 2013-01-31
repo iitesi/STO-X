@@ -39,8 +39,8 @@ doAirPrice
 			<!--- Selected outbound and return then wanting a price --->
 			<cfset stSelected = session.searches[arguments.SearchID].stSelected>
 		<cfelse>
-			<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups#" item="local.nGroup">
-				<cfset stSelected[nGroup].Groups[0] = session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups[nGroup]>
+			<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups#" item="local.Group">
+				<cfset stSelected[Group].Groups[0] = session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups[Group]>
 			</cfloop>
 		</cfif>
 
@@ -126,19 +126,19 @@ prepareSOAPHeader
 							<com:BillingPointOfSaleInfo OriginApplication="uAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
-								<cfloop collection="#arguments.stSelected#" item="local.nGroup">
-									<cfif structKeyExists(arguments.stSelected[nGroup], "Groups")>
-										<cfloop collection="#arguments.stSelected[nGroup].Groups#" item="local.nInnerGroup">
-											<cfloop collection="#arguments.stSelected[nGroup].Groups[nInnerGroup].Segments#" item="local.nSegment">
+								<cfloop collection="#arguments.stSelected#" item="local.Group">
+									<cfif structKeyExists(arguments.stSelected[Group], "Groups")>
+										<cfloop collection="#arguments.stSelected[Group].Groups#" item="local.nInnerGroup">
+											<cfloop collection="#arguments.stSelected[Group].Groups[nInnerGroup].Segments#" item="local.nSegment">
 												<cfset nCount++>
-												<cfset local.stSegment = arguments.stSelected[nGroup].Groups[nInnerGroup].Segments[nSegment]>
+												<cfset local.stSegment = arguments.stSelected[Group].Groups[nInnerGroup].Segments[nSegment]>
 												<air:AirSegment
 												Key="#nCount#T"
 												Origin="#stSegment.Origin#"
 												Destination="#stSegment.Destination#"
 												DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
 												ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
-												Group="#nGroup#"
+												Group="#Group#"
 												FlightNumber="#stSegment.FlightNumber#"
 												Carrier="#stSegment.Carrier#"
 												ProviderCode="1V" />

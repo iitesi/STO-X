@@ -56,8 +56,8 @@
 		<cfset controller( 'setup.setSession' )>
 
 		<!---Set some default variables that are used throughout the site.--->
-		<cfset request.context.SearchID = (request.context.keyExists('Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'SearchID') ? request.context.SearchID : 0))>
-		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
+		<cfset request.context.SearchID = (StructKeyExists(request.context, 'SearchID') ? request.context.SearchID : 0)>
+		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
 
 		<!---Redirect the site if the search hasn't been loaded yet.--->
 		<cfif (NOT StructKeyExists(session, 'searches')

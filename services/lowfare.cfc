@@ -255,7 +255,7 @@ selectAir
 --->
 	<cffunction name="selectAir" output="false">
 		<cfargument name="SearchID">
-		<cfargument name="nGroup">
+		<cfargument name="Group">
 		<cfargument name="nTrip">
 
 <!--- Initialize or overwrite the CouldYou air section --->

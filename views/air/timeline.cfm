@@ -48,12 +48,12 @@
 			<cfsavecontent variable="jsondata">
 				<cfset Count = 0>
 				<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group]#" index="i">
-					<cfset TotalSegments = ArrayLen(StructKeyArray(session.searches[rc.SearchID].stAvailTrips[rc.nGroup][i].Groups[0].Segments))>
+					<cfset TotalSegments = ArrayLen(StructKeyArray(session.searches[rc.SearchID].stAvailTrips[rc.Group][i].Groups[0].Segments))>
 					<cfset SegmentCount = 0>
-					<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.nGroup][i].Groups[0].Segments#" index="j">
+					<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.Group][i].Groups[0].Segments#" index="j">
 						<cfset Count++>
 						<cfset SegmentCount++>
-						<cfset stSegment = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][i].Groups[0].Segments[j]>
+						<cfset stSegment = session.searches[rc.SearchID].stAvailTrips[rc.Group][i].Groups[0].Segments[j]>
 						<cfif Count NEQ 1>,</cfif>
 						{
 							'start':new Date(#DateFormat(stSegment.DepartureGMT, 'yyyy,m,d,')##TimeFormat(stSegment.DepartureGMT, 'HH,mm,00')#),
@@ -64,7 +64,7 @@
 						<cfif TotalSegments NEQ SegmentCount>
 							,{
 								'start':new Date(#DateFormat(stSegment.ArrivalGMT, 'yyyy,m,d,')##TimeFormat(stSegment.ArrivalGMT, 'HH,mm,00')#),
-								<cfset stNextSegment = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][i].Groups[0].Segments[j+1]>
+								<cfset stNextSegment = session.searches[rc.SearchID].stAvailTrips[rc.Group][i].Groups[0].Segments[j+1]>
 								<cfset layoverTime = DateDiff('n', stSegment.ArrivalGMT, stNextSegment.DepartureGMT)>
 								'end':new Date(#DateFormat(stNextSegment.DepartureGMT, 'yyyy,m,d,')##TimeFormat(stNextSegment.DepartureGMT, 'HH,mm,00')#),
 								'content':'Layover in #stNextSegment.Origin# for #int(layoverTime/60)#h #layoverTime%60#m',

@@ -1,3 +1,8 @@
+<div class="page-header">
+<cfoutput>
+        <h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#UCase(rc.Filter.getHeading())#</a></h1>
+</cfoutput>
+</div>
 <cfoutput>
 	#View('air/legs')#
 	#View('air/filter')#
@@ -9,14 +14,14 @@
 			<input type="hidden" name="bSelect" value="1">
 			<input type="hidden" name="SearchID" value="#rc.SearchID#">
 			<input type="hidden" name="nTrip" id="nTrip" value="">
-			<input type="hidden" name="Group" value="#rc.nGroup#">
+			<input type="hidden" name="Group" value="#rc.Group#">
 		</form>	
 	</cfoutput>
 	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
 		<cfset variables.minheight = 225>
 		<cfset variables.bSelected = false>
 		<cfset variables.bDisplayFare = false>
-		<cfset variables.nDisplayGroup = rc.nGroup>
+		<cfset variables.nDisplayGroup = rc.Group>
 		<cfset variables.nCount = 0>
 		<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group]#" index="variables.nTripKey">
 			<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>

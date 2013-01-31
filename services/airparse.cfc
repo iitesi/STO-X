@@ -536,31 +536,31 @@ mergeTripsToAvail
 		<cfargument name="stAvailTrips"	required="true">
 		
 		<cfset local.stTempTrips = {}>
-		<cfset local.nGroup = ''>
+		<cfset local.Group = ''>
 		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
 			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
-				<cfset nGroup = arguments.stTrips[sTripKey].Segments[nSegment].Group>
-				<cfif NOT structKeyExists(stTempTrips, nGroup)
-				OR NOT structKeyExists(stTempTrips[nGroup], sTripKey)>
-					<cfset stTempTrips[nGroup][sTripKey] = StructNew('linked')>
+				<cfset Group = arguments.stTrips[sTripKey].Segments[nSegment].Group>
+				<cfif NOT structKeyExists(stTempTrips, Group)
+				OR NOT structKeyExists(stTempTrips[Group], sTripKey)>
+					<cfset stTempTrips[Group][sTripKey] = StructNew('linked')>
 				</cfif>
-				<cfset stTempTrips[nGroup][sTripKey][nSegment] = arguments.stTrips[sTripKey].Segments[nSegment]>
+				<cfset stTempTrips[Group][sTripKey][nSegment] = arguments.stTrips[sTripKey].Segments[nSegment]>
 			</cfloop>
 		</cfloop>
 		<cfset local.sIndex = ''>
 		<cfset local.nHashNumeric = ''>
 		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#stTempTrips#" item="local.nGroup">
-			<cfloop collection="#stTempTrips[nGroup]#" item="local.sTripKey">
+		<cfloop collection="#stTempTrips#" item="local.Group">
+			<cfloop collection="#stTempTrips[Group]#" item="local.sTripKey">
 				<cfset sIndex = ''>
-				<cfloop collection="#stTempTrips[nGroup][sTripKey]#" item="local.sSegment">
+				<cfloop collection="#stTempTrips[Group][sTripKey]#" item="local.sSegment">
 					<cfloop array="#aSegmentKeys#" index="local.stSegment">
-						<cfset sIndex &= stTempTrips[nGroup][sTripKey][sSegment][stSegment]>
+						<cfset sIndex &= stTempTrips[Group][sTripKey][sSegment][stSegment]>
 					</cfloop>
 				</cfloop>
 				<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
-				<cfif NOT structKeyExists(arguments.stAvailTrips[nGroup], nHashNumeric)>
-					<cfset arguments.stAvailTrips[nGroup][nHashNumeric].Segments = stTempTrips[nGroup][sTripKey]>
+				<cfif NOT structKeyExists(arguments.stAvailTrips[Group], nHashNumeric)>
+					<cfset arguments.stAvailTrips[Group][nHashNumeric].Segments = stTempTrips[Group][sTripKey]>
 				</cfif>
 			</cfloop>
 		</cfloop>
