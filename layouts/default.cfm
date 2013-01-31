@@ -42,10 +42,8 @@
 
     <div id="main-wrapper" class="wide">
 
-    <!-- Main Header -->
     <header id="main-header">
 
-        <!-- Top Header -->
         <div id="header-top">
             <div class="container">
                 <div class="sixteen columns">
@@ -62,7 +60,6 @@
             </div>
         </div>
 
-        <!-- Bottom Header -->
         <div id="header-bottom">
             <div class="container">
                 <div class="sixteen columns">
@@ -73,79 +70,20 @@
             </div>
         </div>
     </header>
-    <!-- END Main Header -->
 
-    <!-- Main Content -->
     <section id="main-content">
 	    <div class="container">
 			<cfoutput>#body#</cfoutput>
 		</div>
-
-
-<!---<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<title>STO .:. The New Generation of Corporate Online Booking</title>
-	<cfif NOT structKeyExists(rc, "bSuppress")>
-		<link href="assets/css/reset.css" rel="stylesheet" media="screen" />
-		<link href="assets/css/style.css" rel="stylesheet" media="screen" />
-		<link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" >
-		<link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
-		<!--- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/pepper-grinder/jquery-ui.css" rel="stylesheet" > --->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-		<script src="assets/js/jqModal.js"></script>
-		<script src="assets/js/booking.js"></script>
-	</cfif>
-</head>
-<body>
-	<cfif NOT structKeyExists(rc, "bSuppress")>
-		
-		<div id="wrapper">
-			<div class="header">
-				<div class="clearfix nav">
-					<cfoutput>#View('main/tabs')#</cfoutput>
-				</div>
-			</div>
-
-			<img class="logo" src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STO-Logo.gif">
-			
-			<br class="clearfix">
-
-			<div id="content">
-				<cfoutput>#body#</cfoutput>
-		
-				<div class="overlayWrapper" id="overlay">
-					<a href="#" class="overlayClose">close</a>
-					<div id="overlayContent">Please wait...</div>
-				</div>
-			
-			</div>
-
-			<br class="clearfix">
-
-			<div id="footer">
-				Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
-			</div>
-
-		</div>
-
-	<cfelse>
-		<p><cfoutput>#body#</cfoutput></p>
-	</cfif>--->
-
     </section>
 
-    <!-- Footer -->
     <footer id="footer">
 
-        <!-- Top Footer -->
         <div id="footer-top">
             <div class="container">
 
                 <div class="one-third column">
-                    <h3>Air Policy</h3>
+					<h3>Air Policy</h3>
 					<ul>
 						<cfoutput>
 							<cfif rc.Policy.Policy_AirLowRule EQ 1>
@@ -183,7 +121,7 @@
 							</cfif>
 						</cfoutput>
 					</ul>
-					<h3>Car Policy</h3>
+                    <h3>Car Policy</h3>
                     <ul>
 						<cfoutput>
 							<cfif rc.Policy.Policy_CarMaxRule EQ 1>
@@ -206,69 +144,29 @@
                 <div class="one-third column">
                     <h3>Unused Tickets</h3>
 					<script type="text/javascript">
-                        getUnusedTickets(3605,1);
+                    getUnusedTickets(3605,1);
 					</script>
+	                <div id="unusedtickets"></div>
                 </div>
 
                 <div class="one-third column">
                     <h3>Photostream</h3>
-
                 </div>
 
             </div>
         </div>
-        <!-- END Top Footer -->
 
-        <!-- Bottom Footer -->
         <div id="footer-bottom">
             <div class="container">
-
                 <div class="eight columns">
                     Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
                 </div>
-                <div class="eight columns">
-                    <!---<ul class="footer-nav">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Portfolio</a></li>
-                        <li class="active"><a href="#">Blog</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>--->
-                </div>
-
             </div>
         </div>
-        <!-- END Bottom Footer -->
 
     </footer>
-    <!-- END Footer -->
 
     </div>
-
-
-<!---
-    <!-- Plugins -->
-    <script src="assets/plugins/selectnav/selectnav.min.js"></script>
-    <script src="assets/plugins/fitvids/jquery.fitvids.js"></script>
-    <script src="assets/plugins/isotope/jquery.isotope.min.js"></script>
-    <script src="assets/plugins/sharrre/jquery.sharrre-1.3.4.min.js"></script>
-
-    <script src="assets/plugins/flexslider/jquery.flexslider-min.js"></script>
-    <link rel="stylesheet" href="assets/plugins/flexslider/flexslider.css">
-
-    <script src="assets/plugins/nivo/jquery.nivo.slider.pack.js"></script>
-    <link rel="stylesheet" href="assets/plugins/nivo/nivo-slider.css">
-
-    <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
-    <script src="assets/plugins/map/jquery.ui.map.min.js"></script>
-
-    <script src="assets/plugins/revolutionslider/js/jquery.themepunch.revolution.min.js"></script>
-    <link rel="stylesheet" href="assets/plugins/revolutionslider/css/settings.css">
-
-    <script src="assets/plugins/caroufredsel/jquery.carouFredSel-6.1.0-packed.js"></script>
-    <script src="assets/plugins/caroufredsel/jquery.touchSwipe.min.js"></script>--->
-
-    <!-- Template Script -->
-    <script src="assets/js/template.js"></script>
 
     </body>
 

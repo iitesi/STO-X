@@ -72,16 +72,14 @@ function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, Destination) {
 function getUnusedTickets(userid, acctid) {
 
     $.ajax({type:"POST",
-        url: 'services/reports.cfc',
-        data:"SearchID="+userid+"&nTrip="+acctid,
+        url: 'services/reports.cfc?method=showUnusedTickets',
+        data:"UserID="+userid+"&AcctID="+acctid,
         dataType: 'json',
         success:function(data) {
-            console.log(data);
+            $("#unusedtickets").html(data);
         },
         error:function(test, tes, te) {
-            console.log(test);
-            console.log(tes);
-            console.log(te);
+            console.log('error');
         }
     });
 

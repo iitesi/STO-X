@@ -50,12 +50,20 @@ showUnusedTickets
 		<cfargument name="AcctID" 		default="#session.AcctID#">
 
 		<cfset local.qAllTravelers = getAllTravelers(arguments.UserID, arguments.AcctID)>
-		<cfset local.qUnusedTickets = getAllUnusedTickets(arguments.User_ID, qAllTravelers)>
+		<cfset local.qUnusedTickets = getAllUnusedTickets(arguments.UserID, qAllTravelers)>
 
 		<cfsavecontent variable="local.sReport">
+            <ul class="arrow-list">
+			<table>
 			<cfoutput query="qUnusedTickets">
-				#Traveler# #DateFormat(ExpirationDate, 'm/d/yyyy')# #DollarFormat(Airfare)# #Carrier#<br>
+				<tr>
+                    <td><li>#DollarFormat(Airfare)# on #Carrier#</li></td>
+					<td>#DateFormat(ExpirationDate, 'm/d')#</td>
+                    <td>#Traveler#</td>
+                </tr>
 			</cfoutput>
+			</table>
+			</ul>
 		</cfsavecontent>
 
 		<cfreturn serializeJSON(sReport)>
