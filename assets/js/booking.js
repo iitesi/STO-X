@@ -394,9 +394,7 @@ function showPhotos(search_id,property_id,hotel_chain) {
 }
 
 function setImage(count, property_id) {
-	var mImage = document.getElementById("mainImage" + property_id);
 	var mImage = $('#mainImage'+property_id)[0]
-	console.log(mImage);
 	mImage.src = $( "#img" + property_id + count ).attr("src");
 	return false;
 }
