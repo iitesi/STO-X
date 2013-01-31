@@ -180,10 +180,14 @@
 	color: #fff;
 }
 
-#header-bottom .breadcrumb li, 
+#header-bottom .breadcrumb li,
 #header-bottom .breadcrumb li a {
 	line-height: 20px;
 	text-shadow: none;
+}
+
+#header-bottom .breadcrumb li .active {
+    color: #fff;
 }
 
 #header-bottom .breadcrumb li a {
@@ -193,7 +197,7 @@
 }
 
 #header-bottom .breadcrumb li .divider {
-	padding: 0 1px;
+	padding: 10px;
 }
 
 #main-content .page-header {

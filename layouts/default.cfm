@@ -57,24 +57,7 @@
 
                     <div class="tagline">The New Generation of Corporate Online Booking</div>
 
-	                <cfoutput>
-	                    <nav id="main-nav">
-	                        <ul>
-	                            <li>
-	                                <a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
-	                            </li>
-	                            <li>
-	                                <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#">Hotel</a>
-	                            </li>
-	                            <li class="active">
-	                                <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#">Car</a>
-	                            </li>
-	                            <li>
-	                                <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
-	                            </li>
-	                        </ul>
-	                    </nav>
-                    </cfoutput>
+	                <cfoutput>#View('main/navigation')#</cfoutput>
                 </div>
             </div>
         </div>
@@ -84,7 +67,7 @@
             <div class="container">
                 <div class="sixteen columns">
                     <ul class="breadcrumb">
-	                    <cfoutput>#View('air/tabs')#</cfoutput>
+	                    <cfoutput>#View('air/breadcrumbs')#</cfoutput>
                     </ul>
                 </div>
             </div>
