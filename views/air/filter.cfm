@@ -76,7 +76,7 @@ CLASSES
 								</cfif>
 								<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
 									<cfoutput>
-										<a href="?action=air.lowfare&Search_ID=#rc.SearchID#&sCabins=C">Find Business Class Fares</a>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C">Find Business Class Fares</a>
 									</cfoutput>
 								</cfif>
 							</li>
@@ -88,7 +88,7 @@ CLASSES
 								</cfif>
 								<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'FX')>
 									<cfoutput>
-										<a href="?action=air.lowfare&Search_ID=#rc.SearchID#&sCabins=F">Find First Class Fares</a>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F">Find First Class Fares</a>
 									</cfoutput>
 								</cfif>
 							</li>

@@ -16,9 +16,9 @@
     </div>
   </div>
 
-  <form method="post" action="#buildURL('hotel.search')#&Search_ID=#rc.SearchID#" id="hotelForm">
+  <form method="post" action="#buildURL('hotel.search')#&SearchID=#rc.SearchID#" id="hotelForm">
     <input type="hidden" name="bSelect" value="1">
-    <input type="hidden" name="Search_ID" value="#rc.SearchID#">
+    <input type="hidden" name="SearchID" value="#rc.SearchID#">
     <input type="hidden" name="sHotel" id="sHotel" value="">
     <input type="hidden" name="sRoomDescription" id="sRoomDescription" value="">
     <input type="hidden" id="current_page" value="0" />
@@ -28,9 +28,9 @@
 
   <div class="hotel" height="100%">
   	<cfset tripcount = 0 />
-  	<cfset stSortHotels       = session.searches[rc.SearchID].stSortHotels />
-  	<cfset stHotelChains      = session.searches[rc.SearchID].stHotelChains />
-  	<cfset stHotels           = session.searches[rc.SearchID].stHotels />
+  	<cfset stsorthotels  = session.searches[rc.SearchID].stSortHotels />
+  	<cfset stHotelChains = session.searches[rc.SearchID].stHotelChains />
+  	<cfset stHotels      = session.searches[rc.SearchID].stHotels />
 
   	<cfloop array="#stSortHotels#" index="sHotel">
 

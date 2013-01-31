@@ -102,7 +102,7 @@
 <!--- HotelInformation --->
 	<cffunction name="HotelInformation" access="public" output="false" returntype="query">
 		<cfargument name="stHotels">
-		<cfargument name="Search_ID">
+		<cfargument name="SearchID">
 		
 		<cfset local.stHotels = arguments.stHotels />
 		<cfset local.aPropertyIDs = [] />
@@ -127,7 +127,7 @@
 
 		</cfloop>
 
-		<cfset session.searches[arguments.Search_ID].stHotels = stHotels />
+		<cfset session.searches[arguments.SearchID].stHotels = stHotels />
 
 		<cfreturn HotelInformation />
 	</cffunction>

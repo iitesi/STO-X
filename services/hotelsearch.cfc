@@ -415,11 +415,11 @@
 <!--- HotelInformationQuery --->
 	<cffunction name="HotelInformationQuery" access="public" output="false" returntype="struct">
 		<cfargument name="stHotels">
-		<cfargument name="Search_ID">
+		<cfargument name="SearchID">
 		<cfargument name="stAmenities" default="#application.stAmenities#" />
 
 		<cfset local.stHotels = arguments.stHotels />
-		<cfset local.aHotels = session.searches[arguments.Search_ID]['stSortHotels'] />
+		<cfset local.aHotels = session.searches[arguments.SearchID]['stSortHotels'] />
 		<cfset local.stAmenities = arguments.stAmenities />
 		<cfset local.PropertyIDs = arrayToList(local.aHotels) />
 
@@ -453,7 +453,7 @@
 		</cfloop>
 
 		<!--- Add HotelInformationQuery to the session for filtering --->
-		<cfset session.searches[arguments.Search_ID].HotelInformationQuery = HotelInformationQuery />
+		<cfset session.searches[arguments.SearchID].HotelInformationQuery = HotelInformationQuery />
 
 		<cfreturn stHotels />
 	</cffunction>

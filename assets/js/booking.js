@@ -167,10 +167,10 @@ function sortAir (sort) {
 	return false;
 }
 
-function airPrice(search_id, trip_id, cabin, refundable) {
+function airPrice(searchid, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",
 		url:"services/airprice.cfc?method=doAirPrice",
-		data:"SearchID="+search_id+"&nTrip="+trip_id+"&sCabin="+cabin+"&bRefundable="+refundable,
+		data:"SearchID="+searchid+"&nTrip="+trip_id+"&sCabin="+cabin+"&bRefundable="+refundable,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -193,17 +193,17 @@ HOTEL SECTION
 ------------------
 */
 
-function hotelPrice(search_id, hotel, chain) {
+function hotelPrice(searchid, hotel, chain) {
 	$.ajax({type:"POST",
 		url:"services/hotelprice.cfc?method=doHotelPrice",
-		data:"SearchID="+search_id+"&nHotelCode="+hotel+"&sHotelChain="+chain,
+		data:"SearchID="+searchid+"&nHotelCode="+hotel+"&sHotelChain="+chain,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
 		success:function(data) {
 			var Rate = data[0] != 'Sold Out' ? '$'+data[0] : data[0];
 			var Address = data[1];
-			var divdata = '<div id="seerooms'+hotel+'" class="button-wrapper"><a onClick="showRates('+search_id+','+hotel+');return false;" class="button"><span>See Rooms</span></a></div>';
+			var divdata = '<div id="seerooms'+hotel+'" class="button-wrapper"><a onClick="showRates('+searchid+','+hotel+');return false;" class="button"><span>See Rooms</span></a></div>';
 			divdata+='<div id="hiderooms'+hotel+'" class="button-wrapper hide"><a onClick="hideRates('+hotel+');return false;" class="button"><span>Hide Rooms</span></a></div>';
 			$("#checkrates2"+hotel).html(Rate + divdata);
 			// if it's Sold Out overwrite existing html with the Sold Out message
@@ -232,10 +232,10 @@ function hotelLoading(property_id) {
 	$("#checkrates"+property_id).html('<div style="border-top:1px dashed gray;"></div><div style="width:100%;margin:0 auto; text-align:center;"><br><br>Gathering the most up to date information...<br><img src="assets/img/ajax-loader.gif"></div>').show();
 }
 
-function showRates(search_id,property_id) {
+function showRates(searchid,property_id) {
 	$.ajax({
 		url:"services/hotelrooms.cfc?method=getRooms",
-		data:"SearchID="+search_id+"&nHotelCode="+property_id,
+		data:"SearchID="+searchid+"&nHotelCode="+property_id,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -271,10 +271,10 @@ function showRates(search_id,property_id) {
 	return false;
 }
 
-function showDetails(search_id,property_id,hotel_chain,rate_type) {
+function showDetails(searchid,property_id,hotel_chain,rate_type) {
 	$.ajax({
 		url:"services/hoteldetails.cfc?method=doHotelDetails",
-		data:"SearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain+"&sRatePlanType="+rate_type,
+		data:"SearchID="+searchid+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain+"&sRatePlanType="+rate_type,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -315,10 +315,10 @@ function showDetails(search_id,property_id,hotel_chain,rate_type) {
 	return false;
 }
 
-function showAmenities(search_id,property_id) {
+function showAmenities(searchid,property_id) {
 	$.ajax({
 		url:"services/hotelrooms.cfc?method=getAmenities",
-		data:"SearchID="+search_id+"&nHotelCode="+property_id,
+		data:"SearchID="+searchid+"&nHotelCode="+property_id,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -347,10 +347,10 @@ function showAmenities(search_id,property_id) {
 }
 
 
-function showPhotos(search_id,property_id,hotel_chain) {
+function showPhotos(searchid,property_id,hotel_chain) {
 	$.ajax({
 		url:"services/hotelphotos.cfc?method=doHotelPhotoGallery",
-		data:"SearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain,
+		data:"SearchID="+searchid+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -549,10 +549,10 @@ function logError(test,tes,te) {
 	console.log(te);	
 }
 
-function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
+function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
-		data:"SearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
+		data:"SearchID="+searchid+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -566,10 +566,10 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,c
 	return false;
 }
 
-function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,currenttotal) {
+function couldYouHotel(searchid,hotelcode,hotelchain,viewDay,nights,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
-		data:"SearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
+		data:"SearchID="+searchid+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -583,10 +583,10 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,c
 	return false;
 }
 
-function couldYouCar(search_id,carchain,cartype,viewDay,startdate,currenttotal) {
+function couldYouCar(searchid,carchain,cartype,viewDay,startdate,currenttotal) {
 	$.ajax({type:"POST",
-		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
-		data:"SearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nTotal="+currenttotal,
+		url:"services/couldyou.cfc?method=doCarPriceCouldYou&SearchID="+searchid,
+		data:"SearchID="+searchid+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
