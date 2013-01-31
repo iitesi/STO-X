@@ -11,15 +11,9 @@
 	
 <!--- search --->
 	<cffunction name="search" output="false">
-		<cfargument name="Filter" />
-		<cfargument name="bSelect" />
-		<cfargument name="bReloadHotel" />
-		
-		<cfif NOT structKeyExists(arguments, 'bSelect')>
-			<cfset rc.stPolicy = application.stPolicies[arguments.Filter.getPolicyID()] />
-			<cfif StructKeyExists(arguments, 'bReloadHotel')>
-				
-			</cfif>
+		<cfargument name="rc">
+
+		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset variables.fw.service('hotelsearch.doHotelSearch', 'void') />
 		<cfelse>
 			<!--- Select --->
@@ -29,15 +23,14 @@
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endsearch" output="false">
-		<cfargument name="Filter" />
-		<cfargument name="bSelect" />
+		<cfargument name="rc">
 
-		<cfif structKeyExists(arguments, 'bSelect')>
-			<cfif arguments.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Car')>
-				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.Filter.getSearchID()#')>
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfif arguments.rc.Filter.getCar()
+			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#arguments.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
@@ -52,13 +45,13 @@
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endskip" output="false">
-		<cfargument name="Filter">
+		<cfargument name="rc">
 
-		<cfif arguments.Filter.getCar()
-		AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Car')>
-			<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.Filter.getSearchID()#')>
+		<cfif arguments.rc.Filter.getCar()
+		AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+			<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
-		<cfset variables.fw.redirect('summary?Search_ID=#arguments.Filter.getSearchID()#')>
+		<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 
 		<cfreturn />
 	</cffunction>

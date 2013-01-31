@@ -1,29 +1,25 @@
-<!--- <a id="helpdesktab" href="http://www.ithelpdesksoftware.com/help-desks.html">CID-LAS<br>1/1/2013</a>
-<a id="blogtab" href="http://blog.ithelpdesksoftware.com/">New Search</a>
-<a id="articlestab" href="http://www.ithelpdesksoftware.com/help-desk-articles.html">Hotel</a>
-<a id="newstab" href="http://www.ithelpdesksoftware.com/help-desk-news.html">Car</a>
-<a id="eventstab" href="http://www.ithelpdesksoftware.com/help-desk-events.html">Purchase</a> --->
+
 <cfoutput>
 	<!--- Any air tabs? --->
-	<cfset bAir = 0>
-	<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
-		<cfif session.searches[nSearchID].bAir>
-			<cfset bAir = 1>
+	<cfset Air = 0>
+	<cfloop collection="#session.Filters#" index="SearchID" item="stFilter">
+		<cfif stfilter.getAir()>
+			<cfset Air = 1>
 			<cfbreak>
 		</cfif>
 	</cfloop>
 <!--- 
 Show Air Tab(s)
 --->
-	<cfif bAir>
-		<cfloop array="#StructKeyArray(session.searches)#" index="nSearchID">
-			<cfif session.searches[nSearchID].bAir>
-				<!--- <cfif rc.action CONTAINS 'air.' AND rc.nSearchID EQ nSearchID>selected</cfif> --->
-				<a href="#buildURL('air.lowfare?Search_ID=#nSearchID#')#">
-					#UCase(session.searches[nSearchID].sHeading)#
+	<cfif Air>
+		<cfloop array="#StructKeyArray(session.searches)#" index="SearchID">
+			<cfif rc.Filter.getAir()>
+				<!--- <cfif rc.action CONTAINS 'air.' AND rc.SearchID EQ SearchID>selected</cfif> --->
+				<a href="#buildURL('air.lowfare?Search_ID=#SearchID#')#">
+					#UCase(rc.Filter.getHeading())#
 				</a>
 						<!--- <cfif ArrayLen(StructKeyArray(session.searches)) GT 1>
-							<a style="position:absolute;top:0px;left:140px;z-index:1005;" href="#buildURL('setup.close?Search_ID=#nSearchID#')#"><img src="assets/img/close.png"></a>
+							<a style="position:absolute;top:0px;left:140px;z-index:1005;" href="#buildURL('setup.close?Search_ID=#SearchID#')#"><img src="assets/img/close.png"></a>
 						</cfif> --->
 			</cfif>
 		</cfloop>
@@ -34,9 +30,9 @@ Show Air Tab(s)
 <!--- 
 Show Hotel Tab(s)
 --->
-	<cfif (session.searches[nSearchID].bAir
-	AND StructKeyExists(session.searches[nSearchID].stItinerary, 'Air'))
-	OR NOT session.searches[nSearchID].bAir>
+	<cfif (rc.Filter.getAir()
+	AND StructKeyExists(session.searches[SearchID].stItinerary, 'Air'))
+	OR NOT rc.Filter.getAir()>
 		<a href="#buildURL('hotel.search?Search_ID=#rc.Search_ID#')#">
 			HOTEL
 		</a>
@@ -48,9 +44,9 @@ Show Hotel Tab(s)
 <!--- 
 Show Car Tab(s)
 --->
-	<cfif (session.searches[nSearchID].bAir
-	AND StructKeyExists(session.searches[nSearchID].stItinerary, 'Air'))
-	OR NOT session.searches[nSearchID].bAir>
+	<cfif (rc.Filter.getAir()
+	AND StructKeyExists(session.searches[SearchID].stItinerary, 'Air'))
+	OR NOT rc.Filter.getAir()>
 		<a href="#buildURL('car.availability?Search_ID=#rc.Search_ID#')#">
 			CAR
 		</a>

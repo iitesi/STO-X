@@ -64,8 +64,8 @@ POLICY
 	</tr> 
 	</table>
 </ul>
-<cfset stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID]>
-<cfset stAccount = application.stAccounts[session.Acct_ID]>
+<cfset stPolicy = application.Policies[session.searches[rc.SearchID].PolicyID]>
+<cfset stAccount = application.Accounts[session.AcctID]>
 <script type="application/javascript">
 
 $(document).ready(function() {

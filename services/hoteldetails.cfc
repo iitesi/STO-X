@@ -2,20 +2,20 @@
 	
 <!--- doHotelDetails --->
 	<cffunction name="doHotelDetails" output="false" access="remote" returnformat="json" returntype="query">
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="sRatePlanType" />
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stAccount" 	default="#application.Accounts[session.AcctID]#">
 		
 		<cfset local.HotelDetails = HotelDetails(arguments.nHotelCode)>
 
 		<cfif NOT HotelDetails.RecordCount>
-			<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode, arguments.sRatePlanType)>
-			<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode)>
+			<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode, arguments.sRatePlanType)>
+			<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode)>
 			<cfset local.stResponse = formatResponse(sResponse)>
-			<cfset parseHotelDetails(stResponse, arguments.nHotelCode, arguments.nSearchID)>
+			<cfset parseHotelDetails(stResponse, arguments.nHotelCode, arguments.SearchID)>
 			<cfset local.HotelDetails = HotelDetails(arguments.nHotelCode)>
 		</cfif>
 
@@ -25,12 +25,16 @@
 <!--- prepareSoapHeader --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
 		<cfargument name="stAccount" />
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="sRatePlanType" />
 		
-		<cfset local.Search = session.searches[arguments.nSearchID] />
+		<cfquery name="local.getSearch" datasource="book">
+		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
+		FROM Searches
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -61,12 +65,12 @@
 		<cfargument name="sService"	/>
 		<cfargument name="sMessage"	/>
 		<cfargument name="sAPIAuth"	/>
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode"	/>
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID]['STHOTELS'][nHotelCode],'HotelDetails')>
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode],'HotelDetails')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -76,9 +80,9 @@
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfset session.searches[nSearchID]['STHOTELS'][nHotelCode].HotelDetails = cfhttp.filecontent />
+			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].HotelDetails = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID]['STHOTELS'][nHotelCode].HotelDetails />
+			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].HotelDetails />
 		</cfif>
 		
 		<cfreturn cfhttp.filecontent />
@@ -97,7 +101,7 @@
 	<cffunction name="parseHotelDetails" returntype="struct" output="false">
 		<cfargument name="stResponse"	required="true">		
 		<cfargument name="nHotelCode"	required="true">		
-		<cfargument name="nSearchID"	required="true">			
+		<cfargument name="SearchID"	required="true">
 		
 		<cfset local.BadDescriptionList = 'Room rate,Promotional,Rate comment,rate description,min length stay,max length stay' />
 		<cfset local.DescriptionStruct = {} />

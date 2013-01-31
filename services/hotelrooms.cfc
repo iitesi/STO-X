@@ -1,11 +1,11 @@
 <cfcomponent output="false">
 	
 	<cffunction name="getRooms" access="remote" returntype="any" returnformat="plain" output="false">
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode" />
-    <cfargument name="stPolicy" default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
+    <cfargument name="stPolicy" default="#application.Policies[session.searches[arguments.SearchID].PolicyID]#">
 		
-		<cfset local.stHotel = session.searches[nSearchID].stHotels[nHotelCode] />
+		<cfset local.stHotel = session.searches[SearchID].stHotels[nHotelCode] />
 		<cfset local.stNewHotel = StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />
 		<cfset local.RoomsData = QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,RoomRateCategory,RoomRatePlanType,Policy", "varchar,numeric,varchar,varchar,varchar,varchar,varchar,boolean")>
 		

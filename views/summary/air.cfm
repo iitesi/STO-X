@@ -1,8 +1,8 @@
 <cfoutput>
-	<cfif bAir>
+	<cfif Air>
 		<br><br>
 		<div class="summarydiv background">
-			<cfset bAirPolicy = (ArrayLen(stItinerary.Air.aPolicies) GT 0 ? false : true)>
+			<cfset AirPolicy = (ArrayLen(stItinerary.Air.aPolicies) GT 0 ? false : true)>
 			<table width="1000">
 			<tr>
 <!--- 
@@ -10,8 +10,8 @@ HEADING
 --->
 				<td colspan="5">
 					<h4>FLIGHT</h4>
-					#(NOT bAirPolicy ? 'Your flight is outside of policy.' : '')#
-					<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.nSearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
+					#(NOT AirPolicy ? 'Your flight is outside of policy.' : '')#
+					<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.SearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
 				</td>
 			</tr>
 			<tr>
@@ -66,7 +66,7 @@ OUT OF POLICY
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
-					<cfif NOT bAirPolicy
+					<cfif NOT AirPolicy
 					AND stPolicy.Policy_AirReasonCode EQ 1>
 							<td>
 								Reason for booking outside of policy
@@ -91,7 +91,7 @@ NOT LOWEST FARE
 					AND they want to capture lost savings
 					--->
 					<cfif stItinerary.Air.Total GT nLowestFare
-					AND (bAirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
+					AND (AirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
 					AND stPolicy.Policy_AirLostSavings EQ 1>
 							<td>
 								Reason for not booking the lowest fare
@@ -131,14 +131,14 @@ GENERAL SEAT ASSIGNMENTS
 								Specific Seat Seletion
 							</td>
 							<td>
-								<a href="?action=air.popup&sDetails=seatmap&Search_ID=#rc.nSearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
+								<a href="?action=air.popup&sDetails=seatmap&Search_ID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
 									Seat Maps
 									<cfloop collection="#stItinerary.Air.Groups#" index="nGroupKey" item="stGroup">
 										<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 											<cfset sFieldName = '#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#'>
-											<cfparam name="session.searches[#rc.nSearchID#].stTravelers[nTraveler].stSeats.#sFieldName#" default="">
-											<input type="text" name="Seat#sFieldName#_view" id="Seat#sFieldName#_view" size="3" maxlength="4" value="#session.searches[rc.nSearchID].stTravelers[nTraveler].stSeats[sFieldName]#" disabled>
-											<input type="hidden" name="Seat#sFieldName#" id="Seat#sFieldName#" value="#session.searches[rc.nSearchID].stTravelers[nTraveler].stSeats[sFieldName]#">
+											<cfparam name="session.searches[#rc.SearchID#].stTravelers[nTraveler].stSeats.#sFieldName#" default="">
+											<input type="text" name="Seat#sFieldName#_view" id="Seat#sFieldName#_view" size="3" maxlength="4" value="#session.searches[rc.SearchID].stTravelers[nTraveler].stSeats[sFieldName]#" disabled>
+											<input type="hidden" name="Seat#sFieldName#" id="Seat#sFieldName#" value="#session.searches[rc.SearchID].stTravelers[nTraveler].stSeats[sFieldName]#">
 										</cfloop>
 									</cfloop>
 								</a>

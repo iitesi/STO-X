@@ -15,11 +15,11 @@ init
 doAirPrice
 --->
 	<cffunction name="doAirCreate" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 
-		<cfset local.stAir 			= session.searches[arguments.nSearchID].stItinerary.Air>
-		<cfset local.nTripKey		= objAirPrice.doAirPrice(arguments.nSearchID, stAir.Class, stAir.Ref, stAir.nTrip, 0, 1)>
-		<cfset local.stAirPricing	= objAirParse.parseTripForPurchase(session.searches[arguments.nSearchID].stTrips[nTripKey].sXML)>
+		<cfset local.stAir 			= session.searches[arguments.SearchID].stItinerary.Air>
+		<cfset local.nTripKey		= objAirPrice.doAirPrice(arguments.SearchID, stAir.Class, stAir.Ref, stAir.nTrip, 0, 1)>
+		<cfset local.stAirPricing	= objAirParse.parseTripForPurchase(session.searches[arguments.SearchID].stTrips[nTripKey].sXML)>
 
 		<cfdump var="#ToString(stAirPricing)#" abort="true">
 
@@ -30,11 +30,11 @@ doAirPrice
 prepareSoapHeader
 --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="nGroup"	 	required="true">
 		<cfargument name="sNextRef"	 	required="false" 	default="">
-		<cfargument name="stAccount"	required="false" 	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy"		required="false"	default="#application.stPolicies[session.searches[url.Search_ID].nPolicyID]#">
+		<cfargument name="stAccount"	required="false" 	default="#application.Accounts[session.AcctID]#">
+		<cfargument name="stPolicy"		required="false"	default="#application.Policies[session.searches[url.Search_ID].PolicyID]#">
 		
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>

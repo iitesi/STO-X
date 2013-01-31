@@ -11,7 +11,7 @@
 	</tr>
 	<cfset nTotalTrip = 0>
 	<cfif structKeyExists(stItinerary, 'Air')>
-		<cfset bAir = true>
+		<cfset Air = true>
 		<tr>
 			<td>Flight</td>
 			<td>#DollarFormat(stItinerary.Air.Base)#</td>
@@ -21,7 +21,7 @@
 		<cfset nTotalTrip = nTotalTrip + stItinerary.Air.Total>
 	</cfif>
 	<cfif structKeyExists(stItinerary, 'Hotel')>
-		<cfset bHotel = true>
+		<cfset Hotel = true>
 		<tr>
 			<td>Hotel</td>
 			<td></td>
@@ -31,7 +31,7 @@
 		<cfset nTotalTrip = nTotalTrip + hoteltotalhere>
 	</cfif>
 	<cfif structKeyExists(stItinerary, 'Car')>
-		<cfset bCar = true>
+		<cfset Car = true>
 		<cfset sCarCurr = Left(stItinerary.Car.EstimatedTotalAmount, 3)>
 		<cfset sCarTotal = Mid(stItinerary.Car.EstimatedTotalAmount, 4)>
 		<tr>

@@ -2,31 +2,31 @@
 	
 <!--- doLocations --->
 	<cffunction name="doLocations" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		
-		<cfset local.stAccount = application.stAccounts[session.Acct_ID]>
-		<cfset local.stDates = getDates(nSearchID)>
-		<cfset local.sLatLong = getAirportLatLong(nSearchID)>
-		<cfset local.sMessage = prepareSoapHeader(nSearchID, stDates, stAccount)>
-		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+		<cfset local.stAccount = application.Accounts[session.AcctID]>
+		<cfset local.stDates = getDates(SearchID)>
+		<cfset local.sLatLong = getAirportLatLong(SearchID)>
+		<cfset local.sMessage = prepareSoapHeader(SearchID, stDates, stAccount)>
+		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, SearchID)>
 		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
 		<cfset local.stLocations = parseLocations(aResponse)>
 		<cfset stLocations = getLatLong(stLocations)>
 		<cfset stLocations.Center = sLatLong>
 		
-		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
+		<!---<cfset session.searches[SearchID].stTrips = addJavascript(stTrips)>--->
 		
 		<cfreturn stLocations>
 	</cffunction>
 	
 <!--- getDates --->
 	<cffunction name="getDates" output="false">
-		<cfargument name="nSearchID"	required="true">
+		<cfargument name="SearchID"	required="true">
 		
 		<cfset local.stDates = {}>
 		<cfset stDates.PickUp_DateTime = ''>
 		<cfset stDates.DropOff_DateTime = ''>
-		<cfif session.searches[arguments.nSearchID].bAir>
+		<cfif session.searches[arguments.SearchID].Air>
 			<!--- To Do!! --->
 		</cfif>
 		<cfif NOT IsDate(stDates.PickUp_DateTime)
@@ -34,7 +34,7 @@
 			<cfquery name="local.getsearch" datasource="book">
 			SELECT Depart_DateTime, Arrival_DateTime
 			FROM Searches
-			WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
 			<cfset stDates.PickUp_DateTime = getsearch.Depart_DateTime>
 			<cfset stDates.DropOff_DateTime = getsearch.Arrival_DateTime>
@@ -45,14 +45,14 @@
 	
 <!--- getAirportLatLong --->
 	<cffunction name="getAirportLatLong" output="false">
-		<cfargument name="nSearchID"	required="true">
+		<cfargument name="SearchID"	required="true">
 		
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Airport_Location
 		FROM lu_FullAirports
 		WHERE Airport_Code IN (SELECT 'ALO' AS Arrival_City
 								FROM Searches
-								WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />)
+								WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />)
 		</cfquery>
 		
 		<cfset local.sLatLong = ''>
@@ -70,14 +70,14 @@
 	
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="stDates" 		required="true">
 		<cfargument name="stAccount" 		required="true">
 		
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT 'ALO' AS Arrival_City
 		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		
 		<cfsavecontent variable="local.sMessage">

@@ -1,31 +1,6 @@
 <cfcomponent output="false">
 
 <!---
-loadUAPI
---->
-	<cffunction name="loadObjUAPI" output="false" returntype="void">
-		
-		<cfset application.objUAPI = createObject("component", "booking.services.uapi")>
-		
-		<cfreturn />
-	</cffunction>
-
-<!---
-loadObjects
---->
-	<cffunction name="loadObjects" output="false" returntype="void">
-		
-		<cfset application.objAirPrice 		= createObject("component", "booking.services.airprice")>
-		<cfset application.objCar			= createObject("component", "booking.services.car")>
-		<cfset application.objHotelDetails 	= createObject("component", "booking.services.hoteldetails")>
-		<cfset application.objHotelPhotos 	= createObject("component", "booking.services.hotelphotos")>
-		<cfset application.objHotelPrice 	= createObject("component", "booking.services.hotelprice")>
-		<cfset application.objHotelRooms	= createObject("component", "booking.services.hotelrooms")>
-		
-		<cfreturn />
-	</cffunction>
-
-<!---
 setServerURL
 --->
 	<cffunction name="setServerURL" output="false" returntype="void">
@@ -152,7 +127,7 @@ setAccounts
 			</cfif>
 		</cfloop>
 		
-		<cfset application.stAccounts = stTemp>
+		<cfset application.Accounts = stTemp>
 		
 		<cfreturn />
 	</cffunction>
@@ -194,7 +169,7 @@ setPolicies
 			</cfif>
 		</cfloop>
 		
-		<cfset application.stPolicies = stTemp>
+		<cfset application.Policies = stTemp>
 		
 		<cfreturn />
 	</cffunction>

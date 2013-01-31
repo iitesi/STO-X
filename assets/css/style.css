@@ -1,66 +1,126 @@
+/* Save and include the following CSS styles on your page. */
+
+a {
+    color: #77a6ee;
+}
+
+a:hover {
+    color: #3279e5;
+}
+
+#main-nav ul li.active {
+    border-top-color: #77a6ee;
+}
+
+#main-nav ul li.active:before {
+    border-top-color: #77a6ee;
+}
+
+#main-nav ul ul li a:hover {
+    background-color: #77a6ee;
+}
+
+.blog .post .side .post-type {
+    background-color: #77a6ee;
+}
+
+.blog .post .content .meta li a:hover {
+    color: #77a6ee;
+}
+
+.blog .post .wrap .read-more a {
+    background-color: #77a6ee;
+}
+
+.portfolio-filter ul li.active a, .portfolio-filter ul li:hover a {
+    background-color: #77a6ee;
+}
+
+.portfolio-filter ul li.active a:after {
+    border-top-color: #77a6ee;
+}
+
+.portfolio-items .item .image .overlay .actions li a:hover {
+    color: #77a6ee;
+}
+
+.portfolio-row .read-more a {
+    background-color: #77a6ee;
+}
+
+.portfolio .portfolio-meta span:before {
+    background-color: #77a6ee;
+}
+
+.highlight {
+    color: #77a6ee;
+}
+
+.underline {
+    border-bottom-color: #77a6ee;
+}
+
+.underline-heading h1, .underline-heading h2, .underline-heading h3, .underline-heading h4, .underline-heading h5, .underline-heading h6 {
+    border-bottom-color: #77a6ee;
+}
+
+.check-list li:before {
+    color: #77a6ee;
+}
+
+.arrow-list li:before {
+    border-left-color: #77a6ee;
+}
+
+.skill .circles span.filled {
+    background-color: #77a6ee;
+}
+
+.our-team .photo .info {
+    border-left-color: #77a6ee;
+}
+
+.our-team .social ul {
+    border-top-color: #77a6ee;
+}
+
+.service .read-more a {
+    background-color: #77a6ee;
+}
+
+.highlights.bold .highlight-item:hover .icon {
+    background-color: #77a6ee;
+}
+
+.callout .link {
+    background-color: #77a6ee;
+}
+
+.callout .link:before {
+    border-right-color: #77a6ee;
+}
+
+.portfolio-carousel .carousel-nav li a {
+    background-color: #77a6ee;
+}
+
+.latest-blog .overlay .post-type {
+    background-color: #77a6ee;
+}
+
+.accordion .accordion-header {
+    border-left-color: #77a6ee;
+}
+
+
+
+
 body {
-	color: #222222;
-	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 13px;
-	background-image:url(../img/background.png);
-	background-color: #FFF;
+	background-image:url(../img/slider-wrap-bg.png);
 }
 #wrapper {
 	width: 100%;
 	min-width: 1000px;
-}
-
-/*
-----------------------------------------------------------------------------------------------------------
-	HEADER
-----------------------------------------------------------------------------------------------------------
-*/
-
-.header { 
-	display: block;
-	float: none;
-	padding: 1px 0 0 0;
-	width:100%;
-	white-space:nowrap;
-	background:linear-gradient(to bottom, #3E3E3E 0%, #212121 100%) repeat scroll 0 0 transparent;
-	background: -webkit-gradient(linear, left top, left 25, from(#3E3E3E), color-stop(4%, #212121), to(#3E3E3E));
-	/*background: -moz-linear-gradient(top, #3E3E3E, #212121 1px, #3E3E3E 25px);*/
-	height: 45px;
-	position:fixed;
-	width:100%;
-	z-index:20;
-}
-.logo {
-	float:left;
-	margin: 55px 0 0 30px;
-	background-color:#FFFFFF;
-}
-.nav {
-	height: 45px;
-	font-size:14px;
-	width:auto;
-}
-.nav a {
-	padding:5px 20px 5px 20px;
-	line-height: 32px;
-	display: block;
-	color:#D6D6D6;
-	float: left;
-	border-right: 1px solid #000;
-}
-.nav a.tabactive-clr {
-	background-color: #FCFCFC;
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	color:#000;
-}
-.nav a:hover {
-	background:linear-gradient(to bottom, #212121 0%, #3E3E3E 100%) repeat scroll 0 0 transparent;
-	background: -webkit-gradient(linear, left top, left 25, from(#212121), color-stop(4%, #3E3E3E), to(#212121));
-	cursor: pointer;
-	color:#fff;
-	text-decoration:none;
 }
 
 /*
@@ -178,21 +238,6 @@ ul.tabs li a.active {
 
 /*
 ----------------------------------------------------------------------------------------------------------
-	BODY
-----------------------------------------------------------------------------------------------------------
-*/
-
-#content{
-	margin: auto 0;
-	padding: 10px;
-	min-width: 95%;
-	clear:both;
-	min-height: 1000px;
-	overflow: hidden;
-}
-
-/*
-----------------------------------------------------------------------------------------------------------
 	FILTER
 ----------------------------------------------------------------------------------------------------------
 */
@@ -282,68 +327,6 @@ ul.tabs li a.active {
 
 /*
 ----------------------------------------------------------------------------------------------------------
-	TEXT CLASSES
-----------------------------------------------------------------------------------------------------------
-*/
-
-.clearfix:after { 
-	content: "."; 
-	visibility: hidden; 
-	display: block; 
-	height: 0; 
-	clear: both;
-}
-.error {
-	margin: 0 auto;
-	width: 90%;
-	text-align: center;
-	padding: 3px 15px 3px 15px;
-	border: 1px solid #FCEFA1;
-	color: #2E76CF;
-	background-color: #FCF9D7;
-}
-.roundall {
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-.left {
-	position:relative;
-	float:left;
-}
-.textButton {
-	border:0px;
-	background:transparent;
-	color: #2E76CF;
-	text-transform: uppercase;
-	font-size: 9px;
-	font-weight: bold;
-
-}
-.left {
-	float:left;
-}
-.inner {
-	margin: 0 auto;
-	position: relative;
-}
-.group:after {
-	content: ".";
-	display: block;
-	height: 0;
-	visibility: hidden;
-	clear: both;
-}
-.inner nav{
-	position: relative;
-	z-index: 3;
-	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
-	height:35px;
-	background-color:#0090D2;
-	width: 1020px;
-}
-
-/*
-----------------------------------------------------------------------------------------------------------
 	BADGE
 ----------------------------------------------------------------------------------------------------------
 */
@@ -355,7 +338,7 @@ ul.tabs li a.active {
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 235px;
+	width: 200px;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 }
@@ -481,31 +464,6 @@ footer[role="contentinfo"]{
 	height: 100px;
 }
 
-/*
-----------------------------------------------------------------------------------------------------------
-	FORMS
-----------------------------------------------------------------------------------------------------------
-*/
-
-form div input[type="submit"] { 
-	cursor: pointer;
-	float: right;
-	margin: 0px !important;
-	padding: 4px 6px !important;
-	position: relative;
-	right: 4px;
-}
-input {
-	padding: 5px;
-	margin-top: 2px;
-	border: solid 1px #CCCCCC;
-	font: normal 13px/100% Verdana, Tahoma, sans-serif;
-	background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
-	background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
-	box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-}
 .button1policy {
 	display: block; 
 	position: relative;
@@ -552,47 +510,6 @@ input {
 	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	overflow: hidden;
-}
-select {
-	background-color: #FFFFFF;
-	padding: 5px;
-	margin-top: 2px;
-	border: solid 1px #CCCCCC;
-	font: normal 13px/100% Verdana, Tahoma, sans-serif;
-	background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
-	background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
-	box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-}
-textarea {
-	padding: 5px;
-	margin-top: 2px;
-	height:100px;
-	border: solid 1px #CCCCCC;
-	font: normal 13px/100% Verdana, Tahoma, sans-serif;
-	background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF));
-	background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
-	box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-	-webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px;
-}
-input[type="text"]:hover, input[type="text"]:focus,
-textarea:hover, textarea:focus,
-select:hover, select:focus { 
-	border-color: #C9C9C9; 
-	-webkit-box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 8px;
-}
-.close {
-	border-radius: 50%;
-	width: 15px;
-	height: 15px;
-	background-color: #CCC;
-	color: #FFF;
-	position: relative;
-	float: right;
-	text-align: center;
-	margin-left: 5px;
 }
 /* Filters */
 .popup {

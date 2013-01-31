@@ -2,7 +2,7 @@
 <cfoutput>
 	<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
 		<input type="hidden" name="bSelect" value="1">
-		<input type="hidden" name="Search_ID" value="#rc.nSearchID#">
+		<input type="hidden" name="Search_ID" value="#rc.SearchID#">
 		<input type="hidden" name="sCategory" id="sCategory" value="">
 		<input type="hidden" name="sVendor" id="sVendor" value="">
 	</form>	
@@ -18,7 +18,7 @@
 			<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
 				<td>
 				<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
-					<cfif ArrayFind(application.stAccounts[session.Acct_ID].aPreferredCar, sVendor)>
+					<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
 						<span class="medium blue bold">PREFERRED</span><br>
 					</cfif>
 					<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-bottom:10px;">
@@ -40,7 +40,7 @@
 				<tr>
 					<td>
 						<div style="width:150px;position:relative;float:left;">
-							<cfif ArrayFind(application.stPolicies[session.searches[rc.nSearchID].nPolicyID].aCarSizes, sCategory)>
+							<cfif ArrayFind(application.Policies[session.searches[rc.SearchID].PolicyID].aCarSizes, sCategory)>
 								<span class="medium blue bold">PREFERRED</span><br>
 							</cfif>
 							<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br>

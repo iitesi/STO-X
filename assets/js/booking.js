@@ -38,30 +38,30 @@ function showManualCreditCard(type) {
 /*
 	Select seats from the summary page
 */
-function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, sDestination) {
+function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, Destination) {
 
-	var nSearchID = $( "#nSearchID" ).val();
+	var SearchID = $( "#SearchID" ).val();
 	var nTraveler = $( "#nTraveler" ).val();
-	var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination).val();
+	var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
 
 	$( "#" + oldSeat ).removeClass('currentseat');
 	$( "#" + sSeat ).addClass('currentseat');
 
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination + "_view").val(sSeat);
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination + "_popup").val(sSeat);
-	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + sDestination ).val(sSeat);
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
+	$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
 
 	$.ajax({
 		type: 'POST',
 		url: 'services/traveler.cfc',
 		data: {
 			method: 'setSeat',
-			nSearchID: nSearchID,
+			SearchID: SearchID,
 			nTraveler: nTraveler,
 			sCarrier: sCarrier,
 			nFlightNumber: nFlightNumber,
 			sOrigin: sOrigin,
-			sDestination: sDestination,
+			Destination: Destination,
 			sSeat: sSeat
 		},
 		dataType: 'json'
@@ -154,7 +154,7 @@ function sortAir (sort) {
 function airPrice(search_id, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",
 		url:"services/airprice.cfc?method=doAirPrice",
-		data:"nSearchID="+search_id+"&nTrip="+trip_id+"&sCabin="+cabin+"&bRefundable="+refundable,
+		data:"SearchID="+search_id+"&nTrip="+trip_id+"&sCabin="+cabin+"&bRefundable="+refundable,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -180,7 +180,7 @@ HOTEL SECTION
 function hotelPrice(search_id, hotel, chain) {
 	$.ajax({type:"POST",
 		url:"services/hotelprice.cfc?method=doHotelPrice",
-		data:"nSearchID="+search_id+"&nHotelCode="+hotel+"&sHotelChain="+chain,
+		data:"SearchID="+search_id+"&nHotelCode="+hotel+"&sHotelChain="+chain,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -536,7 +536,7 @@ function logError(test,tes,te) {
 function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
-		data:"nSearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
+		data:"SearchID="+search_id+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -553,7 +553,7 @@ function couldYouAir(search_id,trip,cabin,refundable,adddays,startdate,viewDay,c
 function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doHotelPriceCouldYou",
-		data:"nSearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
+		data:"SearchID="+search_id+"&nHotelCode="+hotelcode+"&sHotelChain="+hotelchain+"&nTripDay="+viewDay+"&nNights="+nights+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
@@ -570,7 +570,7 @@ function couldYouHotel(search_id,hotelcode,hotelchain,viewDay,nights,startdate,c
 function couldYouCar(search_id,carchain,cartype,viewDay,startdate,currenttotal) {
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doCarPriceCouldYou&Search_ID="+search_id,
-		data:"nSearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nTotal="+currenttotal,
+		data:"SearchID="+search_id+"&sCarChain="+carchain+"&sCarType="+cartype+"&nTripDay="+viewDay+"&nTotal="+currenttotal,
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,

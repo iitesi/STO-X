@@ -19,10 +19,10 @@
 		<cfif NOT StructKeyExists(application, 'sAPIAuth') OR application.sAPIAuth EQ ''>
 			<cfset variables.fw.service('setup.setAPIAuth', 'void')>
 		</cfif>
-		<cfif NOT StructKeyExists(application, 'stAccounts') OR StructIsEmpty(application.stAccounts)>
+		<cfif NOT StructKeyExists(application, 'Accounts') OR StructIsEmpty(application.Accounts)>
 			<cfset variables.fw.service('setup.setAccounts', 'void')>
 		</cfif>
-		<cfif NOT StructKeyExists(application, 'stPolicies') OR StructIsEmpty(application.stPolicies)>
+		<cfif NOT StructKeyExists(application, 'Policies') OR StructIsEmpty(application.Policies)>
 			<cfset variables.fw.service('setup.setPolicies', 'void')>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAirVendors') OR StructIsEmpty(application.stAirVendors)>
@@ -52,8 +52,8 @@
 
 
 <!--- setup : setSession --->
-	<cffunction name="setSession" access="public" output="true">
-		
+	<cffunction name="setSession">
+
 		<cfset variables.fw.service('security.search', 'search')>
 		
 		<cfreturn />

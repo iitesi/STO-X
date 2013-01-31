@@ -1,5 +1,5 @@
 <cfoutput>
-	<cfif bAir>
+	<cfif Air>
 		<br><br>
 		<div class="fulldiv">
 			<table align="right">

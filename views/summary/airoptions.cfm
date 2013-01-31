@@ -1,5 +1,5 @@
 <!--- <cfoutput>
-	<cfif bAir>
+	<cfif Air>
 		<table with="100%">
 		<tr>
 			<td class="medium bold" colspan="2">
@@ -10,7 +10,7 @@
 			</td>
 		</tr>
 		<cfif rc.nY1TripKey NEQ ''><!--- They may not have business class returned on a flight --->
-			<cfset nFareDiff = session.searches[rc.nSearchID].stTrips[rc.nY1TripKey].Total-stItinerary.Air.Total>
+			<cfset nFareDiff = session.searches[rc.SearchID].stTrips[rc.nY1TripKey].Total-stItinerary.Air.Total>
 			<tr>
 				<td colspan="2">&nbsp;</td>
 			</tr>
@@ -26,7 +26,7 @@
 			</tr>
 		</cfif>
 		<cfif rc.nC0TripKey NEQ ''>
-			<cfset nFareDiff = session.searches[rc.nSearchID].stTrips[rc.nC0TripKey].Total-stItinerary.Air.Total>
+			<cfset nFareDiff = session.searches[rc.SearchID].stTrips[rc.nC0TripKey].Total-stItinerary.Air.Total>
 			<tr>
 				<td colspan="2">&nbsp;</td>
 			</tr>

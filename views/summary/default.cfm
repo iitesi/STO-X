@@ -1,20 +1,20 @@
-<cfif application.stAccounts[session.Acct_ID].CouldYou>
+<cfif application.Accounts[session.AcctID].CouldYou>
 	<cfoutput>
 		<a href="?action=couldyou&Search_ID=#url.Search_ID#">CouldYou</a>
 	</cfoutput>	
 </cfif>
-<cfset variables.stItinerary = session.searches[rc.nSearchID].stItinerary>
-<cfset variables.stPolicy = application.stPolicies[session.searches[rc.nSearchID].nPolicyID]>
-<cfset variables.nLowestFare = session.searches[rc.nSearchID].stTrips[session.searches[rc.nSearchID].stLowFareDetails.aSortFare[1]].Total>
-<cfset variables.bAir = (structKeyExists(stItinerary, 'Air') ? true : false)>
-<cfset variables.bHotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
-<cfset variables.bCar = (structKeyExists(stItinerary, 'Car') ? true : false)>
+<cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
+<cfset variables.stPolicy = application.Policies[session.searches[rc.SearchID].PolicyID]>
+<cfset variables.nLowestFare = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].Total>
+<cfset variables.Air = (structKeyExists(stItinerary, 'Air') ? true : false)>
+<cfset variables.Hotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
+<cfset variables.Car = (structKeyExists(stItinerary, 'Car') ? true : false)>
 <cfoutput>
 	<form method="post" action="#buildURL('summary')#">
-		<input type="hidden" name="nSearchID" id="nSearchID" value="#rc.nSearchID#">
-		<input type="hidden" id="bAir" value="#bAir#">
-		<input type="hidden" id="bCar" value="#bCar#">
-		<input type="hidden" id="bHotel" value="#bHotel#">
+		<input type="hidden" name="SearchID" id="SearchID" value="#rc.SearchID#">
+		<input type="hidden" id="Air" value="#Air#">
+		<input type="hidden" id="Car" value="#Car#">
+		<input type="hidden" id="Hotel" value="#Hotel#">
 		<input type="hidden" name="nTraveler" id="nTraveler" value="1">
 		<input type="hidden" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
 		<cfif bCar>
@@ -31,7 +31,7 @@
 		<input type="hidden" id="bCD" value="#stCD.CD#">
 		<cfset variables.nTraveler = 1>
 		<cfset variables.bTotalTrip = 0>
-		<cfset variables.stTraveler 	= (StructKeyExists(session.searches[rc.nSearchID].stTravelers, nTraveler) ? session.searches[rc.nSearchID].stTravelers[nTraveler] : {})>
+		<cfset variables.stTraveler 	= (StructKeyExists(session.searches[rc.SearchID].stTravelers, nTraveler) ? session.searches[rc.SearchID].stTravelers[nTraveler] : {})>
 		<div id="travelef" class="tab_content" style="display: block;">
 			<p>
 				<div class="summarydiv" style="float:left;">	
@@ -63,19 +63,19 @@
 		</div>
 	</form>
 </cfoutput>
-<!--- <cfdump var="#session.searches[rc.nSearchID].stTravelers#"> --->
+<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
 <cfset sType 		= (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
-<!--- <cfdump var="#session.searches[rc.nSearchID].stTravelers#"> --->
+<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
 <script type="text/javascript">
 function setTravelerForm(nTraveler, bCollapse) {
-	var nSearchID = $( "#nSearchID" ).val();
+	var SearchID = $( "#SearchID" ).val();
 	$.ajax({
 		type: 'POST',
 		url: 'services/traveler.cfc',
 		data: {
 			method: 'setTravelerForm',
 			nTraveler: nTraveler,
-			nSearchID: nSearchID,
+			SearchID: SearchID,
 			bCollapse: bCollapse
 		},
 		dataType: 'json',
@@ -85,10 +85,10 @@ function setTravelerForm(nTraveler, bCollapse) {
 	});
 }
 function setPaymentForm(nTraveler) {
-	var nSearchID = $( "#nSearchID" ).val();
-	var bAir = $( "#bAir" ).val();
-	var bCar = $( "#bCar" ).val();
-	var bHotel = $( "#bHotel" ).val();
+	var SearchID = $( "#SearchID" ).val();
+	var Air = $( "#Air" ).val();
+	var Car = $( "#Car" ).val();
+	var Hotel = $( "#Hotel" ).val();
 	var bCD = $( "#bCD" ).val();
 	var bDB = $( "#bDB" ).val();
 	$.ajax({
@@ -97,10 +97,10 @@ function setPaymentForm(nTraveler) {
 		data: {
 			method: 'setPaymentForm',
 			nTraveler: nTraveler,
-			nSearchID: nSearchID,
-			bAir: bAir,
-			bCar: bCar,
-			bHotel: bHotel,
+			SearchID: SearchID,
+			Air: Air,
+			Car: Car,
+			Hotel: Hotel,
 			bCD: bCD,
 			bDB: bDB
 		},
@@ -111,14 +111,14 @@ function setPaymentForm(nTraveler) {
 	});
 }
 function setOtherFields(nTraveler) {
-	var nSearchID = $( "#nSearchID" ).val();
+	var SearchID = $( "#SearchID" ).val();
 	$.ajax({
 		type: 'POST',
 		url: 'services/traveler.cfc',
 		data: {
 			method: 'getTraveler',
 			nTraveler: nTraveler,
-			nSearchID: nSearchID
+			SearchID: SearchID
 		},
 		dataType: 'json',
 		success: function(traveler) {
@@ -173,7 +173,7 @@ function setOtherFields(nTraveler) {
 	});
 }
 function changeTraveler(nTraveler) {
-	var nSearchID = $( "#nSearchID" ).val();
+	var SearchID = $( "#SearchID" ).val();
 	var User_ID = $( "#User_ID" ).val();
 	$( "#travelerForm" ).html('<table width="500" height="290"><tr height="23"><td valign="top">Gathering profile data...</td></tr></table>');
 	$.ajax({
@@ -182,7 +182,7 @@ function changeTraveler(nTraveler) {
 		data: {
 			method: 'getUser',
 			nTraveler: nTraveler,
-			nSearchID: nSearchID,
+			SearchID: SearchID,
 			User_ID: User_ID
 		},
 		dataType: 'json',

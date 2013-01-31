@@ -13,7 +13,7 @@ callUAPI
 	<cffunction name="callUAPI" output="false">
 		<cfargument name="sService">
 		<cfargument name="sMessage">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		
 		<cfset local.bSessionStorage = 1><!--- Testing setting (1 - testing, 0 - live) --->
 		<cfset local.scfhttp = 'rockstar'&RandRange(1, 1000000)>

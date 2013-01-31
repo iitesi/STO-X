@@ -4,18 +4,18 @@
 baggage
 ---> 
 	<cffunction name="baggage" output="false">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="nTripID" 		required="true">
 		<cfargument name="nGroup" 		required="false"	default="">
 		
 		<cfset local.sCarriers = ''>
 		<cfif arguments.nGroup EQ ''>
-			<cfset sCarriers = ArrayToList(session.searches[arguments.nSearchID].stTrips[arguments.nTripID].Carriers)>
+			<cfset sCarriers = ArrayToList(session.searches[arguments.SearchID].stTrips[arguments.nTripID].Carriers)>
 		<cfelse>
-			<cfloop collection="#session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups#" index="local.nGroup">
+			<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups#" index="local.nGroup">
 				<cfif arguments.nGroup EQ nGroup>
-					<cfloop collection="#session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments#" index="local.nSegment">
-						<cfset sCarriers = ListAppend(sCarriers, session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments[nSegment].Carrier)>
+					<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments#" index="local.nSegment">
+						<cfset sCarriers = ListAppend(sCarriers, session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTripID].Groups[nGroup].Segments[nSegment].Carrier)>
 					</cfloop>
 				</cfif>
 			</cfloop>

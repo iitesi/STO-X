@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking2'>
+	<cfset this.name = 'booking8'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
@@ -37,37 +37,46 @@
 	<cffunction name="setupApplication">
 		
 		<cfset bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
-		<cfset bf.loadBeans( expandPath('config/coldspring.xml') )>
+		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') )>
 		<cfset setBeanFactory(bf)>
 		<cfset controller( 'setup.setApplication' )>
-		
+		<cfset application.bDebug = 1>
+		<cfset application.objHotelDetails  = createObject("component", "booking.services.hoteldetails")>
+		<cfset application.objHotelPhotos  = createObject("component", "booking.services.hotelphotos")>
+		<cfset application.objHotelPrice  = createObject("component", "booking.services.hotelprice")>
+		<cfset application.objHotelRooms = createObject("component", "booking.services.hotelrooms")>
 	</cffunction>
 	
 	<cffunction name="setupSession">
-		
-		<cfset controller( 'setup.setSession' )>
 
 	</cffunction>
 	
 	<cffunction name="setupRequest">
-		<cfset request.context.nSearchID = (request.context.keyExists('Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'nSearchID') ? request.context.nSearchID : 0))>
-		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
-		<cfset request.context.Filter = (StructKeyExists(session, 'searches') AND StructKeyExists(session.searches, request.context.nSearchID) ? session.searches[request.context.nSearchID].getFilter() : '')>
 
-		<cfset application.bDebug = 1>
-		<cfset controller( 'setup.setApplication' )>
 		<cfset controller( 'setup.setSession' )>
-		
+
+		<!---Set some default variables that are used throughout the site.--->
+		<cfset request.context.SearchID = (request.context.keyExists('Search_ID') ? request.context.Search_ID : (StructKeyExists(request.context, 'SearchID') ? request.context.SearchID : 0))>
+		<cfset request.context.nGroup = (StructKeyExists(request.context, 'Group') ? request.context.Group : (StructKeyExists(request.context, 'nGroup') ? request.context.nGroup : ''))>
+
+		<!---Redirect the site if the search hasn't been loaded yet.--->
 		<cfif (NOT StructKeyExists(session, 'searches')
-		OR NOT StructKeyExists(session.searches, request.context.nSearchID))
+		OR NOT StructKeyExists(session.searches, request.context.SearchID))
 		AND request.context.action NEQ 'main.default'>
-			<cfset redirect('main?Search_ID=#request.context.nSearchID#')>
+			<cfset redirect('main?Search_ID=#request.context.SearchID#')>
 		</cfif>
 
+		<!---Always defined.  Filter, Account & Policy for the given Search_ID passed in.--->
+		<cfset request.context.Filter = (StructKeyExists(session, 'filters') AND StructKeyExists(session.filters, request.context.SearchID) ? session.filters[request.context.SearchID] : '')>
+
+		<cfif StructKeyExists(session, 'AcctID')>
+			<cfset request.context.Account = (StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, session.AcctID) ? application.Accounts[session.AcctID] : '')>
+			<cfset request.context.Policy = (StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, session.PolicyID) ? application.Policies[session.PolicyID] : '')>
+		</cfif>
 	</cffunction>
 	
 	<cffunction name="onRequestEnd">
-		
+
 	</cffunction>
 	
 </cfcomponent>

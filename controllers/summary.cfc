@@ -17,13 +17,13 @@ default
 			<cfset variables.fw.service('summary.saveSummary', 'void')>
 		</cfif>
 
-		<cfif NOT StructKeyExists(session.searches[rc.nSearchID], 'stTravelers')>
-			<cfset session.searches[rc.nSearchID].stTravelers = {}>
+		<cfif NOT StructKeyExists(session.searches[rc.SearchID], 'stTravelers')>
+			<cfset session.searches[rc.SearchID].stTravelers = {}>
 		</cfif>
 
 		<cfset variables.fw.service('summary.determinFees', 'stFees')>
 		<cfset variables.fw.service('summary.getOutOfPolicy', 'qOutOfPolicy')>
-		<cfif session.Acct_ID EQ 235>
+		<cfif session.AcctID EQ 235>
 			<cfset variables.fw.service('summary.getTXExceptionCodes', 'qTXExceptionCodes')>
 		</cfif>
 		<cfset variables.fw.service('traveler.getUser', 'qUser')>
@@ -32,13 +32,13 @@ default
 		<!--- <cfset local.stY1 = {}>
 		<cfset stY1.sCabin = 'Y'>
 		<cfset stY1.bRefundable = 1>
-		<cfset stY1.nTrip = session.searches[rc.nSearchID].stItinerary.Air.nTrip>
+		<cfset stY1.nTrip = session.searches[rc.SearchID].stItinerary.Air.nTrip>
 		<cfset variables.fw.service('airprice.doAirPrice', 'nY1TripKey', stY1)>
 		
 		<cfset local.stC0 = {}>
 		<cfset stC0.sCabin = 'C'>
 		<cfset stC0.bRefundable = 0>
-		<cfset stC0.nTrip = session.searches[rc.nSearchID].stItinerary.Air.nTrip>
+		<cfset stC0.nTrip = session.searches[rc.SearchID].stItinerary.Air.nTrip>
 		<cfset variables.fw.service('airprice.doAirPrice', 'nC0TripKey', stC0)> --->
 
 		<cfreturn />

@@ -9,7 +9,7 @@
 <!--- checkCarPolicy --->
 	<cffunction name="checkCarPolicy" output="false">
 		<cfargument name="stCars">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="stPolicy">
 		<cfargument name="stAccount">
 		
@@ -21,7 +21,7 @@
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_DateTime
 		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		<cfset local.nDays = DateDiff('d', getsearch.Depart_DateTime, getSearch.Arrival_DateTime)>
 		

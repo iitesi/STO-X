@@ -18,10 +18,11 @@ lowfare
 	<cffunction name="lowfare" output="false">
 		<cfargument name="rc">
 
-	    <cfif NOT structKeyExists(rc, 'bSelect')>
+	    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<!--- Throw out a thread for availability --->
-			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+			<!---<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>--->
 			<!--- Do the low fare search. --->
+			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
@@ -31,19 +32,18 @@ lowfare
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endlowfare" output="false">
-		<cfargument name="Filter">
-		<cfargument name="bSelect">
+		<cfargument name="rc">
 
-		<cfif structKeyExists(arguments, 'bSelect')>
-			<cfif arguments.Filter.getHotel()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.Filter.getSearchID()#')>
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfif arguments.rc.Filter.getHotel()
+			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
-			<cfif arguments.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Car')>
-				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.Filter.getSearchID()#')>
+			<cfif arguments.rc.Filter.getCar()
+			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#arguments.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
@@ -55,10 +55,11 @@ availability
 	<cffunction name="availability" output="true">
 		<cfargument name="rc">
 		
-		<cfif NOT structKeyExists(rc, 'bSelect')>
-			<cfset rc.sPriority = 'LOW'>
+		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+			<cfset arguments.rc.sPriority = 'LOW'>
 			<!--- Throw out a thread for low fare --->
-			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+			<!---<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>--->
 			<!--- Do the availability search. --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
@@ -72,7 +73,7 @@ availability
 		<cfargument name="rc">
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfloop collection="#session.searches[arguments.rc.Search_ID].stLegs#" item="local.nLeg">
+			<cfloop collection="#session.searches[arguments.rc.Search_ID].Legs#" item="local.nLeg">
 				<cfif structIsEmpty(session.searches[arguments.rc.Search_ID].stSelected[nLeg])>
 					<cfset variables.fw.redirect('air.availability?Search_ID=#arguments.rc.Search_ID#&nGroup=#nLeg#')>
 				</cfif>
@@ -114,7 +115,7 @@ popup
 		<cfelseif rc.sDetails EQ 'email'>
 			<cfset rc.UserID = session.User_ID>
 			<cfset variables.fw.service('general.getUser', 'qUser')>
-			<cfset rc.UserID = session.searches[rc.nSearchID].ProfileID>
+			<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
 			<cfset variables.fw.service('general.getUser', 'qProfile')>
 		</cfif>
 		
@@ -178,7 +179,7 @@ price
 	<cffunction name="endprice" output="true">
 		<cfargument name="rc">
 		
-		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.nSearchID#&filter=all')>
+		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.SearchID#&filter=all')>
 
 		<cfreturn />
 	</cffunction>

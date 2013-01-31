@@ -4,22 +4,22 @@
 doAirPriceCouldYou
 --->
 	<cffunction name="doAirPriceCouldYou" output="false" access="remote" returnformat="json">
-		<cfargument name="nSearchID" 		required="true" />
+		<cfargument name="SearchID" 		required="true" />
 		<cfargument name="sCabin" 			required="false"	default="Y" /><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable"	required="false"	default="0" /><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip"				required="false"	default="" />
 		<cfargument name="nTripDay"			required="false"	default="0" />
 		<cfargument name="StartDate"		required="false"	default="" />
 		<cfargument name="nTotal" />
-		<cfargument name="stAccount" 		required="false"	default="#application.stAccounts[session.Acct_ID]#" />
+		<cfargument name="stAccount" 		required="false"	default="#application.Accounts[session.AcctID]#" />
 
 		<cfset local.stTrip = '' />
 		<cfset local.nTotalPrice = 0 />
-		<cfset local.Search 			= getSearch(arguments.nSearchID) />
+		<cfset local.Search 			= getSearch(arguments.SearchID) />
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',arguments.nTripDay,Search.Depart_DateTime)) />
 
-		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[nSearchID].CouldYou.Air,CouldYouDate)>
-			<cfset local.nTripKey = application.objAirPrice.doAirPrice(arguments.nSearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
+		<cfif NOT structKeyExists(session.searches[SearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[SearchID].CouldYou.Air,CouldYouDate)>
+			<cfset nTripKey = application.objAirPrice.doAirPrice(arguments.SearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
 
 			<cfloop array="#nTripKey#" index="local.Element">
 				<cfif Element.xmlName EQ 'air:AirPriceResult'>
@@ -28,13 +28,13 @@ doAirPriceCouldYou
 				</cfif>
 			</cfloop>
 
-			<cfset session.searches[nSearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice />
+			<cfset session.searches[SearchID].CouldYou.Air[CouldYouDate] = nTotalPrice EQ 0 ? 'Flight Does not Operate' : nTotalPrice />
 		<cfelse>
-			<cfset local.nTotalPrice = session.searches[nSearchID].CouldYou.Air[CouldYouDate] />
-		</cfif>	
+			<cfset nTotalPrice = session.searches[SearchID].CouldYou.Air[CouldYouDate] />
+		</cfif>
 
-		<cfset local.nTotalPrice = doTotalPrice(arguments.nSearchID,arguments.nTripDay,arguments.nTotal) />
-		
+		<cfset nTotalPrice = doTotalPrice(arguments.SearchID,arguments.nTripDay,arguments.nTotal) />
+
 		<cfreturn nTotalPrice>
 	</cffunction>
 
@@ -42,26 +42,26 @@ doAirPriceCouldYou
 doHotelPriceCouldYou
 --->
 	<cffunction name="doHotelPriceCouldYou" output="false" access="remote" returnformat="json">
-		<cfargument name="nSearchID /">
+		<cfargument name="SearchID /">
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="nTripDay"		default="0" />
 		<cfargument name="nNights" />
 		<cfargument name="nTotal" />
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#" />
+		<cfargument name="stAccount" 	default="#application.Accounts[session.AcctID]#" />
 
-		<cfset local.Search = session.searches[arguments.nSearchID] />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
+		<cfset local.Search 			= getSearch(arguments.SearchID) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
 
-		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Hotel,CouldYouDate)>
-			<cfset local.hotelprice = application.objHotelPrice.doHotelPrice(arguments.nSearchID,arguments.nHotelCode,arguments.sHotelChain,arguments.nHotelCode) />
+		<cfif NOT structKeyExists(session.searches[SearchID].CouldYou.Hotel,CouldYouDate)>
+			<cfset hotelprice = application.objHotelPrice.doHotelPrice(arguments.SearchID,arguments.nHotelCode,arguments.sHotelChain,arguments.nHotelCode) />
 			<cfset local.nhotelprice = hotelprice[1] * arguments.nNights />
-			<cfset session.searches[nSearchID].CouldYou.Hotel[CouldYouDate] = nhotelprice />
+			<cfset session.searches[SearchID].CouldYou.Hotel[CouldYouDate] = nhotelprice />
 		<cfelse>
-			<cfset local.nhotelprice = session.searches[nSearchID].CouldYou.Hotel[CouldYouDate] />
-		</cfif> 
+			<cfset nhotelprice = session.searches[SearchID].CouldYou.Hotel[CouldYouDate] />
+		</cfif>
 		
-		<cfset local.nhotelprice = doTotalPrice(arguments.nSearchID,arguments.nTripDay,arguments.nTotal) />
+		<cfset nhotelprice = doTotalPrice(arguments.SearchID,arguments.nTripDay,arguments.nTotal) />
 
 		<cfreturn nhotelprice>
 	</cffunction>
@@ -70,27 +70,28 @@ doHotelPriceCouldYou
 doCarPriceCouldYou
 --->
 	<cffunction name="doCarPriceCouldYou" output="false" access="remote" returnformat="json">
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nTripDay"		default="0" />
 		<cfargument name="nNights" />
 		<cfargument name="sCarChain" />
 		<cfargument name="sCarType" />
 		<cfargument name="nTotal" />
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#" />
+		<cfargument name="stAccount" 	default="#application.Accounts[session.AcctID]#" />
 
-		<cfset local.Search = session.searches[arguments.nSearchID] />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
+		<cfset local.Search 			= getSearch(arguments.SearchID) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
 
-		<cfif NOT structKeyExists(session.searches[nSearchID].CouldYou.Car,CouldYouDate)>
-			<cfset local.CarAvailability = application.objCar.doAvailability(arguments.nSearchID,arguments.nTripDay) />
+
+		<cfif NOT structKeyExists(session.searches[SearchID].CouldYou.Car,CouldYouDate)>
+			<cfset CarAvailability = application.objCar.doAvailability(arguments.SearchID,arguments.nTripDay) />
 			<cfset local.CarStruct = CarAvailability[arguments.sCarType][arguments.sCarChain] />
 			<cfset local.nCarPrice = Mid(CarStruct.EstimatedTotalAmount,4) />
-			<cfset session.searches[nSearchID].CouldYou.Car[CouldYouDate] = nCarPrice />
+			<cfset session.searches[SearchID].CouldYou.Car[CouldYouDate] = nCarPrice />
 		<cfelse>
-			<cfset local.nCarPrice = session.searches[nSearchID].CouldYou.Car[CouldYouDate] />
+			<cfset nCarPrice = session.searches[SearchID].CouldYou.Car[CouldYouDate] />
 		</cfif>
 
-		<cfset local.nCarPrice = doTotalPrice(arguments.nSearchID,arguments.nTripDay,arguments.nTotal) />
+		<cfset nCarPrice = doTotalPrice(arguments.SearchID,arguments.nTripDay,arguments.nTotal) />
 
 		<cfreturn nCarPrice>
 	</cffunction>
@@ -99,37 +100,37 @@ doCarPriceCouldYou
 doTotalPrice
 --->
 	<cffunction name="doTotalPrice" output="false">
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nTripDay"		default="0" />
 		<cfargument name="nTotal" />
 		
-		<cfset local.nSearchID 		= arguments.nSearchID />
-		<cfset local.Search 			= session.searches[arguments.nSearchID] />
-		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.dDepartDate)) />
-		<cfset local.bAir 				= session['Searches'][nSearchID]['bAir'] />
-		<cfset local.bCar 				= session['Searches'][nSearchID]['bCar'] />
-		<cfset local.bHotel				= session['Searches'][nSearchID]['bHotel'] />
+		<cfset local.SearchID 		= arguments.SearchID />
+		<cfset local.Search 			= getSearch(SearchID) />
+		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',nTripDay,Search.Depart_DateTime)) />
+		<cfset local.Air 				= session['Searches'][SearchID]['Air'] />
+		<cfset local.Car 				= session['Searches'][SearchID]['Car'] />
+		<cfset local.Hotel				= session['Searches'][SearchID]['Hotel'] />
 		<cfset local.count 				= 0 />
 		<cfset local.nTotalPrice 	= 0 />
 		<cfset local.stTotalPrice = {} />
 
 		<cfset local.aTypes = [] />
-		<cfset bAir ? arrayAppend(aTypes,'Air') : '' />
-		<cfset bCar ? arrayAppend(aTypes,'Car') : '' />
-		<cfset bHotel ? arrayAppend(aTypes,'Hotel') : '' />
+		<cfset Air ? arrayAppend(aTypes,'Air') : '' />
+		<cfset Car ? arrayAppend(aTypes,'Car') : '' />
+		<cfset Hotel ? arrayAppend(aTypes,'Hotel') : '' />
 		<cfset local.nTypes = arrayLen(aTypes) />
 
 		<cfloop array="#aTypes#" index="local.Type">
-			<cfif structKeyExists(session.searches[nSearchID].CouldYou,Type) AND structKeyExists(session.searches[nSearchID].CouldYou[Type],CouldYouDate)>
+			<cfif structKeyExists(session.searches[SearchID].CouldYou,Type) AND structKeyExists(session.searches[SearchID].CouldYou[Type],CouldYouDate)>
 				<cfif isNumeric(nTotalPrice)>					
-					<cfif isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
-						<cfset local.nTotalPrice+=session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
+					<cfif isNumeric(session.searches[SearchID].CouldYou[Type][CouldYouDate])>
+						<cfset nTotalPrice+=session.searches[SearchID].CouldYou[Type][CouldYouDate] />
 					<cfelse>
-						<cfset local.nTotalPrice = session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
+						<cfset nTotalPrice = session.searches[SearchID].CouldYou[Type][CouldYouDate] />
 					</cfif>
 				<cfelse>
-					<cfif NOT isNumeric(session.searches[nSearchID].CouldYou[Type][CouldYouDate])>
-						<cfset local.nTotalPrice&= session.searches[nSearchID].CouldYou[Type][CouldYouDate] />
+					<cfif NOT isNumeric(session.searches[SearchID].CouldYou[Type][CouldYouDate])>
+						<cfset nTotalPrice&= session.searches[SearchID].CouldYou[Type][CouldYouDate] />
 					</cfif>
 				</cfif>
 				<cfset local.count++ />
@@ -154,6 +155,19 @@ doTotalPrice
 		<cfset local.stTotalPrice.Day = DateFormat(CouldYouDate,'d') />
 
 		<cfreturn stTotalPrice />
+	</cffunction>
+
+<!--- getsearch --->
+	<cffunction name="getsearch" output="false">
+		<cfargument name="SearchID">
+
+		<cfquery name="local.getsearch" datasource="book" cachedwithin="#createTimeSpan(1,0,0,0)#">
+		SELECT Depart_DateTime
+		FROM Searches
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
+		
+		<cfreturn getsearch />
 	</cffunction>
 
 </cfcomponent>

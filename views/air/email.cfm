@@ -39,7 +39,7 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td><label for="Email_Subject">Subject Line *</label></td>
-				<td><input type="text" name="Email_Subject" id="Email_Subject" size="60" value="Tentative Itinerary for #rc.qProfile.First_Name# #rc.qProfile.Last_Name# departing #DateFormat(session.searches[rc.nSearchID].dDepart, 'ddd, mmm d')#"></td>
+				<td><input type="text" name="Email_Subject" id="Email_Subject" size="60" value="Tentative Itinerary for #rc.qProfile.First_Name# #rc.qProfile.Last_Name# departing #DateFormat(session.searches[rc.SearchID].dDepart, 'ddd, mmm d')#"></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

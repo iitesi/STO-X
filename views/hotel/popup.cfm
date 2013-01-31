@@ -76,7 +76,7 @@ ul.tabs li a.active {
 <cfoutput>
 	<div>
 		<ul id="details-tabs">
-			<cfset sURL = 'Search_ID=#rc.nSearchID#&PropertyID=#url.PropertyID#&RoomRatePlanType=#url.RoomRatePlanType#&HotelChain=#url.HotelChain#'>
+			<cfset sURL = 'Search_ID=#rc.SearchID#&PropertyID=#url.PropertyID#&RoomRatePlanType=#url.RoomRatePlanType#&HotelChain=#url.HotelChain#'>
 			<cfset TabTypes = 'Details,Rooms,Amenities,Photos' />
 			<cfloop list="#TabTypes#" index="OneTab">
 				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=hotel.popup&sDetails=#OneTab#&#sURL#')">

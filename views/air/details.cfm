@@ -1,5 +1,5 @@
 <cfset aRef = ["0","1"]>
-<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.nSearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
+<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.SearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
 <cfif rc.nGroup EQ ''>
 	<cfset stTrip = session.searches[rc.Search_ID].stTrips[rc.nTripID]>
 <cfelse>

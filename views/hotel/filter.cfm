@@ -8,11 +8,11 @@
 	</div>
 </div>
 <cfoutput>
-	<cfset arraysort(session.searches[rc.nSearchID].stHotelChains,'text') />
+	<cfset arraysort(session.searches[rc.SearchID].stHotelChains,'text') />
 	<div id="HotelDialog" class="popup">
 		<div class="popup-hotel">
 			<div class="region">
-				<cfloop array="#session.searches[rc.nSearchID].stHotelChains#" index="Chain">
+				<cfloop array="#session.searches[rc.SearchID].stHotelChains#" index="Chain">
 					<div class="checkbox">
 						<input id="HotelChain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterhotel();">
 						<label for="HotelChain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
@@ -24,7 +24,7 @@
 	<div id="AmenityDialog" class="popup">
 		<div class="popup-hotel">
 			<div class="region">
-				<cfloop array="#session.searches[rc.nSearchID].stAmenities#" index="Amenity">
+				<cfloop array="#session.searches[rc.SearchID].stAmenities#" index="Amenity">
 					<div class="checkbox">
 						<input id="#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterhotel();">
 						<label for="#Amenity#">#application.stAmenities[Amenity]#</label>

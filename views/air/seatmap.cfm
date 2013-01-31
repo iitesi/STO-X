@@ -3,25 +3,25 @@
 	<div id="seatcontent">
 		<cfif rc.nGroup EQ ''>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
-				<cfloop collection="#session.searches[rc.nSearchID].stTrips[rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+				<cfloop collection="#session.searches[rc.SearchID].stTrips[rc.nTripID].Groups[0].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
 					<cfbreak>
 				</cfloop>
 			</cfif>
-			<cfset stGroups = session.searches[rc.nSearchID].stTrips[rc.nTripID].Groups>
+			<cfset stGroups = session.searches[rc.SearchID].stTrips[rc.nTripID].Groups>
 		<cfelse>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
-				<cfloop collection="#session.searches[rc.nSearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+				<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
 					<cfbreak>
 				</cfloop>
 			</cfif>
-			<cfset stGroups = session.searches[rc.nSearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups>
+			<cfset stGroups = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID].Groups>
 		</cfif>
 		<ul class="tabs">
 			<table>
 			<tr height="30">
-				<cfset sURL = 'Search_ID=#rc.nSearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
+				<cfset sURL = 'Search_ID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
 				<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
 					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 						<td>
@@ -44,7 +44,7 @@
 						<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 							<cfset nSegmentCount++>
 							<td>
-								Seat: <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.nSearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled>
+								Seat: <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled>
 							</td>
 							<cfif bFound EQ 1>
 								<cfset bFound = 0>
@@ -53,7 +53,7 @@
 							<cfif rc.nSegment EQ sSegKey>
 								<cfset bFound = 1>
 								<cfset stSegments = stSegment>
-								<cfset sCurrentSeat = session.searches[rc.nSearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']>
+								<cfset sCurrentSeat = session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']>
 							</cfif>
 						</cfloop>
 					</cfloop>

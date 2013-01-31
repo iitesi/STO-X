@@ -4,12 +4,12 @@
 getUser
 --->
 	<cffunction name="getUser" output="false" access="remote" returnformat="plain">
-		<cfargument name="nSearchID"	default="#url.Search_ID#">
-		<cfargument name="Acct_ID" 		default="#session.Acct_ID#">
-		<cfargument name="User_ID" 		default="#session.searches[url.Search_ID].nProfileID#">
+		<cfargument name="SearchID"	default="#url.Search_ID#">
+		<cfargument name="Acct_ID" 		default="#session.AcctID#">
+		<cfargument name="User_ID" 		default="#session.searches[url.Search_ID].ProfileID#">
 		<cfargument name="nTraveler" 	default="1">
 
-		<cfset local.stTravelers = session.searches[arguments.nSearchID].stTravelers>
+		<cfset local.stTravelers = session.searches[arguments.SearchID].stTravelers>
 		<!--- <cfset local.stTravelers = {}> --->
 
 		<cfif IsNumeric(arguments.User_ID)
@@ -111,7 +111,7 @@ getUser
 			<cfset stTravelers[arguments.nTraveler].stSeats = {}>
 
 		</cfif>
-		<cfset session.searches[arguments.nSearchID].stTravelers = stTravelers>
+		<cfset session.searches[arguments.SearchID].stTravelers = stTravelers>
 
 		<cfreturn serializeJSON(true)>
 	</cffunction>
@@ -120,12 +120,12 @@ getUser
 getTraveler
 --->
 	<cffunction name="getTraveler" output="false" access="remote" returnformat="plain">
-		<cfargument name="nSearchID"	default="#url.Search_ID#">
+		<cfargument name="SearchID"	default="#url.Search_ID#">
 		<cfargument name="nTraveler" 	default="1">
 
 		<cfset local.stTraveler = {}>
-		<cfif StructKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
-			<cfset stTraveler = session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler]>
+		<cfif StructKeyExists(session.searches[arguments.SearchID].stTravelers, arguments.nTraveler)>
+			<cfset stTraveler = session.searches[arguments.SearchID].stTravelers[arguments.nTraveler]>
 		</cfif>
 
 		<cfreturn UCase(serializeJSON(stTraveler))>
@@ -135,15 +135,15 @@ getTraveler
 getFOPs
 --->
 	<cffunction name="getFOPs" output="false">
-		<cfargument name="nUserID">
-		<cfargument name="nValueID">
-		<cfargument name="Acct_ID" 		default="#session.Acct_ID#">
+		<cfargument name="UserID">
+		<cfargument name="ValueID">
+		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		
 		<cfquery name="local.qFOPs" datasource="Corporate_Production">
 		<!--- Profile credit cards --->
 		SELECT FOP_ID, 0 AS BTA_ID, 'Profile' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, CASE WHEN Air_Use = 1 THEN 'O' ELSE 'N' END AS Air_Use, CASE WHEN Hotel_Use = 1 THEN 'O' ELSE 'N' END AS Hotel_Use, CASE WHEN BookIt_Use = 1 THEN 'O' ELSE 'N' END AS BookIt_Use, Billing_Name, Billing_Address, Billing_City, Billing_State, Billing_Zip
 		FROM Form_Of_Payment, Users
-		WHERE Form_Of_Payment.User_ID = <cfqueryparam value="#arguments.nUserID#" cfsqltype="cf_sql_integer">
+		WHERE Form_Of_Payment.User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 		AND Form_Of_Payment.User_ID = Users.User_ID
 		UNION
 		<!--- Account wide credit card --->
@@ -155,7 +155,7 @@ getFOPs
 		<!--- Department specific credit card by guest traveler --->
 		SELECT 0 AS FOP_ID, BTAs.BTA_ID, 'OU' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, OU_Air AS Air_Use, OU_Hotel AS Hotel_Use, OU_BookIt AS BookIt_Use, Billing_Name, Billing_Address, Billing_City, Billing_State, Billing_Zip
 		FROM BTAs, OU_BTAs, OU_Values
-		WHERE OU_BTAs.Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_integer">
+		WHERE OU_BTAs.Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_integer">
 		AND BTAs.BTA_ID = OU_BTAs.BTA_ID
 		AND OU_BTAs.Value_ID = OU_Values.Value_ID
 		AND OU_Values.Active = 1
@@ -163,17 +163,17 @@ getFOPs
 			UNION
 			SELECT 0 AS FOP_ID, 0 AS BTA_ID, 'GHOST' AS CC_UseType, '' AS FOP_Code, '' AS Acct_Num, '' AS Expire_Date, 'GHOST' AS CCType, 'O' AS Air_Use, 'N' AS Hotel_Use, 'N' AS BookIt_Use, '' AS Billing_Name, '' AS Billing_Address, '' AS Billing_City, '' AS Billing_State, '' AS Billing_Zip
 			FROM OU_Values
-			WHERE Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_integer">
+			WHERE Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_integer">
 			AND Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 		</cfif>
 		</cfquery>
 		<cfset local.stFOPs = StructNew()>
 		<cfset local.aUses = []>
-		<cfset local.bAirCard = 0>
-		<cfset local.bHotelCard = 0>
+		<cfset local.AirCard = 0>
+		<cfset local.HotelCard = 0>
 		<cfset local.bBookitCard = 0>
-		<cfset local.bAirPerCard = 0>
-		<cfset local.bHotelPerCard = 0>
+		<cfset local.AirPerCard = 0>
+		<cfset local.HotelPerCard = 0>
 		<cfset local.bBookitPerCard = 0>
 		<cfset local.nCount = 0>
 		<!--- 
@@ -188,11 +188,11 @@ getFOPs
 			<cfset aUses = []>
 			<cfif Air_Use EQ 'R'>
 				<cfset ArrayAppend(aUses, 'A')>
-				<cfset bAirCard = 1>
+				<cfset AirCard = 1>
 			</cfif>
 			<cfif Hotel_Use EQ 'R'>
 				<cfset ArrayAppend(aUses, 'H')>
-				<cfset bHotelCard = 1>
+				<cfset HotelCard = 1>
 			</cfif>
 			<cfif BookIt_Use EQ 'R'>
 				<cfset ArrayAppend(aUses, 'B')>
@@ -214,17 +214,17 @@ getFOPs
 			</cfif>
 		</cfloop>
 		<!--- If no exclusive defaults set, check for personal level uses --->
-		<cfif NOT bAirCard OR NOT bHotelCard OR NOT bBookitCard>
+		<cfif NOT AirCard OR NOT HotelCard OR NOT bBookitCard>
 			<cfloop query="qFOPs">
 				<cfif CC_UseType EQ 'Per'>
 					<cfset aUses = []>
-					<cfif Air_Use NEQ 'N' AND NOT bAirCard>
+					<cfif Air_Use NEQ 'N' AND NOT AirCard>
 						<cfset ArrayAppend(aUses, 'A')>
-						<cfset bAirPerCard = 1>
+						<cfset AirPerCard = 1>
 					</cfif>
-					<cfif Hotel_Use NEQ 'N' AND NOT bHotelCard>
+					<cfif Hotel_Use NEQ 'N' AND NOT HotelCard>
 						<cfset ArrayAppend(aUses, 'H')>
-						<cfset bHotelPerCard = 1>
+						<cfset HotelPerCard = 1>
 					</cfif>
 					<cfif BookIt_Use NEQ 'N' AND NOT bBookitCard>
 						<cfset ArrayAppend(aUses, 'B')>
@@ -251,13 +251,13 @@ getFOPs
 			<cfloop query="qFOPs">
 				<cfif CC_UseType NEQ 'Per'>
 					<cfset aUses = []>
-					<cfif bAirCard EQ 0
-					AND ((Air_Use EQ 'E' AND bAirPerCard EQ 0)
+					<cfif AirCard EQ 0
+					AND ((Air_Use EQ 'E' AND AirPerCard EQ 0)
 						OR (Air_Use NEQ 'E' AND Air_Use NEQ 'N'))>
 						<cfset ArrayAppend(aUses, 'A')>
 					</cfif>
-					<cfif bHotelCard EQ 0
-					AND ((Hotel_Use EQ 'E' AND bHotelPerCard EQ 0)
+					<cfif HotelCard EQ 0
+					AND ((Hotel_Use EQ 'E' AND HotelPerCard EQ 0)
 						OR (Hotel_Use NEQ 'E' AND Hotel_Use NEQ 'N'))>
 						<cfset ArrayAppend(aUses, 'H')>
 					</cfif>
@@ -291,8 +291,8 @@ getFOPs
 getOUs
 --->
 	<cffunction name="getOUs" output="false">
-		<cfargument name="Value_ID"		default="#session.searches[url.Search_ID].nValueID#">
-		<cfargument name="Acct_ID" 		default="#session.Acct_ID#">
+		<cfargument name="Value_ID"		default="#session.searches[url.Search_ID].ValueID#">
+		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		
 		<cfquery name="local.qOUs" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 		SELECT OUs.OU_ID, OU_Name, OU_Capture, OU_Position, OU_Default, OU_Required, OU_Freeform, OU_Pattern, OU_Max, OU_Min, OU_Values.Value_ID, OU_Type, OU_STO, Value_Display, Value_Report
@@ -318,7 +318,7 @@ getAllTravelers
 --->
 	<cffunction name="getAllTravelers" output="false">
 		<cfargument name="User_ID" 		default="#session.User_ID#">
-		<cfargument name="Acct_ID" 		default="#session.Acct_ID#">
+		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		
 		<cfstoredproc procedure="sp_travelers" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 			<cfprocparam type="in" cfsqltype="cf_sql_integer" value="#arguments.Acct_ID#">
@@ -333,15 +333,15 @@ getAllTravelers
 setSeat
 --->
 	<cffunction name="setSeat" output="false" access="remote" returnformat="plain">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="nTraveler">
 		<cfargument name="sCarrier">
 		<cfargument name="nFlightNumber">
 		<cfargument name="sOrigin">
-		<cfargument name="sDestination">
+		<cfargument name="Destination">
 		<cfargument name="sSeat">
 		
-		<cfset session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler].stSeats['#arguments.sCarrier##arguments.nFlightNumber##arguments.sOrigin##arguments.sDestination#'] = arguments.sSeat>
+		<cfset session.searches[arguments.SearchID].stTravelers[arguments.nTraveler].stSeats['#arguments.sCarrier##arguments.nFlightNumber##arguments.sOrigin##arguments.Destination#'] = arguments.sSeat>
 
 		<cfreturn true/>
 	</cffunction>
@@ -350,18 +350,18 @@ setSeat
 setTravelerForm
 --->
 	<cffunction name="setTravelerForm" output="false" access="remote" returnformat="plain">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="nTraveler">
 		<cfargument name="bCollapse">
 		
-		<cfif StructKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
-			<cfset local.stTraveler = session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler]>
+		<cfif StructKeyExists(session.searches[arguments.SearchID].stTravelers, arguments.nTraveler)>
+			<cfset local.stTraveler = session.searches[arguments.SearchID].stTravelers[arguments.nTraveler]>
 			<cfset local.qOUs = getOUs(stTraveler.Value_ID)>
 		<cfelse>
 			<cfset local.stTraveler.Type = 'NEW'>
 			<cfset local.stTraveler.User_ID = ''>
 			<cfset local.stTraveler.NoMiddleName = 0>
-			<cfset local.qOUs = getOUs(session.searches[arguments.nSearchID].nValueID)>
+			<cfset local.qOUs = getOUs(session.searches[arguments.SearchID].ValueID)>
 		</cfif>
 		<cfif stTraveler.NoMiddleName EQ ''>
 			<cfset stTraveler.NoMiddleName = 0>
@@ -610,16 +610,16 @@ setTravelerForm
 setPaymentForm
 --->
 	<cffunction name="setPaymentForm" output="false" access="remote" returnformat="plain">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="nTraveler">
-		<cfargument name="bAir">
-		<cfargument name="bCar">
-		<cfargument name="bHotel">
+		<cfargument name="Air">
+		<cfargument name="Car">
+		<cfargument name="Hotel">
 		<cfargument name="bCD">
 		<cfargument name="bDB">
 
-		<cfif StructKeyExists(session.searches[arguments.nSearchID].stTravelers, arguments.nTraveler)>
-			<cfset local.stTraveler = session.searches[arguments.nSearchID].stTravelers[arguments.nTraveler]>
+		<cfif StructKeyExists(session.searches[arguments.SearchID].stTravelers, arguments.nTraveler)>
+			<cfset local.stTraveler = session.searches[arguments.SearchID].stTravelers[arguments.nTraveler]>
 		<cfelse>
 			<cfset local.stTraveler.Type = 'NEW'>
 			<cfset local.stTraveler.User_ID = ''>
@@ -629,7 +629,7 @@ setPaymentForm
 				<!---
 				AIR PAYMENT
 				--->
-				<cfif arguments.bAir>
+				<cfif arguments.Air>
 					<cfset bExcludeEntry = false>
 					<table width="500">
 					<tr>
@@ -709,7 +709,7 @@ setPaymentForm
 				<!---
 				CAR PAYMENT
 				--->
-				<cfif arguments.bCar>
+				<cfif arguments.Car>
 					<table width="500">
 					<tr>
 						<td colspan="2">

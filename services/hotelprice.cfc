@@ -2,21 +2,19 @@
 	
 <!--- doHotelPrice --->
 	<cffunction name="doHotelPrice" output="false" access="remote" returnformat="json" returntype="array">
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="sHotelChain" />
 		<cfargument name="nCouldYou"	default="0">
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
-    <cfargument name="stPolicy" 	default="#application.stPolicies[session.searches[arguments.nSearchID].nPolicyID]#">
-		<cfargument name="stAccount" 	default="#application.stAccounts[session.Acct_ID]#">
-		
+		<cfargument name="Policy"       default="#application.Policies[session.PolicyID]#">
+		<cfargument name="Filter"       default="#session.filters[url.Search_ID]#">
+
 		<cfset local.nHotelCode	= arguments.nHotelCode />
-		<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, nHotelCode, arguments.nCouldYou)>
-		<!--- <cffile action="append" file="c:\text.txt" output="#sMessage#"> --->
-		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, nHotelCode, arguments.nCouldYou)>
+		<cfset local.sMessage 	= prepareSoapHeader(arguments.sHotelChain, nHotelCode, arguments.nCouldYou, arguments.Filter)>
+		<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, nHotelCode, arguments.nCouldYou)>
 		<cfset local.stResponse = formatResponse(sResponse)>
-		<!--- <cffile action="append" file="c:\text.txt" output="#stResponse#"> --->
-		<cfset local.stHotels 	= parseHotelRooms(stResponse, nHotelCode, arguments.nSearchID)>
+		<cfset local.stHotels 	= parseHotelRooms(stResponse, nHotelCode, arguments.SearchID)>
 		<cfset local.stRates 		= structKeyExists(stHotels,'Rooms') ? stHotels['Rooms'] : 'Sold Out' />
 		<!--- <cfdump var="#stRates#"> --->
 
@@ -36,7 +34,7 @@
 		<cfset local.HotelAddress = StructKeyExists(stHotels,'Property') ? stHotels['Property']['Address1'] : ''/>
 		<cfset local.HotelAddress&= StructKeyExists(stHotels,'Property') AND Len(Trim(stHotels['Property']['Address2'])) ? ', '&stHotels['Property']['Address2'] : '' />		
 
-		<cfset local.stHotels = checkPolicy(stHotels,arguments.nSearchID,stPolicy,stAccount)>
+		<cfset stHotels = checkPolicy(stHotels,arguments.SearchID,arguments.Policy)>
 
 		<cfset local.NewResponse = [ LowRate:LowRate,
 													HotelAddress:HotelAddress,
@@ -45,20 +43,17 @@
 													PreferredVendor:structKeyExists(stHotels,'PreferredVendor') ? stHotels['PreferredVendor'] : false
 													] />		
 
-		<cfset session.searches[arguments.nSearchID].stHotels[nHotelCode] = stHotels />
+		<cfset session.searches[arguments.SearchID].stHotels[nHotelCode] = stHotels />
 
 		<cfreturn NewResponse />
 	</cffunction>
 		
 <!--- prepareSoapHeader --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
-		<cfargument name="stAccount" 		required="true">
-		<cfargument name="nSearchID" 		required="true">
 		<cfargument name="sHotelChain" 	required="true">
 		<cfargument name="nHotelCode" 	required="true">
 		<cfargument name="nCouldYou"		default="0">
-		
-		<cfset local.Search = session.searches[arguments.nSearchID] />
+		<cfargument name="Filter" 		required="true">
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -71,8 +66,8 @@
 						  </hot:HotelProperty>
 						  <hot:HotelDetailsModifiers RateRuleDetail="Complete">
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,Search.dDepartDate),'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,Search.dArrivalDate),'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getDepartDate()),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getArrivalDate()),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						    <hot:RateCategory>All</hot:RateCategory>
 						  </hot:HotelDetailsModifiers>
@@ -91,7 +86,7 @@
 		<cfargument name="sService"	/>
 		<cfargument name="sMessage"	/>
 		<cfargument name="sAPIAuth"	/>
-		<cfargument name="nSearchID" />
+		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode"	/>
 		<cfargument name="nCouldYou" default="0" />
 		
@@ -102,8 +97,8 @@
 		</cfif>
 		<cfset local.httpname = 'http'&arguments.nHotelCode /><!--- need a unique name for each result --->
 
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[nSearchID],nHotelCode)>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="#httpname#">
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID],nHotelCode)>
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#httpname#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
@@ -113,10 +108,10 @@
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
 			
-			<cfset cfhttp.filecontent = variables[httpname].filecontent />
-			<cfset session.searches[nSearchID][nHotelCode] = cfhttp.filecontent />
+			<cfset cfhttp.filecontent = local[httpname].filecontent />
+			<cfset session.searches[SearchID][nHotelCode] = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID][nHotelCode] />
+			<cfset cfhttp.filecontent = session.searches[SearchID][nHotelCode] />
 		</cfif>
 		
 		<cfreturn cfhttp.filecontent />
@@ -135,9 +130,9 @@
 	<cffunction name="parseHotelRooms" returntype="struct" output="false">
 		<cfargument name="stResponse"	required="true">		
 		<cfargument name="nHotelCode"	required="true">		
-		<cfargument name="nSearchID"	required="true">			
+		<cfargument name="SearchID"	required="true">
 		
-		<cfset local.stHotels = session.searches[nSearchID].stHotels[arguments.nHotelCode] />
+		<cfset local.stHotels = session.searches[SearchID].stHotels[arguments.nHotelCode] />
 
 		<cfloop array="#arguments.stResponse#" index="local.stHotelResults">
 
@@ -242,13 +237,12 @@
 <!--- checkPolicy --->
 	<cffunction name="checkPolicy" output="true">
 		<cfargument name="stHotels" />
-		<cfargument name="nSearchID" />
-		<cfargument name="stPolicy" />
-		<cfargument name="stAccount" />
+		<cfargument name="SearchID" />
+		<cfargument name="Policy" />
 		
 		<cfset local.stHotels = arguments.stHotels />
 		<cfset local.bActive = true />
-		<cfset local.bBlacklisted = arguments.stPolicy.Policy_HotelMaxDisp /><!--- are they allowed to book out of policy hotels (regarding max rate)? --->
+		<cfset local.bBlacklisted = arguments.Policy.Policy_HotelMaxDisp /><!--- are they allowed to book out of policy hotels (regarding max rate)? --->
 		
 		<cfset local.aPolicy = StructKeyExists(stHotels,'aPolicies') ? stHotels['aPolicies'] : [] /><!--- Need to use existing array --->
 		
@@ -263,11 +257,11 @@
 					<cfset local.bActive = true>
 					
 					<!--- Max rate turned on and hotel is above max rate. --->
-					<cfif arguments.stPolicy.Policy_HotelMaxRule EQ 1 AND LowRate NEQ 'Sold Out' AND LowRate GT arguments.stPolicy.Policy_HotelMaxRate>
+					<cfif arguments.Policy.Policy_HotelMaxRule EQ 1 AND LowRate NEQ 'Sold Out' AND LowRate GT arguments.Policy.Policy_HotelMaxRate>
 						<cfif NOT ArrayFind(aPolicy,'Too expensive')><!--- Since we're passing in the existing array, a refresh would continually add this message to the array --->
 							<cfset ArrayAppend(aPolicy, 'Too expensive')>
 						</cfif>
-						<cfif arguments.stPolicy.Policy_HotelMaxDisp EQ 1><!--- Only display in policy hotels? --->
+						<cfif arguments.Policy.Policy_HotelMaxDisp EQ 1><!--- Only display in policy hotels? --->
 							<cfset local.bActive = false>
 						</cfif>
 						<cfbreak />

@@ -1,9 +1,9 @@
 <cfset nOverallStart = getTickCount('nano')>
 <cfoutput>
-	<cfset sCacheFileName = '/cache/'&rc.nSearchID&'/'&Hash(stTrip.toString())&'.html'>
+	<cfset sCacheFileName = '/cache/'&rc.SearchID&'/'&Hash(stTrip.toString())&'.html'>
 	<cfset nOverallStart = getTickCount('nano') - nOverallStart>
-	<cfif NOT directoryExists('/cache/'&rc.nSearchID)>
-		<cfdirectory action="create" directory="/cache/#rc.nSearchID#">
+	<cfif NOT directoryExists('/cache/'&rc.SearchID)>
+		<cfdirectory action="create" directory="/cache/#rc.SearchID#">
 	</cfif>
 </cfoutput>
 
@@ -35,29 +35,26 @@
 				<cfloop collection="#stTrip.Groups#" item="nGroup" >
 					<cfset stGroup = stTrip.Groups[nGroup]>
 					<tr>
-						<td colspan="4">&nbsp;</td>
-					</tr>
-					<tr>
 						<td> </td>
-						<td class="fade medium upper" title="#application.stAirports[stGroup.Origin]#">
-							<strong>#stGroup.Origin#</strong>
+						<td title="#application.stAirports[stGroup.Origin]#">
+							#stGroup.Origin#
 						</td>
 						<td> </td>
-						<td class="fade right medium upper" title="#application.stAirports[stGroup.Destination]#">
-							<strong>#stGroup.Destination#</strong>
+						<td title="#application.stAirports[stGroup.Destination]#">
+                            #stGroup.Destination#
 						</td>
 					</tr>
 					<tr>
-						<td class="bold medium upper">
+						<td>
 							<strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong>
 						</td>
-						<td class="bold medium upper">
+						<td>
 							<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
 						</td>
-						<td class="bold large center">
+						<td>
 							-
 						</td>
-						<td class="bold right medium upper">
+						<td>
 							<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong>
 						</td>
 					</tr>
@@ -66,10 +63,10 @@
 						<cfset nCnt++>
 						<cfset stSegment = stGroup.Segments[nSegment]>
 						<tr>
-							<td class="fade" valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
-							<td class="fade" valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-							<td class="right fade" valign="top" title="#application.stAirports[stSegment.Destination]#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#' : '')#</span><!---  ---></td>
-							<td class="right fade" valign="top">
+							<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
+							<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
+							<td valign="top" title="#application.stAirports[stSegment.Destination]#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#' : '')#</span><!---  ---></td>
+							<td valign="top">
 								<cfif nCnt EQ 1>
 									#stGroup.TravelTime#
 									<cfset nFirstSeg = nSegment>
@@ -80,7 +77,7 @@
 				</cfloop>
 				</table>
 				<br><br>
-				<cfset sURL = 'Search_ID=#rc.nSearchID#&nTripID=#nTripKey#&nGroup=#nDisplayGroup#'>
+				<cfset sURL = 'Search_ID=#rc.SearchID#&nTripID=#nTripKey#&nGroup=#nDisplayGroup#'>
 				<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
 				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 					<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank"><button type="button" class="textButton">Seats</button>|</a>
@@ -91,11 +88,11 @@
 					<ul class="smallnav">
 						<li class="main">+
 							<ul>
-								<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>							
-								<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>							
-								<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>							
-								<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>							
-								<li><a href="?action=air.price&Search_ID=#rc.nSearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>							
+								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
+								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
+								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
+								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
+								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
 							</ul>
 						</li>
 					</ul>

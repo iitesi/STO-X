@@ -2,17 +2,17 @@
 	
 <!--- doCarRates --->
 	<cffunction name="doCarRates" output="false" access="remote">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="sVendor" 		required="false"	default="">
 		<cfargument name="sCategory" 	required="false"	default="">
-		<cfargument name="stAccount"	required="false"	default="#application.stAccounts[session.Acct_ID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.stPolicies[session.searches[nSearchID].nPolicyID]#">
+		<cfargument name="stAccount"	required="false"	default="#application.Accounts[session.AcctID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.Policies[session.searches[SearchID].PolicyID]#">
 		
-		<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.nSearchID].nValueID, session.Acct_ID, arguments.sVendor)>
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, nSearchID, qCDNumbers,  arguments.sVendor,  arguments.sCategory)>
-		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, nSearchID)>
+		<cfset local.qCDNumbers = searchCDNumbers(session.searches[arguments.SearchID].ValueID, session.AcctID, arguments.sVendor)>
+		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.stPolicy, SearchID, qCDNumbers,  arguments.sVendor,  arguments.sCategory)>
+		<cfset local.sResponse = application.objUAPI.callUAPI('VehicleService', sMessage, SearchID)>
 		<cfset local.aResponse = application.objUAPI.formatUAPIRsp(sResponse)>
-		<!---<cfset session.searches[nSearchID].stTrips = addJavascript(stTrips)>--->
+		<!---<cfset session.searches[SearchID].stTrips = addJavascript(stTrips)>--->
 		<cfdump var="#local.sMessage#">
 		<cfdump var="#local.sResponse#">
 		<cfdump var="#local.aResponse#">
@@ -22,15 +22,15 @@
 	
 <!--- searchCDNumbers --->
 	<cffunction name="searchCDNumbers" output="false">
-		<cfargument name="nValueID" 	required="true">
-		<cfargument name="Acct_ID"		default="#session.Acct_ID#">
+		<cfargument name="ValueID" 	required="true">
+		<cfargument name="Acct_ID"		default="#session.AcctID#">
 		<cfargument name="sVendor" 		required="false"	default="">
 		
 		<cfquery name="local.qCDNumbers" datasource="book">
 		SELECT Vendor_Code, CD_Number
 		FROM CD_Numbers
 		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
-		AND (Value_ID = <cfqueryparam value="#arguments.nValueID#" cfsqltype="cf_sql_numeric" />
+		AND (Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_numeric" />
 		OR Value_ID IS NULL)
 		AND Vendor_Code = <cfqueryparam value="#arguments.sVendor#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
@@ -42,7 +42,7 @@
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="stAccount" 	required="true">
 		<cfargument name="stPolicy" 	required="true">
-		<cfargument name="nSearchID" 	required="true">
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="qCDNumbers" 	required="true">
 		<cfargument name="sVendor"	 	required="true">
 		<cfargument name="sCategory" 	required="true">
@@ -50,7 +50,7 @@
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
 		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		
 		<cfsavecontent variable="local.sMessage">
@@ -155,7 +155,7 @@
 <!--- sortCategories --->
 	<cffunction name="sortCategories" output="false">
 		<cfargument name="stCars"		required="true">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="stPolicy">
 		
 		<cfset local.stCarCategories = StructNew('linked')>
@@ -181,7 +181,7 @@
 <!--- checkPolicy --->
 	<cffunction name="checkPolicy" output="true">
 		<cfargument name="stCars" type="any" required="false">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="stPolicy">
 		<cfargument name="stAccount">
 		
@@ -193,7 +193,7 @@
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Depart_DateTime, Arrival_DateTime
 		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.nSearchID#" cfsqltype="cf_sql_numeric" />
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		<cfset local.nDays = DateDiff('d', getsearch.Depart_DateTime, getSearch.Arrival_DateTime)>
 		

@@ -4,18 +4,19 @@
 	<cffunction name="search" access="remote" output="false" returntype="void">
 		<cfargument name="Search_ID" 	required="true"> 
 		<cfargument name="Append" 		required="false" default="0" > 
-		
+
+		<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
+
 		<!--- Testing setting --->
 		<cfset local.refresh = 0>
 		
 		<cfset local.done = 0>
-		<cfif StructKeyExists(session, 'searches')
-		AND IsStruct(session.searches)
-		AND StructKeyExists(session.searches, arguments.Search_ID)
-		AND StructKeyExists(session.searches[arguments.Search_ID], 'nPolicyID')>
+		<cfif StructKeyExists(session, 'filters')
+		AND IsStruct(session.filters)
+		AND StructKeyExists(session.filters, arguments.Search_ID)>
 			<cfset done = 1>
 		</cfif>
-		
+
 		<cfif NOT done OR refresh>
 			<cfif NOT StructKeyExists(session, 'searches') OR NOT IsStruct(session.searches)>
 				<cfset session.searches = StructNew()>
@@ -45,115 +46,104 @@
 				</cfquery>
 			</cfif>
 
-			<cfset local.tab = {}>
 			<!--- Search related items --->
-			<cfset tab.bAir = getsearch.Air EQ 1 ? true : false>
-			<cfset tab.bCar = getsearch.Car EQ 1 ? true : false>
-			<cfset tab.bHotel = getsearch.Hotel EQ 1 ? true : false>
-			<cfset tab.sAirType = getsearch.Air_Type>
-			<cfset tab.sDepartCity = getsearch.Depart_City>
-			<cfset tab.dDepartDate = getsearch.Depart_DateTime>
-			<cfset tab.sDepartType = getsearch.Depart_TimeType>
-			<cfset tab.sArrivalCity = getsearch.Arrival_City>
-			<cfset tab.dArrivalDate = getsearch.Arrival_DateTime>
-			<cfset tab.sArrivalType = getsearch.Arrival_TimeType>
-			<cfset tab.sAirlines = getsearch.Airlines>
-			<cfset tab.bInternational = getsearch.International EQ 1 ? true : false>
-			<cfset tab.sCOS = getsearch.ClassOfService>
-			<cfset tab.sBookingFor = ''>
-			<cfset tab.sDestination = ''>
-			<cfset tab.sHeading = ''>
-			<cfset tab.nProfileID = getsearch.Profile_ID>
-			<cfset tab.nPolicyID = getsearch.Policy_ID>
-			<cfset tab.nValueID = getsearch.Value_ID>
-			<cfset tab.stLegs = StructNew('linked')>
-			<cfset tab.stItinerary = {}>
-			<!--- Air - low fare search --->
-			<cfset tab.stTrips = {}>
-			<cfset tab.stLowFareDetails = {}>
-			<cfset tab.stLowFareDetails.aCarriers = {}>
-			<cfset tab.stLowFareDetails.stPricing = {}>
-			<cfset tab.stLowFareDetails.stResults = {}>
-			<cfset tab.stLowFareDetails.stPriced = {}>
-			<cfset tab.stLowFareDetails.aSortArrival = []>
-			<cfset tab.stLowFareDetails.aSortBag = []>
-			<cfset tab.stLowFareDetails.aSortDepart = []>
-			<cfset tab.stLowFareDetails.aSortDuration = []>
-			<cfset tab.stLowFareDetails.aSortFare = []>
-			<!--- Air - availability search --->
-			<cfset tab.stAvailTrips = {}>
-			<cfset tab.stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-			<cfset tab.stSelected[0] = {}>
-			<cfset tab.stSelected[1] = {}>
-			<cfset tab.stSelected[2] = {}>
-			<cfset tab.stSelected[3] = {}>
-			<cfset tab.stAvailTrips[0] = {}><!--- Leg details by group --->
-			<cfset tab.stAvailTrips[1] = {}>
-			<cfset tab.stAvailTrips[2] = {}>
-			<cfset tab.stAvailTrips[3] = {}>
-			<cfset tab.stAvailDetails.stGroups = {}>
-			<cfset tab.stAvailDetails.stCarriers = {}>
-			
+			<cfset searchfilter.setSearchID(getsearch.Search_ID)>
+			<cfset searchfilter.setAir(getsearch.Air EQ 1 ? true : false)>
+			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
+			<cfset searchfilter.setHotel(getsearch.Hotel EQ 1 ? true : false)>
+			<cfset searchfilter.setAirType(getsearch.Air_Type)>
+			<cfset searchfilter.setDepartCity(getsearch.Depart_City)>
+			<cfset searchfilter.setDepartDate(getsearch.Depart_DateTime)>
+			<cfset searchfilter.setDepartType(getsearch.Depart_TimeType)>
+			<cfset searchfilter.setArrivalCity(getsearch.Arrival_City)>
+			<cfset searchfilter.setArrivalDate(getsearch.Arrival_DateTime)>
+			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
+			<cfset searchfilter.setAirlines(getsearch.Airlines)>
+			<cfset searchfilter.setInternational(getsearch.International EQ 1 ? true : false)>
+			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
+			<cfset searchfilter.setProfileID(getsearch.Profile_ID)>
+			<cfset searchfilter.setPolicyID(getsearch.Policy_ID)>
+			<cfset searchfilter.setValueID(getsearch.Value_ID)>
+			<cfset searchfilter.setUserID(getsearch.User_ID)>
+			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
+			<cfset searchfilter.setUsername(getsearch.Username)>
+
 			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
-				<cfset tab.sBookingFor = ''><!--- Booking for themselves --->
+				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->
 			<cfelseif getsearch.Profile_ID EQ 0>
-				<cfset tab.sBookingFor = 'Guest Traveler'><!--- Guest traveler --->
+				<cfset searchfilter.setBookingFor('Guest Traveler')><!--- Guest traveler --->
 			<cfelse>
 				<cfquery name="local.getuser" datasource="Corporate_Production">
 				SELECT First_Name, Last_Name, Email
 				FROM Users
 				WHERE User_ID = <cfqueryparam value="#getsearch.Profile_ID#" cfsqltype="cf_sql_integer" >
 				</cfquery>
-				<cfset tab.sBookingFor = getuser.First_Name&' '&getuser.Last_Name><!--- Booking for someone else --->
+				<cfset searchfilter.setBookingFor(getuser.First_Name&' '&getuser.Last_Name)><!--- Booking for someone else --->
 			</cfif>
 			
 			<!--- Round trip tab --->
 			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-					<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d')>
+					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d'))>
 				<cfelse>
-					<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 				</cfif>
-				<cfset tab.sDestination = application.stAirports[getsearch.Arrival_City]>
-				<cfset tab.stLegs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
-				<cfset tab.stLegs[1] = getsearch.Arrival_City&' to '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d')>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+				<cfset searchfilter.addLeg(getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset searchfilter.addLeg(getsearch.Arrival_City&' to '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
 			<!--- One way trip tab --->
 			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
-				<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
-				<cfset tab.sDestination = application.stAirports[getsearch.Arrival_City]>
-				<cfset tab.stLegs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+				<cfset searchfilter.addLeg(getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 			<!--- Multi destination trip tab --->
 			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'MD'>
-				<cfset tab.sDestination = ''>
-				<cfset tab.sHeading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' '>
-				<cfset tab.stLegs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+				<!---<cfset searchfilter.setDestination('')>
+				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' '>--->
+				<!---<cfset tab.Legs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
 				<cfloop query="getsearchlegs">
-					<cfset tab.sHeading = tab.sHeading&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
-					<cfset tab.stLegs[getsearchlegs.CurrentRow] = getsearchlegs.Depart_City&' to '&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')>
-				</cfloop>
+					<cfset tab.Heading = tab.Heading&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
+					<cfset tab.Legs[getsearchlegs.CurrentRow] = getsearchlegs.Depart_City&' to '&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')>
+				</cfloop>--->
 			<cfelseif NOT getsearch.Air AND getsearch.Car>
-				<cfset tab.sDestination = application.stAirports[getsearch.Arrival_City]>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
-			
-			<cflock timeout="30" scope="session" type="exclusive">
-				<cfset session.searches[arguments.Search_ID] = tab>
-				<cfset session.User_ID = getsearch.User_ID>
-				<cfset session.Username = getsearch.Username>
-				<cfset session.Acct_ID = getsearch.Acct_ID>
-			</cflock>
+
+			<cfset session.AcctID = getSearch.Acct_ID>
+			<cfset session.PolicyID = getSearch.Policy_ID>
+			<cfset session.filters[arguments.Search_ID] = searchfilter>
+			<cfset session.searches[arguments.Search_ID].stAvailTrips[0] = {}>
+			<cfset session.searches[arguments.Search_ID].stAvailTrips[1] = {}>
+			<cfset session.searches[arguments.Search_ID].stAvailTrips[2] = {}>
+			<cfset session.searches[arguments.Search_ID].stAvailTrips[3] = {}>
+			<cfset session.searches[arguments.Search_ID].stAvailDetails = {}>
+			<cfset session.searches[arguments.Search_ID].stAvailDetails.stGroups = {}>
+			<cfset session.searches[arguments.Search_ID].stTrips = {}>
+			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stPricing = {}>
+			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stPriced = {}>
+			<cfset session.searches[arguments.Search_ID].stLowFareDetails.aCarriers = {}>
+			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[arguments.Search_ID].stItinerary = {}>
+			<cfset session.searches[arguments.Search_ID].stSelected = {}>
+
 		</cfif>
-		
+		<cfset session.searches[arguments.Search_ID].stSelected[1] = {}>
+		<cfset session.searches[arguments.Search_ID].stSelected[2] = {}>
+		<cfset session.searches[arguments.Search_ID].stSelected[3] = {}>
+		<cfset session.searches[arguments.Search_ID].stSelected[0] = {}>
+
 		<cfreturn />
 	</cffunction>
 	
 <!--- close --->
 	<cffunction name="close" output="false">
-		<cfargument name="nSearchID"> 
+		<cfargument name="SearchID">
 		
-		<cfset local.temp = StructDelete(session.searches, arguments.nSearchID)>
+		<cfset local.temp = StructDelete(session.searches, arguments.SearchID)>
 		<cfset local.nNewSearchID = ''>
-		<cfloop collection="#session.searches#" item="local.nSearchID">
-			<cfset nNewSearchID = nSearchID>
+		<cfloop collection="#session.searches#" item="local.SearchID">
+			<cfset nNewSearchID = SearchID>
 			<cfbreak>
 		</cfloop>
 		

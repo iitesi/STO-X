@@ -1,4 +1,4 @@
-<cfoutput>
+<cfoutput><cfdump var="#session.aMessages#" abort>
 	<cfset cnt = 0>
 	<cfloop from="#ArrayLen(session.aMessages)#" to="1" step="-1" index="i">
 		<cfset cnt++>

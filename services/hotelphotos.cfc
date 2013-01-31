@@ -2,25 +2,27 @@
 		
 <!--- doHotelPhotoGallery --->
 	<cffunction name="doHotelPhotoGallery" output="false" access="remote" returnformat="json" returntype="array">
-		<cfargument name="nSearchID" 		required="true">
+		<cfargument name="SearchID" 		required="true">
 		<cfargument name="nHotelCode"		required="true">
 		<cfargument name="sHotelChain"	required="true">
 		<cfargument name="sAPIAuth" 		required="false"	default="#application.sAPIAuth#">
-		<cfargument name="stAccount" 		required="false"	default="#application.stAccounts[session.Acct_ID]#">
+		<cfargument name="stAccount" 		required="false"	default="#application.Accounts[session.AcctID]#">
 		
-		<cfset local.stTrip = session.searches[arguments.nSearchID] />
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.nSearchID, arguments.sHotelChain, arguments.nHotelCode) />
-		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.nSearchID, arguments.nHotelCode) />
+		<cfset local.stTrip = session.searches[arguments.SearchID] />
+		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode) />
+		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode) />
 		<cfset local.stResponse = formatResponse(sResponse) />
-		<cfset local.aHotelPhotos = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.nSearchID) />
-		
+		<cfset local.stHotels = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.SearchID) />
+
+		<cfset session.searches[arguments.SearchID].stHotels = stHotels />
+
 		<cfreturn local.aHotelPhotos />
 	</cffunction>
 		
 <!--- prepareSoapHeader --->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
 		<cfargument name="stAccount" 		required="true">
-		<cfargument name="nSearchID" 		required="true">
+		<cfargument name="SearchID" 		required="true">
 		<cfargument name="sHotelChain" 	required="true">
 		<cfargument name="nHotelCode" 	required="true">
 
@@ -47,12 +49,12 @@
 		<cfargument name="sService"		required="true">
 		<cfargument name="sMessage"		required="true">
 		<cfargument name="sAPIAuth"		required="true">
-		<cfargument name="nSearchID"	required="true">
+		<cfargument name="SearchID"	required="true">
 		<cfargument name="nHotelCode"	required="true">
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
-		<cfif NOT bSessionStorage OR (NOT StructKeyExists(session.searches[nSearchID]['STHOTELS'][nHotelCode], 'stHotelPhotos') AND NOT StructKeyExists(session.searches[nSearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos'))>
+		<cfif NOT bSessionStorage OR (NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'stHotelPhotos') AND NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos'))>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -62,9 +64,9 @@
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfset session.searches[nSearchID]['STHOTELS'][nHotelCode].stHotelPhotos = cfhttp.filecontent />
+			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].stHotelPhotos = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[nSearchID]['STHOTELS'][nHotelCode].stHotelPhotos />
+			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].stHotelPhotos />
 		</cfif>
 
 		<cfreturn cfhttp.filecontent />
@@ -83,9 +85,9 @@
 	<cffunction name="parseHotelPhotos" returntype="array" output="false">
 		<cfargument name="stResponse"	required="true">		
 		<cfargument name="nHotelCode"	required="true">		
-		<cfargument name="nSearchID"	required="true">			
+		<cfargument name="SearchID"	required="true">
 		
-		<cfset local.stHotels = session.searches[nSearchID].stHotels />
+		<cfset local.stHotels = session.searches[SearchID].stHotels />
 		<cfset local.nHotelCode = arguments.nHotelCode />
 		<cfset local.aHotelPhotos = [] />
 

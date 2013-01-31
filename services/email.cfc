@@ -4,7 +4,7 @@
 email
 --->
 	<cffunction name="email" output="false">
-		<cfargument name="nSearchID">
+		<cfargument name="SearchID">
 		<cfargument name="nTripID">
 		<cfargument name="nGroup">
 		<cfargument name="Email_Name">
@@ -31,9 +31,9 @@ email
 				<body>
 					<!--- <cfoutput> --->
 					<cfif arguments.nGroup EQ ''>
-						<cfset local.stTrip = session.searches[arguments.nSearchID].stTrips[arguments.nTripID]>
+						<cfset local.stTrip = session.searches[arguments.SearchID].stTrips[arguments.nTripID]>
 					<cfelse>
-						<cfset local.stTrip = session.searches[arguments.nSearchID].stAvailTrips[arguments.nGroup][arguments.nTripID]>
+						<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.nGroup][arguments.nTripID]>
 					</cfif>
 					<table width="700" align="center" style="padding:15px;">
 					<cfif arguments.Email_Message NEQ ''>
@@ -79,7 +79,7 @@ email
 				</body>
 				</html>
 			</cfmail>
-			<cfset session.searches[arguments.nSearchID].sUserMessage = 'Your email has been sent.'>
+			<cfset session.searches[arguments.SearchID].sUserMessage = 'Your email has been sent.'>
 
 		<cfreturn />
 	</cffunction>
