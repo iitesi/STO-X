@@ -235,7 +235,7 @@ function hotelLoading(property_id) {
 function showRates(search_id,property_id) {
 	$.ajax({
 		url:"services/hotelrooms.cfc?method=getRooms",
-		data:"nSearchID="+search_id+"&nHotelCode="+property_id,
+		data:"SearchID="+search_id+"&nHotelCode="+property_id,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -274,7 +274,7 @@ function showRates(search_id,property_id) {
 function showDetails(search_id,property_id,hotel_chain,rate_type) {
 	$.ajax({
 		url:"services/hoteldetails.cfc?method=doHotelDetails",
-		data:"nSearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain+"&sRatePlanType="+rate_type,
+		data:"SearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain+"&sRatePlanType="+rate_type,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -318,7 +318,7 @@ function showDetails(search_id,property_id,hotel_chain,rate_type) {
 function showAmenities(search_id,property_id) {
 	$.ajax({
 		url:"services/hotelrooms.cfc?method=getAmenities",
-		data:"nSearchID="+search_id+"&nHotelCode="+property_id,
+		data:"SearchID="+search_id+"&nHotelCode="+property_id,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
@@ -350,14 +350,14 @@ function showAmenities(search_id,property_id) {
 function showPhotos(search_id,property_id,hotel_chain) {
 	$.ajax({
 		url:"services/hotelphotos.cfc?method=doHotelPhotoGallery",
-		data:"nSearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain,
+		data:"SearchID="+search_id+"&nHotelCode="+property_id+"&sHotelChain="+hotel_chain,
 		dataType: 'json',
 		beforeSend:function () {
 			hotelLoading(property_id)
 		},
 		success:function(details) {
 			var firstimg = '';
-			var table = '<br /><table width="100%"><tr><td class="bold" colspan="2">HOTEL PHOTOS';
+			var table = '<br /><table width="500px"><tr><td class="bold" colspan="2">HOTEL PHOTOS';
 			table+='<a href="#" onClick="hideRates('+property_id+');return false;" style="float:right;">close details</a><br /><br /></td></tr><tr><td><table>';
 			var count = 0;
 			$.each(details, function(key, val) {
@@ -369,7 +369,7 @@ function showPhotos(search_id,property_id,hotel_chain) {
 					table+='<tr>';
 				}
 				table+='<td><a href="#" onClick="setImage(' + count + ', ' + property_id + ');return false;">';
-				table+='<img id="img' + property_id + count + '" src="' + val + '" border="0" width="75" height="50" style="padding:5px;" /></a></td>';
+				table+='<img id="img' + property_id + count + '" src="' + val + '" border="0" width="75" height="50" style="padding:2px;" /></a></td>';
 				if (count % 3 == 0) {
 					table+='</tr>';
 				}
@@ -377,8 +377,8 @@ function showPhotos(search_id,property_id,hotel_chain) {
 			table+='</table>';
 			table+='<td><table><tr><td>';
 			if (firstimg != '') {
-				table+='<div class="listcell" style="width:400px;overflow:hidden;max-height:300px;height:300px;">';
-				table+='<img width="400px" src="' + firstimg + '" id="mainImage' + property_id + '">';
+				table+='<div class="listcell" style="width:300px;overflow:hidden;max-height:300px;height:300px;">';
+				table+='<img width="300px" src="' + firstimg + '" id="mainImage' + property_id + '">';
 			}
 			else {
 				table+='no images available at this time';
@@ -395,6 +395,8 @@ function showPhotos(search_id,property_id,hotel_chain) {
 
 function setImage(count, property_id) {
 	var mImage = document.getElementById("mainImage" + property_id);
+	var mImage = $('#mainImage'+property_id)[0]
+	console.log(mImage);
 	mImage.src = $( "#img" + property_id + count ).attr("src");
 	return false;
 }

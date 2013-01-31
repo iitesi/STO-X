@@ -8,14 +8,21 @@
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
 		<cfset local.SearchID 		= arguments.Filter.getSearchID() />
-		<cfset local.sMessage		= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID) />
+		<cfset local.sMessage			= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID) />
 		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID) />
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
 		<cfset local.stChains 		= getChains(stHotels)>
 		<cfset local.stAmenities 	= getAmenities(stHotels)>
-		<cfset local.getSearch      = getSearch(SearchID) />
-		<cfset local.latlong 		= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
+		<!--- <cfset local.getSearch    = getSearch(SearchID) /> --->
+
+		<cfquery name="local.getSearch" datasource="book">
+		SELECT CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
+		FROM Searches
+		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
+
+		<cfset local.latlong 			= latlong(getSearch.Hotel_Search,getSearch.Hotel_Airport,getSearch.Hotel_Landmark,getSearch.Hotel_Address,getSearch.Hotel_City,getSearch.Hotel_State,getSearch.Hotel_Zip,getSearch.Hotel_Country,getSearch.Office_ID) />
 				
 		<!--- Store the hotels, chains, amenities and lat/long into the session --->
 		<cfset session.searches[SearchID].stHotels 		= stHotels />
@@ -420,7 +427,9 @@
 		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
-		ORDER BY CASE <cfloop array="#local.aHotels#" index="count" item="property">WHEN Property_ID = '#property#' THEN #count# </cfloop>END
+		<cfif NOT arrayIsEmpty(aHotels)>
+			ORDER BY CASE <cfloop array="#local.aHotels#" index="count" item="property">WHEN Property_ID = '#property#' THEN #count# </cfloop>END			
+		</cfif>
 		</cfquery>
 
 		<cfloop query="HotelInformationQuery">

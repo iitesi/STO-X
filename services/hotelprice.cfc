@@ -7,8 +7,8 @@
 		<cfargument name="sHotelChain" />
 		<cfargument name="nCouldYou"	default="0">
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
-		<cfargument name="Policy"       default="#application.Policies[session.PolicyID]#">
-		<cfargument name="Filter"       default="#session.filters[url.SearchID]#">
+		<cfargument name="Policy"     default="#application.Policies[session.PolicyID]#">
+		<cfargument name="Filter"     default="#session.filters[arguments.SearchID]#">
 
 		<cfset local.nHotelCode	= arguments.nHotelCode />
 		<cfset local.sMessage 	= prepareSoapHeader(arguments.sHotelChain, nHotelCode, arguments.nCouldYou, arguments.Filter)>

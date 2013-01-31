@@ -12,9 +12,7 @@
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode) />
 		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode) />
 		<cfset local.stResponse = formatResponse(sResponse) />
-		<cfset local.stHotels = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.SearchID) />
-
-		<cfset session.searches[arguments.SearchID].stHotels = stHotels />
+		<cfset local.aHotelPhotos = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.SearchID) />		
 
 		<cfreturn local.aHotelPhotos />
 	</cffunction>
@@ -54,7 +52,7 @@
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
-		<cfif NOT bSessionStorage OR (NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'stHotelPhotos') AND NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos'))>
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -64,9 +62,9 @@
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].stHotelPhotos = cfhttp.filecontent />
+			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].aHotelPhotos = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].stHotelPhotos />
+			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].aHotelPhotos />
 		</cfif>
 
 		<cfreturn cfhttp.filecontent />
@@ -87,10 +85,7 @@
 		<cfargument name="nHotelCode"	required="true">		
 		<cfargument name="SearchID"	required="true">
 		
-		<cfset local.stHotels = session.searches[SearchID].stHotels />
-		<cfset local.nHotelCode = arguments.nHotelCode />
 		<cfset local.aHotelPhotos = [] />
-
 		<cfloop array="#arguments.stResponse#" index="local.stHotelPhoto">
 			<cfif stHotelPhoto.XMLName EQ 'common_v15_0:MediaItem'>
 				<cfset local.HotelPhoto = stHotelPhoto.XMLAttributes.url />
@@ -99,7 +94,7 @@
 		</cfloop>
 		
 		<!--- Update the struct so we know we've received photos and we don't pull them again later --->
-		<cfset session.searches[arguments.nSearchID].stHotels[nHotelCode]['aHotelPhotos'] = aHotelPhotos />
+		<cfset session.searches[arguments.SearchID].stHotels[arguments.nHotelCode]['aHotelPhotos'] = aHotelPhotos />
 
 		<cfreturn aHotelPhotos />
 	</cffunction>	

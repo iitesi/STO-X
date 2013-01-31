@@ -8,11 +8,12 @@
 		<cfargument name="sRatePlanType" />
 		<cfargument name="sAPIAuth"		default="#application.sAPIAuth#">
 		<cfargument name="stAccount" 	default="#application.Accounts[session.AcctID]#">
+		<cfargument name="Filter"     default="#session.filters[arguments.SearchID]#">
 		
 		<cfset local.HotelDetails = HotelDetails(arguments.nHotelCode)>
 
 		<cfif NOT HotelDetails.RecordCount>
-			<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode, arguments.sRatePlanType)>
+			<cfset local.sMessage 	= prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode, arguments.sRatePlanType, arguments.Filter)>
 			<cfset local.sResponse 	= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode)>
 			<cfset local.stResponse = formatResponse(sResponse)>
 			<cfset parseHotelDetails(stResponse, arguments.nHotelCode, arguments.SearchID)>
@@ -29,12 +30,7 @@
 		<cfargument name="sHotelChain" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="sRatePlanType" />
-		
-		<cfquery name="local.getSearch" datasource="book">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
+		<cfargument name="Filter" required="true">
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -47,8 +43,8 @@
 						  	<hot:HotelProperty HotelChain="#arguments.sHotelChain#" HotelCode="#arguments.nHotelCode#">
 						    </hot:HotelProperty>
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(Search.dDepartDate,'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(Search.dArrivalDate,'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(arguments.Filter.getDepartDate(),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(arguments.Filter.getArrivalDate(),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						  </hot:HotelRulesLookup>
 						</hot:HotelRulesReq>
@@ -98,7 +94,7 @@
 	</cffunction>
 	
 <!--- parseHotelDetails --->
-	<cffunction name="parseHotelDetails" returntype="struct" output="false">
+	<cffunction name="parseHotelDetails" returntype="void" output="false">
 		<cfargument name="stResponse"	required="true">		
 		<cfargument name="nHotelCode"	required="true">		
 		<cfargument name="SearchID"	required="true">
@@ -130,30 +126,28 @@
 			</cfif>
 		</cfloop>
 
-		<cfoutput>
-			<cfset local.CheckIn = '' />
-			<cfset local.CheckOut = '' />
-			<cfset local.Commission = '' />
-			<cfloop list="#structKeyList(DescriptionStruct)#" index="local.i">
-				<cfset local.DeleteKey = false />
-				<cfset local.NoSpaceName = replace(i,' ','','all') />
-				<cfif uCase(NoSpaceName) EQ 'CHECKIN'>
-					<cfset local.CheckIn = MilitaryToStandardTime(DescriptionStruct[i]) />
-					<cfset structDelete(DescriptionStruct,i) /><!--- These fields are stored in individual columns. Don't need to store them twice --->
-				</cfif>
-				<cfif uCase(NoSpaceName) EQ 'CHECKOUT'>
-					<cfset local.CheckOut = MilitaryToStandardTime(DescriptionStruct[i]) />
-					<cfset structDelete(DescriptionStruct,i) />
-				</cfif>
-				<cfif uCase(NoSpaceName) EQ 'COMMISSION'>
-					<cfset local.Commission = replace(replace(replace(uCase(DescriptionStruct[i]),'COMMISSION',''),'AMT',''),'-','') />
-					<cfset structDelete(DescriptionStruct,i) />
-				</cfif>
-				<cfif uCase(replace(NoSpaceName,' ','','all')) EQ 'CHECKINCHECKOUT'>
-					<cfset structDelete(DescriptionStruct,i) />
-				</cfif>
-			</cfloop>
-		</cfoutput>
+		<cfset local.CheckIn = '' />
+		<cfset local.CheckOut = '' />
+		<cfset local.Commission = '' />
+		<cfloop list="#structKeyList(DescriptionStruct)#" index="local.i">
+			<cfset local.DeleteKey = false />
+			<cfset local.NoSpaceName = replace(i,' ','','all') />
+			<cfif uCase(NoSpaceName) EQ 'CHECKIN'>
+				<cfset local.CheckIn = MilitaryToStandardTime(DescriptionStruct[i]) />
+				<cfset structDelete(DescriptionStruct,i) /><!--- These fields are stored in individual columns. Don't need to store them twice --->
+			</cfif>
+			<cfif uCase(NoSpaceName) EQ 'CHECKOUT'>
+				<cfset local.CheckOut = MilitaryToStandardTime(DescriptionStruct[i]) />
+				<cfset structDelete(DescriptionStruct,i) />
+			</cfif>
+			<cfif uCase(NoSpaceName) EQ 'COMMISSION'>
+				<cfset local.Commission = replace(replace(replace(uCase(DescriptionStruct[i]),'COMMISSION',''),'AMT',''),'-','') />
+				<cfset structDelete(DescriptionStruct,i) />
+			</cfif>
+			<cfif uCase(replace(NoSpaceName,' ','','all')) EQ 'CHECKINCHECKOUT'>
+				<cfset structDelete(DescriptionStruct,i) />
+			</cfif>
+		</cfloop>
 
 		<cfset local.DetailsArray = [] />
 		<cfloop list="#structKeyList(DescriptionStruct)#" index="local.i">
