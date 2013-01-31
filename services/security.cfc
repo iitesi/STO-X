@@ -2,7 +2,7 @@
 	
 <!--- session : search --->
 	<cffunction name="search" access="remote" output="false" returntype="void">
-		<cfargument name="Search_ID" 	required="true"> 
+		<cfargument name="SearchID" 	required="true">
 		<cfargument name="Append" 		required="false" default="0" > 
 
 		<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
@@ -13,7 +13,7 @@
 		<cfset local.done = 0>
 		<cfif StructKeyExists(session, 'filters')
 		AND IsStruct(session.filters)
-		AND StructKeyExists(session.filters, arguments.Search_ID)>
+		AND StructKeyExists(session.filters, arguments.SearchID)>
 			<cfset done = 1>
 		</cfif>
 
@@ -35,14 +35,14 @@
 			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
 			Arrival_TimeType, ClassOfService
 			FROM Searches
-			WHERE Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_integer">
+			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
 			</cfquery>
 			<cfif getsearch.Air_Type EQ 'MD'>
 				<cfquery name="local.getsearchlegs" datasource="book">
 				SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
 				FROM Searches_Legs
-				WHERE Search_ID = <cfqueryparam value="#arguments.Search_ID#" cfsqltype="cf_sql_numeric" />
+				WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 				</cfquery>
 			</cfif>
 
@@ -112,26 +112,25 @@
 
 			<cfset session.AcctID = getSearch.Acct_ID>
 			<cfset session.PolicyID = getSearch.Policy_ID>
-			<cfset session.filters[arguments.Search_ID] = searchfilter>
-			<cfset session.searches[arguments.Search_ID].stAvailTrips[0] = {}>
-			<cfset session.searches[arguments.Search_ID].stAvailTrips[1] = {}>
-			<cfset session.searches[arguments.Search_ID].stAvailTrips[2] = {}>
-			<cfset session.searches[arguments.Search_ID].stAvailTrips[3] = {}>
-			<cfset session.searches[arguments.Search_ID].stAvailDetails = {}>
-			<cfset session.searches[arguments.Search_ID].stAvailDetails.stGroups = {}>
-			<cfset session.searches[arguments.Search_ID].stTrips = {}>
-			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stPricing = {}>
-			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stPriced = {}>
-			<cfset session.searches[arguments.Search_ID].stLowFareDetails.aCarriers = {}>
-			<cfset session.searches[arguments.Search_ID].stLowFareDetails.stResults = {}>
-			<cfset session.searches[arguments.Search_ID].stItinerary = {}>
-			<cfset session.searches[arguments.Search_ID].stSelected = {}>
+			<cfset session.filters[arguments.SearchID] = searchfilter>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[1] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[2] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[3] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailDetails = {}>
+			<cfset session.searches[arguments.SearchID].stAvailDetails.stGroups = {}>
+			<cfset session.searches[arguments.SearchID].stTrips = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPricing = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[arguments.SearchID].stItinerary = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
 
 		</cfif>
-		<cfset session.searches[arguments.Search_ID].stSelected[1] = {}>
-		<cfset session.searches[arguments.Search_ID].stSelected[2] = {}>
-		<cfset session.searches[arguments.Search_ID].stSelected[3] = {}>
-		<cfset session.searches[arguments.Search_ID].stSelected[0] = {}>
 
 		<cfreturn />
 	</cffunction>

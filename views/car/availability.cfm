@@ -2,7 +2,7 @@
 <cfoutput>
 	<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
 		<input type="hidden" name="bSelect" value="1">
-		<input type="hidden" name="Search_ID" value="#rc.SearchID#">
+		<input type="hidden" name="SearchID" value="#rc.SearchID#">
 		<input type="hidden" name="sCategory" id="sCategory" value="">
 		<input type="hidden" name="sVendor" id="sVendor" value="">
 	</form>	
@@ -15,7 +15,7 @@
 					&nbsp;
 				</div>
 			</td>
-			<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
+			<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 				<td>
 				<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
 					<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
@@ -31,8 +31,8 @@
 
 	<br clear="all">
 
-	<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory">
-		<cfset stCar = session.searches[rc.Search_ID].stCars[sCategory]>
+	<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
+		<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 		<cfif NOT StructIsEmpty(stCar)>
 
 			<div id="row#LCase(sCategory)#" class="carrow">
@@ -47,11 +47,11 @@
 						</div>
 					</td>
 
-					<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
+					<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 						<td>
 							<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
-								<cfif StructKeyExists(session.searches[rc.Search_ID].stCars[sCategory], sVendor)>
-									<cfset stRate = session.searches[rc.Search_ID].stCars[sCategory][sVendor]>
+								<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
+									<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 									<cfif stRate.Corporate>
 										CORPORATE
 									</cfif><br>

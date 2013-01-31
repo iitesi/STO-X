@@ -63,10 +63,10 @@
 		<cfif (NOT StructKeyExists(session, 'searches')
 		OR NOT StructKeyExists(session.searches, request.context.SearchID))
 		AND request.context.action NEQ 'main.default'>
-			<cfset redirect('main?Search_ID=#request.context.SearchID#')>
+			<cfset redirect('main?SearchID=#request.context.SearchID#')>
 		</cfif>
 
-		<!---Always defined.  Filter, Account & Policy for the given Search_ID passed in.--->
+		<!---Always defined.  Filter, Account & Policy for the given SearchID passed in.--->
 		<cfset request.context.Filter = (StructKeyExists(session, 'filters') AND StructKeyExists(session.filters, request.context.SearchID) ? session.filters[request.context.SearchID] : '')>
 
 		<cfif StructKeyExists(session, 'AcctID')>

@@ -1,5 +1,5 @@
 <cfset PropertyID = url.PropertyID />
-<cfset stHotel = session.searches[url.Search_ID].stHotels[PropertyID] />
+<cfset stHotel = session.searches[url.SearchID].stHotels[PropertyID] />
 <cfset HotelChain = stHotel.HotelChain />
 <cfset RoomRatePlanType = Len(Trim(url.RoomRatePlanType)) ? url.RoomRatePlanType : '' />
 <cfif NOT Len(Trim(RoomRatePlanType))  AND structKeyExists(stHotel,'Rooms')>
@@ -11,7 +11,7 @@
 	</cfloop>		
 </cfif>
 
-<cfset HotelDetails = application.objHotelDetails.doHotelDetails(url.Search_ID,PropertyID,HotelChain,RoomRatePlanType) />
+<cfset HotelDetails = application.objHotelDetails.doHotelDetails(url.SearchID,PropertyID,HotelChain,RoomRatePlanType) />
 
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">

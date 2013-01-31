@@ -13,7 +13,7 @@ HEADING
 				<td colspan="2">
 					<h4>CAR</h4>
 					#(NOT CarPolicy ? 'Your car is outside of policy.' : '')#
-					<span style="float:right;"><a href="#buildURL('car.availability?Search_ID=#rc.SearchID#')#" style="color:##666">change car <div class="close">x</div></a>
+					<span style="float:right;"><a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" style="color:##666">change car <div class="close">x</div></a>
 				</td>
 			<tr>
 			</tr>

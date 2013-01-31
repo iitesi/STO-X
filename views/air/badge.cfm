@@ -1,4 +1,4 @@
-<cfset nOverallStart = getTickCount('nano')>
+<!---<cfset nOverallStart = getTickCount('nano')>
 <cfoutput>
 	<cfset sCacheFileName = '/cache/'&rc.SearchID&'/'&Hash(stTrip.toString())&'.html'>
 	<cfset nOverallStart = getTickCount('nano') - nOverallStart>
@@ -7,7 +7,7 @@
 	</cfif>
 </cfoutput>
 
-<cfif NOT fileExists(sCacheFileName)>
+<cfif NOT fileExists(sCacheFileName)>--->
 	<cfsavecontent variable="sBadge" trim="#true#">
 		<cfoutput>
 			<div class="badge">
@@ -37,11 +37,11 @@
 					<tr>
 						<td> </td>
 						<td title="#application.stAirports[stGroup.Origin]#">
-							#stGroup.Origin#
+							<strong>#stGroup.Origin#</strong>
 						</td>
 						<td> </td>
 						<td title="#application.stAirports[stGroup.Destination]#">
-                            #stGroup.Destination#
+                            <strong>#stGroup.Destination#</strong>
 						</td>
 					</tr>
 					<tr>
@@ -77,7 +77,7 @@
 				</cfloop>
 				</table>
 				<br><br>
-				<cfset sURL = 'Search_ID=#rc.SearchID#&nTripID=#nTripKey#&nGroup=#nDisplayGroup#'>
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&nGroup=#nDisplayGroup#'>
 				<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger"><button type="button" class="textButton">Details</button>|</a>
 				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 					<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank"><button type="button" class="textButton">Seats</button>|</a>
@@ -88,11 +88,11 @@
 					<ul class="smallnav">
 						<li class="main">+
 							<ul>
-								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
-								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
-								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
-								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
-								<li><a href="?action=air.price&Search_ID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
+								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
+								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
+								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
+								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
+								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -100,7 +100,7 @@
 			</div>
 		</cfoutput>
 	</cfsavecontent>
-	<cfset fileWrite(sCacheFileName, sBadge)>
+	<!---<cfset fileWrite(sCacheFileName, sBadge)>
 <cfelseif nCount LTE 5>
 	<cfset sBadge = fileRead(sCacheFileName)>
 </cfif>
@@ -111,9 +111,11 @@
 		<script type="text/javascript">
 		$("###nTripKey#").load("#sCacheFileName#");
 		</script>
-	<cfelse>
+	<cfelse>--->
+	<cfoutput>
 		<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
 			#sBadge#
 		</div>
-	</cfif>
-</cfoutput>
+	</cfoutput>
+	<!---</cfif>
+--->

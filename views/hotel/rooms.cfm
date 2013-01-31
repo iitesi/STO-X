@@ -1,4 +1,4 @@
-<cfset rates = application.objHotelRooms.getRooms(url.Search_ID,PropertyID) />
+<cfset rates = application.objHotelRooms.getRooms(url.SearchID,PropertyID) />
 
 <div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">
 <table width="600px">

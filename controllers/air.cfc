@@ -37,13 +37,13 @@ lowfare
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
 			<cfif arguments.rc.Filter.getHotel()
 			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?Search_ID=#arguments.rc.Filter.getSearchID()#')>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfif arguments.rc.Filter.getCar()
 			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
-				<cfset variables.fw.redirect('car.availability?Search_ID=#arguments.rc.Filter.getSearchID()#')>
+				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#arguments.rc.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
@@ -73,12 +73,12 @@ availability
 		<cfargument name="rc">
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfloop collection="#session.searches[arguments.rc.Search_ID].Legs#" item="local.nLeg">
-				<cfif structIsEmpty(session.searches[arguments.rc.Search_ID].stSelected[nLeg])>
-					<cfset variables.fw.redirect('air.availability?Search_ID=#arguments.rc.Search_ID#&nGroup=#nLeg#')>
+			<cfloop collection="#session.searches[arguments.rc.SearchID].Legs#" item="local.nLeg">
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg])>
+					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&nGroup=#nLeg#')>
 				</cfif>
 			</cfloop>
-			<cfset variables.fw.redirect('air.price?Search_ID=#arguments.rc.Search_ID#')>
+			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
 		<cfreturn />
@@ -160,7 +160,7 @@ email
 	<cffunction name="endemail" output="true">
 		<cfargument name="rc">
 
-		<cfset variables.fw.redirect('air.lowfare?Search_ID=#arguments.rc.Search_ID#')>
+		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
 
 		<cfreturn />
 	</cffunction>
@@ -179,7 +179,7 @@ price
 	<cffunction name="endprice" output="true">
 		<cfargument name="rc">
 		
-		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.SearchID#&filter=all')>
+		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.SearchID#&filter=all')>
 
 		<cfreturn />
 	</cffunction>

@@ -1,5 +1,5 @@
-<cfset application.objHotelPhotos.doHotelPhotoGallery(url.Search_ID,PropertyID,HotelChain) />
-<cfset aHotelPhotos = session.searches[url.Search_ID].stHotels[PropertyID].aHotelPhotos />
+<cfset application.objHotelPhotos.doHotelPhotoGallery(url.SearchID,PropertyID,HotelChain) />
+<cfset aHotelPhotos = session.searches[url.SearchID].stHotels[PropertyID].aHotelPhotos />
 
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:600px">

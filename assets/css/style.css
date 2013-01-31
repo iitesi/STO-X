@@ -1,7 +1,7 @@
 /* Save and include the following CSS styles on your page. */
 
 a {
-    color: #77a6ee;
+    color: #2E76CF;
 }
 
 a:hover {
@@ -9,120 +9,128 @@ a:hover {
 }
 
 #main-nav ul li.active {
-    border-top-color: #77a6ee;
+    border-top-color: #2E76CF;
 }
 
 #main-nav ul li.active:before {
-    border-top-color: #77a6ee;
+    border-top-color: #2E76CF;
 }
 
 #main-nav ul ul li a:hover {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .blog .post .side .post-type {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .blog .post .content .meta li a:hover {
-    color: #77a6ee;
+    color: #2E76CF;
 }
 
 .blog .post .wrap .read-more a {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .portfolio-filter ul li.active a, .portfolio-filter ul li:hover a {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .portfolio-filter ul li.active a:after {
-    border-top-color: #77a6ee;
+    border-top-color: #2E76CF;
 }
 
 .portfolio-items .item .image .overlay .actions li a:hover {
-    color: #77a6ee;
+    color: #2E76CF;
 }
 
 .portfolio-row .read-more a {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .portfolio .portfolio-meta span:before {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .highlight {
-    color: #77a6ee;
+    color: #2E76CF;
 }
 
 .underline {
-    border-bottom-color: #77a6ee;
+    border-bottom-color: #2E76CF;
 }
 
 .underline-heading h1, .underline-heading h2, .underline-heading h3, .underline-heading h4, .underline-heading h5, .underline-heading h6 {
-    border-bottom-color: #77a6ee;
+    border-bottom-color: #2E76CF;
 }
 
 .check-list li:before {
-    color: #77a6ee;
+    color: #2E76CF;
 }
 
 .arrow-list li:before {
-    border-left-color: #77a6ee;
+    border-left-color: #2E76CF;
 }
 
 .skill .circles span.filled {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .our-team .photo .info {
-    border-left-color: #77a6ee;
+    border-left-color: #2E76CF;
 }
 
 .our-team .social ul {
-    border-top-color: #77a6ee;
+    border-top-color: #2E76CF;
 }
 
 .service .read-more a {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .highlights.bold .highlight-item:hover .icon {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .callout .link {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .callout .link:before {
-    border-right-color: #77a6ee;
+    border-right-color: #2E76CF;
 }
 
 .portfolio-carousel .carousel-nav li a {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .latest-blog .overlay .post-type {
-    background-color: #77a6ee;
+    background-color: #2E76CF;
 }
 
 .accordion .accordion-header {
-    border-left-color: #77a6ee;
+    border-left-color: #2E76CF;
 }
-
-
-
 
 body {
 	background-image:url(../img/slider-wrap-bg.png);
 }
-#wrapper {
-	width: 100%;
-	min-width: 1000px;
-}
 
+.roundtrip {
+    margin: auto !important;
+    text-transform: uppercase;
+    font-size: 18px;
+    width:100%;
+}
+.roundtrip .leg {
+    position: relative;
+    float:left;
+    background-color:#2E76CF;
+    color:#FFFFFF;
+    border-radius: 4px;
+    padding: 6px 20px 6px;
+    margin: 0 20px 0 20px;
+}
 /*
 ----------------------------------------------------------------------------------------------------------
 	OVERLAY
@@ -218,7 +226,7 @@ ul.tabs li {
 }
 ul.tabs li a {
 	background-color:#F4F0F0;
-	color:#0090D2;
+	color:#2E76CF;
 	padding:8px 14px 8px 14px;
 	text-decoration:none;
 	font-weight:bold;
@@ -226,14 +234,14 @@ ul.tabs li a {
 	border:1px solid #CBC7BD;
 }
 ul.tabs li a:hover {
-	color:#0090D2;
+	color:#2E76CF;
 	border-color:#2f343a;
 	cursor: hand;
 }  
 ul.tabs li a.active {
-	color:#0090D2;
+	color:#2E76CF;
 	background-color: #FFFFFF;
-	border:1px solid #0090D2;
+	border:1px solid #2E76CF;
 }
 
 /*
@@ -271,6 +279,7 @@ ul.tabs li a.active {
 	float:left;
 	margin-right:10px;
 	position:relative;
+    list-style: none;
 }
 #filter li:hover ul{ /* Display the dropdown on hover */
 	left:0; /* Bring back on-screen when needed */
@@ -480,7 +489,7 @@ footer[role="contentinfo"]{
 	-moz-border-radius: 4px; 
 	khtml-border-radius: 4px; 
 	border-radius: 4px; 
-	background-color: #0090D2;
+	background-color: #2E76CF;
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
 	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
 	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 

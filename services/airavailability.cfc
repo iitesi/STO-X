@@ -74,7 +74,7 @@ doAirAvailability
 		<cfargument name="Account"      required="true">
 		<cfargument name="Policy"       required="true">
 		<cfargument name="sPriority"	required="false"	default="NORMAL">
-		<cfargument name="stGroups"		required="false"	default="#session.searches[url.Search_ID].stAvailDetails.stGroups#">
+		<cfargument name="stGroups"		required="false"	default="#session.searches[url.SearchID].stAvailDetails.stGroups#">
 
 		<cfset local.sThreadName = ''>
 		<!--- Don't go back to the getUAPI if we already got the data. --->

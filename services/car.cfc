@@ -24,7 +24,7 @@ doAvailability
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="SearchID">
 		<cfargument name="nCouldYou"	default="0">
-		<cfargument name="stPolicy"		default="#application.Policies[session.searches[url.Search_ID].PolicyID]#">
+		<cfargument name="stPolicy"		default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
 		
 		<cfset StructDelete(session.searches[SearchID], 'stCars')>
 
@@ -34,7 +34,7 @@ doAvailability
 			<cfset local.stThreads = {}>
 			<cfif NOT StructKeyExists(stPolicy, 'stCDNumbers')>
 				<cfset stPolicy.stCDNumbers = searchCDNumbers(session.searches[arguments.SearchID].ValueID)>
-				<cfset application.Policies[session.searches[url.Search_ID].PolicyID].stCDNumbers = stPolicy.stCDNumbers>
+				<cfset application.Policies[session.searches[url.SearchID].PolicyID].stCDNumbers = stPolicy.stCDNumbers>
 			</cfif>
 			<cfif NOT structIsEmpty(stPolicy.stCDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
@@ -108,7 +108,7 @@ doAvailability
 		<cfargument name="stCDNumbers" 		required="false"	default="">
 		<cfargument name="bFullRequest" 	required="false"	default="false">
 		<cfargument name="stAccount"		required="false"	default="#application.Accounts[session.AcctID]#">
-		<cfargument name="stPolicy" 		required="false"	default="#application.Policies[session.searches[url.Search_ID].PolicyID]#">
+		<cfargument name="stPolicy" 		required="false"	default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
 		
 		<cfquery name="local.getsearch">
 		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Air_Type
@@ -244,7 +244,7 @@ checkPolicy
 		<cfargument name="stCars"  		required="true">
 		<cfargument name="SearchID"	required="true">
 		<cfargument name="stAccount"	required="false"	default="#application.Accounts[session.AcctID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.Policies[session.searches[url.Search_ID].PolicyID]#">
+		<cfargument name="stPolicy" 	required="false"	default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
 		
 		<cfset local.stCars = arguments.stCars>
 		<cfset local.aPolicy = {}>

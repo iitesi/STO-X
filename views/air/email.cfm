@@ -1,6 +1,6 @@
 <div id="emailcontent" style="display:block;position:relative">
 	<cfoutput>
-		<form action="#buildURL('air.email?Search_ID=#rc.Search_ID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#')#" method="post">
+		<form action="#buildURL('air.email?SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#')#" method="post">
 			<input type="hidden" name="bSubmit" value="1">
 			<table width="700">
 			<tr>

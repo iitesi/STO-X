@@ -34,7 +34,7 @@ prepareSoapHeader
 		<cfargument name="nGroup"	 	required="true">
 		<cfargument name="sNextRef"	 	required="false" 	default="">
 		<cfargument name="stAccount"	required="false" 	default="#application.Accounts[session.AcctID]#">
-		<cfargument name="stPolicy"		required="false"	default="#application.Policies[session.searches[url.Search_ID].PolicyID]#">
+		<cfargument name="stPolicy"		required="false"	default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
 		
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>

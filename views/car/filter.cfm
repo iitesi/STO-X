@@ -13,7 +13,7 @@ VENDORS
 				<input type="checkbox" id="btnCarVendor" name="btnCarVendor"> <label for="btnCarVendor">Vendors</label>
 				<ul>
 					<cfoutput>
-						<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="VendorCode">
+						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="VendorCode">
 							<li><input id="btnVendor#LCase(VendorCode)#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onClick="filterCar()"> <label for="btnVendor#LCase(VendorCode)#">#StructKeyExists(application.stCarVendors, VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#</label></li>
 						</cfloop>
 					</cfoutput>
@@ -37,7 +37,7 @@ CATEGORIES
 					<tr>
 					<cfoutput>
 						<cfset temp = ''>
-						<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory">
+						<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 							<cfif temp NEQ Right(sCategory, 3)>
 								<cfif temp NEQ ''>
 									</td>
@@ -82,12 +82,12 @@ $(document).ready(function() {
 <cfoutput>
 	var carresults = [
 		<cfset nCount = 0>
-		<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory">
-			<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
+		<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
+			<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 				<cfif nCount NEQ 0>,</cfif>
 				<cfset nCount++>
-				<cfif structKeyExists(session.searches[rc.Search_ID].stCars[sCategory], sVendor)>
-					[#session.searches[rc.Search_ID].stCars[sCategory][sVendor].sJavascript#]
+				<cfif structKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
+					[#session.searches[rc.SearchID].stCars[sCategory][sVendor].sJavascript#]
 				<cfelse>
 					['#LCase(sCategory)##LCase(sVendor)#','#LCase(sCategory)#','#LCase(sVendor)#',0,0]
 				</cfif>
@@ -96,7 +96,7 @@ $(document).ready(function() {
 
 	var carcategories = [
 		<cfset nCount = 0>
-		<cfloop collection="#session.searches[rc.Search_ID].stCarCategories#" item="sCategory">
+		<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 			<cfif nCount NEQ 0>,</cfif>
 			<cfset nCount++>
 			['#LCase(sCategory)#',#(stPolicy.Policy_CarTypeRule EQ 1 AND NOT ArrayFindNoCase(stPolicy.aCarSizes, sCategory) ? 0 : 1)#]
@@ -104,7 +104,7 @@ $(document).ready(function() {
 
 	var carvendors = [
 		<cfset nCount = 0>
-		<cfloop collection="#session.searches[rc.Search_ID].stCarVendors#" item="sVendor">
+		<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 			<cfif nCount NEQ 0>,</cfif>
 			<cfset nCount++>
 			['#LCase(sVendor)#',#(stPolicy.Policy_CarPrefRule EQ 1 AND NOT ArrayFindNoCase(stAccount.aPreferredCar, sVendor) ? 0 : 1)#]

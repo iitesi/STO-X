@@ -4,7 +4,7 @@
 </cfoutput>
 <br clear="both">
 <div id="aircontent">
-	<cfif structKeyExists(session.searches[rc.Search_ID].stAvailDetails.aSortDuration, rc.Group)>
+	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
 	    <script type="text/javascript" src="assets/js/timeline.js"></script>
 	    <link rel="stylesheet" type="text/css" href="assets/js/timeline.css">
 	    <style type="text/css">

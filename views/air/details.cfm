@@ -1,9 +1,9 @@
 <cfset aRef = ["0","1"]>
 <cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.SearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
 <cfif rc.nGroup EQ ''>
-	<cfset stTrip = session.searches[rc.Search_ID].stTrips[rc.nTripID]>
+	<cfset stTrip = session.searches[rc.SearchID].stTrips[rc.nTripID]>
 <cfelse>
-	<cfset stTrip = session.searches[rc.Search_ID].stAvailTrips[rc.nGroup][rc.nTripID]>
+	<cfset stTrip = session.searches[rc.SearchID].stAvailTrips[rc.nGroup][rc.nTripID]>
 </cfif>
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:#300*2#px">

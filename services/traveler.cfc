@@ -4,9 +4,9 @@
 getUser
 --->
 	<cffunction name="getUser" output="false" access="remote" returnformat="plain">
-		<cfargument name="SearchID"	default="#url.Search_ID#">
+		<cfargument name="SearchID"	default="#url.SearchID#">
 		<cfargument name="Acct_ID" 		default="#session.AcctID#">
-		<cfargument name="User_ID" 		default="#session.searches[url.Search_ID].ProfileID#">
+		<cfargument name="User_ID" 		default="#session.searches[url.SearchID].ProfileID#">
 		<cfargument name="nTraveler" 	default="1">
 
 		<cfset local.stTravelers = session.searches[arguments.SearchID].stTravelers>
@@ -120,7 +120,7 @@ getUser
 getTraveler
 --->
 	<cffunction name="getTraveler" output="false" access="remote" returnformat="plain">
-		<cfargument name="SearchID"	default="#url.Search_ID#">
+		<cfargument name="SearchID"	default="#url.SearchID#">
 		<cfargument name="nTraveler" 	default="1">
 
 		<cfset local.stTraveler = {}>
@@ -291,7 +291,7 @@ getFOPs
 getOUs
 --->
 	<cffunction name="getOUs" output="false">
-		<cfargument name="Value_ID"		default="#session.searches[url.Search_ID].ValueID#">
+		<cfargument name="Value_ID"		default="#session.searches[url.SearchID].ValueID#">
 		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		
 		<cfquery name="local.qOUs" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(1,0,0,0)#">

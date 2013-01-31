@@ -1,6 +1,6 @@
 <cfif application.Accounts[session.AcctID].CouldYou>
 	<cfoutput>
-		<a href="?action=couldyou&Search_ID=#url.Search_ID#">CouldYou</a>
+		<a href="?action=couldyou&SearchID=#url.SearchID#">CouldYou</a>
 	</cfoutput>	
 </cfif>
 <cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>

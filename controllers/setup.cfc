@@ -70,7 +70,7 @@
 	<cffunction name="endclose" output="false">
 		<cfargument name="rc">
 		
-		<cfset variables.fw.redirect('air.lowfare?Search_ID=#rc.nNewSearchID#')>
+		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.nNewSearchID#')>
 		
 		<cfreturn />
 	</cffunction>

@@ -19,6 +19,7 @@
         <link href="assets/css/skeleton.css" rel="stylesheet">
         <link href="assets/css/layout.css" rel="stylesheet">
         <link href="assets/css/style.css" rel="stylesheet">
+        <link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
 
         <!-- Le Fonts -->
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet">
@@ -29,16 +30,15 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <!-- Required Scripts -->
-        <script src="assets/js/jquery-1.8.3.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
         <script src="assets/js/jquery.plugins.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/booking.js"></script>
+        <script src="assets/js/booking.js"></script><!---Custom--->
+        <script src="assets/js/jqModal.js"></script><!---Overlay--->
     </head>
 
     <body>
-
-    <!-- Color Customizer, remove if not needed -->
-    <div id="joiee-customizer"></div>
 
     <div id="main-wrapper" class="wide">
 
@@ -50,43 +50,31 @@
             <div class="container">
                 <div class="sixteen columns">
 
-                    <!-- Logo Container -->
                     <div id="logo-container">
                         <div id="logo-center"><!---logo here--->
                         </div>
                     </div>
-                    <!-- END Logo Container -->
 
                     <div class="tagline">The New Generation of Corporate Online Booking</div>
 
-                    <!-- Main Navigation -->
 	                <cfoutput>
-                    <nav id="main-nav">
-                        <ul>
-                            <li>
-                                <a href="#buildURL('air.lowfare?Search_ID=#rc.SearchID#')#">Air</a>
-                            </li>
-                            <li>
-                                <a href="#buildURL('hotel.search?Search_ID=#rc.SearchID#')#">Hotel</a>
-                            </li>
-                            <li class="active">
-                                <a href="##">Features</a>
-                            </li>
-                            <li>
-                                <a href="portfolio-3.html">Portfolio</a>
-                            </li>
-                            <li>
-                                <a href="blog.html">Blog</a>
-                                <ul>
-                                    <li><a href="blog.html">Blog</a></li>
-                                    <li><a href="blog-single.html">Blog Single</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="contact.html">Contact</a></li>
-                        </ul>
-                    </nav>
+	                    <nav id="main-nav">
+	                        <ul>
+	                            <li>
+	                                <a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
+	                            </li>
+	                            <li>
+	                                <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#">Hotel</a>
+	                            </li>
+	                            <li class="active">
+	                                <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#">Car</a>
+	                            </li>
+	                            <li>
+	                                <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
+	                            </li>
+	                        </ul>
+	                    </nav>
                     </cfoutput>
-                    <!-- END Main Navigation -->
                 </div>
             </div>
         </div>
@@ -95,10 +83,9 @@
         <div id="header-bottom">
             <div class="container">
                 <div class="sixteen columns">
-                    <!---<ul class="breadcrumb">
-                        <li><a href="index.html">Home</a> <span class="divider">/</span></li>
-                        <li class="active">Full Width</li>
-                    </ul>--->
+                    <ul class="breadcrumb">
+	                    <cfoutput>#View('air/tabs')#</cfoutput>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -108,12 +95,6 @@
     <!-- Main Content -->
     <section id="main-content">
 	    <div class="container">
-
-	        <!-- Page Header -->
-	        <div class="page-header">
-	            <h1>SEA-ALO Aug 1-14</h1>
-	        </div>
-	        <!-- End Page Header -->
 			<cfoutput>#body#</cfoutput>
 		</div>
 

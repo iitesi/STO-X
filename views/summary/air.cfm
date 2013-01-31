@@ -11,7 +11,7 @@ HEADING
 				<td colspan="5">
 					<h4>FLIGHT</h4>
 					#(NOT AirPolicy ? 'Your flight is outside of policy.' : '')#
-					<span style="float:right;"><a href="#buildURL('air.lowfare?Search_ID=#rc.SearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
+					<span style="float:right;"><a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
 				</td>
 			</tr>
 			<tr>
@@ -131,7 +131,7 @@ GENERAL SEAT ASSIGNMENTS
 								Specific Seat Seletion
 							</td>
 							<td>
-								<a href="?action=air.popup&sDetails=seatmap&Search_ID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
+								<a href="?action=air.popup&sDetails=seatmap&SearchID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&nGroup=&bSelection=1" class="overlayTrigger" target="_blank">
 									Seat Maps
 									<cfloop collection="#stItinerary.Air.Groups#" index="nGroupKey" item="stGroup">
 										<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">

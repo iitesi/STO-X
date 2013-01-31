@@ -4,7 +4,7 @@
 getOUs
 --->
 	<cffunction name="getOUs" output="false">
-		<cfargument name="Value_ID"		default="#session.searches[url.Search_ID].ValueID#">
+		<cfargument name="Value_ID"		default="#session.searches[url.SearchID].ValueID#">
 		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		
 		<cfquery name="local.qOUs" datasource="Corporate_Production" cachedwithin="#createTime(24,0,0)#">
@@ -114,8 +114,8 @@ determinFees
 	<cffunction name="determinFees" access="remote" output="false">
 		<cfargument name="Acct_ID" 		default="#session.AcctID#">
 		<cfargument name="User_ID" 		default="#session.User_ID#">
-		<cfargument name="stItinerary" 	default="#session.searches[url.Search_ID].stItinerary#">
-		<cfargument name="AirType"		default="#session.searches[url.Search_ID].AirType#">
+		<cfargument name="stItinerary" 	default="#session.searches[url.SearchID].stItinerary#">
+		<cfargument name="AirType"		default="#session.searches[url.SearchID].AirType#">
 		
 		<cfset local.stFees = {}>
 		<cfset local.Air = false>

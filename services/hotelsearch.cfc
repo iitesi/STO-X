@@ -453,7 +453,7 @@
 	<cffunction name="selectHotel" output="false">
 		<cfargument name="nHotelID" default="#form.sHotel#">
 		<cfargument name="nRoom" default="#form.sRoomDescription#">
-		<cfargument name="SearchID" default="#url.Search_ID#">
+		<cfargument name="SearchID" default="#url.SearchID#">
 
 		<cfset getSearch = getSearch(arguments.SearchID) />
 		<cfset local.Nights = DateDiff('d',getSearch.CheckIn_Date,getSearch.CheckOut_Date) />

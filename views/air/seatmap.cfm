@@ -21,7 +21,7 @@
 		<ul class="tabs">
 			<table>
 			<tr height="30">
-				<cfset sURL = 'Search_ID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&nGroup=#rc.nGroup#'>
 				<cfloop collection="#stGroups#" index="nGroupKey" item="stGroup">
 					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 						<td>

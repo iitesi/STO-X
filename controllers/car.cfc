@@ -27,9 +27,9 @@
 		<cfif structKeyExists(arguments.Filter, 'bSelect')>
 			<cfif arguments.Filter.getHotel()
 			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?Search_ID=#session.searches[arguments.Filter.getSearchID()#')>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#session.searches[arguments.Filter.getSearchID()#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?Search_ID=#session.searches[arguments.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?SearchID=#session.searches[arguments.Filter.getSearchID()#')>
 		</cfif>
 
 		<cfreturn />
