@@ -20,15 +20,18 @@ doAvailability
 		<cfargument name="Filter" 	required="true">
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"   required="true">
+		<cfargument name="sCarChain"required="false">
+		<cfargument name="sCarType" required="false">
 		<cfargument name="nCouldYou"required="false"    default="0">
 		<cfargument name="sPriority"required="false"    default="LOW">
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
-
+		<cfset local.CarRate = 0>
 		<!---<cfset session.searches[SearchID].stCars = {}>--->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
-		OR StructIsEmpty(session.searches[SearchID].stCars)>
+		OR StructIsEmpty(session.searches[SearchID].stCars)
+		OR arguments.nCouldYou NEQ 0>
 
 			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
 			<cfset local.stThreads = {}>
@@ -46,11 +49,15 @@ doAvailability
 					<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
 					<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
 					<cfset local.stCars     = parseCars(aResponse, 1)>
-					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-					<cfset local.stCars     = addJavascript(stCars)>
-					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
-					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
-					<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+					<cfif arguments.nCouldYou EQ 0>
+						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+						<cfset local.stCars     = addJavascript(stCars)>
+						<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
+						<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+						<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+					<cfelse>
+						<cfset thread.stCars     = stCars>
+					</cfif>
 				</cfthread>
 			</cfif>
 			
@@ -65,22 +72,36 @@ doAvailability
 				<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
 				<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
 				<cfset local.stCars     = parseCars(aResponse, 0)>
-				<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-				<cfset local.stCars     = addJavascript(stCars)>
-				<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
-				<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
-				<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+				<cfif arguments.nCouldYou EQ 0>
+					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<cfset local.stCars     = addJavascript(stCars)>
+					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
+					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+					<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+				<cfelse>
+					<cfset thread.stCars     = stCars>
+				</cfif>
 			</cfthread>
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
 
-			<cfif arguments.sPriority EQ 'HIGH'>
+			<cfif arguments.sPriority EQ 'HIGH'
+			OR arguments.nCouldYou NEQ 0>
 				<cfthread action="join" name="#StructKeyList(stThreads)#" />
 				<cfdump var="#cfthread#" abort>
+				<cfif arguments.nCouldYou NEQ 0>
+					<cfif structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars, sCarType)
+					AND structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
+						<cfset CarRate = cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					<cfelseif structKeyExists(cfthread['stPublicRates#nUniqueThreadName#'].stCars, sCarType)
+					AND structKeyExists(cfthread['stPublicRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
+						<cfset CarRate = cfthread['stPublicRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					</cfif>
+				</cfif>
 			</cfif>
 
 		</cfif>
 		
-		<cfreturn >
+		<cfreturn CarRate>
 	</cffunction>
 
 <!--- prepareSOAPHeader --->
