@@ -46,7 +46,7 @@ OUT OF POLICY
 --->
 					<!--- All accounts when out of policy --->
 					<cfif NOT CarPolicy
-					AND stPolicy.Policy_CarReasonCode EQ 1>
+					AND rc.Policy.Policy_CarReasonCode EQ 1>
 						<select name="Car_ReasonCode" id="Car_ReasonCode">
 						<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
 						<option value="D">Required car vendor does not provide service at destination</option>

@@ -10,9 +10,16 @@
 		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
 		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
 	</bean>
-	<bean id="airavailability" class="booking.services.airavailability" >
-		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
-		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
-	</bean>
+    <bean id="airavailability" class="booking.services.airavailability" >
+        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+        <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+    </bean>
+    <bean id="airprice" class="booking.services.airprice" >
+        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+        <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+    </bean>
+    <bean id="car" class="booking.services.car" >
+        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+    </bean>
 	
 </beans>

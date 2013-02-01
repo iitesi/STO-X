@@ -21,7 +21,7 @@
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
 	<cfif nLegs EQ 2>
-		<cfset variables.minheight = 345>
+		<cfset variables.minheight = 325>
 	<cfelseif nLegs EQ 1>
 		<cfset variables.minheight = 225>
 	<cfelseif nLegs EQ 3>
@@ -40,7 +40,7 @@
 				#View('air/badge')#
 			</cfloop>
 			<!--- Display standard fare based search --->
-			<cfset bSelected = false>
+			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey) AND nCount LTE 50>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>

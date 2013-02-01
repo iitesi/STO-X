@@ -19,12 +19,6 @@
 		<cfif NOT StructKeyExists(application, 'sAPIAuth') OR application.sAPIAuth EQ ''>
 			<cfset variables.fw.service('setup.setAPIAuth', 'void')>
 		</cfif>
-		<cfif NOT StructKeyExists(application, 'Accounts') OR StructIsEmpty(application.Accounts)>
-			<cfset variables.fw.service('setup.setAccounts', 'void')>
-		</cfif>
-		<cfif NOT StructKeyExists(application, 'Policies') OR StructIsEmpty(application.Policies)>
-			<cfset variables.fw.service('setup.setPolicies', 'void')>
-		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAirVendors') OR StructIsEmpty(application.stAirVendors)>
 			<cfset variables.fw.service('setup.setAirVendors', 'void')>
 		</cfif>
@@ -50,15 +44,57 @@
 		<cfreturn />
 	</cffunction>
 
+<!---
+setSearch
+--->
+	<cffunction name="setSearch" output="false" returntype="void">
+		<cfargument name="rc">
 
-<!--- setup : setSession --->
-	<cffunction name="setSession">
+		<!---Move the search into the rc scope so it is always available.--->
+		<cfif StructKeyExists(session, 'Filters') AND StructKeyExists(session.Filters, arguments.rc.SearchID)>
+			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
+		<!---Add search to the session scope.--->
+		<cfelse>
+			<cfset variables.fw.service('setup.setSearch', 'Filter')>
+		</cfif>
 
-		<cfset variables.fw.service('security.search', 'search')>
-		
 		<cfreturn />
 	</cffunction>
-	
+
+<!---
+setAccount
+--->
+	<cffunction name="setAccount" output="false" returntype="void">
+		<cfargument name="rc">
+
+		<!---Move the Account into the rc scope so it is always available.--->
+		<cfif StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, arguments.rc.AcctID)>
+			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
+		<!---Lazy loading, adds account to the application scope as needed.--->
+		<cfelse>
+			<cfset variables.fw.service('setup.setAccount', 'Account')>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+<!---
+setPolicy
+--->
+	<cffunction name="setPolicy" output="false" returntype="void">
+		<cfargument name="rc">
+
+		<!---Move the Policy into the rc scope so it is always available.--->
+		<cfif StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, arguments.rc.PolicyID)>
+			<cfset rc.Policy = application.Policies[arguments.rc.PolicyID]>
+		<!---Lazy loading, adds policies to the application scope as needed.--->
+		<cfelse>
+			<cfset variables.fw.service('setup.setPolicy', 'Policy')>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
 <!--- close --->
 	<cffunction name="close" output="false">
 		<cfargument name="rc">

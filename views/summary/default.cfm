@@ -4,7 +4,6 @@
 	</cfoutput>	
 </cfif>
 <cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
-<cfset variables.stPolicy = application.Policies[session.searches[rc.SearchID].PolicyID]>
 <cfset variables.nLowestFare = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].Total>
 <cfset variables.Air = (structKeyExists(stItinerary, 'Air') ? true : false)>
 <cfset variables.Hotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
@@ -17,16 +16,16 @@
 		<input type="hidden" id="Hotel" value="#Hotel#">
 		<input type="hidden" name="nTraveler" id="nTraveler" value="1">
 		<input type="hidden" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
-		<cfif bCar>
+		<cfif Car>
 			<input type="hidden" id="sCarVendor" value="#stItinerary.Car.VendorCode#">			
 		</cfif>
-		<cfif StructKeyExists(stPolicy, 'stCDNumbers')
-		AND StructKeyExists(stPolicy.stCDNumbers, stItinerary.Car.VendorCode)>
-			<cfset variables.stCD = stPolicy.stCDNumbers[stItinerary.Car.VendorCode]>
-		<cfelse>
+		<!---<cfif StructKeyExists(Policy, 'CDNumbers')
+		AND StructKeyExists(Policy.CDNumbers, stItinerary.Car.VendorCode)>
+			<cfset variables.stCD = Policy.stCDNumbers[stItinerary.Car.VendorCode]>
+		<cfelse>todo--->
 			<cfset variables.stCD.DB = ''>
 			<cfset variables.stCD.CD = ''>
-		</cfif>
+		<!---</cfif>--->
 		<input type="hidden" id="bDB" value="#stCD.DB#">
 		<input type="hidden" id="bCD" value="#stCD.CD#">
 		<cfset variables.nTraveler = 1>
@@ -52,7 +51,7 @@
 				#View('summary/hotel')#
 				<br class="clearfix">
 				 --->
-				<cfif bCar>
+				<cfif Car>
 					#View('summary/car')#					
 				</cfif>
 				

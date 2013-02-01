@@ -31,7 +31,6 @@ saveSummary
 --->
 	<cffunction name="saveSummary" output="false">
 
-		
 		<cfset local.stItinerary = session.searches[arguments.SearchID].stItinerary>
 		<cfset local.stTraveler = StructCopy(session.searches[arguments.SearchID].stTravelers[arguments.nTraveler])>
 
@@ -112,10 +111,10 @@ getAllTravelers
 determinFees
 --->
 	<cffunction name="determinFees" access="remote" output="false">
-		<cfargument name="Acct_ID" 		default="#session.AcctID#">
-		<cfargument name="User_ID" 		default="#session.User_ID#">
+		<cfargument name="AcctID" 		default="#session.AcctID#">
+		<cfargument name="UserID" 		default="#session.UserID#">
 		<cfargument name="stItinerary" 	default="#session.searches[url.SearchID].stItinerary#">
-		<cfargument name="AirType"		default="#session.searches[url.SearchID].AirType#">
+		<cfargument name="Fitler">
 		
 		<cfset local.stFees = {}>
 		<cfset local.Air = false>
@@ -124,7 +123,7 @@ determinFees
 		<cfquery name="local.qAgentSine" datasource="Corporate_Production">
 		SELECT AccountID
 		FROM Payroll_Users
-		WHERE User_ID = <cfqueryparam value="#arguments.User_ID#" cfsqltype="cf_sql_integer">
+		WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 		</cfquery>
 		<cfif StructKeyExists(arguments.stItinerary, 'Air')>
 			<cfset local.Air = true>
@@ -159,7 +158,7 @@ determinFees
 			</cfloop>
 			<cfif (sFeeType EQ 'OINTL' OR sFeeType EQ 'INTL')
 			AND (ArrayLen(arguments.stItinerary.Air.Carriers) GT 1
-				OR arguments.AirType EQ 'MD'
+				OR arguments.Filter.getAirType() EQ 'MD'
 				OR nSegments GT 6)>
 					<cfif qAgentSine.AccountID EQ ''>
 						<cfset sFeeType = 'OINTLRD'>
@@ -177,13 +176,13 @@ determinFees
 		<cfquery name="local.qRequest" datasource="Corporate_Production">
 		SELECT IsNull(Fee_Amount, 0) AS Fee_Amount
 		FROM Account_Fees
-		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 		AND Fee_Type = <cfqueryparam value="ORQST" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<cfquery name="local.qSpecificFee" datasource="Corporate_Production">
 		SELECT IsNull(Fee_Amount, 0) AS Fee_Amount
 		FROM Account_Fees
-		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 		AND Fee_Type = <cfqueryparam value="#sFeeType#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 <!--- TO DO : Traveler Count --->

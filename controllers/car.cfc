@@ -11,36 +11,26 @@
 	<cffunction name="availability" output="false">
 		<cfargument name="rc">
 		
-		<cfif NOT structKeyExists(rc, 'bSelect')>
-			<cfset variables.fw.service('car.doAvailability', 'void')>
+		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+			<cfset rc.sPriority = 'HIGH'>
+			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
-			<!--- Select --->
-			<cfset variables.fw.service('car.selectCar', 'void')>
+			<cfset fw.getBeanFactory().getBean('car').selectCar(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endavailability" output="false">
-		<cfargument name="Filter">
-		<cfargument name="bSelect">
+		<cfargument name="rc">
 
-		<cfif structKeyExists(arguments.Filter, 'bSelect')>
-			<cfif arguments.Filter.getHotel()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?SearchID=#session.searches[arguments.Filter.getSearchID()#')>
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+			<cfif arguments.rc.Filter.getHotel()
+			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?SearchID=#session.searches[arguments.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
-		<cfreturn />
-	</cffunction>
-	
-<!--- locations --->
-	<cffunction name="locations" output="false">
-		<cfargument name="rc">
-		
-		<cfset variables.fw.service('locations.doLocations', 'stLocations')>
-				
 		<cfreturn />
 	</cffunction>
 	

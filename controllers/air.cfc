@@ -19,8 +19,9 @@ lowfare
 		<cfargument name="rc">
 
 	    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			<!--- Throw out a thread for availability --->
-			<!---<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>--->
+			<!--- Throw out a threads --->
+			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
@@ -57,9 +58,10 @@ availability
 		
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset arguments.rc.sPriority = 'LOW'>
-			<!--- Throw out a thread for low fare --->
-			<!---<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>--->
+			<!--- Throw out a threads --->
+			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the availability search. --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
@@ -74,12 +76,30 @@ availability
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg])>
-					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg#')>
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
+					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
 				</cfif>
 			</cfloop>
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+<!---
+price
+--->
+	<cffunction name="price" output="false">
+		<cfargument name="rc">
+
+		<cfset fw.getBeanFactory().getBean('airprice').doAirPrice(argumentcollection=arguments.rc)>
+
+		<cfreturn />
+	</cffunction>
+	<cffunction name="endprice" output="true">
+		<cfargument name="rc">
+
+		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&filter=all')>
 
 		<cfreturn />
 	</cffunction>
@@ -151,25 +171,6 @@ email
 		<cfargument name="rc">
 
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
-
-		<cfreturn />
-	</cffunction>
-
-<!---
-price
---->
-	<cffunction name="price" output="false">
-		<cfargument name="rc">
-		
-		<!--- Do the pricing --->
-		<cfset variables.fw.service('airprice.doAirPrice', 'void')>
-		
-		<cfreturn />
-	</cffunction>
-	<cffunction name="endprice" output="true">
-		<cfargument name="rc">
-		
-		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.SearchID#&filter=all')>
 
 		<cfreturn />
 	</cffunction>

@@ -49,7 +49,7 @@ threadAvailability
 			<cfelse>
 				<cfset sPriority = 'LOW'>
 			</cfif>
-			<cfset sThreadName = doAvailability(arguments.Filter, nLeg, arguments.Account, arguments.Policy, sPriority)>
+			<cfset sThreadName = doAvailability(arguments.Filter, nLeg-1, arguments.Account, arguments.Policy, sPriority)>
 			<cfif sPriority EQ 'HIGH' AND sThreadName NEQ ''>
 				<cfset stThreads[sThreadName] = ''>
 			</cfif>
@@ -59,7 +59,7 @@ threadAvailability
 		<cfif NOT StructIsEmpty(stThreads)>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 			<!--- <cfdump eval=stThreads> --->
-			<!--- <cfdump eval=cfthread abort> --->
+			<!---<cfdump eval=cfthread abort>--->
 		</cfif>
 
 		<cfreturn >
@@ -78,7 +78,7 @@ doAirAvailability
 
 		<cfset local.sThreadName = ''>
 		<!--- Don't go back to the getUAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stGroups, Group)>
+		<cfif NOT StructKeyExists(arguments.stGroups, arguments.Group)>
 			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = 'Group'&arguments.Group>
 			<!--- Kick off the thread. --->

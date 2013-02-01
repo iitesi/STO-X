@@ -53,125 +53,260 @@ setAPIAuth - REMOVE LATER
 		
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
-setAccounts
+setSearch
 --->
-	<cffunction name="setAccounts" output="false" returntype="void">
-		
-		<cfset local.stBranches = {
-			"149I" = "P7003154",
-			"176T" = "P7003151",
-			"17D8" = "P7003159",
-			"1AM2" = "P7003153",
-			"1CO2" = "P7003175",
-			"1H7M" = "P7003150",
-			"1H7N" = "P7003185",
-			"1M98" = "P7003155",
-			"1N32" = "P7003173",
-			"1N47" = "P7003172",
-			"1N51" = "P7003156",
-			"1N52" = "P7003157",
-			"1N63" = "P7003158",
-			"1P6O" = "P7003160",
-			"1WN9" = "P7003174",
-			"1WO0" = "P7003182",
-			"2B2C" = "P7003152",
-			"2N0D" = "P7003176"
-		}>
-		
-		<!--- CouldYou is in the Corporate_Production accounts table --->
-		<cfquery name="local.qAccounts" datasource="book">
-		SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
-		Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-		RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
-		FROM Accounts, Zeus.Corporate_Production.dbo.Accounts CPAccounts
-		WHERE Accounts.Active = 1
-		AND Accounts.Acct_ID = CPAccounts.Acct_ID
-		</cfquery>
-		<cfset local.stTemp = {}>
-		<cfloop query="qAccounts">
-			<cfset stTemp[Acct_ID] = {}>
-			<cfset stTemp[Acct_ID].aPreferredAir = ArrayNew()> 
-			<cfset stTemp[Acct_ID].aPreferredCar = ArrayNew()> 
-			<cfset stTemp[Acct_ID].aPreferredHotel = ArrayNew()> 
-			<cfset stTemp[Acct_ID].aNonPolicyAir = ArrayNew()> 
-			<cfset stTemp[Acct_ID].aNonPolicyCar = ArrayNew()> 
-			<cfset stTemp[Acct_ID].aNonPolicyHotel = ArrayNew()> 
-			<cfloop list="#qAccounts.ColumnList#" index="local.sCol">
-				<cfset stTemp[Acct_ID][sCol] = qAccounts[sCol]>
-			</cfloop>
-			<cfset stTemp[Acct_ID].sBranch = stBranches[PCC_Booking]>
-			<cfset stTemp[Acct_ID].Air_PF = ListToArray(stTemp[Acct_ID].Air_PF, '~')> 
-		</cfloop>
-		
-		<cfquery name="local.qOutOfPolicy" datasource="book">
-		SELECT Vendor_ID, Acct_ID, Type
-		FROM OutofPolicy_Vendors
-		</cfquery>
-		<cfloop query="qOutOfPolicy">
-			<cfif StructKeyExists(stTemp, Acct_ID)>
-				<cfset local.sType = 'aNonPolicy'&(Type EQ 'A' ? 'Air' : (Type EQ 'C' ? 'Car' : 'Hotel'))>
-				<cfset ArrayAppend(stTemp[Acct_ID][sType], qOutOfPolicy.Vendor_ID)>
+	<cffunction name="setSearch" output="false">
+		<cfargument name="SearchID" required="true">
+		<cfargument name="Append" 	required="false" default="0" >
+
+		<cfif arguments.SearchID NEQ 0>
+			<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
+
+			<cfquery name="local.getsearch">
+			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,
+			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
+			Arrival_TimeType, ClassOfService
+			FROM Searches
+			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
+			ORDER BY Search_ID DESC
+			</cfquery>
+			<cfif getsearch.Air_Type EQ 'MD'>
+				<cfquery name="local.getsearchlegs">
+				SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
+				FROM Searches_Legs
+				WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
 			</cfif>
-		</cfloop>
-		
-		<cfquery name="local.qPreferred" datasource="book">
-		SELECT Acct_ID, Vendor_ID, Type
-		FROM Preferred_Vendors
-		</cfquery>
-		<cfloop query="qPreferred">
-			<cfif StructKeyExists(stTemp, Acct_ID)>
-				<cfset local.sType = 'aPreferred'&(Type EQ 'A' ? 'Air' : (Type EQ 'C' ? 'Car' : 'Hotel'))>
-				<cfset ArrayAppend(stTemp[Acct_ID][sType], qPreferred.Vendor_ID)>
+
+			<cfset searchfilter.setSearchID(getsearch.Search_ID)>
+			<cfset searchfilter.setAir(getsearch.Air EQ 1 ? true : false)>
+			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
+			<cfset searchfilter.setHotel(getsearch.Hotel EQ 1 ? true : false)>
+			<cfset searchfilter.setAirType(getsearch.Air_Type)>
+			<cfset searchfilter.setDepartCity(getsearch.Depart_City)>
+			<cfset searchfilter.setDepartDate(getsearch.Depart_DateTime)>
+			<cfset searchfilter.setDepartType(getsearch.Depart_TimeType)>
+			<cfset searchfilter.setArrivalCity(getsearch.Arrival_City)>
+			<cfset searchfilter.setArrivalDate(getsearch.Arrival_DateTime)>
+			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
+			<cfset searchfilter.setAirlines(getsearch.Airlines)>
+			<cfset searchfilter.setInternational(getsearch.International EQ 1 ? true : false)>
+			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
+			<cfset searchfilter.setProfileID(getsearch.Profile_ID)>
+			<cfset searchfilter.setPolicyID(getsearch.Policy_ID)>
+			<cfset searchfilter.setValueID(getsearch.Value_ID)>
+			<cfset searchfilter.setUserID(getsearch.User_ID)>
+			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
+			<cfset searchfilter.setUsername(getsearch.Username)>
+
+			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
+				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->
+			<cfelseif getsearch.Profile_ID EQ 0>
+				<cfset searchfilter.setBookingFor('Guest Traveler')><!--- Guest traveler --->
+			<cfelse>
+				<cfquery name="local.getuser" datasource="Corporate_Production">
+				SELECT First_Name, Last_Name
+				FROM Users
+				WHERE User_ID = <cfqueryparam value="#getsearch.Profile_ID#" cfsqltype="cf_sql_integer" >
+				</cfquery>
+				<cfset searchfilter.setBookingFor(getuser.First_Name&' '&getuser.Last_Name)><!--- Booking for someone else --->
 			</cfif>
-		</cfloop>
-		
-		<cfset application.Accounts = stTemp>
-		
-		<cfreturn />
+
+			<!--- Round trip tab --->
+			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
+				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
+					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d'))>
+					<cfelse>
+					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				</cfif>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+				<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset searchfilter.addLeg(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
+			<!--- One way trip tab --->
+			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
+				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+				<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+			<!--- Multi destination trip tab --->
+			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'MD'>
+				<!---<cfset searchfilter.setDestination('')>
+				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' '>--->
+				<!---<cfset tab.Legs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
+				<cfloop query="getsearchlegs">
+					<cfset tab.Heading = tab.Heading&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
+					<cfset tab.Legs[getsearchlegs.CurrentRow] = getsearchlegs.Depart_City&' to '&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')>
+				</cfloop>--->
+			<cfelseif NOT getsearch.Air>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+			</cfif>
+
+			<!---Set filter--->
+			<cfset session.Filters[arguments.SearchID] = searchfilter>
+			<!---Set session variables--->
+			<cfset session.UserID = getSearch.User_ID>
+			<cfset session.AcctID = getSearch.Acct_ID>
+			<cfset session.PolicyID = getSearch.Policy_ID>
+			<!---Default the search session struct--->
+			<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[1] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[2] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailTrips[3] = {}>
+			<cfset session.searches[arguments.SearchID].stAvailDetails = {}>
+			<cfset session.searches[arguments.SearchID].stAvailDetails.stGroups = {}>
+			<cfset session.searches[arguments.SearchID].stTrips = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPricing = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[arguments.SearchID].stItinerary = {}>
+			<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
+			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
+			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
+		</cfif>
+
+		<cfreturn searchfilter/>
 	</cffunction>
-	
+
 <!---
-setPolicies
+setAccount
 --->
-	<cffunction name="setPolicies" output="false" returntype="void">
-		
-		<cfquery name="local.qPolicies" datasource="book">
-		SELECT Policy_ID, Acct_ID, Policy_Include, Policy_Approval, Policy_Window, Policy_AirReasonCode, Policy_AirLostSavings, 
-		Policy_AirFirstClass, Policy_AirBusinessClass, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad, 
-		Policy_AirMaxRule, Policy_AirMaxDisp, Policy_AirMaxTotal, Policy_AirPrefRule, Policy_AirPrefDisp, Policy_AirAdvRule, 
-		Policy_AirAdvDisp, Policy_AirAdv, Policy_AirRefRule, Policy_AirRefDisp, Policy_AirNonRefRule, Policy_AirNonRefDisp, 
-		Policy_FindIt, Policy_FindItDays, Policy_FindItDiff, Policy_FindItFee, Policy_CarReasonCode, Policy_CarMaxRule, Policy_CarMaxDisp, 
-		Policy_CarMaxRate, Policy_CarPrefRule, Policy_CarPrefDisp, Policy_CarTypeRule, Policy_CarTypeDisp, Policy_CarOnlyRates, 
-		Policy_HotelReasonCode, Policy_HotelMaxRule, Policy_HotelMaxDisp, Policy_HotelMaxRate, Policy_HotelPrefRule, Policy_HotelPrefDisp, 
-		Policy_HotelNotBooking, Policy_AirFee, Policy_AirIntFee, Policy_NonAirFee, Policy_SpecialRequestFee, Policy_AgentAirFee, 
-		Policy_AgentAirIntFee, Policy_AgentNonAirFee, Policy_ComplexFee, BookIt_MonthFee, BookIt_TransFee, Policy_AllowRequests
-		FROM Account_Policies
-		WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		</cfquery>
+	<cffunction name="setAccount" output="false">
+		<cfargument name="AcctID">
+
 		<cfset local.stTemp = {}>
-		<cfloop query="qPolicies">
-			<cfset stTemp[Policy_ID] = {}>
-			<cfset stTemp[Policy_ID].aCarSizes = ArrayNew()>
-			<cfloop list="#qPolicies.ColumnList#" index="local.sCol">
-				<cfset stTemp[Policy_ID][sCol] = qPolicies[sCol]>
-			</cfloop> 
-		</cfloop>
-		
-		<cfquery name="local.qPreferredCarSizes" datasource="book">
-		SELECT Car_Size, Policy_ID
-		FROM Policy_CarCategories
-		</cfquery>
-		<cfloop query="qPreferredCarSizes">
-			<cfif StructKeyExists(stTemp, Policy_ID)>
-				<cfset ArrayAppend(stTemp[Policy_ID].aCarSizes, qPreferredCarSizes.Car_Size)>
-			</cfif>
-		</cfloop>
-		
-		<cfset application.Policies = stTemp>
-		
-		<cfreturn />
+		<cfif arguments.AcctID NEQ 0>
+			<!---Lazy loading, adds account to the application scope as needed.--->
+			<cfset local.Branches = {
+				"149I" = "P7003154",
+				"176T" = "P7003151",
+				"17D8" = "P7003159",
+				"1AM2" = "P7003153",
+				"1CO2" = "P7003175",
+				"1H7M" = "P7003150",
+				"1H7N" = "P7003185",
+				"1M98" = "P7003155",
+				"1N32" = "P7003173",
+				"1N47" = "P7003172",
+				"1N51" = "P7003156",
+				"1N52" = "P7003157",
+				"1N63" = "P7003158",
+				"1P6O" = "P7003160",
+				"1WN9" = "P7003174",
+				"1WO0" = "P7003182",
+				"2B2C" = "P7003152",
+				"2N0D" = "P7003176"
+			}>
+
+			<cfquery name="local.qAccount">
+			SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+			Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
+			RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
+			FROM Accounts, Zeus.Corporate_Production.dbo.Accounts CPAccounts<!--- CouldYou is in the Corporate_Production accounts table --->
+			WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+			AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			AND Accounts.Acct_ID = CPAccounts.Acct_ID
+			</cfquery>
+
+			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
+				<cfset stTemp[sCol] = qAccount[sCol]>
+			</cfloop>
+			<cfset stTemp.sBranch = Branches[qAccount.PCC_Booking]>
+			<cfset stTemp.Air_PF = ListToArray(stTemp.Air_PF, '~')>
+
+			<cfquery name="local.qOutOfPolicy" datasource="book">
+			SELECT Vendor_ID, Type
+			FROM OutofPolicy_Vendors
+			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+			<cfset stTemp.aNonPolicyAir = []>
+			<cfset stTemp.aNonPolicyCar = []>
+			<cfset stTemp.aNonPolicyHotel = []>
+			<cfloop query="qOutOfPolicy">
+				<cfset local.sType = 'aNonPolicy'&(qOutOfPolicy.Type EQ 'A' ? 'Air' : (qOutOfPolicy.Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(stTemp[sType], qOutOfPolicy.Vendor_ID)>
+			</cfloop>
+
+			<cfquery name="local.qPreferred" datasource="book">
+			SELECT Acct_ID, Vendor_ID, Type
+			FROM Preferred_Vendors
+			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+			<cfset stTemp.aPreferredAir = []>
+			<cfset stTemp.aPreferredCar = []>
+			<cfset stTemp.aPreferredHotel = []>
+			<cfloop query="qPreferred">
+				<cfif StructKeyExists(stTemp, Acct_ID)>
+					<cfset local.sType = 'aPreferred'&(qPreferred.Type EQ 'A' ? 'Air' : (qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
+					<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
+				</cfif>
+			</cfloop>
+
+			<cfset application.Accounts[arguments.AcctID] = stTemp>
+		</cfif>
+
+		<cfreturn stTemp/>
+	</cffunction>
+
+<!---
+setPolicy
+--->
+	<cffunction name="setPolicy" output="false">
+		<cfargument name="PolicyID">
+
+		<cfset local.stTemp = {}>
+		<cfif arguments.PolicyID NEQ 0>
+			<!---Lazy loading, adds policies to the application scope as needed.--->
+			<cfquery name="local.qPolicy" datasource="book">
+			SELECT Policy_ID, Acct_ID, Policy_Include, Policy_Approval, Policy_Window, Policy_AirReasonCode, Policy_AirLostSavings,
+			Policy_AirFirstClass, Policy_AirBusinessClass, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad,
+			Policy_AirMaxRule, Policy_AirMaxDisp, Policy_AirMaxTotal, Policy_AirPrefRule, Policy_AirPrefDisp, Policy_AirAdvRule,
+			Policy_AirAdvDisp, Policy_AirAdv, Policy_AirRefRule, Policy_AirRefDisp, Policy_AirNonRefRule, Policy_AirNonRefDisp,
+			Policy_FindIt, Policy_FindItDays, Policy_FindItDiff, Policy_FindItFee, Policy_CarReasonCode, Policy_CarMaxRule, Policy_CarMaxDisp,
+			Policy_CarMaxRate, Policy_CarPrefRule, Policy_CarPrefDisp, Policy_CarTypeRule, Policy_CarTypeDisp, Policy_CarOnlyRates,
+			Policy_HotelReasonCode, Policy_HotelMaxRule, Policy_HotelMaxDisp, Policy_HotelMaxRate, Policy_HotelPrefRule, Policy_HotelPrefDisp,
+			Policy_HotelNotBooking, Policy_AirFee, Policy_AirIntFee, Policy_NonAirFee, Policy_SpecialRequestFee, Policy_AgentAirFee,
+			Policy_AgentAirIntFee, Policy_AgentNonAirFee, Policy_ComplexFee, BookIt_MonthFee, BookIt_TransFee, Policy_AllowRequests
+			FROM Account_Policies
+			WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+			AND Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<cfset local.stTemp = {}>
+			<cfloop list="#qPolicy.ColumnList#" index="local.sCol">
+				<cfset stTemp[sCol] = qPolicy[sCol]>
+			</cfloop>
+
+			<cfquery name="local.qPreferredCarSizes" datasource="book">
+			SELECT Car_Size, Policy_ID
+			FROM Policy_CarCategories
+			WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+			<cfset stTemp.aCarSizes = []>
+			<cfloop query="qPreferredCarSizes">
+				<cfset ArrayAppend(stTemp.aCarSizes, qPreferredCarSizes.Car_Size)>
+			</cfloop>
+
+			<cfquery name="local.qCDNumbers">
+			SELECT IsNull(Value_ID, '0') AS Value_ID, Vendor_Code, CD_Number, DB_Number, DB_Type
+			FROM CD_Numbers
+			WHERE Acct_ID = <cfqueryparam value="#qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+			<cfset stTemp.CDNumbers = {}>
+			<cfloop query="qCDNumbers">
+				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].CD = qCDNumbers.CD_Number>
+				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].DB = qCDNumbers.DB_Number>
+				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].DBType = qCDNumbers.DB_Type>
+			</cfloop>
+
+			<cfset application.Policies[arguments.PolicyID] = stTemp>
+		</cfif>
+
+		<cfreturn stTemp/>
 	</cffunction>
 		
 <!---

@@ -1,157 +1,134 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="uapi">
 
 <!---
-selectCar
+init
 --->
-	<cffunction name="selectCar" output="false">
-		<cfargument name="SearchID">
-		<cfargument name="sCategory">
-		<cfargument name="sVendor">
+	<cffunction name="init" output="false">
+		<cfargument name="uapi">
 
-		<!--- Initialize or overwrite the CouldYou car section --->
-		<cfset session.searches[arguments.SearchID].CouldYou.Car = {} />
-		<cfset session.searches[arguments.SearchID]['Car'] = true />
-		<!--- Move over the information into the stItinerary --->
-		<cfset session.searches[arguments.SearchID].stItinerary.Car = session.searches[arguments.SearchID].stCars[arguments.sCategory][arguments.sVendor]>
-		<cfset session.searches[arguments.SearchID].stItinerary.Car.VendorCode = arguments.sVendor>
+		<cfset setUAPI(arguments.uapi)>
 
-		<cfreturn />
+		<cfreturn this>
 	</cffunction>
 	
 <!---
 doAvailability
 --->
 	<cffunction name="doAvailability" output="false">
-		<cfargument name="SearchID">
-		<cfargument name="nCouldYou"	default="0">
-		<cfargument name="stPolicy"		default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
-		
-		<cfset StructDelete(session.searches[SearchID], 'stCars')>
+		<cfargument name="Filter" 	required="true">
+		<cfargument name="Account"	required="true">
+		<cfargument name="Policy"   required="true">
+		<cfargument name="nCouldYou"required="false"    default="0">
+		<cfargument name="sPriority"required="false"    default="LOW">
 
-		<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
+		<cfset local.SearchID = arguments.Filter.getSearchID()>
 
-		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars') OR StructIsEmpty(session.searches[SearchID].stCars)>
+		<!---<cfset session.searches[SearchID].stCars = {}>--->
+
+		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
+		OR StructIsEmpty(session.searches[SearchID].stCars)>
+
+			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
 			<cfset local.stThreads = {}>
-			<cfif NOT StructKeyExists(stPolicy, 'stCDNumbers')>
-				<cfset stPolicy.stCDNumbers = searchCDNumbers(session.searches[arguments.SearchID].ValueID)>
-				<cfset application.Policies[session.searches[url.SearchID].PolicyID].stCDNumbers = stPolicy.stCDNumbers>
-			</cfif>
-			<cfif NOT structIsEmpty(stPolicy.stCDNumbers)>
+			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
+			<cfif NOT structIsEmpty(CDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
-				<cfthread name="stCorporateRates#nUniqueThreadName#" SearchID="#arguments.SearchID#" stCDNumbers="#stPolicy.stCDNumbers#" nCouldYou="#arguments.nCouldYou#">
-					<cfset sMessage		= prepareSoapHeader(SearchID, arguments.nCouldYou, stCDNumbers)>
-					<cfset sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.SearchID)>
-					<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
-					<cfset thread.stCars= parseCars(aResponse, 1)>
+				<cfthread
+				name="stCorporateRates#nUniqueThreadName#"
+				Filter="#arguments.Filter#"
+				Account="#arguments.Account#"
+				Policy="#arguments.Policy#"
+				nCouldYou="#arguments.nCouldYou#"
+				CDNumbers="#CDNumbers#">
+					<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
+					<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
+					<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
+					<cfset local.stCars     = parseCars(aResponse, 1)>
+					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<cfset local.stCars     = addJavascript(stCars)>
+					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
+					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+					<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
 				</cfthread>
 			</cfif>
 			
 			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
-			<cfthread name="stPublicRates#nUniqueThreadName#" SearchID="#arguments.SearchID#" nCouldYou="#arguments.nCouldYou#">
-				<cfset sMessage		= prepareSoapHeader(arguments.SearchID, arguments.nCouldYou)>
-				<cfset sResponse 	= application.objUAPI.callUAPI('VehicleService', sMessage, arguments.SearchID)>
-				<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
-				<cfset thread.stCars= parseCars(aResponse, 0)>
+			<cfthread
+			name="stPublicRates#nUniqueThreadName#"
+			Filter="#arguments.Filter#"
+			Account="#arguments.Account#"
+			Policy="#arguments.Policy#"
+			nCouldYou="#arguments.nCouldYou#">
+				<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
+				<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
+				<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
+				<cfset local.stCars     = parseCars(aResponse, 0)>
+				<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+				<cfset local.stCars     = addJavascript(stCars)>
+				<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
+				<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+				<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
 			</cfthread>
-
 			<cfthread action="join" name="#StructKeyList(stThreads)#" />
 
-			<!--- <cfdump var="#cfthread#" abort> --->
-			<cfif ArrayLen(StructKeyArray(stThreads)) GT 1>
-				<cfset local.stCars = mergeCars(cfthread['stCorporateRates'&nUniqueThreadName].stCars, cfthread['stPublicRates'&nUniqueThreadName].stCars)>
-			<cfelse>
-				<cfset local.stCars = cfthread['stPublicRates'&nUniqueThreadName].stCars>
+			<cfif arguments.sPriority EQ 'HIGH'>
+				<cfthread action="join" name="#StructKeyList(stThreads)#" />
+				<cfdump var="#cfthread#" abort>
 			</cfif>
 
-			<cfif arguments.nCouldYou EQ 0>
-<!--- Move to cfthread --->
-				<cfset stCars = checkPolicy(stCars, arguments.SearchID)>
-				<cfset session.searches[SearchID].stCarVendors = getVendors(stCars)>
-				<cfset session.searches[SearchID].stCarCategories = getCategories(stCars)>
-				<cfset session.searches[SearchID].stCars = addJavascript(stCars)>
-			</cfif>
-			<!--- <cfdump var="#stCars#" abort> --->
 		</cfif>
-
-		<!---<cfset session.searches[SearchID].stTrips = addJavascript(stTrips)>--->
-		<cfset CarAvailability = nCouldYou NEQ 0 ? stCars : '' />
 		
-		<cfreturn CarAvailability>
-	</cffunction>
-
-<!--- searchCDNumbers --->
-	<cffunction name="searchCDNumbers" output="false">
-		<cfargument name="ValueID" 	required="true">
-		<cfargument name="Acct_ID"		required="false"	default="#session.AcctID#">
-		
-		<cfquery name="local.qCDNumbers">
-		SELECT Vendor_Code, CD_Number, DB_Number, DB_Type
-		FROM CD_Numbers
-		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
-		AND (Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_numeric" />
-		OR Value_ID IS NULL)
-		</cfquery>
-		<cfset local.stCDNumbers = {}>
-		<cfloop query="qCDNumbers">
-			<cfset stCDNumbers[Vendor_Code].CD = CD_Number>
-			<cfset stCDNumbers[Vendor_Code].DB = DB_Number>
-			<cfset stCDNumbers[Vendor_Code].DBType = DB_Type>
-		</cfloop>
-		
-		<cfreturn stCDNumbers>
+		<cfreturn >
 	</cffunction>
 
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" output="false">
-		<cfargument name="SearchID" 		required="true">
-		<cfargument name="nCouldYou"		required="false"	default="0">
-		<cfargument name="stCDNumbers" 		required="false"	default="">
-		<cfargument name="bFullRequest" 	required="false"	default="false">
-		<cfargument name="stAccount"		required="false"	default="#application.Accounts[session.AcctID]#">
-		<cfargument name="stPolicy" 		required="false"	default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
-		
-		<cfquery name="local.getsearch">
-		SELECT Depart_DateTime, Arrival_City, Arrival_DateTime, Air_Type
-		FROM Searches
-		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
-		
-		<cfif session.searches[arguments.SearchID].Air EQ 1>
-			<cfset local.dPickUp = session.searches[arguments.SearchID].stItinerary.Air.Groups[0].ArrivalTime>
-			<cfif getsearch.Air_Type EQ 'RT'>
-				<cfset local.dDropOff = session.searches[arguments.SearchID].stItinerary.Air.Groups[1].DepartureTime>
-			<cfelseif getsearch.Air_Type EQ 'OW'>
+		<cfargument name="Filter" 		required="true">
+		<cfargument name="Account"	    required="false">
+		<cfargument name="Policy" 	    required="false">
+		<cfargument name="nCouldYou"	required="false"	default="0">
+		<cfargument name="CDNumbers" 	required="false"	default="">
+		<cfargument name="bFullRequest" required="false"	default="false">
+
+		<cfset local.SearchID = arguments.Filter.getSearchID()>
+
+		<cfif arguments.Filter.getAir() AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')>
+			<cfset local.dPickUp = session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime>
+			<cfif arguments.Filter.getAirType() EQ 'RT'>
+				<cfset local.dDropOff = session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime>
+			<cfelseif arguments.Filter.getAirType() EQ 'OW'>
 				<cfset local.dDropOff = getsearch.Arrival_DateTime>
-			<cfelseif getsearch.Air_Type EQ 'MD'>
+			<cfelseif arguments.Filter.getAirType() EQ 'MD'>
 				<!--- Not allowed at this time --->
 			</cfif>
 		<cfelse>
-			<cfset local.dPickUp = getsearch.Depart_DateTime>
-			<cfset local.dDropOff = getsearch.Arrival_DateTime>
+			<cfset local.dPickUp = arguments.Filter.getDepartDate()>
+			<cfset local.dDropOff = arguments.Filter.getArrivalDate()>
 		</cfif>
-		<cfset session.searches[arguments.SearchID].dPickUp = dPickUp>
-		<cfset session.searches[arguments.SearchID].dDropOff = dDropOff>
+		<cfset session.searches[SearchID].dPickUp = dPickUp>
+		<cfset session.searches[SearchID].dDropOff = dDropOff>
 		
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<veh:VehicleSearchAvailabilityReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:veh="http://www.travelport.com/schema/vehicle_v17_0" ReturnExtraRateInfo="true" ReturnApproximateTotal="true" ReturnAllRates="true">
+						<veh:VehicleSearchAvailabilityReq TargetBranch="#arguments.Account.sBranch#" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:veh="http://www.travelport.com/schema/vehicle_v17_0" ReturnExtraRateInfo="true" ReturnApproximateTotal="true" ReturnAllRates="true">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
-								PickupLocation="#getsearch.Arrival_City#"
+								PickupLocation="#arguments.Filter.getArrivalCity()#"
 								PickupDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dPickUp), 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
 								PickupLocationType="Airport"
-								ReturnLocation="#getsearch.Arrival_City#"
+								ReturnLocation="#arguments.Filter.getArrivalCity()#"
 								ReturnDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dDropOff), 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
-								<cfif IsStruct(arguments.stCDNumbers) >
-									<cfloop collection="#arguments.stCDNumbers#" index="local.sVendorCode">
-										<!--- Can have up to 10 --->
-										<veh:RateModifiers DiscountNumber="#arguments.stCDNumbers[sVendorCode].CD#" VendorCode="#sVendorCode#" />
+								<cfif IsStruct(arguments.CDNumbers) >
+									<cfloop collection="#arguments.CDNumbers#" index="local.sVendorCode">
+										<veh:RateModifiers DiscountNumber="#arguments.CDNumbers[sVendorCode].CD#" VendorCode="#sVendorCode#" />
 									</cfloop>
 								</cfif>
 							</veh:VehicleSearchModifiers>  
@@ -213,22 +190,33 @@ doAvailability
 mergeCars
 --->
 	<cffunction name="mergeCars" output="false">
-		<cfargument name="stCorporate" 	required="true">
-		<cfargument name="stPublic" 	required="true">
-		
-		<cfset local.stCars = arguments.stPublic>
-		<cfif IsStruct(stCars) AND IsStruct(arguments.stCorporate)>
-			<cfloop collection="#arguments.stCorporate#" item="local.stClassCategory" index="local.sClassCategory">
-				<cfif structKeyExists(stCars, sClassCategory)>
-					<cfloop collection="#stClassCategory#" item="local.stVendor" index="local.sVendor">
-						<cfset stCars[sClassCategory][sVendor] = stVendor>
+		<cfargument name="stNewCars"    required="true">
+
+		<cfset local.stCars = session.searches[SearchID].stCars>
+		<cfset local.stNewCars = arguments.stNewCars>
+		<!---If they are both structs that contain values--->
+		<cfif IsStruct(stCars) AND IsStruct(stNewCars)>
+			<!---Loop through the new car struct to be added to the session--->
+			<cfloop collection="#stNewCars#" item="local.stNewClass" index="local.sNewClass">
+				<!---If the car category already exists--->
+				<cfif structKeyExists(stCars, sNewClass)>
+					<!---Loop through each vendor--->
+					<cfloop collection="#stNewClass#" item="local.stNewVendor" index="local.sNewVendor">
+						<!---If the new one is a corporate rate, just add/override it.--->
+						<cfif stNewVendor.Corporate>
+							<cfset stCars[sNewClass][sNewVendor] = stNewVendor>
+						<!---If it isn't a corporate rate, if it doesn't exist then add it.--->
+						<cfelseif NOT structKeyExists(stCars[sNewClass], sNewVendor)>
+							<cfset stCars[sNewClass][sNewVendor] = stNewVendor>
+						</cfif>
 					</cfloop>
+				<!---If the car category doesn't exists just add the whole struct for that category--->
 				<cfelse>
-					<cfset stCars[sClassCategory] = arguments.stCorporate[sClassCategory]>
+					<cfset stCars[sNewClass] = stNewClass>
 				</cfif>
 			</cfloop>
-		<cfelse>
-			<cfset stCars = arguments.stCorporate>
+		<cfelseif IsStruct(stNewCars)>
+			<cfset stCars = stNewCars>
 		</cfif>
 		<cfif NOT IsStruct(stCars)>
 			<cfset stCars = {}>
@@ -240,16 +228,16 @@ mergeCars
 <!---
 checkPolicy
 --->
-	<cffunction name="checkPolicy" output="true">
-		<cfargument name="stCars"  		required="true">
+	<cffunction name="checkPolicy" output="false">
+		<cfargument name="stCars"  	required="true">
 		<cfargument name="SearchID"	required="true">
-		<cfargument name="stAccount"	required="false"	default="#application.Accounts[session.AcctID]#">
-		<cfargument name="stPolicy" 	required="false"	default="#application.Policies[session.searches[url.SearchID].PolicyID]#">
+		<cfargument name="Account"	required="false">
+		<cfargument name="Policy" 	required="false">
 		
 		<cfset local.stCars = arguments.stCars>
 		<cfset local.aPolicy = {}>
 		<cfset local.bActive = 1>
-		<cfset local.bBlacklisted = (ArrayLen(arguments.stAccount.aNonPolicyCar) GT 0 ? 1 : 0)>
+		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyCar) GT 0 ? 1 : 0)>
 		
 		<cfquery name="local.getsearch">
 			SELECT 	Depart_DateTime, Arrival_DateTime
@@ -263,28 +251,28 @@ checkPolicy
 				<cfset aPolicy = []>
 				<cfset bActive = 1>
 				<!--- Out of policy if they cannot book non preferred vendors. --->
-				<cfif arguments.stPolicy.Policy_CarPrefRule EQ 1
-				AND NOT ArrayFindNoCase(arguments.stAccount.aPreferredCar, sVendor)>
+				<cfif arguments.Policy.Policy_CarPrefRule EQ 1
+				AND NOT ArrayFindNoCase(arguments.Account.aPreferredCar, sVendor)>
 					<cfset ArrayAppend(aPolicy, 'Not a preferred vendor')>
-					<cfif arguments.stPolicy.Policy_CarPrefDisp EQ 1>
+					<cfif arguments.Policy.Policy_CarPrefDisp EQ 1>
 						<cfset bActive = 0>
 					</cfif>
 				</cfif>
 				<!--- Out of policy if the car type is not allowed.--->
-				<cfif arguments.stPolicy.Policy_CarTypeRule EQ 1
-				AND NOT ArrayFindNoCase(arguments.stPolicy.aCarSizes, sCategory)>
+				<cfif arguments.Policy.Policy_CarTypeRule EQ 1
+				AND NOT ArrayFindNoCase(arguments.Policy.aCarSizes, sCategory)>
 					<cfset ArrayAppend(aPolicy, 'Car type not preferred')>
-					<cfif arguments.stPolicy.Policy_CarTypeDisp EQ 1>
+					<cfif arguments.Policy.Policy_CarTypeDisp EQ 1>
 						<cfset bActive = 0>
 					</cfif>
 				</cfif>
 				<!--- Out of policy if the car vendor is blacklisted (still shows though).  --->
 				<cfif bBlacklisted
-				AND ArrayFindNoCase(arguments.stAccount.aNonPolicyCar, sVendor)>
+				AND ArrayFindNoCase(arguments.Account.aNonPolicyCar, sVendor)>
 					<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 				</cfif>
 				<cfif bActive>
-					<cfset stCars[sCategory][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? 1 : 0)>
+					<cfset stCars[sCategory][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? true : false)>
 					<cfset stCars[sCategory][sVendor].aPolicies = aPolicy>
 				<cfelse>
 					<cfset temp = StructDelete(stCars[sCategory], sVendor)>
@@ -322,17 +310,21 @@ addJavascript
 getVendors
 --->
 	<cffunction name="getVendors" output="false">
-		<cfargument name="stCars" 	required="true">
+		<cfargument name="stCarVendors"	required="true">
+		<cfargument name="stCars" 	    required="true">
+		<cfargument name="Account" 	    required="true">
 		
 		<cfset local.stCars = arguments.stCars>
-		<cfset local.stCarVendors = StructNew('linked')>
+		<cfset local.stCarVendors = (IsStruct(arguments.stCarVendors) ? arguments.stCarVendors : StructNew('linked'))>
 		<cfloop collection="#stCars#" item="local.sClassCategory">
 			<cfloop collection="#stCars[sClassCategory]#" item="local.sVendor">
-				<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
+				<!---Add preferred vendors first--->
+				<cfif ArrayFind(arguments.Account.aPreferredCar, sVendor)>
 					<cfset stCarVendors[sVendor] = ''>
 				</cfif>
 			</cfloop>
 		</cfloop>
+		<!---Add all other vendors--->
 		<cfloop collection="#stCars#" item="local.sClassCategory">
 			<cfloop collection="#stCars[sClassCategory]#" item="local.sVendor">
 				<cfset stCarVendors[sVendor] = ''>
@@ -346,12 +338,13 @@ getVendors
 getCategories
 --->
 	<cffunction name="getCategories" output="false">
-		<cfargument name="stCars" 	required="true">
-		
+		<cfargument name="stCarCategories"	required="true">
+		<cfargument name="stCars" 	    required="true">
+
+		<cfset local.stCars = arguments.stCars>
+		<cfset local.stCarCategories = (IsStruct(arguments.stCarCategories) ? arguments.stCarCategories : StructNew('linked'))>
 		<!--- If you update this list, update it in parseCars too --->
 		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
-		<cfset local.stCars = arguments.stCars>
-		<cfset local.stCarCategories = StructNew('linked')>
 		<cfloop array="#aClassCategories#" index="local.sCategory">
 			<cfif StructKeyExists(stCars, sCategory)>
 				<cfset stCarCategories[sCategory] = ''>
@@ -359,6 +352,24 @@ getCategories
 		</cfloop>
 		
 		<cfreturn stCarCategories/>
+	</cffunction>
+
+<!---
+selectCar
+--->
+	<cffunction name="selectCar" output="false">
+		<cfargument name="SearchID">
+		<cfargument name="sCategory">
+		<cfargument name="sVendor">
+
+		<!--- Initialize or overwrite the CouldYou car section --->
+		<cfset session.searches[arguments.SearchID].CouldYou.Car = {} >
+		<cfset session.searches[arguments.SearchID].Car = true >
+		<!--- Move over the information into the stItinerary --->
+		<cfset session.searches[arguments.SearchID].stItinerary.Car = session.searches[arguments.SearchID].stCars[arguments.sCategory][arguments.sVendor]>
+		<cfset session.searches[arguments.SearchID].stItinerary.Car.VendorCode = arguments.sVendor>
+
+		<cfreturn />
 	</cffunction>
 	
 </cfcomponent>

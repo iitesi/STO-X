@@ -40,7 +40,7 @@
 				<tr>
 					<td>
 						<div style="width:150px;position:relative;float:left;">
-							<cfif ArrayFind(application.Policies[session.searches[rc.SearchID].PolicyID].aCarSizes, sCategory)>
+							<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
 								<span class="medium blue bold">PREFERRED</span><br>
 							</cfif>
 							<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br>

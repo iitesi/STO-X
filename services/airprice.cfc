@@ -1,12 +1,18 @@
-<cfcomponent output="false">
-	
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="uapi">
+	<cfproperty name="airparse">
+
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		
-		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
-		
+		<cfargument name="uapi">
+		<cfargument name="airparse">
+
+		<cfset setUAPI(arguments.uapi)>
+		<cfset setAirParse(arguments.airparse)>
+
 		<cfreturn this>
 	</cffunction>
 	
@@ -16,6 +22,7 @@ doAirPrice
 	<cffunction name="doAirPrice" output="false">
 		<cfargument name="SearchID" 	required="true">
 		<cfargument name="Account"      required="true">
+		<cfargument name="Policy"       required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip"		required="false"	default="">
@@ -46,29 +53,25 @@ doAirPrice
 
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
+		<!---<cfdump var="#sMessage#">--->
 		<!--- Call the UAPI. --->
-		<cfset sResponse 	= application.objUAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
+		<cfset sResponse 	= uapi.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- Format the UAPI response. --->
-		<cfset aResponse 	= application.objUAPI.formatUAPIRsp(sResponse)>
-		
-		<!--- <cfdump var="#aResponse#"> --->
-
-		<!--- THIS IS BAD. I NEEDED IT FOR COULD YOU --->
-		<!--- <cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()> --->
-		<!--- THIS IS BAD. I NEEDED IT FOR COULD YOU --->
+		<cfset aResponse 	= uapi.formatUAPIRsp(sResponse)>
+		<!---<cfdump var="#aResponse#">--->
 
 		<cfif arguments.nCouldYou EQ 0>
 			<!--- Parse the segments. --->
-			<cfset stSegments	= objAirParse.parseSegments(aResponse)>
+			<cfset stSegments	= airparse.parseSegments(aResponse)>
 			<cfif NOT StructIsEmpty(stSegments)>
 				<!--- Parse the trips. --->
-				<cfset stTrips		= objAirParse.parseTrips(aResponse, stSegments)>
+				<cfset stTrips		= airparse.parseTrips(aResponse, stSegments)>
 				<!--- Add group node --->
-				<cfset stTrips		= objAirParse.addGroups(stTrips)>
+				<cfset stTrips		= airparse.addGroups(stTrips)>
 				<!--- Check low fare. --->
-				<cfset stTrips 		= objAirParse.addTotalBagFare(stTrips)>
+				<cfset stTrips 		= airparse.addTotalBagFare(stTrips)>
 				<!--- Mark preferred carriers. --->
-				<cfset stTrips		= objAirParse.addPreferred(stTrips, arguments.Account)>
+				<cfset stTrips		= airparse.addPreferred(stTrips, arguments.Account)>
 				<!--- Add trip id to the list of priced items --->
 				<cfset nTripKey		= getTripKey(stTrips)>
 				<!--- Save XML if needed - aircreate --->
@@ -79,9 +82,9 @@ doAirPrice
 					<!--- Add trip id to the list of priced items --->
 					<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.SearchID].stTrips 						= objAirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
+					<cfset session.searches[arguments.SearchID].stTrips 						= airparse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
 					<!--- Finish up the results --->
-					<cfset void = objAirParse.finishLowFare(arguments.SearchID)>
+					<cfset void = airparse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
 					<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
 					<!--- Clear out their results --->
 					<cfif arguments.sCabin NEQ stTrips[nTripKey].Class>
@@ -126,19 +129,18 @@ prepareSOAPHeader
 							<com:BillingPointOfSaleInfo OriginApplication="uAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
-								<cfloop collection="#arguments.stSelected#" item="local.Group">
-									<cfif structKeyExists(arguments.stSelected[Group], "Groups")>
-										<cfloop collection="#arguments.stSelected[Group].Groups#" item="local.nInnerGroup">
-											<cfloop collection="#arguments.stSelected[Group].Groups[nInnerGroup].Segments#" item="local.nSegment">
+								<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">
+									<cfif structKeyExists(stGroup, "Groups")>
+										<cfloop collection="#stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
+											<cfloop collection="#stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
 												<cfset nCount++>
-												<cfset local.stSegment = arguments.stSelected[Group].Groups[nInnerGroup].Segments[nSegment]>
 												<air:AirSegment
 												Key="#nCount#T"
 												Origin="#stSegment.Origin#"
 												Destination="#stSegment.Destination#"
 												DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
 												ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
-												Group="#Group#"
+												Group="#nGroup#"
 												FlightNumber="#stSegment.FlightNumber#"
 												Carrier="#stSegment.Carrier#"
 												ProviderCode="1V" />

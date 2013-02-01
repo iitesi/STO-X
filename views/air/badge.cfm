@@ -11,15 +11,16 @@
 	<cfsavecontent variable="sBadge" trim="#true#">
 		<cfoutput>
 			<div class="badge">
-				<table width="100%">
+				<table height="#variables.minheight#" width="100%">
 				<tr>
 					<td colspan="2" align="center">
 						#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br>')#
-						#(NOT stTrip.Preferred ? '' : '<span class="medium blue bold">PREFERRED</span><br>')#
+
 						#(NOT bDisplayFare OR NOT stTrip.PrivateFare ? '' : '<span class="medium blue bold">CONTRACTED</span><br>')#
 						<!---  <cfset sImg = (ListLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers : 'Mult')><cfif sImg NEQ 'Mult'>title="#application.stAirVendors[sImg].Name#"<cfelse>title="Multiple Carriers"</cfif> --->
 						<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
 						#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br>'&application.stAirVendors[stTrip.Carriers[1]].Name : '')#
+						#(NOT stTrip.Preferred ? '' : '<span class="medium blue bold">PREFERRED</span><br>')#
 					</td>
 					<td colspan="2" class="fares" align="right">
 						<cfif bDisplayFare>
@@ -75,28 +76,31 @@
 						</tr>
 					</cfloop>
 				</cfloop>
-				</table>
-				<br><br>
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-				<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger">Details <span class="divider">/</span></a>
-				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-					<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank">Seats <span class="divider">/</span></a>
-				</cfif>
-				<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger">Bags <span class="divider">/</span></a>
-				<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger">Email</a>
-				<cfif bDisplayFare>
-					<ul class="smallnav">
-						<li class="main">+
-							<ul>
-								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
-								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
-								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
-								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
-								<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
+				<tr>
+					<td height="100%" valign="bottom" colspan="4">
+						<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+						<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger">Details <span class="divider">/</span></a>
+						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+							<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank">Seats <span class="divider">/</span></a>
+						</cfif>
+						<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger">Bags <span class="divider">/</span></a>
+						<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger">Email</a>
+						<cfif bDisplayFare>
+							<ul class="smallnav">
+								<li class="main">+
+									<ul>
+										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
+										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
+										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
+										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
+										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
+									</ul>
+								</li>
 							</ul>
-						</li>
-					</ul>
-				</cfif>
+						</cfif>
+					</td>
+                </tr>
+                </table>
 			</div>
 		</cfoutput>
 	</cfsavecontent>

@@ -18,7 +18,7 @@
 		</form>	
 	</cfoutput>
 	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
-		<cfset variables.minheight = 225>
+		<cfset variables.minheight = 215>
 		<cfset variables.bSelected = false>
 		<cfset variables.bDisplayFare = false>
 		<cfset variables.nDisplayGroup = rc.Group>

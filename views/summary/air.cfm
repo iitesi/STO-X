@@ -67,7 +67,7 @@ OUT OF POLICY
 					AND they want to capture reason codes
 					--->
 					<cfif NOT AirPolicy
-					AND stPolicy.Policy_AirReasonCode EQ 1>
+					AND rc.Policy.Policy_AirReasonCode EQ 1>
 							<td>
 								Reason for booking outside of policy
 							</td>
@@ -91,8 +91,8 @@ NOT LOWEST FARE
 					AND they want to capture lost savings
 					--->
 					<cfif stItinerary.Air.Total GT nLowestFare
-					AND (AirPolicy OR stPolicy.Policy_AirReasonCode EQ 0)
-					AND stPolicy.Policy_AirLostSavings EQ 1>
+					AND (AirPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
+					AND rc.Policy.Policy_AirLostSavings EQ 1>
 							<td>
 								Reason for not booking the lowest fare
 							</td>
@@ -162,7 +162,7 @@ FREQUENT PROGRAM NUMBER
 <!---
 SPECIAL REQUEST
 --->
-					<cfif stPolicy.Policy_AllowRequests EQ 1>
+					<cfif rc.Policy.Policy_AllowRequests EQ 1>
 							<td>
 								Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#
 							</td>

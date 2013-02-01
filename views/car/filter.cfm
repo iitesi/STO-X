@@ -64,8 +64,7 @@ POLICY
 	</tr> 
 	</table>
 </ul>
-<cfset stPolicy = application.Policies[session.searches[rc.SearchID].PolicyID]>
-<cfset stAccount = application.Accounts[session.AcctID]>
+
 <script type="application/javascript">
 
 $(document).ready(function() {
@@ -99,7 +98,7 @@ $(document).ready(function() {
 		<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 			<cfif nCount NEQ 0>,</cfif>
 			<cfset nCount++>
-			['#LCase(sCategory)#',#(stPolicy.Policy_CarTypeRule EQ 1 AND NOT ArrayFindNoCase(stPolicy.aCarSizes, sCategory) ? 0 : 1)#]
+			['#LCase(sCategory)#',#(rc.Policy.Policy_CarTypeRule EQ 1 AND NOT ArrayFindNoCase(rc.Policy.aCarSizes, sCategory) ? 0 : 1)#]
 		</cfloop>];
 
 	var carvendors = [
@@ -107,7 +106,7 @@ $(document).ready(function() {
 		<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 			<cfif nCount NEQ 0>,</cfif>
 			<cfset nCount++>
-			['#LCase(sVendor)#',#(stPolicy.Policy_CarPrefRule EQ 1 AND NOT ArrayFindNoCase(stAccount.aPreferredCar, sVendor) ? 0 : 1)#]
+			['#LCase(sVendor)#',#(rc.Policy.Policy_CarPrefRule EQ 1 AND NOT ArrayFindNoCase(rc.Account.aPreferredCar, sVendor) ? 0 : 1)#]
 		</cfloop>];
 
 </cfoutput>

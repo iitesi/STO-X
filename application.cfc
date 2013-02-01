@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking8'>
+	<cfset this.name = 'booking15'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
@@ -45,34 +45,35 @@
 		<cfset application.objHotelPhotos  = createObject("component", "booking.services.hotelphotos")>
 		<cfset application.objHotelPrice  = createObject("component", "booking.services.hotelprice")>
 		<cfset application.objHotelRooms = createObject("component", "booking.services.hotelrooms")>
+
 	</cffunction>
 	
 	<cffunction name="setupSession">
+
+		<cfset session.searches = {}>
+		<cfset session.aMessages = []>
 
 	</cffunction>
 	
 	<cffunction name="setupRequest">
 
-		<cfset controller( 'setup.setSession' )>
-
-		<!---Set some default variables that are used throughout the site.--->
 		<cfset request.context.SearchID = (StructKeyExists(request.context, 'SearchID') ? request.context.SearchID : 0)>
-		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
-
+		<cfset controller( 'setup.setSearch' )>
 		<!---Redirect the site if the search hasn't been loaded yet.--->
 		<cfif (NOT StructKeyExists(session, 'searches')
 		OR NOT StructKeyExists(session.searches, request.context.SearchID))
 		AND request.context.action NEQ 'main.default'>
 			<cfset redirect('main?SearchID=#request.context.SearchID#')>
 		</cfif>
+		<cfset request.context.AcctID = (structKeyExists(session, 'AcctID') ? session.AcctID : 0)>
+		<cfset controller( 'setup.setAccount' )>
+		<cfset request.context.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
+		<cfset controller( 'setup.setPolicy' )>
 
-		<!---Always defined.  Filter, Account & Policy for the given SearchID passed in.--->
-		<cfset request.context.Filter = (StructKeyExists(session, 'filters') AND StructKeyExists(session.filters, request.context.SearchID) ? session.filters[request.context.SearchID] : '')>
 
-		<cfif StructKeyExists(session, 'AcctID')>
-			<cfset request.context.Account = (StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, session.AcctID) ? application.Accounts[session.AcctID] : '')>
-			<cfset request.context.Policy = (StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, session.PolicyID) ? application.Policies[session.PolicyID] : '')>
-		</cfif>
+		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
+
+
 	</cffunction>
 	
 	<cffunction name="onRequestEnd">

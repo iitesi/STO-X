@@ -175,6 +175,7 @@ parseTrips
 
 		<!---
 		Custom code for air pricing to move the 'air:AirPriceResult' up a node to work with the current parsing code.
+        --->
 		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
 			<cfif stAirPricingSolution.XMLName EQ 'air:AirPriceResult'>
 				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.test">
@@ -182,7 +183,6 @@ parseTrips
 				</cfloop>
 			</cfif>
 		</cfloop>
-        --->
 
 		<!---
 		Create a quick struct containing the private fare information

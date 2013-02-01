@@ -15,21 +15,23 @@ init
 <!--- 
 default
 --->
+	<cffunction name="default" output="false">
+	</cffunction>
 	<cffunction name="enddefault" output="false">
-		<cfargument name="Filter">
+		<cfargument name="rc">
 
-		<cfif NOT IsNull(arguments.Filter)>
-			<cfif arguments.Filter.getAir()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Air')>
-				<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.Filter.getSearchID()#')>
+		<cfif IsObject(arguments.rc.Filter)>
+			<cfif arguments.rc.Filter.getAir()
+			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Air')>
+				<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
-			<cfif arguments.Filter.getHotel()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.Filter.getSearchID()#')>
+			<cfif arguments.rc.Filter.getHotel()
+			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Hotel')>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
-			<cfif arguments.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.Filter.getSearchID()].stItinerary, 'Car')>
-				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.Filter.getSearchID()#')>
+			<cfif arguments.rc.Filter.getCar()
+			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Car')>
+				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.Filter.getSearchID()#')>
 		</cfif>
