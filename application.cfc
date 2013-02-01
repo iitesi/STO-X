@@ -21,7 +21,7 @@
 		error = 'main.error', 
 		reload = 'reload',
 		password = 'true',
-		reloadApplicationOnEveryRequest = true,
+		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'localhost' ? true : false),
 		generateSES = false,
 		SESOmitIndex = false,
 		baseURL = 'useCgiScriptName',
@@ -35,7 +35,7 @@
 	}>
 	
 	<cffunction name="setupApplication">
-		
+
 		<cfset bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') )>
 		<cfset setBeanFactory(bf)>

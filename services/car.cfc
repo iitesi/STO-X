@@ -20,8 +20,8 @@ doAvailability
 		<cfargument name="Filter" 	required="true">
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"   required="true">
-		<cfargument name="sCarChain"required="false">
-		<cfargument name="sCarType" required="false">
+		<cfargument name="sCarChain"required="false"    default="">
+		<cfargument name="sCarType" required="false"    default="">
 		<cfargument name="nCouldYou"required="false"    default="0">
 		<cfargument name="sPriority"required="false"    default="LOW">
 
@@ -52,8 +52,8 @@ doAvailability
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 						<cfset local.stCars     = addJavascript(stCars)>
-						<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
-						<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+						<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : StructNew('linked')), stCars, arguments.Account)>
+						<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : StructNew('linked')), stCars)>
 						<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
 					<cfelse>
 						<cfset thread.stCars     = stCars>
@@ -75,19 +75,18 @@ doAvailability
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 					<cfset local.stCars     = addJavascript(stCars)>
-					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : {}), stCars, arguments.Account)>
-					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : {}), stCars)>
+					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : StructNew('linked')), stCars, arguments.Account)>
+					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : StructNew('linked')), stCars)>
 					<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
 				<cfelse>
 					<cfset thread.stCars     = stCars>
 				</cfif>
 			</cfthread>
-			<cfthread action="join" name="#StructKeyList(stThreads)#" />
 
 			<cfif arguments.sPriority EQ 'HIGH'
 			OR arguments.nCouldYou NEQ 0>
 				<cfthread action="join" name="#StructKeyList(stThreads)#" />
-				<cfdump var="#cfthread#" abort>
+				<!---<cfdump var="#cfthread#" abort>--->
 				<cfif arguments.nCouldYou NEQ 0>
 					<cfif structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars, sCarType)
 					AND structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
@@ -213,7 +212,7 @@ mergeCars
 	<cffunction name="mergeCars" output="false">
 		<cfargument name="stNewCars"    required="true">
 
-		<cfset local.stCars = session.searches[SearchID].stCars>
+		<cfset local.stCars = (structKeyExists(session.searches[SearchID], 'stCars') ? session.searches[SearchID].stCars : {})>
 		<cfset local.stNewCars = arguments.stNewCars>
 		<!---If they are both structs that contain values--->
 		<cfif IsStruct(stCars) AND IsStruct(stNewCars)>
@@ -360,7 +359,7 @@ getCategories
 --->
 	<cffunction name="getCategories" output="false">
 		<cfargument name="stCarCategories"	required="true">
-		<cfargument name="stCars" 	    required="true">
+		<cfargument name="stCars" 	        required="true">
 
 		<cfset local.stCars = arguments.stCars>
 		<cfset local.stCarCategories = (IsStruct(arguments.stCarCategories) ? arguments.stCarCategories : StructNew('linked'))>
