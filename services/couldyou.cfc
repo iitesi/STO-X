@@ -67,8 +67,10 @@ doCouldYou
 								</cfloop>
 								<!--- Put together the SOAP message. --->
 								<cfset sMessage 	= airprice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
+								<cfset thread.sMessage 	= sMessage>
 								<!--- Call the UAPI. --->
 								<cfset sResponse 	= airprice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
+								<cfset thread.sResponse 	= sResponse>
 								<!--- Format the UAPI response. --->
 								<cfset aResponse 	= airprice.getUAPI().formatUAPIRsp(sResponse)>
 								<!--- Parse the trips. --->
@@ -119,7 +121,6 @@ doCouldYou
 		</cfloop>
 
 		<cfthread action="join" name="#StructKeyList(threadnames)#">
-		<cfdump var="#threadnames#">
 		<cfdump var="#cfthread#">
 
 		<cfabort>

@@ -71,7 +71,7 @@ doAirPrice
 			<cfset stTrips 		= airparse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
 			<cfset stTrips		= airparse.addPreferred(stTrips, arguments.Account)>
-			<cfdump var="#stTrips#" abort>
+			<!---<cfdump var="#stTrips#" abort>--->
 			<!--- Add trip id to the list of priced items --->
 			<cfset nTripKey		= getTripKey(stTrips)>
 			<!--- Save XML if needed - aircreate --->
