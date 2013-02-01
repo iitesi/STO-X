@@ -21,5 +21,9 @@
     <bean id="car" class="booking.services.car" >
         <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
     </bean>
-	
+    <bean id="couldyou" class="booking.services.couldyou" >
+        <constructor-arg name="airprice"><ref bean="airprice" /></constructor-arg>
+        <constructor-arg name="car"><ref bean="car" /></constructor-arg>
+    </bean>
+
 </beans>

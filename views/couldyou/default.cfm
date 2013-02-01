@@ -3,18 +3,18 @@
 
 <cfset SelectedTotal = 0 />
 <!--- Air --->
-<cfif session.searches[url.SearchID].Air EQ 1>Air
+<cfif rc.Filter.getAir()>Air
 	<cfset AirSelection = session.searches[url.SearchID].stItinerary.Air />
 	<cfset OriginDate = AirSelection.Depart>
 	<cfset SelectedTotal+= AirSelection.Total />
 </cfif>
 <!--- Car --->
-<cfif session.searches[url.SearchID].Car EQ 1>Car
+<cfif rc.Filter.getCar()>Car
 	<cfset CarSelection = session.searches[url.SearchID].stItinerary.Car />
 	<cfset SelectedTotal+= Mid(CarSelection.EstimatedTotalAmount,4) />
 </cfif>
 <!--- Hotel --->
-<cfif session.searches[url.SearchID].Hotel EQ 1>Hotel
+<cfif rc.Filter.getHotel()>Hotel
 	<cfset HotelSelection = session.searches[url.SearchID].stItinerary.Hotel />
 	<cfset HotelChain = session.searches[rc.SearchID].stHotels[HotelSelection.HotelID].HotelChain />
 	<cfset SelectedTotal+= HotelSelection.TotalRate />
@@ -71,9 +71,9 @@
 							<cfif Len(Trim(tdName))><br />
 								<img src="assets/img/ajax-loader.gif" />
 								<script type="text/javascript">
-								<cfif session.searches[url.SearchID].Air EQ 1>couldYouAir(#url.SearchID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);</cfif>
-								<cfif session.searches[url.SearchID].Hotel EQ 1>couldYouHotel(#url.SearchID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>
-								<cfif session.searches[url.SearchID].Car EQ 1>couldYouCar(#url.SearchID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#,#viewDate#,#SelectedTotal#);</cfif>
+								<cfif session.searches[url.SearchID].Air EQ 1>couldYouAir(#rc.SearchID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);</cfif>
+								<cfif session.searches[url.SearchID].Hotel EQ 1>couldYouHotel(#rc.SearchID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>
+								<cfif session.searches[url.SearchID].Car EQ 1>couldYouCar(#rc.SearchID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#,#viewDate#,#SelectedTotal#);</cfif>
 								</script>
 							</cfif>
 							<!--- Existing trip Start Day --->

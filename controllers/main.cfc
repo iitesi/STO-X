@@ -33,7 +33,7 @@ default
 			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Car')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
-			<cfset variables.fw.redirect('summary?SearchID=#arguments.Filter.getSearchID()#')>
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
 		<cfreturn />

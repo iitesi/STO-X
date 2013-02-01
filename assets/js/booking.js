@@ -550,6 +550,7 @@ function logError(test,tes,te) {
 }
 
 function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
+    console.log('air')
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
 		data:"SearchID="+searchid+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
