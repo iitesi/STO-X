@@ -58,6 +58,7 @@
 		</cfloop>
 		<cfthread action="join" name="#arraytoList(local.aThreads)#" />
 		<!---<cfdump var="#cfthread#" abort>--->
+		<!--- <Cfdump var="#session.searches[SearchID].stHotels#" abort> --->
 
 		<cfreturn />
 	</cffunction>
@@ -182,7 +183,7 @@
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 			
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'sFileContent')>
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotels') OR NOT StructKeyExists(session.searches[SearchID].stHotels, 'sFileContent')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -193,10 +194,10 @@
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
 			<cfif bSessionStorage>
-				<cfset session.searches[SearchID].sFileContent = cfhttp.filecontent />
+				<cfset session.searches[SearchID].stHotels.sFileContent = cfhttp.filecontent />
 			</cfif>
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[SearchID].sFileContent />
+			<cfset cfhttp.filecontent = session.searches[SearchID].stHotels.sFileContent />
 		</cfif>
 		
 		<cfreturn cfhttp.filecontent />
@@ -424,7 +425,7 @@
 		<cfset local.PropertyIDs = arrayToList(local.aHotels) />
 
 		<cfquery name="local.HotelInformationQuery" datasource="Book">
-		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
+		SELECT RIGHT('0000'+CAST(PROPERTY_ID AS VARCHAR),5) PROPERTY_ID, SIGNATURE_IMAGE, LAT, LONG, CHAIN_CODE, 0 AS POLICY, 0 AS LOWRATE<cfloop list="#structKeyList(stAmenities)#" index="local.Amenity">, 0 AS #Amenity#</cfloop>
 		FROM lu_hotels
 		WHERE Property_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#PropertyIDs#" />)
 		<cfif NOT arrayIsEmpty(aHotels)>
@@ -449,6 +450,10 @@
 			<!--- Update policy if value is true. Don't update if false --->
 			<cfif stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['POLICY']>
 				<cfset querySetCell(HotelInformationQuery, 'POLICY', 1, HotelInformationQuery.CurrentRow) />
+			</cfif>
+			<!--- Update lowrate if it exists --->
+			<cfif structKeyExists(stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')],'LowRate')>
+				<cfset querySetCell(HotelInformationQuery, 'POLICY', stHotels[NumberFormat(HotelInformationQuery.Property_ID,'00000')]['LOWRATE'], HotelInformationQuery.CurrentRow) />
 			</cfif>
 		</cfloop>
 

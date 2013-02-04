@@ -241,7 +241,7 @@ function showRates(searchid,property_id) {
 			hotelLoading(property_id)
 		},
 		success:function(rates) {
-			//"0 - PROPERTYID, 1 - COUNT, 2 - ROOMDESCRIPTION, 3 - RATE, 4 - CURRENCYCODE, 5 - ROOMRATECATEGORY, 6 - ROOMRATEPLANTYPE, 7 - POLICY"
+			//"0 - PROPERTYID, 1 - COUNT, 2 - ROOMDESCRIPTION, 3 - RATE, 4 - CURRENCYCODE, 5 - ROOMRATECATEGORY, 6 - ROOMRATEPLANTYPE, 7 - POLICY, 8 - GOVERNMENTRATE"
 			var table = '<table width="100%">';
 			$.each(rates.DATA, function(key, val) {
 				table+='<tr style="padding:5px;width:80px;border-top:1px dashed gray;"><td>';
@@ -251,12 +251,16 @@ function showRates(searchid,property_id) {
 				}
 				table+=' per night&nbsp;</td>';
 				table+='<td>'+val[2]+'</td>';
-				/*
-				add if gov't or corporate code
-				*/
+				var GovernmentRate = val[8];
 				var PolicyFlag = val[7] == true ? 1 : 0;
 				table+='<td><input type="submit" id="ChosenHotel" name="HotelSubmission" class="button'+PolicyFlag+'policy" value="Reserve" onclick="submitHotel(\''+property_id+'\',\''+val[2]+'\');">';
+				if (GovernmentRate) {
+					table+='<img src="assets/img/GovRate.gif">';
+				}
 				if (val[7] == false) {
+					if (GovernmentRate) {
+						table+='<br>';
+					}
 					table+='<font color="#C7151A">Out of Policy</font>';
 				}
 				table+='</td></tr>';
@@ -346,7 +350,6 @@ function showAmenities(searchid,property_id) {
 	return false;
 }
 
-
 function showPhotos(searchid,property_id,hotel_chain) {
 	$.ajax({
 		url:"services/hotelphotos.cfc?method=doHotelPhotoGallery",
@@ -391,6 +394,99 @@ function showPhotos(searchid,property_id,hotel_chain) {
 		}
 	});
 	return false;
+}
+
+$(document).ready(function() {
+
+  $("#SoldOut")
+  .button()
+  .change(function() {
+  	filterhotel();
+  });
+
+  $("#Policy")
+  .button()
+  .change(function() {
+  	filterhotel();
+  });
+
+  $(".radiobuttons").buttonset();
+  
+  $(".radiosort")
+  .buttonset()
+  .change(function(event) {
+    sortAir($( "input:radio[name=sort]:checked" ).attr('id'));
+  });
+  
+  $("#btnHotelChain")
+  .button({
+    icons: {secondary: "ui-icon-triangle-1-s"}
+  })
+  .click(function() {
+    $("#HotelDialog").dialog( "open" );
+  return false;
+  });
+
+  $("#HotelDialog").dialog({
+    autoOpen: false,
+    show: "fade",
+    hide: "fade",
+    width: 525,
+    title: 'Select your preferred hotel chains',
+    position: [100,120],
+    modal: true,
+    closeOnEscape: true
+  });
+  
+  $( "#btnHotelAmenities" )
+    .button({
+      icons: {secondary: "ui-icon-triangle-1-s"}
+    })
+    .click(function() {
+      $( "#AmenityDialog" ).dialog( "open" );
+      return false;
+  });
+  $( "#AmenityDialog" ).dialog({
+    autoOpen: false,
+    show: "fade",
+    hide: "fade",
+    width: 525,
+    title: 'Select your preferred amenities',
+    position: [100,120],
+    modal: true,
+      closeOnEscape: true
+  });
+  $( "#btnClass" )
+  .button({
+    icons: {secondary: "ui-icon-triangle-1-s"}
+  })
+  .click(function() {
+    $( "#ClassDialog" ).dialog( "open" );
+    return false;
+  });
+});
+
+function loadImage(image, property_id) {
+  $( "#hotelimage" + property_id ).html('');
+  var img = new Image();
+  $(img).load(function () {
+    $(img).hide();
+    $( "#hotelimage" + property_id ).html(img);
+    $(img).fadeIn('slow');
+  }).attr('src', image)
+  .attr('style','max-width: 125px;');
+  return false;
+}
+
+function sortHotel(sort) {
+  $( "#current_page" ).val(0);
+  $( "#sorttype" ).val(sort);
+  var order = $( "#hotellist" + sort + "sort" ).val();
+  order = order.split(',');
+  for (var t = 0; t < order.length; t++) {
+    $( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
+  }
+  filterhotel();
 }
 
 function setImage(count, property_id) {
@@ -444,11 +540,11 @@ function writePages(number_of_items) {
  	   navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';   
 	}
 	//write the html to the navigation div
-    $('#page_navigation').html(navigation_html);   
-    $('#page_navigation2').html(navigation_html);   
-    //add active_page class to the active page link   
-    $('#page_navigation .page_link').eq(current_page).addClass('active_page');   
-    $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');   
+  $('#page_navigation').html(navigation_html);   
+  $('#page_navigation2').html(navigation_html);   
+  //add active_page class to the active page link   
+  $('#page_navigation .page_link').eq(current_page).addClass('active_page');   
+  $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');   
 	return false;
 }
 

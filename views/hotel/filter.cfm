@@ -1,12 +1,18 @@
-<br /><br />
-<div id="filterbar">
-	<div>
-		<div class="filterheader">Filter By</div>
-		<button id="btnHotelChain">Hotel Chain</button>
-		<button id="btnHotelAmenities">Amenities</button>
-		<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
-	</div>
-</div>
+<ul id="filter">
+	<table>
+	<tr>
+		<td>
+			<div class="filterheader">Filter By</h2>
+		</td>
+		<td>
+			<button id="btnHotelChain">Hotel Chain</button>
+			<button id="btnHotelAmenities">Amenities</button>
+			<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
+			<input type="checkbox" id="SoldOut" name="SoldOut"> <label for="SoldOut">No Sold Outs</label>
+		</td>
+	</tr>
+	</table>
+</ul>
 <cfoutput>
 	<cfset arraysort(session.searches[rc.SearchID].stHotelChains,'text') />
 	<div id="HotelDialog" class="popup">

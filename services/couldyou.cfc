@@ -121,9 +121,8 @@ doCouldYou
 		</cfloop>
 
 		<cfthread action="join" name="#StructKeyList(threadnames)#">
-		<cfdump var="#cfthread#">
-
-		<cfabort>
+		<!--- <cfdump var="#cfthread#"> --->
+		<!--- <cfabort> --->
 
 
 <!---

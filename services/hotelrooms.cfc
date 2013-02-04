@@ -4,10 +4,13 @@
 		<cfargument name="SearchID" />
 		<cfargument name="nHotelCode" />
 		<cfargument name="Policy" default="#application.Policies[session.PolicyID]#">
-		
-		<cfset local.stHotel = session.searches[arguments.SearchID].stHotels[nHotelCode] />
-		<cfset local.stNewHotel = StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />
-		<cfset local.RoomsData = QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,RoomRateCategory,RoomRatePlanType,Policy", "varchar,numeric,varchar,varchar,varchar,varchar,varchar,boolean")>
+
+
+		<cfset local.stHotel 						= session.searches[arguments.SearchID].stHotels[nHotelCode] />
+		<cfset local.stNewHotel 				= StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />
+		<!--- <cfset local.CorporateRateCodes = application.Accounts[session.AcctID]['Hotel_RateCodes'] /> --->
+		<cfset local.RoomsData					= QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,RoomRateCategory,RoomRatePlanType,Policy,GovernmentRate",
+																			"varchar,numeric,varchar,varchar,varchar,varchar,varchar,boolean,boolean")>
 		
 		<!--- If not a preferred vendor then all are out of policy. Set this one time and compare in the loop for rates --->
 		<cfset local.PreferredVendorPolicy = NOT ArrayFind(stHotel['apolicies'],'Not a preferred vendor') /><!--- Policy = true if it's in policy, which is why NOT is needed --->
@@ -25,14 +28,15 @@
 			<cfset QuerySetCell(RoomsData,'RoomRateCategory',stNewHotel[sRoom]['RoomRateCategory'],Row)>
 			<cfset QuerySetCell(RoomsData,'RoomRatePlanType',stNewHotel[sRoom]['RoomRatePlanType'],Row)>
 			<cfset QuerySetCell(RoomsData,'Policy',Policy,Row)>
+			<cfset QuerySetCell(RoomsData,'GovernmentRate',stNewHotel[sRoom]['GovernmentRate'],Row)>
 		</cfloop>
 
 		<cfquery name="local.RoomsData" dbtype="query">
-		SELECT PropertyID, Count, RoomDescription, Rate, CurrencyCode, RoomRateCategory, RoomRatePlanType, Policy
+		SELECT PropertyID, Count, RoomDescription, Rate, CurrencyCode, RoomRateCategory, RoomRatePlanType, Policy, GovernmentRate
 		FROM local.RoomsData
 		ORDER BY Rate
 		</cfquery>
-
+		
 		<cfset local.rates = serializeJSON(RoomsData)>
 		
 		<cfreturn rates />

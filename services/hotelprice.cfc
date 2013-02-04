@@ -97,7 +97,7 @@
 		</cfif>
 		<cfset local.httpname = 'http'&arguments.nHotelCode /><!--- need a unique name for each result --->
 
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID],nHotelCode)>
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotelsRooms') OR NOT StructKeyExists(session.searches[SearchID].stHotelsRooms,nHotelCode)>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#httpname#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -109,9 +109,9 @@
 			</cfhttp>
 			
 			<cfset cfhttp.filecontent = local[httpname].filecontent />
-			<cfset session.searches[SearchID][nHotelCode] = cfhttp.filecontent />
+			<cfset session.searches[SearchID].stHotelsRooms[nHotelCode] = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[SearchID][nHotelCode] />
+			<cfset cfhttp.filecontent = session.searches[SearchID].stHotelsRooms[nHotelCode] />
 		</cfif>
 		
 		<cfreturn cfhttp.filecontent />
@@ -133,6 +133,7 @@
 		<cfargument name="SearchID"	required="true">
 		
 		<cfset local.stHotels = session.searches[SearchID].stHotels[arguments.nHotelCode] />
+		<cfset local.GovernmentRateTypes = ['GVT','GOVERNMENT','MILITARY','GVNMT','GOV-MIL'] />
 
 		<cfloop array="#arguments.stResponse#" index="local.stHotelResults">
 
@@ -153,13 +154,21 @@
 						</cfif>
 					</cfloop>
 
+					<!--- Determine if government rate --->
+					<cfset local.GovernmentRate = false />
 					<cfif RoomDescription NEQ 'No Description for Hotel'>
+						<cfloop array="#local.GovernmentRateTypes#" index="local.GovtRate">
+							<cfif local.RoomDescription CONTAINS GovtRate>
+								<cfset local.GovernmentRate = true />
+							</cfif>
+						</cfloop>
 						
 						<!--- Create a struct with the Room Description --->
 						<cfset local.stHotels['Rooms'][RoomDescription] = {
 							TotalIncludes : '',
 							Description : RoomDescription,
 							RoomRateCategory : RoomRateCategory,
+							GovernmentRate : GovernmentRate,
 							RoomRatePlanType : RoomRatePlanType,
 							Commission : '',
 							CancelPolicyExist : '',
