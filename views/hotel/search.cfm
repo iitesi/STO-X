@@ -68,7 +68,7 @@
               <table width="500px">
               <tr>
                 <td width="135px">
-                  <div id="hotelimage#sHotel#" class="listcell" style="width:125px; overflow:none; border:1px solid ##FFFFFF">
+                  <div id="hotelimage#sHotel#" class="listcell">
                     <cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
                     <!--- <img width="125px" src="#Signature_Image#" /> --->image
                   </div>
@@ -76,7 +76,7 @@
                 <td valign="top" width="365px">
                   <table width="365px">
                   <tr>
-                    <td><div id="number#sHotel#" style="float:left;">#tripcount#</div> - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
+                    <td><div id="number#sHotel#">#tripcount#</div> - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
                   </tr>
                   <tr>
                     <td><div id="address#sHotel#">#HotelAddress#</div></td>
