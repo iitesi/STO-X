@@ -69,7 +69,7 @@ setFilter
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
 		<!---Add search to the session scope.--->
 		<cfelse>
-			<cfset rc.Filter = variables.bf.getBean("setup").setSearch(argumentcollection=arguments.rc)>
+			<cfset rc.Filter = variables.bf.getBean("setup").setFilter(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<cfreturn />
