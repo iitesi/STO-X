@@ -24,6 +24,7 @@ lowfare
 			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->

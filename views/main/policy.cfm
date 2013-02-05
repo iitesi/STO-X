@@ -1,4 +1,4 @@
-<cfif structKeyExists(rc, 'Policy')>
+<cfif structKeyExists(rc, 'Policy') AND NOT structIsEmpty(rc.Policy)>
     <div class="one-third column">
         <h3>Air Policy</h3>
     <ul>
@@ -49,9 +49,9 @@
 		</cfif>
 		<cfif rc.Policy.Policy_CarPrefRule EQ 1>
 			<cfif rc.Policy.Policy_CarPrefDisp EQ 1>
-                    <li>Must book preferred vendor</li>
-				<cfelse>
-                    <li>Book preferred vendor</li>
+                <li>Must book preferred vendor</li>
+			<cfelse>
+                <li>Book preferred vendor</li>
 			</cfif>
 		</cfif>
 	</cfoutput>

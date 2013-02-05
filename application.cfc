@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking15'>
+	<cfset this.name = 'booking20'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
@@ -42,41 +42,37 @@
 
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 1>
+		<!---
 		<cfset application.objHotelDetails  = createObject("component", "booking.services.hoteldetails")>
 		<cfset application.objHotelPhotos  = createObject("component", "booking.services.hotelphotos")>
 		<cfset application.objHotelPrice  = createObject("component", "booking.services.hotelprice")>
 		<cfset application.objHotelRooms = createObject("component", "booking.services.hotelrooms")>
-
+		--->
 	</cffunction>
-	
+
 	<cffunction name="setupSession">
 
 		<cfset session.searches = {}>
 		<cfset session.aMessages = []>
 
 	</cffunction>
-	
-	<cffunction name="setupRequest">
 
-		<cfset request.context.SearchID = (StructKeyExists(request.context, 'SearchID') ? request.context.SearchID : 0)>
-		<cfset controller( 'setup.setSearch' )>
-		<!---Redirect the site if the search hasn't been loaded yet.--->
-		<cfif (NOT StructKeyExists(session, 'searches')
-		OR NOT StructKeyExists(session.searches, request.context.SearchID))
-		AND request.context.action NEQ 'main.default'>
-			<cfset redirect('main?SearchID=#request.context.SearchID#')>
-		</cfif>
-		<cfset request.context.AcctID = (structKeyExists(session, 'AcctID') ? session.AcctID : 0)>
-		<cfset controller( 'setup.setAccount' )>
-		<cfset request.context.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
-		<cfset controller( 'setup.setPolicy' )>
-
-
-		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
-
+	<cffunction name="before">
 
 	</cffunction>
-	
+
+	<cffunction name="setupRequest" output="true">
+
+		<cfset controller( 'setup.setSearchID' )>
+		<cfset controller( 'setup.setFilter' )>
+		<cfset controller( 'setup.setAcctID' )>
+		<cfset controller( 'setup.setAccount' )>
+		<cfset controller( 'setup.setPolicyID' )>
+		<cfset controller( 'setup.setPolicy' )>
+		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
+
+	</cffunction>
+
 	<cffunction name="onRequestEnd">
 
 	</cffunction>

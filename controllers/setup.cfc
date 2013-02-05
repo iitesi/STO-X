@@ -3,7 +3,10 @@
 	<cfset variables.fw = "">
 	<cffunction name="init" access="public" output="false" returntype="any">
 		<cfargument name="fw">
+
 		<cfset variables.fw = arguments.fw>
+        <cfset variables.bf = fw.getBeanFactory()>
+
 		<cfreturn this>
 	</cffunction>
 
@@ -45,9 +48,20 @@
 	</cffunction>
 
 <!---
-setSearch
+setSearchID
 --->
-	<cffunction name="setSearch" output="false" returntype="void">
+	<cffunction name="setSearchID" output="false">
+		<cfargument name="rc">
+
+		<cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)>
+
+		<cfreturn />
+	</cffunction>
+
+<!---
+setFilter
+--->
+	<cffunction name="setFilter" output="false">
 		<cfargument name="rc">
 
 		<!---Move the search into the rc scope so it is always available.--->
@@ -55,8 +69,19 @@ setSearch
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
 		<!---Add search to the session scope.--->
 		<cfelse>
-			<cfset variables.fw.service('setup.setSearch', 'Filter')>
+			<cfset rc.Filter = variables.bf.getBean("setup").setSearch(argumentcollection=arguments.rc)>
 		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+<!---
+setAcctID
+--->
+	<cffunction name="setAcctID" output="false">
+		<cfargument name="rc">
+
+		<cfset rc.AcctID = (structKeyExists(session, 'AcctID') ? session.AcctID : 0)>
 
 		<cfreturn />
 	</cffunction>
@@ -64,7 +89,7 @@ setSearch
 <!---
 setAccount
 --->
-	<cffunction name="setAccount" output="false" returntype="void">
+	<cffunction name="setAccount" output="false">
 		<cfargument name="rc">
 
 		<!---Move the Account into the rc scope so it is always available.--->
@@ -72,8 +97,19 @@ setAccount
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
 		<cfelse>
-			<cfset variables.fw.service('setup.setAccount', 'Account')>
+			<cfset rc.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc)>
 		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+<!---
+setPolicyID
+--->
+	<cffunction name="setPolicyID" output="true">
+		<cfargument name="rc">
+
+		<cfset rc.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
 
 		<cfreturn />
 	</cffunction>
@@ -81,21 +117,21 @@ setAccount
 <!---
 setPolicy
 --->
-	<cffunction name="setPolicy" output="false" returntype="void">
+	<cffunction name="setPolicy" output="true">
 		<cfargument name="rc">
 
 		<!---Move the Policy into the rc scope so it is always available.--->
-		<cfif StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, arguments.rc.PolicyID)>
-			<cfset rc.Policy = application.Policies[arguments.rc.PolicyID]>
+		<cfif StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, rc.PolicyID)>
+			<cfset rc.Policy = application.Policies[rc.PolicyID]>
 		<!---Lazy loading, adds policies to the application scope as needed.--->
 		<cfelse>
-			<cfset variables.fw.service('setup.setPolicy', 'Policy')>
+			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
 
-<!--- close --->
+<!--- close
 	<cffunction name="close" output="false">
 		<cfargument name="rc">
 		
@@ -110,5 +146,5 @@ setPolicy
 		
 		<cfreturn />
 	</cffunction>
-	
+    --->
 </cfcomponent>

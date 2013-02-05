@@ -1,6 +1,14 @@
 <cfcomponent output="false">
 
 <!---
+init
+--->
+	<cffunction name="init" output="false">
+
+		<cfreturn this>
+	</cffunction>
+
+<!---
 setServerURL
 --->
 	<cffunction name="setServerURL" output="false" returntype="void">
@@ -43,21 +51,21 @@ setPortalURL
 		
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 setAPIAuth - REMOVE LATER
 --->
 	<cffunction name="setAPIAuth" output="false" returntype="void">
-		
+
 		<cfset application.sAPIAuth = ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
-		
+
 		<cfreturn />
 	</cffunction>
 
 <!---
-setSearch
+setFilter
 --->
-	<cffunction name="setSearch" output="false">
+	<cffunction name="setFilter" output="false">
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Append" 	required="false" default="0" >
 
@@ -308,7 +316,7 @@ setPolicy
 
 		<cfreturn stTemp/>
 	</cffunction>
-		
+
 <!---
 setAirVendors
 --->

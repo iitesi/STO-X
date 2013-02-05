@@ -1,26 +1,34 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	
-	<bean id="uapi" class="booking.services.uapi" />
-	<bean id="airparse" class="booking.services.airparse" >
+
+    <bean id="uapi" class="booking.services.uapi" />
+
+    <bean id="setup" class="booking.services.setup" />
+
+    <bean id="airparse" class="booking.services.airparse" >
 		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
 	</bean>
+
 	<bean id="lowfare" class="booking.services.lowfare" >
 		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
 		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
 	</bean>
+
     <bean id="airavailability" class="booking.services.airavailability" >
         <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
         <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
     </bean>
+
     <bean id="airprice" class="booking.services.airprice" >
         <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
         <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
     </bean>
+
     <bean id="car" class="booking.services.car" >
         <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
     </bean>
+
     <bean id="couldyou" class="booking.services.couldyou" >
         <constructor-arg name="airprice"><ref bean="airprice" /></constructor-arg>
         <constructor-arg name="car"><ref bean="car" /></constructor-arg>

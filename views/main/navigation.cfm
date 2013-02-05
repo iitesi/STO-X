@@ -1,5 +1,5 @@
 <cfoutput>
-	<cfif IsObject(rc.Filter)>
+	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		<nav id="main-nav">
 		    <ul>
 				<!---Air--->

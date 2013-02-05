@@ -28,6 +28,7 @@ doCouldYou
 		<cfset calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDate()) />
 		<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
 		<cfset threadnames = {}>
+
 		<cfloop from="1" to="2" index="MonthOption">
 			<cfset calendarDate = MonthOption EQ 2 ? DateAdd('m',1,calendarStartDate) : calendarStartDate />
 			<cfset Start = false>

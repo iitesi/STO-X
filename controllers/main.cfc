@@ -16,11 +16,9 @@ init
 default
 --->
 	<cffunction name="default" output="false">
-	</cffunction>
-	<cffunction name="enddefault" output="false">
 		<cfargument name="rc">
 
-		<cfif IsObject(arguments.rc.Filter)>
+		<cfif structKeyExists(arguments.rc, 'Filter') AND IsObject(arguments.rc.Filter)>
 			<cfif arguments.rc.Filter.getAir()
 			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Air')>
 				<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
@@ -36,7 +34,6 @@ default
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
-		<cfreturn />
 	</cffunction>
 	
 </cfcomponent>
