@@ -14,34 +14,31 @@
 	<cffunction name="setApplication" output="false" returntype="void">
 		
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>
-			<cfset variables.fw.service('setup.setServerURL', 'void')>
+			<cfset variables.bf.getBean("setup").setServerURL(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'sPortalURL') OR application.sPortalURL EQ ''>
-			<cfset variables.fw.service('setup.setPortalURL', 'void')>
+			<cfset variables.bf.getBean("setup").setPortalURL(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'sAPIAuth') OR application.sAPIAuth EQ ''>
-			<cfset variables.fw.service('setup.setAPIAuth', 'void')>
+			<cfset variables.bf.getBean("setup").setAPIAuth(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAirVendors') OR StructIsEmpty(application.stAirVendors)>
-			<cfset variables.fw.service('setup.setAirVendors', 'void')>
+			<cfset variables.bf.getBean("setup").setAirVendors(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stCarVendors') OR StructIsEmpty(application.stCarVendors)>
-			<cfset variables.fw.service('setup.setCarVendors', 'void')>
+			<cfset variables.bf.getBean("setup").setCarVendors(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stHotelVendors') OR StructIsEmpty(application.stHotelVendors)>
-			<cfset variables.fw.service('setup.setHotelVendors', 'void')>
+			<cfset variables.bf.getBean("setup").setHotelVendors(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stEquipment') OR StructIsEmpty(application.stEquipment)>
-			<cfset variables.fw.service('setup.setEquipment', 'void')>
+			<cfset variables.bf.getBean("setup").setEquipment(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAirports') OR StructIsEmpty(application.stAirports)>
-			<cfset variables.fw.service('setup.setAirports', 'void')>
+			<cfset variables.bf.getBean("setup").setAirports(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAmenities') OR StructIsEmpty(application.stAmenities)>
-			<cfset variables.fw.service('setup.setAmenities', 'void')>
-		</cfif>
-		<cfif NOT StructKeyExists(application, 'hotelphotos')>
-			<cfset application.hotelphotos = CreateObject('component','booking.services.hotelphotos') />
+			<cfset variables.bf.getBean("setup").setAmenities(argumentcollection=arguments.rc)>
 		</cfif>
 		
 		<cfreturn />

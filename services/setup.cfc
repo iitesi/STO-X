@@ -126,7 +126,7 @@ setFilter
 			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
 					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d'))>
-					<cfelse>
+				<cfelse>
 					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 				</cfif>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
@@ -136,7 +136,7 @@ setFilter
 			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
 				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
-				<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+				<!---<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>--->
 			<!--- Multi destination trip tab --->
 			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'MD'>
 				<!---<cfset searchfilter.setDestination('')>
