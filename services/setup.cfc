@@ -75,7 +75,8 @@ setFilter
 			<cfquery name="local.getsearch">
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,
 			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
-			Arrival_TimeType, ClassOfService
+			Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, 
+			Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
@@ -108,6 +109,18 @@ setFilter
 			<cfset searchfilter.setUserID(getsearch.User_ID)>
 			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
 			<cfset searchfilter.setUsername(getsearch.Username)>
+			<cfset searchfilter.setCheckIn_Date(getsearch.CheckIn_Date)>
+			<cfset searchfilter.setArrival_City(getsearch.Arrival_City)>
+			<cfset searchfilter.setCheckOut_Date(getsearch.CheckOut_Date)>
+			<cfset searchfilter.setHotel_Search(getsearch.Hotel_Search)>
+			<cfset searchfilter.setHotel_Airport(getsearch.Hotel_Airport)>
+			<cfset searchfilter.setHotel_Landmark(getsearch.Hotel_Landmark)>
+			<cfset searchfilter.setHotel_Address(getsearch.Hotel_Address)>
+			<cfset searchfilter.setHotel_City(getsearch.Hotel_City)>
+			<cfset searchfilter.setHotel_State(getsearch.Hotel_State)>
+			<cfset searchfilter.setHotel_Zip(getsearch.Hotel_Zip)>
+			<cfset searchfilter.setHotel_Country(getsearch.Hotel_Country)>
+			<cfset searchfilter.setOffice_ID(getsearch.Office_ID)>
 
 			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
 				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->

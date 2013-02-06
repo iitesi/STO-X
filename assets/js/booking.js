@@ -203,8 +203,8 @@ function hotelPrice(searchid, hotel, chain) {
 		success:function(data) {
 			var Rate = data[0] != 'Sold Out' ? '$'+data[0] : data[0];
 			var Address = data[1];
-			var divdata = '<div id="seerooms'+hotel+'" class="button-wrapper"><a onClick="showRates('+searchid+','+hotel+');return false;" class="button"><span>See Rooms</span></a></div>';
-			divdata+='<div id="hiderooms'+hotel+'" class="button-wrapper hide"><a onClick="hideRates('+hotel+');return false;" class="button"><span>Hide Rooms</span></a></div>';
+			var divdata = '<div id="seerooms'+hotel+'" class="button-wrapper"><a onClick="showRates('+searchid+',\''+hotel+'\');return false;" class="button"><span>See Rooms</span></a></div>';
+			divdata+='<div id="hiderooms'+hotel+'" class="button-wrapper hide"><a onClick="hideRates(\''+hotel+'\');return false;" class="button"><span>Hide Rooms</span></a></div>';
 			$("#checkrates2"+hotel).html(Rate + divdata);
 			// if it's Sold Out overwrite existing html with the Sold Out message
 			if (Rate == 'Sold Out') {

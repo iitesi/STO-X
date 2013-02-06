@@ -8,10 +8,10 @@
 		<cfargument name="sAPIAuth" 		required="false"	default="#application.sAPIAuth#">
 		<cfargument name="stAccount" 		required="false"	default="#application.Accounts[session.AcctID]#">
 		
-		<cfset local.stTrip = session.searches[arguments.SearchID] />
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode) />
-		<cfset local.sResponse = callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode) />
-		<cfset local.stResponse = formatResponse(sResponse) />
+		<cfset local.stTrip 			= session.searches[arguments.SearchID] />
+		<cfset local.sMessage 		= prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.sHotelChain, arguments.nHotelCode) />
+		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, arguments.SearchID, arguments.nHotelCode) />
+		<cfset local.stResponse 	= formatResponse(sResponse) />
 		<cfset local.aHotelPhotos = parseHotelPhotos(stResponse,arguments.nHotelCode,arguments.SearchID) />		
 
 		<cfreturn local.aHotelPhotos />
@@ -52,7 +52,7 @@
 		
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'aHotelPhotos')>
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID]['STHOTELS'][nHotelCode], 'HotelPhotos')>
 			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
@@ -62,9 +62,9 @@
 				<cfhttpparam type="header" name="SOAPAction" value="" />
 				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
 			</cfhttp>
-			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].aHotelPhotos = cfhttp.filecontent />
+			<cfset session.searches[SearchID]['STHOTELS'][nHotelCode].HotelPhotos = cfhttp.filecontent />
 		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].aHotelPhotos />
+			<cfset cfhttp.filecontent = session.searches[SearchID]['STHOTELS'][nHotelCode].HotelPhotos />
 		</cfif>
 
 		<cfreturn cfhttp.filecontent />

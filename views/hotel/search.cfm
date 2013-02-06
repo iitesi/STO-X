@@ -4,6 +4,11 @@
 <!--- <cfdump var="#session.searches[SearchID]['STHOTELS']#" abort> --->
 <!--- <cfinvoke component="services.hotelrooms" method="getRooms" SearchID="231413" nHotelCode="15550" returnvariable="hotel">
 <cfdump var="#hotel#" abort> --->
+
+<!--- <cfinvoke component="services.hotelphotos" method="doHotelPhotoGallery" SearchID="231413" nHotelCode="72779" sHotelChain="CZ" returnvariable="test">
+<cfdump var="#test#" abort> --->
+
+
 <cfoutput>
   <div class="container">
     <div class="portfolio-items filterable">
@@ -76,7 +81,7 @@
                 <td valign="top" width="365px">
                   <table width="365px">
                   <tr>
-                    <td><div id="number#sHotel#">#tripcount#</div> - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
+                    <td><div id="number#sHotel#" style="float:left;">#tripcount#</div> - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
                   </tr>
                   <tr>
                     <td><div id="address#sHotel#">#HotelAddress#</div></td>
@@ -232,7 +237,6 @@ function filterhotel() {
   var orderedpropertyids = "#ArrayToList(session.searches[rc.SearchID]['stSortHotels'])#";
   </cfoutput>
   orderedpropertyids = orderedpropertyids.split(',');
-  console.log(hotelresults);
 
   for (var t = 0; t < orderedpropertyids.length; t++) {
     // start the loop with 6 because property_id, signature_image, lat, long, chain_code, policy, lowrate are 0-6

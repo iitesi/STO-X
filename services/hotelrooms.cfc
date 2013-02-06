@@ -6,7 +6,7 @@
 		<cfargument name="Policy" default="#application.Policies[session.PolicyID]#">
 
 
-		<cfset local.stHotel 						= session.searches[arguments.SearchID].stHotels[nHotelCode] />
+		<cfset local.stHotel 						= session.searches[arguments.SearchID].stHotels[NumberFormat(nHotelCode,'00000')] />
 		<cfset local.stNewHotel 				= StructKeyExists(stHotel,'Rooms') ? stHotel['Rooms'] : {} />
 		<!--- <cfset local.CorporateRateCodes = application.Accounts[session.AcctID]['Hotel_RateCodes'] /> --->
 		<cfset local.RoomsData					= QueryNew("PropertyID,Count,RoomDescription,Rate,CurrencyCode,RoomRateCategory,RoomRatePlanType,Policy,GovernmentRate",
