@@ -1,14 +1,14 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="uapi">
+	<cfproperty name="UAPI">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="uapi">
+		<cfargument name="UAPI">
 
-		<cfset setUAPI(arguments.uapi)>
+		<cfset setUAPI(arguments.UAPI)>
 
 		<cfreturn this>
 	</cffunction>
@@ -46,8 +46,8 @@ doAvailability
 				nCouldYou="#arguments.nCouldYou#"
 				CDNumbers="#CDNumbers#">
 					<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
-					<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
-					<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
+					<cfset local.sResponse 	= UAPI.callUAPI('VehicleService', sMessage, SearchID)>
+					<cfset local.aResponse 	= UAPI.formatUAPIRsp(sResponse)>
 					<cfset local.stCars     = parseCars(aResponse, 1)>
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
@@ -69,8 +69,8 @@ doAvailability
 			Policy="#arguments.Policy#"
 			nCouldYou="#arguments.nCouldYou#">
 				<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
-				<cfset local.sResponse 	= uapi.callUAPI('VehicleService', sMessage, SearchID)>
-				<cfset local.aResponse 	= uapi.formatUAPIRsp(sResponse)>
+				<cfset local.sResponse 	= UAPI.callUAPI('VehicleService', sMessage, SearchID)>
+				<cfset local.aResponse 	= UAPI.formatUAPIRsp(sResponse)>
 				<cfset local.stCars     = parseCars(aResponse, 0)>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>

@@ -1,16 +1,16 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="airprice">
+	<cfproperty name="AirPrice">
 	<cfproperty name="car">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="airprice">
+		<cfargument name="AirPrice">
 		<cfargument name="car">
 
-		<cfset setAirPrice(arguments.airprice)>
+		<cfset setAirPrice(arguments.AirPrice)>
 		<cfset setCar(arguments.car)>
 
 		<cfreturn this>
@@ -67,16 +67,16 @@ doCouldYou
 									<cfset stSelected[nGroup].Groups[0] = stGroup>
 								</cfloop>
 								<!--- Put together the SOAP message. --->
-								<cfset sMessage 	= airprice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
+								<cfset sMessage 	= AirPrice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
 								<cfset thread.sMessage 	= sMessage>
 								<!--- Call the UAPI. --->
-								<cfset sResponse 	= airprice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
+								<cfset sResponse 	= AirPrice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
 								<cfset thread.sResponse 	= sResponse>
 								<!--- Format the UAPI response. --->
-								<cfset aResponse 	= airprice.getUAPI().formatUAPIRsp(sResponse)>
+								<cfset aResponse 	= AirPrice.getUAPI().formatUAPIRsp(sResponse)>
 								<!--- Parse the trips. --->
-								<cfset stTrips		= airprice.getAirParse().parseTrips(aResponse, {})>
-								<cfset nTripKey		= airprice.getTripKey(stTrips)>
+								<cfset stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
+								<cfset nTripKey		= AirPrice.getTripKey(stTrips)>
 								<cfif NOT StructIsEmpty(stTrips)>
 									<cfset thread.AirTotal = stTrips[nTripKey].Total>
 								</cfif>
@@ -136,7 +136,7 @@ doCouldYou
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',arguments.nTripDay,Search.Depart_DateTime)) />
 
 		<cfif NOT structKeyExists(session.searches[SearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[SearchID].CouldYou.Air,CouldYouDate)>
-			<cfset nTripKey = airprice.doAirPrice(arguments.SearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
+			<cfset nTripKey = AirPrice.doAirPrice(arguments.SearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
 
 			<cfloop array="#nTripKey#" index="local.Element">
 				<cfif Element.xmlName EQ 'air:AirPriceResult'>
@@ -174,7 +174,7 @@ doAirPriceCouldYou
 		<cfset local.CouldYouDate = CreateODBCDate(DateAdd('d',arguments.nTripDay,Search.Depart_DateTime)) />
 
 		<cfif NOT structKeyExists(session.searches[SearchID].CouldYou,'Air') OR NOT structKeyExists(session.searches[SearchID].CouldYou.Air,CouldYouDate)>
-			<cfset nTripKey = airprice.doAirPrice(arguments.SearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
+			<cfset nTripKey = AirPrice.doAirPrice(arguments.SearchID,arguments.sCabin,arguments.bRefundable,arguments.nTrip,arguments.nTripDay) />
 
 			<cfloop array="#nTripKey#" index="local.Element">
 				<cfif Element.xmlName EQ 'air:AirPriceResult'>

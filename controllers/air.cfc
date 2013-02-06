@@ -21,10 +21,8 @@ lowfare
 	    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<!--- Throw out a threads --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
-			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
@@ -62,7 +60,6 @@ availability
 			<!--- Throw out a threads --->
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
-			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the availability search. --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
@@ -93,7 +90,7 @@ price
 	<cffunction name="price" output="false">
 		<cfargument name="rc">
 
-		<cfset fw.getBeanFactory().getBean('airprice').doAirPrice(argumentcollection=arguments.rc)>
+		<cfset fw.getBeanFactory().getBean('AirPrice').doAirPrice(argumentcollection=arguments.rc)>
 
 		<cfreturn />
 	</cffunction>
@@ -121,7 +118,7 @@ popup
 			</cfif>
 			<cfparam name="rc.bSelection" default="0">
 			<!--- init objects --->
-			<cfset variables.fw.service('uapi.init', 'objUAPI')>
+			<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 			<!--- Do the search. --->
 			<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 		<cfelseif rc.sDetails EQ 'details'>
@@ -150,7 +147,7 @@ seatmap
 		<cfset rc.nTripID = url.nTripID>
 		<cfset rc.nSegment = url.nSegment>
 		<!--- init objects --->
-		<cfset variables.fw.service('uapi.init', 'objUAPI')>
+		<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 		

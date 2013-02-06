@@ -31,13 +31,13 @@
 		<cfset variables.nTraveler = 1>
 		<cfset variables.bTotalTrip = 0>
 		<cfset variables.stTraveler 	= (StructKeyExists(session.searches[rc.SearchID].stTravelers, nTraveler) ? session.searches[rc.SearchID].stTravelers[nTraveler] : {})>
-		<div id="travelef" class="tab_content" style="display: block;">
+		<div id="traveler" class="tab_content">
 			<p>
-				<div class="summarydiv" style="float:left;">	
+				<div class="summarydiv" style="background-color: ##FFF">
 					<div id="travelerForm"> </div>
 				</div>
 				
-				<div class="summarydiv" style="float:left;">
+				<div class="summarydiv" style="background-color: ##FFF">
 					<div id="paymentForm"> </div>
 				</div>
 				
@@ -173,7 +173,7 @@ function setOtherFields(nTraveler) {
 }
 function changeTraveler(nTraveler) {
 	var SearchID = $( "#SearchID" ).val();
-	var User_ID = $( "#User_ID" ).val();
+	var UserID = $( "#User_ID" ).val();
 	$( "#travelerForm" ).html('<table width="500" height="290"><tr height="23"><td valign="top">Gathering profile data...</td></tr></table>');
 	$.ajax({
 		type: 'POST',
@@ -182,7 +182,7 @@ function changeTraveler(nTraveler) {
 			method: 'getUser',
 			nTraveler: nTraveler,
 			SearchID: SearchID,
-			User_ID: User_ID
+			UserID: UserID
 		},
 		dataType: 'json',
 		success: function(data) {

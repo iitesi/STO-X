@@ -8,7 +8,7 @@
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 		
 		<cfset local.SearchID 		= arguments.Filter.getSearchID() />
-		<cfset local.sMessage			= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID) />
+		<cfset local.sMessage		= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID) />
 		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID) />
 		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.stHotels 		= parseHotels(aResponse) />
@@ -184,7 +184,7 @@
 		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
 			
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotels') OR NOT StructKeyExists(session.searches[SearchID].stHotels, 'sFileContent')>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#">
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />

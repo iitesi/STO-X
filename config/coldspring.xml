@@ -2,35 +2,41 @@
 
 <beans>
 
-    <bean id="uapi" class="booking.services.uapi" />
+    <bean id="UAPI" class="booking.services.UAPI" />
 
     <bean id="setup" class="booking.services.setup" />
 
-    <bean id="airparse" class="booking.services.airparse" >
-		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+    <bean id="AirCreate" class="booking.services.AirCreate" >
+        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+        <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+        <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+    </bean>
+
+    <bean id="AirParse" class="booking.services.AirParse" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 	</bean>
 
 	<bean id="lowfare" class="booking.services.lowfare" >
-		<constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
-		<constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 	</bean>
 
     <bean id="airavailability" class="booking.services.airavailability" >
-        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
-        <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+        <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
     </bean>
 
-    <bean id="airprice" class="booking.services.airprice" >
-        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
-        <constructor-arg name="airparse"><ref bean="airparse" /></constructor-arg>
+    <bean id="AirPrice" class="booking.services.AirPrice" >
+        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+        <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
     </bean>
 
     <bean id="car" class="booking.services.car" >
-        <constructor-arg name="uapi"><ref bean="uapi" /></constructor-arg>
+        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
     </bean>
 
     <bean id="couldyou" class="booking.services.couldyou" >
-        <constructor-arg name="airprice"><ref bean="airprice" /></constructor-arg>
+        <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
         <constructor-arg name="car"><ref bean="car" /></constructor-arg>
     </bean>
 

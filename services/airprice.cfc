@@ -1,17 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="uapi">
-	<cfproperty name="airparse">
+	<cfproperty name="UAPI">
+	<cfproperty name="AirParse">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="uapi">
-		<cfargument name="airparse">
+		<cfargument name="UAPI">
+		<cfargument name="AirParse">
 
-		<cfset setUAPI(arguments.uapi)>
-		<cfset setAirParse(arguments.airparse)>
+		<cfset setUAPI(arguments.UAPI)>
+		<cfset setAirParse(arguments.AirParse)>
 
 		<cfreturn this>
 	</cffunction>
@@ -56,25 +56,25 @@ doAirPrice
 		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
 		<!---<cfdump var="#sMessage#" abort>--->
 		<!--- Call the UAPI. --->
-		<cfset sResponse 	= uapi.callUAPI('AirService', sMessage, arguments.SearchID)>
+		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- Format the UAPI response. --->
-		<cfset aResponse 	= uapi.formatUAPIRsp(sResponse)>
-		<!---<cfdump var="#aResponse#">--->
+		<cfset aResponse 	= UAPI.formatUAPIRsp(sResponse)>
+		<!---<cfdump var="#aResponse#" abort>--->
 		<!--- Parse the segments. --->
-		<cfset stSegments	= airparse.parseSegments(aResponse)>
+		<cfset stSegments	= AirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
 			<!--- Parse the trips. --->
-			<cfset stTrips		= airparse.parseTrips(aResponse, stSegments)>
+			<cfset stTrips		= AirParse.parseTrips(aResponse, stSegments)>
 			<!--- Add group node --->
-			<cfset stTrips		= airparse.addGroups(stTrips)>
+			<cfset stTrips		= AirParse.addGroups(stTrips)>
 			<!--- Check low fare. --->
-			<cfset stTrips 		= airparse.addTotalBagFare(stTrips)>
+			<cfset stTrips 		= AirParse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
-			<cfset stTrips		= airparse.addPreferred(stTrips, arguments.Account)>
+			<cfset stTrips		= AirParse.addPreferred(stTrips, arguments.Account)>
 			<!---<cfdump var="#stTrips#" abort>--->
 			<!--- Add trip id to the list of priced items --->
 			<cfset nTripKey		= getTripKey(stTrips)>
-			<!--- Save XML if needed - aircreate --->
+			<!--- Save XML if needed - AirCreate --->
 			<cfif arguments.bSaveAirPrice>
 				<cfset stTrips[nTripKey].sXML = sResponse>
 			</cfif>
@@ -82,9 +82,9 @@ doAirPrice
 				<!--- Add trip id to the list of priced items --->
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
 				<!--- Merge all data into the current session structures. --->
-				<cfset session.searches[arguments.SearchID].stTrips 						= airparse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
+				<cfset session.searches[arguments.SearchID].stTrips 						= AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
 				<!--- Finish up the results --->
-				<cfset void = airparse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
+				<cfset void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
 				<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
 				<!--- Clear out their results --->
 				<cfif arguments.sCabin NEQ stTrips[nTripKey].Class>
@@ -103,7 +103,7 @@ doAirPrice
 		<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
 		<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 
-		<cfreturn TotalFare>
+		<cfreturn stTrips>
 	</cffunction>
 
 <!---
@@ -125,7 +125,7 @@ prepareSOAPHeader
 					<soapenv:Header/>
 					<soapenv:Body>
 						<air:AirPriceReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
-							<com:BillingPointOfSaleInfo OriginApplication="uAPI"/>
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
 								<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">

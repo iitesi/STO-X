@@ -10,7 +10,9 @@
 		<cfreturn this>
 	</cffunction>
 
-<!--- setup : setApplication --->
+<!---
+setApplication
+--->
 	<cffunction name="setApplication" output="false" returntype="void">
 		
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>

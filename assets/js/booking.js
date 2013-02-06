@@ -167,9 +167,9 @@ function sortAir (sort) {
 	return false;
 }
 
-function airPrice(searchid, trip_id, cabin, refundable) {
+function AirPrice(searchid, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",
-		url:"services/airprice.cfc?method=doAirPrice",
+		url:"services/AirPrice.cfc?method=doAirPrice",
 		data:"SearchID="+searchid+"&nTrip="+trip_id+"&sCabin="+cabin+"&bRefundable="+refundable,
 		async: true,
 		dataType: 'json',

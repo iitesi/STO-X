@@ -1,14 +1,14 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="uapi">
+	<cfproperty name="UAPI">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="uapi">
+		<cfargument name="UAPI">
 
-		<cfset setUAPI(arguments.uapi)>
+		<cfset setUAPI(arguments.UAPI)>
 		
 		<cfreturn this>
 	</cffunction>
@@ -22,22 +22,22 @@ doLowFare
 		<cfargument name="Policy"	required="true">
 
 		<!--- Check low fare. --->
-		<cfset session.searches[SearchID].stTrips							= addTotalBagFare(session.searches[SearchID].stTrips)>
+		<cfset session.searches[SearchID].stTrips						= addTotalBagFare(session.searches[SearchID].stTrips)>
 		<!--- Update the results that are available. --->
-		<cfset session.searches[SearchID].stLowFareDetails.stResults 		= findResults(session.searches[arguments.SearchID].stTrips)>
+		<cfset session.searches[SearchID].stLowFareDetails.stResults 	= findResults(session.searches[arguments.SearchID].stTrips)>
 		<!--- Get list of all carriers returned. --->
-		<cfset session.searches[SearchID].stLowFareDetails.aCarriers 		= getCarriers(session.searches[arguments.SearchID].stTrips)>
+		<cfset session.searches[SearchID].stLowFareDetails.aCarriers 	= getCarriers(session.searches[arguments.SearchID].stTrips)>
 		<!--- Run policy on all the results --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stTrips 							= checkPolicy(session.searches[arguments.SearchID].stTrips, arguments.SearchID, session.searches[SearchID].stLowFareDetails.aSortFare[1], 'Fare', arguments.Account, arguments.Policy)>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+		<cfset session.searches[SearchID].stTrips 						= checkPolicy(session.searches[arguments.SearchID].stTrips, arguments.SearchID, session.searches[SearchID].stLowFareDetails.aSortFare[1], 'Fare', arguments.Account, arguments.Policy)>
 		<!--- Create javascript structure per trip. --->
-		<cfset session.searches[SearchID].stTrips 							= addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
+		<cfset session.searches[SearchID].stTrips 						= addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
 		<!--- Sort the results in different mannors. --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 		= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortArrival 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 		= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
 		
 		<cfreturn >
 	</cffunction>

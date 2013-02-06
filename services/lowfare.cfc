@@ -1,17 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="uapi">
-	<cfproperty name="airparse">
+	<cfproperty name="UAPI">
+	<cfproperty name="AirParse">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="uapi">
-		<cfargument name="airparse">
+		<cfargument name="UAPI">
+		<cfargument name="AirParse">
 
-		<cfset setUAPI(arguments.uapi)>
-		<cfset setAirParse(arguments.airparse)>
+		<cfset setUAPI(arguments.UAPI)>
+		<cfset setAirParse(arguments.AirParse)>
 		
 		<cfreturn this>
 	</cffunction>
@@ -36,7 +36,7 @@ threadLowFare
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
 				<cfset sThreadName = doLowFare(arguments.Filter, sCabin, bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy)>
-				<!---<cfset stThreads[sThreadName] = ''>--->
+				<cfset stThreads[sThreadName] = ''>
 			</cfloop>
 		</cfloop>
 
@@ -77,17 +77,18 @@ doLowFare
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
 			<cfset local[sThreadName] = {}>
 			<!--- Kick off the thread. --->
-			<!---<cfthread
+			<cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
 				Filter="#arguments.Filter#"
 				sCabin="#arguments.sCabin#"
 				Account="#arguments.Account#"
-				bRefundable="#arguments.bRefundable#">--->
+				Policy="#arguments.Policy#"
+				bRefundable="#arguments.bRefundable#">
 				<!--- <cfset thread.arguments = arguments> --->
 				<!--- Put together the SOAP message. --->
-				<cfset sMessage 	= prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable)>
+				<cfset sMessage 	= prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
 				<!---<cfdump var="#sMessage#">--->
 				<!--- Call the UAPI. --->
 				<cfset sResponse 	= getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
@@ -103,8 +104,6 @@ doLowFare
 				<cfset stSegments 	= getAirParse().parseSegments(aResponse)>
 				<!--- Parse the trips. --->
 				<cfset stTrips 		= getAirParse().parseTrips(aResponse, stSegments)>
-		<!---<cfdump var="#stTrips#">
-		<cfabort>--->
 				<!--- Add group node --->
 				<cfset stTrips 		= getAirParse().addGroups(stTrips)>
 				<!--- Add group node --->
@@ -122,7 +121,7 @@ doLowFare
 				</cfif>
 				<cfset thread.sMessage = sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
-			<!---</cfthread>--->
+			</cfthread>
 		</cfif>
 
 		<cfreturn sThreadName>
@@ -133,11 +132,11 @@ doLowFare
 prepareSOAPHeader
 --->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
-		<cfargument name="Filter"		        required="true">
-		<cfargument name="sCabins" 				required="true"><!--- Options (one item) - Economy, Y, Business, C, First, F (this is coded for a list but none of the calls actually send a list) --->
-		<cfargument name="bRefundable"			required="true"><!--- Options (one item) - 0, 1 (this is coded for a list but none of the calls actually send a list) --->
-		<cfargument name="sLowFareSearchID"		required="false"	default="">
-		<cfargument name="stAccount"			required="false"	default="">
+		<cfargument name="Filter"		    required="true">
+		<cfargument name="sCabins" 			required="true"><!--- Options (one item) - Economy, Y, Business, C, First, F (this is coded for a list but none of the calls actually send a list) --->
+		<cfargument name="bRefundable"		required="true"><!--- Options (one item) - 0, 1 (this is coded for a list but none of the calls actually send a list) --->
+		<cfargument name="sLowFareSearchID"	required="false"	default="">
+		<cfargument name="Account"			required="false"	default="">
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<cfquery name="local.qSearchLegs">
@@ -155,8 +154,8 @@ prepareSOAPHeader
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<cfif arguments.sLowFareSearchID EQ ''><!---TODO #arguments.stAccount.sBranch#--->
-							<air:LowFareSearchAsynchReq TargetBranch="P7003155" MaxResults="5" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0" AuthorizedBy="Test">
+						<cfif arguments.sLowFareSearchID EQ ''>
+							<air:LowFareSearchReq TargetBranch="#arguments.Account.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0" AuthorizedBy="Test">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
@@ -236,7 +235,7 @@ prepareSOAPHeader
 									</cfif>--->
 								</air:AirPricingModifiers>
 								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" /><!---TODO #arguments.stAccount.PCC_Booking#--->
-							</air:LowFareSearchAsynchReq>
+							</air:LowFareSearchReq>
 						<cfelse>
 							<air:RetrieveLowFareSearchReq TargetBranch="#arguments.stAccount.sBranch#" SearchId="#arguments.sLowFareSearchID#" ProviderCode="1V" PartNumber="1">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />

@@ -6,17 +6,15 @@ getUser
 	<cffunction name="getUser" output="false" access="remote" returnformat="plain">
 		<cfargument name="SearchID">
 		<cfargument name="Acct_ID"  default="#session.AcctID#">
-		<cfargument name="Filter">
+		<cfargument name="UserID">
 		<cfargument name="nTraveler"default="1">
-
-		<cfset local.UserID = arguments.Filter.getProfileID()>
 
 		<cfset local.stTravelers = session.searches[arguments.SearchID].stTravelers>
 		<!--- <cfset local.stTravelers = {}> --->
 
-		<cfif IsNumeric(UserID)
+		<cfif IsNumeric(arguments.UserID)
 		AND (NOT StructKeyExists(stTravelers, arguments.nTraveler)
-			OR stTravelers[arguments.nTraveler].User_ID NEQ UserID)>
+			OR stTravelers[arguments.nTraveler].User_ID NEQ arguments.UserID)>
 			<cfset local.stTravelers[arguments.nTraveler] = {}>
 			<!--- Preload general information --->
 			<cfquery name="local.qUser" datasource="Corporate_Production">
@@ -27,12 +25,12 @@ getUser
 			LEFT OUTER JOIN Biz_Contact_Info ON Users_Accounts.User_ID = Biz_Contact_Info.User_ID
 			LEFT OUTER JOIN Airline_Prefs ON Users_Accounts.User_ID = Airline_Prefs.User_ID
 			WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
-			AND Users.User_ID = <cfqueryparam value="#UserID#" cfsqltype="cf_sql_integer">
+			AND Users.User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND Status = <cfqueryparam value="A" cfsqltype="cf_sql_varchar">
 			AND Users.User_ID = Users_Accounts.User_ID
 			AND Primary_Acct = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 			</cfquery>
-			<cfset stTravelers[arguments.nTraveler].User_ID = UserID>
+			<cfset stTravelers[arguments.nTraveler].User_ID = arguments.UserID>
 			<cfloop list="#qUser.columnList#" index="local.sColumn">
 				<cfset stTravelers[arguments.nTraveler][sColumn] = qUser[sColumn]>
 			</cfloop>
@@ -44,7 +42,7 @@ getUser
 			<cfquery name="local.qFFAccounts" datasource="Corporate_Production">
 			SELECT ShortCode, CustType, Name, Acct_Num
 			FROM MP_Accts, Suppliers
-			WHERE User_ID = <cfqueryparam value="#UserID#" cfsqltype="cf_sql_integer">
+			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND MP_Accts.Supplier = Suppliers.AccountID
 			ORDER BY CustType, Name
 			</cfquery>
@@ -56,7 +54,7 @@ getUser
 			<cfquery name="local.qCCEmails" datasource="Corporate_Production">
 			SELECT DISTINCT CCEmail_Address
 			FROM VI_CcEmail
-			WHERE User_ID = <cfqueryparam value="#UserID#" cfsqltype="cf_sql_integer">
+			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 			<cfset stTravelers[arguments.nTraveler].CCEmail = ValueList(qCCEmails.CCEmail_Address, ';')>
 
@@ -64,7 +62,7 @@ getUser
 			<cfquery name="local.qSTOOU" datasource="Corporate_Production">
 			SELECT OU_Users.Value_ID
 			FROM OU_Users, OUs
-			WHERE User_ID = <cfqueryparam value="#UserID#" cfsqltype="cf_sql_integer">
+			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND OUs.Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
 			AND OU_Users.OU_ID = OUs.OU_ID
 			AND OU_Users.Value_ID IS NOT NULL
@@ -81,7 +79,7 @@ getUser
 			WHERE OUs.OU_ID = OU_Users.OU_ID
 			AND OUs.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 			AND OUs.Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
-			AND User_ID = <cfqueryparam value="#UserID#" cfsqltype="cf_sql_integer">
+			AND User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND (MainOU_ID IS NULL
 				<cfif stTravelers[arguments.nTraveler].Value_ID NEQ ''>
 					OR MainValue_ID IN (<cfqueryparam value="#stTravelers[arguments.nTraveler].Value_ID#" cfsqltype="cf_sql_integer">)
@@ -104,10 +102,10 @@ getUser
 			</cfloop>
 
 			<!--- Populate all possible FOPs to be used --->
-			<cfset stTravelers[arguments.nTraveler].stFOPs = getFOPs(UserID, qSTOOU.Value_ID)>
+			<cfset stTravelers[arguments.nTraveler].stFOPs = getFOPs(arguments.UserID, qSTOOU.Value_ID)>
 
 			<!--- Mark appropriate type --->
-			<cfset stTravelers[arguments.nTraveler].Type = (UserID NEQ 0 ? 'Profiled' : 'Guest')>
+			<cfset stTravelers[arguments.nTraveler].Type = (arguments.UserID NEQ 0 ? 'Profiled' : 'Guest')>
 			
 			<!--- Create defaults --->
 			<cfset stTravelers[arguments.nTraveler].stSeats = {}>

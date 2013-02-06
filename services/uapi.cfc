@@ -24,8 +24,8 @@ callUAPI
 			AND (NOT StructKeyExists(session, 'aMessages')
 				OR NOT ArrayFind(session.aMessages,arguments.sMessage)
 				OR NOT ArrayFind(session.aMessages[arguments.sMessage], 'sFileContent')))>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#scfhttp#">
-				<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')#" />
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#" result="local.#scfhttp#">
+				<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64('Universal API/UAPI6148916507-02cbc4d4:Qq7?b6*X5B')#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
 				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />

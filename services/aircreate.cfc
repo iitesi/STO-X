@@ -1,26 +1,36 @@
-<cfcomponent>
-	
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="UAPI">
+	<cfproperty name="AirParse">
+	<cfproperty name="AirPrice">
+
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		
-		<cfset variables.objAirPrice = CreateObject('component', 'booking.services.airprice').init()>
-		<cfset variables.objAirParse = CreateObject('component', 'booking.services.airparse').init()>
-		
-		<cfreturn this>
-	</cffunction>	
+		<cfargument name="UAPI">
+		<cfargument name="AirParse">
+		<cfargument name="AirPrice">
 
+		<cfset setUAPI(arguments.UAPI)>
+		<cfset setAirParse(arguments.AirParse)>
+		<cfset setAirPrice(arguments.AirPrice)>
+
+		<cfreturn this>
+	</cffunction>
 <!---
 doAirPrice
 --->
 	<cffunction name="doAirCreate" output="false">
-		<cfargument name="SearchID" 	required="true">
+		<cfargument name="SearchID" required="true">
+		<cfargument name="Account" 	required="true">
+		<cfargument name="Policy" 	required="true">
+		<cfargument name="stAir" 	required="true">
 
-		<cfset local.stAir 			= session.searches[arguments.SearchID].stItinerary.Air>
-		<cfset local.nTripKey		= objAirPrice.doAirPrice(arguments.SearchID, stAir.Class, stAir.Ref, stAir.nTrip, 0, 1)>
-		<cfset local.stAirPricing	= objAirParse.parseTripForPurchase(session.searches[arguments.SearchID].stTrips[nTripKey].sXML)>
+		<cfset local.stTrip		    = AirPrice.doAirPrice(arguments.SearchID, arguments.Account, arguments.Policy, arguments.stAir.Class, arguments.stAir.Ref, arguments.stAir.nTrip, 0, 1)>
+		<cfset local.stAirPricing	= AirParse.parseTripForPurchase(stTrip[structKeyList(stTrip)].sXML)>
 
+		<cfdump var="#stAirPricing#">
 		<cfdump var="#ToString(stAirPricing)#" abort="true">
 
 		<cfreturn >
@@ -42,7 +52,7 @@ prepareSoapHeader
 					<soapenv:Header/>
 					<soapenv:Body>
 						<air:AirCreateReservationReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
-							<com:BillingPointOfSaleInfo OriginApplication="uAPI"/>
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 					         <!--Zero or more repetitions:-->
 					         <com:BookingTraveler Key="?" TravelerType="?" Age="?" VIP="false" DOB="?" Gender="?">
 					            <com:BookingTravelerName First="#stTraveler.First_Name#" Middle="#stTraveler.Middle_Name#" Last="#stTraveler.Last_Name#"/>
@@ -814,173 +824,6 @@ prepareSoapHeader
 		</cfsavecontent>
 
 		<cfreturn message/>
-	</cffunction>
-
-<!---
-parseSegmentKeys
---->
-	<cffunction name="parseSegmentKeys" output="false">
-		<cfargument name="stResponse"	required="true">
-		
-		<cfset local.stSegmentKeys = {}>
-		<cfset local.sIndex = ''>
-		<!--- Create list of fields that make up a distint segment. --->
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
-		<!--- Loop through results. --->
-		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<!--- Build up the distinct segment string. --->
-					<cfset sIndex = ''>
-					<cfloop array="#aSegmentKeys#" index="local.sCol">
-						<cfset sIndex &= stAirSegment.XMLAttributes[sCol]>
-					</cfloop>
-					<!--- Create a look up structure for the primary key. --->
-					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	application.objUAPI.HashNumeric(sIndex),
-						Index		: 	sIndex
-					}>
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn stSegmentKeys />
-	</cffunction>
-
-<!---
-addSegmentRefs
---->
-	<cffunction name="addSegmentRefs" output="false">
-		<cfargument name="stResponse">
-		<cfargument name="stSegmentKeys">
-		
-		<cfset local.sAPIKey = ''>
-		<cfset local.cnt = 0>
-		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
-			<cfif stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
-				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
-					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
-						<cfset sAPIKey = stAirSegmentRef.XMLAttributes.Key>
-						<cfset arguments.stSegmentKeys[sAPIKey].nLocation = cnt>
-						<cfset cnt++>
-					</cfif>
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn arguments.stSegmentKeys />
-	</cffunction>
-
-<!---
-parseKeyLookup - schedule
---->
-	<cffunction name="parseKeyLookup" output="false">
-		<cfargument name="stSegmentKeys">
-		
-		<cfset local.stSegmentKeyLookUp = {}>
-		<cfloop collection="#arguments.stSegmentKeys#" item="local.sKey">
-			<cfset stSegmentKeyLookUp[stSegmentKeys[sKey].nLocation] = sKey>
-		</cfloop>
-		
-		<cfreturn stSegmentKeyLookUp />
-	</cffunction>
-
-<!---
-parseSegments
---->
-	<cffunction name="parseSegments" output="false">
-		<cfargument name="stResponse"		required="true">
-		<cfargument name="stSegmentKeys"	required="true">
-		
-		<cfset local.stSegments = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.dArrivalGMT = stAirSegment.XMLAttributes.ArrivalTime>
-					<cfset local.dArrivalTime = GetToken(dArrivalGMT, 1, '.')>
-					<cfset local.dArrivalOffset = GetToken(GetToken(dArrivalGMT, 2, '-'), 1, ':')>
-					<cfset local.dDepartGMT = stAirSegment.XMLAttributes.DepartureTime>
-					<cfset local.dDepartTime = GetToken(dDepartGMT, 1, '.')>
-					<cfset local.dDepartOffset = GetToken(GetToken(dDepartGMT, 2, '-'), 1, ':')>
-					<cfset stSegments[arguments.stSegmentKeys[stAirSegment.XMLAttributes.Key].HashIndex] = {
-						Arrival				: dArrivalGMT,
-						ArrivalTime			: ParseDateTime(dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', dArrivalOffset, dArrivalTime)),
-						Carrier 			: stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						Departure			: dDepartGMT,
-						DepartureTime		: ParseDateTime(dDepartTime),
-						DepartureGMT		: ParseDateTime(DateAdd('h', dDepartOffset, dDepartTime)),
-						Destination			: stAirSegment.XMLAttributes.Destination,
-						Equipment			: stAirSegment.XMLAttributes.Equipment,
-						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
-						Group				: stAirSegment.XMLAttributes.Group,
-						Origin				: stAirSegment.XMLAttributes.Origin,
-						TravelTime			: stAirSegment.XMLAttributes.TravelTime
-					}>
-				</cfloop>
-			</cfif>
-		</cfloop>
-			
-		<cfreturn stSegments />
-	</cffunction>
-
-<!---
-parseConnections - schedule
---->
-	<cffunction name="parseConnections" output="false">
-		<cfargument name="stResponse">
-		<cfargument name="stSegments">
-		<cfargument name="stSegmentKeys">
-		<cfargument name="stSegmentKeyLookUp">
-		
-		<!--- Create a structure to hold FIRST connection points --->
-		<cfset local.stSegmentIndex = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
-			<cfif stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
-				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stConnection">
-					<cfif stConnection.XMLName EQ 'air:Connection'>
-						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex] = StructNew('linked')>
-						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex][1] = stSegments[stSegmentKeys[stSegmentKeyLookUp[stConnection.XMLAttributes.SegmentIndex]].HashIndex]>
-					</cfif>
-				</cfloop>
-			</cfif>
-		</cfloop>
-		<!--- Add to that structure the missing connection points --->
-		<cfset local.stTrips = {}>
-		<cfset local.nCount = 0>
-		<cfset local.nSegNum = 1>
-		<cfset local.nMaxCount = ArrayLen(StructKeyArray(stSegmentKeys))>
-		<cfloop collection="#stSegmentIndex#" item="local.nIndex">
-			<cfset nCount = nIndex>
-			<cfset nSegNum = 1>
-			<cfloop condition="NOT StructKeyExists(stSegmentIndex, nCount+1) AND nCount LT nMaxCount AND StructKeyExists(stSegmentKeyLookUp, nCount+1)">
-				<cfset nSegNum++>
-				<cfset stSegmentIndex[nIndex][nSegNum] = stSegments[stSegmentKeys[stSegmentKeyLookUp[nCount+1]].HashIndex]>
-				<cfset nCount++>
-			</cfloop>
-		</cfloop>
-		<!--- Create an appropriate trip key --->
-		<cfset local.stTrips = {}>
-		<cfset local.sIndex = ''>
-		<cfset local.aCarriers = {}>
-		<cfset local.nHashNumeric = ''>
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#stSegmentIndex#" item="local.nIndex">
-			<cfloop collection="#stSegmentIndex[nIndex]#" item="local.sSegment">
-				<cfset sIndex = ''>
-				<cfloop array="#aSegmentKeys#" index="local.stSegment">
-					<cfset sIndex &= stSegmentIndex[nIndex][sSegment][stSegment]>
-				</cfloop>
-			</cfloop>
-			<cfset nHashNumeric = application.objUAPI.hashNumeric(sIndex)>
-			<cfset stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
-			<cfset stTrips[nHashNumeric].Class = 'X'>
-			<cfset stTrips[nHashNumeric].Ref = 'X'>
-		</cfloop>
-		
-		<cfreturn stTrips />
 	</cffunction>
 	
 </cfcomponent>

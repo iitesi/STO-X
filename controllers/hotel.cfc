@@ -8,6 +8,14 @@
 		
 		<cfreturn this />
 	</cffunction>
+
+	<cffunction name="before" output="false">
+		<cfargument name="rc">
+
+		<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+
+		<cfreturn />
+	</cffunction>
 	
 <!--- search --->
 	<cffunction name="search" output="false">

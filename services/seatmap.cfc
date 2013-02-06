@@ -66,7 +66,7 @@
 				<soapenv:Header/>
 					<soapenv:Body>
 						<air:SeatMapReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
-							<com:BillingPointOfSaleInfo OriginApplication="uAPI" />
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 								<air:AirSegment
 									Key="#nSegment#T"
 									Carrier="#stSegment.Carrier#"

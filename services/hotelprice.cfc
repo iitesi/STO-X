@@ -98,7 +98,7 @@
 		<cfset local.httpname = 'http'&arguments.nHotelCode /><!--- need a unique name for each result --->
 
 		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotelsRooms') OR NOT StructKeyExists(session.searches[SearchID].stHotelsRooms,nHotelCode)>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/uAPI/#arguments.sService#" result="local.#httpname#">
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#" result="local.#httpname#">
 				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
 				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
 				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />

@@ -57,7 +57,7 @@ setAPIAuth - REMOVE LATER
 --->
 	<cffunction name="setAPIAuth" output="false" returntype="void">
 
-		<cfset application.sAPIAuth = ToBase64('Universal API/uAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
+		<cfset application.sAPIAuth = ToBase64('Universal API/UAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
 
 		<cfreturn />
 	</cffunction>

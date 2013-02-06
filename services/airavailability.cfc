@@ -1,17 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="uapi">
-	<cfproperty name="airparse">
+	<cfproperty name="UAPI">
+	<cfproperty name="AirParse">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="uapi">
-		<cfargument name="airparse">
+		<cfargument name="UAPI">
+		<cfargument name="AirParse">
 
-		<cfset setUAPI(arguments.uapi)>
-		<cfset setAirParse(arguments.airparse)>
+		<cfset setUAPI(arguments.UAPI)>
+		<cfset setAirParse(arguments.AirParse)>
 		
 		<cfreturn this>
 	</cffunction>
