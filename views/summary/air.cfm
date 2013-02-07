@@ -1,7 +1,7 @@
 <cfoutput>
 	<cfif Air>
-		<br><br>
-		<div class="summarydiv background">
+		<br><br clear="both">
+		<div class="summarydiv" style="background-color: ##FFF">
 			<cfset AirPolicy = (ArrayLen(stItinerary.Air.aPolicies) GT 0 ? false : true)>
 			<table width="1000">
 			<tr>
@@ -9,9 +9,11 @@
 HEADING
 --->
 				<td colspan="5">
-					<h4>FLIGHT</h4>
-					#(NOT AirPolicy ? 'Your flight is outside of policy.' : '')#
-					<span style="float:right;"><a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#" style="color:##666">change flight <div class="close">x</div></a>
+                    <div class="underline-heading">
+                        <h2>Flights</h2>
+						#(NOT AirPolicy ? 'Your flight is outside of policy.' : '')#
+				        <span style="float:right;"><a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#" style="color:##666">Edit Flights</a>
+                    </div>
 				</td>
 			</tr>
 			<tr>

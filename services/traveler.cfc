@@ -372,7 +372,7 @@ setTravelerForm
 			<cfoutput>
 				<table width="500" height="290">
 				<tr height="23">
-					<td colspan="2"><h4>Traveler</h4></td>
+					<td colspan="2" class="underline-heading"> <h2>Traveler</h2></td>
 				</tr>
 				<tr height="23">
 					<td>

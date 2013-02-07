@@ -57,6 +57,7 @@ doAirPrice
 		<!---<cfdump var="#sMessage#" abort>--->
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
+		<!---<cfdump var="#sResponse#" abort>--->
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= UAPI.formatUAPIRsp(sResponse)>
 		<!---<cfdump var="#aResponse#" abort>--->

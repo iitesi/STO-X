@@ -69,8 +69,8 @@ setFilter
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Append" 	required="false" default="0" >
 
+		<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
 		<cfif arguments.SearchID NEQ 0>
-			<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
 
 			<cfquery name="local.getsearch">
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,

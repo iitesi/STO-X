@@ -130,6 +130,17 @@ setPolicy
 		<cfreturn />
 	</cffunction>
 
+<!---
+setGroup
+--->
+	<cffunction name="setGroup" output="false">
+		<cfargument name="rc">
+
+		<cfset rc.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
+
+		<cfreturn />
+	</cffunction>
+
 <!--- close
 	<cffunction name="close" output="false">
 		<cfargument name="rc">

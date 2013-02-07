@@ -696,3 +696,132 @@ function couldYouCar(searchid,carchain,cartype,viewDay,startdate,currenttotal) {
 	});
 	return false;
 }
+function setTravelerForm(nTraveler, bCollapse) {
+    var SearchID = $( "#SearchID" ).val();
+    $.ajax({
+        type: 'POST',
+        url: 'services/traveler.cfc',
+        data: {
+            method: 'setTravelerForm',
+            nTraveler: nTraveler,
+            SearchID: SearchID,
+            bCollapse: bCollapse
+        },
+        dataType: 'json',
+        success: function(data) {
+            $( "#travelerForm" ).html(data);
+        }
+    });
+}
+function setPaymentForm(nTraveler) {
+    var SearchID = $( "#SearchID" ).val();
+    var Air = $( "#Air" ).val();
+    var Car = $( "#Car" ).val();
+    var Hotel = $( "#Hotel" ).val();
+    var bCD = $( "#bCD" ).val();
+    var bDB = $( "#bDB" ).val();
+    $.ajax({
+        type: 'POST',
+        url: 'services/traveler.cfc',
+        data: {
+            method: 'setPaymentForm',
+            nTraveler: nTraveler,
+            SearchID: SearchID,
+            Air: Air,
+            Car: Car,
+            Hotel: Hotel,
+            bCD: bCD,
+            bDB: bDB
+        },
+        dataType: 'json',
+        success: function(data) {
+            $( "#paymentForm" ).html(data);
+        }
+    });
+}
+function setOtherFields(nTraveler) {
+    var SearchID = $( "#SearchID" ).val();
+    $.ajax({
+        type: 'POST',
+        url: 'services/traveler.cfc',
+        data: {
+            method: 'getTraveler',
+            nTraveler: nTraveler,
+            SearchID: SearchID
+        },
+        dataType: 'json',
+        success: function(traveler) {
+            //set global variables
+            var sCarriers = $( "#sCarriers" ).val().split(',');
+            var sCarVendor = $( "#sCarVendor" ).val();
+            //set variables if defined
+            var stAirFFs = new Object();
+            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+                && typeof traveler['STFFACCOUNTS']['A'] != 'undefined') {
+                stAirFFs = traveler['STFFACCOUNTS']['A'];
+            }
+            var stCarFFs = new Object();
+            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+                && typeof traveler['STFFACCOUNTS']['C'] != 'undefined') {
+                stCarFFs = traveler['STFFACCOUNTS']['C'];
+            }
+            var stHotelFFs = new Object();
+            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+                && typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
+                stHotelFFs = traveler['STFFACCOUNTS']['H'];
+            }
+            var stFOPs = new Object();
+            if (typeof traveler['STFOPS'] != 'undefined') {
+                stFOPs = traveler['STFOPS'];
+            }
+            var sSeat = '';
+            if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
+                sSeat = traveler['WINDOW_AISLE'];
+            }
+            //logic to update form fields
+            for (var i = 0; i < stFOPs.length; i++) {
+                console.log(stFOPs[i]);
+
+            }
+            for (var i = 0; i < sCarriers.length; i++) {
+                if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
+                    $( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
+                }
+                else {
+                    $( "#Air_FF" + sCarriers[i] ).val('');
+                }
+            }
+            if (typeof stCarFFs[sCarVendor] != 'undefined') {
+                $( "#Car_FF" ).val(stCarFFs[sCarVendor]);
+            }
+            else {
+                $( "#Car_FF" ).val('');
+            }
+            $( "#Seats" ).val(sSeat);
+        }
+    });
+}
+function changeTraveler(nTraveler) {
+    var SearchID = $( "#SearchID" ).val();
+    var UserID = $( "#User_ID" ).val();
+    $( "#travelerForm" ).html('<table width="500" height="290"><tr height="23"><td valign="top">Gathering profile data...</td></tr></table>');
+    $.ajax({
+        type: 'POST',
+        url: 'services/traveler.cfc',
+        data: {
+            method: 'getUser',
+            nTraveler: nTraveler,
+            SearchID: SearchID,
+            UserID: UserID
+        },
+        dataType: 'json',
+        success: function(data) {
+            setTravelerForm(nTraveler, 1);
+            setPaymentForm(nTraveler);
+            setOtherFields(nTraveler);
+        },
+        error: function(data, dat, da) {
+            $( "#travelerForm" ).html(data);
+        }
+    });
+}

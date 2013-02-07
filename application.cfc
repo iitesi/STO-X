@@ -57,10 +57,6 @@
 
 	</cffunction>
 
-	<cffunction name="before">
-
-	</cffunction>
-
 	<cffunction name="setupRequest" output="true">
 
 		<cfset controller( 'setup.setSearchID' )>
@@ -69,7 +65,11 @@
 		<cfset controller( 'setup.setAccount' )>
 		<cfset controller( 'setup.setPolicyID' )>
 		<cfset controller( 'setup.setPolicy' )>
-		<cfset request.context.Group = (StructKeyExists(request.context, 'Group') ? request.context.Group : '')>
+		<cfset controller( 'setup.setGroup' )>
+
+		<cfif NOT structKeyExists(request.context, 'SearchID')>
+			Not A Valid Search<cfabort>
+		</cfif>
 
 	</cffunction>
 

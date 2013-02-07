@@ -1,7 +1,7 @@
 <cfoutput>
 	<cfif Air>
 		<br><br>
-		<div class="summarydiv background">
+		<div class="summarydiv" style="background-color: ##FFF">
 			<cfset sCarCurr = Left(stItinerary.Car.EstimatedTotalAmount, 3)>
 			<cfset sCarTotal = Mid(stItinerary.Car.EstimatedTotalAmount, 4)>
 			<cfset CarPolicy = (ArrayLen(stItinerary.Car.aPolicies) GT 0 ? false : true)>
@@ -11,9 +11,11 @@
 HEADING
 --->
 				<td colspan="2">
-					<h4>CAR</h4>
+                <div class="underline-heading">
+                    <h2>Car</h2>
 					#(NOT CarPolicy ? 'Your car is outside of policy.' : '')#
-					<span style="float:right;"><a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" style="color:##666">change car <div class="close">x</div></a>
+			        <span style="float:right;"><a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" style="color:##666">Edit Car</a>
+			    </div>
 				</td>
 			<tr>
 			</tr>
