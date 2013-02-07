@@ -73,7 +73,7 @@
 								<script type="text/javascript">
 								<cfif session.searches[url.SearchID].Air EQ 1>couldYouAir(#rc.SearchID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);</cfif>
 								<cfif session.searches[url.SearchID].Hotel EQ 1>couldYouHotel(#rc.SearchID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>
-								<cfif session.searches[url.SearchID].Car EQ 1>couldYouCar(#rc.SearchID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#,#viewDate#,#SelectedTotal#);</cfif>
+								<cfif structKeyExists(session.searches[url.SearchID], 'Car') AND session.searches[url.SearchID].Car EQ 1>couldYouCar(#rc.SearchID#,'#CarSelection.VendorCode#','#CarSelection.VehicleClass##CarSelection.Category#',#DateDifference#,#viewDate#,#SelectedTotal#);</cfif>
 								</script>
 							</cfif>
 							<!--- Existing trip Start Day --->
