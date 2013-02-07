@@ -49,67 +49,68 @@ doCouldYou
 						<cfset DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy')) />
 						<cfset viewDate = DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd") />
 						<cfif Len(Trim(tdName))>
-						<cfset threadnames['could#DateDifference#'] = ''>
-						<cfthread
-						name="could#DateDifference#"
-						Filter="#arguments.Filter#"
-						SearchID="#arguments.SearchID#"
-						DateDifference="#DateDifference#"
-						Account="#Account#"
-						Policy="#Policy#"
-						CDNumbers="#CDNumbers#">
-							<cfset thread.AirTotal = 0>
-							<cfset thread.CarTotal = 0>
-							<!---Air--->
-							<cfif arguments.Filter.getAir()>
-								<cfset local.stSelected = structNew('linked')>
-								<cfloop collection="#session.searches[arguments.SearchID].stItinerary.Air.Groups#" item="local.stGroup" index="local.nGroup">
-									<cfset stSelected[nGroup].Groups[0] = stGroup>
-								</cfloop>
-								<!--- Put together the SOAP message. --->
-								<cfset sMessage 	= AirPrice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
-								<cfset thread.sMessage 	= sMessage>
-								<!--- Call the UAPI. --->
-								<cfset sResponse 	= AirPrice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
-								<cfset thread.sResponse 	= sResponse>
-								<!--- Format the UAPI response. --->
-								<cfset aResponse 	= AirPrice.getUAPI().formatUAPIRsp(sResponse)>
-								<!--- Parse the trips. --->
-								<cfset stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
-								<cfset nTripKey		= AirPrice.getTripKey(stTrips)>
-								<cfif NOT StructIsEmpty(stTrips)>
-									<cfset thread.AirTotal = stTrips[nTripKey].Total>
-								</cfif>
-							</cfif>
-							<!---Car--->
-							<cfif arguments.Filter.getCar()>
-								<cfset local.sCarType = session.searches[arguments.SearchID].stItinerary.Car.VehicleClass&session.searches[arguments.SearchID].stItinerary.Car.Category>
-								<cfset local.sCarChain = session.searches[arguments.SearchID].stItinerary.Car.VendorCode>
-								<cfif NOT structIsEmpty(CDNumbers)>
-									<cfset local.sMessage	= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference, CDNumbers)>
-									<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
-									<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
-									<cfset local.stCars     = car.parseCars(aResponse, 1)>
-									<cfif structKeyExists(stCars, sCarType)
-									AND structKeyExists(stCars[sCarType], sCarChain)>
-										<cfset thread.CarTotal = stCars[sCarType][sCarChain].EstimatedTotalAmount>
+							<cfset threadnames['could#DateDifference#'] = ''>
+							<cfthread
+							name="could#DateDifference#"
+							Filter="#arguments.Filter#"
+							SearchID="#arguments.SearchID#"
+							DateDifference="#DateDifference#"
+							Account="#Account#"
+							Policy="#Policy#"
+							CDNumbers="#CDNumbers#"
+							OriginDate="#OriginDate#">
+								<cfset thread.AirTotal = 0>
+								<cfset thread.CarTotal = 0>
+								<cfset thread.CouldYouDate = DateAdd('d',DateDifference,arguments.OriginDate)>
+								<!---Air--->
+								<cfif arguments.Filter.getAir()>
+									<cfset local.stSelected = structNew('linked')>
+									<cfloop collection="#session.searches[arguments.SearchID].stItinerary.Air.Groups#" item="local.stGroup" index="local.nGroup">
+										<cfset stSelected[nGroup].Groups[0] = stGroup>
+									</cfloop>
+									<!--- Put together the SOAP message. --->
+									<cfset sMessage = AirPrice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
+									<!--- <cfset thread.sAirMessage 	= sMessage> --->
+									<!--- Call the UAPI. --->
+									<cfset sResponse 	= AirPrice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
+									<!--- <cfset thread.sAirResponse = sResponse> --->
+									<!--- Format the UAPI response. --->
+									<cfset aResponse 	= AirPrice.getUAPI().formatUAPIRsp(sResponse)>
+									<!--- Parse the trips. --->
+									<cfset stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
+									<cfset nTripKey		= AirPrice.getTripKey(stTrips)>
+									<cfif NOT StructIsEmpty(stTrips)>
+										<cfset thread.AirTotal = stTrips[nTripKey].Total>
 									</cfif>
 								</cfif>
-								<cfif thread.CarTotal EQ 0>
-									<cfset local.sMessage	= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference)>
-									<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
-									<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
-									<cfset local.stCars     = car.parseCars(aResponse, 0)>
-									<cfif structKeyExists(stCars, sCarType)
-									AND structKeyExists(stCars[sCarType], sCarChain)>
-										<cfset thread.CarTotal = stCars[sCarType][sCarChain].EstimatedTotalAmount>
+								<!---Car--->
+								<cfif arguments.Filter.getCar()>
+									<cfset local.sCarType = session.searches[arguments.SearchID].stItinerary.Car.VehicleClass&session.searches[arguments.SearchID].stItinerary.Car.Category>
+									<cfset local.sCarChain = session.searches[arguments.SearchID].stItinerary.Car.VendorCode>
+									<cfif NOT structIsEmpty(CDNumbers)>
+										<cfset local.sMessage	= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference, CDNumbers)>
+										<!--- <cfset thread.sCarCDMessage 	= sMessage> --->
+										<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
+										<!--- <cfset thread.sCarCDResponse = sResponse> --->
+										<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
+										<cfset local.stCars     = car.parseCars(aResponse, 1)>
+										<cfif structKeyExists(stCars, sCarType) AND structKeyExists(stCars[sCarType], sCarChain)>
+											<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4)>
+										</cfif>
+									</cfif>
+									<cfif thread.CarTotal EQ 0>
+										<cfset local.sMessage	= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference)>
+										<!--- <cfset thread.sCarMessage 	= sMessage> --->
+										<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
+										<!--- <cfset thread.sCarResponse 	= sResponse> --->
+										<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
+										<cfset local.stCars     = car.parseCars(aResponse, 0)>
+										<cfif structKeyExists(stCars, sCarType) AND structKeyExists(stCars[sCarType], sCarChain)>
+											<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4)>
+										</cfif>
 									</cfif>
 								</cfif>
-
-<!---<cfset thread.CarTotal = car.doAvailability(arguments.Filter, arguments.Account, arguments.Policy, , session.searches[arguments.SearchID].stItinerary.Car.VehicleClass&session.searches[arguments.SearchID].stItinerary.Car.Category, DateDifference)>--->
-							</cfif>
-						</cfthread>
-
+							</cfthread>
 
 						</cfif>
 					</cfif>
@@ -122,9 +123,17 @@ doCouldYou
 		</cfloop>
 
 		<cfthread action="join" name="#StructKeyList(threadnames)#">
-		<!--- <cfdump var="#cfthread#"> --->
-		<!--- <cfabort> --->
-
+		<cfset local.stCouldYouResults = {}>
+		<cfloop list="#structKeyList(threadnames)#" index="local.CouldYou">
+			<cfset local.stCouldYou = cfthread[CouldYou]>
+			<cfset local.CouldYouDate = stCouldYou.CouldYouDate>
+			<cfset local.stCouldYouResults.Air[CouldYouDate] = stCouldYou.AirTotal EQ 0 ? 'Flight Does not Operate' : stCouldYou.AirTotal>
+			<cfset local.stCouldYouResults.Car[CouldYouDate] = stCouldYou.CarTotal EQ 0 ? 'Car Not Available' : stCouldYou.CarTotal>			
+		</cfloop>
+		<cfset session.searches[SearchID].CouldYou = stCouldYouResults>
+		<cfdump var="#cfthread#" abort>
+		<!--- <cfdump var="#stCouldYouResults#">
+		<cfdump var="#session.searches[SearchID].CouldYou#" abort> --->
 
 <!---
 

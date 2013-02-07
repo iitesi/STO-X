@@ -171,7 +171,7 @@ parseTrips
 				
 					<cfif stAirPricingNode.XMLName EQ 'air:AirSegmentRef'>
 
-						<cfset stTrip.Segments[sSegmentKey] = arguments.stSegments[sSegmentKey]>
+						<cfset stTrip.Segments[sSegmentKey] = structKeyExists(arguments.stSegments,sSegmentKey) ? arguments.stSegments[sSegmentKey] : {}>
 
 					<cfelseif stAirPricingNode.XMLName EQ 'air:AirPricingInfo'>
 
@@ -228,15 +228,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.stAirSegmentRef">
 					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
 						<cfloop array="#aIndexKeys#" index="local.stSegment">
-							<cfset sIndex &= arguments.stSegments[stAirSegmentRef.XMLAttributes.Key][stSegment]>
+							<cfset sIndex &= structKeyExists(arguments.stSegments,stAirSegmentRef.XMLAttributes.Key) AND structKeyExists(arguments.stSegments[stAirSegmentRef.XMLAttributes.Key],stSegment) ? arguments.stSegments[stAirSegmentRef.XMLAttributes.Key][stSegment] : ''>
 						</cfloop>
 					</cfif>
 				</cfloop>
 				<cfset sTripKey = getUAPI().hashNumeric(sIndex&sOverallClass&bRefundable)>
 				<cfset stTrips[sTripKey] = stTrip>
-
-
-
 
 			</cfif>
 		</cfloop>

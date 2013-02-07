@@ -1,12 +1,26 @@
 <cfcomponent>
 
-	<cfset variables.fw = '' />
-	<cffunction name="init" output="false" returntype="any">
-		<cfargument name="fw" />
+<!---
+init
+--->
+	<cfset variables.fw = ''>
+	<cffunction name="init" output="false">
+		<cfargument name="fw">
 
-		<cfset variables.fw = arguments.fw />
-		
-		<cfreturn this />
+		<cfset variables.fw = arguments.fw>
+
+		<cfreturn this>
+	</cffunction>
+
+<!---
+default
+--->
+	<cffunction name="default" output="false">
+		<cfargument name="rc">
+
+	    <cfset fw.getBeanFactory().getBean('hotelsearch').doHotelSearch(argumentcollection=arguments.rc)>
+
+		<cfreturn />
 	</cffunction>
 
 	<cffunction name="before" output="false">
@@ -30,6 +44,7 @@
 				
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="endsearch" output="false">
 		<cfargument name="rc">
 

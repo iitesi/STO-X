@@ -239,8 +239,8 @@ function filterhotel() {
   orderedpropertyids = orderedpropertyids.split(',');
 
   for (var t = 0; t < orderedpropertyids.length; t++) {
-    // start the loop with 6 because property_id, signature_image, lat, long, chain_code, policy, lowrate are 0-6
-    for (var i = 6; i < hotelresults.COLUMNS.length; i++) {
+    // start the loop with 7 because property_id, signature_image, lat, long, chain_code, policy, lowrate, SOLDOUT are 0-7
+    for (var i = 7; i < hotelresults.COLUMNS.length; i++) {
       var ColumnName = hotelresults.COLUMNS[i];
       var propertymatch = 1;
       if ($("#" + ColumnName + ":checked").val() != undefined) {
@@ -268,13 +268,13 @@ function filterhotel() {
 
     // check Sold Out
     /*
-    var Policy = $( "input:checkbox[name=SoldOut]:checked" ).val();
-    var PolicyValue = hotelresults.DATA['LOWRATE'][t];
-    console.log(PolicyValue);
-    if (propertymatch == 1 && Policy == 'on' && PolicyValue != '1') {
+    var SoldOut = $( "input:checkbox[name=SoldOut]:checked" ).val();
+    var SoldOutValue = hotelresults.DATA['LOWRATE'][t];
+    console.log(SoldOutValue);
+    if (propertymatch == 1 && SoldOut == 'on' && SoldOutValue != '1') {
       propertymatch = 0;
     }
-    */
+    */    
 
     var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
     if (propertymatch == 1) {
