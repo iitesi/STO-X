@@ -38,9 +38,12 @@
   <bean id="couldyou" class="booking.services.couldyou" >
     <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
     <constructor-arg name="car"><ref bean="car" /></constructor-arg>
+    <constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
   </bean>
 
-  <bean id="hotelprice" class="booking.services.hotelprice" />
+  <bean id="hotelprice" class="booking.services.hotelprice" >
+    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+  </bean>
   
   <bean id="hotelsearch" class="booking.services.hotelsearch" >
     <constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>

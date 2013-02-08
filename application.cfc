@@ -42,12 +42,6 @@
 
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 1>
-		<!---
-		<cfset application.objHotelDetails  = createObject("component", "booking.services.hoteldetails")>
-		<cfset application.objHotelPhotos  = createObject("component", "booking.services.hotelphotos")>
-		<cfset application.objHotelPrice  = createObject("component", "booking.services.hotelprice")>
-		<cfset application.objHotelRooms = createObject("component", "booking.services.hotelrooms")>
-		--->
 	</cffunction>
 
 	<cffunction name="setupSession">

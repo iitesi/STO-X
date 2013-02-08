@@ -1,4 +1,17 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="UAPI">
+
+<!---
+init
+--->
+	<cffunction name="init" output="false">
+		<cfargument name="UAPI">
+
+		<cfset setUAPI(arguments.UAPI)>
+
+		<cfreturn this>
+	</cffunction>
 	
 <!--- doHotelPrice --->
 	<cffunction name="doHotelPrice" output="false" access="remote" returnformat="json" returntype="array">
