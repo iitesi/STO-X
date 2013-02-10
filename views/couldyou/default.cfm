@@ -28,6 +28,7 @@
 	
 	<!--- First day of Find It --->
 	<cfset calendarStartDate = dateAdd('d',-7,OriginDate) />
+	<cfset stCouldYou = session.searches[url.SearchID].CouldYou />
 	
 	<cfloop from="1" to="2" index="MonthOption">
 		<cfset calendarDate = MonthOption EQ 2 ? DateAdd('m',1,calendarStartDate) : calendarStartDate />
@@ -69,8 +70,8 @@
 							<cfset DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy')) />
 							<cfset viewDate = DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),"yyyymmdd") />
 							<cfif Len(Trim(tdName))><br />
-								<img src="assets/img/ajax-loader.gif" />
 								<!---
+								<img src="assets/img/ajax-loader.gif" />
 								<script type="text/javascript">
 								<cfif session.searches[url.SearchID].Air EQ 1>couldYouAir(#rc.SearchID#,'#AirSelection.nTrip#','#AirSelection.Class#','#AirSelection.Ref#',#DateDifference#,#viewDate#,#DateDifference#,#SelectedTotal#);</cfif>
 								<cfif session.searches[url.SearchID].Hotel EQ 1>couldYouHotel(#rc.SearchID#,'#HotelSelection.HotelID#','#HotelSelection.HotelChain#',#DateDifference#,#HotelSelection.Nights#,#viewDate#,#SelectedTotal#);</cfif>

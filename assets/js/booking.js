@@ -411,59 +411,9 @@ $(document).ready(function() {
   });
 
   $(".radiobuttons").buttonset();
-  
-  $(".radiosort")
-  .buttonset()
-  .change(function(event) {
-    sortAir($( "input:radio[name=sort]:checked" ).attr('id'));
-  });
-  
-  $("#btnHotelChain")
-  .button({
-    icons: {secondary: "ui-icon-triangle-1-s"}
-  })
-  .click(function() {
-    $("#HotelDialog").dialog( "open" );
-  return false;
-  });
+  $("#HotelChains").button();
+	$("#HotelAmenities").button();
 
-  $("#HotelDialog").dialog({
-    autoOpen: false,
-    show: "fade",
-    hide: "fade",
-    width: 525,
-    title: 'Select your preferred hotel chains',
-    position: [100,120],
-    modal: true,
-    closeOnEscape: true
-  });
-  
-  $( "#btnHotelAmenities" )
-    .button({
-      icons: {secondary: "ui-icon-triangle-1-s"}
-    })
-    .click(function() {
-      $( "#AmenityDialog" ).dialog( "open" );
-      return false;
-  });
-  $( "#AmenityDialog" ).dialog({
-    autoOpen: false,
-    show: "fade",
-    hide: "fade",
-    width: 525,
-    title: 'Select your preferred amenities',
-    position: [100,120],
-    modal: true,
-      closeOnEscape: true
-  });
-  $( "#btnClass" )
-  .button({
-    icons: {secondary: "ui-icon-triangle-1-s"}
-  })
-  .click(function() {
-    $( "#ClassDialog" ).dialog( "open" );
-    return false;
-  });
 });
 
 function loadImage(image, property_id) {

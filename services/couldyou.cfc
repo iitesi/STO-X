@@ -28,50 +28,53 @@ doCouldYou
 		<cfargument name="Policy">
 
 		<cfset local.OriginDate = arguments.Filter.getDepartDate()>
-		<cfset calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDate())>
+		<cfset local.calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDate())>
 		<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
-		<cfset threadnames = {}>
+		<cfset local.threadnames = {}>
 		<cfset local.CouldYou = structKeyExists(session.searches[SearchID],'CouldYou') ? session.searches[SearchID].CouldYou : {}>
-		<cfset local.Air = arguments.Filter.getAir()>
-		<cfset local.Car = arguments.Filter.getCar()>
-		<cfset local.Hotel = arguments.Filter.getHotel()>
+		<cfset local.viewDay = 0>
 
 		<cfloop from="1" to="2" index="MonthOption">
-			<cfset calendarDate = MonthOption EQ 2 ? DateAdd('m',1,calendarStartDate) : calendarStartDate>
-			<cfset Start = false>
-			<cfset Done = false>
+			<cfset local.calendarDate = MonthOption EQ 2 ? DateAdd('m',1,calendarStartDate) : calendarStartDate>
+			<cfset local.Start = false>
+			<cfset local.Done = false>
 			<cfloop from="1" to="8" index="week">
 				<cfloop from="1" to="7" index="day">
 					<cfif DayOfWeek(CreateDate(Year(calendarDate), Month(calendarDate), 1)) EQ day AND NOT Start>
-						<cfset Start = true>
-						<cfset viewDay = 0>
+						<cfset local.Start = true>
+						<cfset local.viewDay = 0>
 					</cfif>
 					<cfif Start AND viewDay LT DaysInMonth(calendarDate)>
-						<cfset viewDay++>
+						<cfset local.viewDay++>
 					</cfif>
-					<cfset tdName = ''>
-					<cfif Start AND abs(datediff('d',DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'m/d/yyyy'),DateFormat(OriginDate,'m/d/yyyy'))) LTE 7 AND abs(datediff('d',DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'m/d/yyyy'),DateFormat(OriginDate,'m/d/yyyy'))) NEQ 0>
-						<cfset tdName = ' id="Air#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'yyyymmdd')#"'>
+					<cfset local.tdName = ''>
+					<cfif Start>
+						<cfset local.absoluteDateValue = abs(datediff('d',DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'m/d/yyyy'),DateFormat(OriginDate,'m/d/yyyy'))) />
+						<cfif absoluteDateValue LTE 7 AND absoluteDateValue NEQ 0>
+							<cfset local.tdName = ' id="Air#DateFormat(CreateDate(Year(calendarDate), Month(calendarDate), viewDay),'yyyymmdd')#"'>
+						</cfif>
 					</cfif>
 					<cfif Start AND viewDay LTE DaysInMonth(calendarDate) AND NOT Done>
-						<cfset DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy'))>
+						<cfset local.DateDifference = DateDiff('d',DateFormat(OriginDate,'m/d/yyyy'),DateFormat(CreateDate(Year(calendarDate), Month(calendarDate),viewDay),'m/d/yyyy'))>
 						<cfset local.FullDate = CreateODBCDate(Year(calendarDate)&'-'&Month(calendarDate)&'-'&viewDay)>
-						<cfset viewDate = DateFormat(FullDate,"yyyymmdd")>
+						<cfset local.viewDate = DateFormat(FullDate,"yyyymmdd")>
 						<cfif Len(Trim(tdName))>
 
 							<!--- Was CouldYou already done? --->
-							<cfset CouldYouDone = false>
-							<cfif Air>
-								<cfset CouldYouDone = structKeyExists(CouldYou,'Air') AND structKeyExists(CouldYou.Air,FullDate) ? true : false>	
+							<cfset local.CouldYouDone = false>
+							<cfif arguments.Filter.getAir()>
+								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Air') AND structKeyExists(CouldYou.Air,FullDate) ? true : false>	
 							</cfif>
-							<cfif Car AND NOT CouldYouDone>
-								<cfset CouldYouDone = structKeyExists(CouldYou,'Car') AND structKeyExists(CouldYou.Car,FullDate) ? true : false>	
+							<cfif arguments.Filter.getCar() AND NOT CouldYouDone>
+								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Car') AND structKeyExists(CouldYou.Car,FullDate) ? true : false>	
 							</cfif>
-							<cfif Hotel AND NOT CouldYouDone>
-								<cfset CouldYouDone = structKeyExists(CouldYou,'Hotel') AND structKeyExists(CouldYou.Hotel,FullDate) ? true : false>	
+							<cfif arguments.Filter.getHotel() AND NOT CouldYouDone>
+								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Hotel') AND structKeyExists(CouldYou.Hotel,FullDate) ? true : false>	
 							</cfif>							
 
-							<cfset CouldYouDone = false>
+							<!--- <cfdump var="#CouldYou#">
+							<cfdump var="#CouldYouDone#" abort> --->
+							<!--- <cfset local.CouldYouDone = false> --->
 							<cfif NOT CouldYouDone>
 								
 								<cfset threadnames['could#DateDifference#'] = ''>
@@ -86,23 +89,23 @@ doCouldYou
 									<cfset thread.CouldYouDate = DateAdd('d',DateDifference,arguments.OriginDate)>
 
 									<!---Air--->
-									<cfif Air>
+									<cfif arguments.Filter.getAir()>
 										<cfset local.stSelected = structNew('linked')>
 										<cfloop collection="#session.searches[arguments.SearchID].stItinerary.Air.Groups#" item="local.stGroup" index="local.nGroup">
-											<cfset stSelected[nGroup].Groups[0] = stGroup>
+											<cfset local.stSelected[nGroup].Groups[0] = stGroup>
 										</cfloop>
-										<cfset sMessage 	= AirPrice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
-										<cfset sResponse 	= AirPrice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
-										<cfset aResponse 	= AirPrice.getUAPI().formatUAPIRsp(sResponse)>
-										<cfset stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
-										<cfset nTripKey		= AirPrice.getTripKey(stTrips)>
+										<cfset local.sMessage 	= AirPrice.prepareSoapHeader(stSelected, session.searches[url.SearchID].stItinerary.Air.Class, session.searches[url.SearchID].stItinerary.Air.Ref, DateDifference)>
+										<cfset local.sResponse 	= AirPrice.getUAPI().callUAPI('AirService', sMessage, arguments.SearchID)>
+										<cfset local.aResponse 	= AirPrice.getUAPI().formatUAPIRsp(sResponse)>
+										<cfset local.stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
+										<cfset local.nTripKey		= AirPrice.getTripKey(stTrips)>
 										<cfif NOT StructIsEmpty(stTrips)>
-											<cfset thread.AirTotal = stTrips[nTripKey].Total>
+											<cfset thread.AirTotal = stTrips[nTripKey].Total EQ 0 ? 'Flight Does not Operate' : stTrips[nTripKey].Total /><!--- Set flight price to string if 0 --->
 										</cfif>
 									</cfif>
 
 									<!---Car--->
-									<cfif Car>
+									<cfif arguments.Filter.getCar()>
 										<cfset local.sCarType 		= session.searches[arguments.SearchID].stItinerary.Car.VehicleClass&session.searches[arguments.SearchID].stItinerary.Car.Category>
 										<cfset local.sCarChain 		= session.searches[arguments.SearchID].stItinerary.Car.VendorCode>
 										<cfif NOT structIsEmpty(CDNumbers)>
@@ -126,8 +129,7 @@ doCouldYou
 									</cfif>
 
 									<!--- Hotel --->
-									<cfif Hotel>
-
+									<cfif arguments.Filter.getHotel()>
 										<cfset local.sMessage 	= HotelPrice.prepareSoapHeader(session.searches[url.SearchID].stItinerary.Hotel.HotelChain, session.searches[url.SearchID].stItinerary.Hotel.HotelID, DateDifference, arguments.Filter)>
 										<cfset local.sResponse 	= HotelPrice.getUAPI().callUAPI('HotelService', sMessage, arguments.SearchID, session.searches[url.SearchID].stItinerary.Hotel.HotelID, DateDifference)>
 										<cfset local.stResponse = HotelPrice.getUAPI().formatUAPIRsp(sResponse)>
@@ -145,7 +147,6 @@ doCouldYou
 											<cfset local.LowRate = 'Sold Out'>
 										</cfif>
 										<cfset thread.HotelTotal = LowRate>
-
 									</cfif>
 
 								</cfthread>
@@ -154,7 +155,7 @@ doCouldYou
 
 						</cfif>
 					</cfif>
-					<cfset Done = Start AND viewDay EQ DaysInMonth(calendarDate) ? true : false>
+					<cfset local.Done = Start AND viewDay EQ DaysInMonth(calendarDate) ? true : false>
 				</cfloop>
 				<cfif Done>
 					<cfbreak>
@@ -163,6 +164,7 @@ doCouldYou
 		</cfloop>
 
 		<cfthread action="join" name="#StructKeyList(threadnames)#">
+		<!--- <cfdump var="#cfthread#" abort> --->
 		<cfset local.stCouldYouResults = {}>
 		<cfloop list="#structKeyList(threadnames)#" index="local.CouldYou">
 			<cfset local.stCouldYou = cfthread[CouldYou]>
@@ -172,9 +174,8 @@ doCouldYou
 			<cfset local.stCouldYouResults.Hotel[CouldYouDate] = stCouldYou.HotelTotal EQ 0 ? 'Hotel Not Available' : stCouldYou.HotelTotal>
 		</cfloop>
 		<cfset session.searches[SearchID].CouldYou = stCouldYouResults>
-		<cfdump var="#stCouldYouResults#" abort>
-		<!--- <cfdump var="#stCouldYouResults#">
-		<cfdump var="#session.searches[SearchID].CouldYou#" abort> --->
+		<!--- CouldYouResults <cfdump var="#stCouldYouResults#" abort> --->
+		<!--- <cfdump var="#session.searches[SearchID].CouldYou#" abort> --->
 
 <!---
 
