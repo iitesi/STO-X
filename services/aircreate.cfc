@@ -24,22 +24,78 @@ doAirPrice
 	<cffunction name="doAirCreate" output="false">
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Account" 	required="true">
+		<cfargument name="Filter" 	required="true">
 		<cfargument name="Policy" 	required="true">
 		<cfargument name="stAir" 	required="true">
+
+		<cfset local.Traveler = session.searches[arguments.SearchID].stTravelers[1]>
 
 		<!---Reprice the flight to get the needed information for the sell--->
 		<cfset local.stTrip		= AirPrice.doAirPrice(arguments.SearchID, arguments.Account, arguments.Policy, arguments.stAir.Class, arguments.stAir.Ref, arguments.stAir.nTrip, 0, 1)>
 		<!---<cfdump var="#stTrip#" abort="true">--->
 		<cfset local.AirPricing	= parseTripForPurchase(stTrip[structKeyList(stTrip)].sXML)>
 		<!---<cfdump var="#ToString(AirPricing)#">--->
-		<cfset local.Message	= prepareSoapHeader(arguments.Account, session.searches[arguments.SearchID].stTravelers[1], Replace(AirPricing, '<?xml version="1.0" encoding="UTF-8"?>', ''))>
-		<cfdump var="#Message#" abort>
+		<cfset local.Message	= prepareSoapHeader(arguments.Filter, arguments.Account, Traveler, Replace(AirPricing, '<?xml version="1.0" encoding="UTF-8"?>', ''))>
+		<!---<cfdump var="#Message#">--->
 		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', Message, arguments.Filter.getSearchID())>
-		<cfdump var="#sResponse#" abort>
-		<cfset local.aResponse 	= getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#aResponse#">
+		<!---<cfdump var="#sResponse#" abort>--->
+		<cfset local.stResponse 	= getUAPI().formatUAPIRsp(sResponse)>
+		<cfset local.locator = ''>
+		<cfloop array="#stResponse[1].XMLChildren#" index="jkl" item="local.stChildren">
+			<cfif stChildren.XMLName EQ 'universal:ProviderReservationInfo'>
+				<cfset locator = stChildren.XMLAttributes.LocatorCode>
+			</cfif>
+		</cfloop>
+		<cfif locator EQ ''>
+			<cfdump var="#stResponse#" abort>
+		</cfif>
+		<!---Open the terminal entry session--->
+		<cfset local.Message	= getUAPI().openSessionSOAP(arguments.Account)>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfset local.hostToken  = stResponse[1].XMLText>
+		<!---TE : Display PNR--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, '*#locator#')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---TE : Move profile--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'MVPT/#Traveler.BAR.PCC#//#Traveler.BAR.Name#-#Traveler.PAR#2')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---TE : Add received by--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'R:STO')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---TE : Remove the second name field--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'C:2N:')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---TE : Verify the stored price--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'T:V')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---TE : End record--->
+		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'QEP/161C/90')>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfdump var="#stResponse#">
+		<!---Close the terminal entry session--->
+		<cfset local.Message	= getUAPI().closeSessionSOAP(arguments.Account, hostToken)>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+		<cfset local.successText  = stResponse[1].XMLText>
+		<cfdump var="#locator#">
+		<cfdump var="#successText#" abort>
+
+
 
 		<cfabort>
+
 		<cfreturn >
 	</cffunction>
 
@@ -107,7 +163,8 @@ prepareSoapHeader
 		                        <com:PhoneNumber Location="#arguments.Filter.getDepartCity()#" AreaCode="319" Number="2318322" Type="Business" />
 		                        <com:PhoneNumber Location="#arguments.Filter.getDepartCity()#" Number="cdohmen@shortstravel.com" Type="Email" />
 		                        <com:Email Type="Home" EmailID="cdohmen@shortstravel.com" />
-		                        <com:NameRemark>
+                                <com:SSR Type="DOCS" Status="NN" FreeText="////#DateFormat(arguments.Traveler.Birthdate, 'ddmmmyy')#/#arguments.Traveler.Gender#//#arguments.Traveler.Last_Name#/#arguments.Traveler.First_Name#/#arguments.Traveler.Middle_Name#"/>
+								<com:NameRemark>
 		                            <com:RemarkData>001 000 STATEMENT</com:RemarkData>
 		                        </com:NameRemark>
 		                        <com:Address>
@@ -133,7 +190,7 @@ prepareSoapHeader
 
 					#arguments.AirPricing#
 
-                        <com:ActionStatus xmlns:com="http://www.travelport.com/schema/common_v15_0" Type="TAU" TicketDate="#DateFormat(Now(), 'yyyy-mm-dd')#T#TimeFormat(Now(), 'HH:mm:ss')#">
+                        <com:ActionStatus xmlns:com="http://www.travelport.com/schema/common_v15_0" Type="TAU" TicketDate="#DateFormat(DateAdd('d', 1, Now()), 'yyyy-mm-dd')#T#TimeFormat(Now(), 'HH:mm:ss')#">
                             <com:Remark><!---HOLD.FOR.APPROVAL--->OK.TO.TKT</com:Remark>
                         </com:ActionStatus>
                         <com:FormOfPayment xmlns:com="http://www.travelport.com/schema/common_v15_0" Type="Credit">

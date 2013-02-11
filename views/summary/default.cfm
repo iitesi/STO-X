@@ -64,7 +64,7 @@
 			</div>
 		</form>
 	</cfoutput>
-<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
+<cfdump var="#session.searches[rc.SearchID].stTravelers#">
 	<cfset sType 		= (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')>
 	<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
     <script type="text/javascript">

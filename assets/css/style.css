@@ -273,14 +273,15 @@ ul.tabs li a.active {
 	background-color: #FFFFFF;
 }
 #filter ul li{
-	float:none;
-	background-color: #FFF;
-	font-size: 11px;
-	float:left;
-	position: relative;
-	min-width: 245px;
-	box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
-	color: #211922;
+    float:none;
+    background-color: #FFF;
+    font-size: 11px;
+    float:left;
+    position: relative;
+    min-width: 245px;
+    box-shadow: 0 1px 3px rgba(0, 53, 229, 0.4);
+    color: #211922;
+    padding: 3px 0 3px 15px;
 }
 #filter li{
 	float:left;
@@ -307,12 +308,14 @@ ul.tabs li a.active {
 	background:#F4F0F0;
 	border:1px solid #E0D6D6;
 	color: #2E76CF;
-	z-index:50;
+	z-index:5;
+    margin-right: 20px;
+    padding:3px 5px 3px 5px;
 }
 .smallnav ul{
 	list-style:none;
 	position:absolute;
-	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+    left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
 	width: 200px;
 	top:-25px;
 }

@@ -5,7 +5,7 @@ getUser
 --->
 	<cffunction name="getUser" output="false" access="remote" returnformat="plain">
 		<cfargument name="SearchID">
-		<cfargument name="Acct_ID"  default="#session.AcctID#">
+		<cfargument name="AcctID"  default="#session.AcctID#">
 		<cfargument name="UserID">
 		<cfargument name="nTraveler"default="1">
 
@@ -24,7 +24,7 @@ getUser
 			LEFT OUTER JOIN Personal_Contact_Info ON Users_Accounts.User_ID = Personal_Contact_Info.User_ID
 			LEFT OUTER JOIN Biz_Contact_Info ON Users_Accounts.User_ID = Biz_Contact_Info.User_ID
 			LEFT OUTER JOIN Airline_Prefs ON Users_Accounts.User_ID = Airline_Prefs.User_ID
-			WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			AND Users.User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND Status = <cfqueryparam value="A" cfsqltype="cf_sql_varchar">
 			AND Users.User_ID = Users_Accounts.User_ID
@@ -37,7 +37,7 @@ getUser
 			<cfif stTravelers[arguments.nTraveler].NoMiddleName EQ ''>
 				<cfset stTravelers[arguments.nTraveler].NoMiddleName = 0>
 			</cfif>
-			
+
 			<!--- Setup all frequent account numbers --->
 			<cfquery name="local.qFFAccounts" datasource="Corporate_Production">
 			SELECT ShortCode, CustType, Name, Acct_Num
@@ -63,7 +63,7 @@ getUser
 			SELECT OU_Users.Value_ID
 			FROM OU_Users, OUs
 			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
-			AND OUs.Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+			AND OUs.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			AND OU_Users.OU_ID = OUs.OU_ID
 			AND OU_Users.Value_ID IS NOT NULL
 			AND OU_Users.Value_ID <> <cfqueryparam value="" cfsqltype="cf_sql_varchar">
@@ -78,14 +78,14 @@ getUser
 			FROM OUs, OU_Users LEFT OUTER JOIN OU_Values ON OU_Users.Value_ID = OU_Values.Value_ID
 			WHERE OUs.OU_ID = OU_Users.OU_ID
 			AND OUs.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-			AND OUs.Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+			AND OUs.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			AND User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
 			AND (MainOU_ID IS NULL
 				<cfif stTravelers[arguments.nTraveler].Value_ID NEQ ''>
 					OR MainValue_ID IN (<cfqueryparam value="#stTravelers[arguments.nTraveler].Value_ID#" cfsqltype="cf_sql_integer">)
 				</cfif>)
 			AND OUs.OU_ID NOT IN (<cfqueryparam value="347,348,349" cfsqltype="cf_sql_integer" list="true">)<!--- Custom code for the State of Texas execption codes --->
-			<cfif arguments.Acct_ID NEQ 348>
+			<cfif arguments.AcctID NEQ 348>
 				AND OU_Capture IN (<cfqueryparam value="R,P" cfsqltype="cf_sql_varchar" list="true">)
 				AND OU_Type IN (<cfqueryparam value="SORT,UDID" cfsqltype="cf_sql_varchar" list="true">)
 			<cfelse>
@@ -109,6 +109,12 @@ getUser
 			
 			<!--- Create defaults --->
 			<cfset stTravelers[arguments.nTraveler].stSeats = {}>
+
+			<!---Add profile BAR--->
+			<cfset stTravelers[arguments.nTraveler].BAR = getBAR(arguments.AcctID, arguments.UserID, qSTOOU.Value_ID, 0)><!---todo account.CBA_AllDepts--->
+
+			<!---Add profile PAR--->
+			<cfset stTravelers[arguments.nTraveler].PAR = getPAR(arguments.UserID)>
 
 		</cfif>
 		<cfset session.searches[arguments.SearchID].stTravelers = stTravelers>
@@ -736,6 +742,81 @@ setPaymentForm
 		</cfsavecontent>
 
 		<cfreturn serializeJSON(sForm)>
+	</cffunction>
+
+<!---
+PAR
+--->
+	<cffunction name="getPAR" output="false">
+		<cfargument name="UserID" required="true">
+
+		<cfset local.PAR = ''>
+		<cfif arguments.UserID NEQ 0>
+			<cfquery name="local.getUser" datasource="Corporate_Production">
+			SELECT Replace(Left(LTrim(RTrim(LTrim(RTrim(Last_Name)) + ' ' + LTrim(RTrim(First_Name)) + ' ' + Left(Middle_Name, 1))), 19) + Right(User_ID, 2), '''', ' ') AS PAR
+			FROM Users
+			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_numeric">
+			</cfquery>
+			<cfset local.invalid = '-,.,_,&,~,!,%,^,+,;,=,[,],>,(,),?,�,@,chr(34),chr(39),chr(35),chr(13)'>
+			<cfset PAR = getUser.PAR>
+			<cfloop list="#invalid#" index="local.char">
+				<cfset PAR = Replace(PAR, char, ' ', 'ALL')>
+			</cfloop>
+		</cfif>
+
+		<cfreturn PAR/>
+	</cffunction>
+
+<!---
+BAR
+--->
+	<cffunction name="getBAR" output="false">
+		<cfargument name="AcctID"   required="true">
+		<cfargument name="UserID"   required="true">
+		<cfargument name="ValueID"  required="true">
+		<cfargument name="OneBAR"   required="true">
+
+		<cfquery name="local.getBAR" datasource="Corporate_Production">
+		<cfif arguments.UserID NEQ 0 AND NOT arguments.OneBAR>
+            SELECT 1 AS Display_Order, BAR_PCC AS PCC, BAR_CrsName AS BAR
+            FROM BAR, BAR_Users
+            WHERE BAR.BAR_ID = BAR_Users.BAR_ID
+            AND User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
+			AND Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			UNION
+			SELECT 2 AS Display_Order, BAR_PCC AS PCC, BAR_CrsName AS BAR
+			FROM OU_Users, OU_Values, OU_BARs, BAR
+			WHERE User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
+			AND OU_Users.Value_ID = OU_Values.Value_ID
+			AND OU_Values.Value_ID = OU_BARs.Value_ID
+			AND OU_BARs.BAR_ID = BAR.BAR_ID
+			AND Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			UNION
+		<cfelseif arguments.ValueID NEQ 0 AND NOT arguments.OneBAR>
+            SELECT 2 AS Display_Order, BAR_PCC AS PCC, BAR_CrsName AS BAR
+            FROM OU_Values, OU_BARs, BAR
+            WHERE OU_Values.Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_integer">
+			AND OU_Values.Value_ID = OU_BARs.Value_ID
+			AND OU_BARs.BAR_ID = BAR.BAR_ID
+			UNION
+		</cfif>
+        SELECT 3 AS Display_Order, BAR_PCC AS PCC, BAR_CrsName AS BAR
+        FROM BAR
+        WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+		AND All_Users = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+		UNION
+		SELECT 3 AS Display_Order, BAR_PCC AS PCC, BAR_CrsName AS BAR
+		FROM BAR
+		WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+		AND Acct_Default = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+		ORDER BY Display_Order
+		</cfquery>
+
+		<cfset local.BAR = {}>
+		<cfset BAR.PCC = getBar.PCC>
+		<cfset BAR.Name = getBar.BAR>
+
+		<cfreturn BAR>
 	</cffunction>
 
 <!--- 

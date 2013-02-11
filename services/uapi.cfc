@@ -51,9 +51,9 @@ formatUAPIRsp
 --->
 	<cffunction name="formatUAPIRsp" output="false">
 		<cfargument name="stResponse"	required="true">
-		
+
 		<cfset local.stResponse = XMLParse(arguments.stResponse)>
-		
+
 		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
 	</cffunction>
 
@@ -64,6 +64,83 @@ hashNumeric
 		<cfargument name="sStringToHash"	required="true">
 		
 		<cfreturn createObject("java", "java.lang.String").init(arguments.sStringToHash).hashCode() />
+	</cffunction>
+
+<!---
+openSessionSOAP
+--->
+	<cffunction name="openSessionSOAP" output="false">
+		<cfargument name="Account" 	required="true">
+
+		<cfsavecontent variable="local.Message">
+			<cfoutput>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <ns3:CreateTerminalSessionReq Host="1V" TargetBranch="#arguments.Account.sBranch#" xmlns:ns2="http://www.travelport.com/schema/common_v12_0" xmlns:ns3="http://www.travelport.com/schema/terminal_v8_0">
+                            <ns2:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+                        </ns3:CreateTerminalSessionReq>
+                    </soapenv:Body>
+                </soapenv:Envelope>
+			</cfoutput>
+		</cfsavecontent>
+
+		<cfreturn Message />
+	</cffunction>
+
+<!---
+closeSessionSOAP
+--->
+	<cffunction name="closeSessionSOAP" output="false">
+		<cfargument name="Account" 	required="true">
+		<cfargument name="hostToken"required="true">
+
+		<cfsavecontent variable="local.Message">
+			<cfoutput>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                    <soapenv:Header/>
+	                <soapenv:Body>
+		                <ter:EndTerminalSessionReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
+		                    <com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+		                    <com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
+		                </ter:EndTerminalSessionReq>
+		            </soapenv:Body>
+	            </soapenv:Envelope>
+			</cfoutput>
+		</cfsavecontent>
+
+		<cfreturn Message />
+	</cffunction>
+
+<!---
+openUAPISession
+--->
+	<cffunction name="terminalEntrySOAP" output="false">
+		<cfargument name="Account"  required="true">
+		<cfargument name="hostToken"required="true">
+		<cfargument name="command"required="true">
+
+		<cfsavecontent variable="local.Message">
+			<cfoutput>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
+							<com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+							<com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
+							<!---<ter:TerminalCommand>SEM/1M98/AG</ter:TerminalCommand>--->
+							<ter:TerminalCommand>#arguments.command#</ter:TerminalCommand>
+							<!---<ter:TerminalCommand>MVPT/149I//SHORTS-LAMONT KRISTIANNE44</ter:TerminalCommand>
+							<ter:TerminalCommand>R:STO<ter:TerminalCommand>
+							<ter:TerminalCommand>ER<ter:TerminalCommand>
+							<ter:TerminalCommand>ER<ter:TerminalCommand>--->
+                        </ter:TerminalReq>
+                    </soapenv:Body>
+                </soapenv:Envelope>
+			</cfoutput>
+		</cfsavecontent>
+
+		<cfreturn Message />
 	</cffunction>
 
 </cfcomponent>
