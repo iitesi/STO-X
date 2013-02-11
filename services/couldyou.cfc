@@ -34,6 +34,23 @@ doCouldYou
 		<cfset local.CouldYou = structKeyExists(session.searches[SearchID],'CouldYou') ? session.searches[SearchID].CouldYou : {}>
 		<cfset local.viewDay = 0>
 
+		<cfset local.Air = arguments.Filter.getAir() />
+		<cfset local.Car = arguments.Filter.getCar() />
+		<cfset local.Hotel = arguments.Filter.getHotel() />
+
+		<!--- get Current Total --->
+		<cfset local.stItinerary = session.searches[url.SearchID].stItinerary />
+		<cfset local.SelectedTotal = 0 />
+		<cfif Air>
+			<cfset local.SelectedTotal+= stItinerary.Air.Total />
+		</cfif>
+		<cfif Car>
+			<cfset local.SelectedTotal+= Mid(stItinerary.Car.EstimatedTotalAmount,4) />
+		</cfif>
+		<cfif Hotel>
+			<cfset local.SelectedTotal+= stItinerary.Hotel.TotalRate />
+		</cfif>
+
 		<cfloop from="1" to="2" index="MonthOption">
 			<cfset local.calendarDate = MonthOption EQ 2 ? DateAdd('m',1,calendarStartDate) : calendarStartDate>
 			<cfset local.Start = false>
@@ -62,18 +79,15 @@ doCouldYou
 
 							<!--- Was CouldYou already done? --->
 							<cfset local.CouldYouDone = false>
-							<cfif arguments.Filter.getAir()>
+							<cfif Air>
 								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Air') AND structKeyExists(CouldYou.Air,FullDate) ? true : false>	
 							</cfif>
-							<cfif arguments.Filter.getCar() AND NOT CouldYouDone>
+							<cfif Car AND NOT CouldYouDone>
 								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Car') AND structKeyExists(CouldYou.Car,FullDate) ? true : false>	
 							</cfif>
-							<cfif arguments.Filter.getHotel() AND NOT CouldYouDone>
+							<cfif Hotel AND NOT CouldYouDone>
 								<cfset local.CouldYouDone = structKeyExists(CouldYou,'Hotel') AND structKeyExists(CouldYou.Hotel,FullDate) ? true : false>	
-							</cfif>							
-
-							<cfset TotalPrice = doTotalPrice(FullDate,500,200,300,arguments.Filter) />
-							111<cfdump var="#TotalPrice#" abort>
+							</cfif>
 
 							<!--- <cfdump var="#CouldYou#">
 							<cfdump var="#CouldYouDone#" abort> --->
@@ -103,7 +117,7 @@ doCouldYou
 										<cfset local.stTrips		= AirPrice.getAirParse().parseTrips(aResponse, {})>
 										<cfset local.nTripKey		= AirPrice.getTripKey(stTrips)>
 										<cfif NOT StructIsEmpty(stTrips)>
-											<cfset thread.AirTotal = stTrips[nTripKey].Total EQ 0 ? 'Flight Does not Operate' : stTrips[nTripKey].Total /><!--- Set flight price to string if 0 --->
+											<cfset thread.AirTotal = stTrips[nTripKey].Total />
 										</cfif>
 									</cfif>
 
@@ -126,7 +140,7 @@ doCouldYou
 											<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
 											<cfset local.stCars     = car.parseCars(aResponse, 0)>
 											<cfif structKeyExists(stCars, sCarType) AND structKeyExists(stCars[sCarType], sCarChain)>
-												<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4) EQ 0 ? 'Car Not Available' : Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4)>
+												<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4) />
 											</cfif>
 										</cfif>
 									</cfif>
@@ -149,7 +163,7 @@ doCouldYou
 										<cfelse>
 											<cfset local.LowRate = 'Sold Out'>
 										</cfif>
-										<cfset thread.HotelTotal = LowRate EQ 0 ? 'Hotel Not Available' : LowRate>
+										<cfset thread.HotelTotal = LowRate>
 									</cfif>
 
 								</cfthread>
@@ -168,17 +182,22 @@ doCouldYou
 
 		<cfthread action="join" name="#StructKeyList(threadnames)#">
 		<!--- <cfdump var="#cfthread#" abort> --->
-		<cfset local.stCouldYouResults = {}>
-		<cfloop list="#structKeyList(threadnames)#" index="local.CouldYou">
-			<cfset local.stCouldYou = cfthread[CouldYou]>
-			<cfset local.CouldYouDate = createODBCDate(stCouldYou.CouldYouDate)>
-			<cfset local.stCouldYouResults.Air[CouldYouDate] = stCouldYou.AirTotal>
-			<cfset local.stCouldYouResults.Car[CouldYouDate] = stCouldYou.CarTotal>
-			<cfset local.stCouldYouResults.Hotel[CouldYouDate] = stCouldYou.HotelTotal>
-			<cfset local.TotalPrice = doTotalPrice(stCouldYou.AirTotal,stCouldYou.CarTotal,stCouldYou.HotelTotal) />
-		</cfloop>
-		<cfset session.searches[SearchID].CouldYou = stCouldYouResults>
-		CouldYouResults <cfdump var="#stCouldYouResults#" abort>
+		<cfif NOT structIsEmpty(threadnames)>
+			<cfset local.stCouldYouResults = {}>
+			<cfset local.stCouldYouResults.CurrentTotal = SelectedTotal />
+			<cfloop list="#structKeyList(threadnames)#" index="local.CouldYou">
+				<cfset local.stCouldYou = cfthread[CouldYou]>
+				<cfset local.CouldYouDate = createODBCDate(stCouldYou.CouldYouDate)>
+				<cfset local.stCouldYouResults.Air[CouldYouDate] = stCouldYou.AirTotal EQ 0 ? 'Flight Does not Operate' : stCouldYou.AirTotal /><!--- Set flight price to string if 0 --->
+				<cfset local.stCouldYouResults.Car[CouldYouDate] = stCouldYou.CarTotal EQ 0 ? 'Car not available' : stCouldYou.CarTotal />
+				<cfset local.stCouldYouResults.Hotel[CouldYouDate] = stCouldYou.HotelTotal EQ 0 ? 'Hotel not available' : stCouldYou.HotelTotal />
+				<cfset local.stCouldYouResults.TotalPrice[CouldYouDate] = doTotalPrice(FullDate,stCouldYouResults.Air[CouldYouDate],stCouldYouResults.Car[CouldYouDate],stCouldYouResults.Hotel[CouldYouDate],SelectedTotal,arguments.Filter) />
+			</cfloop>
+			<cfset session.searches[SearchID].CouldYou = stCouldYouResults>
+		<cfelse>
+			<cfset local.stCouldYouResults = session.searches[SearchID].CouldYou />
+		</cfif>
+		<!--- CouldYouResults <cfdump var="#stCouldYouResults#" abort> --->
 		<!--- <cfdump var="#session.searches[SearchID].CouldYou#" abort> --->
 
 		<cfreturn >
@@ -194,6 +213,7 @@ doTotalPrice
 		<cfargument name="AirTotal">
 		<cfargument name="CarTotal">
 		<cfargument name="HotelTotal">
+		<cfargument name="SelectedTotal">
 		<cfargument name="Filter">
 
 		<cfset local.CouldYouDate = arguments.CouldYouDate />
@@ -229,7 +249,7 @@ doTotalPrice
 		<cfif nTypes EQ count>
 			<cfset local.stTotalPrice.nTotalPrice = nTotalPrice>
 			<cfif isNumeric(nTotalPrice)>
-				<cfif nTotalPrice><!---  GTE nTotal --->
+				<cfif nTotalPrice GTE arguments.SelectedTotal>
 					<cfset local.stTotalPrice.sDifference = 'Higher/Same'>
 					<cfset local.stTotalPrice.sColor = 'FFCCCC'>
 				<cfelse>
@@ -241,7 +261,6 @@ doTotalPrice
 				<cfset local.stTotalPrice.sColor = 'CCCCCC'>
 			</cfif>
 		</cfif>
-		<cfset local.stTotalPrice.Day = DateFormat(CouldYouDate,'d')>
 
 		<cfreturn stTotalPrice>
 	</cffunction>
