@@ -139,6 +139,14 @@
 
 <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
 <script type="text/javascript">
+<cfoutput>
+var hotelresults = #serializeJSON(session.searches[rc.SearchID].HotelInformationQuery,true)#;
+var orderedpropertyids = "#ArrayToList(session.searches[rc.SearchID]['stSortHotels'])#";
+</cfoutput>
+orderedpropertyids = orderedpropertyids.split(',');
+</script>
+
+<script type="text/javascript">
 var hotelchains = [<cfoutput><cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop></cfoutput>];
 
 var map = "";
@@ -153,13 +161,11 @@ function loadMap(lat, long, centerimg) {
   var map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), mapOptions);
   map.entities.push(new Microsoft.Maps.Pushpin(center, {icon: centerimg, zIndex:-51}));
 
-  var orderedpropertyids = "<cfoutput>#ArrayToList(session.searches[rc.SearchID]['stSortHotels'])#</cfoutput>";
-  orderedpropertyids = orderedpropertyids.split(',');
-  var hotelresults = <cfoutput>#serialize(session.searches[rc.SearchID].stHotels)#</cfoutput>;
+  var hotelresults2 = <cfoutput>#serialize(session.searches[rc.SearchID].stHotels)#</cfoutput>;
 
   for (loopcnt = 0; loopcnt < orderedpropertyids.length; loopcnt++) {
     var propertyid = orderedpropertyids[loopcnt];
-    var property = hotelresults[propertyid]['HOTELINFORMATION'];
+    var property = hotelresults2[propertyid]['HOTELINFORMATION'];
     var propertylat = property['LATITUDE'];
     var propertylong = property['LONGITUDE'];
     var propertyname = property['Name'];
@@ -227,16 +233,10 @@ function changeLatLongCenter(e) {
 }
 
 function filterhotel() {
-  // pages & sortng
+  // pages & sorting
   var start_from = $( "#current_page" ).val() * 20;
   var end_on = start_from + 20;
   var matchcriteriacount = 0;
-
-  <cfoutput>
-  var hotelresults = #serializeJSON(session.searches[rc.SearchID].HotelInformationQuery,true)#;
-  var orderedpropertyids = "#ArrayToList(session.searches[rc.SearchID]['stSortHotels'])#";
-  </cfoutput>
-  orderedpropertyids = orderedpropertyids.split(',');
 
   for (var t = 0; t < orderedpropertyids.length; t++) {
     // start the loop with 7 because property_id, signature_image, lat, long, chain_code, policy, lowrate, SOLDOUT are 0-7
@@ -267,14 +267,16 @@ function filterhotel() {
     }
 
     // check Sold Out
-    /*
     var SoldOut = $( "input:checkbox[name=SoldOut]:checked" ).val();
-    var SoldOutValue = hotelresults.DATA['LOWRATE'][t];
-    console.log(SoldOutValue);
-    if (propertymatch == 1 && SoldOut == 'on' && SoldOutValue != '1') {
+    var SoldOutValue = hotelresults.DATA['SOLDOUT'][t];
+    //console.log('new property' + t);
+    //console.log(hotelresults.DATA['SOLDOUT']);
+    //console.log(SoldOut);
+    //console.log(SoldOutValue);
+    if (propertymatch == 1 && SoldOut == 'on' && SoldOutValue == '1') {
       propertymatch = 0;
+      //console.log('hide' + propertyid);
     }
-    */    
 
     var propertyid = hotelresults.DATA['PROPERTY_ID'][t];
     if (propertymatch == 1) {

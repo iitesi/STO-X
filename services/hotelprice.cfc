@@ -41,6 +41,8 @@ init
 			</cfloop>
 		<cfelse>
 			<cfset local.LowRate = 'Sold Out' />
+			<!--- Update the HotelInformationQuery that the hotel is sold out for the JavaScript filter --->
+			<cfset QuerySetCell(session.searches[SearchID]['HOTELINFORMATIONQUERY'],'SOLDOUT',1,arrayFind(session.searches[SearchID]['stSortHotels'],nHotelCode)) />
 		</cfif>
 
 		<cfset local.stHotels['LowRate'] = LowRate NEQ 'Sold Out' ? Int(Round(LowRate)) : LowRate />

@@ -210,6 +210,13 @@ function hotelPrice(searchid, hotel, chain) {
 			if (Rate == 'Sold Out') {
 				$("#checkrates2"+hotel).html(Rate);
 				$("#DetailLinks"+hotel).html('');
+				var ArrayOrder = jQuery.inArray(hotel,orderedpropertyids);
+				//console.log(orderedpropertyids);
+				//console.log(ArrayOrder);
+				//console.log(hotel);
+				//console.log(hotelresults['DATA']['SOLDOUT'][ArrayOrder]);
+				hotelresults['DATA']['SOLDOUT'][ArrayOrder] = 1;
+				//console.log(hotelresults['DATA']['SOLDOUT'][ArrayOrder]);
 			}
 			$("#address"+hotel).html(Address);
 		},
