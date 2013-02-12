@@ -113,6 +113,19 @@ closeSessionSOAP
 	</cffunction>
 
 <!---
+formatUAPITerminalRsp
+--->
+	<cffunction name="formatUAPITerminalRsp" output="false">
+		<cfargument name="stResponse"	required="true">
+
+		<cfset local.stResponse = XMLParse(arguments.stResponse)>
+
+		<cfdump var="#stResponse#" abort>
+
+		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
+	</cffunction>
+
+<!---
 openUAPISession
 --->
 	<cffunction name="terminalEntrySOAP" output="false">
@@ -128,12 +141,7 @@ openUAPISession
                         <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
 							<com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
 							<com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
-							<!---<ter:TerminalCommand>SEM/1M98/AG</ter:TerminalCommand>--->
 							<ter:TerminalCommand>#arguments.command#</ter:TerminalCommand>
-							<!---<ter:TerminalCommand>MVPT/149I//SHORTS-LAMONT KRISTIANNE44</ter:TerminalCommand>
-							<ter:TerminalCommand>R:STO<ter:TerminalCommand>
-							<ter:TerminalCommand>ER<ter:TerminalCommand>
-							<ter:TerminalCommand>ER<ter:TerminalCommand>--->
                         </ter:TerminalReq>
                     </soapenv:Body>
                 </soapenv:Envelope>

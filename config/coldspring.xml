@@ -4,12 +4,14 @@
 
   <bean id="UAPI" class="booking.services.UAPI" />
 
-  <bean id="setup" class="booking.services.setup" />
+    <bean id="setup" class="booking.services.setup" />
+    <bean id="General" class="booking.services.general" />
 
-  <bean id="AirCreate" class="booking.services.AirCreate" >
+    <bean id="AirCreate" class="booking.services.AirCreate" >
     <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
     <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-    <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+      <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+      <constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
   </bean>
 
   <bean id="AirParse" class="booking.services.AirParse" >
@@ -49,5 +51,9 @@
     <constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
   </bean>
 
+    <bean id="TerminalEntry" class="booking.services.terminalentry" >
+        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+        <constructor-arg name="General"><ref bean="General" /></constructor-arg>
+    </bean>
 
 </beans>

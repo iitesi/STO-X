@@ -3,6 +3,7 @@
 	<cfproperty name="UAPI">
 	<cfproperty name="AirParse">
 	<cfproperty name="AirPrice">
+	<cfproperty name="TerminalEntry">
 
 <!---
 init
@@ -11,13 +12,16 @@ init
 		<cfargument name="UAPI">
 		<cfargument name="AirParse">
 		<cfargument name="AirPrice">
+		<cfargument name="TerminalEntry">
 
 		<cfset setUAPI(arguments.UAPI)>
 		<cfset setAirParse(arguments.AirParse)>
 		<cfset setAirPrice(arguments.AirPrice)>
+		<cfset setTerminalEntry(arguments.TerminalEntry)>
 
 		<cfreturn this>
 	</cffunction>
+
 <!---
 doAirPrice
 --->
@@ -30,6 +34,7 @@ doAirPrice
 
 		<cfset local.Traveler = session.searches[arguments.SearchID].stTravelers[1]>
 
+		<!---
 		<!---Reprice the flight to get the needed information for the sell--->
 		<cfset local.stTrip		= AirPrice.doAirPrice(arguments.SearchID, arguments.Account, arguments.Policy, arguments.stAir.Class, arguments.stAir.Ref, arguments.stAir.nTrip, 0, 1)>
 		<!---<cfdump var="#stTrip#" abort="true">--->
@@ -41,64 +46,61 @@ doAirPrice
 		<!---<cfdump var="#sResponse#" abort>--->
 		<cfset local.stResponse 	= getUAPI().formatUAPIRsp(sResponse)>
 		<cfset local.locator = ''>
-		<cfloop array="#stResponse[1].XMLChildren#" index="jkl" item="local.stChildren">
-			<cfif stChildren.XMLName EQ 'universal:ProviderReservationInfo'>
-				<cfset locator = stChildren.XMLAttributes.LocatorCode>
-			</cfif>
+		<cfloop array="#stResponse#" index="jkl" item="local.stParent">
+			<cfloop array="#stParent.XMLChildren#" index="jkl" item="local.stChildren">
+				<cfif stChildren.XMLName EQ 'universal:ProviderReservationInfo'>
+					<cfset locator = stChildren.XMLAttributes.LocatorCode>
+				</cfif>
+			</cfloop>
 		</cfloop>
+		<cfdump var="#locator#">
 		<cfif locator EQ ''>
 			<cfdump var="#stResponse#" abort>
 		</cfif>
+		--->
+		<cfset locator = 'SS1HWW'>
 		<!---Open the terminal entry session--->
-		<cfset local.Message	= getUAPI().openSessionSOAP(arguments.Account)>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+		<cfset local.Message	= getTerminalEntry().openSessionSOAP(arguments.Account)>
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.SearchID)>
 		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
 		<cfset local.hostToken  = stResponse[1].XMLText>
-		<!---TE : Display PNR--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, '*#locator#')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---TE : Move profile--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'MVPT/#Traveler.BAR.PCC#//#Traveler.BAR.Name#-#Traveler.PAR#2')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---TE : Add received by--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'R:STO')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---TE : Remove the second name field--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'C:2N:')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---TE : Verify the stored price--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'T:V')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---TE : End record--->
-		<cfset local.Message	= getUAPI().terminalEntrySOAP(arguments.Account, hostToken, 'QEP/161C/90')>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfdump var="#stResponse#">
-		<!---Close the terminal entry session--->
-		<cfset local.Message	= getUAPI().closeSessionSOAP(arguments.Account, hostToken)>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfset local.successText  = stResponse[1].XMLText>
-		<cfdump var="#locator#">
-		<cfdump var="#successText#" abort>
 
 
+<!---TE : Open TE session--->
+<cfset local.hostToken	= getTerminalEntry().openSession(arguments.Account, hostToken, arguments.SearchID)>
+<!---TE : Display PNR--->
+<cfset local.Response	= getTerminalEntry().displayPNR(arguments.Account, hostToken, locator, arguments.SearchID)>
+<!---TE : Move profile--->
+<cfset local.Response	= getTerminalEntry().moveBARPAR(arguments.Account, hostToken, Traveler.BAR.PCC, Traveler.BAR.Name, Traveler.PAR, arguments.SearchID)>
+<!---TE : Add received by--->
+<cfset local.Response	= getTerminalEntry().addReceivedBy(arguments.Account, hostToken, session.UserID, arguments.SearchID)>
+<!---TE : Remove the second name field--->
+<cfset local.Response	= getTerminalEntry().removeSecondName(arguments.Account, hostToken, arguments.SearchID)>
+<!---TE : Verify the stored price--->
+<cfset local.Response	= getTerminalEntry().verifyStoredFare(arguments.Account, hostToken, arguments.SearchID)>
+<!---TE : Queue record--->
+<cfset local.Response	= getTerminalEntry().queueRecord(arguments.Account, hostToken, arguments.SearchID)>
+<!---TE : Close TE session--->
+<cfset getTerminalEntry().closeSession(arguments.Account, hostToken, arguments.SearchID)>
+
+		<cfabort>
+
+		<!---
+
+<!---Close the terminal entry session--->
+<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+<cfset local.Message	= getUAPI().closeSessionSOAP(arguments.Account, hostToken)>
+<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.Filter.getSearchID())>
+<cfset local.successText  = stResponse[1].XMLText>
+<cfdump var="#locator#">
+<cfdump var="#successText#" abort>
+
+        --->
 
 		<cfabort>
 
 		<cfreturn >
 	</cffunction>
-
 <!---
 parseTripForPurchase
 --->
