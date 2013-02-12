@@ -225,6 +225,9 @@ init
 					<cfloop array="#sHotelPriceResult.XMLChildren#" index="local.sHotelProperty">
 						<cfif sHotelProperty.xmlName EQ 'hotel:PropertyAddress'>
 							<cfset local.stHotels['Property'].Address1 = sHotelProperty.XMLChildren.1.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.1.XMLText) : local.stHotels['Property'].Address1 />
+							<!--- <cfif structKeyExists(sHotelProperty.XMLChildren,'2') AND structKeyExists(sHotelProperty.XMLChildren.2,'XMLText')>
+								<cfset local.stHotels['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : local.stHotels['Property'].Address2 />
+							</cfif> --->
 							<cftry>
 								<cfset local.stHotels['Property'].Address2 = sHotelProperty.XMLChildren.2.XMLName EQ 'hotel:Address' ? Trim(sHotelProperty.XMLChildren.2.XMLText) : local.stHotels['Property'].Address2 />
 								<cfcatch>
