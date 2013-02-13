@@ -76,7 +76,7 @@ setFilter
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,
 			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
 			Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, 
-			Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID
+			Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID, Hotel_Radius
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
@@ -121,6 +121,7 @@ setFilter
 			<cfset searchfilter.setHotel_Zip(getsearch.Hotel_Zip)>
 			<cfset searchfilter.setHotel_Country(getsearch.Hotel_Country)>
 			<cfset searchfilter.setOffice_ID(getsearch.Office_ID)>
+			<cfset searchfilter.setHotel_Radius(getsearch.Hotel_Radius)>
 
 			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
 				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->
@@ -453,6 +454,23 @@ setAmenities
 			<cfset stTemp[qAmenities.code] = qAmenities.Amenity>
 		</cfloop>
 		<cfset application.stAmenities = stTemp>
+		
+		<cfreturn />
+	</cffunction>
+<!---
+setStates
+--->
+	<cffunction name="setStates" output="false" returntype="void">
+		
+		<cfquery name="local.qStates" datasource="booking">
+		SELECT code, State
+		FROM RSTATES
+		</cfquery>
+		<cfset local.stTemp = {}>
+		<cfloop query="qStates">
+			<cfset stTemp[qStates.code] = qStates.State>
+		</cfloop>
+		<cfset application.stStates = stTemp>
 		
 		<cfreturn />
 	</cffunction>

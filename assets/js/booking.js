@@ -459,6 +459,41 @@ function hideRates(property_id) {
 	return false;
 }
 
+function submitForm(formname, submitbutton, newbuttontext){
+	if (submitbutton != '') {
+		$("#" + submitbutton).html('<a class="button" onclick="return false;"><span>' + newbuttontext + '</span></a>');
+	}
+	$( "#" + formname ).submit();
+	return false;
+}
+
+function stohotel() {
+	if ($("#Hotel_Search").val() === "Airport") {
+		$("#filterhotelairport").show('fast');
+		$("#filterhotellandmark").hide();
+		$("#filterhoteladdress").hide();
+		$("#filterhoteloffice").hide();
+	}
+	else if ($("#Hotel_Search").val() === "City") {
+		$("#filterhotelairport").hide();
+		$("#filterhotellandmark").show('fast');
+		$("#filterhoteladdress").hide();
+		$("#filterhoteloffice").hide();
+	}
+	else if ($("#Hotel_Search").val() === "Address") {
+		$("#filterhotelairport").hide();
+		$("#filterhotellandmark").hide();
+		$("#filterhoteladdress").show('fast');
+		$("#filterhoteloffice").hide();
+	}
+	else if ($("#Hotel_Search").val() === "Office") {
+		$("#filterhotelairport").hide();
+		$("#filterhotellandmark").hide();
+		$("#filterhoteladdress").hide();
+		$("#filterhoteloffice").show('fast');
+	}
+}
+
 /*Submits the hotel.search form.*/
 function submitHotel (sHotel,sRoomDescription) {
 	$("#sHotel").val(sHotel);

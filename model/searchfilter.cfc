@@ -36,6 +36,7 @@
 	<cfproperty name="Hotel_Zip">
 	<cfproperty name="Hotel_Country">
 	<cfproperty name="Office_ID">
+	<cfproperty name="Hotel_Radius">
 
 	<cffunction name="init" output="false">
 

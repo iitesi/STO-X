@@ -19,19 +19,20 @@ init
 		<cfargument name="Account">
 		<cfargument name="Policy">
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
-		
-		<cfset local.Search 			= arguments.Filter />
-		<cfset local.SearchID 		= Search.getSearchID() />
-		<cfset local.sMessage			= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
-		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID) />
-		<cfset local.aResponse 		= formatResponse(sResponse) />
-		<cfset local.CurrentHotel = structKeyExists(session.searches[SearchID],'stHotels') ? session.searches[SearchID].stHotels : {} />
-		<cfset local.stHotels 		= parseHotels(aResponse, CurrentHotel) />
-		<cfset local.stChains 		= getChains(stHotels)>
-		<cfset local.stAmenities 	= getAmenities(stHotels, application.stAmenities)>
-		<cfset local.latlong 			= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
-		<cfset local.stHotels 		= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
-		<cfset local.stHotels 		= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) />
+
+		<cfset local.SearchChanged	= checkModifySearch(form,arguments.Filter) />
+		<cfset local.Search 				= arguments.Filter />
+		<cfset local.SearchID 			= Search.getSearchID() />
+		<cfset local.sMessage				= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
+		<cfset local.sResponse 			= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
+		<cfset local.aResponse 			= formatResponse(sResponse) />
+		<cfset local.CurrentHotel 	= structKeyExists(session.searches[SearchID],'stHotels') ? session.searches[SearchID].stHotels : {} />
+		<cfset local.stHotels 			= parseHotels(aResponse, CurrentHotel) />
+		<cfset local.stChains 			= getChains(stHotels)>
+		<cfset local.stAmenities 		= getAmenities(stHotels, application.stAmenities)>
+		<cfset local.latlong 				= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
+		<cfset local.stHotels 			= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
+		<cfset local.stHotels 			= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) />
 
 		<cfset local.aThreads = [] />
 		<cfset local.count = 0 />
@@ -62,6 +63,95 @@ init
 		<cfset session.searches[SearchID].stSortHotels 	= StructKeyArray(stHotels) />
 
 		<cfreturn />
+	</cffunction>	
+
+<!--- callAPI --->
+	<cffunction name="callAPI" output="false">
+		<cfargument name="sService">
+		<cfargument name="sMessage">
+		<cfargument name="sAPIAuth">
+		<cfargument name="SearchID">
+		<cfargument name="SearchChanged">
+		
+		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
+		<!--- if the search was changed then make sure we go out and re-fetch results otherwise keep what's set --->
+		<cfif structKeyExists(arguments,'SearchChanged')>
+			<cfset local.bSessionStorage = arguments.SearchChanged ? false : bSessionStorage />
+		</cfif>
+			
+		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotelsFileContent')>
+			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#">
+				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
+				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
+				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
+				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
+				<cfhttpparam type="header" name="Pragma" value="no-cache" />
+				<cfhttpparam type="header" name="SOAPAction" value="" />
+				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
+			</cfhttp>
+			<cfif bSessionStorage>
+				<cfset session.searches[SearchID].stHotelsFileContent = cfhttp.filecontent />
+			</cfif>
+		<cfelse>
+			<cfset cfhttp.filecontent = session.searches[SearchID].stHotelsFileContent />
+		</cfif>
+		
+		<cfreturn cfhttp.filecontent />
+	</cffunction>
+
+<!--- prepareSoapHeader --->
+	<cffunction name="prepareSoapHeader" returntype="string" output="false">
+		<cfargument name="stAccount" 	required="true">
+		<cfargument name="stPolicy" 	required="true">
+		<cfargument name="SearchID" 	required="true">
+		<cfargument name="Filter">
+		<cfargument name="RateCodes">
+		<cfargument name="Hotel_Radius">
+		
+		<cfset local.Search = arguments.Filter />
+		<cfset local.Hotel_Radius = structKeyExists(arguments,'Hotel_Radius') ? arguments.Hotel_Radius : Search.getHotel_Radius() />
+
+		<cfsavecontent variable="local.message">
+			<cfoutput>
+				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+					<soapenv:Header/>
+					<soapenv:Body>
+						<hot:HotelSearchAvailabilityReq TargetBranch="P7003155" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
+							<hot:HotelLocation Location="#Search.getArrival_City()#" LocationType="Airport">
+								<!--- <com:VendorLocation ProviderCode="1V"  VendorCode="RD" VendorLocationID="86291"/> ---> <!--- 1V - apollo --->
+							</hot:HotelLocation>
+							<hot:HotelSearchModifiers NumberOfAdults="1" NumberOfRooms="1">
+								#getRateCodes(arguments.RateCodes)#
+								<com:Distance Value="#Search.getHotel_Radius()#" Direction="" xmlns="http://www.travelport.com/schema/common_v16_0"/>
+								<!---<PermittedChains>
+									<HotelChain Code="ES"/>
+									<HotelChain Code="EM"/>
+									<HotelChain Code="HY"/>
+								</PermittedChains>
+								<RateCategory>All</RateCategory>--->
+							</hot:HotelSearchModifiers>
+							<hot:HotelStay>
+								<hot:CheckinDate>#DateFormat(Search.getCheckIn_Date(),'yyyy-mm-dd')#</hot:CheckinDate>
+								<hot:CheckoutDate>#DateFormat(Search.getCheckOut_Date(),'yyyy-mm-dd')#</hot:CheckoutDate>
+							</hot:HotelStay>
+							<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
+						</hot:HotelSearchAvailabilityReq>
+					</soapenv:Body>
+				</soapenv:Envelope>
+			</cfoutput>
+		</cfsavecontent>
+		
+		<cfreturn message/>
+	</cffunction>
+		
+<!--- formatResponse --->
+	<cffunction name="formatResponse" output="false">
+		<cfargument name="stResponse">
+		
+		<cfset local.stResponse = XMLParse(arguments.stResponse)>
+		
+		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
 	</cffunction>
 	
 <!--- parseHotels --->
@@ -131,88 +221,6 @@ init
 		<cfreturn stHotels />
 	</cffunction>
 
-<!--- prepareSoapHeader --->
-	<cffunction name="prepareSoapHeader" returntype="string" output="false">
-		<cfargument name="stAccount" 	required="true">
-		<cfargument name="stPolicy" 	required="true">
-		<cfargument name="SearchID" 	required="true">
-		<cfargument name="Filter">
-		<cfargument name="RateCodes">
-		
-		<cfset local.Search = arguments.Filter />
-
-		<cfsavecontent variable="local.message">
-			<cfoutput>
-				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-					<soapenv:Header/>
-					<soapenv:Body>
-						<hot:HotelSearchAvailabilityReq TargetBranch="P7003155" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:hot="http://www.travelport.com/schema/hotel_v17_0">
-							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
-							<hot:HotelLocation Location="#Search.getArrival_City()#" LocationType="Airport">
-								<!--- <com:VendorLocation ProviderCode="1V"  VendorCode="RD" VendorLocationID="86291"/> ---> <!--- 1V - apollo --->
-							</hot:HotelLocation>
-							<hot:HotelSearchModifiers NumberOfAdults="1" NumberOfRooms="1">
-								#getRateCodes(arguments.RateCodes)#
-								<!---<PermittedChains>
-									<HotelChain Code="ES"/>
-									<HotelChain Code="EM"/>
-									<HotelChain Code="HY"/>
-								</PermittedChains>
-								<Distance Value="10" Direction="" xmlns="http://www.travelport.com/schema/common_v16_0"/>
-								<RateCategory>All</RateCategory>--->
-							</hot:HotelSearchModifiers>
-							<hot:HotelStay>
-								<hot:CheckinDate>#DateFormat(Search.getCheckIn_Date(),'yyyy-mm-dd')#</hot:CheckinDate>
-								<hot:CheckoutDate>#DateFormat(Search.getCheckOut_Date(),'yyyy-mm-dd')#</hot:CheckoutDate>
-							</hot:HotelStay>
-							<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
-						</hot:HotelSearchAvailabilityReq>
-					</soapenv:Body>
-				</soapenv:Envelope>
-			</cfoutput>
-		</cfsavecontent>
-		
-		<cfreturn message/>
-	</cffunction>
-	
-<!--- callAPI --->
-	<cffunction name="callAPI" output="false">
-		<cfargument name="sService">
-		<cfargument name="sMessage">
-		<cfargument name="sAPIAuth">
-		<cfargument name="SearchID">
-		
-		<cfset local.bSessionStorage = true /><!--- Testing setting (true - testing, false - live) --->
-			
-		<cfif NOT bSessionStorage OR NOT StructKeyExists(session.searches[SearchID], 'stHotelsFileContent')>
-			<cfhttp method="post" url="https://americas.copy-webservices.travelport.com/B2BGateway/connect/UAPI/#arguments.sService#">
-				<cfhttpparam type="header" name="Authorization" value="Basic #arguments.sAPIAuth#" />
-				<cfhttpparam type="header" name="Content-Type" value="text/xml;charset=UTF-8" />
-				<cfhttpparam type="header" name="Accept" value="gzip,deflate" />
-				<cfhttpparam type="header" name="Cache-Control" value="no-cache" />
-				<cfhttpparam type="header" name="Pragma" value="no-cache" />
-				<cfhttpparam type="header" name="SOAPAction" value="" />
-				<cfhttpparam type="body" name="message" value="#Trim(arguments.sMessage)#" />
-			</cfhttp>
-			<cfif bSessionStorage>
-				<cfset session.searches[SearchID].stHotelsFileContent = cfhttp.filecontent />
-			</cfif>
-		<cfelse>
-			<cfset cfhttp.filecontent = session.searches[SearchID].stHotelsFileContent />
-		</cfif>
-		
-		<cfreturn cfhttp.filecontent />
-	</cffunction>
-	
-<!--- formatResponse --->
-	<cffunction name="formatResponse" output="false">
-		<cfargument name="stResponse">
-		
-		<cfset local.stResponse = XMLParse(arguments.stResponse)>
-		
-		<cfreturn stResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren />
-	</cffunction>
-	
 <!--- getChains --->
 	<cffunction name="getChains" output="false">
 		<cfargument name="stHotels">
@@ -400,6 +408,29 @@ init
 		</cfif>
 			
 		<cfreturn LatLong>
+	</cffunction>
+
+<!--- checkModifySearch --->
+	<cffunction name="checkModifySearch" output="false">
+		<cfargument name="form">
+		<cfargument name="Filter">
+
+		<cfset local.SearchChanged = false />
+		<cfset local.form = arguments.form />
+		<cfif structKeyExists(form,'ModifySearch') AND form.ModifySearch EQ 'LetsModify!'>
+			<cfset local.formfields = 'CheckIn_Date,CheckOut_Date,Hotel_Radius,Hotel_Zip,Hotel_City,Hotel_Address,Hotel_State,Hotel_Landmark,Hotel_Airport,Hotel_Search' />
+			<cfloop list="#local.formfields#" index="OneField">
+				<cfset local.getFunc = arguments.Filter[ 'get' & OneField ] />
+				<cfset local.getFunc( form[OneField] ) />
+				<cfif structKeyExists(form,OneField) AND form[OneField] NEQ getFunc( form[OneField] )>
+					<cfset local.setFunc = arguments.Filter[ 'set' & OneField ] />
+					<cfset local.setFunc( form[OneField] ) />
+					<cfset local.SearchChanged = true />
+				</cfif>	
+			</cfloop>		
+		</cfif>
+
+		<cfreturn SearchChanged />
 	</cffunction>
 
 <!--- HotelInformationQuery --->

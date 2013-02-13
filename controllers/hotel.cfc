@@ -1,8 +1,6 @@
 <cfcomponent>
 
-<!---
-init
---->
+<!--- init --->
 	<cfset variables.fw = ''>
 	<cffunction name="init" output="false">
 		<cfargument name="fw">
@@ -12,17 +10,16 @@ init
 		<cfreturn this>
 	</cffunction>
 
-<!---
-default
---->
+<!--- default --->
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-	    <cfset fw.getBeanFactory().getBean('hotelsearch').doHotelSearch(argumentcollection=arguments.rc)>
+    <cfset fw.getBeanFactory().getBean('hotelsearch').doHotelSearch(argumentcollection=arguments.rc)>
 
 		<cfreturn />
 	</cffunction>
 
+<!--- before --->
 	<cffunction name="before" output="false">
 		<cfargument name="rc">
 
@@ -45,12 +42,12 @@ default
 		<cfreturn />
 	</cffunction>
 
+<!--- endsearch --->
 	<cffunction name="endsearch" output="false">
 		<cfargument name="rc">
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfif arguments.rc.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+			<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -67,11 +64,12 @@ default
 				
 		<cfreturn />
 	</cffunction>
+
+<!--- endskip --->
 	<cffunction name="endskip" output="false">
 		<cfargument name="rc">
 
-		<cfif arguments.rc.Filter.getCar()
-		AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+		<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
 			<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 		<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -79,9 +77,7 @@ default
 		<cfreturn />
 	</cffunction>
 
-<!---
-popup
---->	
+<!--- popup --->	
 	<cffunction name="popup" output="true">
 		<cfargument name="rc">
 		

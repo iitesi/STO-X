@@ -2,9 +2,7 @@
 
 	<cfproperty name="UAPI">
 
-<!---
-init
---->
+<!--- init --->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
 

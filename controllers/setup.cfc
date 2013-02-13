@@ -42,6 +42,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'stAmenities') OR StructIsEmpty(application.stAmenities)>
 			<cfset variables.bf.getBean("setup").setAmenities(argumentcollection=arguments.rc)>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'stStates') OR StructIsEmpty(application.stStates)>
+			<cfset variables.bf.getBean("setup").setStates(argumentcollection=arguments.rc)>
+		</cfif>
 		
 		<cfreturn />
 	</cffunction>
