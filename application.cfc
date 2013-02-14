@@ -33,7 +33,10 @@
 		cacheFileExists = false,
 		applicationKey = 'fw'
 	}>
-	
+
+<!---
+setupApplication
+--->
 	<cffunction name="setupApplication">
 
 		<cfset bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
@@ -44,6 +47,9 @@
 		<cfset application.bDebug = 1>
 	</cffunction>
 
+<!---
+setupSession
+--->
 	<cffunction name="setupSession">
 
 		<cfset session.searches = {}>
@@ -51,6 +57,9 @@
 
 	</cffunction>
 
+<!---
+setupRequest
+--->
 	<cffunction name="setupRequest" output="true">
 
 		<cfset controller( 'setup.setSearchID' )>
@@ -67,6 +76,9 @@
 
 	</cffunction>
 
+<!---
+onRequestEnd
+--->
 	<cffunction name="onRequestEnd">
 
 	</cffunction>

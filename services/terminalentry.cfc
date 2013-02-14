@@ -21,8 +21,10 @@ openSession
 --->
 	<cffunction name="openSession" output="false">
 		<cfargument name="Account" 	required="true">
+		<cfargument name="SearchID"	required="true">
 
-		<cfsavecontent variable="local.Message">
+		<!--- Create the SOAP message to sign in. --->
+		<cfsavecontent variable="local.message">
 			<cfoutput>
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
                     <soapenv:Header/>
@@ -34,13 +36,13 @@ openSession
                 </soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
-		<cfset local.Message	= getTerminalEntry().openSessionSOAP(arguments.Account)>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.SearchID)>
+
+		<!---
+		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', message, arguments.SearchID)>
 		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
 		<cfset local.hostToken  = stResponse[1].XMLText>
-
-
-		<cfreturn Message />
+--->
+		<cfreturn hostToken />
 	</cffunction>
 
 <!---

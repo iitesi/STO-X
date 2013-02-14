@@ -33,8 +33,7 @@ doAirPrice
 		<cfargument name="stAir" 	required="true">
 
 		<cfset local.Traveler = session.searches[arguments.SearchID].stTravelers[1]>
-
-		<!---
+<!---
 		<!---Reprice the flight to get the needed information for the sell--->
 		<cfset local.stTrip		= AirPrice.doAirPrice(arguments.SearchID, arguments.Account, arguments.Policy, arguments.stAir.Class, arguments.stAir.Ref, arguments.stAir.nTrip, 0, 1)>
 		<!---<cfdump var="#stTrip#" abort="true">--->
@@ -44,7 +43,7 @@ doAirPrice
 		<!---<cfdump var="#Message#">--->
 		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', Message, arguments.Filter.getSearchID())>
 		<!---<cfdump var="#sResponse#" abort>--->
-		<cfset local.stResponse 	= getUAPI().formatUAPIRsp(sResponse)>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
 		<cfset local.locator = ''>
 		<cfloop array="#stResponse#" index="jkl" item="local.stParent">
 			<cfloop array="#stParent.XMLChildren#" index="jkl" item="local.stChildren">
@@ -55,33 +54,42 @@ doAirPrice
 		</cfloop>
 		<cfdump var="#locator#">
 		<cfif locator EQ ''>
+			<cfdump var="#stTrip#">
 			<cfdump var="#stResponse#" abort>
 		</cfif>
-		--->
-		<cfset locator = 'SS1HWW'>
-		<!---Open the terminal entry session--->
-		<cfset local.Message	= getTerminalEntry().openSessionSOAP(arguments.Account)>
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', Message, arguments.SearchID)>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfset local.hostToken  = stResponse[1].XMLText>
+--->
+		<cfset locator = 'SSVZ9I'>
 
 
-<!---TE : Open TE session--->
-<cfset local.hostToken	= getTerminalEntry().openSession(arguments.Account, hostToken, arguments.SearchID)>
-<!---TE : Display PNR--->
-<cfset local.Response	= getTerminalEntry().displayPNR(arguments.Account, hostToken, locator, arguments.SearchID)>
-<!---TE : Move profile--->
-<cfset local.Response	= getTerminalEntry().moveBARPAR(arguments.Account, hostToken, Traveler.BAR.PCC, Traveler.BAR.Name, Traveler.PAR, arguments.SearchID)>
-<!---TE : Add received by--->
-<cfset local.Response	= getTerminalEntry().addReceivedBy(arguments.Account, hostToken, session.UserID, arguments.SearchID)>
-<!---TE : Remove the second name field--->
-<cfset local.Response	= getTerminalEntry().removeSecondName(arguments.Account, hostToken, arguments.SearchID)>
-<!---TE : Verify the stored price--->
-<cfset local.Response	= getTerminalEntry().verifyStoredFare(arguments.Account, hostToken, arguments.SearchID)>
-<!---TE : Queue record--->
-<cfset local.Response	= getTerminalEntry().queueRecord(arguments.Account, hostToken, arguments.SearchID)>
-<!---TE : Close TE session--->
-<cfset getTerminalEntry().closeSession(arguments.Account, hostToken, arguments.SearchID)>
+		<!---TE : Open TE session--->
+		<cfset local.hostToken	= getTerminalEntry().openSession(arguments.Account, arguments.SearchID)>
+
+		<!---TE : Display PNR--->
+		<cfset local.Response	= getTerminalEntry().displayPNR(arguments.Account, hostToken, locator, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Move profile--->
+		<cfset local.Response	= getTerminalEntry().moveBARPAR(arguments.Account, hostToken, Traveler.BAR.PCC, Traveler.BAR.Name, Traveler.PAR, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Add received by--->
+		<cfset local.Response	= getTerminalEntry().addReceivedBy(arguments.Account, hostToken, session.UserID, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Remove the second name field--->
+		<cfset local.Response	= getTerminalEntry().removeSecondName(arguments.Account, hostToken, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Verify the stored price--->
+		<cfset local.Response	= getTerminalEntry().verifyStoredFare(arguments.Account, hostToken, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Queue record--->
+		<cfset local.Response	= getTerminalEntry().queueRecord(arguments.Account, hostToken, arguments.SearchID)>
+		<cfdump var="#Response#">
+
+		<!---TE : Close TE session--->
+		<cfset getTerminalEntry().closeSession(arguments.Account, hostToken, arguments.SearchID)>
 
 		<cfabort>
 
@@ -121,6 +129,7 @@ parseTripForPurchase
 				</cfloop>
 			</cfif>
 		</cfloop>
+		<!---<cfdump var="#sXML#">--->
 		<cfset local.stPriceSolution = {}>
 		<!--- Get AirPricingSolution node --->
 		<cfloop array="#sXML#" item="local.stAirPriceResult" index="local.nAirPriceResult">
@@ -128,11 +137,13 @@ parseTripForPurchase
 				<cfloop array="#stAirPriceResult.XMLChildren#" item="local.stAirPricingSolution" index="local.nAirPricingSolution">
 					<cfif stAirPricingSolution.XMLName EQ 'air:AirPricingSolution'>
 						<cfset stPriceSolution = stAirPricingSolution>
-						<cfdump var="#stPriceSolution#">
 						<cfloop array="#stPriceSolution.XMLChildren#" item="local.stChildren" index="local.nChildren">
 							<cfif stChildren.XMLName EQ 'air:AirSegmentRef'>
 								<!--- Replace the SegmentRef with the air segment details --->
 								<cfset stPriceSolution.XMLChildren[nChildren] = stSegments[stChildren.XMLAttributes.Key]>
+							<cfelseif stChildren.XMLName EQ 'air:OptionalServices'>
+								<!--- Remove Optional Services --->
+								<cfset arrayDeleteAt(stPriceSolution.XMLChildren, nChildren)>
 							</cfif>
 						</cfloop>
 					</cfif>
