@@ -71,13 +71,13 @@ OUT OF POLICY
 					<cfif NOT AirPolicy
 					AND rc.Policy.Policy_AirReasonCode EQ 1>
 							<td>
-								Reason for booking outside of policy
+								<label for="Air_ReasonCode" class="#(structKeyExists(stTraveler.Errors, 'Air_ReasonCode') ? 'error' : '')#">Reason for booking outside of policy</label>
 							</td>
 							<td>
-								<select name="Air_ReasonCode1" id="Air_ReasonCode1">
+								<select name="Air_ReasonCode" id="Air_ReasonCode">
 								<option value=""></option>
 								<cfloop query="rc.qOutOfPolicy">
-									<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+									<option value="#rc.qOutOfPolicy.FareSavingsCode#" <cfif structKeyExists(stTraveler, 'Air_ReasonCode') AND stTraveler.Air_ReasonCode EQ rc.qOutOfPolicy.FareSavingsCode>selected</cfif>>#rc.qOutOfPolicy.Description#</option>
 								</cfloop>
 								</select>
 							</td>
@@ -96,13 +96,13 @@ NOT LOWEST FARE
 					AND (AirPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 					AND rc.Policy.Policy_AirLostSavings EQ 1>
 							<td>
-								Reason for not booking the lowest fare
+								<label for="LostSavings" class="#(structKeyExists(stTraveler.Errors, 'LostSavings') ? 'error' : '')#">Reason for not booking the lowest fare</label>
 							</td>
 							<td>
 								<select name="LostSavings" id="LostSavings">
 								<option value=""></option>
 								<cfloop query="rc.qOutOfPolicy">
-									<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+									<option value="#rc.qOutOfPolicy.FareSavingsCode#" <cfif structKeyExists(stTraveler, 'LostSavings') AND stTraveler.LostSavings EQ rc.qOutOfPolicy.FareSavingsCode>selected</cfif>>#rc.qOutOfPolicy.Description#</option>
 								</cfloop>
 								</select>
 							</td>
@@ -124,8 +124,8 @@ GENERAL SEAT ASSIGNMENTS
 							<td>
 								<select name="Seats" id="Seats">
 								<option value="">GENERAL SEAT SELECTION</option>
-								<option value="A" <cfif stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
-								<option value="W" <cfif stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
+								<option value="A" <cfif structKeyExists(stTraveler, 'Window_Aisle') AND stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
+								<option value="W" <cfif structKeyExists(stTraveler, 'Window_Aisle') AND stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
 								</select>
 							</td>
 						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
@@ -157,7 +157,7 @@ FREQUENT PROGRAM NUMBER
 								#sCarrier# Frequent Flyer Number
 							</td>
 							<td>
-								<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20">
+								<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20" <cfif structKeyExists(stTraveler, 'Air_FF#sCarrier#')>value="#stTraveler['Air_FF#sCarrier#']#"</cfif>>
 							</td>
 						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					</cfloop>
@@ -169,7 +169,11 @@ SPECIAL REQUEST
 								Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#
 							</td>
 							<td>
-								<textarea name="Special_Requests" id="Special_Requests" cols="40" rows="1" placeholder="" style="height:15px;"></textarea>
+								<textarea name="Special_Requests" id="Special_Requests" cols="40" rows="1" placeholder="">
+									<cfif structKeyExists(stTraveler, 'Special_Requests')>
+										#stTraveler.Special_Requests#
+									</cfif>
+								</textarea>
 							</td>
 						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
 					</cfif>
@@ -182,10 +186,10 @@ ADDITIONAL REQUESTS
 						<td>
 							<select name="Service_Requests" id="Service_Requests">
 							<option value="">SPECIAL REQUESTS</option>
-							<option value="BLND">Blind</option>
-							<option value="DEAF">Deaf</option>
-							<option value="UMNR">Unaccompanied Minor</option>
-							<option value="WCHR">Wheelchair</option>
+							<option value="BLND" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'BLND'>selected</cfif>>BLIND</option>
+							<option value="DEAF" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'DEAF'>selected</cfif>>DEAF</option>
+							<option value="UMNR" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'UMNR'>selected</cfif>>UNACCOMPANIED MINOR</option>
+							<option value="WCHR" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'WCHR'>selected</cfif>>WHEELCHAIR</option>
 							</select>
 						</td>
 					</tr>

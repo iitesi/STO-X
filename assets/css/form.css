@@ -356,7 +356,8 @@ input[type="color"]:focus {
 
 /* Form Errors
 ================================================== */
-
+.error,
+.form .form-item .error, 
 .form .form-item .error, 
 .form .form-item label.error, 
 .form .form-item span.error, 

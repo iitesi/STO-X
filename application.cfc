@@ -39,12 +39,14 @@ setupApplication
 --->
 	<cffunction name="setupApplication">
 
-		<cfset bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init()>
-		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') )>
+		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
+				.init( defaultProperties = { currentServerName=cgi.http_host }) />
+		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 1>
+
 	</cffunction>
 
 <!---

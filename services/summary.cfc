@@ -1,20 +1,258 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true">
+
+<!---
+init
+--->
+	<cffunction name="init" output="false">
+		
+		<cfreturn this>
+	</cffunction>
+
+
+<!---
+saveSummary
+--->
+	<cffunction name="saveSummary" output="false">
+		<cfargument name="qAllOUs">
+		<cfargument name="NoMiddleName" default="0">
+		<cfargument name="AirFOP_ID" default="">
+		<cfargument name="CarFOP_ID" default="">
+		<cfargument name="HotelFOP_ID" default="">
+		<cfargument name="Traveler">
+
+
+
+		<cfloop collection="#arguments#" item="local.field">
+			<cfset local[field] = arguments[field]>
+		</cfloop>
+
+		<cfset local.stItinerary = session.searches[SearchID].stItinerary>
+		<cfset local.stTraveler = session.searches[SearchID].stTravelers[nTraveler]>
+		<cfset stTraveler.Errors = {}>
+
+		<!--- Personal Information --->
+		<cfif First_Name EQ ''>
+			<cfset stTraveler.First_Name = ''>
+			<cfset stTraveler.Errors.First_Name = ''>
+		<cfelse>
+			<cfset stTraveler.First_Name = First_Name>
+		</cfif>
+		<cfif (NoMiddleName EQ 0 AND Middle_Name EQ '')
+		OR (NoMiddleName EQ 1 AND Middle_Name NEQ '')>
+			<cfset stTraveler.Middle_Name = ''>
+			<cfset stTraveler.Errors.Middle_Name = ''>
+		<cfelse>
+			<cfset stTraveler.Middle_Name = Middle_Name>
+		</cfif>
+		<cfset stTraveler.NoMiddleName = NoMiddleName>
+		<cfif Last_Name EQ ''>
+			<cfset stTraveler.Last_Name = ''>
+			<cfset stTraveler.Errors.Last_Name = ''>
+		<cfelse>
+			<cfset stTraveler.Last_Name = Last_Name>
+		</cfif>
+		<cfif Phone_Number EQ ''>
+			<cfset stTraveler.Phone_Number = ''>
+			<cfset stTraveler.Errors.Phone_Number = ''>
+		<cfelse>
+			<cfset stTraveler.Phone_Number = Phone_Number>
+		</cfif>
+		<cfif Wireless_Phone EQ ''>
+			<cfset stTraveler.Wireless_Phone = ''>
+			<cfset stTraveler.Errors.Wireless_Phone = ''>
+		<cfelse>
+			<cfset stTraveler.Wireless_Phone = Wireless_Phone>
+		</cfif>
+		<cfif NOT IsValid('Email', Email)>
+			<cfset stTraveler.Email = ''>
+			<cfset stTraveler.Errors.Email = ''>
+		<cfelse>
+			<cfset stTraveler.Email = Email>
+		</cfif>
+		<cfset local.sTempEmails = ''>
+		<cfset local.sTempError = 0>
+		<cfloop list="#Replace(Replace(CCEmail, ',', ';', 'ALL'), ' ', '', 'ALL')#" delimiters=";" index="local.sEmail">
+			<cfif IsValid('Email', sEmail)>
+				<cfset sTempEmails = ListAppend(sTempEmails, sEmail, ';')>
+			<cfelse>
+				<cfset sTempError = 1>
+			</cfif>
+		</cfloop>
+		<cfif sTempError>
+			<cfset stTraveler.CCEmail = ''>
+			<cfset stTraveler.Errors.CCEmail = ''>
+		<cfelse>
+			<cfset stTraveler.CCEmail = sTempEmails>
+		</cfif>
+		<cfset local.Birthdate = Month&'/'&Day&'/'&(Year EQ '****' AND IsDate(stTraveler.Birthdate) ? Year(stTraveler.Birthdate) : Year)>
+		<cfif NOT IsDate(Birthdate)>
+			<cfset stTraveler.Birthdate = ''>
+			<cfset stTraveler.Errors.Birthdate = ''>
+		<cfelse>
+			<cfset stTraveler.Birthdate = CreateODBCDate(Birthdate)>
+		</cfif>
+		<cfif Gender EQ ''>
+			<cfset stTraveler.Gender = ''>
+			<cfset stTraveler.Errors.Gender = ''>
+		<cfelse>
+			<cfset stTraveler.Gender = Gender>
+		</cfif>
+		<cfset local.qAllOUs = getAllOUs(stTraveler.Value_ID, session.AcctID)>
+		<!--- Org Units --->
+		<cfloop query="qAllOUs" group="OU_ID">
+			<cfset local.field = qAllOUs.OU_Type&qAllOUs.OU_Position>
+			<cfset local.value = local[field]>
+			<cfif (qAllOUs.OU_Capture EQ 'R'
+				OR (qAllOUs.OU_Capture EQ 'P' AND stTraveler.User_ID EQ 0))>
+				<cfif qAllOUs.OU_Required EQ 1 AND Len(Trim(value)) LTE 0>
+					<cfset stTraveler.Errors[field] = ''>
+				<cfelseif qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) GT 0 AND qAllOUs.OU_Pattern NEQ ''>
+					<cfloop from="1" to="#Len(qAllOUs.OU_Pattern)#" index="local.character">
+						<cfset local.patternCharacter = Mid(qAllOUs.OU_Pattern, character, 1)>
+						<cfset local.stringCharacter = Mid(value, character, 1)>
+						<cfif (IsNumeric(patternCharacter) AND NOT IsNumeric(stringCharacter))
+						OR (patternCharacter EQ 'A' AND REFind("[A-Za-z]", stringCharacter, 1) NEQ 1)
+						OR (patternCharacter EQ 'x' AND REFind("[^A-Za-z|^0-9]", stringCharacter, 1) EQ 1)
+						OR (REFind("[^A-Za-z|^0-9]", patternCharacter, 1) EQ 1 AND patternCharacter NEQ stringCharacter)>
+							<cfset stTraveler.Errors[field] = ''>
+							<cfbreak>
+						</cfif>
+					</cfloop>
+				<cfelseif (qAllOUs.OU_Required EQ 1 AND qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) GT qAllOUs.OU_Max)
+				OR (qAllOUs.OU_Required EQ 1 AND qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) LT qAllOUs.OU_Min)>
+					<cfset stTraveler.Errors[field] = ''>
+				</cfif>
+			</cfif>
+			<cfif NOT structKeyExists(stTraveler.Errors, field)>
+				<cfset stTraveler.OUs[field].Value_ID = ''>
+				<cfset stTraveler.OUs[field].Value_Display = ''>
+				<cfset stTraveler.OUs[field].Value_Report = value>
+			</cfif>
+		</cfloop>
+
+		<!--- Air Payment --->
+		<cfset stTraveler.AirFOP.Errors = {}>
+		<cfif IsNumeric(AirFOP_ID)>
+			<cfset stTraveler.AirFOP = stTraveler.listFOPs[AirFOP_ID]>
+			<cfset stTraveler.AirFOP.AirFOP_ID = AirFOP_ID>
+		<cfelseif AirFOP_ID EQ 'Manual'>
+			<cfset stTraveler.AirFOP.AirFOP_ID = 'Manual'>
+			<cfset stTraveler.AirFOP.FOP_ID = ''>
+			<cfset stTraveler.AirFOP.BTA_ID = ''>
+			<cfset stTraveler.AirFOP.CC_UseType = 'Manual'>
+			<cfset stTraveler.AirFOP.aUses = ['A']>
+			<cfif AirCC_Code EQ ''>
+				<cfset stTraveler.AirFOP.CC_Code = ''>
+				<cfset stTraveler.AirFOP.Errors.AirCC_Code = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.CC_Code = AirCC_Code>
+			</cfif>
+			<cfif Len(AirCC_Number) LT 15>
+				<cfset stTraveler.AirFOP.CC_Number = ''>
+				<cfset stTraveler.AirFOP.Errors.AirCC_Number = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.CC_Number = AirCC_Number>
+			</cfif>
+			<cfif AirCC_Month EQ '' OR AirCC_Year EQ 0>
+				<cfset stTraveler.AirFOP.CC_Expiration = ''>
+				<cfset stTraveler.AirFOP.Errors.AirCC_Month = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.CC_Expiration = AirCC_Month&'/'&AirCC_Year>
+			</cfif>
+			<cfif AirBilling_Name EQ ''>
+				<cfset stTraveler.AirFOP.Billing_Name = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_Name = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_Name = AirBilling_Name>
+			</cfif>
+			<cfif AirBilling_Address EQ ''>
+				<cfset stTraveler.AirFOP.Billing_Address = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_Address = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_Address = AirBilling_Address>
+			</cfif>
+			<cfif AirBilling_City EQ ''>
+				<cfset stTraveler.AirFOP.Billing_City = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_City = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_City = AirBilling_City>
+			</cfif>
+			<cfif AirBilling_State EQ ''>
+				<cfset stTraveler.AirFOP.Billing_State = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_State = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_State = AirBilling_State>
+			</cfif>
+			<cfif AirBilling_Zip EQ ''>
+				<cfset stTraveler.AirFOP.Billing_Zip = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_Zip = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_Zip = AirBilling_Zip>
+			</cfif>
+			<cfif AirBilling_CVV EQ ''>
+				<cfset stTraveler.AirFOP.Billing_CVV = ''>
+				<cfset stTraveler.AirFOP.Errors.AirBilling_CVV = ''>
+			<cfelse>
+				<cfset stTraveler.AirFOP.Billing_CVV = AirBilling_CVV>
+			</cfif>
+		</cfif>
+
+		<!--- Car Payment --->
+
+		<!--- Hotel Payment --->
+
+		<!--- Air Options --->
+		<cfset stTraveler.Window_Aisle = Seats>
+		<cfloop array="#stItinerary.Air.Carriers#" index="nCarrierKey" item="sCarrier">
+			<cfset stTraveler.Air_FF[sCarrier] = local['Air_FF#sCarrier#']>
+		</cfloop>
+		<cfset stTraveler.Service_Requests = Service_Requests>
+		<cfset stTraveler.Special_Requests = Special_Requests>
+		<cfif structKeyExists(local, 'Air_ReasonCode')>
+			<cfif Air_ReasonCode EQ ''>
+				<cfset stTraveler.Air_ReasonCode = ''>
+				<cfset stTraveler.Errors.Air_ReasonCode = ''>
+			<cfelse>
+				<cfset stTraveler.Air_ReasonCode = Air_ReasonCode>
+			</cfif>
+		</cfif>
+		<cfif structKeyExists(local, 'LostSavings')>
+			<cfif LostSavings EQ ''>
+				<cfset stTraveler.LostSavings = ''>
+				<cfset stTraveler.Errors.LostSavings = ''>
+			<cfelse>
+				<cfset stTraveler.LostSavings = LostSavings>
+			</cfif>
+		</cfif>
+		<cfloop array="#stItinerary.Air.Carriers#" item="sCarrier">
+			<cfset stTraveler['Air_FF#sCarrier#'] = local['Air_FF#sCarrier#']>
+		</cfloop>
+		<!---<cfset stTraveler.Car_FF[stItinerary.Air.CarVendor] = Car_FF>--->
+		
+		<!--- Car Options --->
+
+		<!--- Hotel Options --->
+		
+		<cfset session.searches[SearchID].stTravelers[nTraveler] = stTraveler>
+
+		<cfreturn />
+	</cffunction>
 
 <!---
 getOUs
 --->
-	<cffunction name="getOUs" output="false">
-		<cfargument name="Value_ID"		default="#session.searches[url.SearchID].ValueID#">
-		<cfargument name="Acct_ID" 		default="#session.AcctID#">
+	<cffunction name="getAllOUs" output="false">
+		<cfargument name="valueID">
+		<cfargument name="acctID">
 		
-		<cfquery name="local.qOUs" datasource="Corporate_Production" cachedwithin="#createTime(24,0,0)#">
+		<cfquery name="local.qAllOUs" datasource="Corporate_Production" cachedwithin="#createTime(24,0,0)#">
 		SELECT OUs.OU_ID, OU_Name, OU_Capture, OU_Position, OU_Default, OU_Required, OU_Freeform, OU_Pattern, OU_Max, OU_Min, OU_Values.Value_ID, OU_Type, OU_STO, Value_Display, Value_Report
 		FROM OUs LEFT OUTER JOIN OU_Values ON OUs.OU_ID = OU_Values.OU_ID
-		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
+		WHERE Acct_ID = <cfqueryparam value="#arguments.acctID#" cfsqltype="cf_sql_integer">
 		AND OUs.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		AND (MainOU_ID IS NULL OR MainValue_ID IN (<cfqueryparam value="#arguments.Value_ID#" cfsqltype="cf_sql_integer">))
+		AND (MainOU_ID IS NULL OR MainValue_ID IN (<cfqueryparam value="#arguments.valueID#" cfsqltype="cf_sql_integer">))
 		AND OUs.OU_ID NOT IN (<cfqueryparam value="347,348,349" cfsqltype="cf_sql_integer" list="true">)<!--- Custom code for the State of Texas execption codes --->
-		<cfif arguments.Acct_ID NEQ 348>
+		<cfif arguments.acctID NEQ 348>
 			AND OU_Capture IN (<cfqueryparam value="R,P" cfsqltype="cf_sql_varchar" list="true">)
 			AND OU_Type IN (<cfqueryparam value="SORT,UDID" cfsqltype="cf_sql_varchar" list="true">)
 		<cfelse>
@@ -23,97 +261,16 @@ getOUs
 		ORDER BY OU_Order, OUs.OU_ID, Value_Display
 		</cfquery>
 		
-		<cfreturn qOUs>
+		<cfreturn qAllOUs>
 	</cffunction>
 
 <!---
-saveSummary
+determineFees
 --->
-	<cffunction name="saveSummary" output="false">
-
-		<cfset local.stItinerary = session.searches[arguments.SearchID].stItinerary>
-		<cfset local.stTraveler = StructCopy(session.searches[arguments.SearchID].stTravelers[arguments.nTraveler])>
-
-		<!--- Personal Information --->
-		<cfset stTraveler.First_Name = (arguments.First_Name NEQ '' ? arguments.First_Name : 'error')>
-		<cfif (arguments.NoMiddleName EQ 0 AND arguments.Middle_Name EQ '')
-		OR (arguments.NoMiddleName EQ 1 AND arguments.Middle_Name NEQ '')>
-			<cfset stTraveler.Middle_Name = 'error'>
-		<cfelse>
-			<cfset stTraveler.Middle_Name = arguments.Middle_Name>
-		</cfif>
-		<cfset stTraveler.NoMiddleName = arguments.NoMiddleName>
-		<cfset stTraveler.Last_Name = (arguments.Last_Name NEQ '' ? arguments.Last_Name : 'error')>
-		<cfset stTraveler.Phone_Number = (arguments.Phone_Number NEQ '' ? arguments.Phone_Number : 'error')>
-		<cfset stTraveler.Wireless_Phone = (arguments.Wireless_Phone NEQ '' ? arguments.Wireless_Phone : 'error')>
-		<cfset stTraveler.Email = (IsValid('Email', arguments.Email) ? arguments.Email : 'error')>
-		<cfset arguments.CCEmail = Replace(arguments.CCEmail, ' ', '', 'ALL')>
-		<cfset arguments.CCEmail = Replace(arguments.CCEmail, ',', ';', 'ALL')>
-		<cfset local.sTempEmails = ''>
-		<cfset local.sTempError = 0>
-		<cfloop list="#arguments.CCEmail#" delimiters=";" index="local.sEmail">
-			<cfif IsValid('Email', sEmail)>
-				<cfset sTempEmails = ListAppend(sTempEmails, sEmail, ';')>
-			<cfelse>
-				<cfset sTempError = 1>
-			</cfif>
-		</cfloop>
-		<cfset stTraveler.CCEmail = (NOT sTempError ? sTempEmails : 'error')>
-		<cfset local.dBirthday = arguments.Month&'/'&arguments.Day&'/'&(arguments.Year EQ '****' AND IsDate(stTraveler.Birthday) ? Year(stTraveler.Birthday) : arguments.Year)>
-		<cfset stTraveler.Birthdate = (IsDate(dBirthday) ? CreateODBCDate(dBirthday) : 'error')>
-		<cfset stTraveler.Gender = (arguments.Gender NEQ '' ? arguments.Gender : 'error')>
-
-		<!--- Org Units --->
-
-		<!--- Air Payment --->
-		
-		<!--- Car Payment --->
-
-		<!--- Hotel Payment --->
-
-		<!--- Air Options --->
-		<cfset stTraveler.Window_Aisle = arguments.Seats>
-		<cfloop array="#stItinerary.Air.Carriers#" index="nCarrierKey" item="sCarrier">
-			<cfset stTraveler.Air_FF[sCarrier] = arguments['Air_FF#sCarrier#']>
-		</cfloop>
-		<cfset stTraveler.Car_FF[stItinerary.Air.CarVendor] = arguments.Car_FF>
-		
-		<!--- Car Options --->
-
-		<!--- Hotel Options --->
-
-
-<cfdump var="#stTraveler#">
-<cfdump var="#arguments#">	
-		
-		<cfabort>
-
-		<cfreturn qAllTravelers />
-	</cffunction>
-
-<!---
-getAllTravelers
---->
-	<cffunction name="getAllTravelers" output="false">
-		<cfargument name="User_ID" 		default="#session.User_ID#">
-		<cfargument name="Acct_ID" 		default="#session.AcctID#">
-		
-		<cfstoredproc procedure="sp_travelers" datasource="Corporate_Production">
-			<cfprocparam type="in" cfsqltype="cf_sql_integer" value="#arguments.Acct_ID#">
-			<cfprocparam type="in" cfsqltype="cf_sql_integer" value="#arguments.User_ID#">
-			<cfprocresult name="local.qAllTravelers"> 
-		</cfstoredproc> 
-
-		<cfreturn qAllTravelers />
-	</cffunction>
-
-<!---
-determinFees
---->
-	<cffunction name="determinFees" access="remote" output="false">
+	<cffunction name="determineFees" access="remote" output="false">
 		<cfargument name="AcctID" 		default="#session.AcctID#">
 		<cfargument name="UserID" 		default="#session.UserID#">
-		<cfargument name="stItinerary" 	default="#session.searches[url.SearchID].stItinerary#">
+		<cfargument name="stItinerary">
 		<cfargument name="Fitler">
 		
 		<cfset local.stFees = {}>
@@ -234,189 +391,6 @@ getTXExceptionCodes
 		</cfquery>
 		
 		<cfreturn qTXExceptionCodes>
-	</cffunction>
-	
-<!--- 
-getFOPs
---->
-	<cffunction name="getFOPs" output="false">
-		<cfargument name="UserID">
-		<cfargument name="ValueID">
-		<cfargument name="Acct_ID" 		default="#session.AcctID#">
-		
-		<cfquery name="local.qFOPs" datasource="Corporate_Production">
-		<!--- Profile credit cards --->
-		SELECT FOP_ID, 0 AS BTA_ID, 'Profile' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, CASE WHEN Air_Use = 1 THEN 'O' ELSE 'N' END AS Air_Use, CASE WHEN Hotel_Use = 1 THEN 'O' ELSE 'N' END AS Hotel_Use, CASE WHEN BookIt_Use = 1 THEN 'O' ELSE 'N' END AS BookIt_Use, Billing_Name, Billing_Address, Billing_City, Billing_State, Billing_Zip
-		FROM Form_Of_Payment, Users
-		WHERE Form_Of_Payment.User_ID = <cfqueryparam value="#arguments.UserID#" cfsqltype="cf_sql_integer">
-		AND Form_Of_Payment.User_ID = Users.User_ID
-		UNION
-		<!--- Account wide credit card --->
-		SELECT 0 AS FOP_ID, BTA_ID, 'BTA' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, BTA_Air AS Air_Use, BTA_Hotel AS Hotel_Use, BTA_BookIt AS BookIt_Use, Billing_Name, Billing_Address, Billing_City, Billing_State, Billing_Zip
-		FROM BTAs
-		WHERE Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_integer">
-		AND Allow_Rules = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
-		UNION
-		<!--- Department specific credit card by guest traveler --->
-		SELECT 0 AS FOP_ID, BTAs.BTA_ID, 'OU' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, OU_Air AS Air_Use, OU_Hotel AS Hotel_Use, OU_BookIt AS BookIt_Use, Billing_Name, Billing_Address, Billing_City, Billing_State, Billing_Zip
-		FROM BTAs, OU_BTAs, OU_Values
-		WHERE OU_BTAs.Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_integer">
-		AND BTAs.BTA_ID = OU_BTAs.BTA_ID
-		AND OU_BTAs.Value_ID = OU_Values.Value_ID
-		AND OU_Values.Active = 1
-		<cfif arguments.Acct_ID EQ 254>
-			UNION
-			SELECT 0 AS FOP_ID, 0 AS BTA_ID, 'GHOST' AS CC_UseType, '' AS FOP_Code, '' AS Acct_Num, '' AS Expire_Date, 'GHOST' AS CCType, 'O' AS Air_Use, 'N' AS Hotel_Use, 'N' AS BookIt_Use, '' AS Billing_Name, '' AS Billing_Address, '' AS Billing_City, '' AS Billing_State, '' AS Billing_Zip
-			FROM OU_Values
-			WHERE Value_ID = <cfqueryparam value="#arguments.ValueID#" cfsqltype="cf_sql_integer">
-			AND Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		</cfif>
-		</cfquery>
-		<cfset local.stFOPs = StructNew()>
-		<cfset local.aUses = []>
-		<cfset local.AirCard = 0>
-		<cfset local.HotelCard = 0>
-		<cfset local.bBookitCard = 0>
-		<cfset local.AirPerCard = 0>
-		<cfset local.HotelPerCard = 0>
-		<cfset local.bBookitPerCard = 0>
-		<cfset local.nCount = 0>
-		<!--- 
-		Air/car/hotel status key:
-			N = Cannot be used
-			R = Travelers are REQUIRED to use this card
-			E = Travelers may use this card EXCEPT when a personal card is in their profile
-			O = Travelers may use this card OR their personal card in their profile
-		--->
-		<!--- Set general strings as well as exclusive defaults --->
-		<cfloop query="qFOPs">
-			<cfset aUses = []>
-			<cfif Air_Use EQ 'R'>
-				<cfset ArrayAppend(aUses, 'A')>
-				<cfset AirCard = 1>
-			</cfif>
-			<cfif Hotel_Use EQ 'R'>
-				<cfset ArrayAppend(aUses, 'H')>
-				<cfset HotelCard = 1>
-			</cfif>
-			<cfif BookIt_Use EQ 'R'>
-				<cfset ArrayAppend(aUses, 'B')>
-				<cfset bBookitCard = 1>
-			</cfif>
-			<cfif NOT ArrayIsEmpty(aUses)>
-				<cfset nCount++ />
-				<cfset stFOPs[nCount].FOP_ID = FOP_ID>
-				<cfset stFOPs[nCount].BTA_ID = BTA_ID>
-				<cfset stFOPs[nCount].CC_UseType = CC_UseType>
-				<cfset stFOPs[nCount].aUses = aUses>
-				<cfset stFOPs[nCount].CC_Number = 0>
-				<cfset stFOPs[nCount].Billing_Name = Billing_Name>
-				<cfset stFOPs[nCount].Billing_Address = Billing_Address>
-				<cfset stFOPs[nCount].Billing_City = Billing_City>
-				<cfset stFOPs[nCount].Billing_State = Billing_State>
-				<cfset stFOPs[nCount].Billing_Zip = Billing_Zip>
-				<cfset stFOPs[nCount].CC_Exclude = 1>
-			</cfif>
-		</cfloop>
-		<!--- If no exclusive defaults set, check for personal level uses --->
-		<cfif NOT AirCard OR NOT HotelCard OR NOT bBookitCard>
-			<cfloop query="qFOPs">
-				<cfif CC_UseType EQ 'Per'>
-					<cfset aUses = []>
-					<cfif Air_Use NEQ 'N' AND NOT AirCard>
-						<cfset ArrayAppend(aUses, 'A')>
-						<cfset AirPerCard = 1>
-					</cfif>
-					<cfif Hotel_Use NEQ 'N' AND NOT HotelCard>
-						<cfset ArrayAppend(aUses, 'H')>
-						<cfset HotelPerCard = 1>
-					</cfif>
-					<cfif BookIt_Use NEQ 'N' AND NOT bBookitCard>
-						<cfset ArrayAppend(aUses, 'B')>
-						<cfset bBookitPerCard = 1>
-					</cfif>
-					<cfif NOT ArrayIsEmpty(aUses)>
-						<cfset Card_Name = CCName&' - Ending in '&Right(CCNum, 4)>
-						<cfset nCount++ />
-						<cfset stFOPs[nCount].FOP_ID = FOP_ID>
-						<cfset stFOPs[nCount].BTA_ID = BTA_ID>
-						<cfset stFOPs[nCount].CC_UseType = CC_UseType>
-						<cfset stFOPs[nCount].aUses = aUses>
-						<cfset stFOPs[nCount].CC_Number = 0>
-						<cfset stFOPs[nCount].Billing_Name = Billing_Name>
-						<cfset stFOPs[nCount].Billing_Address = Billing_Address>
-						<cfset stFOPs[nCount].Billing_City = Billing_City>
-						<cfset stFOPs[nCount].Billing_State = Billing_State>
-						<cfset stFOPs[nCount].Billing_Zip = Billing_Zip>
-						<cfset stFOPs[nCount].CC_Exclude = 0>
-					</cfif>
-				</cfif>
-			</cfloop>
-			<!--- If no personal defaults set, check for not exclusive cards --->
-			<cfloop query="qFOPs">
-				<cfif CC_UseType NEQ 'Per'>
-					<cfset aUses = []>
-					<cfif AirCard EQ 0
-					AND ((Air_Use EQ 'E' AND AirPerCard EQ 0)
-						OR (Air_Use NEQ 'E' AND Air_Use NEQ 'N'))>
-						<cfset ArrayAppend(aUses, 'A')>
-					</cfif>
-					<cfif HotelCard EQ 0
-					AND ((Hotel_Use EQ 'E' AND HotelPerCard EQ 0)
-						OR (Hotel_Use NEQ 'E' AND Hotel_Use NEQ 'N'))>
-						<cfset ArrayAppend(aUses, 'H')>
-					</cfif>
-					<cfif bBookitCard EQ 0
-					AND ((BookIt_Use EQ 'E' AND bBookitPerCard EQ 0)
-						OR (BookIt_Use NEQ 'E' AND BookIt_Use NEQ 'N'))>
-						<cfset ArrayAppend(aUses, 'B')>
-					</cfif>
-					<cfif NOT ArrayIsEmpty(aUses)>
-						<cfset nCount++ />
-						<cfset stFOPs[nCount].FOP_ID = FOP_ID>
-						<cfset stFOPs[nCount].BTA_ID = BTA_ID>
-						<cfset stFOPs[nCount].CC_UseType = CC_UseType>
-						<cfset stFOPs[nCount].aUses = aUses>
-						<cfset stFOPs[nCount].CC_Number = 0>
-						<cfset stFOPs[nCount].Billing_Name = Billing_Name>
-						<cfset stFOPs[nCount].Billing_Address = Billing_Address>
-						<cfset stFOPs[nCount].Billing_City = Billing_City>
-						<cfset stFOPs[nCount].Billing_State = Billing_State>
-						<cfset stFOPs[nCount].Billing_Zip = Billing_Zip>
-						<cfset stFOPs[nCount].CC_Exclude = 0>
-					</cfif>
-				</cfif>
-			</cfloop>
-		</cfif>
-		
-		<cfreturn stFOPs />
-	</cffunction>
-		
-<!--- 
-encryption
---->
-	<cffunction name="encryption" output="false">
-		<cfargument name="sString"		default="">
-		<cfargument name="sMethod" 		default="Decrypt">
-
-		<cfset local.sString = ''>
-		<cfset local.sSecretKey = 'sqIYCnx+1JgtIED5RMrr1w=='>
-
-		<cfif arguments.sString NEQ ''>
-			<cfif arguments.sMethod EQ 'Decrypt'>
-				<cfset local.oCLS = CreateObject('COM', 'aes.clsDecrypt', 'InProc')>
-				<cfset sString = oCLS.Decrypt(sSecretKey, arguments.sString, 256)>
-			<cfelse>
-				<cfset local.oCLS = CreateObject('COM', 'aes.clsEncrypt', 'InProc')>
-				<cfset sString = oCLS.Encrypt(sSecretKey, arguments.sString, 256)>
-			</cfif>
-			<cfscript>
-			ReleaseComObject(oCLS);
-			</cfscript>
-			<cfset sString = Trim(sString)>
-		</cfif>
-		
-		<cfreturn sString />
 	</cffunction>
 
 </cfcomponent>

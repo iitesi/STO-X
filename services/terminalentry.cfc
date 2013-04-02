@@ -37,11 +37,10 @@ openSession
 			</cfoutput>
 		</cfsavecontent>
 
-		<!---
 		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', message, arguments.SearchID)>
 		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
 		<cfset local.hostToken  = stResponse[1].XMLText>
---->
+
 		<cfreturn hostToken />
 	</cffunction>
 
@@ -74,8 +73,6 @@ closeSession
 		successText would equal 'Terminal End Session Successful'--->
 
 	</cffunction>
-
-
 
 <!---
 terminalEntrySOAP
@@ -157,6 +154,34 @@ displayPNR
 		</cfloop>
 
 		<cfreturn Response>
+	</cffunction>
+
+<!---
+readPAR
+--->
+	<cffunction name="readPAR" output="false">
+		<cfargument name="Account" 	required="true">
+		<cfargument name="hostToken"required="true">
+		<cfargument name="pcc"		required="true">
+		<cfargument name="bar"		required="true">
+		<cfargument name="par"		required="true">
+		<cfargument name="searchID" required="true">
+
+		<!--- Create a blank response structure. --->
+		<cfset local.profileFound = true>
+
+		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'S*#arguments.pcc#/#arguments.bar#-#arguments.par#1', arguments.searchID)>
+
+		<!--- Loop through the response and check for errors. --->
+		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+			<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
+			OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
+				<cfset profileFound = false>
+			</cfif>
+		</cfloop>
+
+		<cfreturn profileFound>
 	</cffunction>
 
 <!---

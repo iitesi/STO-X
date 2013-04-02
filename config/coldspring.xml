@@ -2,58 +2,121 @@
 
 <beans>
 
-  <bean id="UAPI" class="booking.services.UAPI" />
+	<bean id="EnvironmentService" class="com.shortstravel.environmentService">
+		<constructor-arg name="currentServerName"><value>${currentServerName}</value></constructor-arg>
+		<constructor-arg name="localServerNames"><value>localhost</value></constructor-arg>
+		<constructor-arg name="preprodServerNames"><value>preproduction.shortstravel.com</value></constructor-arg>
+		<constructor-arg name="prodServerNames"><value>www.shortstravel.com</value></constructor-arg>
+		<constructor-arg name="localSettings"><ref bean="LocalConfig" /></constructor-arg>
+		<constructor-arg name="preprodSettings"><ref bean="PreprodConfig" /></constructor-arg>
+		<constructor-arg name="prodSettings"><ref bean="ProdConfig" /></constructor-arg>
+	</bean>
 
-    <bean id="setup" class="booking.services.setup" />
-    <bean id="General" class="booking.services.general" />
+	<bean id="UAPI" class="booking.services.UAPI" />
 
-    <bean id="AirCreate" class="booking.services.AirCreate" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-    <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-      <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
-      <constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
-  </bean>
+	<bean id="setup" class="booking.services.setup" />
 
-  <bean id="AirParse" class="booking.services.AirParse" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-  </bean>
+	<bean id="General" class="booking.services.general" />
 
-  <bean id="lowfare" class="booking.services.lowfare" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-    <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-  </bean>
+	<bean id="UserService" class="com.shortstravel.security.UserService">
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+	</bean>
 
-  <bean id="airavailability" class="booking.services.airavailability" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-    <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-  </bean>
+	<bean id="AccountManager" class="com.shortstravel.security.AccountManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
 
-  <bean id="AirPrice" class="booking.services.AirPrice" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-    <constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-  </bean>
+	<bean id="UserManager" class="com.shortstravel.security.UserManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
 
-  <bean id="car" class="booking.services.car" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-  </bean>
+	<bean id="Summary" class="booking.services.summary" >
+		<constructor-arg name="User"><ref bean="User" /></constructor-arg>
+	</bean>
 
-  <bean id="couldyou" class="booking.services.couldyou" >
-    <constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
-    <constructor-arg name="car"><ref bean="car" /></constructor-arg>
-    <constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
-  </bean>
+	<bean id="AirCreate" class="booking.services.AirCreate" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
+	</bean>
 
-  <bean id="hotelprice" class="booking.services.hotelprice" >
-    <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-  </bean>
-  
-  <bean id="hotelsearch" class="booking.services.hotelsearch" >
-    <constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
-  </bean>
+	<bean id="AirParse" class="booking.services.AirParse" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+	</bean>
 
-    <bean id="TerminalEntry" class="booking.services.terminalentry" >
-        <constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-        <constructor-arg name="General"><ref bean="General" /></constructor-arg>
-    </bean>
+	<bean id="lowfare" class="booking.services.lowfare" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
 
+	<bean id="airavailability" class="booking.services.airavailability" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
+
+	<bean id="AirPrice" class="booking.services.AirPrice" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
+
+	<bean id="car" class="booking.services.car" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+	</bean>
+
+	<bean id="couldyou" class="booking.services.couldyou" >
+		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+		<constructor-arg name="car"><ref bean="car" /></constructor-arg>
+		<constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
+	</bean>
+
+	<bean id="hotelprice" class="booking.services.hotelprice" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+	</bean>
+
+	<bean id="hotelsearch" class="booking.services.hotelsearch" >
+		<constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
+	</bean>
+
+	<bean id="TerminalEntry" class="booking.services.terminalentry" >
+		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="General"><ref bean="General" /></constructor-arg>
+	</bean>
+
+	<!--Environment configuration beans-->
+	<bean id="LocalConfig" class="coldspring.beans.factory.config.MapFactoryBean">
+		<property name="SourceMap">
+			<map>
+				<entry key="SearchesDSN"><value>book</value></entry>
+				<entry key="BookDSN"><value>book</value></entry>
+				<entry key="SessionsDSN"><value>sessions</value></entry>
+				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="PreprodConfig" class="coldspring.beans.factory.config.MapFactoryBean">
+		<property name="SourceMap">
+			<map>
+				<entry key="SearchesDSN"><value>preproduction</value></entry>
+				<entry key="BookDSN"><value>book</value></entry>
+				<entry key="SessionsDSN"><value>sessions</value></entry>
+				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="ProdConfig" class="coldspring.beans.factory.config.MapFactoryBean">
+		<property name="SourceMap">
+			<map>
+				<entry key="SearchesDSN"><value>book</value></entry>
+				<entry key="BookDSN"><value>book</value></entry>
+				<entry key="SessionsDSN"><value>sessions</value></entry>
+				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
+			</map>
+		</property>
+	</bean>
 </beans>

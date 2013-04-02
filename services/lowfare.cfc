@@ -70,7 +70,7 @@ doLowFare
 		<cfargument name="sLowFareSearchID"	required="false"	default="">
 		
 		<cfset local.sThreadName = ''>
-		<cfset arguments.stPricing = {}>
+		<!---<cfset arguments.stPricing = {}>--->
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable)>
 			<!--- Name of the thread thrown out. --->

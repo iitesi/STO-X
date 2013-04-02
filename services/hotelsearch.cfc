@@ -20,19 +20,33 @@ init
 		<cfargument name="Policy">
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 
-		<cfset local.SearchChanged	= checkModifySearch(form,arguments.Filter) />
-		<cfset local.Search 				= arguments.Filter />
-		<cfset local.SearchID 			= Search.getSearchID() />
-		<cfset local.sMessage				= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
-		<cfset local.sResponse 			= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
-		<cfset local.aResponse 			= formatResponse(sResponse) />
+		<cfquery name="getAllProperties" datasource="book">
+		SELECT Property_ID, Chain_Code
+		FROM lu_Hotels
+		WHERE (dbo.udf_Calculate_Distance (<cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float">, <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float">, Lat, Long) <= <cfqueryparam value="#session.searches[1].Hotel_Radius#" cfsqltype="cf_sql_integer">
+		AND Lat <> 0 AND Lat <> '' AND Lat IS NOT NULL
+		AND Long <> 0 AND Long <> '' AND Long IS NOT NULL
+		AND Lat BETWEEN <cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float"> + 1.5
+		AND Long BETWEEN <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float"> + 1.5)
+		<cfif propertyids NEQ ''>
+			OR Property_ID IN (<cfqueryparam value="#propertyids#" cfsqltype="cf_sql_integer" list="true"> )
+		</cfif>
+		</cfquery>
+		
+		<!--- <cfset local.SearchChanged	= checkModifySearch(form,arguments.Filter) />
+		<cfset local.Search 		= arguments.Filter />
+		<cfset local.SearchID 		= Search.getSearchID() />
+		
+		<cfset local.sMessage		= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
+		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
+		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.CurrentHotel 	= structKeyExists(session.searches[SearchID],'stHotels') ? session.searches[SearchID].stHotels : {} />
-		<cfset local.stHotels 			= parseHotels(aResponse, CurrentHotel) />
-		<cfset local.stChains 			= getChains(stHotels)>
-		<cfset local.stAmenities 		= getAmenities(stHotels, application.stAmenities)>
-		<cfset local.latlong 				= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
-		<cfset local.stHotels 			= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
-		<cfset local.stHotels 			= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) />
+		<cfset local.stHotels 		= parseHotels(aResponse, CurrentHotel) />
+		<cfset local.stChains 		= getChains(stHotels)>
+		<cfset local.stAmenities 	= getAmenities(stHotels, application.stAmenities)>
+		<cfset local.latlong 		= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
+		<cfset local.stHotels 		= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
+		<cfset local.stHotels 		= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) /> 
 
 		<cfset local.aThreads = [] />
 		<cfset local.count = 0 />
@@ -53,14 +67,14 @@ init
 		<cfthread action="join" name="#arraytoList(local.aThreads)#" />
 		<!--- <cfdump var="#cfthread#" abort> --->
 
-		<cfset session.searches[SearchID].Hotel					= true />
-		<cfset session.searches[SearchID].Hotel_Lat 		= GetToken(latlong,1,',') />
-		<cfset session.searches[SearchID].Hotel_Long		= GetToken(latlong,2,',') />
-		<cfset session.searches[SearchID].stHotels 			= stHotels />
+		<cfset session.searches[SearchID].Hotel			= true />
+		<cfset session.searches[SearchID].Hotel_Lat 	= GetToken(latlong,1,',') />
+		<cfset session.searches[SearchID].Hotel_Long	= GetToken(latlong,2,',') />
+		<cfset session.searches[SearchID].stHotels 		= stHotels />
 		<cfset session.searches[SearchID].stHotelChains	= stChains />
-		<cfset session.searches[SearchID].slatlong			= latlong />
-		<cfset session.searches[SearchID].stAmenities		=	stAmenities />
-		<cfset session.searches[SearchID].stSortHotels 	= StructKeyArray(stHotels) />
+		<cfset session.searches[SearchID].slatlong		= latlong />
+		<cfset session.searches[SearchID].stAmenities	= stAmenities />
+		<cfset session.searches[SearchID].stSortHotels 	= StructKeyArray(stHotels) />--->
 
 		<cfreturn />
 	</cffunction>	
@@ -109,7 +123,7 @@ init
 		<cfargument name="Hotel_Radius">
 		
 		<cfset local.Search = arguments.Filter />
-		<cfset local.Hotel_Radius = structKeyExists(arguments,'Hotel_Radius') ? arguments.Hotel_Radius : Search.getHotel_Radius() />
+		<cfset local.Hotel_Radius =  5/><!--- structKeyExists(arguments,'Hotel_Radius') ? arguments.Hotel_Radius : Search.getHotelRadius() --->
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -521,9 +535,10 @@ init
 
 <!--- skipHotel --->
 	<cffunction name="skipHotel" output="false">
-		<cfargument name="SearchID">
+		<cfargument name="Filter">
 
-		<cfset session.searches[arguments.SearchID].Hotel = false />
+		<cfset arguments.Filter = arguments.Filter.setHotel(false)>
+		<cfset session.Filters[arguments.Filter.getSearchID()] = arguments.Filter />
 		
 		<cfreturn />
 	</cffunction>
