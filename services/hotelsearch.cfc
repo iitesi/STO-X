@@ -8,75 +8,56 @@ init
 	<cffunction name="init" output="false">
 		<cfargument name="HotelPrice">
 
-		<cfset setHotelPrice(arguments.HotelPrice)>
-
 		<cfreturn this>
 	</cffunction>
 
 <!--- doHotelSearch --->
-	<cffunction name="doHotelSearch" output="false">
+	<cffunction name="doHotelSearch" access="public" returntype="query" output="false">
 		<cfargument name="Filter">
-		<cfargument name="Account">
+        <cfargument name="Search">
 		<cfargument name="Policy">
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 
-		<cfquery name="getAllProperties" datasource="book">
-		SELECT Property_ID, Chain_Code
-		FROM lu_Hotels
-		WHERE (dbo.udf_Calculate_Distance (<cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float">, <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float">, Lat, Long) <= <cfqueryparam value="#session.searches[1].Hotel_Radius#" cfsqltype="cf_sql_integer">
-		AND Lat <> 0 AND Lat <> '' AND Lat IS NOT NULL
-		AND Long <> 0 AND Long <> '' AND Long IS NOT NULL
-		AND Lat BETWEEN <cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#session.searches[1].Hotel_Lat#" cfsqltype="cf_sql_float"> + 1.5
-		AND Long BETWEEN <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#session.searches[1].Hotel_Long#" cfsqltype="cf_sql_float"> + 1.5)
-		<cfif propertyids NEQ ''>
-			OR Property_ID IN (<cfqueryparam value="#propertyids#" cfsqltype="cf_sql_integer" list="true"> )
-		</cfif>
-		</cfquery>
-		
-		<!--- <cfset local.SearchChanged	= checkModifySearch(form,arguments.Filter) />
-		<cfset local.Search 		= arguments.Filter />
-		<cfset local.SearchID 		= Search.getSearchID() />
-		
-		<cfset local.sMessage		= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
-		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
-		<cfset local.aResponse 		= formatResponse(sResponse) />
-		<cfset local.CurrentHotel 	= structKeyExists(session.searches[SearchID],'stHotels') ? session.searches[SearchID].stHotels : {} />
-		<cfset local.stHotels 		= parseHotels(aResponse, CurrentHotel) />
-		<cfset local.stChains 		= getChains(stHotels)>
-		<cfset local.stAmenities 	= getAmenities(stHotels, application.stAmenities)>
-		<cfset local.latlong 		= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
-		<cfset local.stHotels 		= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
-		<cfset local.stHotels 		= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) /> 
+        <cfquery name="hotelProperties" datasource="book">
+            SELECT Property_ID
+                , Chain_Code
+                , Property_Name
+                , Address
+                , City
+                , State
+                , Zip
+                , Lat
+                , Long
+                , dbo.udf_Calculate_Distance (
+                      <cfqueryparam value="#arguments.Search.getHotelLat()#" cfsqltype="cf_sql_float">
+                    , <cfqueryparam value="#arguments.Search.getHotelLong()#" cfsqltype="cf_sql_float">
+                    , Lat
+                    , Long
+                  ) AS distance
+            FROM lu_Hotels
+            WHERE dbo.udf_Calculate_Distance (
+                      <cfqueryparam value="#arguments.Search.getHotelLat()#" cfsqltype="cf_sql_float">
+                    , <cfqueryparam value="#arguments.Search.getHotelLong()#" cfsqltype="cf_sql_float">
+                    , Lat
+                    , Long
+                ) <= 5
+                AND Lat <> 0 AND Lat <> ''
+                AND Lat IS NOT NULL
+                AND Long <> 0 AND Long <> ''
+                AND Long IS NOT NULL
+                AND Lat BETWEEN <cfqueryparam value="#arguments.Search.getHotelLat()#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#arguments.Search.getHotelLat()#" cfsqltype="cf_sql_float"> + 1.5
+                AND Long BETWEEN <cfqueryparam value="#arguments.Search.getHotelLong()#" cfsqltype="cf_sql_float"> - 1.5 AND <cfqueryparam value="#arguments.Search.getHotelLong()#" cfsqltype="cf_sql_float"> + 1.5
 
-		<cfset local.aThreads = [] />
-		<cfset local.count = 0 />
-		<cfloop array="#StructKeyArray(stHotels)#" index="local.sHotel">
-			<cfif count LT 4><!--- Stop the rates after 4. We'll get the rest of the rates later --->
-				<cfif NOT stHotels[sHotel]['RoomsReturned']><!--- if rooms were already returned, don't check again --->
-					<cfset local.sHotelChain = stHotels[sHotel].HotelChain />
-					<cfthread name="#sHotel#" SearchID="#SearchID#" nHotelCode="#sHotel#" sHotelChain="#sHotelChain#">
-						<cfset HotelPrice.doHotelPrice(arguments.SearchID,arguments.nHotelCode,arguments.sHotelChain) />
-					</cfthread>
-					<cfset arrayAppend(local.aThreads,sHotel)>
-				</cfif>
-				<cfset local.count++ />
-			<cfelse>
-				<cfbreak />
-			</cfif>
-		</cfloop>
-		<cfthread action="join" name="#arraytoList(local.aThreads)#" />
-		<!--- <cfdump var="#cfthread#" abort> --->
+                <!---
+                <cfif propertyids NEQ ''>
+                    OR Property_ID IN (<cfqueryparam value="#propertyids#" cfsqltype="cf_sql_integer" list="true"> )
+                </cfif>
+               --->
 
-		<cfset session.searches[SearchID].Hotel			= true />
-		<cfset session.searches[SearchID].Hotel_Lat 	= GetToken(latlong,1,',') />
-		<cfset session.searches[SearchID].Hotel_Long	= GetToken(latlong,2,',') />
-		<cfset session.searches[SearchID].stHotels 		= stHotels />
-		<cfset session.searches[SearchID].stHotelChains	= stChains />
-		<cfset session.searches[SearchID].slatlong		= latlong />
-		<cfset session.searches[SearchID].stAmenities	= stAmenities />
-		<cfset session.searches[SearchID].stSortHotels 	= StructKeyArray(stHotels) />--->
+            ORDER BY distance ASC
+        </cfquery>
 
-		<cfreturn />
+		<cfreturn hotelProperties />
 	</cffunction>	
 
 <!--- callAPI --->

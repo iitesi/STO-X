@@ -1,19 +1,15 @@
-<!--- <cfdump var="#session.searches[rc.SearchID]#"> --->
-<!--- <cfset structDelete(session.searches,231413) /> --->
-<cfsetting showdebugoutput="false" />
-<!--- <cfdump var="#session.searches[SearchID]['STHOTELS']#" abort> --->
-<!--- <cfinvoke component="services.hotelrooms" method="getRooms" SearchID="231413" nHotelCode="15550" returnvariable="hotel">
-<cfdump var="#hotel#" abort> --->
+<cfsilent>
 
-<!--- <cfinvoke component="services.hotelphotos" method="doHotelPhotoGallery" SearchID="231413" nHotelCode="72779" sHotelChain="CZ" returnvariable="test">
-<cfdump var="#test#" abort> --->
+    <cfsetting showdebugoutput="false" />
+
+</cfsilent>
 
 
 <cfoutput>
   <div class="container">
     <div class="portfolio-items filterable">
       <div class="item ten columns">
-        #View('hotel/filter')#
+       <!--- #View('hotel/filter')#--->
 
         <a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#">Continue without hotel</a>
         <span id="hotelcount" style="float:right;"></span>
@@ -42,91 +38,70 @@
 
         <div class="hotel" height="100%">
         	<cfset tripcount = 0 />
-        	<cfset stsorthotels  = session.searches[rc.SearchID].stSortHotels />
-        	<cfset stHotelChains = session.searches[rc.SearchID].stHotelChains />
-        	<cfset stHotels      = session.searches[rc.SearchID].stHotels />
 
-        	<cfloop array="#stSortHotels#" index="sHotel">
+        	<cfloop query="rc.hotels">
 
-        		<cfset stHotel = stHotels[sHotel] />
         		<cfset tripcount++ />
-        		<cfset PropertyID = sHotel />
-        		<cfset HotelChain = stHotel.HotelChain />
-        		<cfset HotelAddress = '' /><!--- Set a default address, the original ddress returned is garbage --->
-        		<cfif stHotel.RoomsReturned><!--- We have the real address --->
-        			<cfset HotelAddress = structKeyExists(stHotel,'Property') ? stHotel['Property']['Address1'] : '' />
-        			<cfset HotelAddress&= structKeyExists(stHotel,'Property') AND Len(Trim(stHotel['Property']['Address2'])) ? ', '&stHotel['Property']['Address2'] : '' />
-        		</cfif>
 
-            <div id="#sHotel#" style="min-height:100px;">
+                <div id="#rc.hotels.currentRow#" style="min-height:100px;">
 
-              <cfset RoomRatePlanType = '' />
-              <cfif structKeyExists(stHotel,'Rooms')>
-                <cfloop list="#StructKeyList(stHotel.Rooms,'|')#" index="OneRoom" delimiters="|">
-                  <cfif Len(Trim(stHotel.Rooms[OneRoom].RoomRatePlanType))>
-                    <cfset RoomRatePlanType = stHotel.Rooms[OneRoom].RoomRatePlanType />
-                    <cfbreak />
-                  </cfif>
-                </cfloop>
-              </cfif>
-
-              <table width="500px">
-              <tr>
-                <td width="135px">
-                  <div id="hotelimage#sHotel#" class="listcell">
-                    <cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />
-                    <!--- <img width="125px" src="#Signature_Image#" /> --->image
-                  </div>
-                </td>
-                <td valign="top" width="365px">
-                  <table width="365px">
-                  <tr>
-                    <td><div id="number#sHotel#" style="float:left;">#tripcount#</div> - #HotelChain# #stHotel.HotelInformation.Name#<font color="##FFFFFF"> #sHotel#</font></td>
-                  </tr>
-                  <tr>
-                    <td><div id="address#sHotel#">#HotelAddress#</div></td>
-                  </tr>
-                  <cfif NOT stHotel.RoomsReturned OR (StructKeyExists(stHotel,'LowRate') AND stHotel.LowRate NEQ 'Sold Out')>
-                    <tr id="DetailLinks#sHotel#">
-                      <td>
-                        <a onClick="showDetails(#rc.SearchID#,'#sHotel#','#HotelChain#','#RoomRatePlanType#');return false;" class="button"><button type="button" class="textButton">Details</button>|</a>
-                        <a onClick="showRates(#rc.SearchID#,'#sHotel#');return false;" class="button"><button type="button" class="textButton">Rooms</button>|</a>
-                        <a onClick="showAmenities(#rc.SearchID#,'#sHotel#');return false;" class="button"><button type="button" class="textButton">Amenities</button>|</a>
-                        <a onClick="showPhotos(#rc.SearchID#,'#sHotel#','#HotelChain#');return false;" class="button"><button type="button" class="textButton">Photos</button>|</a>
-                      </td>
-                    </tr>
-                  </cfif>
-                  </table>
-                </td>
-                <td class="fares" align="center" id="checkrates2#sHotel#">
-
-                <cfif NOT stHotel.RoomsReturned>
-                  <script type="text/javascript">
-                  hotelPrice(#rc.SearchID#, '#sHotel#', '#HotelChain#');
-                  </script>
-                  <img src="assets/img/ajax-loader.gif" />
-                <cfelse>
-                  <cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
-                  #RateText#
-                  <cfif RateText NEQ 'Sold Out'>
-                    <div id="seerooms#sHotel#" class="button-wrapper">
-                      <a onClick="showRates(#rc.SearchID#,'#sHotel#');return false;" class="button"><span>See Rooms</span></a>
-                    </div>
-                    <div id="hiderooms#sHotel#" class="button-wrapper hide">
-                      <a onClick="hideRates('#sHotel#');return false;" class="button"><span>Hide Rooms</span></a>
-                    </div>
-                  </cfif>
-                </cfif>
-                <!--- <cfinvoke component="services.hotelrooms" method="getRooms" nearchID="#rc.SearchID#" nHotelCode="#sHotel#" returnvariable="hotel">
-                <cfdump var="#hotel#" abort> --->
-                <!--- <a href="http://localhost:8888/booking/services/hotelprice.cfc?method=doHotelPrice&SearchID=#rc.SearchID#&nHotelCode=#sHotel#&sHotelChain=#HotelChain#" target="_blank">Link</a><br> --->
-                </td>
-              </tr>
-              <tr>
-                <td colspan="3" id="checkrates#sHotel#"></td>
-              </tr>
-              </table>
-            </div>
+                    <table width="500px">
+                        <tr>
+                            <td width="135px">
+                                <div id="hotelimage#rc.hotels.currentRow#" class="listcell">
+                                <!---<cfset Signature_Image = StructKeyExists(stHotels[sHotel],'HOTELINFORMATION') AND StructKeyExists(stHotels[sHotel]['HOTELINFORMATION'],'SIGNATURE_IMAGE') ? stHotels[sHotel]['HOTELINFORMATION']['SIGNATURE_IMAGE'] : 'assets/img/MissingHotel.png' />--->
+                                <!--- <img width="125px" src="#Signature_Image#" /> --->image
+                                </div>
+                            </td>
+                            <td valign="top" width="365px">
+                                <table width="365px">
+                                    <tr>
+                                        <td><div id="number#rc.hotels.property_id#" style="float:left;">#tripcount#</div> - #rc.hotels.chain_code# #rc.hotels.property_name#<font color="##FFFFFF"> #rc.hotels.currentRow#</font></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div id="address#rc.hotels.currentRow#">#rc.hotels.address#</div></td>
+                                    </tr>
+                                    <!---
+                                    <cfif NOT stHotel.RoomsReturned OR (StructKeyExists(stHotel,'LowRate') AND stHotel.LowRate NEQ 'Sold Out')>
+                                        <tr id="DetailLinks#sHotel#">
+                                            <td>
+                                                <a onClick="showDetails(#rc.SearchID#,'#sHotel#','#HotelChain#','#RoomRatePlanType#');return false;" class="button"><button type="button" class="textButton">Details</button>|</a>
+                                                <a onClick="showRates(#rc.SearchID#,'#sHotel#');return false;" class="button"><button type="button" class="textButton">Rooms</button>|</a>
+                                                <a onClick="showAmenities(#rc.SearchID#,'#sHotel#');return false;" class="button"><button type="button" class="textButton">Amenities</button>|</a>
+                                                <a onClick="showPhotos(#rc.SearchID#,'#sHotel#','#HotelChain#');return false;" class="button"><button type="button" class="textButton">Photos</button>|</a>
+                                            </td>
+                                        </tr>
+                                    </cfif>
+                                    --->
+                                </table>
+                            </td>
+                            <td class="fares" align="center" id="checkrates2#rc.hotels.currentRow#">
+                                <!---
+                                <cfif NOT stHotel.RoomsReturned>
+                                    <script type="text/javascript">
+                                        hotelPrice(#rc.SearchID#, '#rc.hotels.currentRow#', '#rc.hotels.chain_code#');
+                                    </script>
+                                    <img src="assets/img/ajax-loader.gif" />
+                                <cfelse>
+                                    <cfset RateText = StructKeyExists(stHotel,'LowRate') ? stHotel.LowRate NEQ 'Sold Out' ? DollarFormat(stHotel.LowRate) : stHotel.LowRate : 'Rates not found' />
+                                    #RateText#
+                                    <cfif RateText NEQ 'Sold Out'>
+                                        <div id="seerooms#sHotel#" class="button-wrapper">
+                                            <a onClick="showRates(#rc.SearchID#,'#sHotel#');return false;" class="button"><span>See Rooms</span></a>
+                                        </div>
+                                        <div id="hiderooms#sHotel#" class="button-wrapper hide">
+                                            <a onClick="hideRates('#sHotel#');return false;" class="button"><span>Hide Rooms</span></a>
+                                        </div>
+                                    </cfif>
+                                </cfif>
+                                --->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" id="checkrates#rc.hotels.currentRow#"></td>
+                        </tr>
+                    </table>
+                </div>
           </cfloop>
         </div>
       </div>
@@ -138,6 +113,8 @@
 </cfoutput>
 
 <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
+
+<!---
 <script type="text/javascript">
 <cfoutput>
 var hotelresults = #serializeJSON(session.searches[rc.SearchID].HotelInformationQuery,true)#;
@@ -176,7 +153,7 @@ function loadMap(lat, long, centerimg) {
     Microsoft.Maps.Events.addHandler(pins[propertyid], 'click', displayHotelInfo);
     map.entities.push(pins[propertyid]);
   }
-  //Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search                                     
+  //Microsoft.Maps.Events.addHandler(map, 'click', changeLatLongCenter); lets you re-search
   return false;
 }
 
@@ -309,3 +286,4 @@ function filterhotel() {
   return false;
 }
 </script>
+--->

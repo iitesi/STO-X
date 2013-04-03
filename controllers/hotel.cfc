@@ -14,7 +14,7 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-    <cfset fw.getBeanFactory().getBean('hotelsearch').doHotelSearch(argumentcollection=arguments.rc)>
+        <cfset fw.getBeanFactory().getBean('hotelsearch').doHotelSearch(argumentcollection=arguments.rc)>
 
 		<cfreturn />
 	</cffunction>
@@ -33,7 +33,8 @@
 		<cfargument name="rc">
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			<cfset variables.fw.service('hotelsearch.doHotelSearch', 'void') />
+            <cfset arguments.rc.Search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
+			<cfset arguments.rc.hotels = fw.getBeanFactory().getBean( "HotelSearchManager").doHotelSearch( argumentCollection=arguments.rc ) />
 		<cfelse>
 			<!--- Select --->
 			<cfset variables.fw.service('hotelsearch.selectHotel', 'void')>

@@ -23,6 +23,10 @@
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
 	</bean>
 
+    <bean id="AccountService" class="com.shortstravel.security.AccountService">
+        <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+    </bean>
+
 	<bean id="AccountManager" class="com.shortstravel.security.AccountManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
@@ -32,6 +36,18 @@
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
+
+    <bean id="SearchService" class="com.shortstravel.search.SearchService">
+        <constructor-arg name="SearchManager"><ref bean="SearchManager" /> </constructor-arg>
+        <constructor-arg name="UserManager"><ref bean="UserManager" /> </constructor-arg>
+        <constructor-arg name="AccountManager"><ref bean="AccountManager" /> </constructor-arg>
+        <constructor-arg name="HotelSearchManager"><ref bean="HotelSearchManager" /> </constructor-arg>
+    </bean>
+
+    <bean id="SearchManager" class="com.shortstravel.search.SearchManager">
+        <constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
+        <constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
+    </bean>
 
 	<bean id="Summary" class="booking.services.summary" >
 		<constructor-arg name="User"><ref bean="User" /></constructor-arg>
@@ -77,14 +93,14 @@
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 	</bean>
 
-	<bean id="hotelsearch" class="booking.services.hotelsearch" >
-		<constructor-arg name="HotelPrice"><ref bean="HotelPrice" /></constructor-arg>
-	</bean>
+	<bean id="HotelSearchManager" class="booking.services.hotelsearch" />
 
 	<bean id="TerminalEntry" class="booking.services.terminalentry" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 		<constructor-arg name="General"><ref bean="General" /></constructor-arg>
 	</bean>
+
+    <bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
 
 	<!--Environment configuration beans-->
 	<bean id="LocalConfig" class="coldspring.beans.factory.config.MapFactoryBean">
