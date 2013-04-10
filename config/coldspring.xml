@@ -49,6 +49,15 @@
         <constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
     </bean>
 
+    <bean id="HotelService" class="com.shortstravel.hotel.HotelService">
+        <constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
+        <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+    </bean>
+
+    <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
+        <constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+    </bean>
+
 	<bean id="Summary" class="booking.services.summary" >
 		<constructor-arg name="User"><ref bean="User" /></constructor-arg>
 	</bean>

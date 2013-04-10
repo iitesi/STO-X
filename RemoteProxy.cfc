@@ -1,4 +1,4 @@
-<cfcomponent name="SearchRemoteProxy" output="false">
+<cfcomponent name="STORemoteProxy" output="false">
 	
 
 	<cffunction name="getUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
@@ -60,6 +60,20 @@
 		<cfreturn getBean( "UserService" ).getUserPAR( arguments.userId ) />
 	</cffunction>
 
+
+    <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
+        <cfargument name="searchId" type="numeric" required="true"/>
+
+        <cfreturn getBean( "SearchService" ).load( arguments.searchId ) />
+
+    </cffunction>
+
+    <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
+        <cfargument name="searchId" type="numeric" required="true"/>
+
+        <cfreturn getBean( "HotelService" ).search( arguments.searchId ) />
+
+    </cffunction>
 
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
