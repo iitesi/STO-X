@@ -4,7 +4,7 @@
   <div class="container">
     <div class="portfolio-items filterable">
       <div class="item ten columns">
-        #View('hotel/filter')#
+        <!---#View('hotel/filter')#--->
 
         <a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#">Continue without hotel</a>
         <span id="hotelcount" style="float:right;"></span>

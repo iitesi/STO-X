@@ -2,17 +2,12 @@
 
 <beans>
 
-	<bean id="EnvironmentService" class="com.shortstravel.environmentService">
-		<constructor-arg name="currentServerName"><value>${currentServerName}</value></constructor-arg>
-		<constructor-arg name="localServerNames"><value>localhost</value></constructor-arg>
-		<constructor-arg name="preprodServerNames"><value>preproduction.shortstravel.com</value></constructor-arg>
-		<constructor-arg name="prodServerNames"><value>www.shortstravel.com</value></constructor-arg>
-		<constructor-arg name="localSettings"><ref bean="LocalConfig" /></constructor-arg>
-		<constructor-arg name="preprodSettings"><ref bean="PreprodConfig" /></constructor-arg>
-		<constructor-arg name="prodSettings"><ref bean="ProdConfig" /></constructor-arg>
-	</bean>
+	<!-- Import the centralized environments.xml file -->
+	<import resource="/com/shortstravel/config/environment.xml" />
 
-	<bean id="UAPI" class="booking.services.UAPI" />
+	<bean id="UAPI" class="booking.services.UAPI">
+	    <constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
+    </bean>
 
 	<bean id="setup" class="booking.services.setup" />
 
@@ -111,37 +106,4 @@
 
     <bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
 
-	<!--Environment configuration beans-->
-	<bean id="LocalConfig" class="coldspring.beans.factory.config.MapFactoryBean">
-		<property name="SourceMap">
-			<map>
-				<entry key="SearchesDSN"><value>book</value></entry>
-				<entry key="BookDSN"><value>book</value></entry>
-				<entry key="SessionsDSN"><value>sessions</value></entry>
-				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
-			</map>
-		</property>
-	</bean>
-
-	<bean id="PreprodConfig" class="coldspring.beans.factory.config.MapFactoryBean">
-		<property name="SourceMap">
-			<map>
-				<entry key="SearchesDSN"><value>preproduction</value></entry>
-				<entry key="BookDSN"><value>book</value></entry>
-				<entry key="SessionsDSN"><value>sessions</value></entry>
-				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
-			</map>
-		</property>
-	</bean>
-
-	<bean id="ProdConfig" class="coldspring.beans.factory.config.MapFactoryBean">
-		<property name="SourceMap">
-			<map>
-				<entry key="SearchesDSN"><value>book</value></entry>
-				<entry key="BookDSN"><value>book</value></entry>
-				<entry key="SessionsDSN"><value>sessions</value></entry>
-				<entry key="CorporateProductionDSN"><value>corporate_production</value></entry>
-			</map>
-		</property>
-	</bean>
 </beans>
