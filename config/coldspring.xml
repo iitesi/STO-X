@@ -18,11 +18,11 @@
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
 	</bean>
 
-    <bean id="AccountService" class="com.shortstravel.security.AccountService">
+    <bean id="AccountService" class="com.shortstravel.account.AccountService">
         <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
     </bean>
 
-	<bean id="AccountManager" class="com.shortstravel.security.AccountManager">
+	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
