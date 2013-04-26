@@ -31,7 +31,7 @@
 
         <!--- <br clear="both"> --->
 
-        <div id="hotelResultsContainer" class="hotel" height="100%"></div>
+        <div id="hotelResultsContainer" class="hotel" style="height: 760px; overflow: auto"></div>
       </div>
       <div class="item eight columns web-design">
         #View('hotel/map')#
@@ -43,13 +43,6 @@
 <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
 
 <script type="text/javascript">
-    <cfoutput>
-        var hotelresults = #serializeJSON(session.searches[rc.SearchID].HotelInformationQuery,true)#;
-        var orderedpropertyids = "#ArrayToList(session.searches[rc.SearchID]['stSortHotels'])#";
-    </cfoutput>
-    orderedpropertyids = orderedpropertyids.split(',');
-
-    <!--- var hotelresults2 = <cfoutput>#serialize(session.searches[rc.SearchID].stHotels)#</cfoutput>; --->
 
     if( typeof shortstravel == "undefined" ){
         var shortstravel = {};
@@ -59,32 +52,41 @@
         var shortstravel = {};
         shortstravel.booking = {};
     }
-    shortstravel.booking.searchId = <cfoutput>#rc.SearchID#</cfoutput>;
-    shortstravel.booking.hotel = {};
 
-    <!---var hotelchains = [<cfoutput><cfset nCount = 0><cfloop array="#stHotelChains#" index="sTrip"><cfset nCount++>'#sTrip#'<cfif ArrayLen(stHotelChains) NEQ nCount>,</cfif></cfloop></cfoutput>];--->
+    $(document).ready(function(){
 
-    var map = "";
-    var pins = new Object;
-    var totalproperties = <cfoutput>#ArrayLen(session['searches'][rc.SearchID]['stsorthotels'])#</cfoutput>;
-    var searchid = <cfoutput>#rc.SearchID#</cfoutput>;
+        shortstravel.booking.searchId = <cfoutput>#rc.SearchID#</cfoutput>;
+        shortstravel.booking.hotel = new HotelSearchResults();
+
+        $.ajax({
+            type: "GET",
+            url: "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + shortstravel.booking.searchId,
+            success: function( response ){
+                shortstravel.booking.Search = response;
+                shortstravel.booking.hotel.initializeMap( shortstravel.booking.Search.hotelLat, shortstravel.booking.Search.hotelLong,"assets/img/center.png" );
+                shortstravel.booking.hotel.doSearch( shortstravel.booking.searchId );
+            },
+            dataType: "json"
+        });
+
+    });
 
 </script>
 
-<script src="/booking/assets/js/hotel.js"></script>
-<script src="/booking/assets/js/hotelSearch.js"></script>
+<script src="/booking/assets/js/hotel/hotel.js"></script>
+<script src="/booking/assets/js/hotel/HotelSearchResults.js"></script>
 
 
 <!--- Prototype for rendering each hotel result --->
 
-<div id="hotelResultTemplate" style="min-height:100px;" class="hidden">
+<div id="hotelResultTemplate" class="hotelRecord hidden" style="padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px;" class="hidden">
     <table width="500px">
         <tbody>
             <tr>
-                <td width="135px">
-                    <div class="listcell hotelImage">image</div>
+                <td width="135px" style="margin-right: 5px;">
+                    <div class="listcell hotelImage"><img class="hotelImage" src=""></div>
                 </td>
-                <td valign="top" width="365px">
+                <td valign="top" width="360px">
                     <table width="365px">
                         <tbody>
                             <tr>
@@ -97,27 +99,53 @@
                             </tr>
                             <tr class="detailLinks">
                                 <td>
-                                    <a onclick="showDetails(266929,'95403','CZ','');return false;" class="button"><button type="button" class="textButton">Details</button>|</a>
-                                    <a onclick="showRates(266929,'95403');return false;" class="button"><button type="button" class="textButton">Rooms</button>|</a>
-                                    <a onclick="showAmenities(266929,'95403');return false;" class="button"><button type="button" class="textButton">Amenities</button>|</a>
-                                    <a onclick="showPhotos(266929,'95403','CZ');return false;" class="button"><button type="button" class="textButton">Photos</button>|</a>
+                                    <div class="btn-group">
+                                        <button class="hotel-details btn btn-mini" value="RT">Details</button>
+                                        <button class="area-details btn btn-mini" value="RT">Area</button>
+                                        <button class="hotel-amenities btn btn-mini" value="RT">Amenities</button>
+                                        <button class="hotel-photos btn btn-mini" value="RT">Photos</button>
+
+                                        <!---<a onclick="showDetails(266929,'95403','CZ','');return false;" class="button"><button type="button" class="textButton">Details</button>|</a>
+                                        <a onclick="showRates(266929,'95403');return false;" class="button"><button type="button" class="textButton">Rooms</button>|</a>
+                                        <a onclick="showAmenities(266929,'95403');return false;" class="button"><button type="button" class="textButton">Amenities</button>|</a>
+                                        <a onclick="showPhotos(266929,'95403','CZ');return false;" class="button"><button type="button" class="textButton">Photos</button></a>--->
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </td>
                 <td class="fares" align="center">
-                    <span class="lowRate">$</span>
+                    <img class="loading" src="/booking/assets/img/ajax-loader.gif">
+                    <span class="lowRate"></span>
+                    <span class="room-details-wrapper hidden">
+                        <span class="lowest-rate"></span>
+                        <button class="room-details btn btn-mini" value="RT">Details</button>
+                    </span>
+                    <!---
                     <div class="seerooms button-wrapper">
                         <a onclick="showRates(266929,'95403');return false;" class="button"><span>See Rooms</span></a>
                     </div>
                     <div class="hiderooms button-wrapper hide">
                         <a onclick="hideRates('95403');return false;" class="button"><span>Hide Rooms</span></a>
                     </div>
+                    --->
                 </td>
             </tr>
-            <tr>
-                <td colspan="3" class="checkrates"></td>
+            <tr class="hidden hotel-panel hotel-details">
+                <td colspan="3" class="hotel-details"></td>
+            </tr>
+            <tr class="hidden hotel-panel area-details">
+                <td colspan="3" class="area-details"></td>
+            </tr>
+            <tr class="hidden hotel-panel amenities">
+                <td colspan="3" class="amenities"></td>
+            </tr>
+            <tr class="hidden hotel-panel photos">
+                <td colspan="3" class="photos"></td>
+            </tr>
+            <tr class="hidden hotel-panel rooms">
+                <td colspan="3" class="rooms"></td>
             </tr>
         </tbody>
     </table>

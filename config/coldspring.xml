@@ -20,6 +20,7 @@
 
     <bean id="AccountService" class="com.shortstravel.account.AccountService">
         <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+        <constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
     </bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
@@ -28,6 +29,11 @@
 	</bean>
 
 	<bean id="UserManager" class="com.shortstravel.security.UserManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="PolicyManager" class="com.shortstravel.account.PolicyManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
@@ -47,6 +53,7 @@
     <bean id="HotelService" class="com.shortstravel.hotel.HotelService">
         <constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
         <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
 
     <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">

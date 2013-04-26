@@ -75,6 +75,14 @@
 
     </cffunction>
 
+    <cffunction name="getExtendedHotelInfo" returntype="any" access="remote" output="false" hint="">
+        <cfargument name="searchId" type="numeric" required="true"/>
+        <cfargument name="propertyId" type="numeric" required="true" />
+
+        <cfreturn getBean( "HotelService" ).getExtendedInfo( arguments.searchId, arguments.propertyId ) />
+
+    </cffunction>
+
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
 

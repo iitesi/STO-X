@@ -14,18 +14,18 @@
 		<cfargument name="sAPIAuth" 	default="#application.sAPIAuth#" />
 
 		<cfset local.SearchChanged	= checkModifySearch(form,arguments.Filter) />
-		<cfset local.Search 				= arguments.Filter />
-		<cfset local.SearchID 			= Search.getSearchID() />
-		<cfset local.sMessage				= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
-		<cfset local.sResponse 			= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
-		<cfset local.aResponse 			= formatResponse(sResponse) />
+		<cfset local.Search 		= arguments.Filter />
+		<cfset local.SearchID 		= Search.getSearchID() />
+		<cfset local.sMessage		= prepareSoapHeader(arguments.Account, arguments.Policy, SearchID, Search, arguments.Account.Hotel_RateCodes) />
+		<cfset local.sResponse 		= callAPI('HotelService', sMessage, arguments.sAPIAuth, SearchID, SearchChanged) />
+		<cfset local.aResponse 		= formatResponse(sResponse) />
 		<cfset local.CurrentHotel 	= structKeyExists(session.searches[SearchID],'stHotels') ? session.searches[SearchID].stHotels : {} />
-		<cfset local.stHotels 			= parseHotels(aResponse, CurrentHotel) />
-		<cfset local.stChains 			= getChains(stHotels)>
-		<cfset local.stAmenities 		= getAmenities(stHotels, application.stAmenities)>
-		<cfset local.latlong 				= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
-		<cfset local.stHotels 			= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
-		<cfset local.stHotels 			= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) />
+		<cfset local.stHotels 		= parseHotels(aResponse, CurrentHotel) />
+		<cfset local.stChains 		= getChains(stHotels)>
+		<cfset local.stAmenities 	= getAmenities(stHotels, application.stAmenities)>
+		<cfset local.latlong 		= latlong(Search.getHotel_Search(),Search.getHotel_Airport(),Search.getHotel_Landmark(),Search.getHotel_Address(),Search.getHotel_City(),Search.getHotel_State(),Search.getHotel_Zip(),Search.getHotel_Country(),Search.getOffice_ID()) />
+		<cfset local.stHotels 		= checkPolicy(stHotels, SearchID, arguments.Policy, arguments.Account) />
+		<cfset local.stHotels 		= HotelInformationQuery(stHotels, SearchID, StructKeyArray(stHotels)) />
 
 		<cfset local.aThreads = [] />
 		<cfset local.count = 0 />

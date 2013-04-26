@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 	
-	<cfset this.name = 'booking20'>
+	<cfset this.name = 'booking'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>

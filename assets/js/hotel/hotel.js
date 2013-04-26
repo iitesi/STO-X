@@ -59,6 +59,16 @@ function Hotel(){
         for(var propt in obj){
             this[propt] = obj[propt];
         }
+
+        //Populate the Ameneities array from the list in the database
+        if( this.AmenitiesList.length ){
+
+            if( this.AmenitiesList.charAt(0) == "|"){
+                this.AmenitiesList = this.AmenitiesList.slice( 1 );
+            }
+            this.Amenities = this.AmenitiesList.split("|")
+
+        }
     }
 
 }
