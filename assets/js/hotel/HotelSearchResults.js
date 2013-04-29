@@ -37,6 +37,7 @@ HotelSearchResults.prototype.doSearch = function( searchId ){
             }
             $("#hotelcount").html( totalLabel );
 
+            shortstravel.booking.hotel.renderPagination();
 			shortstravel.booking.hotel.updateResultsDisplay();
 
         },
@@ -46,7 +47,6 @@ HotelSearchResults.prototype.doSearch = function( searchId ){
 
 }
 
-//TODO: Update to use jQuery
 HotelSearchResults.prototype.displayHotelInfo = function(e) {
   if (e.targetType == "pushpin") {
     var infoboxTitle = $('#infoboxTitle')[0];
@@ -55,7 +55,7 @@ HotelSearchResults.prototype.displayHotelInfo = function(e) {
     infoboxDescription.innerHTML = e.target.description;
     var infobox2 = $('#infoBox')[0];
     infobox2.style.visibility = "visible";
-    document.getElementById('mapDiv').appendChild(infobox2);
+    $('#mapDiv').append(infobox2);
   }
   return false;
 }
@@ -177,9 +177,10 @@ HotelSearchResults.prototype.updateResultsDisplay = function(){
         endRecord = this.searchResults.length;
     }
 
-    $("#hotelcount").prepend( (startRecord+1) + '-' + (endRecord+1) + ' of ' );
+    //$("#hotelcount").prepend( (startRecord+1) + '-' + (endRecord+1) + ' of ' );
 
-    $("#hotelResultsContainer").html('');
+    $("#hotelResultsContainer").html(''); //Clear the search results left column
+    this.map.entities.clear(); //Clear pins from the map in the right column
 
     for( var i=startRecord; i <= endRecord; i++ ){
         var h = this.searchResults[ i ];
@@ -247,7 +248,7 @@ HotelSearchResults.prototype.renderProperty = function( h ){
     //Then we insert the values from the hotel property specified (h)
     $( hotelRenderer ).first().attr( "id", h.PropertyId );
     $( hotelRenderer ).find( "div.recordNumber").html( $.inArray( h, this.searchResults ) + 1 );
-    $( hotelRenderer ).find( "span.propertyName" ).html( h.PropertyName );
+    $( hotelRenderer ).find( "span.propertyName" ).html( h.PropertyName  );
     $( hotelRenderer ).find( "div.hotelAddress").html( h.Address + ', ' + h.City + " " + h.State + " " + h.Zip + " " + h.Country );
     $( hotelRenderer ).find( "img.hotelImage").attr( "src", h.SignatureImage );
 
@@ -287,47 +288,27 @@ HotelSearchResults.prototype.renderProperty = function( h ){
     $("#hotelResultsContainer").append( hotelRenderer );
 
     //Lastly, we update the extended information for the hotel (area, rooms, etc)
-    //this.updateExtendedInfo( h, $('#hotelResultsContainer').last() );
+    if( h.roomsReturned ){
+        $( hotelRenderer ).find( "img.loading" ).addClass( "hidden" );
+        $( hotelRenderer ).find( "span.lowRate" ).html( h.findLowestRoomRate() );
+    }else{
+        this.getAvailableRooms( h, hotelRenderer );
+    }
 
 }
 
-HotelSearchResults.prototype.updateExtendedInfo = function( h, el ) {
+HotelSearchResults.prototype.getAvailableRooms = function( h, el ) {
 
-    //First we do rooms IN PROGRESS--DON'T JUDGE!
 	$.ajax({
-		url:"services/hotelrooms.cfc?method=getRooms",
-		data:"SearchID="+shortstravel.booking.searchID+"&nHotelCode="+ h.PropertyId,
+	    type: "GET",
+		url:"/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + shortstravel.booking.searchId + "&PropertyId=" + h.PropertyId,
 		dataType: 'json',
-		success:function(rates) {
-			//"0 - PROPERTYID, 1 - COUNT, 2 - ROOMDESCRIPTION, 3 - RATE, 4 - CURRENCYCODE, 5 - ROOMRATECATEGORY, 6 - ROOMRATEPLANTYPE, 7 - POLICY, 8 - GOVERNMENTRATE"
-			var table = '<table width="100%">';
-			$.each(rates.DATA, function(key, val) {
-				table+='<tr style="padding:5px;width:80px;border-top:1px dashed gray;"><td>';
-				table+='$ '+val[3];
-				if (val[4] != 'USD' && val[4] != null) {
-					table+=val[4];
-				}
-				table+=' per night&nbsp;</td>';
-				table+='<td>'+val[2]+'</td>';
-				var GovernmentRate = val[8];
-				var PolicyFlag = val[7] == true ? 1 : 0;
-				table+='<td><input type="submit" id="ChosenHotel" name="HotelSubmission" class="button'+PolicyFlag+'policy" value="Reserve" onclick="submitHotel(\''+property_id+'\',\''+val[2]+'\');">';
-				if (GovernmentRate) {
-					table+='<img src="assets/img/GovRate.gif">';
-				}
-				if (val[7] == false) {
-					if (GovernmentRate) {
-						table+='<br>';
-					}
-					table+='<font color="#C7151A">Out of Policy</font>';
-				}
-				table+='</td></tr>';
-			});
-			table+='<tr><td></td></tr></table>';
-			$( "#checkrates" + property_id).html(table).show();
-		},
-		error:function(test,tes,te) {
-			logError(test,tes,te)
+		success:function(rooms) {
+            h.roomsReturned = true;
+            h.rooms = rooms;
+
+            $( el ).find( "img.loading" ).addClass( "hidden" );
+            $( el ).find( "span.lowRate" ).html( h.findLowestRoomRate() );
 		}
 	});
 	return false;
@@ -340,4 +321,26 @@ HotelSearchResults.prototype.addPin = function( propertyNumber, lat, long, prope
     Microsoft.Maps.Events.addHandler(pin, 'click', this.displayHotelInfo);
     this.map.entities.push(pin);
 
+}
+
+HotelSearchResults.prototype.renderPagination = function( ){
+
+    var pages = 0;
+
+    if( this.searchResults.length % this.propertiesPerPage > 0 ){
+        pages = Math.floor( this.searchResults.length / this.propertiesPerPage ) + 1;
+    }else{
+        pages = this.searchResults.length / this.propertiesPerPage;
+    }
+
+    for( var i=1; i<= pages; i++ ){
+        $( "#page_navigation" ).append( '<a href="#" onclick="shortstravel.booking.hotel.setCurrentPage(' + i + ')">' + i + '</a>&nbsp;')
+    }
+
+}
+
+HotelSearchResults.prototype.setCurrentPage = function( pageNumber ){
+    this.currentPage = pageNumber;
+    this.updateResultsDisplay();
+    return false;
 }

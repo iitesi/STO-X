@@ -7,6 +7,7 @@ function Hotel(){
     this.hotelInformation = {};
     this.policy = false;
     this.preferredVendor = false;
+    this.rooms = [];
     this.roomsReturned = false;
 
     this.PropertyId = 0 ;
@@ -55,20 +56,36 @@ function Hotel(){
     this.AreaTransportationDetail = "";
     this.distance = 0;
 
-    this.populate = function( obj ){
-        for(var propt in obj){
-            this[propt] = obj[propt];
+}
+
+Hotel.prototype.populate = function( obj ){
+    for(var propt in obj){
+        this[propt] = obj[propt];
+    }
+
+    //Populate the Ameneities array from the list in the database
+    if( this.AmenitiesList.length ){
+
+        if( this.AmenitiesList.charAt(0) == "|"){
+            this.AmenitiesList = this.AmenitiesList.slice( 1 );
         }
+        this.Amenities = this.AmenitiesList.split("|")
 
-        //Populate the Ameneities array from the list in the database
-        if( this.AmenitiesList.length ){
+    }
+}
 
-            if( this.AmenitiesList.charAt(0) == "|"){
-                this.AmenitiesList = this.AmenitiesList.slice( 1 );
-            }
-            this.Amenities = this.AmenitiesList.split("|")
+Hotel.prototype.findLowestRoomRate = function(){
+    var lowestRate = 0;
 
+    for (var i = 0; i < this.rooms.length; i++) {
+        var room = this.rooms[i];
+
+        if( lowestRate == 0 && room.dailyRate > 0 ){
+            lowestRate = room.dailyRate;
+        }else if( room.dailyRate < lowestRate ){
+            lowestRate = room.dailyRate;
         }
     }
 
+    return lowestRate;
 }

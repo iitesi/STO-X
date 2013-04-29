@@ -53,6 +53,7 @@
     <bean id="HotelService" class="com.shortstravel.hotel.HotelService">
         <constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
         <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+        <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
 

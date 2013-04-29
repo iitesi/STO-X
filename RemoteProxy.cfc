@@ -75,11 +75,11 @@
 
     </cffunction>
 
-    <cffunction name="getExtendedHotelInfo" returntype="any" access="remote" output="false" hint="">
+    <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="json" output="false" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
         <cfargument name="propertyId" type="numeric" required="true" />
 
-        <cfreturn getBean( "HotelService" ).getExtendedInfo( arguments.searchId, arguments.propertyId ) />
+        <cfreturn getBean( "HotelService" ).getAvailableRooms( arguments.searchId, arguments.propertyId ) />
 
     </cffunction>
 
