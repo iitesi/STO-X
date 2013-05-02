@@ -755,6 +755,66 @@ function setOtherFields(nTraveler, overrideEverything) {
         }
     });
 }
+
+function getAuthorizedTravelers(userID, acctID) {
+	$.ajax({
+		type: 'POST',
+		url: 'RemoteProxy.cfc',
+		data: {	method: 'getAuthorizedTravelers',
+				userID: userID,
+				acctID: acctID
+			  },
+		dataType: 'json',
+		success: function(Travelers) {
+			$.each(Travelers, function(index,Traveler) {
+				$( "#userID" ).append( '<option value="' + Traveler.userId + '"'+ 'selected>' + Traveler.lastName + ', ' + Traveler.firstName + '</option>')
+			});
+		}
+	});
+	return false
+}
+
+function getUser(userID) {
+	$.ajax({
+		type: 'POST',
+		url: 'RemoteProxy.cfc',
+		data: {	method: 'getUser',
+				userID: userID
+			  },
+		dataType: 'json',
+		success: function(User) {
+			$( "#firstName" ).val( User.firstName );
+			$( "#middleName" ).val( User.middleName );
+			$( "#noMiddleName" ).val( User.noMiddleName );
+			$( "#lastName" ).val( User.lastName );
+			$( "#phoneNumber" ).val( User.phoneNumber );
+			$( "#wirelessPhone" ).val( User.wirelessPhone );
+			$( "#email" ).val( User.email );
+			$( "#gender" ).val( User.gender );
+			//var birthday = new Date();
+			//var birthday = User.birthdate;
+			//$( "#birthdayMonth" ).val( birthday.getDate() );
+		}
+	});
+	return false
+}
+
+function getUserCCEmails(userID) {
+	$.ajax({
+		type: 'POST',
+		url: 'RemoteProxy.cfc',
+		data: {	method: 'getUserCCEmails',
+				userID: userID,
+				returnType: 'string'
+			  },
+		dataType: 'json',
+		success: function(ccEmails) {
+			$( "#ccEmails" ).val( ccEmails );
+		}
+	});
+	return false
+}
+
 function changeTraveler(nTraveler) {
 	var userID = $( "#User_ID" ).val();
 

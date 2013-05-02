@@ -36,7 +36,7 @@
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv" style="background-color: ##FFF">
-						<div id="travelerForm"><table width="500"><tr><td></td></tr></table></div>
+						#View('summary/user')#
 					</div>
 
 					<div class="summarydiv" style="background-color: ##FFF">
@@ -66,7 +66,11 @@
 		</cfif>
 		<script type="text/javascript">
 		$(document).ready(function() {
-			setTravelerForm(1, 1, #userID#);
+			getAuthorizedTravelers(#userID#, #session.acctID#);
+			getUser(#userID#);
+			getUserCCEmails(#userID#);
+			//setUser(User);
+			<!---//setTravelerForm(1, 1, #userID#);--->
 		});
 		</script>
 	</cfoutput>
