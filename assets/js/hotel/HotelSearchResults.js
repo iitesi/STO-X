@@ -196,7 +196,7 @@ HotelSearchResults.prototype.updateResultsDisplay = function(){
 
     //Add handlers to buttons
 
-    $( "button.hotel-details").on( "click", function(){
+    $( "label.hotel-details").on( "click", function(){
         var hotelRecord = $( this ).parents( ".hotelRecord" );
         var detailsRow = $( hotelRecord ).find( "tr.hotel-details" );
         if( $( detailsRow ).hasClass( "hidden" ) ){
@@ -206,7 +206,7 @@ HotelSearchResults.prototype.updateResultsDisplay = function(){
             $( detailsRow ).addClass( "hidden" );
         }
     })
-    $( "button.area-details").on( "click", function(){
+    $( "label.area-details").on( "click", function(){
         var hotelRecord = $( this ).parents( ".hotelRecord" );
         var areaRow = $( hotelRecord ).find( "tr.area-details" );
         if( $( areaRow ).hasClass( "hidden" ) ){
@@ -216,7 +216,7 @@ HotelSearchResults.prototype.updateResultsDisplay = function(){
             $( areaRow ).addClass( "hidden" );
         }
     })
-    $( "button.hotel-amenities").on( "click", function(){
+    $( "label.hotel-amenities").on( "click", function(){
         var hotelRecord = $( this ).parents( ".hotelRecord" );
         var amenitiesRow = $( hotelRecord ).find( "tr.amenities" );
         if( $( amenitiesRow ).hasClass( "hidden" ) ){
@@ -226,7 +226,7 @@ HotelSearchResults.prototype.updateResultsDisplay = function(){
             $( amenitiesRow ).addClass( "hidden" );
         }
     })
-    $( "button.hotel-photos").on( "click", function(){
+    $( "label.hotel-photos").on( "click", function(){
         var hotelRecord = $( this ).parents( ".hotelRecord" );
         var photosRow = $( hotelRecord ).find( "tr.photos" );
         if( $( photosRow ).hasClass( "hidden" ) ){
@@ -247,17 +247,18 @@ HotelSearchResults.prototype.renderProperty = function( h ){
 
     //Then we insert the values from the hotel property specified (h)
     $( hotelRenderer ).first().attr( "id", h.PropertyId );
-    $( hotelRenderer ).find( "div.recordNumber").html( $.inArray( h, this.searchResults ) + 1 );
+    $( hotelRenderer ).find( "span.recordNumber").html( $.inArray( h, this.searchResults ) + 1 );
     $( hotelRenderer ).find( "span.propertyName" ).html( h.PropertyName  );
-    $( hotelRenderer ).find( "div.hotelAddress").html( h.Address + ', ' + h.City + " " + h.State + " " + h.Zip + " " + h.Country );
+    $( hotelRenderer ).find( "div.hotelAddress").html( h.Address + ', ' + h.City );
+    $( hotelRenderer ).find( "div.hotelDistance").html( h.distance + ' miles' );
     $( hotelRenderer ).find( "img.hotelImage").attr( "src", h.SignatureImage );
 
-     //Next build the hotel details panel
+    //Next build the hotel details panel
     var table = '<table width="100%"><tr><td class="bold">HOTEL DETAILS</td></tr>';
     table+='</table>';
     $( hotelRenderer ).find( "td.hotel-details").html(table);
 
-     //Next build the hotel rooms panel
+    //Next build the area details panel
     var table = '<table width="100%"><tr><td class="bold">AREA DETAILS</td></tr>';
     table+='</table>';
     $( hotelRenderer ).find( "td.area-details").html(table);
@@ -283,14 +284,43 @@ HotelSearchResults.prototype.renderProperty = function( h ){
     table+='</table>';
     $( hotelRenderer ).find( "td.photos").html(table);
 
+    //Next build the room list panel
+    var table = '<table width="100%"><tr><td class="bold">ROOMS</td></tr>';
+    table+='</table>';
+    $( hotelRenderer ).find( "td.rooms").html(table);
+
+
     //Next, we add it to the container div
     $( hotelRenderer ).first().removeClass( 'hidden' );
     $("#hotelResultsContainer").append( hotelRenderer );
 
     //Lastly, we update the extended information for the hotel (area, rooms, etc)
     if( h.roomsReturned ){
+       var lowestRate = Math.ceil( h.findLowestRoomRate() );
+
         $( hotelRenderer ).find( "img.loading" ).addClass( "hidden" );
-        $( hotelRenderer ).find( "span.lowRate" ).html( h.findLowestRoomRate() );
+
+        if( h.rooms.length == 0 || lowestRate == 0 ){
+            $( hotelRenderer ).find( "span.sold-out" ).removeClass( "hidden" );
+            $( hotelRenderer ).find( "span.room-details-wrapper" ).addClass( "hidden" );
+        }else{
+            $( hotelRenderer ).find( "span.room-details-wrapper" ).removeClass( "hidden" );
+            $( hotelRenderer ).find( "span.lowest-rate" ).html( Math.ceil( h.findLowestRoomRate() ) );
+
+            //Add event handler to "See Rooms" button
+            $( hotelRenderer ).find( "button.room-details" ).on( "click", function(){
+                var hotelRecord = $( this ).parents( ".hotelRecord" );
+                var detailsRow = $( hotelRecord ).find( "tr.rooms" );
+                if( $( detailsRow ).hasClass( "hidden" ) ){
+                    $( hotelRecord ).find( "tr.hotel-panel" ).addClass( "hidden" );
+                    $( detailsRow ).removeClass( "hidden" );
+                    $( this ).html( "HIDE ROOMS" );
+                }else{
+                    $( detailsRow ).addClass( "hidden" );
+                    $( this ).html( "SEE ROOMS" );
+                }
+            })
+        }
     }else{
         this.getAvailableRooms( h, hotelRenderer );
     }
@@ -307,8 +337,31 @@ HotelSearchResults.prototype.getAvailableRooms = function( h, el ) {
             h.roomsReturned = true;
             h.rooms = rooms;
 
+            var lowestRate = Math.ceil( h.findLowestRoomRate() );
+
             $( el ).find( "img.loading" ).addClass( "hidden" );
-            $( el ).find( "span.lowRate" ).html( h.findLowestRoomRate() );
+
+            if( h.rooms.length == 0 || lowestRate == 0 ){
+                $( el ).find( "span.sold-out" ).removeClass( "hidden" );
+                $( el ).find( "span.room-details-wrapper" ).addClass( "hidden" );
+            }else{
+                $( el ).find( "span.room-details-wrapper" ).removeClass( "hidden" );
+                $( el ).find( "span.lowest-rate" ).html( Math.ceil( h.findLowestRoomRate() ) );
+
+                //Add event handler to "See Rooms" button
+                $( el ).find( "button.room-details" ).on( "click", function(){
+                    var hotelRecord = $( this ).parents( ".hotelRecord" );
+                    var detailsRow = $( hotelRecord ).find( "tr.rooms" );
+                    if( $( detailsRow ).hasClass( "hidden" ) ){
+                        $( hotelRecord ).find( "tr.hotel-panel" ).addClass( "hidden" );
+                        $( detailsRow ).removeClass( "hidden" );
+                        $( this ).html( "HIDE ROOMS" );
+                    }else{
+                        $( detailsRow ).addClass( "hidden" );
+                        $( this ).html( "SEE ROOMS" );
+                    }
+                })
+            }
 		}
 	});
 	return false;

@@ -5,7 +5,7 @@
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
 
-	<bean id="UAPI" class="booking.services.UAPI">
+	<bean id="UAPI" class="com.travelport.uapi">
 	    <constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
     </bean>
 

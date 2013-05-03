@@ -58,15 +58,34 @@
         shortstravel.booking.searchId = <cfoutput>#rc.SearchID#</cfoutput>;
         shortstravel.booking.hotel = new HotelSearchResults();
 
+        //TODO: THIS SHOULD REALLY NOT BE NESTED THIS WAY
         $.ajax({
             type: "GET",
             url: "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + shortstravel.booking.searchId,
+            dataType: "json",
             success: function( response ){
                 shortstravel.booking.Search = response;
                 shortstravel.booking.hotel.initializeMap( shortstravel.booking.Search.hotelLat, shortstravel.booking.Search.hotelLong,"assets/img/center.png" );
-                shortstravel.booking.hotel.doSearch( shortstravel.booking.searchId );
-            },
-            dataType: "json"
+
+                $.ajax({
+                    type: "GET",
+                    url: "/booking/RemoteProxy.cfc?method=getAccount&accountId=" + shortstravel.booking.Search.acctID,
+                    dataType: "json",
+                    success: function( response ){
+
+                        shortstravel.booking.Account = response;
+                        $.ajax({
+                            type: "GET",
+                            url: "/booking/RemoteProxy.cfc?method=getAccountPolicies&accountId=" + shortstravel.booking.Search.acctID,
+                            dataType: "json",
+                            success: function( response ){
+                                shortstravel.booking.Account.policies = response;
+                                shortstravel.booking.hotel.doSearch( shortstravel.booking.searchId );
+                            }
+                        })
+                    }
+                })
+            }
         });
 
     });
@@ -79,48 +98,49 @@
 
 <!--- Prototype for rendering each hotel result --->
 
-<div id="hotelResultTemplate" class="hotelRecord hidden" style="padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px;" class="hidden">
+<div id="hotelResultTemplate" class="hotelRecord hidden" style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px;" class="hidden">
     <table width="500px">
         <tbody>
             <tr>
-                <td width="135px" style="margin-right: 5px;">
-                    <div class="listcell hotelImage"><img class="hotelImage" src=""></div>
+                <td style="width: 100px;">
+                    <img class="hotelImage" src="" heigh>
                 </td>
-                <td valign="top" width="360px">
-                    <table width="365px">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="recordNumber" style="float:left;"></div> - <span class="propertyName"></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><div class="hotelAddress"></div></td>
-                            </tr>
-                            <tr class="detailLinks">
-                                <td>
-                                    <div class="btn-group">
-                                        <button class="hotel-details btn btn-mini" value="RT">Details</button>
-                                        <button class="area-details btn btn-mini" value="RT">Area</button>
-                                        <button class="hotel-amenities btn btn-mini" value="RT">Amenities</button>
-                                        <button class="hotel-photos btn btn-mini" value="RT">Photos</button>
+                <td valign="top" style="padding-left: 20px; width: 280px;">
+                    <div class="hotelName" style="width: 100%; clear: both; font-weight: bold;">
+                        <span class="recordNumber"></span> - <span class="propertyName"></span>
+                    </div>
 
-                                        <!---<a onclick="showDetails(266929,'95403','CZ','');return false;" class="button"><button type="button" class="textButton">Details</button>|</a>
-                                        <a onclick="showRates(266929,'95403');return false;" class="button"><button type="button" class="textButton">Rooms</button>|</a>
-                                        <a onclick="showAmenities(266929,'95403');return false;" class="button"><button type="button" class="textButton">Amenities</button>|</a>
-                                        <a onclick="showPhotos(266929,'95403','CZ');return false;" class="button"><button type="button" class="textButton">Photos</button></a>--->
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="hotelAddress" style="width: 100%; clear: both; font-size: 11px;"></div>
+                    <div class="hotelDistance" style="width: 100%; clear: both; font-size: 11px; font-weight: bolder;"></div>
+
+                    <div class="detailLinks">
+                        <div class="ui-buttonset">
+                            <label class="hotel-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <span class="ui-button-text">Details</span>
+                            </label>
+
+                            <label class="area-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <span class="ui-button-text">Area</span>
+                            </label>
+
+                            <label class="hotel-amenities ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <span class="ui-button-text">Amenities</span>
+                            </label>
+
+                            <label class="hotel-photos ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <span class="ui-button-text">Photos</span>
+                            </label>
+                        </div>
+
+                    </div>
+
                 </td>
-                <td class="fares" align="center">
+                <td class="fares" align="center" style="width: 100px;">
                     <img class="loading" src="/booking/assets/img/ajax-loader.gif">
-                    <span class="lowRate"></span>
+                    <span class="sold-out hidden" style="color: #FF0000; font-weight: bold;">SOLD OUT</span>
                     <span class="room-details-wrapper hidden">
-                        <span class="lowest-rate"></span>
-                        <button class="room-details btn btn-mini" value="RT">Details</button>
+                        <span class="lowest-rate" style="clear: both;"></span>
+                        <button class="room-details btn btn-mini btn-primary">SEE ROOMS</button>
                     </span>
                     <!---
                     <div class="seerooms button-wrapper">

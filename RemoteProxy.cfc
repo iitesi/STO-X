@@ -92,6 +92,20 @@
 
     </cffunction>
 
+    <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
+        <cfargument name="accountId" type="numeric" required="true" />
+
+        <cfreturn getBean( "AccountService" ).load( arguments.accountId ) />
+
+    </cffunction>
+
+    <cffunction name="getAccountPolicies" returntype="any" access="remote" output="false" returnformat="json" hint="">
+        <cfargument name="accountId" type="numeric" required="true" />
+
+        <cfreturn getBean( "AccountService" ).listAccountPolicies( arguments.accountId ) />
+
+    </cffunction>
+
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
 

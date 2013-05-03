@@ -1,6 +1,6 @@
 function Hotel(){
 
-    this.amenities =  [];
+    this.Amenities =  [];
     this.policies = {};
     this.featuredProperty = false;
     this.hotelChain = "";
