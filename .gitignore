@@ -1,0 +1,12 @@
+STO.sublime-project
+STO.sublime-workspace
+p2/org.eclipse.equinox.p2.core/cache/artifacts.xml
+p2/org.eclipse.equinox.p2.engine/.settings/org.eclipse.equinox.p2.artifact.repository.prefs
+p2/org.eclipse.equinox.p2.engine/.settings/org.eclipse.equinox.p2.metadata.repository.prefs
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/.data/.settings/org.eclipse.equinox.p2.artifact.repository.prefs
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/.data/.settings/org.eclipse.equinox.p2.metadata.repository.prefs
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/.data/org.eclipse.equinox.internal.p2.touchpoint.eclipse.actions/jvmargs
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/.lock
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/1367950425227.profile.gz
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/1367950437208.profile.gz
+p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/state.properties
