@@ -1,40 +1,27 @@
 <cfcomponent output="false">
 
-<!---
-init
---->
 	<cffunction name="init" output="false">
-
 		<cfreturn this>
 	</cffunction>
 
-<!---
-setServerURL
---->
 	<cffunction name="setServerURL" output="false" returntype="void">
-		
+
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
-		
 		<cfreturn />
+
 	</cffunction>
-	
-<!---
-setPortalURL
---->
+
 	<cffunction name="setPortalURL" output="false" returntype="void">
-		
+
 		<cfset local.sPortalURL = ''>
 		<cfset local.bDebug = 0>
 
 		<cfif cgi.SERVER_NAME EQ 'www.shortstravelonline.com'>
 			<cfset sPortalURL = 'https://www.shortstravel.com'>
-			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'www.shortstravel.com'>
 			<cfset sPortalURL = 'https://www.shortstravel.com'>
-			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'www.b-hives.com'>
 			<cfset sPortalURL = 'https://www.b-hive.travel'>
-			<cfset bDebug = 0>
 		<cfelseif cgi.SERVER_NAME EQ 'localhost'>
 			<cfset sPortalURL = 'http://localhost'>
 			<cfset bDebug = 1>
@@ -43,28 +30,21 @@ setPortalURL
 			<cfset bDebug = 1>
 		<cfelseif cgi.SERVER_NAME EQ 'hermes.shortstravel.com'>
 			<cfset sPortalURL = 'https://hermes.shortstravel.com'>
-			<cfset bDebug = 0>
 		</cfif>
-		
+
 		<cfset application.sPortalURL = sPortalURL>
 		<cfset application.bDebug = bDebug>
-		
+
 		<cfreturn />
 	</cffunction>
 
-<!---
-setAPIAuth - REMOVE LATER
---->
 	<cffunction name="setAPIAuth" output="false" returntype="void">
 
 		<cfset application.sAPIAuth = ToBase64('Universal API/UAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
-
 		<cfreturn />
+
 	</cffunction>
 
-<!---
-setFilter
---->
 	<cffunction name="setFilter" output="false">
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Append" 	required="false" default="0" >
@@ -75,7 +55,7 @@ setFilter
 			<cfquery name="local.getsearch">
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username,
 			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
-			Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport, 
+			Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport,
 			Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID, Hotel_Radius
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
@@ -194,9 +174,6 @@ setFilter
 		<cfreturn searchfilter/>
 	</cffunction>
 
-<!---
-setAccount
---->
 	<cffunction name="setAccount" output="false">
 		<cfargument name="AcctID">
 
@@ -225,13 +202,14 @@ setAccount
 			}>
 
 			<cfquery name="local.qAccount">
-			SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
-			Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-			RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
-			FROM Accounts, Zeus.Corporate_Production.dbo.Accounts CPAccounts<!--- CouldYou is in the Corporate_Production accounts table --->
-			WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-			AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
-			AND Accounts.Acct_ID = CPAccounts.Acct_ID
+				SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+				Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
+				RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
+				-- CouldYou is in the Corporate_Production accounts table
+				FROM Accounts, Corporate_Production.dbo.Accounts CPAccounts
+				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+					AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+					AND Accounts.Acct_ID = CPAccounts.Acct_ID
 			</cfquery>
 
 			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
@@ -274,9 +252,6 @@ setAccount
 		<cfreturn stTemp/>
 	</cffunction>
 
-<!---
-setPolicy
---->
 	<cffunction name="setPolicy" output="false">
 		<cfargument name="PolicyID">
 
@@ -331,11 +306,8 @@ setPolicy
 		<cfreturn stTemp/>
 	</cffunction>
 
-<!---
-setAirVendors
---->
 	<cffunction name="setAirVendors" output="false" returntype="void">
-		
+
 		<cfquery name="local.qAirVendors" datasource="booking">
 		SELECT VendorCode, ShortName
 		FROM RAIR
@@ -357,15 +329,12 @@ setAirVendors
 			<cfset stTemp[ShortCode].Bag1 = OnlineDomBag1>
 		</cfloop>
 		<cfset application.stAirVendors = stTemp>
-		
+
 		<cfreturn />
 	</cffunction>
-	
-<!---
-setCarVendors
---->
+
 	<cffunction name="setCarVendors" output="false" returntype="void">
-		
+
 		<cfquery name="local.qCarVendors" datasource="booking">
 		SELECT VendorCode, VendorName
 		FROM RCAR
@@ -375,17 +344,14 @@ setCarVendors
 		<cfloop query="qCarVendors">
 			<cfset stTemp[VendorCode] = VendorName>
 		</cfloop>
-		
+
 		<cfset application.stCarVendors = stTemp>
-		
+
 		<cfreturn />
 	</cffunction>
-	
-<!---
-setHotelVendors
---->
+
 	<cffunction name="setHotelVendors" output="false" returntype="void">
-		
+
 		<cfquery name="local.qHotelChains" datasource="booking">
 		SELECT VendorCode, VendorName
 		FROM rhtl
@@ -396,17 +362,14 @@ setHotelVendors
 		<cfloop query="qHotelChains">
 			<cfset stTemp[VendorCode] = qHotelChains.VendorName>
 		</cfloop>
-		
+
 		<cfset application.stHotelVendors = stTemp>
-		
+
 		<cfreturn />
 	</cffunction>
-	
-<!---
-setEquipment
---->
+
 	<cffunction name="setEquipment" output="false" returntype="void">
-		
+
 		<cfquery name="local.qEquipment" datasource="booking">
 		SELECT EquipmentCode, ShortName
 		FROM RAEQ
@@ -415,17 +378,14 @@ setEquipment
 		<cfloop query="qEquipment">
 			<cfset stTemp[EquipmentCode] = ShortName>
 		</cfloop>
-		
+
 		<cfset application.stEquipment = stTemp>
-		
+
 		<cfreturn />
 	</cffunction>
-	
-<!---
-setAirports
---->
+
 	<cffunction name="setAirports" output="false" returntype="void">
-		
+
 		<cfquery name="local.qAirports" datasource="booking">
 		SELECT AirportCode, AirportName
 		FROM RAPT
@@ -434,17 +394,14 @@ setAirports
 		<cfloop query="qAirports">
 			<cfset stTemp[AirportCode] = AirportName>
 		</cfloop>
-		
+
 		<cfset application.stAirports = stTemp>
-		
+
 		<cfreturn />
 	</cffunction>
-		
-<!---
-setAmenities
---->
+
 	<cffunction name="setAmenities" output="false" returntype="void">
-		
+
 		<cfquery name="local.qAmenities" datasource="booking">
 		SELECT code, Amenity
 		FROM RAMENITIES
@@ -454,14 +411,12 @@ setAmenities
 			<cfset stTemp[qAmenities.code] = qAmenities.Amenity>
 		</cfloop>
 		<cfset application.stAmenities = stTemp>
-		
 		<cfreturn />
+
 	</cffunction>
-<!---
-setStates
---->
+
 	<cffunction name="setStates" output="false" returntype="void">
-		
+
 		<cfquery name="local.qStates" datasource="booking">
 		SELECT code, State
 		FROM RSTATES
@@ -471,8 +426,8 @@ setStates
 			<cfset stTemp[qStates.code] = qStates.State>
 		</cfloop>
 		<cfset application.stStates = stTemp>
-		
 		<cfreturn />
+
 	</cffunction>
-			
+
 </cfcomponent>
