@@ -121,20 +121,10 @@ body {
 }
 
 .roundtrip {
-    margin: auto !important;
-    text-transform: uppercase;
-    font-size: 16px;
-    width:100%;
+	text-transform: uppercase;
 }
-.roundtrip .leg {
-    position: relative;
-    float:left;
-    background-color:#2E76CF;
-    color:#FFFFFF;
-    border-radius: 4px;
-    padding: 6px 20px 6px;
-    margin: 0 20px 10px 20px;
-}
+
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	OVERLAY
@@ -216,7 +206,7 @@ body {
 	min-width: 700px;
 	min-height: 150px;
 	padding: 25px;
-	border: 4px solid #CBC7BD;  
+	border: 4px solid #CBC7BD;
 	margin-top: -4px;
 	z-index: 0;
 }
@@ -244,7 +234,7 @@ ul.tabs li a:hover {
 	color:#2E76CF;
 	border-color:#2f343a;
 	cursor: hand;
-}  
+}
 ul.tabs li a.active {
 	color:#2E76CF;
 	background-color: #FFFFFF;
@@ -466,15 +456,15 @@ ul.tabs li a.active {
 	color:#FFFFFF;
 	margin-top: -100px; /*set to a negative number 1/2 of your height*/
 	margin-left: -100px; /*set to a negative number 1/2 of your width*/
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf));
+	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
-	-webkit-border-radius: 10px; 
-	-moz-border-radius: 10px; 
-	khtml-border-radius: 10px; 
-	border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	khtml-border-radius: 10px;
+	border-radius: 10px;
 }
 footer[role="contentinfo"]{
 	font-size: 0.85em;
@@ -482,49 +472,49 @@ footer[role="contentinfo"]{
 }
 
 .button1policy {
-	display: block; 
+	display: block;
 	position: relative;
-	padding: 4px 15px 4px 15px; 
-	border: 1px solid #4081af; 
+	padding: 4px 15px 4px 15px;
+	border: 1px solid #4081af;
 	font-weight:bold;
-	border-bottom-color: #20559a; 
-	color: white; 
+	border-bottom-color: #20559a;
+	color: white;
 	font-size: 16px;
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
+	text-align: center;
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+	text-decoration: none;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	khtml-border-radius: 4px;
+	border-radius: 4px;
 	background-color: #2E76CF;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf)); 
-	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #52a8e8), color-stop(1, #2e76cf));
+	background: -moz-linear-gradient(center top, #52a8e8 20%, #2e76cf 100%);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	overflow: hidden;
 }
 .button0policy {
-	display: block; 
-	margin: 5px; 
-	padding: 4px 15px 4px 15px; 
-	border: 1px solid #666666; 
+	display: block;
+	margin: 5px;
+	padding: 4px 15px 4px 15px;
+	border: 1px solid #666666;
 	font-weight:bold;
-	color: white; 
+	color: white;
 	font-size: 16px;
-	text-align: center; 
-	text-shadow: 0 -1px 0 rgba(0,0,0,.3); 
-	text-decoration: none; 
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	khtml-border-radius: 4px; 
-	border-radius: 4px; 
-	background-color: #CCCCCC; 
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #999999)); 
-	background: -moz-linear-gradient(center top, #999999 20%, #999999 100%); 
-	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
-	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29); 
+	text-align: center;
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+	text-decoration: none;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	khtml-border-radius: 4px;
+	border-radius: 4px;
+	background-color: #CCCCCC;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(.2, #cccccc), color-stop(1, #999999));
+	background: -moz-linear-gradient(center top, #999999 20%, #999999 100%);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 2px rgba(255,255,255,.3), 0 1px 2px rgba(0,0,0,.29);
 	overflow: hidden;
 }

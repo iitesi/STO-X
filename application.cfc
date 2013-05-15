@@ -1,42 +1,38 @@
 <cfcomponent extends="org.corfield.framework">
-	
+
 	<cfset this.name = 'booking'>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
-	<!--- <cfset this.sessionStorage = 'Sessions'>
-	<cfset this.sessionCluster = true> --->
 	<cfset this.applicationManagement = true>
 	<cfset this.defaultdatasource = "book">
 
 	<cfset variables.framework = {
 		action = 'action',
-		usingSubsystems = false,
-		defaultSubsystem = 'home',
-		defaultSection = 'main',
-		defaultItem = 'default',
-		subsystemDelimiter = ':',
-		siteWideLayoutSubsystem = 'common',
-		home = 'main.default', 
-		error = 'main.error', 
-		reload = 'reload',
-		password = 'true',
-		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'localhost' ? true : false),
-		generateSES = false,
-		SESOmitIndex = false,
+		applicationKey = 'fw',
 		baseURL = 'useCgiScriptName',
+		cacheFileExists = false,
+		defaultItem = 'default',
+		defaultSection = 'main',
+		defaultSubsystem = 'home',
+		error = 'main.error',
+		generateSES = false,
+		home = 'main.default',
+		maxNumContextsPreserved = 10,
+		password = 'true',
+		preserveKeyURLKey = 'fw1pk',
+		reload = 'reload',
+		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'localhost' ? true : false),
+		SESOmitIndex = false,
+		siteWideLayoutSubsystem = 'common',
+		subsystemDelimiter = ':',
 		suppressImplicitService = true,
+		trace = true,
 		unhandledExtensions = 'cfc',
 		unhandledPaths = '/external',
-		preserveKeyURLKey = 'fw1pk',
-		maxNumContextsPreserved = 10,
-		cacheFileExists = false,
-		applicationKey = 'fw'
+		usingSubsystems = false
 	}>
 
-<!---
-setupApplication
---->
 	<cffunction name="setupApplication">
 
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
@@ -49,9 +45,6 @@ setupApplication
 
 	</cffunction>
 
-<!---
-setupSession
---->
 	<cffunction name="setupSession">
 
 		<cfset session.searches = {}>
@@ -59,9 +52,6 @@ setupSession
 
 	</cffunction>
 
-<!---
-setupRequest
---->
 	<cffunction name="setupRequest" output="true">
 
 		<cfset controller( 'setup.setSearchID' )>
@@ -78,11 +68,4 @@ setupRequest
 
 	</cffunction>
 
-<!---
-onRequestEnd
---->
-	<cffunction name="onRequestEnd">
-
-	</cffunction>
-	
 </cfcomponent>
