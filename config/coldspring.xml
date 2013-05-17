@@ -13,6 +13,8 @@
 
 	<bean id="General" class="booking.services.general" />
 
+    <bean id="CacheManager" class="com.shortstravel.CacheManagerService" />
+
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
@@ -21,6 +23,7 @@
     <bean id="AccountService" class="com.shortstravel.account.AccountService">
         <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
         <constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
+        <constructor-arg name="CacheManager"><ref bean="CacheManager" /> </constructor-arg>
     </bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">

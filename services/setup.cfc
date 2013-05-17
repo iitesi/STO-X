@@ -202,14 +202,13 @@
 			}>
 
 			<cfquery name="local.qAccount">
-				SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
-				Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-				RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
-				-- CouldYou is in the Corporate_Production accounts table
-				FROM Accounts, Corporate_Production.dbo.Accounts CPAccounts
-				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-					AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
-					AND Accounts.Acct_ID = CPAccounts.Acct_ID
+			SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+			Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
+			RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
+			FROM Accounts, Zeus.Corporate_Production.dbo.Accounts CPAccounts<!--- CouldYou is in the Corporate_Production accounts table --->
+			WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+			AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			AND Accounts.Acct_ID = CPAccounts.Acct_ID
 			</cfquery>
 
 			<cfloop list="#qAccount.ColumnList#" index="local.sCol">

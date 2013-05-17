@@ -64,7 +64,7 @@
             url: "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + shortstravel.booking.searchId,
             dataType: "json",
             success: function( response ){
-                shortstravel.booking.Search = response;
+                shortstravel.booking.Search = response.data;
                 shortstravel.booking.hotel.initializeMap( shortstravel.booking.Search.hotelLat, shortstravel.booking.Search.hotelLong,"assets/img/center.png" );
 
                 $.ajax({
@@ -85,6 +85,9 @@
                         })
                     }
                 })
+            },
+            error: function( e ){
+
             }
         });
 
@@ -170,3 +173,4 @@
         </tbody>
     </table>
 </div>
+

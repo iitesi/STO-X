@@ -73,7 +73,26 @@
     <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
 
-        <cfreturn getBean( "SearchService" ).load( arguments.searchId ) />
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+
+		<cftry>
+			<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+
+			<cfif isNumeric( Search.getSearchID() ) AND Search.getSearchID() > 0>
+				<cfset result.setData( Search ) />
+			<cfelse>
+				<cfset result.addError( "Unable to locate the specified search." ) />
+				<cfset result.setSuccess( false ) />
+			</cfif>
+
+			<cfcatch type="any">
+				<cfset result.addError( "An error occurred while retrieving the specified search." ) />
+				<cfset result.setSuccess( false ) />
+			</cfcatch>
+
+		</cftry>
+
+        <cfreturn result />
 
     </cffunction>
 

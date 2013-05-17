@@ -68,4 +68,11 @@
 
 	</cffunction>
 
+<!---
+onRequestEnd
+--->
+	<cffunction name="onRequestEnd">
+
+	</cffunction>
+	
 </cfcomponent>
