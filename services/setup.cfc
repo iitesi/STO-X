@@ -116,6 +116,12 @@
 				<cfset searchfilter.setBookingFor(getuser.First_Name&' '&getuser.Last_Name)><!--- Booking for someone else --->
 			</cfif>
 
+			<cfquery name="local.getAirportName" datasource="book">
+				SELECT Airport_Name
+				FROM lu_FullAirports
+				WHERE Airport_Code = <cfqueryparam value="#getsearch.Arrival_City#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+
 			<!--- Round trip tab --->
 			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
 				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
@@ -170,6 +176,9 @@
 			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 		</cfif>
+
+		<!--- Kamie's hack for now to get more descriptive information in her page title. --->
+		<cfset searchfilter.setHeading(getAirportName.Airport_Name&' :: '&DateFormat(getsearch.Depart_DateTime, 'dddd mmmm d yyyy')&' - '&DateFormat(getsearch.Arrival_DateTime, 'dddd mmmm d yyyy'))>
 
 		<cfreturn searchfilter/>
 	</cffunction>
