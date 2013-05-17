@@ -1,6 +1,6 @@
 <cfcomponent extends="org.corfield.framework">
 
-	<cfset this.name = 'booking'>
+	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
@@ -22,7 +22,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'localhost' ? true : false),
+		reloadApplicationOnEveryRequest = IsLocalHost(cgi.remote_addr),
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
@@ -46,10 +46,8 @@
 	</cffunction>
 
 	<cffunction name="setupSession">
-
 		<cfset session.searches = {}>
 		<cfset session.aMessages = []>
-
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
