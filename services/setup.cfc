@@ -57,6 +57,9 @@
 			Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines, International, Depart_TimeType,
 			Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search, Hotel_Airport,
 			Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID, Hotel_Radius
+			, air_heading
+			, car_heading
+			, hotel_heading
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
@@ -69,39 +72,43 @@
 				</cfquery>
 			</cfif>
 
-			<cfset searchfilter.setSearchID(getsearch.Search_ID)>
+			<!--- populate search filter from query above --->
+			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
 			<cfset searchfilter.setAir(getsearch.Air EQ 1 ? true : false)>
-			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
-			<cfset searchfilter.setHotel(getsearch.Hotel EQ 1 ? true : false)>
+			<cfset searchfilter.setAirHeading(getsearch.air_heading)>
+			<cfset searchfilter.setAirlines(getsearch.Airlines)>
 			<cfset searchfilter.setAirType(getsearch.Air_Type)>
-			<cfset searchfilter.setDepartCity(getsearch.Depart_City)>
-			<cfset searchfilter.setDepartDate(getsearch.Depart_DateTime)>
-			<cfset searchfilter.setDepartType(getsearch.Depart_TimeType)>
+			<cfset searchfilter.setArrival_City(getsearch.Arrival_City)>
 			<cfset searchfilter.setArrivalCity(getsearch.Arrival_City)>
 			<cfset searchfilter.setArrivalDate(getsearch.Arrival_DateTime)>
 			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
-			<cfset searchfilter.setAirlines(getsearch.Airlines)>
-			<cfset searchfilter.setInternational(getsearch.International EQ 1 ? true : false)>
-			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
-			<cfset searchfilter.setProfileID(getsearch.Profile_ID)>
-			<cfset searchfilter.setPolicyID(getsearch.Policy_ID)>
-			<cfset searchfilter.setValueID(getsearch.Value_ID)>
-			<cfset searchfilter.setUserID(getsearch.User_ID)>
-			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
-			<cfset searchfilter.setUsername(getsearch.Username)>
+			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
+			<cfset searchfilter.setCarHeading(getsearch.Car_Heading)>
 			<cfset searchfilter.setCheckIn_Date(getsearch.CheckIn_Date)>
-			<cfset searchfilter.setArrival_City(getsearch.Arrival_City)>
 			<cfset searchfilter.setCheckOut_Date(getsearch.CheckOut_Date)>
-			<cfset searchfilter.setHotel_Search(getsearch.Hotel_Search)>
-			<cfset searchfilter.setHotel_Airport(getsearch.Hotel_Airport)>
-			<cfset searchfilter.setHotel_Landmark(getsearch.Hotel_Landmark)>
+			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
+			<cfset searchfilter.setDepartCity(getsearch.Depart_City)>
+			<cfset searchfilter.setDepartDate(getsearch.Depart_DateTime)>
+			<cfset searchfilter.setDepartType(getsearch.Depart_TimeType)>
+			<cfset searchfilter.setHotel(getsearch.Hotel EQ 1 ? true : false)>
 			<cfset searchfilter.setHotel_Address(getsearch.Hotel_Address)>
+			<cfset searchfilter.setHotel_Airport(getsearch.Hotel_Airport)>
 			<cfset searchfilter.setHotel_City(getsearch.Hotel_City)>
+			<cfset searchfilter.setHotel_Country(getsearch.Hotel_Country)>
+			<cfset searchfilter.setHotel_Landmark(getsearch.Hotel_Landmark)>
+			<cfset searchfilter.setHotel_Radius(getsearch.Hotel_Radius)>
+			<cfset searchfilter.setHotel_Search(getsearch.Hotel_Search)>
 			<cfset searchfilter.setHotel_State(getsearch.Hotel_State)>
 			<cfset searchfilter.setHotel_Zip(getsearch.Hotel_Zip)>
-			<cfset searchfilter.setHotel_Country(getsearch.Hotel_Country)>
+			<cfset searchfilter.setHotelHeading(getsearch.Hotel_Heading)>
+			<cfset searchfilter.setInternational(getsearch.International EQ 1 ? true : false)>
 			<cfset searchfilter.setOffice_ID(getsearch.Office_ID)>
-			<cfset searchfilter.setHotel_Radius(getsearch.Hotel_Radius)>
+			<cfset searchfilter.setPolicyID(getsearch.Policy_ID)>
+			<cfset searchfilter.setProfileID(getsearch.Profile_ID)>
+			<cfset searchfilter.setSearchID(getsearch.Search_ID)>
+			<cfset searchfilter.setUserID(getsearch.User_ID)>
+			<cfset searchfilter.setUsername(getsearch.Username)>
+			<cfset searchfilter.setValueID(getsearch.Value_ID)>
 
 			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
 				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->
@@ -144,6 +151,13 @@
 			<cfelseif NOT getsearch.Air>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
+
+
+
+			<cfset searchfilter.setHeading( searchFilter.getAirHeading() )>
+
+
+
 
 			<!---Set filter--->
 			<cfset session.Filters[arguments.SearchID] = searchfilter>
