@@ -28,6 +28,8 @@ doAvailability
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
 		<!---<cfset session.searches[SearchID].stCars = {}>--->
+		<!--- <cfset StructDelete(session, 'searches') />
+		<cfabort> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -88,6 +90,7 @@ doAvailability
 				<cfthread action="join" name="#StructKeyList(stThreads)#" />
 				<!---<cfdump var="#cfthread#" abort>--->
 				<cfif arguments.nCouldYou NEQ 0>
+	<!--- this line is NOT being hit after deleting session.searches. --->
 					<cfif structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars, sCarType)
 					AND structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
 						<cfset CarRate = cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
@@ -98,8 +101,11 @@ doAvailability
 				</cfif>
 			</cfif>
 
+			<cfset session.searches[SearchID].stCars.fLowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
 		</cfif>
 		
+			<!--- <cfdump var="#session.searches[SearchID].stCars#" abort> --->
+
 		<cfreturn CarRate>
 	</cffunction>
 
@@ -301,6 +307,30 @@ checkPolicy
 		</cfloop>
 
 		<cfreturn stCars/>
+	</cffunction>
+
+<!---
+findLowestCarRate
+--->
+	<cffunction name="findLowestCarRate" output="false">
+		<cfargument name="stCars"    required="true">
+
+		<cfset local.fLowestCarRate = 999999 />
+		<cfset local.stCars = arguments.stCars />
+
+		<!--- Loop through the cars and find the lowest rate of all. --->
+		<cfloop collection="#stCars#" item="local.sClassCategory">
+			<cfloop collection="#stCars[sClassCategory]#" item="local.sVendor">
+				<cfset local.stCarJavaScript = stCars[sClassCategory][sVendor].sJavascript />
+				<cfset local.fEstimatedTotalAmount = Trim(ListLast(stCarJavaScript)) />
+				<!--- Get the last item in the JavaScript string, which is the estimated total amount. --->
+				<cfif IsNumeric(fEstimatedTotalAmount) AND (fEstimatedTotalAmount LT fLowestCarRate)>
+					<cfset fLowestCarRate = fEstimatedTotalAmount />
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn fLowestCarRate />
 	</cffunction>
 
 <!---
