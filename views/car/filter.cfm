@@ -6,6 +6,7 @@
 <ul id="filter">
 	<table>
 	<tr>
+<!--- <cfdump var="#session.searches[rc.SearchID]#" abort> --->
 <!---
 VENDORS
 --->		<td>
@@ -25,7 +26,7 @@ VENDORS
 CATEGORIES
 --->		<td>
 			<li>
-				<input type="checkbox" id="btnCarCategory" name="btnCarCategory"> <label for="btnCarCategory">Categories</label>
+				<input type="checkbox" id="btnCarCategory" name="btnCarCategory"> <label for="btnCarCategory">Car Types</label>
 				<ul>
 					<li>
 					<table width="400px">
