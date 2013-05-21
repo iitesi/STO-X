@@ -1,11 +1,8 @@
-<cfset Hotel_Radiuses = '1,2,5,10,15,20,25' />
+<!---<cfset Hotel_Radiuses = '1,2,5,10,15,20,25' />
 <cfset Hotel_Radius = rc.Filter.getHotel_Radius() />
 <cfset Hotel_Search = rc.Filter.getHotel_Search() />
 <div class="modifysearch">		
 	<h3>Modify Search</h3>
-<!---
-MODIFY SEARCH
---->
 	<cfoutput>
 		<form method="post" action="#buildURL('hotel.search?SearchID=#rc.Filter.getSearchID()#')#" id="modifyhotelform">
 			<input type="hidden" name="ModifySearch" value="LetsModify!" />
@@ -103,9 +100,8 @@ MODIFY SEARCH
 			<br>
 		</form>
 	</div>
-</cfoutput>
+</cfoutput>--->
 
-<cfset arraysort(session.searches[rc.SearchID].stHotelChains,'text') />
 <ul id="filter">
 	<table>
 	<tr>
@@ -117,12 +113,24 @@ MODIFY SEARCH
 				<input type="checkbox" id="HotelChains" name="HotelChains"> <label for="HotelChains">Hotel Chain</label>
 				<cfoutput>
 					<ul>
-						<cfloop array="#session.searches[rc.SearchID].stHotelChains#" index="Chain">
+						<li>
+							<input id="HotelChain1" type="checkbox" name="HotelChain1" value="HH" checked="checked">
+							<label for="HotelChain1">Hilton</label>
+						</li>
+						<li>
+							<input id="HotelChain2" type="checkbox" name="HotelChain2" value="HY" checked="checked">
+							<label for="HotelChain2">Hyatt</label>
+						</li>
+						<li>
+							<input id="HotelChain3" type="checkbox" name="HotelChain3" value="MC" checked="checked">
+							<label for="HotelChain3">Marriott</label>
+						</li>
+						<!---<cfloop array="#session.searches[rc.SearchID].stHotelChains#" index="Chain">
 							<li>
 								<input id="HotelChain#Chain#" type="checkbox" name="HotelChain#Chain#" value="#Chain#" checked="checked" onclick="filterhotel();">
 								<label for="HotelChain#Chain#">#StructKeyExists(application.stHotelVendors,Chain) ? application.stHotelVendors[Chain] : 'No Chain found'#</label>
 							</li>
-						</cfloop>
+						</cfloop>--->
 					</ul>
 				</cfoutput>
 			</li>
@@ -130,12 +138,12 @@ MODIFY SEARCH
 				<input type="checkbox" id="HotelAmenities" name="HotelAmenities"> <label for="HotelAmenities">Amenities</label>
 				<cfoutput>
 					<ul>
-						<cfloop array="#session.searches[rc.SearchID].stAmenities#" index="Amenity">
+						<!---<cfloop array="#session.searches[rc.SearchID].stAmenities#" index="Amenity">
 							<li>
 								<input id="#Amenity#" type="checkbox" name="HotelAmenity#Amenity#" value="#Amenity#" onclick="filterhotel();">
 								<label for="#Amenity#">#application.stAmenities[Amenity]#</label>
 							</li>
-						</cfloop>
+						</cfloop>--->
 					</ul>
 				</cfoutput>
 			</li>

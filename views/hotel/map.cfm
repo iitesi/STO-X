@@ -1,1 +1,1 @@
-<div id="mapDiv" class="map">&nbsp;</div>
+<div id="mapDiv">&nbsp;</div>

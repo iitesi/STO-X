@@ -578,7 +578,7 @@ div.checkbox {
 }
 
 #mapdiv {
-	width:760px;
+	/*width:760px;*/
 	float:left;
 	border:1px solid #CCC;
 	margin:0 auto;

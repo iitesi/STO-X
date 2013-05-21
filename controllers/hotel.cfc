@@ -32,6 +32,7 @@
 	<cffunction name="search" output="false">
 		<cfargument name="rc">
 
+		<!---
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
             <cfset arguments.rc.Search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
 			<cfset arguments.rc.hotels = fw.getBeanFactory().getBean( "HotelSearchManager").doHotelSearch( argumentCollection=arguments.rc ) />
@@ -39,7 +40,7 @@
 			<!--- Select --->
 			<cfset variables.fw.service('hotelsearch.selectHotel', 'void')>
 		</cfif>
-				
+		--->
 		<cfreturn />
 	</cffunction>
 

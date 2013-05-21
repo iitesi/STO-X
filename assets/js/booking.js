@@ -174,7 +174,7 @@ function AirPrice(searchid, trip_id, cabin, refundable) {
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
-		success:function(data) {	
+		success:function(data) {
 			$( "#" + trip_id + cabin + refundable ).html(data);
 			console.log(data);
 		},
@@ -314,7 +314,7 @@ function showDetails(searchid,property_id,hotel_chain,rate_type) {
 				if (DetailsShown == false) {
 					table+='<tr><td><em>There are no details for this hotel.</em></td></tr>';
 				}
-	
+
 			});
 			table+='</table>';
 			$("#checkrates"+property_id).html(table).show();
@@ -503,7 +503,7 @@ function submitHotel (sHotel,sRoomDescription) {
 
 //PAGES
 function writePages(number_of_items) {
-	
+
 	//calculate the number of pages that are needed
 	var number_of_pages = Math.ceil(number_of_items/20);
 	//set current page
@@ -529,14 +529,14 @@ function writePages(number_of_items) {
 	}
 	//create html for the next link
 	if (($('#current_page').val() != number_of_pages-1) && (number_of_pages > 0)) {
- 	   navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';   
+ 	   navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';
 	}
 	//write the html to the navigation div
-  $('#page_navigation').html(navigation_html);   
-  $('#page_navigation2').html(navigation_html);   
-  //add active_page class to the active page link   
-  $('#page_navigation .page_link').eq(current_page).addClass('active_page');   
-  $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');   
+  $('#page_navigation').html(navigation_html);
+  $('#page_navigation2').html(navigation_html);
+  //add active_page class to the active page link
+  $('#page_navigation .page_link').eq(current_page).addClass('active_page');
+  $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');
 	return false;
 }
 
@@ -614,7 +614,7 @@ $(document).ready(function() {
 		target: "#overlayContent",
 		overlay:75
 	});
-	
+
 });
 
 /* CouldYou */
@@ -634,7 +634,7 @@ function getTotal(data,startdate) {
 function logError(test,tes,te) {
 	console.log(test);
 	console.log(tes);
-	console.log(te);	
+	console.log(te);
 }
 
 function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {

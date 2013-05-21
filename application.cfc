@@ -27,7 +27,7 @@
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
 		suppressImplicitService = true,
-		trace = true,
+		trace = false,
 		unhandledExtensions = 'cfc',
 		unhandledPaths = '/external',
 		usingSubsystems = false
@@ -41,7 +41,7 @@
 		<cfset setBeanFactory(bf)>
 
 		<cfset controller( 'setup.setApplication' )>
-		<cfset application.bDebug = 1>
+		<cfset application.bDebug = 0>
 
 	</cffunction>
 
