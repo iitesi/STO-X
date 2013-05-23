@@ -30,11 +30,9 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <!-- Required Scripts -->
-        <!---
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-        --->
-        <script src="assets/js/jquery-1.8.3.min.js"></script>
         <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=en-us" charset="UTF-8" type="text/javascript"></script>
         <script src="assets/js/jquery.plugins.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
@@ -44,7 +42,7 @@
         <script src="assets/js/hotel/services.js"></script>
         <script src="assets/js/hotel/controllers.js"></script>
         <script src="assets/js/hotel/app.js" />
-        <!---<script src="assets/js/booking.js"></script>---><!---Custom--->
+        <script src="assets/js/booking.js"></script><!---Custom--->
         <script src="assets/js/jqModal.js"></script><!---Overlay--->
     </head>
 

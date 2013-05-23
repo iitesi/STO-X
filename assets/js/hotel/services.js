@@ -19,10 +19,16 @@ services.factory( "Search", function($http ){
 					h.populate( response.data[i] );
 					hotels.push( h );
 				}
-				console.log( hotels );
 				return hotels;
 				});
+	}
 
+	Search.getHotelRates = function( searchId, hotel ) {
+		return $http.get( "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + hotel.PropertyId )
+			.then( function( response ){
+				hotel.roomsReturned = true;
+				hotel.rooms = response.data;
+			})
 	}
 
 	return Search;

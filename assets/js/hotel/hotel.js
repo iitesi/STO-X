@@ -89,3 +89,21 @@ Hotel.prototype.findLowestRoomRate = function(){
 
     return lowestRate;
 }
+
+Hotel.prototype.isSoldOut = function(){
+
+	if( this.findLowestRoomRate() == 0 && this.roomsReturned ){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+Hotel.prototype.hasRoomsAvailable = function(){
+
+	if( !this.isSoldOut() && this.roomsReturned ){
+		return true;
+	} else {
+		return false;
+	}
+}

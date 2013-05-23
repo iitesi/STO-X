@@ -13,7 +13,7 @@
 
 	<bean id="General" class="booking.services.general" />
 
-    <bean id="CacheManager" class="com.shortstravel.CacheManagerService" />
+    <bean id="CacheManager" class="com.shortstravel.CacheManager" />
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>

@@ -1,11 +1,24 @@
 var controllers = angular.module('app.controllers',[]);
 
-controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, $http, Search ){
-
-	$scope.search = Search.getSearch( $routeParams.searchId );
-	$scope.hotels = Search.doSearch( $routeParams.searchId );
-
+controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, Search ){
 	$scope.currentPage = 1;
+	$scope.resultsPerPage = 20;
+
+	Search.getSearch( $routeParams.searchId )
+		.then( function( result ){
+			$scope.search = result;
+			console.log( $scope.search );
+		});
+	Search.doSearch( $routeParams.searchId )
+		.then( function(result){
+			$scope.hotels = result;
+
+			for( var i=0; i<$scope.resultsPerPage; i++ ){
+				if( !$scope.hotels[i].roomsReturned ){
+					Search.getHotelRates( $routeParams.searchId, $scope.hotels[i] );
+				}
+			}
+		});
 
 	$scope.toggleHotelDetails = function(hotel) {
 
@@ -13,7 +26,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			$scope.showHotelDetails = false;
 		} else {
 			$scope.showAreaDetails = false;
-			$scope.showAmenitiess = false;
+			$scope.showAmenities = false;
 			$scope.showPhotos = false;
 			$scope.showRooms = false;
 			$scope.showHotelDetails = true;
@@ -25,7 +38,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 		if($scope.showAreaDetails) {
 			$scope.showAreaDetails = false;
 		} else {
-			$scope.showAmenitiess = false;
+			$scope.showAmenities = false;
 			$scope.showPhotos = false;
 			$scope.showRooms = false;
 			$scope.showHotelDetails = false;
@@ -35,15 +48,15 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 	$scope.toggleAmenities = function(hotel) {
 
-		if($scope.showAmenitiess) {
+		if($scope.showAmenities) {
 
-			$scope.showAmenitiess = false;
+			$scope.showAmenities = false;
 		} else {
 			$scope.showAreaDetails = false;
 			$scope.showPhotos = false;
 			$scope.showRooms = false;
 			$scope.showHotelDetails = false;
-			$scope.showAmenitiess = true;
+			$scope.showAmenities = true;
 		}
 	}
 
@@ -55,7 +68,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			$scope.showAreaDetails = false;
 			$scope.showRooms = false;
 			$scope.showHotelDetails = false;
-			$scope.showAmenitiess = false;
+			$scope.showAmenities = false;
 			$scope.showPhotos = true;
 		}
 	}
@@ -67,9 +80,15 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 		} else {
 			$scope.showAreaDetails = false;
 			$scope.showHotelDetails = false;
-			$scope.showAmenitiess = false;
+			$scope.showAmenities = false;
 			$scope.showPhotos = false;
 			$scope.showRooms = true;
 		}
 	}
+
+	//$scope.center = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
+    //$scope.mapOptions = {credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", center: $scope.center, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
+    //$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
+    //$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.center, {icon: 'assets/img/center.png', zIndex:-51}));
+
 });
