@@ -1,6 +1,6 @@
 <div class="page-header">
 	<cfoutput>
-		<h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#rc.Filter.getHeading()#</a></h1>
+		<h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a></h1>
 	</cfoutput>
 </div>
 <cfoutput>

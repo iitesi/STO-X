@@ -1,30 +1,38 @@
-<div id="filterbar">
-	<div>
-		<div class="filterheader">Filter By</div>
-	</div>
-</div>
+<cfparam name="rc.filter" default="">
+
+<!--- <a href="#" id="displayModal">CHANGE YOUR SEARCH</a>
+<div id="modalWindow" class="modal hide fade in" data-url="<cfoutput>#buildURL('modal.default')#&SearchID=#rc.SearchID#</cfoutput>" data-header="Change Car Search">
+	<div id="modalContainer"></div>
+</div> --->
+
+<!--- It gets more complicated if you want to do form submission from the modal.
+The biggest thing is you need to handle server side errors. We did this by having the server return a json object with a result code and the partial view (populated with model errors) as a string when an error needed to be displayed. --->
+
 <ul id="filter">
 	<table>
 	<tr>
-<!--- <cfdump var="#session.searches[rc.SearchID]#" abort> --->
+		<td>
+			<div class="filterheader">Filter By</div>
+		</td>
 <!---
 VENDORS
---->		<td>
+--->
+		<td>
 			<li>
 				<input type="checkbox" id="btnCarVendor" name="btnCarVendor"> <label for="btnCarVendor">Vendors</label>
 				<ul>
 					<cfoutput>
 						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="VendorCode">
-							<li><input id="btnVendor#LCase(VendorCode)#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onClick="filterCar()"> <label for="btnVendor#LCase(VendorCode)#">#StructKeyExists(application.stCarVendors, VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#</label></li>
+							<div id="vendorButtons"><li><input id="btnVendor#LCase(VendorCode)#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" class="checkUncheck" checked="checked" onClick="filterCar()"> <label for="btnVendor#LCase(VendorCode)#">#StructKeyExists(application.stCarVendors, VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#</label></li></div>
 						</cfloop>
 					</cfoutput>
 				</ul>
 			</li>
 		</td>
-
 <!---
 CATEGORIES
---->		<td>
+--->
+		<td>
 			<li>
 				<input type="checkbox" id="btnCarCategory" name="btnCarCategory"> <label for="btnCarCategory">Car Types</label>
 				<ul>
@@ -46,7 +54,7 @@ CATEGORIES
 								<td valign="top">
 								<cfset temp = Right(sCategory, 3)>
 							</cfif>
-							<input id="btnCategory#LCase(sCategory)#" type="checkbox" checked="checked" name="sCategory" value="#sCategory#" onClick="filterCar()"> <label for="btnCategory#LCase(sCategory)#">#Left(sCategory, Len(sCategory)-3)#</label><br>
+							<div id="categoryButtons"><input id="btnCategory#LCase(sCategory)#" type="checkbox" checked="checked" name="sCategory" value="#sCategory#" class="checkUncheck" onClick="filterCar()"> <label for="btnCategory#LCase(sCategory)#">#Left(sCategory, Len(sCategory)-3)#</label><br></div>
 						</cfloop>
 						</td>
 					</cfoutput>
@@ -62,6 +70,15 @@ POLICY
 		<td>
 			<input type="checkbox" id="Policy" name="Policy" checked> <label for="Policy">In Policy</label>
 		</td>
+<!---
+DISPLAY RESULTS/REMOVE FILTERS
+--->
+		<td>
+			<div class="filterresults">
+				xxx of xxx cars displayed<br />
+				<a href="#" id="clearFilters" name="clearFilters">Remove filters</a>
+			</div>
+		</td>
 	</tr> 
 	</table>
 </ul>
@@ -72,12 +89,31 @@ $(document).ready(function() {
 	$( "#btnCarVendor" ).button().click(function() { filterCar(); });
 	$( "#btnCarCategory" ).button().click(function() { filterCar(); });
 	$( "#Policy" ).button().change(function() { filterCar(); });
+	$( "#clearFilters" ).click(function() { filterCar('clearAll'); });
 	var nCount = filterCar();
 	if (nCount == 0) {
 		$( "#Policy" ).prop('checked', false);
 		$( "#Policy" ).button( "refresh" );
 		filterCar();
 	}
+	//alert(carresults);
+
+	/* $("#displayModal").click(function() {
+		var url = $("#modalWindow").data("url");
+		var modalHeader = $("#modalWindow").data("header");
+			alert(url);
+
+		$.get(url, function(data) {
+			$("#modalContainer").html(data);
+			$(".modal-header #myModalHeader").val(modalHeader);
+
+			$("#modalWindow").modal("show");
+		});
+	});
+
+	$("#modalWindow").on("hidden", function() {
+		$(this).removeData("modal");
+	}); */
 });
 <cfoutput>
 	var carresults = [
