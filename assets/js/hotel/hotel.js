@@ -12,6 +12,7 @@ function Hotel(){
 
     this.PropertyId = 0 ;
     this.ChainCode = "";
+    this.VendorName = "";
     this.PropertyName = "";
     this.Address = "";
     this.City = "";

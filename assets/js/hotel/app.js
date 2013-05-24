@@ -4,7 +4,7 @@ app.config([ '$routeProvider', function( $routeProvider) {
 	$routeProvider.
 		when('/search/:searchId', {
 			controller: 'HotelCtrl',
-			templateUrl: '/booking/views/hotel/hotelRenderer.html'
+			templateUrl: '/booking/views/hotel/searchResults.html'
 		} ).
 		otherwise({
 			redirectTo: '/',
