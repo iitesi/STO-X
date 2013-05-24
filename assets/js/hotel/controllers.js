@@ -27,7 +27,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 			//Build vendor array for filter
 			$scope.buildVendorArrayFromSearchResults( $scope.vendors, result );
-			
+
 			//Build the amenities array for filter
 			$scope.buildAmenitiesArrayFromSearchResults( $scope.amenities, result );
 
@@ -118,7 +118,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 				}
 			}
 			if( !found ){
-				vendors.push( {code: hotel.ChainCode, name: hotel.VendorName })
+				vendors.push( {code: hotel.ChainCode, name: hotel.VendorName, checked: true })
 			}
 		}
 
@@ -128,7 +128,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 		  if (a.name > b.name)
 			return 1;
 		  return 0;
-		})
+		});
 	}
 
 	$scope.buildAmenitiesArrayFromSearchResults = function( amenities, hotels ){
@@ -138,13 +138,27 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 			for( var k=0; k < hotel.Amenities.length; k++ ){
 
-				if( $.inArray( hotel.Amenities[k], amenities) == -1 ){
-					amenities.push( hotel.Amenities[k] );
+				var found = false;
+				for( var m=0; m < amenities.length; m++ ){
+					if( amenities[m].name.toLowerCase() == hotel.Amenities[k].toLowerCase() ){
+						found = true;
+						break;
+					}
+				}
+
+				if( !found ){
+					amenities.push( {name: hotel.Amenities[k], checked: true } );
 				}
 
 			}
 		}
-		amenities.sort();
+		amenities.sort( function(a,b) {
+		  if (a.name < b.name)
+			 return -1;
+		  if (a.name > b.name)
+			return 1;
+		  return 0;
+		});
 	}
 
 
