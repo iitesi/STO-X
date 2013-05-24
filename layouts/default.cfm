@@ -20,6 +20,7 @@
         <link href="assets/css/layout.css" rel="stylesheet">
         <link href="assets/css/style.css" rel="stylesheet">
         <link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+		<link href="assets/css/bootstrap-modal.css" rel="stylesheet">
 
         <!-- Le Fonts -->
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet">
@@ -44,6 +45,8 @@
         <script src="assets/js/hotel/app.js" />
         <script src="assets/js/booking.js"></script><!---Custom--->
         <script src="assets/js/jqModal.js"></script><!---Overlay--->
+		<script src="assets/js/bootstrap-modalmanager.js"></script>
+		<script src="assets/js/bootstrap-modal.js"></script>
     </head>
 
     <body>
