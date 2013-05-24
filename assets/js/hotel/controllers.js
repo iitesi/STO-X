@@ -150,7 +150,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 				}
 
 				if( !found ){
-					amenities.push( {name: hotel.Amenities[k], checked: true } );
+					amenities.push( {name: hotel.Amenities[k], checked: false } );
 				}
 
 			}
@@ -181,16 +181,69 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 	}
 
 	$scope.clearFilters = function(){
-		console.log( "clearFilters() called" );
 		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
 			var vendor = $scope.filterItems.vendors[i];
 			vendor.checked = true;
 		}
 		for( var j=0; j < $scope.filterItems.amenities.length; j++ ){
 			var amenity = $scope.filterItems.amenities[j];
-			amenity.checked = true;
+			amenity.checked = false;
 		}
 		$scope.filterItems.noSoldOut = false;
 		$scope.filterItems.inPolicyOnly = false;
 	}
+
+	$scope.hotelFilter = function( hotel ){
+
+		var display = true;
+
+		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
+			var vendor = $scope.filterItems.vendors[i];
+			if( vendor.code == hotel.ChainCode ){
+				display = vendor.checked;
+			}
+		}
+
+		if( display ){
+
+			if( $scope.filterItems.noSoldOut && hotel.roomsReturned && hotel.isSoldOut() ){
+				display = false;
+			}
+
+		}
+
+		/* Commenting out the amenities filter condition for now
+		if( display ){
+
+			var selectedAmenities = []
+
+			for( var j=0; j < $scope.filterItems.amenities.length; j++ ){
+				var amenity = $scope.filterItems.amenities[j];
+				if( amenity.checked ){
+					selectedAmenities.push( amenity.name );
+				}
+			}
+			console.log( selectedAmenities.length );
+			if( selectedAmenities.length ){
+
+				for( var m=0; m < selectedAmenities.length; m++ ){
+					if( !$.inArray( hotel.Amentiies, selectedAmenities[m] ) ){
+						display = false;
+						break;
+					}
+				}
+			}
+
+		}
+		*/
+
+
+		return display;
+
+		//if( $scope.filterItems.noSoldOut & hotel.isSoldOut() ){
+		//	return false;
+		//}
+
+	}
+
 });
