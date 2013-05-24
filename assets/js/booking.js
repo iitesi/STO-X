@@ -562,9 +562,14 @@ function go_to_page(new_page) {
 CAR SECTION
 --------------------------------------------------------------------------------------------------------------------
 */
-function filterCar() {
+function filterCar(howFilter) {
 	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
 	var nCount = 0;
+
+	if (howFilter == 'clearAll') {
+		$('#vendorButtons .checkUncheck').prop('checked', true);
+		$('#categoryButtons .checkUncheck').prop('checked', true);
+	}
 
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
