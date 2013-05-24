@@ -12,6 +12,9 @@
 	<cfproperty name="BookingFor">
 	<cfproperty name="Car">
 	<cfproperty name="CarHeading">
+	<cfproperty name="CarPickupAirport">
+	<cfproperty name="CarPickupDateTime">
+	<cfproperty name="CarDropoffDateTime">
 	<cfproperty name="CheckIn_Date">
 	<cfproperty name="CheckOut_Date">
 	<cfproperty name="COS">

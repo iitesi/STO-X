@@ -27,9 +27,6 @@ doAvailability
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
-		<!---<cfset session.searches[SearchID].stCars = {}>--->
-		<!--- <cfset StructDelete(session, 'searches') />
-		<cfabort> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -38,7 +35,7 @@ doAvailability
 			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
 			<cfset local.stThreads = {}>
 			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
-			<cfif NOT structIsEmpty(CDNumbers)>
+			<cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
 				<cfthread
 				name="stCorporateRates#nUniqueThreadName#"
@@ -88,9 +85,7 @@ doAvailability
 			<cfif arguments.sPriority EQ 'HIGH'
 			OR arguments.nCouldYou NEQ 0>
 				<cfthread action="join" name="#StructKeyList(stThreads)#" />
-				<!---<cfdump var="#cfthread#" abort>--->
 				<cfif arguments.nCouldYou NEQ 0>
-	<!--- this line is NOT being hit after deleting session.searches. --->
 					<cfif structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars, sCarType)
 					AND structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
 						<cfset CarRate = cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
@@ -103,8 +98,6 @@ doAvailability
 
 			<cfset session.searches[SearchID].stCars.fLowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
 		</cfif>
-		
-			<!--- <cfdump var="#session.searches[SearchID].stCars#" abort> --->
 
 		<cfreturn CarRate>
 	</cffunction>
@@ -120,7 +113,7 @@ doAvailability
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 
-		<cfif arguments.Filter.getAir() AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')>
+		<!--- <cfif arguments.Filter.getAir() AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')>
 			<cfset local.dPickUp = session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime>
 			<cfif arguments.Filter.getAirType() EQ 'RT'>
 				<cfset local.dDropOff = session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime>
@@ -132,7 +125,9 @@ doAvailability
 		<cfelse>
 			<cfset local.dPickUp = arguments.Filter.getDepartDate()>
 			<cfset local.dDropOff = arguments.Filter.getArrivalDate()>
-		</cfif>
+		</cfif> --->
+		<cfset local.dPickUp = arguments.Filter.getCarPickupDateTime()>
+		<cfset local.dDropOff = arguments.Filter.getCarDropoffDateTime()>
 		<cfset session.searches[SearchID].dPickUp = dPickUp>
 		<cfset session.searches[SearchID].dDropOff = dDropOff>
 		
@@ -145,10 +140,10 @@ doAvailability
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<veh:VehicleDateLocation
 								ReturnLocationType="Airport"
-								PickupLocation="#arguments.Filter.getArrivalCity()#"
+								PickupLocation="#arguments.Filter.getCarPickupAirport()#"
 								PickupDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dPickUp), 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
 								PickupLocationType="Airport"
-								ReturnLocation="#arguments.Filter.getArrivalCity()#"
+								ReturnLocation="#arguments.Filter.getCarPickupAirport()#"
 								ReturnDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dDropOff), 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
 							<veh:VehicleSearchModifiers>
 								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
@@ -266,11 +261,11 @@ checkPolicy
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyCar) GT 0 ? 1 : 0)>
 		
 		<cfquery name="local.getsearch">
-			SELECT 	Depart_DateTime, Arrival_DateTime
+			SELECT 	CarPickup_DateTime, CarDropoff_DateTime
 			FROM 	Searches
 			WHERE 	Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
-		<cfset local.nDays = Int(getSearch.Arrival_DateTime - getsearch.Depart_DateTime)>
+		<cfset local.nDays = Int(getSearch.CarPickup_DateTime - getsearch.CarDropoff_DateTime)>
 		
 		<cfloop collection="#stCars#" item="local.sCategory">
 			<cfloop collection="#stCars[sCategory]#" item="local.sVendor">

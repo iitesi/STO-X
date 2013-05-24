@@ -84,6 +84,9 @@
 			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
 			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
 			<cfset searchfilter.setCarHeading(getsearch.Car_Heading)>
+			<cfset searchfilter.setCarPickupAirport(getsearch.CarPickup_Airport)>
+			<cfset searchfilter.setCarPickupDateTime(getsearch.CarPickup_DateTime)>
+			<cfset searchfilter.setCarDropoffDateTime(getsearch.CarDropoff_DateTime)>
 			<cfset searchfilter.setCheckIn_Date(getsearch.CheckIn_Date)>
 			<cfset searchfilter.setCheckOut_Date(getsearch.CheckOut_Date)>
 			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
