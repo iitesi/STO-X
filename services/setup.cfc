@@ -123,10 +123,15 @@
 				<cfset searchfilter.setBookingFor(getuser.First_Name&' '&getuser.Last_Name)><!--- Booking for someone else --->
 			</cfif>
 
-			<cfquery name="local.getAirportName" datasource="book">
-				SELECT Airport_Name
+			<cfquery name="local.getAirportData" datasource="book">
+				SELECT Airport_Name, Airport_City, Airport_State
 				FROM lu_FullAirports
-				WHERE Airport_Code = <cfqueryparam value="#getsearch.Arrival_City#" cfsqltype="cf_sql_varchar" />
+				WHERE Airport_Code =
+					<cfif getsearch.Car>
+						<cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
+					<cfelse>
+						<cfqueryparam value="#getsearch.Arrival_City#" cfsqltype="cf_sql_varchar" />
+					</cfif>
 			</cfquery>
 
 			<!--- Round trip tab --->
@@ -154,7 +159,7 @@
 					<cfset tab.Heading = tab.Heading&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
 					<cfset tab.Legs[getsearchlegs.CurrentRow] = getsearchlegs.Depart_City&' to '&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')>
 				</cfloop>--->
-			<cfelseif NOT getsearch.Air>
+			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
 
@@ -162,7 +167,10 @@
 
 			<cfset searchfilter.setHeading( searchFilter.getAirHeading() )>
 
-
+			<!--- Set carHeading. --->
+			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
+				<cfset searchfilter.setCarHeading(getAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&'), '&getAirportData.Airport_City&', '&getAirportData.Airport_State&' :: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d'))>
+			</cfif>
 
 
 			<!---Set filter--->
@@ -190,9 +198,6 @@
 			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 		</cfif>
-
-		<!--- Kamie's hack for now to get more descriptive information in her page title. --->
-		<cfset searchfilter.setHeading(getAirportName.Airport_Name&' :: '&DateFormat(getsearch.Depart_DateTime, 'dddd mmmm d yyyy')&' - '&DateFormat(getsearch.Arrival_DateTime, 'dddd mmmm d yyyy'))>
 
 		<cfreturn searchfilter/>
 	</cffunction>
