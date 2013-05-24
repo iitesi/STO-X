@@ -6,8 +6,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 	$scope.totalProperties = 0;
 
 	//Hard coded for now until we extract them from the results list
-	$scope.vendors = [];
-	$scope.amenities = [];
+	$scope.filterItems = {};
+	$scope.filterItems.vendors = [];
+	$scope.filterItems.amenities = [];
+	$scope.filterItems.noSoldOut = false;
+	$scope.filterItems.inPolicyOnly = false;
 
 	Search.getSearch( $routeParams.searchId )
 		.then( function( result ){
@@ -26,10 +29,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			$scope.totalProperties = result.length;
 
 			//Build vendor array for filter
-			$scope.buildVendorArrayFromSearchResults( $scope.vendors, result );
+			$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
 
 			//Build the amenities array for filter
-			$scope.buildAmenitiesArrayFromSearchResults( $scope.amenities, result );
+			$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result );
 
 			//Fire off calls to get room rates for these hotels
 			for( var i=0; i<$scope.resultsPerPage; i++ ){
@@ -161,5 +164,33 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 		});
 	}
 
+	$scope.toggleInPolicyOnly = function(){
+		if( $scope.filterItems.inPolicyOnly == true ){
+			$scope.filterItems.inPolicyOnly = false;
+		} else {
+			$scope.filterItems.inPolicyOnly = true;
+		}
+	}
 
+	$scope.toggleNoSoldOut = function(){
+		if( $scope.filterItems.noSoldOut == true ){
+			$scope.filterItems.noSoldOut = false;
+		} else {
+			$scope.filterItems.noSoldOut = true;
+		}
+	}
+
+	$scope.clearFilters = function(){
+		console.log( "clearFilters() called" );
+		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
+			var vendor = $scope.filterItems.vendors[i];
+			vendor.checked = true;
+		}
+		for( var j=0; j < $scope.filterItems.amenities.length; j++ ){
+			var amenity = $scope.filterItems.amenities[j];
+			amenity.checked = true;
+		}
+		$scope.filterItems.noSoldOut = false;
+		$scope.filterItems.inPolicyOnly = false;
+	}
 });
