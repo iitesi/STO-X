@@ -1,5 +1,5 @@
-STO.sublime-project
-STO.sublime-workspace
+*.sublime-project
+*.sublime-workspace
 p2/org.eclipse.equinox.p2.core/cache/artifacts.xml
 p2/org.eclipse.equinox.p2.engine/.settings/org.eclipse.equinox.p2.artifact.repository.prefs
 p2/org.eclipse.equinox.p2.engine/.settings/org.eclipse.equinox.p2.metadata.repository.prefs
