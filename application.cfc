@@ -34,7 +34,6 @@
 	}>
 
 	<cffunction name="setupApplication">
-
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
 				.init( defaultProperties = { currentServerName=cgi.http_host }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
@@ -42,7 +41,6 @@
 
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 0>
-
 	</cffunction>
 
 	<cffunction name="setupSession">
@@ -51,26 +49,22 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
-
-		<cfset controller( 'setup.setSearchID' )>
-		<cfset controller( 'setup.setFilter' )>
-		<cfset controller( 'setup.setAcctID' )>
-		<cfset controller( 'setup.setAccount' )>
-		<cfset controller( 'setup.setPolicyID' )>
-		<cfset controller( 'setup.setPolicy' )>
-		<cfset controller( 'setup.setGroup' )>
-
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
-			Not A Valid Search<cfabort>
+			<cfset var action = ListFirst(rc.action, ':')>
+			<cfreturn view( "main/notfound" )>
+		<cfelse>
+			<cfset controller( 'setup.setSearchID' )>
+			<cfset controller( 'setup.setFilter' )>
+			<cfset controller( 'setup.setAcctID' )>
+			<cfset controller( 'setup.setAccount' )>
+			<cfset controller( 'setup.setPolicyID' )>
+			<cfset controller( 'setup.setPolicy' )>
+			<cfset controller( 'setup.setGroup' )>
 		</cfif>
-
 	</cffunction>
 
-<!---
-onRequestEnd
---->
-	<cffunction name="onRequestEnd">
-
+	<cffunction name="onMissingView" hint="I handle missing views.">
+		<cfreturn view( "main/notfound" )>
 	</cffunction>
-	
+
 </cfcomponent>
