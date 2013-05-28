@@ -197,6 +197,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 		var display = true;
 
+		//Hotel chain check
 		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
 			var vendor = $scope.filterItems.vendors[i];
 			if( vendor.code == hotel.ChainCode ){
@@ -204,6 +205,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			}
 		}
 
+		//Sold out check
 		if( display ){
 
 			if( $scope.filterItems.noSoldOut && hotel.roomsReturned && hotel.isSoldOut() ){
@@ -212,22 +214,25 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 		}
 
-		/* Commenting out the amenities filter condition for now
+		// Amenities check
 		if( display ){
 
-			var selectedAmenities = []
+			var selectedAmenities = [];
 
+			//Check to see if the user has selected any amenities to filter by
 			for( var j=0; j < $scope.filterItems.amenities.length; j++ ){
 				var amenity = $scope.filterItems.amenities[j];
 				if( amenity.checked ){
 					selectedAmenities.push( amenity.name );
 				}
 			}
-			console.log( selectedAmenities.length );
+
+			//Only apply this filter condition if the user has selected at least 1 amenity
 			if( selectedAmenities.length ){
 
 				for( var m=0; m < selectedAmenities.length; m++ ){
-					if( !$.inArray( hotel.Amentiies, selectedAmenities[m] ) ){
+
+					if( $.inArray( hotel.Amentiies, selectedAmenities[m] == -1 ) ){
 						display = false;
 						break;
 					}
@@ -235,14 +240,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			}
 
 		}
-		*/
 
+		//TODO: Policy check
 
 		return display;
-
-		//if( $scope.filterItems.noSoldOut & hotel.isSoldOut() ){
-		//	return false;
-		//}
 
 	}
 
