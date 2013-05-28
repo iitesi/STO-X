@@ -11,13 +11,18 @@
 		<cfif nAirCount GT 1>
 			<cfset nTempCount = 0>
 			<cfoutput>
+
+				<li><a href="" class="btn btn-mini">New Search</a></li>
+
+
 				<cfloop collection="#session.filters#" index="filterSearchID">
 					<cfif session.filters[filterSearchID].getAir()>
 						<cfset nTempCount++>
 						<li>
-			                <a href="#buildURL('air.lowfare?SearchID=#filterSearchID#')#" <cfif filterSearchID EQ rc.SearchID>class="active"</cfif>>#UCase(session.filters[filterSearchID].getHeading())#</a>
+			        <a href="#buildURL('air.lowfare?SearchID=#filterSearchID#')#" <cfif filterSearchID EQ rc.SearchID>class="active"</cfif>>#UCase(session.filters[filterSearchID].getHeading())#</a>
+							<i class="icon-remove"></i>
 							<cfif nAirCount NEQ nTempCount><span class="divider">/</span></cfif>
-	                    </li>
+	          </li>
 					</cfif>
 				</cfloop>
 			</cfoutput>
