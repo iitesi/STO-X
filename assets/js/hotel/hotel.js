@@ -107,4 +107,12 @@ Hotel.prototype.hasRoomsAvailable = function(){
 	} else {
 		return false;
 	}
+
+}
+
+Hotel.prototype.isInPolicy = function(){
+
+	//TODO: Apply policy filtering
+
+	return true;
 }

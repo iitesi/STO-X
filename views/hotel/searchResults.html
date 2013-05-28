@@ -32,7 +32,7 @@
 
 
         <a href="#">Continue without hotel</a>
-        <span id="hotelcount" style="float:right;">{{hotels.length}} total properties</span>
+        <span id="hotelcount" style="float:right;"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</span>
 
         <div id="hotelcountwrapper">
             <div id="page_navigation"></div>
@@ -47,7 +47,7 @@
 <div class="container">
     <div class="eleven columns" style="height: 500px; overflow: auto;">
 
-        <div ng-repeat="hotel in hotels | limitTo: resultsPerPage | filter: hotelFilter" id="hotelResultTemplate" class="hotelRecord" style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+        <div ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter )" id="hotelResultTemplate" class="hotelRecord" style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
                 <tr>
@@ -64,19 +64,19 @@
 
                         <div class="detailLinks">
                             <div class="ui-buttonset">
-                                <label ng-click="toggleHotelDetails(hotel)" class="hotel-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <label ng-click="showHotelDetails = !ShowHotelDetails" class="hotel-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
                                     <span class="ui-button-text">Details</span>
                                 </label>
 
-                                <label ng-click="toggleAreaDetails(hotel)" class="area-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <label ng-click="showAreaDetails = !ShowAreaDetails" class="area-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
                                     <span class="ui-button-text">Area</span>
                                 </label>
 
-                                <label ng-click="toggleAmenities(hotel)" class="hotel-amenities ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <label ng-click="showAmenities = !ShowAmenities" class="hotel-amenities ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
                                     <span class="ui-button-text">Amenities</span>
                                 </label>
 
-                                <label ng-click="togglePhotos(hotel)" class="hotel-photos ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
+                                <label ng-click="showPhotos = !ShowPhotos" class="hotel-photos ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
                                     <span class="ui-button-text">Photos</span>
                                 </label>
                             </div>
@@ -89,7 +89,7 @@
                         <span class="sold-out" style="color: #FF0000; font-weight: bold;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
                                 <span class="lowest-rate" style="clear: both;">{{hotel.findLowestRoomRate()}}</span>
-                                <button ng-click="toggleRooms(hotel)" class="room-details btn btn-mini btn-primary">SEE ROOMS</button>
+                                <button ng-click="showRooms = !ShowRooms" class="room-details btn btn-mini btn-primary">SEE ROOMS</button>
                             </span>
                     </td>
                 </tr>

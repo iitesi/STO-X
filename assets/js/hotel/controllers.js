@@ -4,8 +4,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 	$scope.currentPage = 1;
 	$scope.resultsPerPage = 20;
 	$scope.totalProperties = 0;
+	$scope.hotels = [];
+	$scope.filteredHotels = [];
 
-	//Hard coded for now until we extract them from the results list
+	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.vendors = [];
 	$scope.filterItems.amenities = [];
@@ -41,72 +43,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 				}
 			}
 		});
-
-	$scope.toggleHotelDetails = function(hotel) {
-
-		if($scope.showHotelDetails) {
-			$scope.showHotelDetails = false;
-		} else {
-			$scope.showAreaDetails = false;
-			$scope.showAmenities = false;
-			$scope.showPhotos = false;
-			$scope.showRooms = false;
-			$scope.showHotelDetails = true;
-		}
-	}
-
-	$scope.toggleAreaDetails = function(hotel) {
-
-		if($scope.showAreaDetails) {
-			$scope.showAreaDetails = false;
-		} else {
-			$scope.showAmenities = false;
-			$scope.showPhotos = false;
-			$scope.showRooms = false;
-			$scope.showHotelDetails = false;
-			$scope.showAreaDetails = true;
-		}
-	}
-
-	$scope.toggleAmenities = function(hotel) {
-
-		if($scope.showAmenities) {
-
-			$scope.showAmenities = false;
-		} else {
-			$scope.showAreaDetails = false;
-			$scope.showPhotos = false;
-			$scope.showRooms = false;
-			$scope.showHotelDetails = false;
-			$scope.showAmenities = true;
-		}
-	}
-
-	$scope.togglePhotos = function(hotel) {
-
-		if($scope.showPhotos) {
-			$scope.showPhotos = false;
-		} else {
-			$scope.showAreaDetails = false;
-			$scope.showRooms = false;
-			$scope.showHotelDetails = false;
-			$scope.showAmenities = false;
-			$scope.showPhotos = true;
-		}
-	}
-
-	$scope.toggleRooms = function(hotel) {
-
-		if($scope.showRooms) {
-			$scope.showRooms = false;
-		} else {
-			$scope.showAreaDetails = false;
-			$scope.showHotelDetails = false;
-			$scope.showAmenities = false;
-			$scope.showPhotos = false;
-			$scope.showRooms = true;
-		}
-	}
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -193,6 +129,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 		$scope.filterItems.inPolicyOnly = false;
 	}
 
+	$scope.filtersApplied = function(){
+		if( $scope.filteredHotels.length && $scope.filteredHotels.length < $scope.hotels.length){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	$scope.hotelFilter = function( hotel ){
 
 		var display = true;
@@ -228,20 +171,36 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			}
 
 			//Only apply this filter condition if the user has selected at least 1 amenity
+
 			if( selectedAmenities.length ){
 
 				for( var m=0; m < selectedAmenities.length; m++ ){
 
-					if( $.inArray( hotel.Amentiies, selectedAmenities[m] == -1 ) ){
+					//This is sub-optimal, but jQuery's inArray() is failing me for some reason
+					var found = false;
+
+					for( var n=0; n < hotel.Amenities.length; n++){
+						if( selectedAmenities[m].toString().toLowerCase() == hotel.Amenities[n].toString().toLowerCase() ){
+							found = true;
+							break;
+						}
+					}
+
+					if( found == false ){
 						display = false;
 						break;
 					}
 				}
 			}
-
 		}
 
-		//TODO: Policy check
+		//Policy check
+		if( display ){
+
+			if( $scope.filterItems.inPolicyOnly && hotel.roomsReturned && !hotel.isInPolicy() ){
+				display = false;
+			}
+		}
 
 		return display;
 
