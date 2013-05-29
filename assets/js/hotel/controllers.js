@@ -9,6 +9,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.search = {};
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
+	$scope.errors = [];
+	$scope.messages = [];
 
 
 	//Collection of items that we can filter our hotel results by
@@ -27,19 +29,19 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	}
 
 	$scope.updateSearch = function(){
+		$('#searchWindow').modal('show');
 		Search.updateSearch( $scope.search )
 			.then( function(result){
 
 				if( result.success ){
 					$scope.search = result.data;
 					$scope.getSearchResults();
-				} else {
-					if( result.errors.length ){
-						alert( result.errors.length + " errors occurred" )
-					}
 				}
 
+				$scope.errors = result.errors;
+				$scope.messages = result.messages;
 
+				$('#searchWindow').modal('hide')
 			} )
 	}
 
