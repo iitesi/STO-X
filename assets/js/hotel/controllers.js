@@ -61,6 +61,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 				for( var i=0; i<$scope.resultsPerPage; i++ ){
 					$scope.getHotelRates( $scope.hotels[i] );
 				}
+
+				$('#searchWindow').modal('hide');
 			});
 	}
 
@@ -289,7 +291,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
     	$scope.map.entities.push( pin );
 	}
 
-
+	$('#searchWindow').modal('show');
 	$scope.loadSearch( $scope.searchId );
 
 	$scope.getSearchResults();

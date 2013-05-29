@@ -146,7 +146,7 @@
     <div id="myModalBody" class="modal-body">
         <p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
         <p>
-            We are finding hotels closest **hotel location** {{search.checkInDate}} - {{search.checkOutDate}}.
+            We are finding hotels closest **hotel location** {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
         </p>
         <p>
             Tip: Double click on the map to update your search with hotels available in other areas of the city.
