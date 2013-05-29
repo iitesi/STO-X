@@ -38,6 +38,7 @@
         <script src="assets/js/hotel/hotel.js"></script>
         <script src="assets/js/angular.min.js"></script>
         <script src="assets/js/angular-resource.min.js"></script>
+        <script src="assets/js/purl.js"></script>
         <script src="assets/js/hotel/services.js"></script>
         <script src="assets/js/hotel/controllers.js"></script>
         <script src="assets/js/hotel/app.js" />

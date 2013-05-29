@@ -1,11 +1,15 @@
 var controllers = angular.module('app.controllers',[]);
 
-controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, Search ){
+controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
+
+	$scope.searchId = $.url().param( 'SearchID' );
 	$scope.currentPage = 1;
 	$scope.resultsPerPage = 20;
 	$scope.totalProperties = 0;
+	$scope.search = {};
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
+
 
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
@@ -14,18 +18,22 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 
-	Search.getSearch( $routeParams.searchId )
+	Search.getSearch( $scope.searchId )
 		.then( function( result ){
-			$scope.search = result;
-
-			//$scope.mapCenter = new Microsoft.Maps.Location( result.hotelLat, result.hotelLong);
-			//console.log( $scope.mapCenter );
-			//$scope.mapOptions = {height: 450, width: 450, credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA", mapCenter: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, enableSearchLogo: false, zoom: 12}
-			//$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
-			//$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: 'assets/img/mapCenter.png', zIndex:-51}));
+			$scope.search = result.data;
+			$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
+			$scope.mapOptions = {
+				height: 500,
+				width: 600,
+				credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
+				enableSearchLogo: false
+				}
+			$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
+			$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
+			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: 'assets/img/mapCenter.png', zIndex:-51}));
 
 		});
-	Search.doSearch( $routeParams.searchId )
+	Search.doSearch( $scope.searchId )
 		.then( function(result){
 			$scope.hotels = result;
 			$scope.totalProperties = result.length;
@@ -39,10 +47,27 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			//Fire off calls to get room rates for these hotels
 			for( var i=0; i<$scope.resultsPerPage; i++ ){
 				if( !$scope.hotels[i].roomsReturned ){
-					Search.getHotelRates( $routeParams.searchId, $scope.hotels[i] );
+					Search.getHotelRates( $scope.searchId, $scope.hotels[i] );
 				}
 			}
+
 		});
+
+	$scope.$watch( "filteredHotels.length + currentPage", function(newValue){
+
+		if( $scope.filteredHotels.length && typeof $scope.map != 'undefined'){
+			//Clear pins from map
+			$scope.map.entities.clear();
+
+			//Plot pins on map
+			for( var i=0; i < $scope.filteredHotels.length; i++ ){
+				var hotel = $scope.filteredHotels[i];
+				var address = hotel.Address + ', ' + hotel.City + ' ' + hotel.State + ' ' + hotel.Zip;
+				$scope.addPin( i+1, hotel.Lat, hotel.Long, hotel.propertyName, address );
+			}
+		}
+
+	}, true)
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -136,6 +161,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 			return false;
 		}
 	}
+
 	$scope.hotelFilter = function( hotel ){
 
 		var display = true;
@@ -204,6 +230,23 @@ controllers.controller( "HotelCtrl", function( $scope, $location, $routeParams, 
 
 		return display;
 
+	}
+
+	$scope.addPin = function( propertyNumber, lat, long, propertyName, propertyAddress ){
+
+    	var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location( lat, long ), {text:propertyNumber.toString(), visible:true});
+    	pin.title = propertyName;
+    	pin.description = propertyAddress;
+    	Microsoft.Maps.Events.addHandler(pin, 'click', function(){
+			var infoboxTitle = $('#infoboxTitle')[0];
+			infoboxTitle.innerHTML = pin.title;
+			var infoboxDescription = $('#infoboxDescription')[0];
+			infoboxDescription.innerHTML = pin.description;
+			var infobox2 = $('#infoBox')[0];
+			infobox2.style.visibility = "visible";
+			$('#mapDiv').append(infobox2);
+		});
+    	$scope.map.entities.push( pin );
 	}
 
 });
