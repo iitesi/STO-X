@@ -66,11 +66,12 @@ Hotel.prototype.populate = function( obj ){
 
     //Populate the Ameneities array from the list in the database
     if( this.AmenitiesList.length ){
-
         if( this.AmenitiesList.charAt(0) == "|"){
             this.AmenitiesList = this.AmenitiesList.slice( 1 );
         }
-        this.Amenities = this.AmenitiesList.split("|")
+
+        var unsortedAmenities =
+        this.Amenities = this.AmenitiesList.split("|" ).sort();
 
     }
 }

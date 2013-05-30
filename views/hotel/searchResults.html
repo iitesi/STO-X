@@ -61,7 +61,7 @@
 <div class="container">
     <div class="eleven columns" style="height: 500px; overflow: auto;">
 
-        <div ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter )" id="hotelResultTemplate" class="hotelRecord" style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+        <div ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter )"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
                 <tr>
@@ -76,52 +76,39 @@
                         <div class="hotelAddress" style="width: 100%; clear: both; font-size: 11px;">{{hotel.Address}}, {{hotel.City}}, {{hotel.State}}</div>
                         <div class="hotelDistance" style="width: 100%; clear: both; font-size: 11px; font-weight: bolder;">{{hotel.distance}} miles</div>
 
-                        <div class="detailLinks">
-                            <div class="ui-buttonset">
-                                <label ng-click="showHotelDetails = !ShowHotelDetails" class="hotel-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
-                                    <span class="ui-button-text">Details</span>
-                                </label>
-
-                                <label ng-click="showAreaDetails = !ShowAreaDetails" class="area-details ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
-                                    <span class="ui-button-text">Area</span>
-                                </label>
-
-                                <label ng-click="showAmenities = !ShowAmenities" class="hotel-amenities ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
-                                    <span class="ui-button-text">Amenities</span>
-                                </label>
-
-                                <label ng-click="showPhotos = !ShowPhotos" class="hotel-photos ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-disabled="false">
-                                    <span class="ui-button-text">Photos</span>
-                                </label>
-                            </div>
-
+                        <div class="btn-group">
+                            <button ng-click="showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
+                            <button ng-click="showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
+                            <button ng-click="showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
+                            <button ng-click="showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
                         </div>
-
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
                         <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="hotel.roomsReturned">
                         <span class="sold-out" style="color: #FF0000; font-weight: bold;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
                                 <span class="lowest-rate" style="clear: both;">{{hotel.findLowestRoomRate()}}</span>
-                                <button ng-click="showRooms = !ShowRooms" class="room-details btn btn-mini btn-primary">SEE ROOMS</button>
+                                <button
+                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy()}"
+                                    ng-click="showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;" class="btn btn-mini btn-primary">SEE ROOMS</button>
                             </span>
                     </td>
                 </tr>
-                <tr class="hotel-panel hotel-details" ng-show="showHotelDetails">
+                <tr ng-show="showHotelDetails">
                     <td colspan="3" class="hotel-details"><b>Hotel Details</b></td>
                 </tr>
-                <tr class="hotel-panel area-details" ng-show="showAreaDetails">
+                <tr ng-show="showAreaDetails">
                     <td colspan="3" class="area-details"><b>Area Details</b></td>
                 </tr>
-                <tr class="hotel-panel amenities" ng-show="showAmenities">
+                <tr ng-show="showAmenities">
                     <td colspan="3" class="amenities"><b>Amenities</b><br>
-                        <span ng-repeat="amenity in hotel.Amenities">{{amenity}}<br></span>
+                        <span ng-repeat="amenity in hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
                     </td>
                 </tr>
-                <tr class="hotel-panel photos" ng-show="showPhotos">
+                <tr ng-show="showPhotos">
                     <td colspan="3" class="photos"><b>Photos</b></td>
                 </tr>
-                <tr class="hotel-panel rooms" ng-show="showRooms">
+                <tr ng-show="showRooms">
                     <td colspan="3" class="rooms"><b>Rooms</b><br>
                         <span ng-repeat="room in hotel.rooms">{{room.description}} - {{room.dailyRate}}<br></span>
                     </td>
@@ -135,7 +122,6 @@
     <div class="ten columns" id="mapDiv" style="height: 500px;" >
     </div>
 </div>
-
 
 <!--- Modal window to be displayed while search is occurring. --->
 <div id="searchWindow" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
