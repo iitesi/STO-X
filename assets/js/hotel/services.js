@@ -1,12 +1,17 @@
 var services = angular.module('app.services', [])
 
-services.factory( "Search", function($http ){
+services.factory( "Search", function( $http ){
 	var Search = function(data) { angular.extend(this, data); };
 
 	Search.getSearch = function( searchId ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + searchId )
 			.then( function(response) { return response.data });
 
+	}
+
+	Search.updateSearch = function( search ){
+		return $http.get( "/booking/RemoteProxy.cfc?method=updateSearch&searchId=" + search.searchID + "&hotelLat=" + search.hotelLat + "&hotelLong=" + search.hotelLong )
+			.then( function(response) { return response.data });
 	}
 
 	Search.doSearch = function( searchId ) {

@@ -96,6 +96,32 @@
 
     </cffunction>
 
+	<cffunction name="updateSearch" access="remote" output="false" returntype="any" returnFormat="json" hint="">
+
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+
+		<cftry>
+
+			<cfset var Search = getBean( "SearchService" ).save( argumentCollection = arguments ) />
+
+			<cfif isNumeric( Search.getSearchID() ) AND Search.getSearchID() > 0>
+				<cfset result.setData( Search ) />
+			<cfelse>
+				<cfset result.addError( "Unable to update the specified search." ) />
+				<cfset result.setSuccess( false ) />
+			</cfif>
+
+			<cfcatch type="any">
+				<cfset result.addError( "An error occurred while updating the specified search." ) />
+				<cfset result.setSuccess( false ) />
+			</cfcatch>
+
+		</cftry>
+
+        <cfreturn result />
+
+	</cffunction>
+
     <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
 

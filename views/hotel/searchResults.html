@@ -1,3 +1,18 @@
+<div class="container">
+
+    <!--Errors row-->
+    <div class="eleven columns alert alert-error" ng-show="errors.length">
+        <span ng-repeat="error in errors">{{error}}</span>
+    </div>
+
+    <!--Messages row-->
+    <div class="eleven columns alert alert-info" ng-show="messages.length">
+        <span ng-repeat="message in messages">{{message}}</span>
+    </div>
+
+</div>
+
+
 <!---First row--->
 <div class="container">
         <div class="eleven columns">
@@ -119,5 +134,22 @@
     </div>
 
     <div class="ten columns" id="mapDiv" style="height: 500px;" >
+    </div>
+</div>
+
+
+<!--- Modal window to be displayed while search is occurring. --->
+<div id="searchWindow" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+    <div class="modal-header">
+        <h3 id="myModalHeader">Please Wait</h3>
+    </div>
+    <div id="myModalBody" class="modal-body">
+        <p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
+        <p>
+            We are finding hotels closest **hotel location** {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
+        </p>
+        <p>
+            Tip: Double click on the map to update your search with hotels available in other areas of the city.
+        </p>
     </div>
 </div>

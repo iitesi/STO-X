@@ -9,6 +9,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.search = {};
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
+	$scope.errors = [];
+	$scope.messages = [];
 
 
 	//Collection of items that we can filter our hotel results by
@@ -18,40 +20,57 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 
-	Search.getSearch( $scope.searchId )
-		.then( function( result ){
-			$scope.search = result.data;
-			$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
-			$scope.mapOptions = {
-				height: 500,
-				width: 600,
-				credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
-				enableSearchLogo: false
+	$scope.loadSearch = function( searchId ){
+		Search.getSearch( $scope.searchId )
+			.then( function( result ){
+				$scope.search = result.data;
+				$scope.initializeMap();
+			});
+	}
+
+	$scope.updateSearch = function(){
+		$('#searchWindow').modal('show');
+		Search.updateSearch( $scope.search )
+			.then( function(result){
+
+				if( result.success ){
+					$scope.search = result.data;
+					$scope.getSearchResults();
 				}
-			$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
-			$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
-			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: 'assets/img/mapCenter.png', zIndex:-51}));
 
-		});
-	Search.doSearch( $scope.searchId )
-		.then( function(result){
-			$scope.hotels = result;
-			$scope.totalProperties = result.length;
+				$scope.errors = result.errors;
+				$scope.messages = result.messages;
 
-			//Build vendor array for filter
-			$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
+				$('#searchWindow').modal('hide')
+			} )
+	}
 
-			//Build the amenities array for filter
-			$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result );
+	$scope.getSearchResults = function(){
+		Search.doSearch( $scope.searchId )
+			.then( function(result){
+				$scope.hotels = result;
+				$scope.totalProperties = result.length;
 
-			//Fire off calls to get room rates for these hotels
-			for( var i=0; i<$scope.resultsPerPage; i++ ){
-				if( !$scope.hotels[i].roomsReturned ){
-					Search.getHotelRates( $scope.searchId, $scope.hotels[i] );
+				//Build vendor array for filter
+				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
+
+				//Build the amenities array for filter
+				$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result );
+
+				//Fire off calls to get room rates for these hotels
+				for( var i=0; i<$scope.resultsPerPage; i++ ){
+					$scope.getHotelRates( $scope.hotels[i] );
 				}
-			}
 
-		});
+				$('#searchWindow').modal('hide');
+			});
+	}
+
+	$scope.getHotelRates = function( Hotel ){
+		if( !Hotel.roomsReturned ){
+			Search.getHotelRates( $scope.searchId, Hotel );
+		}
+	}
 
 	$scope.$watch( "filteredHotels.length + currentPage", function(newValue){
 
@@ -232,6 +251,29 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
 	}
 
+	$scope.initializeMap = function(){
+
+		$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
+		$scope.mapOptions = {
+			height: 500,
+			width: 600,
+			credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
+			enableSearchLogo: false
+			}
+		$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
+		$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
+		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: 'assets/img/mapCenter.png', zIndex:-51}));
+
+		Microsoft.Maps.Events.addHandler( $scope.map, "dblclick", function(e){
+			var center = $scope.map.getCenter();
+			$scope.search.hotelLat = center.latitude;
+			$scope.search.hotelLong = center.longitude;
+
+			$scope.updateSearch();
+		})
+
+	}
+
 	$scope.addPin = function( propertyNumber, lat, long, propertyName, propertyAddress ){
 
     	var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location( lat, long ), {text:propertyNumber.toString(), visible:true});
@@ -249,4 +291,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
     	$scope.map.entities.push( pin );
 	}
 
+	$('#searchWindow').modal('show');
+	$scope.loadSearch( $scope.searchId );
+
+	$scope.getSearchResults();
 });
