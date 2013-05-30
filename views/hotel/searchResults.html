@@ -90,7 +90,10 @@
                                 <span class="lowest-rate" style="clear: both;">{{hotel.findLowestRoomRate()}}</span>
                                 <button
                                     ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy()}"
-                                    ng-click="showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;" class="btn btn-mini btn-primary">SEE ROOMS</button>
+                                    ng-click="showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;" class="btn btn-mini btn-primary">
+                                    <span ng-show="showRooms">HIDE ROOMS</span>
+                                    <span ng-show="!showRooms">SHOW ROOMS</span>
+                                </button>
                             </span>
                     </td>
                 </tr>
