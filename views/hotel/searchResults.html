@@ -15,36 +15,35 @@
 
 <!---First row--->
 <div class="container">
-        <div class="eleven columns">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <a class="brand" href="#">Filter By</a>
-                    <ul class="nav">
+    <div class="eleven columns">
+        <span id="filterBarTitle">Filter By</span>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav">
 
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="vendor in filterItems.vendors">
-                                    <input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Amenities<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="amenity in filterItems.amenities">
-                                    <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
-                                </li>
-                            </ul>
-                        </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="vendor in filterItems.vendors">
+                                <input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Amenities<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="amenity in filterItems.amenities">
+                                <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
+                            </li>
+                        </ul>
+                    </li>
 
-                        <li><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
-                        <li><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
-                        <li><a ng-click="clearFilters()">Clear Filters</a></li>
-                    </ul>
-                </div>
+                    <li><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
+                    <li><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
+                    <li><a ng-click="clearFilters()">Clear Filters</a></li>
+                </ul>
             </div>
-
+        </div>
 
         <a href="#">Continue without hotel</a>
         <span id="hotelcount" style="float:right;"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</span>

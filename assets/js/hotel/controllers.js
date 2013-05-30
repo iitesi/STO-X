@@ -2,6 +2,7 @@ var controllers = angular.module('app.controllers',[]);
 
 controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
+	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
 	$scope.currentPage = 1;
 	$scope.resultsPerPage = 20;
@@ -12,7 +13,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.errors = [];
 	$scope.messages = [];
 
-
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.vendors = [];
@@ -20,6 +20,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 
+
+	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
 		Search.getSearch( $scope.searchId )
 			.then( function( result ){
@@ -291,7 +293,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
     	$scope.map.entities.push( pin );
 	}
 
+
+	/* Items executed when controller is loaded */
+
 	$('#searchWindow').modal('show');
+
 	$scope.loadSearch( $scope.searchId );
 
 	$scope.getSearchResults();
