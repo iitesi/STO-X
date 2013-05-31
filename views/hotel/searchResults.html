@@ -12,6 +12,13 @@
 
 </div>
 
+<!--Page title row-->
+<div class="container">
+   <div class="page-header">
+        <h1><a href="/booking/index.cfm?action=air.lowfare&amp;SearchID={{searchId}}">Raleigh Durham Intl Arpt (RDU), Morrisville, NC :: Fri Aug 2 - Fri Aug 9</a></h1>
+    </div>
+</div>
+
 
 <!---First row--->
 <div class="container">
@@ -46,14 +53,10 @@
         </div>
 
         <div style="float: left">
-            <div class="pagination pagination-small">
-                <ul>
-                    <li ng-class="{'disabled': currentPage == 1}"><a ng-click="currentPage = currentPage - 1" >Prev</a></li>
-                    <li ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': $parent.currentPage==$index+1}"><a ng-click="$parent.currentPage=$index+1">{{$index+1}}</a></li>
-                    <li ng-class="{'disabled': currentPage == calculatePages()}"><a ng-click="currentPage = currentPage + 1">Next</a></li>
-                </ul>
-            </div>
-            <a href="#">Continue without hotel</a>
+            <span ng-hide="currentPage == 1"><a href="javascript: void(0)" ng-click="currentPage = currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+            <span ng-hide="currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="currentPage = currentPage + 1">Next Page >></a></span>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
 
 
@@ -135,12 +138,22 @@
     <div class="ten columns" id="mapDiv" style="height: 500px;" >
     </div>
 </div>
- <div class="pagination pagination-small">
-    <ul>
-        <li ng-class="{'disabled': currentPage == 1}"><a ng-click="currentPage = currentPage - 1" >Prev</a></li>
-        <li ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': $parent.currentPage==$index+1}"><a ng-click="$parent.currentPage=$index+1">{{$index+1}}</a></li>
-        <li ng-class="{'disabled': currentPage == calculatePages()}"><a ng-click="currentPage = currentPage + 1">Next</a></li>
-    </ul>
+
+<!--Bottom row under search results and map-->
+<div class="container">
+    <div class="eleven columns">
+
+        <div style="float: left">
+            <span ng-hide="currentPage == 1"><a href="javascript: void(0)" ng-click="currentPage = currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+            <span ng-hide="currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="currentPage = currentPage + 1">Next Page >></a></span>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
+        </div>
+
+    </div>
+    <div class="eleven columns">
+        &nbsp;
+    </div>
 </div>
 
 <!--- Modal window to be displayed while search is occurring. --->
