@@ -609,7 +609,7 @@ function filterCar(howFilter) {
 
 	return nCount;
 }
-$(document).ready(function() {
+/* $(document).ready(function() {
 	$("#overlay").jqm({
 		modal: true,
 		ajax: "@href",
@@ -620,7 +620,7 @@ $(document).ready(function() {
 		overlay:75
 	});
 
-});
+}); */
 
 /* CouldYou */
 
