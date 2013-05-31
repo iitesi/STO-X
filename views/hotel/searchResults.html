@@ -22,7 +22,7 @@
                 <ul class="nav">
 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
+                        <a href="#"class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li ng-repeat="vendor in filterItems.vendors">
                                 <input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}
@@ -38,19 +38,29 @@
                         </ul>
                     </li>
 
-                    <li><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
-                    <li><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
+                    <li ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
+                    <li ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
                     <li><a ng-click="clearFilters()">Clear Filters</a></li>
                 </ul>
             </div>
         </div>
 
-        <a href="#">Continue without hotel</a>
-        <span id="hotelcount" style="float:right;"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</span>
-
-        <div id="hotelcountwrapper">
-            <div id="page_navigation"></div>
+        <div style="float: left">
+            <div class="pagination pagination-small">
+                <ul>
+                    <li ng-class="{'disabled': currentPage == 1}"><a ng-click="currentPage = currentPage - 1" >Prev</a></li>
+                    <li ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': $parent.currentPage==$index+1}"><a ng-click="$parent.currentPage=$index+1">{{$index+1}}</a></li>
+                    <li ng-class="{'disabled': currentPage == calculatePages()}"><a ng-click="currentPage = currentPage + 1">Next</a></li>
+                </ul>
+            </div>
+            <a href="#">Continue without hotel</a>
         </div>
+
+
+
+        <div style="float:right;"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</div>
+
+
     </div>
     <div class="eleven columns">
         &nbsp;
@@ -61,7 +71,7 @@
 <div class="container">
     <div class="eleven columns" style="height: 500px; overflow: auto;">
 
-        <div ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter )"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+        <div ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter ) |  limitTo: resultsPerPage"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
                 <tr>
@@ -89,7 +99,7 @@
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
                                 <span class="lowest-rate" style="clear: both;">{{hotel.findLowestRoomRate()}}</span>
                                 <button
-                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy()}"
+                                    ng-class="{'btn': true, 'btn-primary': hotel.isInPolicy()}"
                                     ng-click="showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;" class="btn btn-mini btn-primary">
                                     <span ng-show="showRooms">HIDE ROOMS</span>
                                     <span ng-show="!showRooms">SHOW ROOMS</span>
@@ -124,6 +134,13 @@
 
     <div class="ten columns" id="mapDiv" style="height: 500px;" >
     </div>
+</div>
+ <div class="pagination pagination-small">
+    <ul>
+        <li ng-class="{'disabled': currentPage == 1}"><a ng-click="currentPage = currentPage - 1" >Prev</a></li>
+        <li ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': $parent.currentPage==$index+1}"><a ng-click="$parent.currentPage=$index+1">{{$index+1}}</a></li>
+        <li ng-class="{'disabled': currentPage == calculatePages()}"><a ng-click="currentPage = currentPage + 1">Next</a></li>
+    </ul>
 </div>
 
 <!--- Modal window to be displayed while search is occurring. --->

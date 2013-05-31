@@ -61,7 +61,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
 				//Fire off calls to get room rates for these hotels
 				for( var i=0; i<$scope.resultsPerPage; i++ ){
-					$scope.getHotelRates( $scope.hotels[i] );
+					try{
+						$scope.getHotelRates( $scope.hotels[i] );
+					}
+					catch( err ){
+
+					}
+
 				}
 
 				$('#searchWindow').modal('hide');
@@ -293,7 +299,17 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
     	$scope.map.entities.push( pin );
 	}
 
-
+	$scope.calculatePages = function(){
+		var pages = $scope.filteredHotels.length / $scope.resultsPerPage;
+		if ( pages%1 > 0 ){
+			pages = parseInt( pages );
+			pages++;
+		}
+		return pages;
+	}
+	$scope.numberToArray = function( num ){
+		return new Array( num );
+	}
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
