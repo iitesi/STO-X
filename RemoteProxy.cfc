@@ -137,6 +137,13 @@
 
     </cffunction>
 
+	<cffunction name="getHotelDetails" access="public" output="false" returntype="any" returnformat="json" hint="I get the extended details for a particular hotel">
+		<cfargument name="propertyId" type="numeric" requred="true" />
+
+
+
+	</cffunction>
+
     <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="accountId" type="numeric" required="true" />
 
