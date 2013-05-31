@@ -1,13 +1,13 @@
-<div class="page-header">
-	<cfoutput>
-		<h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a></h1>
-	</cfoutput>
-</div>
-<cfoutput>
-	#view('car/filter')#
-</cfoutput>
 <cfif (rc.Filter.getAir() AND structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air'))
 OR NOT rc.Filter.getAir()>
+	<div class="page-header">
+		<cfoutput>
+			<h1><a href="#buildURL('car.availability&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a></h1>
+		</cfoutput>
+	</div>
+	<cfoutput>
+		#view('car/filter')#
+	</cfoutput>
 	<br clear="both" />
 	<cfoutput>
 		<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
@@ -99,6 +99,6 @@ OR NOT rc.Filter.getAir()>
 	</cfoutput>
 <cfelse>
 	<cfoutput>
-		#View('car/error')#
+		#view('car/error')#
 	</cfoutput>
 </cfif>

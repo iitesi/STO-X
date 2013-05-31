@@ -1,12 +1,39 @@
+<cfhtmlhead text="
+	<script type='text/javascript' src='assets/js/bootstrap-datepicker.js'></script>
+	<script type='text/javascript' src='assets/js/date.format.js'></script>
+	<script type='text/javascript' src='assets/js/select2.min.js'></script>
+	<script type='text/javascript' src='assets/localdata/airports-us.js'></script>
+	<script type='text/javascript' src='assets/js/car/search.js'></script>
+	<link rel='stylesheet' type='text/css' href='assets/css/datepicker.css' />
+	<link rel='stylesheet' type='text/css' href='assets/css/select2.css' />
+	<link rel='stylesheet' type='text/css' href='assets/css/search.css' />
+	<style type='text/css'>
+		.searchContainer {
+			max-width: 680px;
+			width: 680px;			
+		}
+		.modal {
+			position: absolute;
+			top: 10%;
+			width: 680px;
+			height: 600px;
+			margin: -80px 0px 0 -360px;
+		}
+		.modal.fade.in {
+			top: 0;
+		}
+		.modal-body {
+			overflow-y: auto;
+		}
+	</style>
+" />
+
 <cfparam name="rc.filter" default="">
 
-<!--- <a href="#" id="displayModal">CHANGE YOUR SEARCH</a>
-<div id="modalWindow" class="modal hide fade in" data-url="<cfoutput>#buildURL('modal.default')#&SearchID=#rc.SearchID#</cfoutput>" data-header="Change Car Search">
-	<div id="modalContainer"></div>
-</div> --->
-
-<!--- It gets more complicated if you want to do form submission from the modal.
-The biggest thing is you need to handle server side errors. We did this by having the server return a json object with a result code and the partial view (populated with model errors) as a string when an error needed to be displayed. --->
+<a href="##displaySearchWindow" id="displayModal" data-toggle="modal">CHANGE YOUR SEARCH</a>
+<cfoutput>
+	#view('car/search')#
+</cfoutput>
 
 <ul id="filter">
 	<table>
@@ -101,11 +128,14 @@ $(document).ready(function() {
 	/* $("#displayModal").click(function() {
 		var url = $("#modalWindow").data("url");
 		var modalHeader = $("#modalWindow").data("header");
-			alert(url);
+		var modalBody = $("#modalWindow").data("view");
+		var modalHeight = $("#modalWindow").data("height");
+		var modalWidth = $("#modalWindow").data("width");
 
 		$.get(url, function(data) {
 			$("#modalContainer").html(data);
-			$(".modal-header #myModalHeader").val(modalHeader);
+			$(".modal-header #myModalHeader").html(modalHeader);
+			$(".modal-body #myIFrame").attr('src', modalBody).attr('height', modalHeight).attr('width', modalWidth);
 
 			$("#modalWindow").modal("show");
 		});
