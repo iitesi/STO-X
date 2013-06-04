@@ -9,11 +9,11 @@
 	    <constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
     </bean>
 
-	<bean id="setup" class="booking.services.setup" />
+	<bean id="setup" class="booking.services.setup" >
+	    <constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+	</bean>
 
 	<bean id="General" class="booking.services.general" />
-
-    <bean id="CacheManager" class="com.shortstravel.CacheManager" />
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
@@ -23,7 +23,6 @@
     <bean id="AccountService" class="com.shortstravel.account.AccountService">
         <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
         <constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
-        <constructor-arg name="CacheManager"><ref bean="CacheManager" /> </constructor-arg>
     </bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
@@ -59,6 +58,8 @@
         <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
+
+    <bean id="VehicleService" class="com.travelport.vehicle.VehicleService"/>
 
     <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
         <constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
@@ -96,6 +97,7 @@
 
 	<bean id="car" class="booking.services.car" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="VehicleService"><ref bean="VehicleService" /></constructor-arg>
 	</bean>
 
 	<bean id="couldyou" class="booking.services.couldyou" >

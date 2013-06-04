@@ -14,6 +14,9 @@
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset rc.sPriority = 'HIGH'>
 			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+			<!--- Below two lines used for populating the change search form. --->
+			<cfset arguments.rc.search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
+			<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria(argumentcollection=arguments.rc) />
 		<cfelse>
 			<cfset fw.getBeanFactory().getBean('car').selectCar(argumentcollection=arguments.rc)>
 		</cfif>
@@ -34,4 +37,25 @@
 		<cfreturn />
 	</cffunction>
 	
+<!--- search --->
+	<!--- <cffunction name="search" output="false">
+		<cfargument name="rc">
+
+		<cfset rc.bSuppress = 1 />
+
+		<cfset arguments.rc.search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
+		<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria(argumentcollection=arguments.rc) />
+
+		<cfreturn />
+	</cffunction> --->
+
+<!--- changeSearch --->
+	<!--- <cffunction name="changeSearch" output="false">
+		<cfargument name="rc">
+
+		<cfset fw.getBeanFactory().getBean('car').updateSearch(argumentcollection=arguments.rc) />
+
+		<cfreturn />
+	</cffunction> --->
+
 </cfcomponent>

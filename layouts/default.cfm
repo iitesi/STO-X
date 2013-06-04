@@ -41,7 +41,7 @@
 				<script src="assets/js/purl.js"></script>
 				<script src="assets/js/hotel/services.js"></script>
 				<script src="assets/js/hotel/controllers.js"></script>
-				<script src="assets/js/hotel/app.js" />
+				<script src="assets/js/hotel/app.js"></script>
 				<script src="assets/js/booking.js"></script><!---Custom--->
 		</head>
 
