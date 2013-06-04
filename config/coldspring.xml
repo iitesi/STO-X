@@ -9,7 +9,9 @@
 	    <constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
     </bean>
 
-	<bean id="setup" class="booking.services.setup" />
+	<bean id="setup" class="booking.services.setup" >
+	    <constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+	</bean>
 
 	<bean id="General" class="booking.services.general" />
 
