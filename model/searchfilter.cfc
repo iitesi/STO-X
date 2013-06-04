@@ -5,7 +5,6 @@
 	<cfproperty name="AirHeading">
 	<cfproperty name="Airlines">
 	<cfproperty name="AirType">
-	<cfproperty name="Arrival_City">
 	<cfproperty name="ArrivalCity">
 	<cfproperty name="ArrivalDate">
 	<cfproperty name="ArrivalType">

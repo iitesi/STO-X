@@ -64,11 +64,18 @@
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
 			</cfquery>
+
+
+
 			<cfif getsearch.Air_Type EQ 'MD'>
 				<cfquery name="local.getsearchlegs">
-				SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
-				FROM Searches_Legs
-				WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+					SELECT Depart_City
+						, Arrival_City
+						, Depart_DateTime
+						, Depart_TimeType
+					FROM Searches_Legs
+					WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
+					ORDER BY Depart_DateTime
 				</cfquery>
 			</cfif>
 
@@ -137,38 +144,80 @@
 					</cfif>
 			</cfquery>
 
-			<!--- Round trip tab --->
-			<cfif getsearch.Air AND getsearch.Air_Type EQ 'RT'>
-				<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' to '&DateFormat(getsearch.Arrival_DateTime, 'm/d'))>
-				<cfelse>
-					<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-				</cfif>
-				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
-				<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-				<cfset searchfilter.addLeg(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
-			<!--- One way trip tab --->
-			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'OW'>
-				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
-				<!---<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>--->
-			<!--- Multi destination trip tab --->
-			<cfelseif getsearch.Air AND getsearch.Air_Type EQ 'MD'>
-				<!---<cfset searchfilter.setDestination('')>
-				<cfset searchfilter.setHeading(getsearch.Depart_City&'-'&getsearch.Arrival_City&' '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-				<cfset tab.Heading = getsearch.Depart_City&'-'&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')&' '>--->
-				<!---<cfset tab.Legs[0] = getsearch.Depart_City&' to '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d')>
-				<cfloop query="getsearchlegs">
-					<cfset tab.Heading = tab.Heading&getsearchlegs.Depart_City&'-'&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')&' '>
-					<cfset tab.Legs[getsearchlegs.CurrentRow] = getsearchlegs.Depart_City&' to '&getsearchlegs.Arrival_City&' on '&DateFormat(getsearchlegs.Depart_DateTime, 'ddd, m/d')>
-				</cfloop>--->
+			<cfif getsearch.Air>
+				<cfswitch expression="#getsearch.Air_Type#">
+					<!---
+					airHeading - page header
+					heading - used in breadcrumb
+					--->
+
+					<!--- Round trip tab --->
+					<cfcase value="RT">
+						<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
+							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')# - #DateFormat(getsearch.Arrival_DateTime, 'ddd mmm d')#")>
+							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')# - #DateFormat(getsearch.Arrival_DateTime, 'm/d')#")>
+						<cfelse>
+							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) ::: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
+							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
+						</cfif>
+						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLeg(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
+					</cfcase>
+
+					<!--- One way --->
+					<cfcase value="OW">
+						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) ::: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
+						<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
+						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+					</cfcase>
+
+					<!--- Multi-city --->
+
+					<!---
+					* Raleigh Durham (RDU) to Miami (MIA) to Atlanta (ATL) :::  Tue Jun 4 – Thurs Jun 6
+					* Outbound city – first destination – second destination (the logic would be to take either the next origin or destination city, and not repeat the same city already listed).  And, show first depart and last return date.
+					* Set a limit of 3 and  add “…” if there are more:
+
+					Depart_City	Arrival_City	Depart_DateTime	Depart_TimeType
+					RDU	MIA	2013-06-05 00:00:00.000	D
+					MIA	ATL	2013-06-07 00:00:00.000	D
+					ATL	RDU	2013-06-09 00:00:00.000	D
+
+Multi-City
+Raleigh Durham (RDU) to Miami (MIA) to Atlanta (ATL) ::: Tue Jun 4 – Thurs Jun 6
+Outbound city – first destination – second destination (the logic would be to take either the next origin or destination city, and not repeat the same city already listed). And, show first depart and last return date.
+Set a limit of 3 and add “…” if there are more:
+Raleigh Durham (RDU) to Miami (MIA) to Atlanta (ATL) … ::: Tue Jun 4 – Thurs Jun 6
+					--->
+
+					<cfcase value="MD" >
+						<cfset local.tempAirheading = "Air Heading">
+						<cfset local.tempHeading = "Breadcrumb">
+
+						<cfloop query="getsearchlegs">
+							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
+						</cfloop>
+<!---
+Legs
+Array
+1
+string	RDU - ATL on Mon, 6/10
+2
+string	ATL - MIA on Wed, 6/12
+3
+string	MIA - RDU on Fri, 6/14 --->
+
+
+						<cfset searchfilter.setAirHeading(tempAirheading)>
+						<cfset searchfilter.setHeading(tempHeading)>
+
+
+					</cfcase>
+				</cfswitch>
 			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
 
-
-
-			<cfset searchfilter.setHeading( searchFilter.getAirHeading() )>
 
 			<!--- Set carHeading. --->
 			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
@@ -176,8 +225,11 @@
 			</cfif>
 
 
-			<!---Set filter--->
+			<!--- Set session.filters! ---------------------------------------------------->
 			<cfset session.Filters[arguments.SearchID] = searchfilter>
+
+
+
 			<!---Set session variables--->
 			<cfset session.UserID = getSearch.User_ID>
 			<cfset session.AcctID = getSearch.Acct_ID>
@@ -416,11 +468,16 @@
 
 	<cffunction name="setAirports" output="false" returntype="void">
 
-		<cfquery name="local.qAirports" datasource="booking">
-		SELECT AirportCode, AirportName
-		FROM RAPT
+		<cfquery name="local.qAirports" datasource="book">
+			SELECT location_code AS AirportCode
+			, Location_Name AS AirportName
+			FROM lu_Geography
+			WHERE Location_Type = 125
+			ORDER BY AIRPORTCODE
 		</cfquery>
+
 		<cfset local.stTemp = {}>
+
 		<cfloop query="qAirports">
 			<cfset stTemp[AirportCode] = AirportName>
 		</cfloop>

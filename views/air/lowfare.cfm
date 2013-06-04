@@ -12,7 +12,12 @@
 
 <cfoutput>
 	<div class="page-header">
-		<h1><a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">#UCase(rc.Filter.getHeading())#</a></h1>
+		<h1>
+			<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">
+				#ListFirst(UCase(rc.Filter.getAirHeading()), "::")#
+				<small>:: #ListLast(UCase(rc.Filter.getAirHeading()), "::")#</small>
+			</a>
+		</h1>
 	</div>
 
 	<form method="post" action="#buildURL('air.lowfare')#" id="lowfareForm">
