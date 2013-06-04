@@ -85,7 +85,6 @@
 			<cfset searchfilter.setAirHeading(getsearch.air_heading)>
 			<cfset searchfilter.setAirlines(getsearch.Airlines)>
 			<cfset searchfilter.setAirType(getsearch.Air_Type)>
-			<cfset searchfilter.setArrival_City(getsearch.Arrival_City)>
 			<cfset searchfilter.setArrivalCity(getsearch.Arrival_City)>
 			<cfset searchfilter.setArrivalDate(getsearch.Arrival_DateTime)>
 			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
