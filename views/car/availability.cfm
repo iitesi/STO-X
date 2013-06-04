@@ -81,7 +81,7 @@ OR NOT rc.Filter.getAir()>
 										<cfif stRate.Corporate>
 											CORPORATE
 										</cfif><br />
-										<input type="submit" class="btn #buttonType# btn-mini" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
+										<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
 										<!--- Original button below.
 										<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#"> --->
 									<cfelse>
