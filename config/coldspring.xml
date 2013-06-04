@@ -57,6 +57,8 @@
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
 
+    <bean id="VehicleService" class="com.travelport.vehicle.VehicleService"/>
+
     <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
         <constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
     </bean>
@@ -93,6 +95,7 @@
 
 	<bean id="car" class="booking.services.car" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="VehicleService"><ref bean="VehicleService" /></constructor-arg>
 	</bean>
 
 	<bean id="couldyou" class="booking.services.couldyou" >

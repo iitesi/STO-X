@@ -1,14 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="UAPI">
+	<cfproperty name="VehicleService">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
+		<cfargument name="VehicleService">
 
 		<cfset setUAPI(arguments.UAPI)>
+		<cfset setVehicleService(arguments.VehicleService)>
 
 		<cfreturn this>
 	</cffunction>
@@ -34,6 +37,10 @@ doAvailability
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
+		<!--- <cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
+		<cfdump var="#sMessage#" abort="true">		 --->
+		<cfset session.searches[SearchID].stCars = {}>
+
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
 		OR arguments.nCouldYou NEQ 0>
@@ -41,7 +48,7 @@ doAvailability
 			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
 			<cfset local.stThreads = {}>
 			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
-			<cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
+			<!--- <cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
 				<cfthread
 				name="stCorporateRates#nUniqueThreadName#"
@@ -64,7 +71,7 @@ doAvailability
 						<cfset thread.stCars     = stCars>
 					</cfif>
 				</cfthread>
-			</cfif>
+			</cfif> --->
 			
 			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
 			<cfthread
@@ -73,10 +80,10 @@ doAvailability
 			Account="#arguments.Account#"
 			Policy="#arguments.Policy#"
 			nCouldYou="#arguments.nCouldYou#">
-				<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
-				<cfset local.sResponse 	= UAPI.callUAPI('VehicleService', sMessage, SearchID)>
-				<cfset local.aResponse 	= UAPI.formatUAPIRsp(sResponse)>
-				<cfset local.stCars     = parseCars(aResponse, 0)>
+				<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
+				<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
+				<cfset local.vehicleLocations = VehicleService.parseVendorLocations(response)>
+				<cfset local.stCars = VehicleService.parseVehicles(response, vehicleLocations)>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 					<cfset local.stCars     = addJavascript(stCars)>
@@ -167,18 +174,19 @@ doAvailability
 		
 		<cfreturn sMessage/>
 	</cffunction>
-	
+
 <!--- parseCars --->
 	<cffunction name="parseCars" output="false">
 		<cfargument name="stResponse"	required="true">
 		<cfargument name="bCorporate"	required="false"	default="0">
-		
+
 		<!--- If you update this list, update it in getCategories too --->
 		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
 		<cfset local.stCars = {}>
 		<cfset local.stCar = {}>
 		<cfset local.sVendorClassCategory = ''>
 		<cfset local.sVendorCode = ''>
+
 		<cfloop array="#arguments.stResponse#" index="local.stVehicle">
 			<cfif stVehicle.XMLName EQ 'vehicle:Vehicle'>
 				<cfset sVendorClassCategory = stVehicle.XMLAttributes.VehicleClass&stVehicle.XMLAttributes.Category>
@@ -209,6 +217,8 @@ doAvailability
 				</cfif>
 			</cfif>
 		</cfloop>
+	
+		<cfabort>
 		
 		<cfreturn stCars />
 	</cffunction>
