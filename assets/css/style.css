@@ -670,3 +670,7 @@ div.checkbox {
 #header-bottom .row {
     margin-bottom: 0;
 }
+
+.page-header h2 {
+	line-height: 0;
+}
