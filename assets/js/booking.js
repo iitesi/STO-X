@@ -405,6 +405,12 @@ function showPhotos(searchid,property_id,hotel_chain) {
 
 $(document).ready(function() {
 
+
+	$(function () {
+		$("[rel='tooltip']").tooltip();
+	});
+
+
   $("#SoldOut")
   .button()
   .change(function() {
