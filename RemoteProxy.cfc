@@ -137,10 +137,21 @@
 
     </cffunction>
 
-	<cffunction name="getHotelDetails" access="public" output="false" returntype="any" returnformat="json" hint="I get the extended details for a particular hotel">
+	<cffunction name="getHotelDetails" access="remote" output="false" returntype="any" returnformat="json" hint="I get the extended details for a particular hotel">
 		<cfargument name="propertyId" type="numeric" requred="true" />
 
+		<cfset var result = new com.shortstravel.RemoteResponse() />
 
+		<!---<cftry>--->
+			<cfset result.setData( getBean( "HotelService" ).getExtendedHotelData( arguments.propertyId ) ) />
+
+			<!---<cfcatch type="any">
+				<cfset result.addError( "An error occurred while retrieving extended data for the requested hotel." ) />
+				<cfset result.setSuccess( false ) />
+			</cfcatch>
+		</cftry>--->
+
+		<cfreturn result />
 
 	</cffunction>
 
