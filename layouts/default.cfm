@@ -65,13 +65,22 @@
 							</div>
 					</div>
 
+				<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 					<div id="header-bottom">
 							<div class="container">
-									<div class="sixteen columns">
+									<div class="one columns newsearch">
+											<!---
+											TODO: switch this out to use modal window to call widget STM-652
+											10:37 AM Tuesday, June 04, 2013 - Jim Priest - jpriest@shortstravel.com
+											--->
+											<a href="/search/?acctid=1&userid=3605" class="btn" title="Start a new search"><i class="icon-search"></i></a>
+										</div>
+									<div class="fifteen columns">
 										<cfoutput>#View('air/breadcrumbs')#</cfoutput>
 									</div>
 							</div>
 					</div>
+				</cfif>
 			</header>
 
 			<section id="main-content">

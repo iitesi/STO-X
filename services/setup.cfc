@@ -53,8 +53,6 @@
 			ORDER BY Search_ID DESC
 			</cfquery>
 
-
-
 			<cfif getsearch.Air_Type EQ 'MD'>
 				<cfquery name="local.getsearchlegs">
 					SELECT Depart_City
@@ -162,8 +160,9 @@
 					<!--- Multi-city --->
 					<cfcase value="MD" >
 						<cfloop query="getsearchlegs">
+							<cfset searchfilter.setHeading("MCD")>
+
 							<cfset searchfilter.setAirHeading("Multi-city Destinations")>
-							<cfset searchfilter.setHeading("")>
 							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City]# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City]# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
@@ -182,10 +181,10 @@
 			</cfif>
 
 
-			<!--- Set searchFilters into the session as session.filters! ---------------------------------------------------->
+
+			<!--- Set searchFilters into the session as session.filters! =================================== --->
 			<cfset session.Filters[arguments.SearchID] = searchfilter>
-
-
+			<!--- ================================================================================================ --->
 
 			<!---Set session variables--->
 			<cfset session.UserID = getSearch.User_ID>

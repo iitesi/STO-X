@@ -60,16 +60,11 @@ setSearchID
 		<cfreturn />
 	</cffunction>
 
-<!---
-setFilter
---->
-	<cffunction name="setFilter" output="false">
+	<cffunction name="setFilter" output="false" hint="Move the search into the rc scope so it is always available.">
 		<cfargument name="rc">
 
-		<!---Move the search into the rc scope so it is always available.--->
 		<cfif StructKeyExists(session, 'Filters') AND StructKeyExists(session.Filters, arguments.rc.SearchID) AND NOT StructKeyExists(arguments.rc, "requery")>
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
-		<!---Add search to the session scope.--->
 		<cfelse>
 			<cfset rc.Filter = variables.bf.getBean("setup").setFilter(argumentcollection=arguments.rc)>
 		</cfif>
