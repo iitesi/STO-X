@@ -57,14 +57,14 @@
 	vertical-align: middle;
 }
 
-#main-nav ul, 
+#main-nav ul,
 #main-nav ul li {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-#main-nav, 
+#main-nav,
 #main-nav ul {
 	float: right;
 }
@@ -78,7 +78,7 @@
 	font-size: 12px;
 }
 
-#main-nav ul li, 
+#main-nav ul li,
 #main-nav ul li a {
 	-webkit-transition: all 0.1s linear;
 	-moz-transition: all 0.1s linear;
@@ -90,7 +90,7 @@
 	display: block;
 }
 
-#main-nav ul li.active > a, 
+#main-nav ul li.active > a,
 #main-nav ul li a:hover {
 	color: #fff;
 }
@@ -110,7 +110,7 @@
 	margin-left: -4px;
 }
 
-#main-nav ul li.active, 
+#main-nav ul li.active,
 #main-nav ul li:hover {
 	background-color: #2f2f2f;
 }
@@ -216,12 +216,12 @@
 	padding: 0 0 20px;
 }
 
-#main-content .page-header h1 small {
+/*#main-content .page-header h1 small {
 	display: block;
 	line-height: 1.7;
 	font-size: 18px;
 	margin-top: 10px;
-}
+}*/
 
 #main-content {
 	margin-bottom: 40px;
@@ -252,7 +252,7 @@
 	color: #fff;
 }
 
-#footer-top .form input, 
+#footer-top .form input,
 #footer-top .form textarea {
 	width: 100%;
 	color: #ddd;
@@ -271,7 +271,7 @@
 	float: right;
 }
 
-.footer-nav, 
+.footer-nav,
 .footer-nav li {
 	margin: 0;
 	padding: 0;
@@ -306,7 +306,7 @@
 	width: 100%;
 }
 
-.sidebar .latest-posts, 
+.sidebar .latest-posts,
 .sidebar .latest-posts li {
 	margin: 0;
 	padding: 0;
@@ -509,7 +509,7 @@
 	background-color: #444;
 }
 
-.blog .post .share-wrap, 
+.blog .post .share-wrap,
 .blog .post .share-wrap > .share {
 	border-top: 1px dotted #ddd;
 }
@@ -574,7 +574,7 @@
 	margin-bottom: 40px;
 }
 
-.blog .post .comments ul, 
+.blog .post .comments ul,
 .blog .post .comments ul li {
 	margin: 0;
 	padding: 0;
@@ -628,7 +628,7 @@
 /* #Portfolio Styles
 ================================================== */
 
-.portfolio-filter ul, 
+.portfolio-filter ul,
 .portfolio-filter ul li {
 	margin: 0;
 	padding: 0;
@@ -678,7 +678,7 @@
 	transition: none;
 }
 
-.portfolio-filter ul li.active a, 
+.portfolio-filter ul li.active a,
 .portfolio-filter ul li:hover a {
 	background-color: #8ecd44;
 	color: #fff;
@@ -728,7 +728,7 @@
 	opacity: 1;
 }
 
-.portfolio-items .item .image .overlay .actions, 
+.portfolio-items .item .image .overlay .actions,
 .portfolio-items .item .image .overlay .actions li {
 	margin: 0;
 	padding: 0;
@@ -902,7 +902,7 @@
 		text-align: center;
 	}
 
-	.footer-nav, 
+	.footer-nav,
 	.footer-nav li {
 		float: none;
 	}

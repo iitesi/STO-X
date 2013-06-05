@@ -1,11 +1,11 @@
 var controllers = angular.module('app.controllers',[]);
 
-controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
-
+controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
 	$scope.currentPage = 1;
 	$scope.resultsPerPage = 20;
+	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
 	$scope.hotels = [];
@@ -23,7 +23,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
-		Search.getSearch( $scope.searchId )
+		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
 				$scope.search = result.data;
 				$scope.initializeMap();
@@ -32,7 +32,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
 	$scope.updateSearch = function(){
 		$('#searchWindow').modal('show');
-		Search.updateSearch( $scope.search )
+		SearchService.updateSearch( $scope.search )
 			.then( function(result){
 
 				if( result.success ){
@@ -48,10 +48,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	}
 
 	$scope.getSearchResults = function(){
-		Search.doSearch( $scope.searchId )
+		SearchService.doSearch( $scope.searchId )
 			.then( function(result){
 				$scope.hotels = result;
 				$scope.totalProperties = result.length;
+				$scope.searchCompleted = true;
 
 				//Build vendor array for filter
 				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
@@ -76,7 +77,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 
 	$scope.getHotelRates = function( Hotel ){
 		if( !Hotel.roomsReturned ){
-			Search.getHotelRates( $scope.searchId, Hotel );
+			HotelService.getHotelRates( $scope.searchId, Hotel );
 		}
 	}
 
@@ -152,6 +153,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 		});
 	}
 
+	$scope.loadExtendedHotelData = function( Hotel ){
+
+		if( !Hotel.details.loaded ){
+			HotelService.getExtendedData( Hotel );
+		}
+
+	}
 	$scope.toggleInPolicyOnly = function(){
 		if( $scope.filterItems.inPolicyOnly == true ){
 			$scope.filterItems.inPolicyOnly = false;
@@ -307,9 +315,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 		}
 		return pages;
 	}
+
 	$scope.numberToArray = function( num ){
 		return new Array( num );
 	}
+
+
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
@@ -317,4 +328,5 @@ controllers.controller( "HotelCtrl", function( $scope, $location, Search ){
 	$scope.loadSearch( $scope.searchId );
 
 	$scope.getSearchResults();
+
 });

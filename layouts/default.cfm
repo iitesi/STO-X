@@ -66,9 +66,7 @@
 					<div id="header-bottom">
 							<div class="container">
 									<div class="sixteen columns">
-											<ul class="breadcrumb">
-												<cfoutput>#View('air/breadcrumbs')#</cfoutput>
-											</ul>
+										<cfoutput>#View('air/breadcrumbs')#</cfoutput>
 									</div>
 							</div>
 					</div>
@@ -107,3 +105,7 @@
 
 		</html>
 </cfif>
+
+
+<!--- CFDUMP: Debugging --->
+<cfdump var="#session#" label="Dump ( session )" metainfo="true" abort="true" format="html">

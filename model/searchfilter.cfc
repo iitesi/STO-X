@@ -5,7 +5,6 @@
 	<cfproperty name="AirHeading">
 	<cfproperty name="Airlines">
 	<cfproperty name="AirType">
-	<cfproperty name="Arrival_City">
 	<cfproperty name="ArrivalCity">
 	<cfproperty name="ArrivalDate">
 	<cfproperty name="ArrivalType">
@@ -36,6 +35,7 @@
 	<cfproperty name="HotelHeading">
 	<cfproperty name="International">
 	<cfproperty name="Legs">
+	<cfproperty name="LegsHeader">
 	<cfproperty name="Office_ID">
 	<cfproperty name="PolicyID">
 	<cfproperty name="ProfileID">
@@ -46,12 +46,18 @@
 
 	<cffunction name="init" output="false">
 		<cfset setLegs([])>
+		<cfset setLegsHeader([])>
 		<cfreturn this>
 	</cffunction>
 
 	<cffunction name="addLeg" output="false">
 		<cfargument name="objLeg">
 		<cfset arrayAppend(Legs, arguments.objLeg)>
+	</cffunction>
+
+	<cffunction name="addLegHeader" output="false">
+		<cfargument name="objLegHeader">
+		<cfset arrayAppend(LegsHeader, arguments.objLegHeader)>
 	</cffunction>
 
 </cfcomponent>

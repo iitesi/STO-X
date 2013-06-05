@@ -4,7 +4,21 @@ function Hotel(){
     this.policies = {};
     this.featuredProperty = false;
     this.hotelChain = "";
-    this.hotelInformation = {};
+    this.details = {
+    	loaded: false,
+    	cancellation: "",
+    	creditCard: "",
+    	directions: "",
+    	facility: "",
+    	guarantee: "",
+    	description: "",
+    	location: "",
+    	ratingService: "",
+    	recreation: "",
+    	services: "",
+    	starRating: "",
+    	transportation: ""
+    };
     this.policy = false;
     this.preferredVendor = false;
     this.rooms = [];
