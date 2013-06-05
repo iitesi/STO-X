@@ -1,11 +1,14 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="useLinkedDatabases" />
+	<cfproperty name="portalURL"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
+		<cfargument name="portalURL" type="string" requred="true" />
 
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
+		<cfset setPortalURL( arguments.portalURL ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -17,30 +20,9 @@
 
 	</cffunction>
 
-	<cffunction name="setPortalURL" output="false" returntype="void">
-
-		<cfset local.sPortalURL = ''>
-		<cfset local.bDebug = 0>
-
-		<cfif cgi.SERVER_NAME EQ 'www.shortstravelonline.com'>
-			<cfset sPortalURL = 'https://www.shortstravel.com'>
-		<cfelseif cgi.SERVER_NAME EQ 'www.shortstravel.com'>
-			<cfset sPortalURL = 'https://www.shortstravel.com'>
-		<cfelseif cgi.SERVER_NAME EQ 'www.b-hives.com'>
-			<cfset sPortalURL = 'https://www.b-hive.travel'>
-		<cfelseif cgi.SERVER_NAME EQ 'localhost'>
-			<cfset sPortalURL = 'http://localhost'>
-			<cfset bDebug = 1>
-		<cfelseif cgi.SERVER_NAME EQ 'localhost:8888'>
-			<cfset sPortalURL = 'http://localhost:8888'>
-			<cfset bDebug = 1>
-		<cfelseif cgi.SERVER_NAME EQ 'hermes.shortstravel.com'>
-			<cfset sPortalURL = 'https://hermes.shortstravel.com'>
-		</cfif>
-
-		<cfset application.sPortalURL = sPortalURL>
-		<cfset application.bDebug = bDebug>
-
+	<!--- Named different to prevent overriding the default setPortalURL from environment service --->
+	<cffunction name="setPortalURLLink" output="false" returntype="void">
+		<cfset application.sPortalURL = getPortalURL()>
 		<cfreturn />
 	</cffunction>
 

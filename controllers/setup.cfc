@@ -14,12 +14,12 @@
 setApplication
 --->
 	<cffunction name="setApplication" output="false" returntype="void">
-		
+
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>
 			<cfset variables.bf.getBean("setup").setServerURL(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'sPortalURL') OR application.sPortalURL EQ ''>
-			<cfset variables.bf.getBean("setup").setPortalURL(argumentcollection=arguments.rc)>
+			<cfset variables.bf.getBean("setup").setPortalURLLink(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'sAPIAuth') OR application.sAPIAuth EQ ''>
 			<cfset variables.bf.getBean("setup").setAPIAuth(argumentcollection=arguments.rc)>
@@ -45,7 +45,7 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'stStates') OR StructIsEmpty(application.stStates)>
 			<cfset variables.bf.getBean("setup").setStates(argumentcollection=arguments.rc)>
 		</cfif>
-		
+
 		<cfreturn />
 	</cffunction>
 
@@ -147,16 +147,16 @@ setGroup
 <!--- close
 	<cffunction name="close" output="false">
 		<cfargument name="rc">
-		
+
 		<cfset variables.fw.service('security.close', 'nNewSearchID')>
-				
+
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endclose" output="false">
 		<cfargument name="rc">
-		
+
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.nNewSearchID#')>
-		
+
 		<cfreturn />
 	</cffunction>
     --->

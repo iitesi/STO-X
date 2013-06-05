@@ -1,5 +1,5 @@
 <cfif rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability'>
-	<cfif ArrayLen(StructKeyArray(session.searches)) GTE 1>
+	<cfif ArrayLen(StructKeyArray(session.searches)) GT 1>
 		<!---How many searches include air?--->
 		<cfset nAirCount = 0>
 		<cfloop collection="#session.filters#" index="filterSearchID">

@@ -55,7 +55,9 @@
 									<div class="sixteen columns">
 										<div id="logo-container">
 												<div id="logo-center"><!---logo here--->
-												<img src="assets/img/stm.gif" alt="Short's Travel Management">
+												<cfoutput>
+												<a href="#application.sPortalURL#" title="Home"><img src="assets/img/stm.gif" alt="Short's Travel Management"></a>
+												</cfoutput>
 												</div>
 										</div>
 										<cfoutput>#View('main/navigation')#</cfoutput>
@@ -108,4 +110,4 @@
 
 
 <!--- CFDUMP: Debugging --->
-<cfdump var="#session#" label="Dump ( session )" metainfo="true" abort="true" format="html">
+<cfdump var="#application#" label="Dump ( session )" metainfo="true" abort="true" format="html">
