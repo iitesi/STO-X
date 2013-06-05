@@ -59,14 +59,22 @@
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
 
-    <bean id="VehicleService" class="com.travelport.vehicle.VehicleService"/>
+	<bean id="VehicleService" class="com.travelport.vehicle.VehicleService"/>
 
     <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
         <constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
     </bean>
 
+	<bean id="LoyaltyProgramManager" class="com.shortstravel.traveler.LoyaltyProgramManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+    <bean id="LoyaltyProgramService" class="com.shortstravel.traveler.LoyaltyProgramService">
+		<constructor-arg name="LoyaltyProgramManager"><ref bean="LoyaltyProgramManager" /></constructor-arg>
+	</bean>
+
 	<bean id="Summary" class="booking.services.summary" >
-		<constructor-arg name="User"><ref bean="User" /></constructor-arg>
+		<constructor-arg name="TravelerService"><ref bean="TravelerService" /></constructor-arg>
 	</bean>
 
 	<bean id="AirCreate" class="booking.services.AirCreate" >

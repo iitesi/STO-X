@@ -3,13 +3,16 @@
 		<cfoutput>
             <a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
             <a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a>
+            <a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>
 		</cfoutput>
 	<!--- </cfif> --->
-	<cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
-	<cfset variables.nLowestFare = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].Total>
+	<!--- <cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
 	<cfset variables.Air = (structKeyExists(stItinerary, 'Air') ? true : false)>
 	<cfset variables.Hotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
 	<cfset variables.Car = (structKeyExists(stItinerary, 'Car') ? true : false)>
+	<cfif air>
+		<cfset variables.nLowestFare = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].Total>
+	</cfif>
 	<cfoutput>
 		<form method="post" action="#buildURL('summary')#">
 			<input type="hidden" name="SearchID" id="SearchID" value="#rc.SearchID#">
@@ -17,7 +20,9 @@
 			<input type="hidden" name="Car" id="Car" value="#Car#">
 			<input type="hidden" name="Hotel" id="Hotel" value="#Hotel#">
 			<input type="hidden" name="nTraveler" id="nTraveler" value="1">
-			<input type="hidden" name="sCarriers" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
+			<cfif air>
+				<input type="hidden" name="sCarriers" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
+			</cfif>
 			<cfif Car>
 				<input type="hidden" id="sCarVendor" value="#stItinerary.Car.VendorCode#">
 			</cfif>
@@ -57,6 +62,7 @@
 			</div>
 		</form>
 		<cfdump var="#session.searches[rc.SearchID].stTravelers#">
+		<cfdump var="#stItinerary.Car#">
 		<!--- <cfset sType = (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')> --->
 		<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
 		<cfif NOT structKeyExists(session.searches[rc.SearchID].stTravelers[nTraveler], 'User_ID')>
@@ -73,7 +79,7 @@
 			<!---//setTravelerForm(1, 1, #userID#);--->
 		});
 		</script>
-	</cfoutput>
+	</cfoutput> --->
 <cfelse>
 	<cfoutput>
 		#View('summary/error')#
