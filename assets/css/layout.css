@@ -19,7 +19,7 @@
 /* #Demo Styles
 ================================================== */
 
-.icons-list, 
+.icons-list,
 .icons-list li {
     margin: 0;
     padding: 0;
@@ -132,7 +132,7 @@
     overflow: hidden;
 }
 
-.fullwidthbanner-container ul, 
+.fullwidthbanner-container ul,
 .fullwidthbanner-container ul li {
     margin: 0;
     padding: 0;
@@ -166,7 +166,7 @@
     display: block;
 }
 
-#joiee-customizer .color-list, 
+#joiee-customizer .color-list,
 #joiee-customizer .color-list li {
     margin: 0;
     padding: 0;
@@ -217,7 +217,7 @@
 }
 
 @media only screen and (max-width: 768px) {
-    #joiee-customizer, 
+    #joiee-customizer,
     #joiee-customizer.active {
         display: none;
     }

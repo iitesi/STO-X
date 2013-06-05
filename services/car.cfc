@@ -175,54 +175,6 @@ doAvailability
 		<cfreturn sMessage/>
 	</cffunction>
 
-<!--- parseCars --->
-	<cffunction name="parseCars" output="false">
-		<cfargument name="stResponse"	required="true">
-		<cfargument name="bCorporate"	required="false"	default="0">
-
-		<!--- If you update this list, update it in getCategories too --->
-		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
-		<cfset local.stCars = {}>
-		<cfset local.stCar = {}>
-		<cfset local.sVendorClassCategory = ''>
-		<cfset local.sVendorCode = ''>
-
-		<cfloop array="#arguments.stResponse#" index="local.stVehicle">
-			<cfif stVehicle.XMLName EQ 'vehicle:Vehicle'>
-				<cfset sVendorClassCategory = stVehicle.XMLAttributes.VehicleClass&stVehicle.XMLAttributes.Category>
-				<cfif ArrayFindNoCase(aClassCategories, sVendorClassCategory)>
-					<cfset sVendorCode = stVehicle.XMLAttributes.VendorCode>
-					<cfset stCar = {
-						DoorCount			: 	(StructKeyExists(stVehicle.XMLAttributes, 'DoorCount') ? stVehicle.XMLAttributes.DoorCount : ''),
-						Location			: 	stVehicle.XMLAttributes.Location,
-						TransmissionType	: 	stVehicle.XMLAttributes.TransmissionType,
-						VehicleClass		: 	stVehicle.XMLAttributes.VehicleClass,
-						Category			: 	stVehicle.XMLAttributes.Category,
-						VendorLocationKey	: 	stVehicle.XMLAttributes.VendorLocationKey,
-						Corporate 			:	(bCorporate EQ 1 ? true : false)
-					}>
-					<cfloop array="#stVehicle.XMLChildren#" index="local.stVehicleRate">
-						<cfif stVehicleRate.XMLName EQ 'vehicle:VehicleRate'>
-							<cfif NOT StructKeyExists(stCar, 'EstimatedTotalAmount')
-							OR stCar.EstimatedTotalAmount GT stVehicleRate.XMLAttributes.EstimatedTotalAmount>
-								<cfset stCar.Policy = 1>
-								<cfset stCar.EstimatedTotalAmount = stVehicleRate.XMLAttributes.EstimatedTotalAmount>
-								<cfset stCar.RateAvailability = stVehicleRate.XMLAttributes.RateAvailability>
-								<cfset stCar.RateCategory = stVehicleRate.XMLAttributes.RateCategory>
-								<cfset stCar.RateCode = stVehicleRate.XMLAttributes.RateCode>
-							</cfif>
-						</cfif>
-					</cfloop>
-					<cfset stCars[sVendorClassCategory][sVendorCode] = stCar>
-				</cfif>
-			</cfif>
-		</cfloop>
-	
-		<cfabort>
-		
-		<cfreturn stCars />
-	</cffunction>
-
 <!---
 mergeCars
 --->

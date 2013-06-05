@@ -4,28 +4,38 @@
 		<cfset nAirCount = 0>
 		<cfloop collection="#session.filters#" index="filterSearchID">
 			<cfif session.filters[filterSearchID].getAir()>
-	            <cfset nAirCount++>
+							<cfset nAirCount++>
 			</cfif>
 		</cfloop>
-		<!---Display searches if there are more than one available with air.--->
-		<cfif nAirCount GT 1>
-			<cfset nTempCount = 0>
+
+		<cfset nTempCount = 0>
 			<cfoutput>
+				<div class="row">
+					<div class="2 columns alpha newsearch">
 
-				<li><a href="" class="btn btn-mini">New Search</a></li>
+						<!---
+						TODO: switch this out to use modal window to call widget STM-652
+						10:37 AM Tuesday, June 04, 2013 - Jim Priest - jpriest@shortstravel.com
+						--->
+						<a href="/search/?acctid=1&userid=3605" class="btn btn-mini">New Search</a>
 
 
-				<cfloop collection="#session.filters#" index="filterSearchID">
-					<cfif session.filters[filterSearchID].getAir()>
-						<cfset nTempCount++>
-						<li>
-			        <a href="#buildURL('air.lowfare?SearchID=#filterSearchID#')#" <cfif filterSearchID EQ rc.SearchID>class="active"</cfif>>#UCase(session.filters[filterSearchID].getHeading())#</a>
-							<i class="icon-remove"></i>
-							<cfif nAirCount NEQ nTempCount><span class="divider">/</span></cfif>
-	          </li>
-					</cfif>
-				</cfloop>
+					</div>
+					<div class="fourteen columns omega">
+						<ul class="breadcrumb">
+						<cfloop collection="#session.filters#" index="filterSearchID">
+								<cfif session.filters[filterSearchID].getAir()>
+									<cfset nTempCount++>
+									<li>
+										<a href="#buildURL('air.lowfare?SearchID=#filterSearchID#')#" <cfif filterSearchID EQ rc.SearchID>class="active"</cfif>>#UCase(session.filters[filterSearchID].getHeading())#</a>
+										<i class="icon-remove"></i>
+										<cfif nAirCount NEQ nTempCount><span class="divider">/</span></cfif>
+									</li>
+								</cfif>
+							</cfloop>
+						</ul>
+					</div>
+				</div>
 			</cfoutput>
-		</cfif>
 	</cfif>
 </cfif>
