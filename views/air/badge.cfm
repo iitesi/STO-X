@@ -16,7 +16,7 @@
 				</td>
 				<td colspan="2" class="fares" align="right">
 					<cfif bDisplayFare>
-						#(stTrip.Policy ? '' : '<span class="red bold" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
+						#(stTrip.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
 						<input type="submit" class="button#stTrip.Policy#policy" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#

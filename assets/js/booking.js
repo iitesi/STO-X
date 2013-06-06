@@ -405,6 +405,12 @@ function showPhotos(searchid,property_id,hotel_chain) {
 
 $(document).ready(function() {
 
+ // bootstrap tooltips
+ //  add  " rel='tooltip' " to element and it will use that elements title text as toolip
+	$(function () {
+		$("[rel='tooltip']").tooltip();
+	});
+
   $("#SoldOut")
   .button()
   .change(function() {

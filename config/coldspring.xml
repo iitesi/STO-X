@@ -1,16 +1,16 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
 
 	<bean id="UAPI" class="com.travelport.uapi">
-	    <constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
-    </bean>
+			<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
+	</bean>
 
 	<bean id="setup" class="booking.services.setup" >
-	    <constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+			<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+			<constructor-arg name="PortalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
 	</bean>
 
 	<bean id="General" class="booking.services.general" />
@@ -20,10 +20,10 @@
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
 	</bean>
 
-    <bean id="AccountService" class="com.shortstravel.account.AccountService">
-        <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
-        <constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
-    </bean>
+	<bean id="AccountService" class="com.shortstravel.account.AccountService">
+			<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+			<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
+	</bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
@@ -40,30 +40,30 @@
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
-    <bean id="SearchService" class="com.shortstravel.search.SearchService">
-        <constructor-arg name="SearchManager"><ref bean="SearchManager" /> </constructor-arg>
-        <constructor-arg name="UserManager"><ref bean="UserManager" /> </constructor-arg>
-        <constructor-arg name="AccountManager"><ref bean="AccountManager" /> </constructor-arg>
-        <constructor-arg name="HotelSearchManager"><ref bean="HotelSearchManager" /> </constructor-arg>
-    </bean>
+	<bean id="SearchService" class="com.shortstravel.search.SearchService">
+		<constructor-arg name="SearchManager"><ref bean="SearchManager" /> </constructor-arg>
+		<constructor-arg name="UserManager"><ref bean="UserManager" /> </constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /> </constructor-arg>
+		<constructor-arg name="HotelSearchManager"><ref bean="HotelSearchManager" /> </constructor-arg>
+	</bean>
 
-    <bean id="SearchManager" class="com.shortstravel.search.SearchManager">
-        <constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
-        <constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
-    </bean>
+	<bean id="SearchManager" class="com.shortstravel.search.SearchManager">
+		<constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
+		<constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
+	</bean>
 
-    <bean id="HotelService" class="com.shortstravel.hotel.HotelService">
-        <constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
-        <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
-        <constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
-    </bean>
+	<bean id="HotelService" class="com.shortstravel.hotel.HotelService">
+		<constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
+		<constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+	</bean>
 
 	<bean id="VehicleService" class="com.travelport.vehicle.VehicleService"/>
 
-    <bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
-        <constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
-    </bean>
+	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+	</bean>
 
 	<bean id="LoyaltyProgramManager" class="com.shortstravel.traveler.LoyaltyProgramManager">
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
@@ -125,6 +125,6 @@
 		<constructor-arg name="General"><ref bean="General" /></constructor-arg>
 	</bean>
 
-    <bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
+	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
 
 </beans>

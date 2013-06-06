@@ -171,6 +171,11 @@ body {
 ----------------------------------------------------------------------------------------------------------
 */
 
+.outofpolicy {
+	cursor: pointer;
+	border-bottom: 1px dashed #999;
+}
+
 #details-tabs {
 	background-color:rgba(0,0,0,0.3);
 }
@@ -664,7 +669,7 @@ div.checkbox {
 */
 
 .newsearch {
-	margin: 1em;
+	margin: 5px;
 }
 
 #header-bottom .row {
