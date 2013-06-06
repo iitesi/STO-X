@@ -44,7 +44,6 @@ services.factory( "HotelService", function( $http ){
 	HotelService.getExtendedData = function( Hotel ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelDetails&propertyId=" + Hotel.PropertyId )
 			.then( function( response ){
-				console.log( response );
 				Hotel.details.loaded = true;
 				Hotel.details.description = response.data.data.description;
 				Hotel.details.cancellation = response.data.data.cancellation;
@@ -58,6 +57,7 @@ services.factory( "HotelService", function( $http ){
 				Hotel.details.services =  response.data.data.services;
 				Hotel.details.starRating = response.data.data.starRating;
 				Hotel.details.transportation = response.data.data.transportation;
+				Hotel.images = response.data.data.images;
 			})
 	}
 

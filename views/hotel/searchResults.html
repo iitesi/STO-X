@@ -95,9 +95,9 @@
 
                         <div class="btn-group">
                             <button ng-click="loadExtendedHotelData(hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
-                            <button ng-click="showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
-                            <button ng-click="showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
-                            <button ng-click="showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
+                            <button ng-click="loadExtendedHotelData(hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
+                            <button ng-click="loadExtendedHotelData(hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
+                            <button ng-click="loadExtendedHotelData(hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
                         </div>
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
@@ -204,7 +204,33 @@
                     </td>
                 </tr>
                 <tr ng-show="showPhotos">
-                    <td colspan="3" class="photos"><b>Photos</b></td>
+                    <td colspan="3" class="photos">
+                        <b>Photos</b>
+                        <div ng-show="!hotel.details.loaded"  style="width: 100%; text-align: center">
+                            <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+                        </div>
+                        <div ng-show="hotel.details.loaded" style="width: 100%">
+
+                            <div ng-show="!hotel.images.length" style="width: 100%">
+                                There are no photos available for this property.
+                            </div>
+
+                            <div ng-show="hotel.images.length" style="width: 100%" >
+                                <div style="text-align: left; vertical-align: top; width: 65%; float: left; clear: none">
+                                    &nbsp;
+                                </div>
+                                <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
+                                    <div ng-repeat="image in hotel.images" style="padding: 3px; float: left;">
+                                        <img  src="{{image.imageURL}}" height="69" width="100"  />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div ng-show="hotel.details.loaded && !hotel.details.transportation.length && !hotel.details.directions.length" >
+                            <p>This information is not available for this property.</p>
+                        </div>
+                    </td>
                 </tr>
                 <tr ng-show="showRooms">
                     <td colspan="3" class="rooms"><b>Rooms</b><br>

@@ -23,6 +23,7 @@ function Hotel(){
     this.preferredVendor = false;
     this.rooms = [];
     this.roomsReturned = false;
+    this.images = [];
 
     this.PropertyId = 0 ;
     this.ChainCode = "";
