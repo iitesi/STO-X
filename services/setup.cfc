@@ -158,22 +158,33 @@
 					</cfcase>
 
 					<!--- Multi-city --->
+					<!--- TODO: this logic for making breadcrumbs / title could be broken out into it's own function --->
 					<cfcase value="MD" >
-						<cfloop query="getsearchlegs">
-							<cfset searchfilter.setHeading("MCD")>
+						<cfset var local.breadCrumb = "">
 
-							<cfset searchfilter.setAirHeading("Multi-city Destinations")>
+						<cfloop query="getsearchlegs">
+							<cfif Len(local.breadCrumb)>
+								<cfif ListLast(local.breadCrumb, '-') NEQ depart_city AND  depart_city NEQ arrival_city>
+									<cfset local.breadCrumb = "#local.breadCrumb#-#depart_city#-#arrival_city#">
+								<cfelse>
+									<cfset  local.breadCrumb = "#local.breadCrumb#-#arrival_city#">
+								</cfif>
+							<cfelse>
+								<cfset local.breadCrumb = "#depart_city#-#arrival_city#">
+							</cfif>
 							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City]# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City]# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
+						<!--- populate headings for display --->
+						<cfset searchfilter.setAirHeading("Multi-city Destinations")>
+						<cfset searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(getSearchLegs.Depart_DateTime[getSearchLegs.recordCount], 'm/d')#")>
 					</cfcase>
+
 				</cfswitch>
+
 			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
 				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
 			</cfif>
-
-
-
 
 			<!--- Set carHeading. --->
 			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
