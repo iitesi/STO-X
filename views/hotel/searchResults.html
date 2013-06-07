@@ -121,6 +121,24 @@
                         </div>
                         <div ng-show="hotel.details.loaded" style="width: 100%">
 
+                            <div style="width: 100%" >
+                                <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
+                                    <b>CHECK IN:</b>
+                                </div>
+                                <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
+                                    {{hotel.CheckIn}}&nbsp;
+                                </div>
+                            </div>
+
+                            <div style="width: 100%" >
+                                <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
+                                    <b>CHECK OUT:</b>
+                                </div>
+                                <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
+                                    {{hotel.CheckOut}}&nbsp;
+                                </div>
+                            </div>
+
                             <div ng-show="hotel.details.services.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>SERVICE:</b>
@@ -216,12 +234,12 @@
                             </div>
 
                             <div ng-show="hotel.images.length" style="width: 100%" >
-                                <div style="text-align: left; vertical-align: top; width: 65%; float: left; clear: none">
-                                    &nbsp;
+                                <div style="text-align: left; vertical-align: top; width: 35%; float: left; clear: none">
+                                    <img  src="{{hotel.selectedImage}}" height="138" width="200"  />
                                 </div>
-                                <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
+                                <div style="text-align: left; vertical-align: top; width: 60%; float: left; clear: right">
                                     <div ng-repeat="image in hotel.images" style="padding: 3px; float: left;">
-                                        <img  src="{{image.imageURL}}" height="69" width="100"  />
+                                        <a href="javascript: void(0)" ng-click="$parent.hotel.selectedImage = image.imageURL"><img src="{{image.imageURL}}" height="69" width="100"  /></a>
                                     </div>
                                 </div>
                             </div>

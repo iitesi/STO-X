@@ -160,6 +160,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 	}
+
 	$scope.toggleInPolicyOnly = function(){
 		if( $scope.filterItems.inPolicyOnly == true ){
 			$scope.filterItems.inPolicyOnly = false;

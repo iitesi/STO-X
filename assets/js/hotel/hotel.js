@@ -56,6 +56,7 @@ function Hotel(){
     this.CheckIn = "";
     this.CheckOut = "";
     this.DetailsDateTime = "";
+    this.ImagesDateTime = "";
     this.ServiceDetail = "";
     this.FacilityDetail = "";
     this.RoomDetail = "";

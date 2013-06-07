@@ -58,6 +58,11 @@ services.factory( "HotelService", function( $http ){
 				Hotel.details.starRating = response.data.data.starRating;
 				Hotel.details.transportation = response.data.data.transportation;
 				Hotel.images = response.data.data.images;
+				if( Hotel.images.length ){
+					Hotel.selectedImage = Hotel.images[0].imageURL;
+				} else {
+					Hotel.selectedImage = "";
+				}
 			})
 	}
 
