@@ -264,35 +264,38 @@
 			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
 				<cfset stTemp[sCol] = qAccount[sCol]>
 			</cfloop>
+
 			<cfset stTemp.sBranch = Branches[qAccount.PCC_Booking]>
 			<cfset stTemp.Air_PF = ListToArray(stTemp.Air_PF, '~')>
 
 			<cfquery name="local.qOutOfPolicy" datasource="book">
-			SELECT Vendor_ID, Type
-			FROM OutofPolicy_Vendors
-			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+				SELECT Vendor_ID, Type
+				FROM OutofPolicy_Vendors
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
+
 			<cfset stTemp.aNonPolicyAir = []>
 			<cfset stTemp.aNonPolicyCar = []>
 			<cfset stTemp.aNonPolicyHotel = []>
+
 			<cfloop query="qOutOfPolicy">
 				<cfset local.sType = 'aNonPolicy'&(qOutOfPolicy.Type EQ 'A' ? 'Air' : (qOutOfPolicy.Type EQ 'C' ? 'Car' : 'Hotel'))>
 				<cfset ArrayAppend(stTemp[sType], qOutOfPolicy.Vendor_ID)>
 			</cfloop>
 
 			<cfquery name="local.qPreferred" datasource="book">
-			SELECT Acct_ID, Vendor_ID, Type
-			FROM Preferred_Vendors
-			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+				SELECT Acct_ID, Vendor_ID, Type
+				FROM Preferred_Vendors
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
+
 			<cfset stTemp.aPreferredAir = []>
 			<cfset stTemp.aPreferredCar = []>
 			<cfset stTemp.aPreferredHotel = []>
+
 			<cfloop query="qPreferred">
-				<cfif StructKeyExists(stTemp, Acct_ID)>
-					<cfset local.sType = 'aPreferred'&(qPreferred.Type EQ 'A' ? 'Air' : (qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
-					<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
-				</cfif>
+				<cfset local.sType = 'aPreferred'&(qPreferred.Type EQ 'A' ? 'Air' : (qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
 			</cfloop>
 
 			<cfset application.Accounts[arguments.AcctID] = stTemp>
