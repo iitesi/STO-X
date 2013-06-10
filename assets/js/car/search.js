@@ -91,10 +91,10 @@ formSubmit = function( event ){
 
 	$.ajax({
 		type: "POST",
-		url: "/booking/RemoteProxy.cfc?method=updateSearch",
+		url: "/search/RemoteProxy.cfc?method=saveSearch",
 		data: formData,
 		success: function( response ){
-			if( response.success ){
+			if( response.success == true ){
 				window.location = "/booking/index.cfm?action=car.availability&searchId=" + formData.searchID + "&requery=true";
 			}else{
 				//TODO: Process any errors returned from the server
@@ -109,6 +109,6 @@ formSubmit = function( event ){
 
 setModalWindowText = function(){
 	//If car is checked, add car-related text to the modal window.
-	$( "#myModalBody" ).append("<h5>CAR</h5>");
-	$( "#myModalBody" ).append("<p>We are finding cars available at " + $("#car-location").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
+	$( "#waitModalBody" ).append("<h3>CAR</h3>");
+	$( "#waitModalBody" ).append("<p>We are finding cars available at " + $("#car-location").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
 };
