@@ -15,7 +15,7 @@
 <!--Page title row-->
 <div class="container">
    <div class="page-header">
-        <h1><a href="/booking/index.cfm?action=air.lowfare&amp;SearchID={{searchId}}">Raleigh Durham Intl Arpt (RDU), Morrisville, NC :: Fri Aug 2 - Fri Aug 9</a></h1>
+        <h1><a href="/booking/index.cfm?action=air.lowfare&amp;SearchID={{searchId}}">{{search.hotelHeading}} :: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</a></h1>
     </div>
 </div>
 
@@ -65,8 +65,8 @@
 
 
     </div>
-    <div class="eleven columns">
-        &nbsp;
+    <div class="ten columns">
+        <a ng-click="showChangeSearchWindow()">Change Search</a>
     </div>
 </div>
 
@@ -296,18 +296,127 @@
     </div>
 </div>
 
-<!--- Modal window to be displayed while search is occurring. --->
-<div id="searchWindow" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+<!-- Modal window to be displayed while search is occurring. -->
+<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
     <div class="modal-header">
         <h3 id="myModalHeader">Please Wait</h3>
     </div>
     <div id="myModalBody" class="modal-body">
         <p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
         <p>
-            We are finding hotels closest **hotel location** {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
+            We are finding hotels closest to {{search.hotelHeading}} for {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
         </p>
         <p>
             Tip: Double click on the map to update your search with hotels available in other areas of the city.
         </p>
+    </div>
+</div>
+
+<!-- Modal window to be displayed when change search feature is selected -->
+<div id="changeSearchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+    <div class="modal-header">
+        <h3 id="changeSearchWindowHeader">Change Your Hotel Search</h3>
+    </div>
+    <div id="changeSearchWindowBody" class="modal-body">
+        <div>
+            <div class="form-element-label">
+                <label for="hotel-radius">&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <div class="input-container">
+                    <div class="btn-group" style="margin-right: 10px;">
+                        <button class="btn btn-mini">in {{search.hotelRadius}} miles of</button>
+                        <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=1">in 1 mile of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=2">in 2 miles of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=5">in 5 miles of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=10">in 10 miles of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=15">in 15 miles of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=20">in 20 miles of</a></li>
+                            <li><a href="javascript:void(0)" ng-click="search.hotelRadius=25">in 25 miles of</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group" id="hotel-search-type" data-toggle="buttons-radio" style="float: right;">
+                        <button id="hotel-search-airport" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='airport'}" ng-click="search.hotelSearch='airport'">Airport</button>
+                        <button id="hotel-search-address" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='address'}" ng-click="search.hotelSearch='address'">Address</button>
+                        <!--<button id="hotel-search-location" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='office'}" ng-click="search.hotelSearch='office'">Offices/Venues</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="hotel-airport-wrapper" ng-show="search.hotelSearch=='airport'">
+            <div class="form-element-label">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <input id="hotel-airport" name="hotel-airport" autocomplete="off" type="text" class="input-block-level airport-select2" ng-model="search.hotelAirport" placeholder="airport">
+            </div>
+        </div>
+
+        <div id="hotel-address-wrapper"  ng-show="search.hotelSearch=='address'">
+            <div class="form-element-label">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <input id="hotel-address" name="hotel-address" autocomplete="off" type="text" class="input-block-level" placeholder="address" style="margin-bottom: 10px;" ng-model="search.hotelAddress">
+                <input id="hotel-city" name="hotel-city" type="text" class="input-large" placeholder="city" ng-model="search.hotelCity">
+                <input id="hotel-state" name="hotel-state" type="text" class="input-small" placeholder="state" ng-model="search.hotelState">
+                <input id="hotel-zip" name="hotel-zip" type="text" class="input-small" placeholder="zip" ng-model="search.hotelZip">
+            </div>
+        </div>
+
+        <!--
+        <div id="hotel-location-wrapper" ng-show="search.hotelSearch=='office'">
+            <div class="form-element-label">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <select id="hotel-location" name="hotel-location" class="input-block-level">
+                    <option></option>
+                    <cfoutput query="locations">
+                        <option value="#locations.Office_ID#">#locations.Office_Name#</option>
+                    </cfoutput>
+                </select>
+            </div>
+        </div>
+        -->
+        <div id="hotel-date-wrapper">
+            <div class="form-element-label">
+                <label for="hotel-in-date">&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <div style="width: 46%; float: left; margin-right: 4%">
+                    <input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width" value="{{search.checkInDate | date:'MM/dd/yyyy'}}" placeholder="check in date" />
+                </div>
+                <div style="width: 46%; float: left;">
+                    <input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width" value="{{search.checkOutDate | date:'MM/dd/yyyy'}}" placeholder="check out date" />
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="form-element-label">
+                <label>&nbsp;</label>
+            </div>
+
+            <div class="form-element-content">
+                <div id="start-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
+                <div id="end-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
+            </div>
+        </div>
+
+        <div id="submit-wrapper" class="row" style="text-align: right;">
+            <a href="javascript:void(0)" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" ng-click="updateSearch()" type="submit" data-toggle="modal">Search</a>
+        </div>
     </div>
 </div>

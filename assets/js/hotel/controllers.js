@@ -27,23 +27,39 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			.then( function( result ){
 				$scope.search = result.data;
 				$scope.initializeMap();
+				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
+				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
+
+				//Now that we have the search data, we're going to set the search parameters into the change search form
+				$(".airport-select2").select2( "val", $scope.search.hotelAirport );
+				$("#start-calendar-wrapper" ).data('datepicker').date = $scope.search.checkInDate;
+				$("#end-calendar-wrapper" ).data('datepicker').date = $scope.search.checkOutDate;
+
 			});
 	}
 
 	$scope.updateSearch = function(){
+		$scope.search.checkInDate = new Date( $('#hotel-in-date' ).val() );
+		$scope.search.checkOutDate = new Date( $('#hotel-out-date' ).val() );
+		$('#changeSearchWindow').modal('hide');
 		$('#searchWindow').modal('show');
+
 		SearchService.updateSearch( $scope.search )
 			.then( function(result){
 
 				if( result.success ){
 					$scope.search = result.data;
+					$scope.search.checkInDate = new Date( $scope.search.checkInDate );
+					$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
+					$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
+					$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
 					$scope.getSearchResults();
 				}
 
 				$scope.errors = result.errors;
 				$scope.messages = result.messages;
 
-				$('#searchWindow').modal('hide')
+
 			} )
 	}
 
@@ -321,6 +337,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		return new Array( num );
 	}
 
+	$scope.showChangeSearchWindow = function(){
+		$('#changeSearchWindow').modal('show');
+	}
 
 	/* Items executed when controller is loaded */
 
@@ -329,5 +348,41 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.loadSearch( $scope.searchId );
 
 	$scope.getSearchResults();
+
+	//Initialization for the change search modal window
+	$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
+	$scope.calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
+	$("#start-calendar-wrapper" ).datepicker( { startDate: $scope.calendarStartDate } )
+		.on( "changeDate", function( event ){
+			$("#hotel-in-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
+			$("#end-calendar-wrapper" ).datepicker('setStartDate', event.date );
+			$("#end-calendar-wrapper" ).datepicker('update', event.date.format( "yyyy-mm-dd" ) );
+			$("#hotel-out-date" ).val( '' );
+		});
+
+	$("#end-calendar-wrapper" ).datepicker( { startDate: $scope.calendarStartDate } )
+		.on( "changeDate", function( event ){
+			$("#hotel-out-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
+		});
+
+	/*$("#start-calendar-wrapper" ).data('datepicker').date = null;
+	$("#start-calendar-wrapper" ).find('.active').removeClass('active');
+	$("#end-calendar-wrapper" ).data('datepicker').date = null;
+	$("#end-calendar-wrapper" ).find('.active').removeClass('active');*/
+
+	$(".airport-select2" ).select2({
+		data: airports,
+		width: "100%",
+		sortResults: function(results, container, query) {
+			if (query.term) {
+				for (var i = 0; i < results.length; i++) {
+					if( results[i].id.toUpperCase() == query.term.toUpperCase() ){
+						results.move( i, 0 );
+					}
+				}
+			}
+			return results;
+		}
+	})
 
 });
