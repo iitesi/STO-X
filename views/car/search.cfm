@@ -1,4 +1,4 @@
-<div id="displaySearchWindow" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+<div id="displaySearchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
 	<div class="searchContainer">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -16,7 +16,7 @@
 									<label for="car-location">location</label>
 								</div>
 								<div class="form-element-content">
-									<input type="text" class="input-block-level airport-select2" id="car-location" name="car-location" value="" placeholder="#rc.formData.carPickupAirport#" />
+									<input type="text" class="input-block-level airport-select2" id="car-location" name="car-location" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
 								</div>
 							</div>
 							<div class="row" id="car-pickup-wrapper">
@@ -126,7 +126,7 @@
 			</div>
 
 			<!--- Modal window to be displayed while search is occurring. --->
-			<div id="pleaseWait" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
+			<div id="pleaseWait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
 				<div class="modal-header">
 					<h3 id="waitModalHeader">Please Wait</h3>
 				</div>

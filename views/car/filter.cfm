@@ -29,7 +29,8 @@
 " />
 
 <cfparam name="rc.filter" default="">
-
+<!--- <cfdump var="#session#" abort> --->
+<!--- TODO: Add in data-backdrop="static" --->
 <a href="##displaySearchWindow" id="displayModal" data-toggle="modal">CHANGE YOUR SEARCH</a>
 <cfoutput>
 	#view('car/search')#

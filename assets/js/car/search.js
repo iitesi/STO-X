@@ -91,10 +91,10 @@ formSubmit = function( event ){
 
 	$.ajax({
 		type: "POST",
-		url: "/booking/RemoteProxy.cfc?method=updateSearch",
+		url: "/search/RemoteProxy.cfc?method=saveSearch",
 		data: formData,
 		success: function( response ){
-			if( response.success ){
+			if( response.success == true ){
 				window.location = "/booking/index.cfm?action=car.availability&searchId=" + formData.searchID + "&requery=true";
 			}else{
 				//TODO: Process any errors returned from the server
