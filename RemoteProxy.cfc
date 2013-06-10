@@ -97,6 +97,17 @@
     </cffunction>
 
 	<cffunction name="updateSearch" access="remote" output="false" returntype="any" returnFormat="json" hint="">
+		<cfargument name="searchId" type="numeric" required="true"/>
+		<cfargument name="hotelRadius" type="numeric" required="false" />
+		<cfargument name="hotelSearch" type="string" required="false" />
+		<cfargument name="hotelLat" type="numeric" required="false" />
+		<cfargument name="hotelLong" type="numeric" required="false" />
+		<cfargument name="hotelAddress" type="string" required="false" />
+		<cfargument name="hotelCity" type="string" required="false" />
+		<cfargument name="hotelState" type="string" required="false" />
+		<cfargument name="hotelZip" type="string" required="false" />
+		<cfargument name="checkInDate" type="date" required="false" />
+		<cfargument name="checkOutDate" type="date" required="false" />
 
 		<cfset var result = new com.shortstravel.RemoteResponse() />
 
@@ -112,7 +123,7 @@
 			</cfif>
 
 			<cfcatch type="any">
-				<cfset result.addError( "An error occurred while updating the specified search." ) />
+				<cfset result.addError( "An error occurred while updating the specified search.<br>#cfcatch.message#" ) />
 				<cfset result.setSuccess( false ) />
 			</cfcatch>
 

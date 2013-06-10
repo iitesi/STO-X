@@ -9,7 +9,25 @@ services.factory( "SearchService", function( $http ){
 	}
 
 	SearchService.updateSearch = function( search ){
-		return $http.get( "/booking/RemoteProxy.cfc?method=updateSearch&searchId=" + search.searchID + "&hotelLat=" + search.hotelLat + "&hotelLong=" + search.hotelLong )
+		var postData = {
+			searchId: search.searchID,
+			hotelLat: search.hotelLat,
+			hotelLong: search.hotelLong,
+			hotelRadius: search.hotelRadius,
+			hotelSearch: search.hotelSearch,
+			hotelAddress: search.hotelAddress,
+			hotelCity: search.hotelCity,
+			hotelState: search.hotelState,
+			hotelZip: search.hotelZip,
+			checkInDate: dateFormat( search.checkInDate, 'mm/dd/yyyy' ),
+			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' )
+		 	}
+		return $http({
+				url: '/booking/RemoteProxy.cfc?method=updateSearch',
+				method: "POST",
+				params: postData,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			})
 			.then( function(response) { return response.data });
 	}
 

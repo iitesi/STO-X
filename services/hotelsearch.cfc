@@ -325,13 +325,13 @@
 		<cfargument Name="Hotel_City" />
 		<cfargument Name="Hotel_State" />
 		<cfargument Name="Hotel_Zip" />
-		<cfargument Name="Hotel_Country" />
+		<cfargument Name="Hotel_Country" required="false" default="USA" />
 		<cfargument Name="Office_ID" />
 		
 		<cfset local.LatLong = '0,0'>
 		<cfset local.getSpecificLongLat = ''>
 		<cfset local.Search_Location = ''>
-		
+
 		<cfif arguments.Hotel_Search EQ 'Airport'>
 			<cfquery name="getSpecificLongLat" datasource="book" cachedwithin="#createTimeSpan(1,0,0,0)#">
 			SELECT Long, Lat, Geography_ID
@@ -378,6 +378,7 @@
 				<cfset local.LatLong = getSpecificLongLat.Office_Lat&','&getSpecificLongLat.Office_Long&',0'>
 			</cfif>
 		</cfif>
+
 		<cfif LatLong EQ '0,0'>
 			<cfif arguments.Hotel_Search EQ 'Airport'>
 				<cfset local.Search_Location = arguments.Hotel_Airport>
@@ -388,6 +389,7 @@
 			<cfelse>
 				<cfset local.Search_Location = '#Trim(arguments.Hotel_Address)#,#Trim(arguments.Hotel_City)#,#Trim(arguments.Hotel_State)#,#Trim(arguments.Hotel_Zip)#,#Trim(arguments.Hotel_Country)#'>
 			</cfif>
+
 			<cfif Search_Location NEQ '' AND Search_Location NEQ ',,,'>
 				<cftry>
 					<cfhttp method="get" url="https://maps.google.com/maps/geo?q=#Search_Location#&output=xml&oe=utf8\&sensor=false&key=ABQIAAAAIHNFIGiwETbSFcOaab8PnBQ2kGXFZEF_VQF9vr-8nzO_JSz_PxTci5NiCJMEdaUIn3HA4o_YLE757Q" />
@@ -400,7 +402,7 @@
 				</cftry>
 			</cfif>
 		</cfif>
-			
+
 		<cfreturn LatLong>
 	</cffunction>
 
