@@ -9,7 +9,25 @@ services.factory( "SearchService", function( $http ){
 	}
 
 	SearchService.updateSearch = function( search ){
-		return $http.get( "/booking/RemoteProxy.cfc?method=updateSearch&searchId=" + search.searchID + "&hotelLat=" + search.hotelLat + "&hotelLong=" + search.hotelLong )
+		var postData = {
+			searchId: search.searchID,
+			hotelLat: search.hotelLat,
+			hotelLong: search.hotelLong,
+			hotelRadius: search.hotelRadius,
+			hotelSearch: search.hotelSearch,
+			hotelAddress: search.hotelAddress,
+			hotelCity: search.hotelCity,
+			hotelState: search.hotelState,
+			hotelZip: search.hotelZip,
+			checkInDate: dateFormat( search.checkInDate, 'mm/dd/yyyy' ),
+			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' )
+		 	}
+		return $http({
+				url: '/booking/RemoteProxy.cfc?method=updateSearch',
+				method: "POST",
+				params: postData,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			})
 			.then( function(response) { return response.data });
 	}
 
@@ -44,7 +62,6 @@ services.factory( "HotelService", function( $http ){
 	HotelService.getExtendedData = function( Hotel ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelDetails&propertyId=" + Hotel.PropertyId )
 			.then( function( response ){
-				console.log( response );
 				Hotel.details.loaded = true;
 				Hotel.details.description = response.data.data.description;
 				Hotel.details.cancellation = response.data.data.cancellation;
@@ -58,6 +75,12 @@ services.factory( "HotelService", function( $http ){
 				Hotel.details.services =  response.data.data.services;
 				Hotel.details.starRating = response.data.data.starRating;
 				Hotel.details.transportation = response.data.data.transportation;
+				Hotel.images = response.data.data.images;
+				if( Hotel.images.length ){
+					Hotel.selectedImage = Hotel.images[0].imageURL;
+				} else {
+					Hotel.selectedImage = "";
+				}
 			})
 	}
 

@@ -116,7 +116,3 @@
 
 		</html>
 </cfif>
-
-
-<!--- CFDUMP: Debugging --->
-<cfdump var="#application#" label="Dump ( session )" metainfo="true" abort="true" format="html">
