@@ -109,6 +109,6 @@ formSubmit = function( event ){
 
 setModalWindowText = function(){
 	//If car is checked, add car-related text to the modal window.
-	$( "#myModalBody" ).append("<h5>CAR</h5>");
-	$( "#myModalBody" ).append("<p>We are finding cars available at " + $("#car-location").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
+	$( "#waitModalBody" ).append("<h3>CAR</h3>");
+	$( "#waitModalBody" ).append("<p>We are finding cars available at " + $("#car-location").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
 };

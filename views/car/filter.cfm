@@ -12,15 +12,11 @@
 			max-width: 680px;
 			width: 680px;			
 		}
-		.modal {
+		.modal.searchForm {
 			position: absolute;
-			top: 10%;
 			width: 680px;
 			height: 600px;
 			margin: -80px 0px 0 -360px;
-		}
-		.modal.fade.in {
-			top: 0;
 		}
 		.modal-body {
 			overflow-y: auto;
@@ -29,9 +25,7 @@
 " />
 
 <cfparam name="rc.filter" default="">
-<!--- <cfdump var="#session#" abort> --->
-<!--- TODO: Add in data-backdrop="static" --->
-<a href="##displaySearchWindow" id="displayModal" data-toggle="modal">CHANGE YOUR SEARCH</a>
+<a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">CHANGE YOUR SEARCH</a>
 <cfoutput>
 	#view('car/search')#
 </cfoutput>

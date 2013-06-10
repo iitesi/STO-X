@@ -1,4 +1,4 @@
-<div id="displaySearchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+<div id="displaySearchWindow" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
 	<div class="searchContainer">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -122,18 +122,18 @@
 		<div class="modal-footer">
 			<!--- Search button that, when clicked, will trigger modal window before results are displayed. --->
 			<div id="submit-wrapper" class="row" style="text-align: right;">
-				<a href="#pleaseWait" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" type="submit" data-toggle="modal">Update Search</a>
-			</div>
-
-			<!--- Modal window to be displayed while search is occurring. --->
-			<div id="pleaseWait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
-				<div class="modal-header">
-					<h3 id="waitModalHeader">Please Wait</h3>
-				</div>
-				<div id="waitModalBody" class="modal-body">
-					<p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
-				</div>
+				<a href="#pleaseWait" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" type="submit" data-toggle="modal" data-backdrop="static">Update Search</a>
 			</div>
 		</div>
+	</div>
+</div>
+
+<!--- Modal window to be displayed while search is occurring. --->
+<div id="pleaseWait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
+	<div class="modal-header">
+		<h3 id="waitModalHeader">Please Wait</h3>
+	</div>
+	<div id="waitModalBody" class="modal-body">
+		<p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
 	</div>
 </div>
