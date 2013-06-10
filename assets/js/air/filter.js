@@ -11,6 +11,9 @@ $(document).ready(function(){
 
 	// Single Carrier (on/off)
 	$('#SingleCarrier').change(function(){
+
+		filterAir();
+		console.log('Single carrier clicked....');
 		if($(this).is(':checked')){
 			$("#singlecarrierbtn").parent().addClass('active');
 			// Example of using icon

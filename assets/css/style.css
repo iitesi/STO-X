@@ -292,8 +292,8 @@ ul.tabs li a.active {
 	margin: 1em;
 }
 
-.filter h4 {
-	color: #ccc;
+.filter h4, .filter h4 a {
+	color: #666;
 	margin: 0;
 }
 

@@ -17,19 +17,21 @@
 					<div class="navbar">
 							<div class="navbar-inner">
 								<ul class="nav">
-									<li class="dropdown">
-										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-											Price
-											<b class="caret"></b>
-										</a>
-										<ul class="dropdown-menu">
-											<li><a href="">Price</a></li>
-											<li><a href="">Price + 1 Bag</a></li>
-											<li><a href="">Price + 2 Bags</a></li>
-										</ul>
+									<cfif rc.action NEQ 'air.availability'>
+										<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
+											<ul class="dropdown-menu">
+												<li><a href="#">Price</a></li>
+												<li><a href="#">Price + 1 Bag</a></li>
+												<li><a href="#">Price + 2 Bags</a></li>
+											</ul>
+										<cfelse>
+											<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
+										</cfif>
 											<li><a href="#">Duration</a></li>
 											<li><a href="#">Departure</a></li>
 									</li>
+
 								</ul>
 							</div>
 						</div>
@@ -40,8 +42,10 @@
 						TODO: figure out how to 'reset' filters globally...
 						4:40 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
 					--->
-				<h4>Filters</h4>
+				<div>
+					<h4>Filters:  10 of 245 flights displayed <a href="" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
 
+				</div>
 					<div class="navbar filterby">
 						<div class="navbar-inner">
 							<ul class="nav">
@@ -128,10 +132,6 @@
 					</cfoutput>
 				</div> <!--- // row --->
 			</div> <!--- // span12 --->
-
-			<div class="pull-right">
-				<a href="" class="btn btn-danger"><i class="icon-refresh"></i> Reset Filters</a>
-			</div>
 		</div> <!--- // well filterselection --->
 
 		</div><!-- // class=sixteen columns -->
@@ -143,6 +143,7 @@
 
 	TODO: Need to clean this up once I finish updated filter and sort bars
 	4:58 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
+
 
 <ul id="filter">
 	<table border="1">
@@ -288,6 +289,7 @@ SINGLE CARRIERS
 	</table>
 </ul>
 
+--->
 
 
 
@@ -324,4 +326,3 @@ $(document).ready(function() {
 });
 </script>
 
- --->

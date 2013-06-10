@@ -57,6 +57,7 @@
 				<cfset nCount++>
 				#View('air/badge')#
 			</cfloop>
+
 			<!--- Display standard fare based search --->
 			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
@@ -90,6 +91,10 @@
 			</script>
 		<cfelse>
 			<h3>No Flights Returned</h2>
+
+<!--- TODO: set change search modal window form link
+7:02 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
+ --->
 			<p>There were no flights found based on your search criteria. Please <a href="">change your search</a> and try again.</p>
 		</cfif>
 	</div>
