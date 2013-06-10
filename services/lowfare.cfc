@@ -89,7 +89,7 @@ doLowFare
 				<!--- <cfset thread.arguments = arguments> --->
 				<!--- Put together the SOAP message. --->
 				<cfset sMessage 	= prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
-				<!---<cfdump var="#sMessage#">--->
+				<!--- <cfdump var="#sMessage#" abort> --->
 				<!--- Call the UAPI. --->
 				<cfset sResponse 	= getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
 				<!---<cfdump var="#sResponse#" abort>--->
@@ -143,6 +143,7 @@ prepareSOAPHeader
 			SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
 			FROM Searches_Legs
 			WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
+			ORDER BY Depart_DateTime
 			</cfquery>
 		</cfif>
 		
@@ -157,24 +158,27 @@ prepareSOAPHeader
 						<cfif arguments.sLowFareSearchID EQ ''>
 							<air:LowFareSearchReq TargetBranch="#arguments.Account.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0" AuthorizedBy="Test">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
-								<air:SearchAirLeg>
-									<air:SearchOrigin>
-										<com:Airport Code="#arguments.Filter.getDepartCity()#" />
-									</air:SearchOrigin>
-									<air:SearchDestination>
-										<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
-									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
-									<air:AirLegModifiers>
-										<cfif NOT arrayIsEmpty(aCabins)>
-											<air:PermittedCabins>
-												<cfloop array="#aCabins#" index="local.sCabin">
-													<air:CabinClass  Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
-												</cfloop>
-											</air:PermittedCabins>
-										</cfif>
-									</air:AirLegModifiers>
-								</air:SearchAirLeg>
+								<cfif arguments.Filter.getAirType() EQ 'RT'
+								OR arguments.Filter.getAirType() EQ 'OW'>
+									<air:SearchAirLeg>
+										<air:SearchOrigin>
+											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+										</air:SearchOrigin>
+										<air:SearchDestination>
+											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+										</air:SearchDestination>
+										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
+										<air:AirLegModifiers>
+											<cfif NOT arrayIsEmpty(aCabins)>
+												<air:PermittedCabins>
+													<cfloop array="#aCabins#" index="local.sCabin">
+														<air:CabinClass  Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+													</cfloop>
+												</air:PermittedCabins>
+											</cfif>
+										</air:AirLegModifiers>
+									</air:SearchAirLeg>
+								</cfif>
 								<cfif arguments.Filter.getAirType() EQ 'RT'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
