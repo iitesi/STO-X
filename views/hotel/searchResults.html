@@ -81,9 +81,13 @@
         <div ng-show="searchCompleted && hotels.length" ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter ) |  limitTo: resultsPerPage"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
+                <tr ng-show="hotel.preferredVendor">
+                    <td colspan="3"><span class="preferred">PREFERRED</span></td>
+                </tr>
+                </tr>
                 <tr>
-                    <td style="width: 100px;">
-                        <img class="hotelImage" src="{{hotel.SignatureImage}}" height>
+                    <td style="width: 100px; vertical-align: top">
+                        <img src="{{hotel.SignatureImage}}" height="70" width="100">
                     </td>
                     <td valign="top" style="padding-left: 20px; width: 280px;">
                         <div class="hotelName" style="width: 100%; clear: both; font-weight: bold;">

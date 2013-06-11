@@ -30,53 +30,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
 				$scope.getSearchResults();
-
-				//Now that we have the search data, we're going to set the search parameters into the change search form
-				$(".airport-select2").select2( "val", $scope.search.hotelAirport );
-
-				//Initialization for the change search modal window
-				$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
-				var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy", true );
-				$("#start-calendar-wrapper" ).datepicker({
-					startDate: calendarStartDate
-					})
-					.on( "changeDate", function( event ){
-						$("#hotel-in-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
-						var endDate = event.date;
-						endDate.setDate( endDate.getDate() + 1 );
-						var endWrapper = $("#end-calendar-wrapper" );
-						endWrapper.data( 'datepicker' ).setStartDate( endDate );
-						endWrapper.data( 'datepicker' ).setDate( endDate );
-						endWrapper.data( 'datepicker' ).update();
-					});
-
-				$("#end-calendar-wrapper" ).datepicker({
-					startDate: calendarStartDate
-					})
-					.on( "changeDate", function( event ){
-						console.log( "end-calendar-wrapper on:changeDate " + event.date );
-						$("#hotel-out-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
-					});
-
-				$("#start-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkInDate );
-				$("#start-calendar-wrapper" ).data( 'datepicker' ).update();
-				$("#end-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkOutDate );
-				$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
-				$(".airport-select2" ).select2({
-					data: airports,
-					width: "100%",
-					sortResults: function(results, container, query) {
-						if (query.term) {
-							for (var i = 0; i < results.length; i++) {
-								if( results[i].id.toUpperCase() == query.term.toUpperCase() ){
-									results.move( i, 0 );
-								}
-							}
-						}
-						return results;
-					}
-				})
-
+				$scope.configureChangeSearchForm();
 			});
 	}
 
@@ -383,6 +337,55 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$('#changeSearchWindow').modal('show');
 	}
 
+	$scope.configureChangeSearchForm = function(){
+
+		//Now that we have the search data, we're going to set the search parameters into the change search form
+		$(".airport-select2").select2( "val", $scope.search.hotelAirport );
+
+		//Initialization for the change search modal window
+		$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
+		var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy", true );
+		$("#start-calendar-wrapper" ).datepicker({
+			startDate: calendarStartDate
+			})
+			.on( "changeDate", function( event ){
+				$("#hotel-in-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
+				var endDate = event.date;
+				endDate.setDate( endDate.getDate() + 1 );
+				var endWrapper = $("#end-calendar-wrapper" );
+				endWrapper.data( 'datepicker' ).setStartDate( endDate );
+				endWrapper.data( 'datepicker' ).setDate( endDate );
+				endWrapper.data( 'datepicker' ).update();
+			});
+
+		$("#end-calendar-wrapper" ).datepicker({
+			startDate: calendarStartDate
+			})
+			.on( "changeDate", function( event ){
+				console.log( "end-calendar-wrapper on:changeDate " + event.date );
+				$("#hotel-out-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
+			});
+
+		$("#start-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkInDate );
+		$("#start-calendar-wrapper" ).data( 'datepicker' ).update();
+		$("#end-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkOutDate );
+		$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
+		$(".airport-select2" ).select2({
+			data: airports,
+			width: "100%",
+			sortResults: function(results, container, query) {
+				if (query.term) {
+					for (var i = 0; i < results.length; i++) {
+						if( results[i].id.toUpperCase() == query.term.toUpperCase() ){
+							results.move( i, 0 );
+						}
+					}
+				}
+				return results;
+			}
+		})
+
+	}
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');

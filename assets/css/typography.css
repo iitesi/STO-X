@@ -170,6 +170,11 @@ blockquote:before {
 	text-shadow: 1px 4px 6px #fff, 0 0 0 #000, 1px 4px 6px #fff;
 }
 
+.preferred{
+    font-weight: bold;
+    color: #308AE8;
+}
+
 /* #Media Queries
 ================================================== */
 
