@@ -13,10 +13,9 @@ default
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<cfset session.Users[1] = fw.getBeanFactory().getBean('userService').load(3605)>
-
-		<cfset rc.stItinerary = session.searches[rc.SearchID].stItinerary>
-		<cfif NOT structKeyExists(session.searches[rc.SearchID], 'stTravelers')>
+		
+		
+		<!--- <cfif NOT structKeyExists(session.searches[rc.SearchID], 'stTravelers')>
 			<cfset session.searches[rc.SearchID].stTravelers = {"1":{"Errors":{}},"2":{"Errors":{}},"3":{"Errors":{}},"4":{"Errors":{}}}>
 		</cfif>
 		<!--- <cfset session.searches[rc.SearchID].stTravelers = {"1":{},"2":{},"3":{},"4":{}}> --->
@@ -31,7 +30,7 @@ default
 
 		<cfif session.AcctID EQ 235>
 			<cfset variables.fw.service('summary.getTXExceptionCodes', 'qTXExceptionCodes')>
-		</cfif>
+		</cfif> --->
 
 		<cfreturn />
 	</cffunction>

@@ -29,12 +29,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.initializeMap();
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
-
-				//Now that we have the search data, we're going to set the search parameters into the change search form
-				$(".airport-select2").select2( "val", $scope.search.hotelAirport );
-				$("#start-calendar-wrapper" ).data('datepicker').date = $scope.search.checkInDate;
-				$("#end-calendar-wrapper" ).data('datepicker').date = $scope.search.checkOutDate;
-
+				$scope.getSearchResults();
+				$scope.configureChangeSearchForm();
 			});
 	}
 
@@ -341,48 +337,59 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$('#changeSearchWindow').modal('show');
 	}
 
+	$scope.configureChangeSearchForm = function(){
+
+		//Now that we have the search data, we're going to set the search parameters into the change search form
+		$(".airport-select2").select2( "val", $scope.search.hotelAirport );
+
+		//Initialization for the change search modal window
+		$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
+		var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy", true );
+		$("#start-calendar-wrapper" ).datepicker({
+			startDate: calendarStartDate
+			})
+			.on( "changeDate", function( event ){
+				$("#hotel-in-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
+				var endDate = event.date;
+				endDate.setDate( endDate.getDate() + 1 );
+				var endWrapper = $("#end-calendar-wrapper" );
+				endWrapper.data( 'datepicker' ).setStartDate( endDate );
+				endWrapper.data( 'datepicker' ).setDate( endDate );
+				endWrapper.data( 'datepicker' ).update();
+			});
+
+		$("#end-calendar-wrapper" ).datepicker({
+			startDate: calendarStartDate
+			})
+			.on( "changeDate", function( event ){
+				console.log( "end-calendar-wrapper on:changeDate " + event.date );
+				$("#hotel-out-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
+			});
+
+		$("#start-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkInDate );
+		$("#start-calendar-wrapper" ).data( 'datepicker' ).update();
+		$("#end-calendar-wrapper" ).data( 'datepicker' ).setDate( $scope.search.checkOutDate );
+		$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
+		$(".airport-select2" ).select2({
+			data: airports,
+			width: "100%",
+			sortResults: function(results, container, query) {
+				if (query.term) {
+					for (var i = 0; i < results.length; i++) {
+						if( results[i].id.toUpperCase() == query.term.toUpperCase() ){
+							results.move( i, 0 );
+						}
+					}
+				}
+				return results;
+			}
+		})
+
+	}
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
 
 	$scope.loadSearch( $scope.searchId );
-
-	$scope.getSearchResults();
-
-	//Initialization for the change search modal window
-	$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
-	$scope.calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
-	$("#start-calendar-wrapper" ).datepicker( { startDate: $scope.calendarStartDate } )
-		.on( "changeDate", function( event ){
-			$("#hotel-in-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
-			$("#end-calendar-wrapper" ).datepicker('setStartDate', event.date );
-			$("#end-calendar-wrapper" ).datepicker('update', event.date.format( "yyyy-mm-dd" ) );
-			$("#hotel-out-date" ).val( '' );
-		});
-
-	$("#end-calendar-wrapper" ).datepicker( { startDate: $scope.calendarStartDate } )
-		.on( "changeDate", function( event ){
-			$("#hotel-out-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
-		});
-
-	/*$("#start-calendar-wrapper" ).data('datepicker').date = null;
-	$("#start-calendar-wrapper" ).find('.active').removeClass('active');
-	$("#end-calendar-wrapper" ).data('datepicker').date = null;
-	$("#end-calendar-wrapper" ).find('.active').removeClass('active');*/
-
-	$(".airport-select2" ).select2({
-		data: airports,
-		width: "100%",
-		sortResults: function(results, container, query) {
-			if (query.term) {
-				for (var i = 0; i < results.length; i++) {
-					if( results[i].id.toUpperCase() == query.term.toUpperCase() ){
-						results.move( i, 0 );
-					}
-				}
-			}
-			return results;
-		}
-	})
 
 });

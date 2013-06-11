@@ -73,8 +73,7 @@ OR NOT rc.Filter.getAir()>
 									<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 										<cfset buttonType="btn-primary" />
 										<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
-										<cfset thisCarRate=Mid(stRate.EstimatedTotalAmount, 4) />
-										<cfif thisCarRate EQ session.searches[SearchID].stCars.fLowestCarRate>
+										<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
 											<span class="green">BEST RATE</span>
 											<cfset buttonType="btn-success" />
 										</cfif>

@@ -1,13 +1,9 @@
-<cfcomponent output="false" accessors="true">
+<cfcomponent output="false">
 
-<!---
-init
---->
-	<cffunction name="init" output="false">
-		
-		<cfreturn this>
-	</cffunction>
+    <cffunction name="init" returntype="any" access="public" output="false" hint="I initialize this component">
 
+        <cfreturn this />
+    </cffunction>
 
 <!---
 saveSummary
@@ -19,8 +15,6 @@ saveSummary
 		<cfargument name="CarFOP_ID" default="">
 		<cfargument name="HotelFOP_ID" default="">
 		<cfargument name="Traveler">
-
-
 
 		<cfloop collection="#arguments#" item="local.field">
 			<cfset local[field] = arguments[field]>
