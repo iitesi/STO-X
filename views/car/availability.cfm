@@ -1,3 +1,5 @@
+<!--- <cfdump var="#session.searches[rc.SearchID]#"> --->
+
 <cfif (rc.Filter.getAir() AND structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air'))
 OR NOT rc.Filter.getAir()>
 	<div class="page-header">
@@ -29,7 +31,7 @@ OR NOT rc.Filter.getAir()>
 					<td>
 					<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
-							<span class="medium blue bold">PREFERRED</span><br>
+							<span class="preferred blue bold">PREFERRED</span><br>
 						</cfif>
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-bottom:10px;">
 					</div>
@@ -39,7 +41,6 @@ OR NOT rc.Filter.getAir()>
 			</table>
 		</div>
 
-<!--- <cfdump var="#session.searches[rc.SearchID].stCars#" abort> --->
 		<br clear="all">
 
 		<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
@@ -58,7 +59,7 @@ OR NOT rc.Filter.getAir()>
 						<td>
 							<div style="width:150px;position:relative;float:left;">
 								<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-									<span class="medium blue bold">PREFERRED</span><br>
+									<span class="preferred blue bold">PREFERRED</span><br>
 								</cfif>
 								#vehicleClass#<br />
 								<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86"><br />
@@ -72,11 +73,15 @@ OR NOT rc.Filter.getAir()>
 								<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
 									<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 										<cfset buttonType="btn-primary" />
+										<!--- If out of policy --->
+										#(session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy ? true : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />')#
 										<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
+										<!--- If best/lowest rate --->
 										<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
 											<span class="green">BEST RATE</span>
 											<cfset buttonType="btn-success" />
 										</cfif>
+										<!--- If corporate rate --->
 										<cfif stRate.Corporate>
 											CORPORATE
 										</cfif><br />

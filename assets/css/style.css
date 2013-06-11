@@ -432,6 +432,9 @@ ul.tabs li a.active {
 .medium {
 	font-size:16px;
 }
+.preferred {
+	font-size:14px;
+}
 .upper {
 	text-transform:uppercase;
 }
