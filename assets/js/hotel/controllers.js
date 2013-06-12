@@ -26,6 +26,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
 				$scope.search = result.data;
+				$scope.loadPolicy( $scope.search.policyID );
+			});
+	}
+
+	$scope.loadPolicy = function( policyId ){
+		HotelService.loadPolicy( policyId )
+			.then( function( result ){
 				$scope.initializeMap();
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
@@ -75,7 +82,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				//Fire off calls to get room rates for these hotels
 				for( var i=0; i<$scope.resultsPerPage; i++ ){
 					try{
-						$scope.getHotelRates( $scope.hotels[i] );
+						$scope.getHotelRates( $scope.hotels[i], requery );
 					}
 					catch( err ){
 
@@ -87,9 +94,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			});
 	}
 
-	$scope.getHotelRates = function( Hotel ){
+	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel );
+			HotelService.getHotelRates( $scope.searchId, Hotel, requery );
 		}
 	}
 
@@ -362,7 +369,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			startDate: calendarStartDate
 			})
 			.on( "changeDate", function( event ){
-				console.log( "end-calendar-wrapper on:changeDate " + event.date );
 				$("#hotel-out-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
 			});
 
