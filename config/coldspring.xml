@@ -73,6 +73,14 @@
 		<constructor-arg name="LoyaltyProgramManager"><ref bean="LoyaltyProgramManager" /></constructor-arg>
 	</bean>
 
+	<bean id="PaymentManager" class="com.shortstravel.traveler.PaymentManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+	</bean>
+
+    <bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
+		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
+	</bean>
+
 	<bean id="Summary" class="booking.services.summary" >
 		<constructor-arg name="TravelerService"><ref bean="TravelerService" /></constructor-arg>
 	</bean>
