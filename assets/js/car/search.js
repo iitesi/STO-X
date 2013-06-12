@@ -3,6 +3,10 @@ $(document).ready(function(){
 	$("#btnFormSubmit" ).on( "click", function(event){ formSubmit( event, this ) });
 
 	var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
+	var pickupVal = $("#car-pickup-date").val();
+	var pickupDate = new Date(pickupVal);
+	var dropoffVal = $("#car-dropoff-date").val();
+	var dropoffDate = new Date(dropoffVal);
 
 	$("#start-calendar-wrapper" ).datepicker( { startDate: calendarStartDate } )
 		.on( "changeDate", function( event ){
@@ -17,10 +21,13 @@ $(document).ready(function(){
 			$("#car-dropoff-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
 		});
 
-	$("#start-calendar-wrapper" ).data('datepicker').date = null;
-	$("#start-calendar-wrapper" ).find('.active').removeClass('active');
-	$("#end-calendar-wrapper" ).data('datepicker').date = null;
-	$("#end-calendar-wrapper" ).find('.active').removeClass('active');
+	$("#start-calendar-wrapper" ).data( 'datepicker' ).setDate( pickupDate );
+	$("#start-calendar-wrapper" ).data( 'datepicker' ).update();
+	$("#end-calendar-wrapper" ).data( 'datepicker' ).setDate( dropoffDate );
+	$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
+
+	/* $("#start-calendar-wrapper").datepicker("setDate", pickupDate);
+	$("#end-calendar-wrapper").datepicker("setDate", dropoffDate); */
 
 	$(".airport-select2" ).select2({
 		data: airports,
