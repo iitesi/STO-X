@@ -261,7 +261,8 @@
                                 {{room.description}}
                             </div>
                             <div style="width: 15%; float: left; clear: none; padding-bottom: 7px;">
-                                &nbsp; <!--Corp/Gov Rate indicator goes here eventually-->
+                                <span ng-show="room.isCorporateRate" class="preferred">Corp Rate</span>
+                                <span ng-show="room.isGovernmentRate" class="preferred">Gov Rate</span>
                             </div>
                             <div style="width: 15%; float: left; clear: right; padding-bottom: 7px;">
                                 <button style="width: 100%"

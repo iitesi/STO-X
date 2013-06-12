@@ -29,7 +29,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.initializeMap();
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
-				$scope.getSearchResults();
+				$scope.getSearchResults( false );
 				$scope.configureChangeSearchForm();
 			});
 	}
@@ -49,7 +49,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
 					$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
 					$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
-					$scope.getSearchResults();
+					$scope.getSearchResults( true );
 				}
 
 				$scope.errors = result.errors;
@@ -59,8 +59,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			} )
 	}
 
-	$scope.getSearchResults = function(){
-		SearchService.doSearch( $scope.searchId )
+	$scope.getSearchResults = function( requery ){
+		SearchService.doSearch( $scope.searchId, requery )
 			.then( function(result){
 				$scope.hotels = result;
 				$scope.totalProperties = result.length;

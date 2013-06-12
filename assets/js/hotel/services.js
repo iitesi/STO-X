@@ -20,7 +20,7 @@ services.factory( "SearchService", function( $http ){
 			hotelState: search.hotelState,
 			hotelZip: search.hotelZip,
 			checkInDate: dateFormat( search.checkInDate, 'mm/dd/yyyy' ),
-			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' )
+			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' ),
 		 	}
 		return $http({
 				url: '/booking/RemoteProxy.cfc?method=updateSearch',
@@ -31,8 +31,8 @@ services.factory( "SearchService", function( $http ){
 			.then( function(response) { return response.data });
 	}
 
-	SearchService.doSearch = function( searchId ) {
-		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId )
+	SearchService.doSearch = function( searchId, requery ) {
+		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&requery=" + requery )
 			.then( function(response) {
 				var hotels = [];
 

@@ -24,6 +24,8 @@ function Hotel(){
     this.rooms = [];
     this.roomsReturned = false;
     this.images = [];
+    this.isGovernmentRate = false;
+    this.isCorporateRate = false;
 
     this.PropertyId = 0 ;
     this.ChainCode = "";
