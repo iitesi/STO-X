@@ -7,6 +7,7 @@
 		<script type="text/javascript" src="assets/js/date.format.js"></script>
 		<script type="text/javascript" src="assets/js/select2.min.js"></script>
 		<script type="text/javascript" src="assets/localdata/airports-us.js"></script>
+		<script type="text/javascript" src="assets/js/hotel/hotelRoom.js"></script>
 
 	</cfsavecontent>
 	<cfhtmlhead text="#localAssets#" />

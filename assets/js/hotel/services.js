@@ -51,11 +51,21 @@ services.factory( "SearchService", function( $http ){
 services.factory( "HotelService", function( $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
-	HotelService.getHotelRates = function( searchId, Hotel, requery ) {
+	HotelService.getHotelRates = function( searchId, Hotel, policy, requery ) {
 		return $http.get( "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery )
 			.then( function( response ){
+				var rooms = [];
+
+				for (var i = 0; i < response.data.length; i++) {
+					var hr = new HotelRoom();
+					hr.populate( response.data[i] );
+					hr.dailyRate = Math.round( hr.dailyRate );
+					hr.setInPolicy( policy );
+					rooms.push( hr );
+				}
 				Hotel.roomsReturned = true;
-				Hotel.rooms = response.data;
+				Hotel.rooms = rooms;
+				Hotel.setInPolicy( policy );
 			})
 	}
 
@@ -86,7 +96,7 @@ services.factory( "HotelService", function( $http ){
 
 	HotelService.loadPolicy = function( policyId ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getPolicy&policyId=" + policyId )
-			.then( function( response ){ return response })
+			.then( function( response ){ return response.data })
 	}
 
 	return HotelService;
