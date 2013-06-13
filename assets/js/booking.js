@@ -613,6 +613,17 @@ function filterCar(howFilter) {
 		}
 	}
 
+	if(nCount == 0) {
+		$("#noFilteredResults").show();
+		$("#vendorRow").hide();
+		$("#categoryRow").hide();
+	}
+	else {
+		$("#noFilteredResults").hide();
+		$("#vendorRow").show();
+		$("#categoryRow").show();
+	}
+
 	return nCount;
 }
 /* $(document).ready(function() {
