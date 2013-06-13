@@ -33,45 +33,45 @@
 
 <div class="filter">
 	<div class="row">
-		<div>
-			<h4>Filters: <span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <a href="" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
-		</div>
-		<div class="navbar filterby">
-			<div class="navbar-inner">
-				<ul class="nav">
-					<li><a href="#" id="btnCarVendor">Vendors</a></li>
-					<li><a href="#" id="btnCarCategory">Car Types</a></li>
-					<li><a href="#" id="btnPolicy">In Policy</a></li>
-				</ul>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-		<div class="well filterselection">
+		<div class="span10">
 			<div class="row">
-				<div class="span12">
-					<div class="row">
-						<cfoutput>
-							<div class="span4">
-								<b>Vendors</b>
-								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
-									<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#" checked="checked"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
-								</cfloop>
-								<label class="checkbox" for="fltrVendorSelectAll"><input id="fltrVendorSelectAll" type="checkbox" name="selectAll" checked="checked"> Select All</label>
-							</div>
-							<div class="span4">
-								<b>Car Types</b>
-								<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
-									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#" checked="checked"> #Left(carCategory, Len(carCategory)-3)#</label>
-								</cfloop>
-								<label class="checkbox" for="fltrCarCategorySelectAll"><input id="fltrCarCategorySelectAll" type="checkbox" name="selectAll" checked="checked"> Select All</label>
-							</div>
-							<div class="span4">
-								<b>In Policy</b>
-								<label class="checkbox" for="fltrPolicy"><input id="fltrPolicy" type="checkbox" name="policy" title="View In Policy Car Rentals"> In Policy</label>
-							</div>
-						</cfoutput>
+				<div>
+					<h4>Filters: <span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+				</div>
+				<div class="navbar filterby">
+					<div class="navbar-inner">
+						<ul class="nav">
+							<li><a href="#" id="btnCarVendor">Vendors</a></li>
+							<li><a href="#" id="btnCarCategory">Car Types</a></li>
+							<li><a href="#" id="btnPolicy">In Policy</a></li>
+						</ul>
 					</div>
 				</div>
+			</div>
+			<div class="row">
+				<div class="clearfix"></div>
+			</div>
+			<div class="row well filterselection">
+				<cfoutput>
+					<div class="span4">
+						<b>Vendors</b>
+						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
+							<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#" checked="checked"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
+						</cfloop>
+						<label class="checkbox" for="fltrVendorSelectAll"><input id="fltrVendorSelectAll" type="checkbox" name="selectAll" checked="checked"> Select All</label>
+					</div>
+					<div class="span4">
+						<b>Car Types</b>
+						<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+							<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#" checked="checked"> #Left(carCategory, Len(carCategory)-3)#</label>
+						</cfloop>
+						<label class="checkbox" for="fltrCarCategorySelectAll"><input id="fltrCarCategorySelectAll" type="checkbox" name="selectAll" checked="checked"> Select All</label>
+					</div>
+					<div class="span2">
+						<b>In Policy</b>
+						<label class="checkbox" for="fltrPolicy"><input id="fltrPolicy" type="checkbox" name="policy" title="View In Policy Car Rentals"> In Policy</label>
+					</div>
+				</cfoutput>
 			</div>
 		</div>
 	</div>
