@@ -569,19 +569,18 @@ CAR SECTION
 --------------------------------------------------------------------------------------------------------------------
 */
 function filterCar(howFilter) {
-	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
+	var policy = $( "input:checkbox[name=policy]:checked" ).val();
 	var nCount = 0;
 
 	if (howFilter == 'clearAll') {
-		$('#vendorButtons .checkUncheck').prop('checked', true);
-		$('#categoryButtons .checkUncheck').prop('checked', true);
+		$(":checkbox").prop('checked', true);
 	}
 
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
 																							//console.log(car)
-		if (($( "#btnCategory" + car[1] ).is(':checked') == false)
-		|| ($( "#btnVendor" + car[2] ).is(':checked') == false)
+		if (($( "#fltrCategory" + car[1] ).is(':checked') == false)
+		|| ($( "#fltrVendor" + car[2] ).is(':checked') == false)
 		|| (policy == 'on' && car[3] != 1)) {
 			$( "#" + car[0] ).hide();
 		}
@@ -593,7 +592,7 @@ function filterCar(howFilter) {
 	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
 		var category = carcategories[loopcnt];
 																							//console.log(category);
-		if (($( "#btnCategory" + category[0] ).is(':checked') == false)
+		if (($( "#fltrCategory" + category[0] ).is(':checked') == false)
 		|| (policy == 'on' && category[1] != 1)) {
 			$( '#row' + category ).hide();
 		}
@@ -604,7 +603,7 @@ function filterCar(howFilter) {
 	for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 		var vendor = carvendors[loopcnt];
 																							//console.log(category);
-		if (($( "#btnVendor" + vendor[0] ).is(':checked') == false)
+		if (($( "#fltrVendor" + vendor[0] ).is(':checked') == false)
 		|| (policy == 'on' && vendor[1] != 1)) {
 			$( '#vendor' + vendor[0] ).hide();
 		}
