@@ -69,24 +69,30 @@
 			</cfloop>
 
 			<script type="application/javascript">
-			var sortarrival = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortArrival)#;
-			var sortdepart = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDepart)#;
-			var sortfare = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFare)#;
-			var sortduration = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDuration)#;
-			var sortbag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag)#;
+
+// TODO:  I have no idea why any of these sort vars are being set -= they are referenced no where else but here?
+// 2:26 PM Thursday, June 13, 2013 - Jim Priest - jpriest@shortstravel.com
+//
+// 			var sortarrival = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortArrival)#;
+// 			var sortdepart = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDepart)#;
+// 			var sortfare = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFare)#;
+// 			var sortduration = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDuration)#;
+// 			var sortbag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag)#;
+
+
 			var flightresults = [
 				<cfset nCount = 0>
 				<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="sTrip">
 					<cfif nCount NEQ 0>,</cfif>[#session.searches[rc.SearchID].stTrips[sTrip].sJavascript#]
 					<cfset nCount++>
 				</cfloop>];
+
 			$(document).ready(function() {
-				setTimeout(function(){
-						$("##usermessage").fadeOut("slow", function () {
-						$("##usermessage").remove();
-					});
-				}, 4000);
-				filterAir();
+				// setTimeout(function(){
+				// 		$("##usermessage").fadeOut("slow", function () {
+				// 		$("##usermessage").remove();
+				// 	});
+				// }, 4000);
 			});
 			</script>
 		<cfelse>

@@ -15,7 +15,7 @@
 			<input type="hidden" name="SearchID" value="#rc.SearchID#">
 			<input type="hidden" name="nTrip" id="nTrip" value="">
 			<input type="hidden" name="Group" value="#rc.Group#">
-		</form>	
+		</form>
 	</cfoutput>
 	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
 		<cfset variables.minheight = 215>
@@ -27,10 +27,18 @@
 			<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
 			<cfoutput>#View('air/badge')#</cfoutput>
 		</cfloop>
+
+
+
 		<script type="application/javascript">
-		var sortarrival = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;</cfoutput>
-		var sortdepart = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group])#;</cfoutput>
-		var sortduration = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group])#;</cfoutput>
+
+		// TODO:  I have no idea why any of these sort vars are being set -= they are referenced no where else but here?
+		// 2:26 PM Thursday, June 13, 2013 - Jim Priest - jpriest@shortstravel.com
+		//
+		// var sortarrival = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;</cfoutput>
+		// var sortdepart = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group])#;</cfoutput>
+		// var sortduration = <cfoutput>#SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group])#;</cfoutput>
+
 		var flightresults = [
 			<cfset nCount = 0>
 			<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group]#" index="sTrip">
@@ -41,9 +49,7 @@
 				<cfif ArrayLen(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group]) NEQ nCount>,</cfif>
 			</cfloop>
 		];
-		$(document).ready(function() {
-			filterAir();
-		});
+
 		</script>
 	</cfif>
 </div>
