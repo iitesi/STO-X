@@ -2,9 +2,10 @@ $(document).ready(function() {
 	// Make In Policy an active state by default when page loads
 	// $("#btnPolicy").parent().addClass('active');
 
-	// Get the total number of records before any filtering
+	// Get the total number of records before any filtering and set the numTotal and numFiltered values
 	var numTotal = filterCar();
 	$("#numTotal").text(numTotal);
+	$("#numFiltered").text(numTotal);
 
 	// Hide the filter box when page loads
 	$(".filterselection").hide();
@@ -13,7 +14,7 @@ $(document).ready(function() {
 	$(".filterby").click(function() { $(".filterselection").slideToggle(); });
 
 	// Show filtered results when any filter criteria is clicked
-	$(":checkbox").click(function() { filterCar(); });
+	$(":checkbox").click(function() { $("#numFiltered").text(filterCar()); });
 
 	// In Policy (on/off)
 	$("#policy").change(function() {
@@ -33,6 +34,7 @@ $(document).ready(function() {
 		}
 	});
 
+
 	// Car Select/Clear All (on/off)
 	$("#fltrCarCategorySelectAll").change(function() {
 		if($(this).is(':checked')) {
@@ -43,5 +45,8 @@ $(document).ready(function() {
 	});
 
 	// Clear all filters
-	$("#clearFilters").click(function() { filterCar('clearAll'); });
+	$("#clearFilters").click(function() { 
+		$("#numFiltered").text(filterCar('clearAll'));
+		return false;
+	});
 });

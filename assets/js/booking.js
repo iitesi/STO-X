@@ -569,12 +569,12 @@ CAR SECTION
 --------------------------------------------------------------------------------------------------------------------
 */
 function filterCar(howFilter) {
-	var policy = $( "input:checkbox[name=policy]:checked" ).val();
-	var nCount = 0;
-
 	if (howFilter == 'clearAll') {
 		$(":checkbox").prop('checked', true);
 	}
+
+	var policy = $( "input:checkbox[name=policy]:checked" ).val();
+	var nCount = 0;
 
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
@@ -602,7 +602,7 @@ function filterCar(howFilter) {
 	}
 	for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 		var vendor = carvendors[loopcnt];
-																							//console.log(category);
+																							//console.log(vendor);
 		if (($( "#fltrVendor" + vendor[0] ).is(':checked') == false)
 		|| (policy == 'on' && vendor[1] != 1)) {
 			$( '#vendor' + vendor[0] ).hide();
