@@ -1,6 +1,9 @@
 $(document).ready(function(){
 	$("button.btn" ).on( "click", function(event){ event.preventDefault() });
-	$("#btnFormSubmit" ).on( "click", function(event){ formSubmit( event, this ) });
+	$("#btnFormSubmit" ).on( "click", function(event){ 
+		$('#displaySearchWindow').modal('hide');
+		formSubmit( event, this );
+	});
 
 	var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
 	var pickupVal = $("#car-pickup-date").val();

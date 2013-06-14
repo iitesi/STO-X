@@ -78,7 +78,10 @@ OR NOT rc.Filter.getAir()>
 										<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 											<cfset buttonType="btn-primary" />
 											<!--- If out of policy --->
-											#(session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy ? true : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />')#
+											<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
+												<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />
+												<cfset buttonType="" />												
+											</cfif>
 											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 											<!--- If best/lowest rate --->
 											<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
