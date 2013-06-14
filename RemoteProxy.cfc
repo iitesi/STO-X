@@ -135,16 +135,18 @@
 
     <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
+		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-        <cfreturn getBean( "HotelService" ).search( arguments.searchId ) />
+        <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 
     </cffunction>
 
     <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="json" output="false" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
         <cfargument name="propertyId" type="numeric" required="true" />
+        <cfargument name="requery" type="boolean" required="false" default="false" />
 
-        <cfreturn getBean( "HotelService" ).getAvailableRooms( arguments.searchId, arguments.propertyId ) />
+        <cfreturn getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
 
     </cffunction>
 
@@ -173,6 +175,17 @@
         <cfreturn getBean( "AccountService" ).load( arguments.accountId ) />
 
     </cffunction>
+
+	<cffunction name="getPolicy" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular account policy">
+		<cfargument name="policyId" type="numeric" required="true" />
+
+		<cfif NOT( structKeyExists( application, "policies" ) AND structKeyExists( application.policies, arguments.policyId ) )>
+			<cfset getBean( "Setup" ).setPolicy( arguments.policyId ) />
+		</cfif>
+
+		<!---TODO: Abstract this so that we're not reaching directly into the Application scope--->
+		<cfreturn application.policies[ arguments.policyId ] />
+	</cffunction>
 
     <cffunction name="getAccountPolicies" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="accountId" type="numeric" required="true" />

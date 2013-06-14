@@ -37,9 +37,7 @@ doAvailability
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
-		<!--- <cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
-		<cfdump var="#sMessage#" abort="true">		 --->
-		<cfset session.searches[SearchID].stCars = {}>
+		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -48,7 +46,7 @@ doAvailability
 			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
 			<cfset local.stThreads = {}>
 			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
-			<!--- <cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
+			<cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
 				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
 				<cfthread
 				name="stCorporateRates#nUniqueThreadName#"
@@ -57,10 +55,10 @@ doAvailability
 				Policy="#arguments.Policy#"
 				nCouldYou="#arguments.nCouldYou#"
 				CDNumbers="#CDNumbers#">
-					<cfset local.sMessage	= prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
-					<cfset local.sResponse 	= UAPI.callUAPI('VehicleService', sMessage, SearchID)>
-					<cfset local.aResponse 	= UAPI.formatUAPIRsp(sResponse)>
-					<cfset local.stCars     = parseCars(aResponse, 1)>
+					<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
+					<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
+					<cfset local.vehicleLocations = VehicleService.parseVendorLocations(response)>
+					<cfset local.stCars = VehicleService.parseVehicles(response, vehicleLocations)>
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 						<cfset local.stCars     = addJavascript(stCars)>
@@ -71,7 +69,7 @@ doAvailability
 						<cfset thread.stCars     = stCars>
 					</cfif>
 				</cfthread>
-			</cfif> --->
+			</cfif>
 			
 			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
 			<cfthread

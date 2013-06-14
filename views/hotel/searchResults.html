@@ -19,11 +19,12 @@
     </div>
 </div>
 
-
 <!---First row--->
 <div class="container">
     <div class="eleven columns">
-        <span id="filterBarTitle">Filter By</span>
+        <div>
+            <h4>Filter By <a href="javascript:void(0)" ng-click="clearFilters()" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+        </div>
         <div class="navbar">
             <div class="navbar-inner">
                 <ul class="nav">
@@ -47,7 +48,6 @@
 
                     <li ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
                     <li ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
-                    <li><a ng-click="clearFilters()">Clear Filters</a></li>
                 </ul>
             </div>
         </div>
@@ -82,7 +82,7 @@
             <table>
                 <tbody>
                 <tr ng-show="hotel.preferredVendor">
-                    <td colspan="3"><span class="preferred">PREFERRED</span></td>
+                    <td colspan="3"><span class="preferred blue bold">PREFERRED</span></td>
                 </tr>
                 </tr>
                 <tr>
@@ -106,12 +106,17 @@
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
                         <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="hotel.roomsReturned">
-                        <span class="sold-out" style="color: #FF0000; font-weight: bold;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
+                        <span class="medium red bold" ng-show="hotel.isSoldOut()">SOLD OUT</span>
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
-                                <span class="lowest-rate" style="clear: both;">{{hotel.findLowestRoomRate()}}</span>
+                                <span ng-show="!hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+                                <span class="large blue bold" >
+                                    ${{hotel.findLowestRoomRate()}} <i class="icon-ban-circle icon-large red" style="color: red;" ng-show="!hotel.isInPolicy"></i>
+                                </span>
+                                <span ng-show="hotel.hasCorporateRate()" class="small blue bold"><br>Corp Rate</span>
+                                <span ng-show="!hotel.hasCorporateRate() && hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
                                 <button
-                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy()}"
-                                    ng-click="showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
+                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy}"
+                                    ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                     <span ng-show="showRooms">HIDE ROOMS</span>
                                     <span ng-show="!showRooms">SHOW ROOMS</span>
                                 </button>
@@ -261,15 +266,17 @@
                                 {{room.description}}
                             </div>
                             <div style="width: 15%; float: left; clear: none; padding-bottom: 7px;">
-                                <span ng-show="room.isCorporateRate" class="preferred">Corp Rate</span>
-                                <span ng-show="room.isGovernmentRate" class="preferred">Gov Rate</span>
+                                <span ng-show="room.isCorporateRate" class="small blue bold">Corp Rate</span>
+                                <span ng-show="room.isGovernmentRate" class="small blue bold">Gov Rate</span>
                             </div>
                             <div style="width: 15%; float: left; clear: right; padding-bottom: 7px;">
-                                <button style="width: 100%"
-                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': true}"
+                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+                                <button style="width: 75%"
+                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': room.isInPolicy}"
                                     ng-click="">
-                                    <span style="font-size: 1.2em"><b>${{room.dailyRate}}<b></span>
+                                    <span class="medium bold">${{room.dailyRate}}</span>
                                 </button>
+                                <i class="icon-ban-circle icon-large" style="color: red" ng-show="!room.isInPolicy"></i>
                             </div>
                         </div>
                     </td>

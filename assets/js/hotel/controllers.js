@@ -26,6 +26,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
 				$scope.search = result.data;
+				$scope.loadPolicy( $scope.search.policyID );
+			});
+	}
+
+	$scope.loadPolicy = function( policyId ){
+		HotelService.loadPolicy( policyId )
+			.then( function( result ){
+				$scope.policy = result;
 				$scope.initializeMap();
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
@@ -75,7 +83,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				//Fire off calls to get room rates for these hotels
 				for( var i=0; i<$scope.resultsPerPage; i++ ){
 					try{
-						$scope.getHotelRates( $scope.hotels[i] );
+						$scope.getHotelRates( $scope.hotels[i], requery );
 					}
 					catch( err ){
 
@@ -87,9 +95,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			});
 	}
 
-	$scope.getHotelRates = function( Hotel ){
+	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel );
+			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery );
 		}
 	}
 
@@ -98,6 +106,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		if( $scope.filteredHotels.length && typeof $scope.map != 'undefined'){
 			//Clear pins from map
 			$scope.map.entities.clear();
+			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
 
 			//Plot pins on map
 			for( var i=0; i < $scope.filteredHotels.length; i++ ){
@@ -106,6 +115,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.addPin( i+1, hotel.Lat, hotel.Long, hotel.propertyName, address );
 			}
 		}
+
+		$scope.updateTooltips();
 
 	}, true)
 
@@ -271,7 +282,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		//Policy check
 		if( display ){
 
-			if( $scope.filterItems.inPolicyOnly && hotel.roomsReturned && !hotel.isInPolicy() ){
+			if( $scope.filterItems.inPolicyOnly && hotel.roomsReturned && !hotel.isInPolicy( $scope.policy ) ){
 				display = false;
 			}
 		}
@@ -279,6 +290,36 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		return display;
 
 	}
+
+	/*
+	$scope.initializeMap = function(){
+
+		Microsoft.Maps.loadModule('Microsoft.Maps.Themes.BingTheme', {
+			callback: function(){
+				$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
+				$scope.mapOptions = {
+					height: 500,
+					width: 600,
+					credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
+					enableSearchLogo: false,
+					theme: new Microsoft.Maps.Themes.BingTheme()
+				}
+				$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
+				$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
+				$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
+
+				Microsoft.Maps.Events.addHandler( $scope.map, "dblclick", function(e){
+					var center = $scope.map.getCenter();
+					$scope.search.hotelLat = center.latitude;
+					$scope.search.hotelLong = center.longitude;
+
+					$scope.updateSearch();
+				})
+			}
+		})
+
+	}
+	*/
 
 	$scope.initializeMap = function(){
 
@@ -300,7 +341,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 			$scope.updateSearch();
 		})
-
 	}
 
 	$scope.addPin = function( propertyNumber, lat, long, propertyName, propertyAddress ){
@@ -362,7 +402,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			startDate: calendarStartDate
 			})
 			.on( "changeDate", function( event ){
-				console.log( "end-calendar-wrapper on:changeDate " + event.date );
 				$("#hotel-out-date" ).val( dateFormat( event.date, "mmm dd, yyyy", true ) );
 			});
 
@@ -386,6 +425,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		})
 
 	}
+
+	$scope.updateTooltips = function(){
+		$("[rel='tooltip']").tooltip();
+	}
+
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');

@@ -124,6 +124,11 @@ body {
 	text-transform: uppercase;
 }
 
+.noresults {
+	font-size: 14px;
+	font-weight: bold;
+	margin-left: 36px;
+}
 
 /*
 ----------------------------------------------------------------------------------------------------------
