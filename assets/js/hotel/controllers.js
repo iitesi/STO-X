@@ -3,18 +3,19 @@ var controllers = angular.module('app.controllers',[]);
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
-	$scope.currentPage = 1;
-	$scope.resultsPerPage = 20;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
+	$scope.visibleHotels = [];
 	$scope.errors = [];
 	$scope.messages = [];
 
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
+	$scope.filterItems.currentPage = 1;
+	$scope.filterItems.resultsPerPage = 20;
 	$scope.filterItems.vendors = [];
 	$scope.filterItems.amenities = [];
 	$scope.filterItems.noSoldOut = false;
@@ -73,6 +74,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.hotels = result;
 				$scope.totalProperties = result.length;
 				$scope.searchCompleted = true;
+				$scope.filterHotels();
 
 				//Build vendor array for filter
 				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
@@ -81,7 +83,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result );
 
 				//Fire off calls to get room rates for these hotels
-				for( var i=0; i<$scope.resultsPerPage; i++ ){
+				/*
+				for( var i=0; i<$scope.filterItems.resultsPerPage; i++ ){
 					try{
 						$scope.getHotelRates( $scope.hotels[i], requery );
 					}
@@ -90,17 +93,33 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					}
 
 				}
-
+				*/
 				$('#searchWindow').modal('hide');
 			});
 	}
 
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery );
+			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery )
+				.then( function( result ){
+					filterHotels();
+				});
 		}
 	}
 
+	$scope.$watch( "filterItems.currentPage", function(newValue){
+		$scope.filterHotels();
+	})
+
+	$scope.$watch( "filterItems.inPolicyOnly", function(newValue){
+		$scope.filterHotels();
+	})
+
+	$scope.$watch( "filterItems.noSoldOut", function(newValue){
+		$scope.filterHotels();
+	})
+
+	/*
 	$scope.$watch( "filteredHotels.length + currentPage", function(newValue){
 
 		if( $scope.filteredHotels.length && typeof $scope.map != 'undefined'){
@@ -109,9 +128,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
 
 			//Plot pins on map
-			var startIndex = ( $scope.currentPage - 1 ) * $scope.resultsPerPage;
-			var endIndex = startIndex + $scope.resultsPerPage;
-			for( var i=0; i < $scope.resultsPerPage; i++ ){
+			var startIndex = ( $scope.filterItems.currentPage - 1 ) * $scope.filterItems.resultsPerPage;
+			var endIndex = startIndex + $scope.filterItems.resultsPerPage;
+			for( var i=0; i < $scope.filterItems.resultsPerPage; i++ ){
 				var hotel = $scope.filteredHotels[i];
 				var address = hotel.Address + ', ' + hotel.City + ' ' + hotel.State + ' ' + hotel.Zip;
 				$scope.addPin( i+1, hotel.Lat, hotel.Long, hotel.propertyName, address );
@@ -119,16 +138,17 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		//Check to see if any of these properties need room rates
-		for( var i=0; i<$scope.resultsPerPage; i++ ){
+		for( var i=0; i<$scope.filterItems.resultsPerPage; i++ ){
 			if( !$scope.filteredHotels[i].roomsReturned ){
 				$scope.getHotelRates( $scope.filteredHotels[i], false );
 			}
 		}
 
-		$scope.setCurrentPage( $scope.currentPage );
+		$scope.setCurrentPage( $scope.filterItems.currentPage );
 		$scope.updateTooltips();
 
 	}, true)
+	*/
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -228,6 +248,35 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	$scope.filterHotels = function(){
+
+		$scope.filteredHotels = [];
+		$scope.visibleHotels = [];
+
+		for( var i=0; i < $scope.hotels.length; i++ ){
+			if( $scope.hotelFilter( $scope.hotels[i] ) ){
+				$scope.filteredHotels.push( $scope.hotels[i] );
+			}
+		}
+
+		var startIndex = ( $scope.filterItems.currentPage - 1 ) * $scope.filterItems.resultsPerPage;
+		if( startIndex > $scope.filteredHotels.length ){
+			startIndex = 0;
+		}
+		var endIndex = startIndex + $scope.filterItems.resultsPerPage;
+		if( endIndex > $scope.filteredHotels.length ){
+			endIndex = $scope.filteredHotels.length;
+		}
+
+		for( var i=startIndex; i<endIndex; i++ ){
+			var Hotel = $scope.filteredHotels[i]
+			$scope.visibleHotels.push( Hotel );
+			if( !Hotel.roomsReturned ){
+				$scope.getHotelRates( Hotel, false );
+			}
 		}
 	}
 
@@ -367,6 +416,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		})
 	}
 
+	$scope.clearMapPins = function(){
+		$scope.map.entities.clear();
+		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
+	}
+
 	$scope.addPin = function( propertyNumber, lat, long, propertyName, propertyAddress ){
 
     	var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location( lat, long ), {text:propertyNumber.toString(), visible:true});
@@ -388,14 +442,16 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		var totalPages = $scope.calculatePages();
 
 		if( pageNumber <= totalPages ){
-			$scope.currentPage = 1;
+			$scope.filterItems.currentPage = 1;
 		} else {
-			$scope.currentPage = pageNumber;
+			$scope.filterItems.currentPage = pageNumber;
 		}
+
+		$scope.filterHotels();
 	}
 
 	$scope.calculatePages = function(){
-		var pages = $scope.filteredHotels.length / $scope.resultsPerPage;
+		var pages = $scope.filteredHotels.length / $scope.filterItems.resultsPerPage;
 		if ( pages%1 > 0 ){
 			pages = parseInt( pages );
 			pages++;

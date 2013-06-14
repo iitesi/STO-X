@@ -50,12 +50,15 @@
             </ul>
         </div>
     </div>
+
     <div class="clearfix"></div>
+
     <div class="well" ng-show="showVendorFilter">
          <div class="row">
              <div class="span3" ng-repeat="vendor in filterItems.vendors"><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div>
          </div>
     </div>
+
     <div class="well" ng-show="showAmenitiesFilter">
         <div class="row">
             <div class="span3" ng-repeat="amenity in filterItems.amenities">
@@ -70,9 +73,9 @@
 <div class="container">
     <div class="eleven columns" >
         <div class="pull-left">
-            <span ng-hide="currentPage == 1"><a href="javascript: void(0)" ng-click="currentPage = currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-            <span ng-hide="currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="currentPage = currentPage + 1">Next Page >></a></span>
+            <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+            <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
 
@@ -83,7 +86,7 @@
 
     <div class="eleven columns" style="height: 500px; overflow: auto;">
 
-        <div ng-show="searchCompleted && hotels.length" ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter ) |  limitTo: resultsPerPage"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+        <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="hotel in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
                 <tr ng-show="hotel.preferredVendor">
@@ -305,15 +308,15 @@
     <div class="eleven columns">
 
         <div style="float: left">
-            <span ng-hide="currentPage == 1"><a href="javascript: void(0)" ng-click="currentPage = currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-            <span ng-hide="currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="currentPage = currentPage + 1">Next Page >></a></span>
+            <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+            <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
 
     </div>
     <div class="eleven columns">
-        &nbsp;
+        &nbsp;{{filterItems.currentPage}}
     </div>
 </div>
 
