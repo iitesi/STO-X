@@ -112,7 +112,7 @@
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
                         <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="hotel.roomsReturned">
-                        <span class="medium red bold" ng-show="hotel.isSoldOut()">SOLD OUT</span>
+                        <span class="medium red bold" style="color: red;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
                                 <span ng-show="!hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
                                 <span class="large blue bold" >
