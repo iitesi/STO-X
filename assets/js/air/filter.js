@@ -97,6 +97,44 @@ $(document).ready(function(){
 	if (fields.length) {
 		$("#airlinebtn").parent().addClass('active');
 	}
+
+	// Class (set of checkboxs - default = economy checked)
+	$('input[name^="Class"]').on('change', function() {
+		var fields = $('#class').find('input[name^="Class"]:checked');
+		if (!fields.length){
+			$("#classbtn").parent().removeClass('active');
+		} else {
+			$("#classbtn").parent().addClass('active');
+		}
+	});
+
+	// check for active state when page loads
+	var fields = $('#class').find('input[name^="Class"]:checked');
+	if (fields.length) {
+		$("#classbtn").parent().addClass('active');
+	}
+
+	// Fares (set of checkboxs - default = all checked)
+	$('input[name^="Fare"]').on('change', function() {
+		var fields = $('#fares').find('input[name^="Fare"]:checked');
+		if (!fields.length){
+			$("#farebtn").parent().removeClass('active');
+		} else {
+			$("#farebtn").parent().addClass('active');
+		}
+	});
+
+	// check for active state when page loads
+	var fields = $('#fares').find('input[name^="Fare"]:checked');
+	if (fields.length) {
+		$("#farebtn").parent().addClass('active');
+	}
+
+// TODO: STM-688 and STM-687
+// * Need to add code to 'reset' all checkboxes back to default states
+// * Need to show/hide the Find more ... links if results are found for fare / class filters
+// 7:50 PM Thursday, June 13, 2013 - Jim Priest - jpriest@shortstravel.com
+
 }); // $(document).ready(function(){
 
 

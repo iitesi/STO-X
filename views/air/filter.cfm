@@ -122,7 +122,7 @@ F = first
 						</cfif>
 					</div>
 
-					<div class="span2">
+					<div id="fares" class="span2">
 						<b>Fares</b>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
 							<label for="Fare0" class="checkbox"><input type="checkbox" id="Fare0" name="Fare0" value="0" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>>Non Refundable <br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</small></label>
