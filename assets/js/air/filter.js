@@ -11,6 +11,21 @@ $(document).ready(function(){
 // 4:59 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
 
 
+
+// sortbyprice
+// sortbyprice1bag
+// sortbyprice2bag
+// sortbyduration
+// sortbydeparture
+// sortbyarrival
+
+
+	$('[id^=sortby]').on('click', function() {
+		console.log('Sorting!');
+	});
+
+
+
 // <script type="application/javascript">
 // $(document).ready(function() {
 // 	$( "#radiosort" ).change(function(event) {
