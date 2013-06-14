@@ -29,26 +29,30 @@
             <div class="navbar-inner">
                 <ul class="nav">
 
-                    <li class="dropdown">
-                        <a href="#"class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="vendor in filterItems.vendors">
-                                <input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}
-                            </li>
-                        </ul>
+                    <li>
+                        <a href="javascript: void(0)" ng-click="showVendorFilter=!showVendorFilter" >Hotel Chain</a>
                     </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Amenities<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="amenity in filterItems.amenities">
-                                <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
-                            </li>
-                        </ul>
+                    <li>
+                        <a href="javascript: void(0)" ng-click="showAmenitiesFilter=!showAmenitiesFilter" >Amenities</a>
                     </li>
 
-                    <li ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
-                    <li ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
+                    <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
+                    <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
+
                 </ul>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="well" ng-show="showVendorFilter">
+             <div class="row">
+                 <div class="span3" ng-repeat="vendor in filterItems.vendors"><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div>
+             </div>
+        </div>
+        <div class="well" ng-show="showAmenitiesFilter">
+            <div class="row">
+                <div class="span3" ng-repeat="amenity in filterItems.amenities">
+                    <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
+                </div>
             </div>
         </div>
 
@@ -66,7 +70,9 @@
 
     </div>
     <div class="ten columns">
-        <a ng-click="showChangeSearchWindow()">Change Search</a>
+        <div class="pull-right">
+            <a ng-click="showChangeSearchWindow()">Change Search</a>
+        </div>
     </div>
 </div>
 
