@@ -232,22 +232,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
-	$scope.toggleInPolicyOnly = function(){
-		if( $scope.filterItems.inPolicyOnly == true ){
-			$scope.filterItems.inPolicyOnly = false;
-		} else {
-			$scope.filterItems.inPolicyOnly = true;
-		}
-	}
-
-	$scope.toggleNoSoldOut = function(){
-		if( $scope.filterItems.noSoldOut == true ){
-			$scope.filterItems.noSoldOut = false;
-		} else {
-			$scope.filterItems.noSoldOut = true;
-		}
-	}
-
 	$scope.clearFilters = function(){
 		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
 			var vendor = $scope.filterItems.vendors[i];
@@ -382,7 +366,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
-	/*
+
 	$scope.initializeMap = function(){
 
 		Microsoft.Maps.loadModule('Microsoft.Maps.Themes.BingTheme', {
@@ -410,8 +394,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		})
 
 	}
-	*/
 
+	/*
 	$scope.initializeMap = function(){
 		console.log( "initializeMap() fired" );
 		$scope.mapOptions = {
@@ -433,7 +417,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$scope.updateSearch();
 		})
 	}
-
+	*/
 	$scope.clearMapPins = function(){
 		$scope.map.entities.clear();
 		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
