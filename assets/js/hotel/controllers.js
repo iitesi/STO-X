@@ -100,23 +100,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
 			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery )
-				.then( function( result ){
-					//$scope.filterHotels();
-				});
 		}
 	}
 
-	$scope.$watch( "filterItems.currentPage", function(newValue){
+	$scope.$watch( "filterItems", function(newValue){
 		$scope.filterHotels();
-	})
-
-	$scope.$watch( "filterItems.inPolicyOnly", function(newValue){
-		$scope.filterHotels();
-	})
-
-	$scope.$watch( "filterItems.noSoldOut", function(newValue){
-		$scope.filterHotels();
-	})
+		console.log( newValue );
+	}, true)
 
 	$scope.$watch( "visibleHotels", function( newValue ){
 		//$scope.clearMapPins();
@@ -129,7 +119,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.$watch( "search", function( newValue ){
 		if( typeof $scope.map == 'undefined' ){
 			$scope.initializeMap();
-			console.log( $scope.map );
 		} else {
 			$scope.clearMapPins();
 			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', zIndex:-51}));
@@ -366,7 +355,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
-
 	$scope.initializeMap = function(){
 
 		Microsoft.Maps.loadModule('Microsoft.Maps.Themes.BingTheme', {
@@ -418,6 +406,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		})
 	}
 	*/
+
 	$scope.clearMapPins = function(){
 		$scope.map.entities.clear();
 		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
