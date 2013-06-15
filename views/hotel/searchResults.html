@@ -86,24 +86,24 @@
 
     <div class="eleven columns" style="height: 500px; overflow: auto;">
 
-        <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="hotel in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+        <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="item in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
-                <tr ng-show="hotel.preferredVendor">
+                <tr ng-show="item.hotel.preferredVendor">
                     <td colspan="3"><span class="preferred blue bold">PREFERRED</span></td>
                 </tr>
                 </tr>
                 <tr>
                     <td style="width: 100px; vertical-align: top">
-                        <img src="{{hotel.SignatureImage}}" height="70" width="100">
+                        <img src="{{item.hotel.SignatureImage}}" height="70" width="100">
                     </td>
                     <td valign="top" style="padding-left: 20px; width: 280px;">
                         <div class="hotelName" style="width: 100%; clear: both; font-weight: bold;">
-                            <span class="recordNumber">{{$index + 1}}</span> - <span class="propertyName">{{hotel.PropertyName}}</span>
+                            <span class="recordNumber">{{item.propertyNumber}}</span> - <span class="propertyName">{{item.hotel.PropertyName}}</span>
                         </div>
 
-                        <div class="hotelAddress" style="width: 100%; clear: both; font-size: 11px;">{{hotel.Address}}, {{hotel.City}}, {{hotel.State}}</div>
-                        <div class="hotelDistance" style="width: 100%; clear: both; font-size: 11px; font-weight: bolder;">{{hotel.distance}} miles</div>
+                        <div class="hotelAddress" style="width: 100%; clear: both; font-size: 11px;">{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}}</div>
+                        <div class="hotelDistance" style="width: 100%; clear: both; font-size: 11px; font-weight: bolder;">{{item.hotel.distance}} miles</div>
 
                         <div class="btn-group">
                             <button ng-click="loadExtendedHotelData(hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
@@ -113,17 +113,17 @@
                         </div>
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
-                        <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="hotel.roomsReturned">
-                        <span class="medium red bold" style="color: red;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
-                            <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
-                                <span ng-show="!hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+                        <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
+                        <span class="medium red bold" style="color: red;" ng-show="item.hotel.isSoldOut()">SOLD OUT</span>
+                            <span class="room-details-wrapper" ng-show="item.hotel.hasRoomsAvailable()">
+                                <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
                                 <span class="large blue bold" >
-                                    ${{hotel.findLowestRoomRate()}} <i class="icon-ban-circle icon-large red" style="color: red;" ng-show="!hotel.isInPolicy"></i>
+                                    ${{item.hotel.findLowestRoomRate()}} <i class="icon-ban-circle icon-large red" style="color: red;" ng-show="!item.hotel.isInPolicy"></i>
                                 </span>
-                                <span ng-show="hotel.hasCorporateRate()" class="small blue bold"><br>Corp Rate</span>
-                                <span ng-show="!hotel.hasCorporateRate() && hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
+                                <span ng-show="item.hotel.hasCorporateRate()" class="small blue bold"><br>Corp Rate</span>
+                                <span ng-show="!item.hotel.hasCorporateRate() && item.hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
                                 <button
-                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': hotel.isInPolicy}"
+                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
                                     ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                     <span ng-show="showRooms">HIDE ROOMS</span>
                                     <span ng-show="!showRooms">SHOW ROOMS</span>
@@ -133,17 +133,17 @@
                 </tr>
                 <tr ng-show="showHotelDetails">
                     <td colspan="3" class="hotel-details"><b>Hotel Details</b>
-                        <div ng-show="!hotel.details.loaded"  style="width: 100%; text-align: center">
+                        <div ng-show="!item.hotel.details.loaded"  style="width: 100%; text-align: center">
                                <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                         </div>
-                        <div ng-show="hotel.details.loaded" style="width: 100%">
+                        <div ng-show="item.hotel.details.loaded" style="width: 100%">
 
                             <div style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>CHECK IN:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.CheckIn}}&nbsp;
+                                    {{item.hotel.CheckIn}}&nbsp;
                                 </div>
                             </div>
 
@@ -152,50 +152,50 @@
                                     <b>CHECK OUT:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.CheckOut}}&nbsp;
+                                    {{item.hotel.CheckOut}}&nbsp;
                                 </div>
                             </div>
 
-                            <div ng-show="hotel.details.services.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.services.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>SERVICE:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.services}}
+                                    {{item.hotel.details.services}}
                                 </div>
                             </div>
 
-                            <div ng-show="hotel.details.facility.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.facility.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>FACILITY:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.facility}}
+                                    {{item.hotel.details.facility}}
                                 </div>
                             </div>
 
-                            <div ng-show="hotel.details.rooms.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.rooms.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>ROOMS:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.rooms}}
+                                    {{item.hotel.details.rooms}}
                                 </div>
                             </div>
 
-                            <div ng-show="hotel.details.recreation.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.recreation.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>RECREATION:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.recreation}}
+                                    {{item.hotel.details.recreation}}
                                 </div>
                             </div>
 
                         </div>
 
 
-                        <div ng-show="hotel.details.loaded && !hotel.details.services.length && !hotel.details.facility.length && !hotel.details.rooms.length && !hotel.details.recreation.length" >
+                        <div ng-show="item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length" >
                             <p>This information is not available for this property.</p>
                         </div>
                     </td>
@@ -204,72 +204,72 @@
                 <tr ng-show="showAreaDetails">
                     <td colspan="3" class="area-details">
                         <b>Area Details</b>
-                        <div ng-show="!hotel.details.loaded"  style="width: 100%; text-align: center">
+                        <div ng-show="!item.hotel.details.loaded"  style="width: 100%; text-align: center">
                             <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                         </div>
-                        <div ng-show="hotel.details.loaded" style="width: 100%">
+                        <div ng-show="item.hotel.details.loaded" style="width: 100%">
 
-                            <div ng-show="hotel.details.directions.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.directions.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>DIRECTIONS:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.directions}}
+                                    {{item.hotel.details.directions}}
                                 </div>
                             </div>
 
-                            <div ng-show="hotel.details.transportation.length" style="width: 100%" >
+                            <div ng-show="item.hotel.details.transportation.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 25%; float: left; clear: none">
                                     <b>TRANSPORTATION:</b>
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 70%; float: left; clear: right">
-                                    {{hotel.details.transportation}}
+                                    {{item.hotel.details.transportation}}
                                 </div>
                             </div>
 
                         </div>
-                        <div ng-show="hotel.details.loaded && !hotel.details.transportation.length && !hotel.details.directions.length" >
+                        <div ng-show="item.hotel.details.loaded && !item.hotel.details.transportation.length && !item.hotel.details.directions.length" >
                             <p>This information is not available for this property.</p>
                         </div>
                     </td>
                 </tr>
                 <tr ng-show="showAmenities">
                     <td colspan="3" class="amenities"><b>Amenities</b><br>
-                        <span ng-repeat="amenity in hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
+                        <span ng-repeat="amenity in item.hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
                     </td>
                 </tr>
                 <tr ng-show="showPhotos">
                     <td colspan="3" class="photos">
                         <b>Photos</b>
-                        <div ng-show="!hotel.details.loaded"  style="width: 100%; text-align: center">
+                        <div ng-show="!item.hotel.details.loaded"  style="width: 100%; text-align: center">
                             <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                         </div>
-                        <div ng-show="hotel.details.loaded" style="width: 100%">
+                        <div ng-show="item.hotel.details.loaded" style="width: 100%">
 
-                            <div ng-show="!hotel.images.length" style="width: 100%">
+                            <div ng-show="!item.hotel.images.length" style="width: 100%">
                                 There are no photos available for this property.
                             </div>
 
-                            <div ng-show="hotel.images.length" style="width: 100%" >
+                            <div ng-show="item.hotel.images.length" style="width: 100%" >
                                 <div style="text-align: left; vertical-align: top; width: 35%; float: left; clear: none">
-                                    <img  src="{{hotel.selectedImage}}" height="138" width="200"  />
+                                    <img  src="{{item.hotel.selectedImage}}" height="138" width="200"  />
                                 </div>
                                 <div style="text-align: left; vertical-align: top; width: 60%; float: left; clear: right">
-                                    <div ng-repeat="image in hotel.images" style="padding: 3px; float: left;">
-                                        <a href="javascript: void(0)" ng-click="$parent.hotel.selectedImage = image.imageURL"><img src="{{image.imageURL}}" height="69" width="100"  /></a>
+                                    <div ng-repeat="image in item.hotel.images" style="padding: 3px; float: left;">
+                                        <a href="javascript: void(0)" ng-click="$parent.item.hotel.selectedImage = image.imageURL"><img src="{{image.imageURL}}" height="69" width="100"  /></a>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
-                        <div ng-show="hotel.details.loaded && !hotel.details.transportation.length && !hotel.details.directions.length" >
+                        <div ng-show="item.hotel.details.loaded && !item.hotel.details.transportation.length && !item.hotel.details.directions.length" >
                             <p>This information is not available for this property.</p>
                         </div>
                     </td>
                 </tr>
                 <tr ng-show="showRooms">
                     <td colspan="3" class="rooms"><b>Rooms</b><br>
-                        <div ng-repeat="room in hotel.rooms" style="width: 100%; ">
+                        <div ng-repeat="room in item.hotel.rooms" style="width: 100%; ">
                             <div style="width: 65%; float: left; clear: none; padding-bottom: 7px;">
                                 {{room.description}}
                             </div>
