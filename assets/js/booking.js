@@ -136,6 +136,10 @@ function filterAir() {
 
 		$( '#' + flight[0] ).hide( 'fade' );
 
+		// THIS WORKS TO DISPLAY *ALL* FLIGHTS
+		// NEED TO DETERMINE FIRST LOAD?
+		// $( '#' + flight[0] ).show( 'fade' );
+
 		$('#filtermsg').addClass('alert-error');
 		$('#filtermsg span').text('OH NO THERE ARE NO FLIGHTS! #1')
 
@@ -183,17 +187,24 @@ function filterAir() {
 		}
 	}
 
+
+	$( '#' + flight[0] ).show();
 	console.log('Air Count =' + aCount);
 	return false;
 }
 
+
 function sortAir (sort) {
-	var sortlist = eval( 'sort' + sort );
+	var sortlist = eval( sort );
+
+	console.log('sortlist = ' + sortlist);
+
 	for (var t = 0; t < sortlist.length; t++) {
 		$( "#aircontent" ).append( $( "#" + sortlist[t] ) );
 	}
 	return false;
 }
+
 
 function AirPrice(searchid, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",

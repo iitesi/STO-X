@@ -1,38 +1,28 @@
 $(document).ready(function(){
 
 	// run filter on page load
-	filterAir();
+	// filterAir();
 
 //------------------------------------------------------------------------------
 // SORTING
 //------------------------------------------------------------------------------
 
-// TODO:  need to add call to sortAir()???
-// 4:59 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
-
 
 
 // sortbyprice
-// sortbyprice1bag
-// sortbyprice2bag
+	// sortbyprice1bag
+	// sortbyprice2bag
 // sortbyduration
 // sortbydeparture
 // sortbyarrival
 
-
 	$('[id^=sortby]').on('click', function() {
-		console.log('Sorting!');
+			console.log('Clicked on' + $(this).attr("id") + ' in filter.js = sortAir('+ $(this).attr("id") +')')
+			sortAir( $(this).attr("id") );
 	});
 
 
 
-// <script type="application/javascript">
-// $(document).ready(function() {
-// 	$( "#radiosort" ).change(function(event) {
-// 		sortAir($( "input:radio[name=sort]:checked" ).attr('id'));
-// 	});
-// });
-// </script>
 
 
 //------------------------------------------------------------------------------
@@ -50,7 +40,7 @@ $(document).ready(function(){
 
 	// Single Carrier (on/off)
 	$('#SingleCarrier').on('change', function() {
-		filterAir();
+		//filterAir();
 		console.log('Single carrier clicked....');
 		if($(this).is(':checked')){
 			$("#singlecarrierbtn").parent().addClass('active');
@@ -69,7 +59,7 @@ $(document).ready(function(){
 
 	// In Policy (on/off)
 	$('#InPolicy').on('change', function() {
-		filterAir();
+		// filterAir();
 		if($(this).is(':checked')){
 			$("#inpolicybtn").parent().addClass('active');
 		} else {
@@ -84,7 +74,7 @@ $(document).ready(function(){
 
 	// NonStops (on/off)
 	$('#NonStops').on('change', function() {
-		filterAir();
+		// filterAir();
 		if($(this).is(':checked')){
 			$("#nonstopbtn").parent().addClass('active');
 		} else {

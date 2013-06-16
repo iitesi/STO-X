@@ -97,17 +97,17 @@ F = first
 						</cfif>
 
 						<cfloop array="#aCarriers#" index="Carrier" >
-							<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#" checked> #application.stAirVendors[Carrier].Name#</label>
+							<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
 						</cfloop>
 					</div>
 
 					<div id="class" class="span2">
 						<b>Class</b>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
-							<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'Y'>checked</cfif>>Economy<br/ > <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
+							<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y" <!--- <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'Y'>checked</cfif> --->>Economy<br/ > <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
 						</cfif>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")>
-							<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'C'>checked</cfif>>Business<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
+							<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C" <!--- <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'C'>checked</cfif> --->>Business<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
 						<cfelseif StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
 							<label for="ClassC" class="checkbox" title="No results"><input type="checkbox" id="ClassC" name="ClassC" value="C" disabled>Business (no results)</label>
 						</cfif>
@@ -115,7 +115,7 @@ F = first
 							<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Find Business Class Fares"><i class="icon-search"></i> Business Class</a><br />
 						</cfif>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")>
-							<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'F'>checked</cfif>>First<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
+							<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F" <!--- <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'F'>checked</cfif> --->>First<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
 						<cfelseif StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'FX')>
 							<label for="ClassF" class="checkbox" title="No results"><input type="checkbox" id="ClassF" name="ClassF" value="F" disabled>First (no results)</label>
 						</cfif>
@@ -127,10 +127,10 @@ F = first
 					<div id="fares" class="span2">
 						<b>Fares</b>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
-							<label for="Fare0" class="checkbox" title="Filter by non-refundable fares"><input type="checkbox" id="Fare0" name="Fare0" value="0" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>>Non Refundable <br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</small></label>
+							<label for="Fare0" class="checkbox" title="Filter by non-refundable fares"><input type="checkbox" id="Fare0" name="Fare0" value="0" <!--- <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif> --->>Non Refundable <br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</small></label>
 						</cfif>
 						<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
-							<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>>Refundable <br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
+							<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1" <!--- <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif> --->>Refundable <br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
 						</cfif>
 						<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
 							<a href="?action=air.lowfare&SearchID=#rc.SearchID#&bRefundable=1" title="Find Refundable Fares"><i class="icon-search"></i> Refundable</a><br />
@@ -149,7 +149,7 @@ F = first
 
 					<div class="span2">
 						<b>Single Carrier</b>
-						<label for="SingleCarrier" class="checkbox" title="Filter by single carrier fares"><input type="checkbox" id="SingleCarrier" name="SingleCarrier" checked> Single Carrier</label>
+						<label for="SingleCarrier" class="checkbox" title="Filter by single carrier fares"><input type="checkbox" id="SingleCarrier" name="SingleCarrier"> Single Carrier</label>
 					</div>
 					</cfoutput>
 				</div> <!--- // row --->
@@ -159,6 +159,9 @@ F = first
 		</div><!-- // class=sixteen columns -->
 	</div><!-- // class=row -->
 </div><!-- // class=filter -->
+
+
+
 
 
 <!---
