@@ -21,62 +21,67 @@
 
 <!---First row--->
 <div class="container">
-    <div class="eleven columns">
-        <div>
+
+    <div>
+        <div class="eleven columns pull-left">
             <h4>Filter By <a href="javascript:void(0)" ng-click="clearFilters()" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
         </div>
-        <div class="navbar">
-            <div class="navbar-inner">
-                <ul class="nav">
+        <div class="ten columns pull-right">
+            <a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="pull-right">Change Search</a>
+        </div>
+    </div>
 
-                    <li class="dropdown">
-                        <a href="#"class="dropdown-toggle" data-toggle="dropdown">Hotel Chain<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="vendor in filterItems.vendors">
-                                <input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Amenities<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="amenity in filterItems.amenities">
-                                <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
-                            </li>
-                        </ul>
-                    </li>
+    <div class="clearfix"></div>
 
-                    <li ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
-                    <li ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
-                </ul>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+
+                <li>
+                    <a href="javascript: void(0)" ng-click="showVendorFilter=!showVendorFilter" >Hotel Chain</a>
+                </li>
+                <li>
+                    <a href="javascript: void(0)" ng-click="showAmenitiesFilter=!showAmenitiesFilter" >Amenities</a>
+                </li>
+
+                <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a ng-click="toggleInPolicyOnly()">In Policy</a></li>
+                <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a ng-click="toggleNoSoldOut()">No Sold Out</a></li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="well" ng-show="showVendorFilter">
+         <div class="row">
+             <div class="span3" ng-repeat="vendor in filterItems.vendors"><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div>
+         </div>
+    </div>
+    <div class="well" ng-show="showAmenitiesFilter">
+        <div class="row">
+            <div class="span3" ng-repeat="amenity in filterItems.amenities">
+                <input type="checkbox" value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}
             </div>
         </div>
+    </div>
 
-        <div style="float: left">
+</div>
+
+<!---Second row--->
+<div class="container">
+    <div class="eleven columns" >
+        <div class="pull-left">
             <span ng-hide="currentPage == 1"><a href="javascript: void(0)" ng-click="currentPage = currentPage - 1" ><< Prev Page</a>&nbsp;</span>
             <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
             <span ng-hide="currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="currentPage = currentPage + 1">Next Page >></a></span>
             &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
 
-
-
-        <div style="float:right;"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</div>
-
+        <div class="pull-right"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</div>
 
     </div>
-    <div class="ten columns">
-        <a ng-click="showChangeSearchWindow()">Change Search</a>
-    </div>
-</div>
+    <div class="clearfix" />
 
-<!---Second row--->
-<div class="container">
     <div class="eleven columns" style="height: 500px; overflow: auto;">
-
-        <div ng-show="searchCompleted && !hotels.length">
-            <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, or CHANGE YOUR SEARCH and try again.</p>
-        </div>
 
         <div ng-show="searchCompleted && hotels.length" ng-repeat="hotel in filteredHotels = ( hotels | filter: hotelFilter ) |  limitTo: resultsPerPage"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
@@ -106,7 +111,7 @@
                     </td>
                     <td class="fares" align="center" style="width: 100px;">
                         <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="hotel.roomsReturned">
-                        <span class="medium red bold" ng-show="hotel.isSoldOut()">SOLD OUT</span>
+                        <span class="medium red bold" style="color: red;" ng-show="hotel.isSoldOut()">SOLD OUT</span>
                             <span class="room-details-wrapper" ng-show="hotel.hasRoomsAvailable()">
                                 <span ng-show="!hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
                                 <span class="large blue bold" >
@@ -283,6 +288,10 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div ng-show="searchCompleted && !filteredHotels.length">
+            <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
         </div>
 
     </div>

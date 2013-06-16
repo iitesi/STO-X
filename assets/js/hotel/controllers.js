@@ -109,13 +109,23 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
 
 			//Plot pins on map
-			for( var i=0; i < $scope.filteredHotels.length; i++ ){
+			var startIndex = ( $scope.currentPage - 1 ) * $scope.resultsPerPage;
+			var endIndex = startIndex + $scope.resultsPerPage;
+			for( var i=0; i < $scope.resultsPerPage; i++ ){
 				var hotel = $scope.filteredHotels[i];
 				var address = hotel.Address + ', ' + hotel.City + ' ' + hotel.State + ' ' + hotel.Zip;
 				$scope.addPin( i+1, hotel.Lat, hotel.Long, hotel.propertyName, address );
 			}
 		}
 
+		//Check to see if any of these properties need room rates
+		for( var i=0; i<$scope.resultsPerPage; i++ ){
+			if( !$scope.filteredHotels[i].roomsReturned ){
+				$scope.getHotelRates( $scope.filteredHotels[i], false );
+			}
+		}
+
+		$scope.setCurrentPage( $scope.currentPage );
 		$scope.updateTooltips();
 
 	}, true)
@@ -133,7 +143,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				}
 			}
 			if( !found ){
-				vendors.push( {code: hotel.ChainCode, name: hotel.VendorName, checked: true })
+				vendors.push( {code: hotel.ChainCode, name: hotel.VendorName, checked: false })
 			}
 		}
 
@@ -203,7 +213,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.clearFilters = function(){
 		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
 			var vendor = $scope.filterItems.vendors[i];
-			vendor.checked = true;
+			vendor.checked = false;
 		}
 		for( var j=0; j < $scope.filterItems.amenities.length; j++ ){
 			var amenity = $scope.filterItems.amenities[j];
@@ -226,20 +236,25 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		var display = true;
 
 		//Hotel chain check
-		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
-			var vendor = $scope.filterItems.vendors[i];
-			if( vendor.code == hotel.ChainCode ){
-				display = vendor.checked;
+		var selectedVendors = [];
+
+		//Check to see if the user has selected any vendors to filter by
+		for( var h=0; h < $scope.filterItems.vendors.length; h++ ){
+			var vendor = $scope.filterItems.vendors[h];
+			if( vendor.checked ){
+				selectedVendors.push( vendor );
 			}
 		}
 
-		//Sold out check
-		if( display ){
-
-			if( $scope.filterItems.noSoldOut && hotel.roomsReturned && hotel.isSoldOut() ){
-				display = false;
+		//Only apply this filter condition if the user has selected at least 1 vendor
+		if( selectedVendors.length ){
+			display = false;
+			for( var g = 0; g < selectedVendors.length; g++ ){
+				if( selectedVendors[g].code == hotel.ChainCode ){
+					display = true;
+					break;
+				}
 			}
-
 		}
 
 		// Amenities check
@@ -282,9 +297,18 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		//Policy check
 		if( display ){
 
-			if( $scope.filterItems.inPolicyOnly && hotel.roomsReturned && !hotel.isInPolicy( $scope.policy ) ){
+			if( $scope.filterItems.inPolicyOnly && hotel.roomsReturned && !hotel.isInPolicy ){
 				display = false;
 			}
+		}
+
+		//Sold out check
+		if( display ){
+
+			if( $scope.filterItems.noSoldOut && hotel.roomsReturned && hotel.isSoldOut() ){
+				display = false;
+			}
+
 		}
 
 		return display;
@@ -332,7 +356,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			}
 		$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
 		$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
-		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: 'assets/img/mapCenter.png', zIndex:-51}));
+		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', zIndex:-51}));
 
 		Microsoft.Maps.Events.addHandler( $scope.map, "dblclick", function(e){
 			var center = $scope.map.getCenter();
@@ -358,6 +382,16 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$('#mapDiv').append(infobox2);
 		});
     	$scope.map.entities.push( pin );
+	}
+
+	$scope.setCurrentPage = function( pageNumber ){
+		var totalPages = $scope.calculatePages();
+
+		if( pageNumber <= totalPages ){
+			$scope.currentPage = 1;
+		} else {
+			$scope.currentPage = pageNumber;
+		}
 	}
 
 	$scope.calculatePages = function(){
