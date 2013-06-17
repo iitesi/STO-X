@@ -196,9 +196,6 @@ function filterAir() {
 
 function sortAir (sort) {
 	var sortlist = eval( sort );
-
-	console.log('sortlist = ' + sortlist);
-
 	for (var t = 0; t < sortlist.length; t++) {
 		$( "#aircontent" ).append( $( "#" + sortlist[t] ) );
 	}

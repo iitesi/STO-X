@@ -1,33 +1,31 @@
 $(document).ready(function(){
 
-	// run filter on page load
-	// filterAir();
-
 //------------------------------------------------------------------------------
 // SORTING
 //------------------------------------------------------------------------------
-
-
-
-// sortbyprice
-	// sortbyprice1bag
-	// sortbyprice2bag
-// sortbyduration
-// sortbydeparture
-// sortbyarrival
-
 	$('[id^=sortby]').on('click', function() {
-			console.log('Clicked on' + $(this).attr("id") + ' in filter.js = sortAir('+ $(this).attr("id") +')')
+
+			// sort flights
 			sortAir( $(this).attr("id") );
+
+			// remove all active states
+			$('[id^=sortby]').parents().removeClass('active');
+
+			// set active button
+			if ($(this).is('[id^=sortbyprice]')) {
+				$(this).parent('li').parents('li').eq(0).addClass('active');
+				$(this).parent().addClass('active');
+			} else {
+				$(this).parent().addClass('active');
+			}
 	});
-
-
-
-
 
 //------------------------------------------------------------------------------
 // FILTER
 //------------------------------------------------------------------------------
+	// run filter on page load
+	// filterAir();
+
 	$('.filterselection').hide();
 
 	// show filter box
