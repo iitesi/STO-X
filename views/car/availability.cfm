@@ -19,6 +19,9 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="sVendor" id="sVendor" value="">
 		</form>
 
+		<!--- If no records can be retrieved from the initial search or change search form. --->
+		<div id="noSearchResults" class="hidden noresults">There were no cars found based on your search criteria. <a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">CHANGE YOUR SEARCH</a> and try again.</div>
+
 		<!--- If no records can be displayed after filtering. --->
 		<div id="noFilteredResults" class="hidden noresults">No cars are available for your filtered criteria.</div>
 
@@ -104,8 +107,6 @@ OR NOT rc.Filter.getAir()>
 						</tr>
 						</table>
 					</div>
-				<cfelse>
-					No cars available for your search criteria.
 				</cfif>
 			</cfloop>
 		</div>

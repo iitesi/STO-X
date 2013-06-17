@@ -650,11 +650,17 @@ function filterCar(howFilter) {
 	}
 
 	if(nCount == 0) {
-		$("#noFilteredResults").show();
+		if(carresults.length == 0) {
+			$("#noSearchResults").show();
+		}
+		else {
+			$("#noFilteredResults").show();
+		}
 		$("#vendorRow").hide();
 		$("#categoryRow").hide();
 	}
 	else {
+		$("#noSearchResults").hide();
 		$("#noFilteredResults").hide();
 		$("#vendorRow").show();
 		$("#categoryRow").show();
