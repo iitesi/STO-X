@@ -8,6 +8,12 @@
 			<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
 	</bean>
 
+	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
+        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+    </bean>
+
+    <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter"/>
+
 	<bean id="setup" class="booking.services.setup" >
 			<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
 			<constructor-arg name="PortalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
@@ -56,10 +62,8 @@
 		<constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
 		<constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
-		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="HotelAdapter"><ref bean="HotelAdapter" /></constructor-arg>
 	</bean>
-
-	<bean id="VehicleAdapter" class="com.travelport.VehicleAdapter"/>
 
 	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
