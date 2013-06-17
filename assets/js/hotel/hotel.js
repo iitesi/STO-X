@@ -73,6 +73,7 @@ function Hotel(){
     this.HotelLocationDetail = "";
     this.DirectionDetail = "";
     this.AreaTransportationDetail = "";
+    this.isInPolicy = true;
     this.distance = 0;
 
 }
@@ -129,9 +130,46 @@ Hotel.prototype.hasRoomsAvailable = function(){
 
 }
 
-Hotel.prototype.isInPolicy = function(){
+Hotel.prototype.setInPolicy = function( policy ){
 
-	//TODO: Apply policy filtering
+	if( this.roomsReturned && this.rooms.length ){
+		this.isInPolicy = false;
+		/* Check all rooms to see if each of them are in policy
+		 if any of them are, then the entire property is based
+		 on the room rate policy check. There might be other reasons
+		 why the hotel would be out of policy however.
+		 */
+		for( var i = 0; i < this.rooms.length; i++ ){
+			if( this.rooms[i].isInPolicy == true ){
+				this.isInPolicy = true;
+				break;
+			}
+		}
+	}
+}
 
-	return true;
+Hotel.prototype.hasCorporateRate = function(){
+	var hasRate = false;
+
+	for( var i = 0; i < this.rooms.length; i++ ){
+		if( this.rooms[1].isCorporateRate ){
+			hasRate = true;
+			break;
+		}
+	}
+
+	return hasRate;
+}
+
+Hotel.prototype.hasGovernmentRate = function(){
+	var hasRate = false;
+
+	for( var i = 0; i < this.rooms.length; i++ ){
+		if( this.rooms[1].isGovernmentRate ){
+			hasRate = true;
+			break;
+		}
+	}
+
+	return hasRate;
 }

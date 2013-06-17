@@ -18,8 +18,11 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="sCategory" id="sCategory" value="">
 			<input type="hidden" name="sVendor" id="sVendor" value="">
 		</form>
-		<!--- #view('car/filter')# --->
-		<div class="carrow">
+
+		<!--- If no records can be displayed after filtering. --->
+		<div id="noFilteredResults" class="hidden noresults">No cars are available for your filtered criteria.</div>
+
+		<div id="vendorRow" class="carrow">
 			<table>
 			<tr>
 				<td>
@@ -43,63 +46,69 @@ OR NOT rc.Filter.getAir()>
 
 		<br clear="all">
 
-		<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
-			<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
+		<div id="categoryRow">
+			<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
+				<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 
-			<cfif NOT StructIsEmpty(stCar)>
-				<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
-				<cfloop collection="#stCar#" item="vendor">
-					<cfset vehicleClass=stCar[vendor].vehicleClass & " " & stCar[vendor].category />
-					<cfbreak />
-				</cfloop>
+				<cfif NOT StructIsEmpty(stCar)>
+					<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
+					<cfloop collection="#stCar#" item="vendor">
+						<cfset vehicleClass=stCar[vendor].vehicleClass & " " & stCar[vendor].category />
+						<cfbreak />
+					</cfloop>
 
-				<div id="row#LCase(sCategory)#" class="carrow" style="margin-top:5px; margin-bottom:0px;">
-					<table>
-					<tr>
-						<td>
-							<div style="width:150px;position:relative;float:left;">
-								<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-									<span class="preferred blue bold">PREFERRED</span><br>
-								</cfif>
-								#vehicleClass#<br />
-								<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86"><br />
-								<!--- Original image tag below.
-								<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br> --->
-							</div>
-						</td>
-
-						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
+					<div id="row#LCase(sCategory)#" class="carrow" style="margin-top:5px; margin-bottom:0px;">
+						<table>
+						<tr>
 							<td>
-								<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
-									<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
-										<cfset buttonType="btn-primary" />
-										<!--- If out of policy --->
-										#(session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy ? true : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />')#
-										<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
-										<!--- If best/lowest rate --->
-										<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
-											<span class="green">BEST RATE</span>
-											<cfset buttonType="btn-success" />
-										</cfif>
-										<!--- If corporate rate --->
-										<cfif stRate.Corporate>
-											CORPORATE
-										</cfif><br />
-										<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
-										<!--- Original button below.
-										<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#"> --->
-									<cfelse>
-										UNAVAILABLE
+								<div style="width:150px;position:relative;float:left;">
+									<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
+										<span class="preferred blue bold">PREFERRED</span><br>
 									</cfif>
+									#vehicleClass#<br />
+									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86"><br />
+									<!--- Original image tag below.
+									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br> --->
 								</div>
 							</td>
-						</cfloop>
-					</tr>
-					</table>
-				</div>
 
-			</cfif>
-		</cfloop>
+							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
+								<td>
+									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
+										<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
+											<cfset buttonType="btn-primary" />
+											<!--- If out of policy --->
+											<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
+												<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />
+												<cfset buttonType="" />												
+											</cfif>
+											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
+											<!--- If best/lowest rate --->
+											<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
+												<span class="green">BEST RATE</span>
+												<cfset buttonType="btn-success" />
+											</cfif>
+											<!--- If corporate rate --->
+											<cfif stRate.Corporate>
+												CORPORATE
+											</cfif><br />
+											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
+											<!--- Original button below.
+											<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#"> --->
+										<cfelse>
+											UNAVAILABLE
+										</cfif>
+									</div>
+								</td>
+							</cfloop>
+						</tr>
+						</table>
+					</div>
+				<cfelse>
+					No cars available for your search criteria.
+				</cfif>
+			</cfloop>
+		</div>
 	</cfoutput>
 <cfelse>
 	<cfoutput>

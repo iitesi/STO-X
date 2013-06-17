@@ -361,25 +361,32 @@
 	<cffunction name="setAirVendors" output="false" returntype="void">
 
 		<cfquery name="local.qAirVendors" datasource="booking">
-		SELECT VendorCode, ShortName
-		FROM RAIR
-		WHERE VendorCode NOT LIKE '%/%'
+			SELECT VendorCode, ShortName
+			FROM RAIR
+			WHERE VendorCode NOT LIKE '%/%'
 		</cfquery>
+
 		<cfset local.stTemp = {}>
+
 		<cfloop query="qAirVendors">
 			<cfset stTemp[VendorCode].Name = ShortName>
 			<cfset stTemp[VendorCode].Bag1 = 0>
+			<cfset stTemp[VendorCode].Bag2 = 0>
 		</cfloop>
+
 		<cfquery name="local.qBagFees" datasource="Corporate_Production">
-		SELECT ShortCode, OnlineDomBag1
-		FROM OnlineCheckIn_Links, Suppliers
-		WHERE OnlineDomBag1 IS NOT NULL
-		AND OnlineDomBag1 <> 0
-		AND OnlineCheckIn_Links.AccountID = Suppliers.AccountID
+			SELECT ShortCode, OnlineDomBag1, OnlineDomBag2
+			FROM OnlineCheckIn_Links, Suppliers
+			WHERE OnlineCheckIn_Links.AccountID = Suppliers.AccountID
+				AND (OnlineDomBag1 IS NOT NULL AND OnlineDomBag1 <> 0)
+				AND	(OnlineDomBag2 IS NOT NULL AND OnlineDomBag2 <> 0)
 		</cfquery>
+
 		<cfloop query="qBagFees">
 			<cfset stTemp[ShortCode].Bag1 = OnlineDomBag1>
+			<cfset stTemp[ShortCode].Bag2 = OnlineDomBag2>
 		</cfloop>
+
 		<cfset application.stAirVendors = stTemp>
 
 		<cfreturn />
