@@ -116,3 +116,12 @@
 
 		</html>
 </cfif>
+
+
+
+<!---
+<cfif IsLocalHost(cgi.remote_addr)>
+	<cfdump var="#application#" expand="false">
+	<cfdump var="#session.searches[rc.SearchID]#" expand="false">
+</cfif>
+ --->

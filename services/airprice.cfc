@@ -15,7 +15,7 @@ init
 
 		<cfreturn this>
 	</cffunction>
-	
+
 <!---
 doAirPrice
 --->
@@ -116,10 +116,10 @@ prepareSOAPHeader
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nCouldYou"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="stAccount" 	required="true"		default="#application.Accounts[session.AcctID]#">
-		
+
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
-		
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -183,7 +183,7 @@ prepareSOAPHeader
 
 		<cfreturn sMessage/>
 	</cffunction>
-	
+
 <!---
 getTripKey
 --->
@@ -197,7 +197,7 @@ getTripKey
 
 		<cfreturn nTripKey>
 	</cffunction>
-	
+
 <!---
 addstPriced
 --->
@@ -210,5 +210,5 @@ addstPriced
 
 		<cfreturn local.stPriced>
 	</cffunction>
-	
+
 </cfcomponent>

@@ -293,8 +293,10 @@ ul.tabs li a.active {
 	left:0; /* Bring back on-screen when needed */
 }
 
+
+/*  AIR FILTER BAR */
 .filter {
-	margin: 1em;
+	margin-left: 1em;
 }
 
 .filter h4, .filter h4 a {
@@ -302,17 +304,13 @@ ul.tabs li a.active {
 	margin: 0;
 }
 
-.filter .row {margin-bottom: 0;}
+.filter .row {
+	margin-bottom: 0;
+}
 
 .filter .navbar {
 	margin-bottom: 3px;
 }
-
-.filter .navbar-inner {
-	padding-left: 0;
-	padding-right: 0;
-}
-
 
 /*
 ----------------------------------------------------------------------------------------------------------

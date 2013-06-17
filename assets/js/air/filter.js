@@ -1,18 +1,44 @@
 $(document).ready(function(){
 
-	 $('.filterselection').hide();
+//------------------------------------------------------------------------------
+// SORTING
+//------------------------------------------------------------------------------
+	$('[id^=sortby]').on('click', function() {
+
+			// sort flights
+			sortAir( $(this).attr("id") );
+
+			// remove all active states
+			$('[id^=sortby]').parents().removeClass('active');
+
+			// set active button
+			if ($(this).is('[id^=sortbyprice]')) {
+				$(this).parent('li').parents('li').eq(0).addClass('active');
+				$(this).parent().addClass('active');
+			} else {
+				$(this).parent().addClass('active');
+			}
+	});
+
+//------------------------------------------------------------------------------
+// FILTER
+//------------------------------------------------------------------------------
+	// run filter on page load
+	// filterAir();
+
+	$('.filterselection').hide();
 
 	// show filter box
 	$('.filterby').click(function(){
 		$(".filterselection").slideToggle();
+		scrollTo("filtermsg");
 	});
 
 // toggle active button state if filter is active
 
 	// Single Carrier (on/off)
-	$('#SingleCarrier').change(function(){
-
-		filterAir();
+	$('#SingleCarrier').on('change', function() {
+		//filterAir();
 		console.log('Single carrier clicked....');
 		if($(this).is(':checked')){
 			$("#singlecarrierbtn").parent().addClass('active');
@@ -30,7 +56,8 @@ $(document).ready(function(){
 	}
 
 	// In Policy (on/off)
-	$('#InPolicy').change(function(){
+	$('#InPolicy').on('change', function() {
+		// filterAir();
 		if($(this).is(':checked')){
 			$("#inpolicybtn").parent().addClass('active');
 		} else {
@@ -44,7 +71,8 @@ $(document).ready(function(){
 	}
 
 	// NonStops (on/off)
-	$('#NonStops').change(function(){
+	$('#NonStops').on('change', function() {
+		// filterAir();
 		if($(this).is(':checked')){
 			$("#nonstopbtn").parent().addClass('active');
 		} else {
@@ -55,12 +83,71 @@ $(document).ready(function(){
 	// check for active state when page loads
 	if ($('#NonStops').attr('checked')) {
 		$("#nonstopbtn").parent().addClass('active');
-		$("#nonstopbtn").html('<i class="icon-check"></i> In Policy');
 	}
 
-// TODO:  need to add call to sort and filterAir() (see old filter.cfm at bottom of page)
-// 4:59 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
+	// Airlines (set of checkboxs - default = all checked)
+	$('input[name="carrier"]').on('change', function() {
+		var fields = $('#airlines').find('input[name="carrier"]:checked');
+		if (!fields.length){
+			$("#airlinebtn").parent().removeClass('active');
+		} else {
+			$("#airlinebtn").parent().addClass('active');
+		}
+	});
 
-});
+	// check for active state when page loads
+	var fields = $('#airlines').find('input[name="carrier"]:checked');
+	if (fields.length) {
+		$("#airlinebtn").parent().addClass('active');
+	}
 
+	// Class (set of checkboxs - default = economy checked)
+	$('input[name^="Class"]').on('change', function() {
+		var fields = $('#class').find('input[name^="Class"]:checked');
+		if (!fields.length){
+			$("#classbtn").parent().removeClass('active');
+		} else {
+			$("#classbtn").parent().addClass('active');
+		}
+	});
+
+	// check for active state when page loads
+	var fields = $('#class').find('input[name^="Class"]:checked');
+	if (fields.length) {
+		$("#classbtn").parent().addClass('active');
+	}
+
+	// Fares (set of checkboxs - default = all checked)
+	$('input[name^="Fare"]').on('change', function() {
+		var fields = $('#fares').find('input[name^="Fare"]:checked');
+		if (!fields.length){
+			$("#farebtn").parent().removeClass('active');
+		} else {
+			$("#farebtn").parent().addClass('active');
+		}
+	});
+
+	// check for active state when page loads
+	var fields = $('#fares').find('input[name^="Fare"]:checked');
+	if (fields.length) {
+		$("#farebtn").parent().addClass('active');
+	}
+
+// TODO: STM-688 and STM-687
+// * Need to add code to 'reset' all checkboxes back to default states
+// * Need to show/hide the Find more ... links if results are found for fare / class filters
+// 7:50 PM Thursday, June 13, 2013 - Jim Priest - jpriest@shortstravel.com
+
+}); // $(document).ready(function(){
+
+
+// -----------------------------------------------------------------------------
+// MISC FUNCTIONS
+// -----------------------------------------------------------------------------
+
+// This is a functions that scrolls to #id
+function scrollTo(id)
+{
+  $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
+}
 
