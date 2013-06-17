@@ -73,7 +73,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.hotels = result;
 				$scope.totalProperties = result.length;
 				$scope.searchCompleted = true;
-				$scope.filterHotels();
+				$scope.initializeMap();
 
 				//Build vendor array for filter
 				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
@@ -105,19 +105,27 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.$watch( "filterItems", function(newValue){
 		$scope.filterHotels();
-		console.log( newValue );
 	}, true)
 
+	/*
 	$scope.$watch( "visibleHotels", function( newValue ){
-		//$scope.clearMapPins();
+
+		try{
+			$scope.clearMapPins();
+		}
+		catch(e){
+
+		}
+		console.log( newValue );
 		for( var i=0; i < newValue.length; i++ ){
 			var Hotel = newValue[i].hotel;
 			$scope.addPin( newValue[i].propertyNumber, Hotel.lat, Hotel.long, Hotel.PropertyName, Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State )
 		}
 	})
-
+	*/
+	/*
 	$scope.$watch( "search", function( newValue ){
-		if( typeof $scope.map == 'undefined' ){
+		if( typeof $scope.search.hotelLat != 'undefined' && typeof $scope.map == 'undefined' ){
 			$scope.initializeMap();
 		} else {
 			$scope.clearMapPins();
@@ -125,11 +133,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 	})
-
+	*/
 	/*
-	$scope.$watch( "filteredHotels.length + currentPage", function(newValue){
+	$scope.$watch( "visibleHotels", function(newValue){
 
-		if( $scope.filteredHotels.length && typeof $scope.map != 'undefined'){
+		if( $scope.visibleHotels.length && typeof $scope.map != 'undefined'){
 			//Clear pins from map
 			$scope.map.entities.clear();
 			$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
@@ -156,7 +164,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}, true)
 	*/
-
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
 		for( var i=0; i < hotels.length; i++ ){
@@ -265,6 +272,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		for( var i=startIndex; i<endIndex; i++ ){
 			var Hotel = $scope.filteredHotels[i]
 			$scope.visibleHotels.push( { propertyNumber: i+1, hotel: Hotel } );
+			var displayedAddress = Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State;
+			//$scope.addPin( i+1, Hotel.lat, Hotel.long, Hotel.PropertyName, displayedAddress );
 			if( !Hotel.roomsReturned ){
 				$scope.getHotelRates( Hotel, false );
 			}
@@ -359,6 +368,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 		Microsoft.Maps.loadModule('Microsoft.Maps.Themes.BingTheme', {
 			callback: function(){
+				console.log( $scope.search );
 				$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
 				$scope.mapOptions = {
 					height: 500,
