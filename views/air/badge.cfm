@@ -97,7 +97,7 @@
 	</cfoutput>
 </cfsavecontent>
 <cfoutput>
-	<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
+	<div id="flight#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
 		#sBadge#
 	</div>
 </cfoutput>
