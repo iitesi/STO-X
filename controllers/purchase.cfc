@@ -24,7 +24,7 @@
 	<cffunction name="car" output="false">
 		<cfargument name="rc">
 
-		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleService').load( session.searches[rc.SearchID].stItinerary.Car )>
+		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stItinerary.Car )>
 
 		<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').load( 3605 )>
 
@@ -57,11 +57,11 @@
 		<cfset rc.branchID = fw.getBeanFactory().getBean('UserService').getBranchID( 1, 'string' )>
 		<cfset rc.Traveler.setBranchID( rc.branchID )>
 
-		<cfset rc.message = fw.getBeanFactory().getBean('VehicleService').create( rc.Traveler, rc.Payment, rc.Vehicle, rc.Filter )>
+		<cfset rc.message = fw.getBeanFactory().getBean('VehicleAdapter').create( rc.Traveler, rc.Payment, rc.Vehicle, rc.Filter )>
 		
 		<cfset rc.response = fw.getBeanFactory().getBean('UAPI').callUAPI( 'VehicleService', rc.message )>
 
-		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleService').parseVehicleRsp( rc.Vehicle, rc.response )>
+		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( rc.Vehicle, rc.response )>
 
 		<cfif rc.Vehicle.getConfirmation() EQ ''>
 			<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>

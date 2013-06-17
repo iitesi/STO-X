@@ -1,17 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="UAPI">
-	<cfproperty name="VehicleService">
+	<cfproperty name="VehicleAdapter">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
-		<cfargument name="VehicleService">
+		<cfargument name="VehicleAdapter">
 
 		<cfset setUAPI(arguments.UAPI)>
-		<cfset setVehicleService(arguments.VehicleService)>
+		<cfset setVehicleAdapter(arguments.VehicleAdapter)>
 
 		<cfreturn this>
 	</cffunction>
@@ -37,7 +37,7 @@ doAvailability
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
-		<!--- <cfset session.searches[SearchID].stCars = {}> --->
+		<cfset session.searches[SearchID].stCars = {}>
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -57,8 +57,8 @@ doAvailability
 				CDNumbers="#CDNumbers#">
 					<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
 					<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
-					<cfset local.vehicleLocations = VehicleService.parseVendorLocations(response)>
-					<cfset local.stCars = VehicleService.parseVehicles(response, vehicleLocations)>
+					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 						<cfset local.stCars     = addJavascript(stCars)>
@@ -80,8 +80,8 @@ doAvailability
 			nCouldYou="#arguments.nCouldYou#">
 				<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
 				<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
-				<cfset local.vehicleLocations = VehicleService.parseVendorLocations(response)>
-				<cfset local.stCars = VehicleService.parseVehicles(response, vehicleLocations)>
+				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
+				<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 					<cfset local.stCars     = addJavascript(stCars)>
