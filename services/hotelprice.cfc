@@ -79,8 +79,8 @@
 						  </hot:HotelProperty>
 						  <hot:HotelDetailsModifiers RateRuleDetail="Complete">
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getDepartDate()),'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getArrivalDate()),'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getDepartDateTime()),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(DateAdd('d',arguments.nCouldYou,arguments.Filter.getArrivalDateTime()),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						    <hot:RateCategory>All</hot:RateCategory>
 						  </hot:HotelDetailsModifiers>

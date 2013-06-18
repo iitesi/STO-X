@@ -27,8 +27,8 @@ doCouldYou
 		<cfargument name="Account">
 		<cfargument name="Policy">
 
-		<cfset local.OriginDate = arguments.Filter.getDepartDate()>
-		<cfset local.calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDate())>
+		<cfset local.OriginDate = arguments.Filter.getDepartDateTime()>
+		<cfset local.calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDateTime())>
 		<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
 		<cfset local.threadnames = {}>
 		<cfset local.CouldYou = structKeyExists(session.searches[SearchID],'CouldYou') ? session.searches[SearchID].CouldYou : {}>

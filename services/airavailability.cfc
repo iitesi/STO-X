@@ -177,7 +177,7 @@ prepareSoapHeader
 									<air:SearchDestination>
 										<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
+									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
 							</cfif>
 							<cfif arguments.Group EQ 1 AND arguments.Filter.getAirType() EQ 'RT'>
@@ -188,7 +188,7 @@ prepareSoapHeader
 									<air:SearchDestination>
 										<com:Airport Code="#arguments.Filter.getDepartCity()#" />
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDate(), 'yyyy-mm-dd')#" />
+									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
 								</air:SearchAirLeg>
 							<cfelseif arguments.Group NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
 								<cfset local.cnt = 0>
@@ -202,7 +202,7 @@ prepareSoapHeader
 											<air:SearchDestination>
 												<com:Airport Code="#qSearchLegs.Arrival_City#" />
 											</air:SearchDestination>
-											<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
+											<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
 										</air:SearchAirLeg>
 									</cfif>
 								</cfloop>

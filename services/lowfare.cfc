@@ -167,7 +167,7 @@ prepareSOAPHeader
 										<air:SearchDestination>
 											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
 										</air:SearchDestination>
-										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDate(), 'yyyy-mm-dd')#" />
+										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
 										<air:AirLegModifiers>
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
@@ -187,7 +187,7 @@ prepareSOAPHeader
 										<air:SearchDestination>
 											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
 										</air:SearchDestination>
-										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDate(), 'yyyy-mm-dd')#" />
+										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
 										<air:AirLegModifiers>
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>

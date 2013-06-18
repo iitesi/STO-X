@@ -43,8 +43,8 @@
 						  	<hot:HotelProperty HotelChain="#arguments.sHotelChain#" HotelCode="#arguments.nHotelCode#">
 						    </hot:HotelProperty>
 						    <hot:HotelStay>
-									<hot:CheckinDate>#DateFormat(arguments.Filter.getDepartDate(),'yyyy-mm-dd')#</hot:CheckinDate>
-									<hot:CheckoutDate>#DateFormat(arguments.Filter.getArrivalDate(),'yyyy-mm-dd')#</hot:CheckoutDate>
+									<hot:CheckinDate>#DateFormat(arguments.Filter.getDepartDateTime(),'yyyy-mm-dd')#</hot:CheckinDate>
+									<hot:CheckoutDate>#DateFormat(arguments.Filter.getArrivalDateTime(),'yyyy-mm-dd')#</hot:CheckoutDate>
 						    </hot:HotelStay>
 						  </hot:HotelRulesLookup>
 						</hot:HotelRulesReq>
