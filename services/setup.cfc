@@ -1,12 +1,15 @@
 <cfcomponent output="false" accessors="true">
 
+	<cfproperty name="SearchService" />
 	<cfproperty name="useLinkedDatabases" />
 	<cfproperty name="portalURL"/>
 
 	<cffunction name="init" output="false">
+		<cfargument name="SearchService" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
 
+		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setPortalURL( arguments.portalURL ) />
 
@@ -37,9 +40,9 @@
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Append" 	required="false" default="0" >
 
-		<cfset local.searchfilter = createObject("component", "booking.model.searchfilter").init()>
-		<cfif arguments.SearchID NEQ 0>
+		<cfset local.searchfilter = SearchService.load( arguments.searchId ) />
 
+		<cfif arguments.SearchID NEQ 0>
 			<cfquery name="local.getsearch">
 			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_DateTime, Hotel, Policy_ID,
 			Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines,
@@ -63,59 +66,6 @@
 					WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 					ORDER BY Depart_DateTime
 				</cfquery>
-			</cfif>
-
-			<!--- populate search filter from query above --->
-			<cfset searchfilter.setAcctID(getsearch.Acct_ID)>
-			<cfset searchfilter.setAir(getsearch.Air EQ 1 ? true : false)>
-			<cfset searchfilter.setAirHeading(getsearch.air_heading)>
-			<cfset searchfilter.setAirlines(getsearch.Airlines)>
-			<cfset searchfilter.setAirType(getsearch.Air_Type)>
-			<cfset searchfilter.setArrivalCity(getsearch.Arrival_City)>
-			<cfset searchfilter.setArrivalDate(getsearch.Arrival_DateTime)>
-			<cfset searchfilter.setArrivalType(getsearch.Arrival_TimeType)>
-			<cfset searchfilter.setCar(getsearch.Car EQ 1 ? true : false)>
-			<cfset searchfilter.setCarHeading(getsearch.Car_Heading)>
-			<cfset searchfilter.setCarPickupAirport(getsearch.CarPickup_Airport)>
-			<cfset searchfilter.setCarPickupDateTime(getsearch.CarPickup_DateTime)>
-			<cfset searchfilter.setCarDropoffDateTime(getsearch.CarDropoff_DateTime)>
-			<cfset searchfilter.setCheckIn_Date(getsearch.CheckIn_Date)>
-			<cfset searchfilter.setCheckOut_Date(getsearch.CheckOut_Date)>
-			<cfset searchfilter.setCOS(getsearch.ClassOfService)>
-			<cfset searchfilter.setDepartCity(getsearch.Depart_City)>
-			<cfset searchfilter.setDepartDate(getsearch.Depart_DateTime)>
-			<cfset searchfilter.setDepartType(getsearch.Depart_TimeType)>
-			<cfset searchfilter.setHotel(getsearch.Hotel EQ 1 ? true : false)>
-			<cfset searchfilter.setHotel_Address(getsearch.Hotel_Address)>
-			<cfset searchfilter.setHotel_Airport(getsearch.Hotel_Airport)>
-			<cfset searchfilter.setHotel_City(getsearch.Hotel_City)>
-			<cfset searchfilter.setHotel_Country(getsearch.Hotel_Country)>
-			<cfset searchfilter.setHotel_Landmark(getsearch.Hotel_Landmark)>
-			<cfset searchfilter.setHotel_Radius(getsearch.Hotel_Radius)>
-			<cfset searchfilter.setHotel_Search(getsearch.Hotel_Search)>
-			<cfset searchfilter.setHotel_State(getsearch.Hotel_State)>
-			<cfset searchfilter.setHotel_Zip(getsearch.Hotel_Zip)>
-			<cfset searchfilter.setHotelHeading(getsearch.Hotel_Heading)>
-			<cfset searchfilter.setInternational(getsearch.International EQ 1 ? true : false)>
-			<cfset searchfilter.setOffice_ID(getsearch.Office_ID)>
-			<cfset searchfilter.setPolicyID(getsearch.Policy_ID)>
-			<cfset searchfilter.setProfileID(getsearch.Profile_ID)>
-			<cfset searchfilter.setSearchID(getsearch.Search_ID)>
-			<cfset searchfilter.setUserID(getsearch.User_ID)>
-			<cfset searchfilter.setUsername(getsearch.Username)>
-			<cfset searchfilter.setValueID(getsearch.Value_ID)>
-
-			<cfif getsearch.Profile_ID EQ getsearch.User_ID>
-				<cfset searchfilter.setBookingFor('')><!--- Booking for themselves --->
-			<cfelseif getsearch.Profile_ID EQ 0>
-				<cfset searchfilter.setBookingFor('Guest Traveler')><!--- Guest traveler --->
-			<cfelse>
-				<cfquery name="local.getuser" datasource="Corporate_Production">
-				SELECT First_Name, Last_Name
-				FROM Users
-				WHERE User_ID = <cfqueryparam value="#getsearch.Profile_ID#" cfsqltype="cf_sql_integer" >
-				</cfquery>
-				<cfset searchfilter.setBookingFor(getuser.First_Name&' '&getuser.Last_Name)><!--- Booking for someone else --->
 			</cfif>
 
 			<cfquery name="local.getAirportData" datasource="book">
