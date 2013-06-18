@@ -33,7 +33,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.$watch( "map", function( map ){
 		if( typeof map != 'undefined' ){
-			console.log( "Map initialized" );
 			$scope.loadPolicy( $scope.search.policyID );
 		}
 	})
@@ -465,8 +464,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.selectRoom = function( Hotel, Room ){
-
-		HotelService.selectRoom( $scope.search,  Hotel, Room );
+		HotelService.selectRoom( $scope.search,  Hotel, Room )
+			.then( function( response ){
+				console.log( response );
+			});
 
 	}
 	/* Items executed when controller is loaded */

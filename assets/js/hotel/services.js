@@ -100,7 +100,7 @@ services.factory( "HotelService", function( $http ){
 	}
 
 	HotelService.selectRoom = function( Search, Hotel, Room ){
-		return $http.get( "/booking/RemoteProxy.cfc?method=selectRoom&searchId=" + Search.searchId
+		return $http.get( "/booking/RemoteProxy.cfc?method=selectHotelRoom&searchId=" + Search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
 							+ '&totalForStay=' + Room.totalForStay )

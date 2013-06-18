@@ -281,7 +281,7 @@
                                 <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
                                 <button style="width: 75%"
                                     ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': room.isInPolicy}"
-                                    ng-click="">
+                                    ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
                                     <span class="medium bold">${{room.dailyRate}}</span>
                                 </button>
                                 <i class="icon-ban-circle icon-large" style="color: red" ng-show="!room.isInPolicy"></i>
