@@ -3,11 +3,19 @@
 	<cfsavecontent variable="localAssets">
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">
+		<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
 		<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="assets/js/date.format.js"></script>
 		<script type="text/javascript" src="assets/js/select2.min.js"></script>
 		<script type="text/javascript" src="assets/localdata/airports-us.js"></script>
 		<script type="text/javascript" src="assets/js/hotel/hotelRoom.js"></script>
+		<script src="assets/js/hotel/hotel.js"></script>
+		<script src="assets/js/angular.min.js"></script>
+		<script src="assets/js/angular-resource.min.js"></script>
+		<script src="assets/js/purl.js"></script>
+		<script src="assets/js/hotel/services.js"></script>
+		<script src="assets/js/hotel/controllers.js"></script>
+		<script src="assets/js/hotel/app.js"></script>
 
 	</cfsavecontent>
 	<cfhtmlhead text="#localAssets#" />
