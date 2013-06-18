@@ -91,9 +91,9 @@ OR NOT rc.Filter.getAir()>
 												<span class="green">BEST RATE</span>
 												<cfset buttonType="btn-success" />
 											</cfif>
-											<!--- If corporate rate --->
+											<!--- If corporate/contracted rate --->
 											<cfif stRate.Corporate>
-												CORPORATE
+												CONTRACTED
 											</cfif><br />
 											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
 											<!--- Original button below.
