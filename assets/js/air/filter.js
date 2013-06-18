@@ -154,6 +154,29 @@ $(document).ready(function(){
 }); // $(document).ready(function(){
 
 
+<<<<<<< Updated upstream
+=======
+//------------------------------------------------------------------------------
+// SORTING
+//------------------------------------------------------------------------------
+	$('[id^=sortby]').on('click', function() {
+
+			// sort flights
+			sortAir( $(this).attr("id") );
+
+			// remove all active states
+			$('[id^=sortby]').parents().removeClass('active');
+
+			// set active button
+			if ($(this).is('[id^=sortbyprice]')) {
+				$(this).parent('li').parents('li').eq(0).addClass('active');
+				$(this).parent().addClass('active');
+			} else {
+				$(this).parent().addClass('active');
+			}
+	});
+
+>>>>>>> Stashed changes
 
 // -----------------------------------------------------------------------------
 // MISC FUNCTIONS
