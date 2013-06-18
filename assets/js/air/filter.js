@@ -131,14 +131,31 @@ $(document).ready(function(){
 		$("#farebtn").parent().addClass('active');
 	}
 
-// TODO: STM-688 and STM-687
-// * Need to add code to 'reset' all checkboxes back to default states
-// * Need to show/hide the Find more ... links if results are found for fare / class filters
-// 7:50 PM Thursday, June 13, 2013 - Jim Priest - jpriest@shortstravel.com
+//------------------------------------------------------------------------------
+// SORTING
+//------------------------------------------------------------------------------
+	$('[id^=sortby]').on('click', function() {
+			// sort flights
+			sortAir( $(this).attr("id") );
+
+			// remove all active states
+			$('[id^=sortby]').parents().removeClass('active');
+
+			// set active button
+			if ($(this).is('[id^=sortbyprice]')) {
+				$(this).parent('li').parents('li').eq(0).addClass('active');
+				$(this).parent().addClass('active');
+			} else {
+				$(this).parent().addClass('active');
+			}
+	});
+
 
 }); // $(document).ready(function(){
 
 
+<<<<<<< Updated upstream
+=======
 //------------------------------------------------------------------------------
 // SORTING
 //------------------------------------------------------------------------------
@@ -159,6 +176,7 @@ $(document).ready(function(){
 			}
 	});
 
+>>>>>>> Stashed changes
 
 // -----------------------------------------------------------------------------
 // MISC FUNCTIONS

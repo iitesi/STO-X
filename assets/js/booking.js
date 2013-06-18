@@ -40,50 +40,49 @@ function showManualCreditCard(type) {
 */
 function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, Destination) {
 
-    var SearchID = $( "#SearchID" ).val();
-    var nTraveler = $( "#nTraveler" ).val();
-    var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
+		var SearchID = $( "#SearchID" ).val();
+		var nTraveler = $( "#nTraveler" ).val();
+		var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
 
-    $( "#" + oldSeat ).removeClass('currentseat');
-    $( "#" + sSeat ).addClass('currentseat');
+		$( "#" + oldSeat ).removeClass('currentseat');
+		$( "#" + sSeat ).addClass('currentseat');
 
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
 
-    $.ajax({
-        type: 'POST',
-        url: 'services/traveler.cfc',
-        data: {
-            method: 'setSeat',
-            SearchID: SearchID,
-            nTraveler: nTraveler,
-            sCarrier: sCarrier,
-            nFlightNumber: nFlightNumber,
-            sOrigin: sOrigin,
-            Destination: Destination,
-            sSeat: sSeat
-        },
-        dataType: 'json'
-    });
+		$.ajax({
+				type: 'POST',
+				url: 'services/traveler.cfc',
+				data: {
+						method: 'setSeat',
+						SearchID: SearchID,
+						nTraveler: nTraveler,
+						sCarrier: sCarrier,
+						nFlightNumber: nFlightNumber,
+						sOrigin: sOrigin,
+						Destination: Destination,
+						sSeat: sSeat
+				},
+				dataType: 'json'
+		});
 
-    return false;
+		return false;
 }
+
 function getUnusedTickets(userid, acctid) {
-
-    $.ajax({type:"POST",
-        url: 'services/reports.cfc?method=showUnusedTickets',
-        data:"UserID="+userid+"&AcctID="+acctid,
-        dataType: 'json',
-        success:function(data) {
-            $("#unusedtickets").html(data);
-        },
-        error:function(test, tes, te) {
-            console.log('error');
-        }
-    });
-
-    return false;
+	$.ajax({type:"POST",
+			url: 'services/reports.cfc?method=showUnusedTickets',
+			data:"UserID="+userid+"&AcctID="+acctid,
+			dataType: 'json',
+			success:function(data) {
+					$("#unusedtickets").html(data);
+			},
+			error:function(test, tes, te) {
+					console.log('error');
+			}
+	});
+	return false;
 }
 
 
@@ -92,7 +91,7 @@ function getUnusedTickets(userid, acctid) {
 
 	FlightResults = ["-721584238", 1, 0, ["AA"], "0", 1, "Y", 0]
 
-	0	Token							-23445611128
+	0	Token							23445611128 (appended with 'flight' in code as CSS id's shouldn't start with number)
 	1	Policy						1/0
 	2 Multiple Carriers	1/0
 	3 Carriers					"DL","AA","UA"
@@ -191,11 +190,11 @@ function filterAir() {
 	return false;
 }
 
-
-function sortAir (sort) {
+function sortAir(sort) {
 	var sortlist = eval( sort );
+	console.log(sortlist);
 	for (var t = 0; t < sortlist.length; t++) {
-		$( "#aircontent" ).append( $( "#" + sortlist[t] ) );
+		$( "#aircontent" ).append( $( "#flight" + sortlist[t] ) );
 	}
 	return false;
 }
@@ -445,45 +444,45 @@ $(document).ready(function() {
 		$("[rel='tooltip']").tooltip();
 	});
 
-  $("#SoldOut")
-  .button()
-  .change(function() {
-  	filterhotel();
-  });
+	$("#SoldOut")
+	.button()
+	.change(function() {
+		filterhotel();
+	});
 
-  $("#Policy")
-  .button()
-  .change(function() {
-  	filterhotel();
-  });
+	$("#Policy")
+	.button()
+	.change(function() {
+		filterhotel();
+	});
 
-  $(".radiobuttons").buttonset();
-  $("#HotelChains").button();
+	$(".radiobuttons").buttonset();
+	$("#HotelChains").button();
 	$("#HotelAmenities").button();
 
 });
 
 function loadImage(image, property_id) {
-  $( "#hotelimage" + property_id ).html('');
-  var img = new Image();
-  $(img).load(function () {
-    $(img).hide();
-    $( "#hotelimage" + property_id ).html(img);
-    $(img).fadeIn('slow');
-  }).attr('src', image)
-  .attr('style','max-width: 125px;');
-  return false;
+	$( "#hotelimage" + property_id ).html('');
+	var img = new Image();
+	$(img).load(function () {
+		$(img).hide();
+		$( "#hotelimage" + property_id ).html(img);
+		$(img).fadeIn('slow');
+	}).attr('src', image)
+	.attr('style','max-width: 125px;');
+	return false;
 }
 
 function sortHotel(sort) {
-  $( "#current_page" ).val(0);
-  $( "#sorttype" ).val(sort);
-  var order = $( "#hotellist" + sort + "sort" ).val();
-  order = order.split(',');
-  for (var t = 0; t < order.length; t++) {
-    $( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
-  }
-  filterhotel();
+	$( "#current_page" ).val(0);
+	$( "#sorttype" ).val(sort);
+	var order = $( "#hotellist" + sort + "sort" ).val();
+	order = order.split(',');
+	for (var t = 0; t < order.length; t++) {
+		$( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
+	}
+	filterhotel();
 }
 
 function setImage(count, property_id) {
@@ -569,14 +568,14 @@ function writePages(number_of_items) {
 	}
 	//create html for the next link
 	if (($('#current_page').val() != number_of_pages-1) && (number_of_pages > 0)) {
- 	   navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';
+		 navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';
 	}
 	//write the html to the navigation div
-  $('#page_navigation').html(navigation_html);
-  $('#page_navigation2').html(navigation_html);
-  //add active_page class to the active page link
-  $('#page_navigation .page_link').eq(current_page).addClass('active_page');
-  $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');
+	$('#page_navigation').html(navigation_html);
+	$('#page_navigation2').html(navigation_html);
+	//add active_page class to the active page link
+	$('#page_navigation .page_link').eq(current_page).addClass('active_page');
+	$('#page_navigation2 .page_link').eq(current_page).addClass('active_page');
 	return false;
 }
 
@@ -700,7 +699,7 @@ function logError(test,tes,te) {
 }
 
 function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
-    console.log('air')
+		console.log('air')
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
 		data:"SearchID="+searchid+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
@@ -753,69 +752,69 @@ function couldYouCar(searchid,carchain,cartype,viewDay,startdate,currenttotal) {
 
 
 function setOtherFields(nTraveler, overrideEverything) {
-    var SearchID = $( "#SearchID" ).val();
-    $.ajax({
-        type: 'POST',
-        url: 'services/traveler.cfc',
-        data: {
-            method: 'getTraveler',
-            nTraveler: nTraveler,
-            SearchID: SearchID
-        },
-        dataType: 'json',
-        success: function(traveler) {
-            //set global variables
-            var sCarriers = $( "#sCarriers" ).val().split(',');
-            var sCarVendor = $( "#sCarVendor" ).val();
-            //set variables if defined
-            var stAirFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['A'] != 'undefined') {
-                stAirFFs = traveler['STFFACCOUNTS']['A'];
-            }
-            var stCarFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['C'] != 'undefined') {
-                stCarFFs = traveler['STFFACCOUNTS']['C'];
-            }
-            var stHotelFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
-                stHotelFFs = traveler['STFFACCOUNTS']['H'];
-            }
-            var stFOPs = new Object();
-            if (typeof traveler['STFOPS'] != 'undefined') {
-                stFOPs = traveler['STFOPS'];
-            }
-            var sSeat = '';
-            if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
-                sSeat = traveler['WINDOW_AISLE'];
-            }
-            //logic to update form fields
-            for (var i = 0; i < stFOPs.length; i++) {
-                console.log(stFOPs[i]);
+		var SearchID = $( "#SearchID" ).val();
+		$.ajax({
+				type: 'POST',
+				url: 'services/traveler.cfc',
+				data: {
+						method: 'getTraveler',
+						nTraveler: nTraveler,
+						SearchID: SearchID
+				},
+				dataType: 'json',
+				success: function(traveler) {
+						//set global variables
+						var sCarriers = $( "#sCarriers" ).val().split(',');
+						var sCarVendor = $( "#sCarVendor" ).val();
+						//set variables if defined
+						var stAirFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['A'] != 'undefined') {
+								stAirFFs = traveler['STFFACCOUNTS']['A'];
+						}
+						var stCarFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['C'] != 'undefined') {
+								stCarFFs = traveler['STFFACCOUNTS']['C'];
+						}
+						var stHotelFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
+								stHotelFFs = traveler['STFFACCOUNTS']['H'];
+						}
+						var stFOPs = new Object();
+						if (typeof traveler['STFOPS'] != 'undefined') {
+								stFOPs = traveler['STFOPS'];
+						}
+						var sSeat = '';
+						if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
+								sSeat = traveler['WINDOW_AISLE'];
+						}
+						//logic to update form fields
+						for (var i = 0; i < stFOPs.length; i++) {
+								console.log(stFOPs[i]);
 
-            }
-            if (($( "#Air_FF" + sCarriers[i] ).val() == '')
-            || overrideEverything == true) {
-	            for (var i = 0; i < sCarriers.length; i++) {
-	                if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
-	                    $( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
-	                }
-	                else {
-	                    $( "#Air_FF" + sCarriers[i] ).val('');
-	                }
-	            }
-            }
-            if (typeof stCarFFs[sCarVendor] != 'undefined') {
-                $( "#Car_FF" ).val(stCarFFs[sCarVendor]);
-            }
-            else {
-                $( "#Car_FF" ).val('');
-            }
-            $( "#Seats" ).val(sSeat);
-        }
-    });
+						}
+						if (($( "#Air_FF" + sCarriers[i] ).val() == '')
+						|| overrideEverything == true) {
+							for (var i = 0; i < sCarriers.length; i++) {
+									if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
+											$( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
+									}
+									else {
+											$( "#Air_FF" + sCarriers[i] ).val('');
+									}
+							}
+						}
+						if (typeof stCarFFs[sCarVendor] != 'undefined') {
+								$( "#Car_FF" ).val(stCarFFs[sCarVendor]);
+						}
+						else {
+								$( "#Car_FF" ).val('');
+						}
+						$( "#Seats" ).val(sSeat);
+				}
+		});
 }
 
 function getAuthorizedTravelers(userID, acctID) {
@@ -825,7 +824,7 @@ function getAuthorizedTravelers(userID, acctID) {
 		data: {	method: 'getAuthorizedTravelers',
 				userID: userID,
 				acctID: acctID
-			  },
+				},
 		dataType: 'json',
 		success: function(Travelers) {
 			$.each(Travelers, function(index,Traveler) {
@@ -842,7 +841,7 @@ function getUser(userID) {
 		url: 'RemoteProxy.cfc',
 		data: {	method: 'getUser',
 				userID: userID
-			  },
+				},
 		dataType: 'json',
 		success: function(User) {
 			$( "#firstName" ).val( User.firstName );
@@ -868,7 +867,7 @@ function getUserCCEmails(userID) {
 		data: {	method: 'getUserCCEmails',
 				userID: userID,
 				returnType: 'string'
-			  },
+				},
 		dataType: 'json',
 		success: function(ccEmails) {
 			$( "#ccEmails" ).val( ccEmails );
