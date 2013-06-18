@@ -28,12 +28,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			.then( function( result ){
 				$scope.search = result.data;
 				$scope.initializeMap();
-
 			});
 	}
 
 	$scope.$watch( "map", function( map ){
 		if( typeof map != 'undefined' ){
+			console.log( "Map initialized" );
 			$scope.loadPolicy( $scope.search.policyID );
 		}
 	})
@@ -104,12 +104,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$scope.filterHotels();
 		}
 	}, true)
-
-	/*
-	$scope.$watch( "visibleHotels", function( newValue ){
-		$scope.filterHotels();
-	}, true )
-	*/
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -338,8 +332,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 					$scope.updateSearch();
 				})
-
-				$scope.loadPolicy( $scope.search.policyID );
 			}
 		})
 
@@ -472,6 +464,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$("[rel='tooltip']").tooltip();
 	}
 
+	$scope.selectRoom = function( Hotel, Room ){
+
+		HotelService.selectRoom( $scope.search,  Hotel, Room );
+
+	}
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');

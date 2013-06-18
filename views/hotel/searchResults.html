@@ -120,7 +120,7 @@
                                 <span class="large blue bold" >
                                     ${{item.hotel.findLowestRoomRate()}} <i class="icon-ban-circle icon-large red" style="color: red;" ng-show="!item.hotel.isInPolicy"></i>
                                 </span>
-                                <span ng-show="item.hotel.hasCorporateRate()" class="small blue bold"><br>Corp Rate</span>
+                                <span ng-show="item.hotel.hasCorporateRate()" class="small blue bold"><br>Contracted Rate</span>
                                 <span ng-show="!item.hotel.hasCorporateRate() && item.hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
                                 <button
                                     ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
@@ -274,7 +274,7 @@
                                 {{room.description}}
                             </div>
                             <div style="width: 15%; float: left; clear: none; padding-bottom: 7px;">
-                                <span ng-show="room.isCorporateRate" class="small blue bold">Corp Rate</span>
+                                <span ng-show="room.isCorporateRate" class="small blue bold">Contracted Rate</span>
                                 <span ng-show="room.isGovernmentRate" class="small blue bold">Gov Rate</span>
                             </div>
                             <div style="width: 15%; float: left; clear: right; padding-bottom: 7px;">

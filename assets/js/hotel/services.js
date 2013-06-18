@@ -99,5 +99,12 @@ services.factory( "HotelService", function( $http ){
 			.then( function( response ){ return response.data })
 	}
 
+	HotelService.selectRoom = function( Search, Hotel, Room ){
+		return $http.get( "/booking/RemoteProxy.cfc?method=selectRoom&searchId=" + Search.searchId
+							+ '&propertyId=' + Hotel.PropertyId
+							+ '&ratePlanType=' + Room.ratePlanType
+							+ '&totalForStay=' + Room.totalForStay )
+			.then( function( response ){ return response.data })
+	}
 	return HotelService;
 })
