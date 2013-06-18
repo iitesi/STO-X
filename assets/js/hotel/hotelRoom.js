@@ -10,6 +10,12 @@ function HotelRoom(){
 	this.totalForStayCurrency = '';
 	this.totalIncludesMessage = '';
 	this.inPolicy = true;
+	this.ratePlanType = '';
+	this.baseRate = 0;
+	this.baseRateCurrency = '';
+	this.tax = 0;
+	this.taxCurrency = '';
+	this.corporateDiscountID = '';
 }
 
 HotelRoom.prototype.populate = function( obj ){
