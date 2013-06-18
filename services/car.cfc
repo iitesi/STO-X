@@ -1,16 +1,13 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
 	<cfproperty name="VehicleAdapter">
 
 <!---
 init
 --->
 	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
 		<cfargument name="VehicleAdapter">
 
-		<cfset setUAPI(arguments.UAPI)>
 		<cfset setVehicleAdapter(arguments.VehicleAdapter)>
 
 		<cfreturn this>
@@ -55,8 +52,7 @@ doAvailability
 				Policy="#arguments.Policy#"
 				nCouldYou="#arguments.nCouldYou#"
 				CDNumbers="#CDNumbers#">
-					<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou, CDNumbers)>
-					<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
+					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers)>
 					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 					<cfif arguments.nCouldYou EQ 0>
@@ -78,8 +74,7 @@ doAvailability
 			Account="#arguments.Account#"
 			Policy="#arguments.Policy#"
 			nCouldYou="#arguments.nCouldYou#">
-				<cfset local.message = prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, arguments.nCouldYou)>
-				<cfset local.response = UAPI.callUAPI('VehicleService', message, SearchID)>
+				<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou)>
 				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 				<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 				<cfif arguments.nCouldYou EQ 0>
@@ -111,66 +106,6 @@ doAvailability
 		</cfif>
 
 		<cfreturn CarRate>
-	</cffunction>
-
-<!--- prepareSOAPHeader --->
-	<cffunction name="prepareSOAPHeader" output="false">
-		<cfargument name="Filter" 		required="true">
-		<cfargument name="Account"	    required="false">
-		<cfargument name="Policy" 	    required="false">
-		<cfargument name="nCouldYou"	required="false"	default="0">
-		<cfargument name="CDNumbers" 	required="false"	default="">
-		<cfargument name="bFullRequest" required="false"	default="false">
-
-		<cfset local.SearchID = arguments.Filter.getSearchID()>
-
-		<!--- <cfif arguments.Filter.getAir() AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')>
-			<cfset local.dPickUp = session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime>
-			<cfif arguments.Filter.getAirType() EQ 'RT'>
-				<cfset local.dDropOff = session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime>
-			<cfelseif arguments.Filter.getAirType() EQ 'OW'>
-				<cfset local.dDropOff = getsearch.Arrival_DateTime>
-			<cfelseif arguments.Filter.getAirType() EQ 'MD'>
-				<!--- Not allowed at this time --->
-			</cfif>
-		<cfelse>
-			<cfset local.dPickUp = arguments.Filter.getDepartDate()>
-			<cfset local.dDropOff = arguments.Filter.getArrivalDate()>
-		</cfif> --->
-		<cfset local.dPickUp = arguments.Filter.getCarPickupDateTime()>
-		<cfset local.dDropOff = arguments.Filter.getCarDropoffDateTime()>
-		<cfset session.searches[SearchID].dPickUp = dPickUp>
-		<cfset session.searches[SearchID].dDropOff = dDropOff>
-		
-		<cfsavecontent variable="local.sMessage">
-			<cfoutput>
-				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-					<soapenv:Header/>
-					<soapenv:Body>
-						<veh:VehicleSearchAvailabilityReq TargetBranch="#arguments.Account.sBranch#" xmlns:com="http://www.travelport.com/schema/common_v15_0" xmlns:veh="http://www.travelport.com/schema/vehicle_v17_0" ReturnExtraRateInfo="true" ReturnApproximateTotal="true" ReturnAllRates="true">
-							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
-							<veh:VehicleDateLocation
-								ReturnLocationType="Airport"
-								PickupLocation="#arguments.Filter.getCarPickupAirport()#"
-								PickupDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dPickUp), 'yyyy-mm-dd')#T#TimeFormat(dPickUp, 'HH:mm')#:00" 
-								PickupLocationType="Airport"
-								ReturnLocation="#arguments.Filter.getCarPickupAirport()#"
-								ReturnDateTime="#DateFormat(DateAdd('d',arguments.nCouldYou,dDropOff), 'yyyy-mm-dd')#T#TimeFormat(dDropOff, 'HH:mm')#:00" />
-							<veh:VehicleSearchModifiers>
-								<veh:VehicleModifier AirConditioning="true" TransmissionType="Automatic" />
-								<cfif IsStruct(arguments.CDNumbers) >
-									<cfloop collection="#arguments.CDNumbers#" index="local.sVendorCode">
-										<veh:RateModifiers DiscountNumber="#arguments.CDNumbers[sVendorCode].CD#" VendorCode="#sVendorCode#" />
-									</cfloop>
-								</cfif>
-							</veh:VehicleSearchModifiers>  
-						</veh:VehicleSearchAvailabilityReq>
-					</soapenv:Body>
-				</soapenv:Envelope>
-			</cfoutput>
-		</cfsavecontent>
-		
-		<cfreturn sMessage/>
 	</cffunction>
 
 <!---

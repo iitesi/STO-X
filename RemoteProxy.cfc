@@ -169,6 +169,29 @@
 
 	</cffunction>
 
+	<cffunction name="selectHotelRoom" access="remote" output="false" returntype="any" returnformat="json" hint="">
+		<cfargument name="searchId" type="numeric" required="true" />
+		<cfargument name="propertyId" type="numeric" required="true" />
+		<cfargument name="ratePlanType" type="string" required="true" />
+		<cfargument name="totalForStay" type="numeric" required="true" />
+
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+
+		<cftry>
+
+			<cfset result.setSuccess( getBean( "HotelService" ).selectRoom( argumentCollection = arguments ) ) />
+
+			<cfcatch type="any">
+				<cfset result.addError( "An error occurred while attempting to record your room selection." ) />
+				<cfset result.setSuccess( false ) />
+			</cfcatch>
+
+		</cftry>
+
+		<cfreturn result />
+
+	</cffunction>
+
     <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="accountId" type="numeric" required="true" />
 

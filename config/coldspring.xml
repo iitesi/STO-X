@@ -12,11 +12,13 @@
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
 
-    <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter"/>
+    <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
+        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+    </bean>
 
 	<bean id="setup" class="booking.services.setup" >
-			<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
-			<constructor-arg name="PortalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
+		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+		<constructor-arg name="PortalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
 	</bean>
 
 	<bean id="General" class="booking.services.general" />
@@ -116,7 +118,6 @@
 	</bean>
 
 	<bean id="car" class="booking.services.car" >
-		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 		<constructor-arg name="VehicleAdapter"><ref bean="VehicleAdapter" /></constructor-arg>
 	</bean>
 
