@@ -24,10 +24,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
-		console.log( "loadSearch() fired" );
 		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
-				console.log( "loadSearch() data returned" );
 				$scope.search = result.data;
 				$scope.initializeMap();
 
@@ -36,16 +34,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.$watch( "map", function( map ){
 		if( typeof map != 'undefined' ){
-			console.log( "Map has initialized" );
 			$scope.loadPolicy( $scope.search.policyID );
 		}
 	})
 
 	$scope.loadPolicy = function( policyId ){
-		console.log( "loadPolicy() fired" );
 		HotelService.loadPolicy( policyId )
 			.then( function( result ){
-				console.log( "loadPolicy() data returned" );
 				$scope.policy = result;
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 				$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
@@ -80,10 +75,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.getSearchResults = function( requery ){
-		console.log( "getSearchResults() fired");
 		SearchService.doSearch( $scope.searchId, requery )
 			.then( function(result){
-				console.log( "getSearchResults() data returned" );
 				$scope.hotels = result;
 				$scope.totalProperties = result.length;
 				$scope.searchCompleted = true;
@@ -108,7 +101,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.$watch( "filterItems", function(newValue){
 
 		if( $scope.searchCompleted ){
-			console.log( "filterItems() fired" );
 			$scope.filterHotels();
 		}
 	}, true)
@@ -205,7 +197,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.filterHotels = function(){
-		console.log( "filterHotels() fired" );
 		var filteredHotels = [];
 		var visibleHotels = [];
 
@@ -396,7 +387,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$('#mapDiv').append(infobox2);
 		});
 		*/
-		//console.log( pin );
     	$scope.map.entities.push( pin );
 	}
 
