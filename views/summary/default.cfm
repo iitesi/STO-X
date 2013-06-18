@@ -2,8 +2,9 @@
 	<!--- <cfif application.Accounts[session.AcctID].CouldYou> --->
 		<cfoutput>
             <a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
-            <a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a>
-            <a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>
+            <a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a> -
+            <a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>-
+            <a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
 		</cfoutput>
 	<!--- </cfif> --->
 	<!--- <cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
