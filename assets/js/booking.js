@@ -118,7 +118,6 @@ function filterAir() {
 // console.log('singlecarrier - '+singlecarrier);
 // console.log('ran');
 
-
 	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 		var flight = flightresults[loopcnt];
 
@@ -134,7 +133,7 @@ function filterAir() {
 			|| (inpolicy == 'on' && flight[1] != 1)
 			|| (singlecarrier == 'on' && flight[2] != 0)) {
 
-		$( '#' + flight[0] ).hide( 'fade' );
+		$( '#flight' + flight[0] ).hide( 'fade' );
 
 		// THIS WORKS TO DISPLAY *ALL* FLIGHTS
 		// NEED TO DETERMINE FIRST LOAD?
@@ -162,13 +161,13 @@ function filterAir() {
 			}
 
 			if (carriercount == 0) {
-				$( '#' + flight[0] ).hide( 'fade' );
+				$( '#flight' + flight[0] ).hide( 'fade' );
 
 					$('#filtermsg').addClass('alert-error');
 					$('#filtermsg span').text('OH NO THERE ARE NO FLIGHTS! #2')
 
 			}	else {
-				$( '#' + flight[0] ).show( 'fade' );
+				$( '#flight' + flight[0] ).show( 'fade' );
 
 					$('#filtermsg').removeClass('alert-error').addClass('alert-success');
 					$('#filtermsg span').text(' WHEW - THERE ARE FLIGHTS NOW!')
@@ -188,7 +187,6 @@ function filterAir() {
 	}
 
 
-	$( '#' + flight[0] ).show();
 	console.log('Air Count =' + aCount);
 	return false;
 }
