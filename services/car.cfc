@@ -36,6 +36,25 @@ doAvailability
 
 		<cfset session.searches[SearchID].stCars = {}>
 
+		<cfif arguments.Filter.getAir()
+			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+			AND arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()>
+
+			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime )>
+
+		</cfif>
+
+		<cfif arguments.Filter.getAir()
+			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+			AND arguments.Filter.getArrivalDateTime() EQ arguments.Filter.getCarDropoffDateTime()
+			AND arguments.Filter.getAirType() EQ 'RT'>
+
+			<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime )>
+
+		</cfif>
+
+		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
+
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 		OR StructIsEmpty(session.searches[SearchID].stCars)
 		OR arguments.nCouldYou NEQ 0>
