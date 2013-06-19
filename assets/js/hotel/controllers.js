@@ -93,6 +93,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
 			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery )
+				.then( function(result){
+					if( !$scope.hotelFilter( result ) ){
+						$scope.filterHotels();
+					}
+				})
 		}
 	}
 
@@ -103,6 +108,36 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			$scope.filterHotels();
 		}
 	}, true)
+
+	$scope.$watch( "filteredHotels", function( newValue ){
+		try{
+			$scope.clearMapPins();
+		} catch(e){
+
+		}
+
+		var visibleHotels = [];
+		var startIndex = ( $scope.filterItems.currentPage - 1 ) * $scope.filterItems.resultsPerPage;
+		if( startIndex > $scope.filteredHotels.length ){
+			startIndex = 0;
+		}
+		var endIndex = startIndex + $scope.filterItems.resultsPerPage;
+		if( endIndex > $scope.filteredHotels.length ){
+			endIndex = $scope.filteredHotels.length;
+		}
+
+		for( var i=startIndex; i<endIndex; i++ ){
+			var Hotel = $scope.filteredHotels[i]
+			visibleHotels.push( { propertyNumber: i+1, hotel: Hotel } );
+			var displayedAddress = Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State;
+			$scope.addPin( i+1, Hotel.Lat, Hotel.Long, Hotel.PropertyName, displayedAddress );
+			if( !Hotel.roomsReturned ){
+				$scope.getHotelRates( Hotel, false );
+			}
+		}
+
+		$scope.visibleHotels = visibleHotels;
+	})
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -199,28 +234,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			}
 		}
 
-		var startIndex = ( $scope.filterItems.currentPage - 1 ) * $scope.filterItems.resultsPerPage;
-		if( startIndex > filteredHotels.length ){
-			startIndex = 0;
-		}
-		var endIndex = startIndex + $scope.filterItems.resultsPerPage;
-		if( endIndex > filteredHotels.length ){
-			endIndex = filteredHotels.length;
-		}
-
-		$scope.clearMapPins();
-		for( var i=startIndex; i<endIndex; i++ ){
-			var Hotel = filteredHotels[i]
-			visibleHotels.push( { propertyNumber: i+1, hotel: Hotel } );
-			var displayedAddress = Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State;
-			$scope.addPin( i+1, Hotel.Lat, Hotel.Long, Hotel.PropertyName, displayedAddress );
-			if( !Hotel.roomsReturned ){
-				$scope.getHotelRates( Hotel, false );
-			}
-
-		}
 		$scope.filteredHotels = filteredHotels;
-		$scope.visibleHotels = visibleHotels;
 	}
 
 	$scope.hotelFilter = function( hotel ){
@@ -466,10 +480,22 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.selectRoom = function( Hotel, Room ){
 		HotelService.selectRoom( $scope.search,  Hotel, Room )
 			.then( function( response ){
-				console.log( response );
+
+				if( response.success == true ){
+					if( $scope.search.car == 1 ){
+						$location.path( '/booking/index.cfm?action=car.availability&SearchID=' + $scope.search.searchID );
+						$scope.apply();
+					} else {
+						$location.path( '/booking/index.cfm?action=summary&SearchID=' + $scope.search.searchID );
+						$scope.apply();
+					}
+				} else {
+					$scope.errors = response.errors;
+				}
 			});
 
 	}
+
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
