@@ -25,4 +25,8 @@
 	<cfoutput>airports = [<cfloop query="getAllAirports">{"id":"#Location_Code#","text":"#Location_Display#"}<cfif CurrentRow NEQ RecordCount>,</cfif></cfloop>];</cfoutput>
 	</cfsavecontent>
 </cfprocessingdirective>
-<cffile action="write" file="c:/inetpub/wwwroot/railo/search/assets/localdata/airports-us2.js" nameconflict="overwrite" output="#intlairports#">
+<cffile action="write"
+	file="c:/inetpub/wwwroot/railo/search/assets/localdata/airports-us2.js"
+	nameconflict="overwrite"
+	charset="UTF-8"
+	output="#intlairports#"/>
