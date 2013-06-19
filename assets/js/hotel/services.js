@@ -66,6 +66,8 @@ services.factory( "HotelService", function( $http ){
 				Hotel.roomsReturned = true;
 				Hotel.rooms = rooms;
 				Hotel.setInPolicy( policy );
+
+				return Hotel;
 			})
 	}
 
