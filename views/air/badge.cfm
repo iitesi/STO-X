@@ -77,22 +77,9 @@
 					</cfif>
 					<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger">Bags <span class="divider">/</span></a>
 					<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger">Email</a>
-					<cfif bDisplayFare>
-						<ul class="smallnav">
-							<li class="main">+
-								<ul>
-									<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
-									<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
-									<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
-									<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
-									<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
-								</ul>
-							</li>
-						</ul>
-					</cfif>
 				</td>
-							</tr>
-							</table>
+			</tr>
+		</table>
 		</div>
 	</cfoutput>
 </cfsavecontent>
