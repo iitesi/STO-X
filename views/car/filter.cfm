@@ -1,32 +1,35 @@
-<cfhtmlhead text="
-	<script type='text/javascript' src='assets/js/bootstrap-datepicker.js'></script>
-	<script type='text/javascript' src='assets/js/date.format.js'></script>
-	<script type='text/javascript' src='assets/js/select2.min.js'></script>
-	<script type='text/javascript' src='assets/localdata/airports-us.js'></script>
-	<script type='text/javascript' src='assets/js/car/search.js'></script>
-	<script type='text/javascript' src='assets/js/car/filter.js'></script>
-	<link rel='stylesheet' type='text/css' href='assets/css/datepicker.css' />
-	<link rel='stylesheet' type='text/css' href='assets/css/select2.css' />
-	<link rel='stylesheet' type='text/css' href='assets/css/search.css' />
-	<style type='text/css'>
-		.searchContainer {
-			max-width: 680px;
-			width: 680px;			
-		}
-		.modal.searchForm {
-			position: absolute;
-			width: 680px;
-			height: 600px;
-			margin: -80px 0px 0 -360px;
-		}
-		.modal-body {
-			overflow-y: auto;
-		}
-	</style>
-" />
+<cfsilent>
+	<cfparam name="rc.filter" default="" />
+	<cfsavecontent variable="filterHeader">
+		<script type='text/javascript' src='assets/js/bootstrap-datepicker.js'></script>
+		<script type='text/javascript' src='assets/js/date.format.js'></script>
+		<script type='text/javascript' src='assets/js/select2.min.js'></script>
+		<script type='text/javascript' src='assets/localdata/airports-us.js'></script>
+		<script type='text/javascript' src='assets/js/car/search.js'></script>
+		<script type='text/javascript' src='assets/js/car/filter.js'></script>
+		<link rel='stylesheet' type='text/css' href='assets/css/datepicker.css' />
+		<link rel='stylesheet' type='text/css' href='assets/css/select2.css' />
+		<link rel='stylesheet' type='text/css' href='assets/css/search.css' />
+		<style type='text/css'>
+			.searchContainer {
+				max-width: 680px;
+				width: 680px;			
+			}
+			.modal.searchForm {
+				position: absolute;
+				width: 680px;
+				height: 600px;
+				margin: -80px 0px 0 -360px;
+			}
+			.modal-body {
+				overflow-y: auto;
+			}
+		</style>
+	</cfsavecontent>
+	<cfhtmlhead text="#filterHeader#" />
+</cfsilent>
 
-<cfparam name="rc.filter" default="">
-<a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">CHANGE YOUR SEARCH</a>
+<a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">Change Search</a>
 <cfoutput>
 	#view('car/search')#
 </cfoutput>
@@ -57,10 +60,9 @@
 						<div class="row" style="text-align:center;"><b>VENDORS</b></div>
 						<div class="row">
 							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
-								<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#" checked="checked"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
+								<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
 							</cfloop>
-							<br />
-							<label class="checkbox" for="fltrVendorSelectAll"><input id="fltrVendorSelectAll" type="checkbox" name="selectAll" checked="checked"> Select All Vendors</label>
+							<input id="fltrVendorSelectAll" name="fltrVendorSelectAll" type="hidden" value="true" />
 						</div>
 					</div>
 					<div class="span7">
@@ -70,17 +72,15 @@
 								<b>Car</b>
 								<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 									<cfif Right(carCategory, 3) IS "car">
-										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#" checked="checked"> #Left(carCategory, Len(carCategory)-3)#</label>
+										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 									</cfif>
 								</cfloop>
-								<br />
-								<label class="checkbox" for="fltrCarCategorySelectAll"><input id="fltrCarCategorySelectAll" type="checkbox" name="selectAll" checked="checked"> Select All Car Types</label>
 							</div>
 							<div class="span2">
 								<b>Van</b>
 								<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 									<cfif Right(carCategory, 3) IS "van">
-										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#" checked="checked"> #Left(carCategory, Len(carCategory)-3)#</label>
+										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 									</cfif>
 								</cfloop>
 							</div>
@@ -88,10 +88,11 @@
 								<b>SUV</b>
 								<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 									<cfif Right(carCategory, 3) IS "suv">
-										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#" checked="checked"> #Left(carCategory, Len(carCategory)-3)#</label>
+										<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 									</cfif>
 								</cfloop>
 							</div>
+							<input id="fltrCarCategorySelectAll" name="fltrCarCategorySelectAll" type="hidden" value="true" />
 						</div>
 					</div>
 					<!--- <div class="span2">

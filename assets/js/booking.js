@@ -603,47 +603,86 @@ CAR SECTION
 */
 function filterCar(howFilter) {
 	if (howFilter == 'clearAll') {
-		$(":checkbox").prop('checked', true);
+		$(":checkbox").prop('checked', false);
 		$("#btnPolicy").parent().addClass('active');
+		$("#fltrVendorSelectAll").val(true);
+		$("#fltrCarCategorySelectAll").val(true);
 	}
 
 	var policy = $("#btnPolicy").parent().hasClass('active');
 	var nCount = 0;
 
+	// Logic for displaying or not displaying a particular result
+	// If (fltrVendorSelectAll is true and fltrCarCategorySelectAll is true)
+	// OR (fltrVendorSelectAll is false and that vendor is checked)
+	// OR (fltrCarCategorySelectAll is false and that category is checked)
+	// AND in policy, show
+	// Else, hide
+
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
+
+		var inpolicy = ((policy == false) || (policy == true && car[3] == 1)) ? true : false;
+
+		if (((($("#fltrVendorSelectAll").val() == 'true') && ($("#fltrCarCategorySelectAll").val() == 'true'))
+		|| (($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))
+		|| (($("#fltrCarCategorySelectAll").val() == 'false') && ($( "#fltrCategory" + car[1] ).is(':checked') == true))) && inpolicy) {
+			$( "#" + car[0] ).show();
+			nCount++;
+		}
+		else {
+			$( "#" + car[0] ).hide();
+		}			
 																							//console.log(car)
-		if (($( "#fltrCategory" + car[1] ).is(':checked') == false)
-		|| ($( "#fltrVendor" + car[2] ).is(':checked') == false)
+		/* if (($( "#fltrCategory" + car[1] ).is(':checked') == true)
+		|| ($( "#fltrVendor" + car[2] ).is(':checked') == true)
 		|| (policy == true && car[3] != 1)) {
 			$( "#" + car[0] ).hide();
 		}
 		else {
 			$( "#" + car[0] ).show();
 			nCount++;
-		}
+		} */
 	}
 	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
 		var category = carcategories[loopcnt];
+
+		var inpolicy = ((policy == false) || (policy == true && category[1] == 1)) ? true : false;
+
+		if ((($("#fltrCarCategorySelectAll").val() == 'true') || ($( "#fltrCategory" + category[0] ).is(':checked') == true)) && inpolicy) {
+			$( '#row' + category ).show();
+		}
+		else {
+			$( '#row' + category ).hide();
+		}
 																							//console.log(category);
-		if (($( "#fltrCategory" + category[0] ).is(':checked') == false)
+		/* if (($( "#fltrCategory" + category[0] ).is(':checked') == true)
 		|| (policy == true && category[1] != 1)) {
 			$( '#row' + category ).hide();
 		}
 		else {
 			$( '#row' + category ).show();
-		}
+		} */
 	}
 	for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 		var vendor = carvendors[loopcnt];
+
+		var inpolicy = ((policy == false) || (policy == true && vendor[1] == 1)) ? true : false;
+
+		if ((($("#fltrVendorSelectAll").val() == 'true') || ($( "#fltrVendor" + vendor[0] ).is(':checked') == true)) && inpolicy) {
+			$( '#vendor' + vendor[0] ).show();
+		}
+		else {
+			$( '#vendor' + vendor[0] ).hide();
+		}
 																							//console.log(vendor);
-		if (($( "#fltrVendor" + vendor[0] ).is(':checked') == false)
+		/* if (($( "#fltrVendor" + vendor[0] ).is(':checked') == true)
 		|| (policy == true && vendor[1] != 1)) {
 			$( '#vendor' + vendor[0] ).hide();
 		}
 		else {
 			$( '#vendor' + vendor[0] ).show();
-		}
+		} */
 	}
 
 	if(nCount == 0) {

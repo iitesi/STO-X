@@ -21,7 +21,7 @@
 							</div>
 							<div class="row" id="car-pickup-wrapper">
 								<div class="form-element-label">
-									<label for="return-date">pick up</label>
+									<label for="return-date">pick-up</label>
 								</div>
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
@@ -63,7 +63,7 @@
 							</div>
 							<div class="row" id="car-dropoff-wrapper">
 								<div class="form-element-label">
-									<label for="return-date">drop off</label>
+									<label for="return-date">drop-off</label>
 								</div>
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
