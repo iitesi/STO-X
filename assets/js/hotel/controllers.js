@@ -20,6 +20,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.filterItems.amenities = [];
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
+	$scope.filterItems.vendorsFilterApplied = false;
+	$scope.filterItems.amenitiesFilterApplied = false;
+	$scope.filterItems.showVendorFilter = false;
+	$scope.filterItems.showAmenitiesFilter = false;
 
 
 	/* Methods that this controller uses to get work done */
@@ -103,6 +107,32 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	//Watches to see if any of the items in the filter bar change and kicks off the filterHotels process
 	$scope.$watch( "filterItems", function(newValue){
+
+		var selectedAmenities = 0;
+		for( var i=0; i < $scope.filterItems.amenities.length; i++ ){
+			if( $scope.filterItems.amenities[i].checked == true ){
+				selectedAmenities++;
+			}
+		}
+
+		if( selectedAmenities > 0 ){
+			$scope.filterItems.amenitiesFilterApplied = true;
+		} else {
+			$scope.filterItems.amenitiesFilterApplied = false;
+		}
+
+		var selectedVendors = 0;
+		for( var h=0; h < $scope.filterItems.vendors.length; h++ ){
+			if( $scope.filterItems.vendors[h].checked == true ){
+				selectedVendors++;
+			}
+		}
+
+		if( selectedVendors > 0 ){
+			$scope.filterItems.vendorsFilterApplied = true;
+		} else {
+			$scope.filterItems.vendorsFilterApplied = false;
+		}
 
 		if( $scope.searchCompleted ){
 			$scope.filterHotels();
@@ -214,6 +244,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 		$scope.filterItems.noSoldOut = false;
 		$scope.filterItems.inPolicyOnly = false;
+		$scope.filterItems.vendorsFilterApplied = false;
+		$scope.filterItems.amenitiesFilterApplied = false;
+		$scope.filterItems.showVendorFilter = false;
+		$scope.filterItems.showAmenitiesFilter = false;
 	}
 
 	$scope.filtersApplied = function(){
@@ -496,10 +530,29 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
+	$scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+		console.log( "ngRepeatFinished event fired" );
+		$scope.updateToolTips();
+	});
+
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
 
 	$scope.loadSearch( $scope.searchId );
 
+});
+
+var directives = angular.module('app.directives',[])
+    .directive('onFinishRender', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit('ngRepeatFinished');
+                });
+            }
+        }
+    }
 });

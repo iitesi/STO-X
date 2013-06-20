@@ -42,37 +42,41 @@
 
 			<header id="main-header">
 
-					<div id="header-top">
-							<div class="container">
-									<div class="sixteen columns">
-										<div id="logo-container">
-												<div id="logo-center"><!---logo here--->
-												<cfoutput>
-												<a href="#application.sPortalURL#" title="Home"><img src="assets/img/stm.gif" alt="Short's Travel Management"></a>
-												</cfoutput>
-												</div>
-										</div>
-										<cfoutput>#View('main/navigation')#</cfoutput>
+				<div id="header-top">
+						<div class="container">
+								<div class="sixteen columns">
+									<div id="logo-container">
+											<div id="logo-center"><!---logo here--->
+											<cfoutput>
+											<a href="#application.sPortalURL#" title="Home"><img src="assets/img/stm.gif" alt="Short's Travel Management"></a>
+											</cfoutput>
+											</div>
 									</div>
-							</div>
-					</div>
+									<cfoutput>#View('main/navigation')#</cfoutput>
+								</div>
+						</div>
+				</div>
 
-				<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
-					<div id="header-bottom">
-							<div class="container">
-									<div class="one columns newsearch">
-											<!---
-											TODO: switch this out to use modal window to call widget STM-652
-											10:37 AM Tuesday, June 04, 2013 - Jim Priest - jpriest@shortstravel.com
-											--->
-											<a href="/search/?acctid=1&userid=3605" class="btn" title="Start a new search"><i class="icon-search"></i></a>
-										</div>
-									<div class="fifteen columns">
-										<cfoutput>#View('air/breadcrumbs')#</cfoutput>
-									</div>
+				<div id="header-bottom">
+					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
+						<div class="container">
+							<div class="one columns newsearch">
+								<!---
+								TODO: switch this out to use modal window to call widget STM-652
+								10:37 AM Tuesday, June 04, 2013 - Jim Priest - jpriest@shortstravel.com
+								--->
+								<a href="/search/?acctid=1&userid=3605" class="btn" title="Start a new search"><i class="icon-search"></i></a>
 							</div>
-					</div>
-				</cfif>
+							<div class="fifteen columns">
+								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
+							</div>
+						</div>
+					<cfelse>
+						<div class="sixteen columns">
+							&nbsp;
+						</div>
+					</cfif>
+				</div>
 			</header>
 
 			<section id="main-content">
