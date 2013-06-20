@@ -71,7 +71,7 @@ $(document).ready(function(){
 		filterAirDelay.run();
 	});
 
-	// Airlines (set of checkboxs - default = all checked)
+	// Airlines (set of checkboxEs - default = all checked)
 	$('input[name="carrier"]').on('change', function() {
 		var fields = $('#airlines').find('input[name="carrier"]:checked');
 		if (!fields.length){
@@ -81,6 +81,12 @@ $(document).ready(function(){
 		}
 		filterAirDelay.run();
 	});
+
+	// check for active state when page loads
+	var fields = $('#airlines').find('input[name="carrier"]:checked');
+	if (fields.length) {
+		$("#airlinebtn").parent().addClass('active');
+	}
 
 	// Class (set of checkboxs - default = economy checked)
 	$('input[name^="Class"]').on('change', function() {
@@ -93,6 +99,12 @@ $(document).ready(function(){
 		filterAirDelay.run();
 	});
 
+	// check for active state when page loads
+	var fields = $('#class').find('input[name^="Class"]:checked');
+	if (fields.length) {
+		$("#classbtn").parent().addClass('active');
+	}
+
 	// Fares (set of checkboxs - default = all checked)
 	$('input[name^="Fare"]').on('change', function() {
 		var fields = $('#fares').find('input[name^="Fare"]:checked');
@@ -103,6 +115,12 @@ $(document).ready(function(){
 		}
 		filterAirDelay.run();
 	});
+
+	// check for active state when page loads
+	var fields = $('#fares').find('input[name^="Fare"]:checked');
+	if (fields.length) {
+		$("#farebtn").parent().addClass('active');
+	}
 
 //------------------------------------------------------------------------------
 // SORTING

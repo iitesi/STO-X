@@ -27,13 +27,11 @@
 				</a>
 			</h1>
 		</cfif>
-	</div>
 
-	<form method="post" action="#buildURL('air.lowfare')#" id="lowfareForm">
-		<input type="hidden" name="bSelect" value="1">
-		<input type="hidden" name="SearchID" value="#rc.SearchID#">
-		<input type="hidden" name="nTrip" id="nTrip" value="">
-	</form>
+		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
+				#View('air/legs')#
+		</cfif>
+	</div>
 
 	<cfif structKeyExists(session.searches[rc.SearchID], 'sUserMessage')>
 		<div id="usermessage" class="error">#session.searches[rc.SearchID].sUserMessage#</div>
@@ -44,7 +42,6 @@
 	<div id="aircontent">
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 
-			#View('air/legs')#
 			#View('air/filter')#
 
 			<br clear="both">
@@ -101,4 +98,12 @@
 			<p>There were no flights found based on your search criteria. Please <a href="">change your search</a> and try again.</p>
 		</cfif>
 	</div>
+
+	<form method="post" action="#buildURL('air.lowfare')#" id="lowfareForm">
+		<input type="hidden" name="bSelect" value="1">
+		<input type="hidden" name="SearchID" value="#rc.SearchID#">
+		<input type="hidden" name="nTrip" id="nTrip" value="">
+	</form>
+
 </cfoutput>
+
