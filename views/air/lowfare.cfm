@@ -13,7 +13,7 @@
 <cfoutput>
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
-			<h1>#UCase(rc.Filter.getAirHeading())#</h1>
+			<h1>#rc.Filter.getAirHeading()#</h1>
 			<ul  class="unstyled">
 				<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
 					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#<small></h2></li>
@@ -22,8 +22,8 @@
 		<cfelse>
 			<h1>
 				<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">
-					#ListFirst(UCase(rc.Filter.getAirHeading()), "::")#
-					<small>:: #ListLast(UCase(rc.Filter.getAirHeading()), "::")#</small>
+					#ListFirst(rc.Filter.getAirHeading(), "::")#
+					<small>:: #ListLast(rc.Filter.getAirHeading(), "::")#</small>
 				</a>
 			</h1>
 		</cfif>

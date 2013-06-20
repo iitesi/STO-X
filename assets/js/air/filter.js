@@ -10,75 +10,66 @@ $(document).ready(function(){
 		$(this).parent().hide();
 	});
 
+	$('.closefilterwell').on('click', function() {
+		$('.filterselection').slideUp();
+	});
+
 	$('#removefilters').on('click', function() {
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
-		// show filters
-		$('.filterselection').show();
 		// reset button states
-		$('.filterby li').removeClass('active');
-		// write friendly message
-		$('#filtermsg').removeClass('alert-error').addClass('alert-success').show();
-		$('#filtermsg span').text('Filters successfully reset!');
-		// scroll to filter bar
-		scrollTo("filtermsg");
+		$('.filterby, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
 
 		// reset sorting and filters
 		sortAir( sortbyprice );
+
+		// TODO: hack to show all flights by default
+		// 9:59 AM Thursday, June 20, 2013 - Jim Priest - jpriest@shortstravel.com
 		$('[id^="flight"]').show();
 
 	});
 
 	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle();
+		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1});
 		scrollTo("filtermsg");
 	});
 
 // toggle active button state if filter is active
 	// Single Carrier (on/off)
-	$('#SingleCarrier').on('change', function() {
-		if($(this).is(':checked')){
-			$("#singlecarrierbtn").parent().addClass('active');
+	$('#singlecarrierbtn').on('click', function() {
+		if( $('#SingleCarrier').val() == 0 ){
+	 		$('#SingleCarrier').val('1')
+	 		$("#singlecarrierbtn").parent().addClass('active');
 		} else {
-			$("#singlecarrierbtn").parent().removeClass('active');
+	 		$('#SingleCarrier').val('0')
+	 		$("#singlecarrierbtn").parent().removeClass('active');
 		}
 		filterAirDelay.run();
 	});
-
-	// check for active state when page loads
-	if ($('#SingleCarrier').attr('checked')) {
-		$("#singlecarrierbtn").parent().addClass('active');
-	}
 
 	// In Policy (on/off)
-	$('#InPolicy').on('change', function() {
-		if($(this).is(':checked')){
-			$("#inpolicybtn").parent().addClass('active');
+	$('#inpolicybtn').on('click', function() {
+		if( $('#InPolicy').val() == 0 ){
+	 		$('#InPolicy').val('1')
+	 		$("#inpolicybtn").parent().addClass('active');
 		} else {
-			$("#inpolicybtn").parent().removeClass('active');
+	 		$('#InPolicy').val('0')
+	 		$("#inpolicybtn").parent().removeClass('active');
 		}
 		filterAirDelay.run();
 	});
-
-	// check for active state when page loads
-	if ($('#InPolicy').attr('checked')) {
-		$("#inpolicybtn").parent().addClass('active');
-	}
 
 	// NonStops (on/off)
-	$('#NonStops').on('change', function() {
-		if($(this).is(':checked')){
-			$("#nonstopbtn").parent().addClass('active');
+	$('#nonstopbtn').on('click', function() {
+		if( $('#NonStops').val() == 0 ){
+	 		$('#NonStops').val('1')
+	 		$("#nonstopbtn").parent().addClass('active');
 		} else {
-			$("#nonstopbtn").parent().removeClass('active');
+	 		$('#NonStops').val('0')
+	 		$("#nonstopbtn").parent().removeClass('active');
 		}
 		filterAirDelay.run();
 	});
-
-	// check for active state when page loads
-	if ($('#NonStops').attr('checked')) {
-		$("#nonstopbtn").parent().addClass('active');
-	}
 
 	// Airlines (set of checkboxs - default = all checked)
 	$('input[name="carrier"]').on('change', function() {
@@ -91,12 +82,6 @@ $(document).ready(function(){
 		filterAirDelay.run();
 	});
 
-	// check for active state when page loads
-	var fields = $('#airlines').find('input[name="carrier"]:checked');
-	if (fields.length) {
-		$("#airlinebtn").parent().addClass('active');
-	}
-
 	// Class (set of checkboxs - default = economy checked)
 	$('input[name^="Class"]').on('change', function() {
 		var fields = $('#class').find('input[name^="Class"]:checked');
@@ -108,12 +93,6 @@ $(document).ready(function(){
 		filterAirDelay.run();
 	});
 
-	// check for active state when page loads
-	var fields = $('#class').find('input[name^="Class"]:checked');
-	if (fields.length) {
-		$("#classbtn").parent().addClass('active');
-	}
-
 	// Fares (set of checkboxs - default = all checked)
 	$('input[name^="Fare"]').on('change', function() {
 		var fields = $('#fares').find('input[name^="Fare"]:checked');
@@ -124,12 +103,6 @@ $(document).ready(function(){
 		}
 		filterAirDelay.run();
 	});
-
-	// check for active state when page loads
-	var fields = $('#fares').find('input[name^="Fare"]:checked');
-	if (fields.length) {
-		$("#farebtn").parent().addClass('active');
-	}
 
 //------------------------------------------------------------------------------
 // SORTING

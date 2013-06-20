@@ -54,28 +54,29 @@ F = first
 			</div>
 
 			<div class="pull-right">
-				<div>
-					<cfoutput>
-						<h4>Filters: XXX of #StructCount(session.searches[rc.SearchID].stTrips)# flights displayed <a href="##" id="removefilters" class="pull-right"><i class="icon-refresh"></i> Remove Filters</a></h4>
-					</cfoutput>
-				</div>
-				<div class="navbar filterby">
+				<h4>Filter</h4>
+				<div class="navbar">
 					<div class="navbar-inner">
 						<ul class="nav">
-							<li><a href="#" id="airlinebtn" title="Click to view/hide filters">Airlines</a></li>
-							<li><a href="#" id="classbtn" title="Click to view/hide filters">Class</a></li>
-							<li><a href="#" id="farebtn" title="Click to view/hide filters">Fares</a></li>
-							<li><a href="#" id="nonstopbtn" title="Click to view/hide filters">Non-stops</a></li>
-							<li><a href="#" id="inpolicybtn" title="Click to view/hide filters">In Policy</a></li>
-							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide filters">Single Carrier</a></li>
+							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
+							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
+							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
 						</ul>
 					</div>
+				</div>
+				<div>
+					<cfoutput>
+						<h4>XXX of #StructCount(session.searches[rc.SearchID].stTrips)# flights displayed <a href="##" id="removefilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+					</cfoutput>
 				</div>
 
 				<!--- new filter well --->
 				<div class="well filterselection">
 					<div class="row">
-						<div class="span6">
+						<div class="span7">
 							<div class="row">
 
 							<cfoutput>
@@ -121,7 +122,7 @@ F = first
 									</cfif>
 								</div>
 
-								<div id="fares" class="span2">
+								<div id="fares" class="span3">
 									<b>Fares</b>
 
 									<!--- 1 = nonrefundable --->
@@ -138,10 +139,14 @@ F = first
 									</cfif>
 								</div>
 							</cfoutput>
-
+							<input type="hidden" id="NonStops" name="NonStops" value="0">
+							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
+							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
 							</div>
 						</div>
 					</div> <!--- row --->
+
+					<button type="button" class="closefilterwell close pull-right" title="Close filters"><i class="icon-remove"></i></button>
 				</div> <!--- well filterselection --->
 			</div>
 		</div><!-- // class=sixteen columns -->
