@@ -90,12 +90,14 @@
 				});
 			</script>
 		<cfelse>
-			<h3>No Flights Returned</h2>
 
-<!--- TODO: set change search modal window form link
-7:02 PM Monday, June 10, 2013 - Jim Priest - jpriest@shortstravel.com
- --->
-			<p>There were no flights found based on your search criteria. Please <a href="">change your search</a> and try again.</p>
+		<div class="container">
+			<h3>No Flights Returned</h2>
+			<p>There were no flights found based on your search criteria.</p>
+			<p>Please <a href="#application.sPortalURL#">change your search</a> and try again.</p>
+			<br /><br /><br /><br /><br /><br />
+		</div>
+
 		</cfif>
 	</div>
 
