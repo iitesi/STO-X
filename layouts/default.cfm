@@ -72,8 +72,10 @@
 							</div>
 						</div>
 					<cfelse>
-						<div class="sixteen columns">
-							&nbsp;
+						<div class="container">
+							<div class="sixteen columns newsearch">
+								&nbsp;
+							</div>
 						</div>
 					</cfif>
 				</div>
@@ -81,8 +83,8 @@
 
 			<section id="main-content">
 				<div class="container">
-				<cfoutput>#body#</cfoutput>
-			</div>
+					<cfoutput>#body#</cfoutput>
+				</div>
 			</section>
 
 			<footer id="footer">
