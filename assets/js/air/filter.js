@@ -19,7 +19,10 @@ $(document).ready(function(){
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
 		$('.filterby, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
-
+		// reset button filters back to 0
+		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
+		// hide filter well
+		$('.filterselection').hide();
 		// reset sorting and filters
 		sortAir( sortbyprice );
 

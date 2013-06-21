@@ -74,22 +74,24 @@
 	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag)#;
 	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2)#;
 
+				// flightresults is used in booking.js to filter flights
+				// here we loop over session searches and stuff all the flights avail in flightresults
 				var flightresults = [
 					<cfset nCount = 0>
 					<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="sTrip">
 						<cfif nCount NEQ 0>,</cfif>[#session.searches[rc.SearchID].stTrips[sTrip].sJavascript#]
 						<cfset nCount++>
 					</cfloop>];
-
-				$(document).ready(function() {
-					// setTimeout(function(){
-					// 		$("##usermessage").fadeOut("slow", function () {
-					// 		$("##usermessage").remove();
-					// 	});
-					// }, 4000);
-				});
 			</script>
-		<cfelse>
+
+			<!---
+			TODO: add message when there are no flights when filtering
+			3:45 PM Thursday, June 20, 2013 - Jim Priest - jpriest@shortstravel.com
+			--->
+			<br clear="both">
+			<h1>SOMETHING SHOULD GO HERE IF THERE ARE NO FLIGHTS WHEN FILTERING</h1>
+
+<cfelse>
 
 		<div class="container">
 			<h3>No Flights Returned</h2>

@@ -1,5 +1,11 @@
 /* Save and include the following CSS styles on your page. */
 
+.changesearch {
+	color: blue;
+	font-size: 14px;
+}
+
+
 a {
     color: #2E76CF;
 }
@@ -317,6 +323,12 @@ ul.tabs li a.active {
 	-moz-box-shadow:    4px 4px 10px rgba(50, 50, 50, 0.5);
 	box-shadow:         4px 4px 10px rgba(50, 50, 50, 0.5);
 }
+
+.filter .navbar-inner {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
 
 /*
 ----------------------------------------------------------------------------------------------------------
