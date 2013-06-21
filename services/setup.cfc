@@ -138,7 +138,7 @@
 
 			<!--- Set carHeading. --->
 			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
-				<cfset searchfilter.setCarHeading(getAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&'), '&getAirportData.Airport_City&', '&getAirportData.Airport_State&' :: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d'))>
+				<cfset searchfilter.setCarHeading(getAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
 			</cfif>
 
 

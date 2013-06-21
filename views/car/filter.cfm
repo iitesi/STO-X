@@ -29,7 +29,72 @@
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
-<a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">Change Search</a>
+<!---First row--->
+<div id="filterbar">
+	<div class="filter">
+		<div>
+			<h4>Filter <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+		</div>
+		<div class="navbar filterby">
+			<div class="navbar-inner">
+				<ul class="nav">
+					<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-chevron-down"></i></a></li>
+					<li><a href="#" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-chevron-down"></i></a></li>
+					<li><a href="#" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="filter">
+			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <a href="#" class="pull-right">Continue without car</a>
+		</div>
+		<div class="row well filterselection">
+			<cfoutput>
+				<div class="span4">
+					<div class="row" style="text-align:center;"><b>VENDORS</b></div>
+					<div class="row">
+						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
+							<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
+						</cfloop>
+						<input id="fltrVendorSelectAll" name="fltrVendorSelectAll" type="hidden" value="true" />
+					</div>
+				</div>
+				<div class="span7">
+					<div class="row" style="text-align:center;"><b>CAR TYPES</b></div>
+					<div class="row">
+						<div class="span2">
+							<b>Car</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "car">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<div class="span2">
+							<b>Van</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "van">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<div class="span2">
+							<b>SUV</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "suv">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<input id="fltrCarCategorySelectAll" name="fltrCarCategorySelectAll" type="hidden" value="true" />
+					</div>
+				</div>
+			</cfoutput>
+		</div>
+	</div>
+</div>
+
+
+<!--- <a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">Change Search</a>
 <cfoutput>
 	#view('car/search')#
 </cfoutput>
@@ -44,9 +109,9 @@
 				<div class="navbar filterby">
 					<div class="navbar-inner">
 						<ul class="nav">
-							<li><a href="#" id="btnCarVendor">Vendors <i class="icon-chevron-down"></i></a></li>
-							<li><a href="#" id="btnCarCategory">Car Types <i class="icon-chevron-down"></i></a></li>
-							<li><a href="#" id="btnPolicy">In Policy</a></li>
+							<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-chevron-down"></i></a></li>
+							<li><a href="#" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-chevron-down"></i></a></li>
+							<li><a href="#" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
 						</ul>
 					</div>
 				</div>
@@ -103,7 +168,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> --->
 
 <script type="application/javascript">
 <cfoutput>
