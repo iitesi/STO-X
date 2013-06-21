@@ -34,7 +34,7 @@ doAvailability
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
-		<cfset session.searches[SearchID].stCars = {}>
+		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
 		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')

@@ -20,72 +20,60 @@
 </div>
 
 <!---First row--->
-<div class="container">
-
-    <div>
-        <div class="eleven columns pull-left">
-            <h4>Filter<a href="javascript:void(0)" ng-click="clearFilters()" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+<div id="filterbar" class="container" >
+    <div class="filter">
+        <div>
+            <h4 >Filter<a href="javascript:void(0)" ng-click="clearFilters()" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
         </div>
-        <div class="ten columns pull-right">
-            <a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="pull-right">Change Search</a>
-        </div>
-    </div>
+        <div class="navbar filterby">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li ng-class="{'active': filterItems.vendorsFilterApplied }">
+                        <a href="javascript: void(0)" ng-click="filterItems.showVendorFilter=!filterItems.showVendorFilter;filterItems.showAmenitiesFilter=false;"  >Hotel Chain <i class="icon-chevron-down"></i></a>
+                    </li>
+                    <li ng-class="{'active': filterItems.amenitiesFilterApplied }">
+                        <a href="javascript: void(0)" ng-click="filterItems.showAmenitiesFilter=!filterItems.showAmenitiesFilter;filterItems.showVendorFilter=false;" >Amenities <i class="icon-chevron-down"></i></a>
+                    </li>
 
-    <div class="clearfix"></div>
-
-    <div class="navbar">
-        <div class="navbar-inner">
-            <ul class="nav">
-
-                <li ng-class="{'active': filterItems.vendorsFilterApplied }">
-                    <a href="javascript: void(0)" ng-click="filterItems.showVendorFilter=!filterItems.showVendorFilter;filterItems.showAmenitiesFilter=false;"  >Hotel Chain <i class="icon-chevron-down"></i></a>
-                </li>
-                <li ng-class="{'active': filterItems.amenitiesFilterApplied }">
-                    <a href="javascript: void(0)" ng-click="filterItems.showAmenitiesFilter=!filterItems.showAmenitiesFilter;filterItems.showVendorFilter=false;" >Amenities <i class="icon-chevron-down"></i></a>
-                </li>
-
-                <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly">In Policy</a></li>
-                <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
-
-            </ul>
-        </div>
-    </div>
-
-    <div class="clearfix"></div>
-
-    <div class="well" ng-show="filterItems.showVendorFilter">
-         <div class="row">
-             <div class="span3" ng-repeat="vendor in filterItems.vendors">
-                <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div></label>
-         </div>
-    </div>
-
-    <div class="well" ng-show="filterItems.showAmenitiesFilter">
-        <div class="row">
-            <div class="span3" ng-repeat="amenity in filterItems.amenities">
-                <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
+                    <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly">In Policy</a></li>
+                    <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
+                </ul>
             </div>
         </div>
-    </div>
+        <div class="filter">
+            <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties <a href="#" class="pull-right">Continue without hotel</a>
+        </div>
 
+        <div class="well"ng-show="filterItems.showVendorFilter">
+             <div class="row">
+                 <div class="span3" ng-repeat="vendor in filterItems.vendors">
+                    <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div></label>
+             </div>
+        </div>
+
+        <div class="well" ng-show="filterItems.showAmenitiesFilter">
+            <div class="row">
+                <div class="span3" ng-repeat="amenity in filterItems.amenities">
+                    <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <!---Second row--->
 <div class="container">
-    <div class="eleven columns" >
-        <div class="pull-left">
+    <div class="eight columns pull-left"  >
+        <div class="pull-right">
             <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
             <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
             <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
-
-        <div class="pull-right"><span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties</div>
-
     </div>
     <div class="clearfix" />
 
-    <div class="eleven columns" style="height: 500px; overflow: auto;">
+    <div class="eight columns" style="height: 500px; overflow: auto;">
 
         <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="item in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
@@ -302,18 +290,16 @@
 
 <!--Bottom row under search results and map-->
 <div class="container">
-    <div class="eleven columns">
-
-        <div style="float: left">
+    <div class="eight columns pull-left">
+        <div class="pull-right">
             <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
             <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
             <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Continue without hotel</a>
         </div>
-
     </div>
-    <div class="eleven columns">
-        &nbsp;
+
+    <div class="eight columns pull-right">
+        <a href="#" class="pull-right">Continue without hotel</a>
     </div>
 </div>
 

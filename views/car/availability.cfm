@@ -1,16 +1,18 @@
-<!--- <cfdump var="#session.searches[rc.SearchID]#"> --->
-
 <cfif (rc.Filter.getAir() AND structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air'))
 OR NOT rc.Filter.getAir()>
-	<div class="page-header">
+	<div class="container">
+		<div class="page-header">
+			<cfoutput>
+				<h1><a href="#buildURL('car.availability&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a><a href="##displaySearchWindow" id="displayModal" class="pull-right change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h1>
+			</cfoutput>
+		</div>
+	</div>
+	<div>
 		<cfoutput>
-			<h1><a href="#buildURL('car.availability&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a></h1>
+			#view('car/search')#
+			#view('car/filter')#
 		</cfoutput>
 	</div>
-	<cfoutput>
-		#view('car/filter')#
-	</cfoutput>
-	<br clear="both" />
 	<cfoutput>
 		<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
 			<input type="hidden" name="bSelect" value="1">
@@ -68,7 +70,7 @@ OR NOT rc.Filter.getAir()>
 									<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
 										<span class="preferred blue bold">PREFERRED</span><br>
 									</cfif>
-									#vehicleClass#<br />
+									<span class="carType">#vehicleClass#</span><br />
 									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86"><br />
 									<!--- Original image tag below.
 									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br> --->
@@ -95,9 +97,12 @@ OR NOT rc.Filter.getAir()>
 											<cfif stRate.Corporate>
 												CONTRACTED
 											</cfif><br />
-											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#">
-											<!--- Original button below.
-											<input type="submit" class="button#stRate.Policy#policy" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#(Left(stRate.EstimatedTotalAmount, 3) EQ 'USD' ? '$'&NumberFormat(Mid(stRate.EstimatedTotalAmount, 4)) : stRate.EstimatedTotalAmount)#"> --->
+											<cfif stRate.Currency IS 'USD'>
+												<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />
+											<cfelse>
+												<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
+											</cfif>
+											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#thisRate#">
 										<cfelse>
 											UNAVAILABLE
 										</cfif>

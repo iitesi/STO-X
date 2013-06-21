@@ -136,6 +136,19 @@ body {
 	margin-left: 36px;
 }
 
+.carType {
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.change-search {
+    color: #2E76CF;
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-left: 36px;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	OVERLAY

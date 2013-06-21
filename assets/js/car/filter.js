@@ -15,11 +15,17 @@ $(document).ready(function() {
 	$(".filterselection").hide();
 
 	// Show filter box when the vendor or car type button is clicked
-	$("#btnCarVendor").click(function() { $(".filterselection").slideToggle(); });
-	$("#btnCarCategory").click(function() { $(".filterselection").slideToggle(); });
+	$("#btnCarVendor").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
+	$("#btnCarCategory").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
 
 	// Show filtered results when any filter criteria is clicked
-	$(":checkbox").click(function() { $("#numFiltered").text(filterCar()); });
+	$(":checkbox").click(function() {
+		var vendorCheckboxes = $("input[name='fltrVendor']");
+		var carCheckboxes = $("input[name='fltrCategory']");
+		$("#fltrVendorSelectAll").val(!vendorCheckboxes.is(':checked'));
+		$("#fltrCarCategorySelectAll").val(!carCheckboxes.is(':checked'));
+		$("#numFiltered").text(filterCar());
+	});
 
 	// In Policy (on/off)
 	$("#btnPolicy").click(function() {
@@ -32,22 +38,22 @@ $(document).ready(function() {
 	});
 
 	// Vendor Select/Clear All (on/off)
-	$("#fltrVendorSelectAll").change(function() {
+	/* $("#fltrVendorSelectAll").change(function() {
 		if($(this).is(':checked')) {
 			$(":checkbox[name=fltrVendor]").prop('checked', true);
 		} else {
 			$(":checkbox[name=fltrVendor]").prop('checked', false);
 		}
-	});
+	}); */
 
 	// Car Select/Clear All (on/off)
-	$("#fltrCarCategorySelectAll").change(function() {
+	/* $("#fltrCarCategorySelectAll").change(function() {
 		if($(this).is(':checked')) {
 			$(":checkbox[name=fltrCategory]").prop('checked', true);
 		} else {
 			$(":checkbox[name=fltrCategory]").prop('checked', false);
 		}
-	});
+	}); */
 
 	// Clear all filters
 	$("#clearFilters").click(function() { 
