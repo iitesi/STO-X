@@ -1,12 +1,12 @@
 <div class="container">
 
     <!--Errors row-->
-    <div class="eleven columns alert alert-error" ng-show="errors.length">
+    <div class="alert alert-error" ng-show="errors.length">
         <span ng-repeat="error in errors">{{error}}</span>
     </div>
 
     <!--Messages row-->
-    <div class="eleven columns alert alert-info" ng-show="messages.length">
+    <div class="alert alert-info" ng-show="messages.length">
         <span ng-repeat="message in messages">{{message}}</span>
     </div>
 
@@ -15,7 +15,8 @@
 <!--Page title row-->
 <div class="container">
    <div class="page-header">
-        <h1><a href="/booking/index.cfm?action=air.lowfare&amp;SearchID={{searchId}}">{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></a></h1>
+        <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
+        <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="icon-search"></i> Change Search</a></h2>
     </div>
 </div>
 
@@ -247,9 +248,6 @@
                                 </div>
                             </div>
 
-                        </div>
-                        <div ng-show="item.hotel.details.loaded && !item.hotel.details.transportation.length && !item.hotel.details.directions.length" >
-                            <p>This information is not available for this property.</p>
                         </div>
                     </td>
                 </tr>
