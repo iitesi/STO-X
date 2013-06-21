@@ -35,7 +35,7 @@
 		<div>
 			<h4>Filter <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
 		</div>
-		<div class="navbar filterby">
+		<div class="navbar">
 			<div class="navbar-inner">
 				<ul class="nav">
 					<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>

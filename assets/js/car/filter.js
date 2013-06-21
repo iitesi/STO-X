@@ -15,8 +15,8 @@ $(document).ready(function() {
 	$(".filterselection").hide();
 
 	// Show filter box when the vendor or car type button is clicked
-	$("#btnCarVendor").click(function() { $(".filterselection").slideToggle(); });
-	$("#btnCarCategory").click(function() { $(".filterselection").slideToggle(); });
+	$("#btnCarVendor").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
+	$("#btnCarCategory").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
 
 	// Show filtered results when any filter criteria is clicked
 	$(":checkbox").click(function() {
