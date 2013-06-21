@@ -72,9 +72,8 @@ OR NOT rc.Filter.getAir()>
 										<span class="preferred blue bold">PREFERRED</span><br>
 									</cfif>
 									<span class="carType">#vehicleClass#</span><br />
-									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86"><br />
-									<!--- Original image tag below.
-									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" style="padding-top:10px;" width="127"><br> --->
+									<!--- Had to add the style width below for IE. --->
+									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;"><br />
 								</div>
 							</td>
 

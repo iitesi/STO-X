@@ -37,6 +37,9 @@
 				<script src="assets/js/booking.js"></script><!---Custom--->
 		</head>
 
+		<cfsilent>
+			<cfparam name="session.userID" default="" />
+		</cfsilent>
 		<body>
 			<div id="main-wrapper" class="wide">
 
@@ -83,7 +86,12 @@
 
 			<section id="main-content">
 				<div class="container">
-					<cfoutput>#body#</cfoutput>
+					<!--- Simple test to see if session still exists. --->
+					<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
+						<cfoutput>#body#</cfoutput>
+					<cfelse>
+						<cfoutput>Your session has timed out due to inactivity. Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.</cfoutput>
+					</cfif>
 				</div>
 			</section>
 
