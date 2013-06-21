@@ -3,7 +3,8 @@ OR NOT rc.Filter.getAir()>
 	<div class="container">
 		<div class="page-header">
 			<cfoutput>
-				<h1><a href="#buildURL('car.availability&SearchID=#rc.SearchID#')#">#rc.Filter.getCarHeading()#</a><a href="##displaySearchWindow" id="displayModal" class="pull-right change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h1>
+				<h1>#rc.Filter.getCarHeading()#</h1>
+				<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
 			</cfoutput>
 		</div>
 	</div>
