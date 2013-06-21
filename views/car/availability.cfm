@@ -13,7 +13,6 @@ OR NOT rc.Filter.getAir()>
 			#view('car/filter')#
 		</cfoutput>
 	</div>
-	<br clear="both" />
 	<cfoutput>
 		<form method="post" action="#buildURL('car.availability')#" id="carAvailabilityForm">
 			<input type="hidden" name="bSelect" value="1">

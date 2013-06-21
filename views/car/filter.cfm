@@ -38,8 +38,8 @@
 		<div class="navbar filterby">
 			<div class="navbar-inner">
 				<ul class="nav">
-					<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-chevron-down"></i></a></li>
-					<li><a href="#" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-chevron-down"></i></a></li>
+					<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
+					<li><a href="#" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
 					<li><a href="#" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
 				</ul>
 			</div>
