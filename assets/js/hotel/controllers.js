@@ -389,7 +389,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"),
 			{
 				height: 500,
-				width: 600,
+				width: $( '#mapDiv' ).width(),
 				credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
 				enableSearchLogo: false
 			});

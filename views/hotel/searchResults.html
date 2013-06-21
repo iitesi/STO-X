@@ -1,22 +1,26 @@
 <div class="container">
+    <div class="row-fluid">
+        <!--Errors row-->
+        <div class="span12 alert alert-error" ng-show="errors.length">
+            <span ng-repeat="error in errors">{{error}}</span>
+        </div>
 
-    <!--Errors row-->
-    <div class="alert alert-error" ng-show="errors.length">
-        <span ng-repeat="error in errors">{{error}}</span>
+        <!--Messages row-->
+        <div class="span12 alert alert-info" ng-show="messages.length">
+            <span ng-repeat="message in messages">{{message}}</span>
+        </div>
     </div>
-
-    <!--Messages row-->
-    <div class="alert alert-info" ng-show="messages.length">
-        <span ng-repeat="message in messages">{{message}}</span>
-    </div>
-
 </div>
 
 <!--Page title row-->
 <div class="container">
-   <div class="page-header">
-        <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
-        <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="icon-search"></i> Change Search</a></h2>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
+                <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="icon-search"></i> Change Search</a></h2>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -42,13 +46,14 @@
             </div>
         </div>
         <div class="filter">
-            <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties <a href="#" class="pull-right">Continue without hotel</a>
+            <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties
         </div>
 
-        <div class="well"ng-show="filterItems.showVendorFilter">
-             <div class="row">
-                 <div class="span3" ng-repeat="vendor in filterItems.vendors">
-                    <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</div></label>
+        <div class="well" ng-show="filterItems.showVendorFilter">
+            <div class="row">
+                <div class="span3" ng-repeat="vendor in filterItems.vendors">
+                    <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</label>
+                 </div>
              </div>
         </div>
 
@@ -63,20 +68,30 @@
     </div>
 </div>
 
-<!---Second row--->
 <div class="container">
-    <div class="eight columns pull-left"  >
-        <div class="pull-right">
-            <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-            <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="pull-right">
+                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+                <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
+            </div>
+        </div>
+
+        <div class="span6">
+            <a href="#" class="pull-right">Continue without hotel</a>
         </div>
     </div>
-    <div class="clearfix" />
+</div>
 
-    <div class="eight columns" style="height: 500px; overflow: auto;">
+<!---Second row--->
+<div class="container">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="span6" >
+                <div class="clearfix" style="height: 500px; overflow-x: hidden; overflow-y: auto;">
 
-        <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="item in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
+                    <div ng-show="searchCompleted && filteredHotels.length" ng-repeat="item in visibleHotels"  style="padding-bottom: 15px; padding-left: 5px; padding-right: 5px; background-color: #FFFFFF; min-height:100px; border-bottom: 2px solid #EEEEEE; border-right: 2px solid #EEEEEE; border-left: 2px solid #EEEEEE; margin-top: 7px; margin-right: 10px;">
             <table>
                 <tbody>
                 <tr ng-show="item.hotel.preferredVendor">
@@ -276,28 +291,30 @@
             </table>
         </div>
 
-        <div ng-show="searchCompleted && !filteredHotels.length">
-            <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
+                    <div ng-show="searchCompleted && !filteredHotels.length">
+                        <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="span6" id="mapDiv" style="height: 500px;"></div>
         </div>
-
-    </div>
-
-    <div class="ten columns" id="mapDiv" style="height: 500px;" >
     </div>
 </div>
 
 <!--Bottom row under search results and map-->
 <div class="container">
-    <div class="eight columns pull-left">
-        <div class="pull-right">
-            <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-            <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-            <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="pull-right">
+                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
+                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
+                <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
+            </div>
         </div>
-    </div>
 
-    <div class="eight columns pull-right">
-        <a href="#" class="pull-right">Continue without hotel</a>
+        <div class="span6">
+            <a href="#" class="pull-right">Continue without hotel</a>
+        </div>
     </div>
 </div>
 
