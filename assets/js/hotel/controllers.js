@@ -401,7 +401,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			var center = $scope.map.getCenter();
 			$scope.search.hotelLat = center.latitude;
 			$scope.search.hotelLong = center.longitude;
-
+			$scope.search.hotelSearch = 'latlong';
 			$scope.updateSearch();
 		})
 	}
