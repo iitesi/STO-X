@@ -13,10 +13,8 @@ function Hotel(){
     	guarantee: "",
     	description: "",
     	location: "",
-    	ratingService: "",
     	recreation: "",
     	services: "",
-    	starRating: "",
     	transportation: ""
     };
     this.policy = false;
@@ -73,6 +71,8 @@ function Hotel(){
     this.HotelLocationDetail = "";
     this.DirectionDetail = "";
     this.AreaTransportationDetail = "";
+    this.StarRating = 0;
+    this.RatingService="";
     this.isInPolicy = true;
     this.distance = 0;
 

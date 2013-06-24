@@ -1,14 +1,27 @@
 <div class="badge hotel">
+    <!---Ribbon overlays--->
+    <span class="ribbon ribbon-r-pref" ng-show="item.hotel.preferredVendor && !item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate()"></span>
+    <span class="ribbon ribbon-r-cont" ng-show="!item.hotel.preferredVendor && item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate()"></span>
+    <span class="ribbon ribbon-r-pref-govt" ng-show="item.hotel.preferredVendor && item.hotel.hasGovernmentRate()"></span>
+    <span class="ribbon ribbon-r-pref-cont" ng-show="item.hotel.preferredVendor && item.hotel.hasCorporateRate()"></span>
 
     <div class="signature-image">
         <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
     </div>
 
     <div class="hotel-info">
-        <span class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</span>
-        <span class="hotel-distance">{{item.hotel.distance}} miles</span>
-
-        <div class="btn-group">
+        <div class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</div>
+        <div class="hotel-distance">
+            {{item.hotel.distance}} miles
+            <span class="rating">
+                <i ng-class="{'icon-star': item.hotel.StarRating >= 1, 'icon-star-empty': item.hotel.StarRating < 1}"></i>
+                <i ng-class="{'icon-star': item.hotel.StarRating >= 2, 'icon-star-empty': item.hotel.StarRating < 2}"></i>
+                <i ng-class="{'icon-star': item.hotel.StarRating >= 3, 'icon-star-empty': item.hotel.StarRating < 3}"></i>
+                <i ng-class="{'icon-star': item.hotel.StarRating >= 4, 'icon-star-empty': item.hotel.StarRating < 4}"></i>
+                <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>{{ item.hotel.starRating}}
+            </span>
+        </div>
+        <div class="btn-group hotel-detail-buttons">
             <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
             <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
             <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
@@ -20,20 +33,18 @@
     <div class="hotel-pricing">
 
         <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
-        <span class="medium red bold daily-rate" style="color: red;" ng-show="item.hotel.isSoldOut()">SOLD OUT</span>
+
+        <span class="medium red bold sold-out" ng-show="item.hotel.isSoldOut()">SOLD OUT</span>
+
         <span class="room-details-wrapper" ng-show="item.hotel.hasRoomsAvailable()">
 
-            <!-- These to be replaced by corner ribbons
-            <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
-            -->
+            <div class="outofpolicy-wrapper">
+                <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+            </div>
             <span class="large blue bold daily-rate" >
                 <span ng-show="item.hotel.rooms[1].dailyRateCurrency == 'USD'">$</span><span ng-show="!item.hotel.rooms[1].dailyRateCurrency == 'USD'">{{rooms[1].dailyRateCurrency}}</span>{{item.hotel.findLowestRoomRate()}}
             </span>
 
-            <!-- These to be replaced by corner ribbons
-            <span ng-show="item.hotel.hasCorporateRate()" class="small blue bold"><br>CONTRACTED</span>
-            <span ng-show="!item.hotel.hasCorporateRate() && item.hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
-            -->
             <button
                 ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
                 ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
@@ -52,34 +63,24 @@
         </div>
         <div ng-show="item.hotel.details.loaded">
 
-           <dl>
-              <dt>Address:</dt>
-              <dd>{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}} {{item.hotel.Zip}}</dd>
-            </dl>
+           <dl class="dl-horizontal">
+                <dt>Address:</dt>
+                <dd>{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}} {{item.hotel.Zip}}</dd>
 
-            <dl ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0" >
-                <dt>Times:</dt>
-                <dd>Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
-            </dl>
+                <dt ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Times:</dt>
+                <dd ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
 
-            <dl ng-show="item.hotel.details.services.length">
-                <dt>Service:</dt>
-                <dd>{{item.hotel.details.services}}</dd>
-            </dl>
+                <dt ng-show="item.hotel.details.services.length">Service:</dt>
+                <dd ng-show="item.hotel.details.services.length">{{item.hotel.details.services}}</dd>
 
-            <dl ng-show="item.hotel.details.facility.length">
-                <dt>Facility:</dt>
-                <dd>{{item.hotel.details.facility}}</dd>
-            </dl>
+                <dt ng-show="item.hotel.details.facility.length">Facility:</dt>
+                <dd ng-show="item.hotel.details.facility.length">{{item.hotel.details.facility}}</dd>
 
-            <dl ng-show="item.hotel.details.rooms.length" >
-                <dt>Rooms:</dt>
-                <dd>{{item.hotel.details.rooms}}</dd>
-            </dl>
+                <dt ng-show="item.hotel.details.rooms.length">Rooms:</dt>
+                <dd ng-show="item.hotel.details.rooms.length">{{item.hotel.details.rooms}}</dd>
 
-            <dl ng-show="item.hotel.details.recreation.length">
-                <dt>Recreation:</dt>
-                <dd>{{item.hotel.details.recreation}}</dd>
+                <dt ng-show="item.hotel.details.recreation.length">Recreation:</dt>
+                <dd ng-show="item.hotel.details.recreation.length">{{item.hotel.details.recreation}}</dd>
             </dl>
 
         </div>
@@ -89,19 +90,40 @@
         </div>
     </div>
 
-
-    <div class="hotel-panel" ng-show="showHotelDetails">
-
-
-    </div>
-
     <div class="hotel-panel" ng-show="showAreaDetails">
+        <div ng-show="!item.hotel.details.loaded"  style="width: 100%; text-align: center">
+            <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+        </div>
 
+        <div ng-show="item.hotel.details.loaded" style="width: 100%">
+
+            <dl class="dl-horizontal">
+
+                <dt ng-show="item.hotel.details.directions.length">Directions:</dt>
+                <dd ng-show="item.hotel.details.directions.length">{{item.hotel.details.directions}}</dd>
+
+                <dt ng-show="item.hotel.details.transportation.length">Transportation:</dt>
+                <dd ng-show="item.hotel.details.transportation.length">{{item.hotel.details.transportation}}</dd>
+
+            </dl>
+
+        </div>
+
+        <div ng-show="item.hotel.details.loaded && !item.hotel.details.transportation.length && !item.hotel.details.directions.length" >
+            <p>This information is not available for this property.</p>
+        </div>
 
     </div>
 
     <div class="hotel-panel" ng-show="showAmenities">
 
+        <div ng-show="item.hotel.Amenities.length">
+            <span ng-repeat="amenity in item.hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
+        </div>
+
+        <div ng-show="!item.hotel.Amenities.length" >
+            <p>No amenities information is available.</p>
+        </div>
 
     </div>
 
