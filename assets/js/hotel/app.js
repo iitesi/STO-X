@@ -1,4 +1,4 @@
-var app = angular.module( 'hotelSearch' , [ 'app.controllers','app.services' ]);
+var app = angular.module( 'hotelSearch' , [ 'app.controllers','app.services','app.directives' ]);
 
 
 app.config([ '$routeProvider', function( $routeProvider) {
