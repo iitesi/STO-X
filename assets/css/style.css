@@ -715,21 +715,6 @@ div.checkbox {
 
 /*
 ----------------------------------------------------------------------------------------------------------
-	HOTEL
-----------------------------------------------------------------------------------------------------------
-*/
-
-.calendarDay {
-	vertical-align: text-top;
-	border: 1px solid #E6E9F3;
-	text-align: center;
-	width: 14%;
-	height: 100%;
-	line-height: 100%;
-}
-
-/*
-----------------------------------------------------------------------------------------------------------
 HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 ----------------------------------------------------------------------------------------------------------
 */
@@ -808,6 +793,20 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-right: 1em;
 }
 
+/*
+----------------------------------------------------------------------------------------------------------
+	HOTEL
+----------------------------------------------------------------------------------------------------------
+*/
+
+.calendarDay {
+	vertical-align: text-top;
+	border: 1px solid #E6E9F3;
+	text-align: center;
+	width: 14%;
+	height: 100%;
+	line-height: 100%;
+}
 
 /*
 ----------------------------------------------------------------------------------------------------------
@@ -847,20 +846,19 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     width: 55%;
 }
 
-    .hotel-name{
-        font-size: 13px;
-        font-weight: bold;
-        display: block;
-        width: 100%;
-    }
+.hotel-name{
+    font-size: 13px;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+}
 
-    .hotel-distance{
-        font-size: 11px;
-        display: block;
-        width: 100%;
-        margin: .3em 0 1.5em;
-    }
-
+.hotel-distance{
+    font-size: 11px;
+    display: block;
+    width: 100%;
+    margin: .3em 0 1.5em;
+}
 
 .hotel-pricing{
     display: block;
@@ -871,12 +869,84 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     vertical-align: bottom;
 }
 
-    .daily-rate{
-        display: block;
-        clear: both;
-        margin: 1.3em 0 .3em 0;
-    }
+.daily-rate{
+    display: block;
+    clear: both;
+    margin: 1.3em 0 .3em 0;
+}
 
 .hotel-panel{
     clear: both;
+}
+
+
+/*
+----------------------------------------------------------------------------------------------------------
+	RIBBON
+----------------------------------------------------------------------------------------------------------
+*/
+
+.ribbon {
+	display: block;
+	height: 58px;
+	position: absolute;
+	top: 0;
+	width: 58px;
+	z-index: 1;
+}
+
+.ribbon-l-govt {
+	background: url(../img/ribbon/ribbon-l-govt.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-govt {
+	background: url(../img/ribbon/ribbon-r-govt.png) no-repeat;
+	right: 0;
+}
+.ribbon-l-cont {
+	background: url(../img/ribbon/ribbon-l-cont.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-cont {
+	background: url(../img/ribbon/ribbon-r-cont.png) no-repeat;
+	right: 0;
+}
+.ribbon-l-pref {
+	background: url(../img/ribbon/ribbon-l-pref.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-pref {
+	background: url(../img/ribbon/ribbon-r-pref.png) no-repeat;
+	right: 0;
+}
+.ribbon-l-pref-cont {
+	background: url(../img/ribbon/ribbon-l-pref-cont.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-pref-cont {
+	background: url(../img/ribbon/ribbon-r-pref-cont.png) no-repeat;
+	right: 0;
+}
+.ribbon-l-pref-govt {
+	background: url(../img/ribbon/ribbon-l-pref-govt.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-pref-govt {
+	background: url(../img/ribbon/ribbon-r-pref-govt.png) no-repeat;
+	right: 0;
+}
+
+/*
+----------------------------------------------------------------------------------------------------------
+	MODAL
+----------------------------------------------------------------------------------------------------------
+*/
+
+#myModalBody h3 {
+	line-height: 0;
+	margin: 0;
+}
+
+.tripdetails {
+	font-size: 20px;
 }
