@@ -3,6 +3,7 @@
 	<cfsavecontent variable="localAssets">
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.min.css">
 		<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
 		<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="assets/js/date.format.js"></script>

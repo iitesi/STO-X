@@ -1,0 +1,138 @@
+<div class="badge hotel">
+
+    <div class="signature-image">
+        <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
+    </div>
+
+    <div class="hotel-info">
+        <span class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</span>
+        <span class="hotel-distance">{{item.hotel.distance}} miles</span>
+
+        <div class="btn-group">
+            <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
+            <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
+            <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
+            <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
+        </div>
+
+    </div>
+
+    <div class="hotel-pricing">
+
+        <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
+        <span class="medium red bold daily-rate" style="color: red;" ng-show="item.hotel.isSoldOut()">SOLD OUT</span>
+        <span class="room-details-wrapper" ng-show="item.hotel.hasRoomsAvailable()">
+
+            <!-- These to be replaced by corner ribbons
+            <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+            -->
+            <span class="large blue bold daily-rate" >
+                <span ng-show="item.hotel.rooms[1].dailyRateCurrency == 'USD'">$</span><span ng-show="!item.hotel.rooms[1].dailyRateCurrency == 'USD'">{{rooms[1].dailyRateCurrency}}</span>{{item.hotel.findLowestRoomRate()}}
+            </span>
+
+            <!-- These to be replaced by corner ribbons
+            <span ng-show="item.hotel.hasCorporateRate()" class="small blue bold"><br>CONTRACTED</span>
+            <span ng-show="!item.hotel.hasCorporateRate() && item.hotel.hasGovernmentRate()" class="small blue bold"><br>Gov Rate</span>
+            -->
+            <button
+                ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
+                ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
+                <span ng-show="showRooms">HIDE ROOMS</span>
+                <span ng-show="!showRooms">SHOW ROOMS</span>
+            </button>
+
+        </span>
+
+    </div>
+
+    <div class="hotel-panel" ng-show="showHotelDetails">
+
+        <div ng-show="!item.hotel.details.loaded" style="text-align: center">
+               <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+        </div>
+        <div ng-show="item.hotel.details.loaded">
+
+           <dl>
+              <dt>Address:</dt>
+              <dd>{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}} {{item.hotel.Zip}}</dd>
+            </dl>
+
+            <dl ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0" >
+                <dt>Times:</dt>
+                <dd>Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
+            </dl>
+
+            <dl ng-show="item.hotel.details.services.length">
+                <dt>Service:</dt>
+                <dd>{{item.hotel.details.services}}</dd>
+            </dl>
+
+            <dl ng-show="item.hotel.details.facility.length">
+                <dt>Facility:</dt>
+                <dd>{{item.hotel.details.facility}}</dd>
+            </dl>
+
+            <dl ng-show="item.hotel.details.rooms.length" >
+                <dt>Rooms:</dt>
+                <dd>{{item.hotel.details.rooms}}</dd>
+            </dl>
+
+            <dl ng-show="item.hotel.details.recreation.length">
+                <dt>Recreation:</dt>
+                <dd>{{item.hotel.details.recreation}}</dd>
+            </dl>
+
+        </div>
+
+        <div ng-show="item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length" >
+            <p>This information is not available for this property.</p>
+        </div>
+    </div>
+
+
+    <div class="hotel-panel" ng-show="showHotelDetails">
+
+
+    </div>
+
+    <div class="hotel-panel" ng-show="showAreaDetails">
+
+
+    </div>
+
+    <div class="hotel-panel" ng-show="showAmenities">
+
+
+    </div>
+
+    <div class="hotel-panel" ng-show="showPhotos">
+        <div ng-show="!item.hotel.details.loaded"  style="text-align: center">
+            <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+        </div>
+        <div ng-show="item.hotel.details.loaded">
+
+            <div ng-show="!item.hotel.images.length" >
+                There are no photos available for this property.
+            </div>
+
+            <div ng-show="item.hotel.images.length" >
+                <div style="text-align: left; vertical-align: top; width: 35%; float: left; clear: none">
+                    <img ng-src="{{item.hotel.selectedImage}}" height="138" width="200"  />
+                </div>
+                <div style="text-align: left; vertical-align: top; width: 60%; float: left; clear: right">
+                    <div ng-repeat="image in item.hotel.images" style="padding: 3px; float: left;">
+                        <a href="javascript: void(0)" ng-click="$parent.item.hotel.selectedImage = image.imageURL"><img ng-src="{{image.imageURL}}" height="69" width="100"  /></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="hotel-panel" ng-show="showRooms">
+
+
+    </div>
+
+</div>

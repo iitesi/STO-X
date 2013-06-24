@@ -808,3 +808,75 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-right: 1em;
 }
 
+
+/*
+----------------------------------------------------------------------------------------------------------
+	HOTEL SEARCH RESULTS
+----------------------------------------------------------------------------------------------------------
+*/
+
+/*
+#mapDiv{
+    border: 1px solid #555;
+}
+
+.hotel-results{
+    border: 1px solid #555;
+}
+*/
+
+.hotel {
+	width: 93%;
+	margin-bottom: 5px;
+}
+
+.signature-image{
+    width: 20%;
+    min-width: 100px;
+    height: 70px;
+    overflow: hidden;
+    display: block;
+    float: left;
+    margin-right: .7em;
+}
+
+.hotel-info{
+    display: block;
+    float: left;
+    clear: none;
+    width: 55%;
+}
+
+    .hotel-name{
+        font-size: 13px;
+        font-weight: bold;
+        display: block;
+        width: 100%;
+    }
+
+    .hotel-distance{
+        font-size: 11px;
+        display: block;
+        width: 100%;
+        margin: .3em 0 1.5em;
+    }
+
+
+.hotel-pricing{
+    display: block;
+    float: left;
+    clear: right;
+    width: 20%;
+    text-align: center;
+    vertical-align: bottom;
+}
+
+    .daily-rate{
+        display: block;
+        clear: both;
+        margin: 1.3em 0 .3em 0;
+    }
+
+.hotel-panel{
+    clear: both;
+}
