@@ -1,18 +1,39 @@
 <cfparam name="variables.minheight" default="100"/>
 
+<cfset ribbonClass = "">
+
 <cfsavecontent variable="sBadge" trim="#true#">
 	<cfoutput>
 		<div class="badge">
+
+			<!--- display ribbon --->
+
+			<!--- TODO - all this should be moved into contoller / service as 'getRibbon()'
+			3:45 PM Monday, June 24, 2013 - Jim Priest - jpriest@shortstravel.com --->
+			<cfif stTrip.preferred EQ 1>
+				<cfset ribbonClass = "ribbon-l-pref">
+			<cfelseif bDisplayFare AND stTrip.PrivateFare>
+				<cfset ribbonClass = "ribbon-l-cont">
+			<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
+				<cfset ribbonClass = "ribbon-l-pref-cont">
+			</cfif>
+
+			<!--- finally add default 'ribbon class' --->
+			<cfif Len(ribbonClass)>
+				<cfset ribbonClass = "ribbon " & ribbonClass>
+			</cfif>
+			<!--- display ribbon --->
+			<span class="#ribbonClass#"></span>
+			<!--- // end ribbon --->
+
+			<p align="center">DEBUGGING:  #ncount#</p>
+
 			<table height="#variables.minheight#" width="100%">
 			<tr>
 				<td colspan="2" align="center">
 					#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br>')#
-
-					#(NOT bDisplayFare OR NOT stTrip.PrivateFare ? '' : '<span class="medium blue bold">CONTRACTED</span><br>')#
-					<!---  <cfset sImg = (ListLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers : 'Mult')><cfif sImg NEQ 'Mult'>title="#application.stAirVendors[sImg].Name#"<cfelse>title="Multiple Carriers"</cfif> --->
 					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
-					#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br>'&application.stAirVendors[stTrip.Carriers[1]].Name : '')#
-					#(NOT stTrip.Preferred ? '' : '<span class="medium blue bold">PREFERRED</span><br>')#
+					#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#
 				</td>
 				<td colspan="2" class="fares" align="right">
 					<cfif bDisplayFare>
