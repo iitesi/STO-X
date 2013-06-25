@@ -5,6 +5,7 @@
 <cfsavecontent variable="sBadge" trim="#true#">
 	<cfoutput>
 		<div class="badge">
+<<<<<<< Updated upstream
 
 			<!--- display ribbon --->
 
@@ -29,6 +30,11 @@
 			<p align="center">DEBUGGING:  #ncount# [ #stTrip.preferred# | #bDisplayFare# | #stTrip.PrivateFare# ] </p>
 
 
+=======
+			<span class="ribbon ribbon-r-pref-govt"></span>
+
+			<p align="center">DEBUGGING:  #ncount#</p>
+>>>>>>> Stashed changes
 
 			<table height="#variables.minheight#" width="100%">
 			<tr>
