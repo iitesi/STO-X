@@ -253,8 +253,8 @@
 
                                 <table width="100%">
                                     <tbody>
-                                        <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 > 0}">
-                                            <td class="room-description">{{room.description}} {{$index%2 > 0}}</td>
+                                        <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
+                                            <td class="room-description">{{room.description}}</td>
                                             <td class="room-rate-code">
                                                 <span ng-show="room.isCorporateRate" class="small blue bold">CONTRACTED</span>
                                                 <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
