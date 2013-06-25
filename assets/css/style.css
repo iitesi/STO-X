@@ -126,10 +126,6 @@ body {
 	background-image:url(../img/slider-wrap-bg.png);
 }
 
-.roundtrip {
-	text-transform: uppercase;
-}
-
 .noresults {
 	font-size: 14px;
 	font-weight: bold;
@@ -408,7 +404,7 @@ ul.tabs li a.active {
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 220px;
+	width: 280px;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 
@@ -417,8 +413,6 @@ ul.tabs li a.active {
 	font-weight: normal;
 	text-shadow: 0;
 }
-
-
 
 .carrow {
 	background-color: #FFF;
@@ -736,7 +730,7 @@ div.checkbox {
 
 /*
 ----------------------------------------------------------------------------------------------------------
-HEADER AND BREADCRUMB
+HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 ----------------------------------------------------------------------------------------------------------
 */
 
@@ -761,6 +755,9 @@ HEADER AND BREADCRUMB
 	#main-content .page-header h1 small {
 		font-size: 14px;
 	}
+	#main-content .filterbar {
+		float: left;
+	}
 }
 
 @media (min-width:960px) {
@@ -769,6 +766,10 @@ HEADER AND BREADCRUMB
 	}
 	#main-content .page-header h1 small {
 		font-size: 16px;
+	}
+
+#main-content .filterbar {
+		float: right;
 	}
 }
 
@@ -779,10 +780,9 @@ HEADER AND BREADCRUMB
 	#main-content .page-header h1 small {
 		font-size: 22px;
 	}
-}
-
-.newsearch {
-	margin: 5px;
+	#main-content .filterbar {
+		float: right;
+	}
 }
 
 #header-bottom .row {
@@ -800,7 +800,7 @@ HEADER AND BREADCRUMB
 */
 
 .legbtn {
-	margin: 0 .5em;
+	margin-right: 1em;
 }
 
 
