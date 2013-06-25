@@ -1,6 +1,4 @@
 <cfoutput>
-<hr>
-
 <!---
 AIR CODES
 -----------------------
@@ -22,32 +20,33 @@ F	number	19
 Y	number	294  331
  --->
 
+<cfset totalFlights = 0>
 
-<!--- <p>Total Flights =  #session.searches[rc.SearchID].stLowFareDetails.stResults.Y + session.searches[rc.SearchID].stLowFareDetails.stResults.F + session.searches[rc.SearchID].stLowFareDetails.stResults.C#</p>
- --->
-<!--- <cfloop collection="#arguments.stTrips#" item="local.sTrip">
- --->
-<!---
-StructFindKey(top, value, scope)
-StructFindValue( top, value [, scope])
+<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")>
+	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.1>
+</cfif>
 
- --->
-ACARRIERS =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ACARRIERS)#<br>
-ASORTARRIVAL =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTARRIVAL)#<br>
-ASORTBAG =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTBAG)#<br>
-ASORTBAG2 =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTBAG2)#<br>
-ORTDEPART =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTDEPART)#<br>
-TDURATION =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTDURATION)#<br>
-ASORTFARE =  #ArrayLen(session.searches[rc.SearchID].stLowFareDetails.ASORTFARE)#<br>
-<cfdump var="#StructCount(session.searches[rc.SearchID].stLowFareDetails.STPRICED)#" />
-<cfdump var="#StructCount(session.searches[rc.SearchID].stLowFareDetails.STPRICING)#" />
-<cfdump var="#StructCount(session.searches[rc.SearchID].stLowFareDetails.STRESULTS)#" />
+<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")>
+	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.0>
+</cfif>
+
+<p>Total Flights (1+0) =  #totalFlights#</p>
 
 
+
+FROM SESSION.SEARCHES0[rc.SearchID]<br>
+================================================================================<br>
+acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
+asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
+asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
+asortbag2 =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag2)#<br>
+sortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
+sortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
+asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)#<br>
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpriced)#" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
 <cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
-
-<hr>
-
 </cfoutput>
 
 

@@ -331,6 +331,8 @@ ul.tabs li a.active {
 	-webkit-box-shadow: 4px 4px 10px rgba(50, 50, 50, 0.5);
 	-moz-box-shadow:    4px 4px 10px rgba(50, 50, 50, 0.5);
 	box-shadow:         4px 4px 10px rgba(50, 50, 50, 0.5);
+	position: absolute;
+	z-index: 99;
 }
 
 .filter .navbar-inner {
@@ -918,7 +920,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	position: absolute;
 	top: 0;
 	width: 58px;
-	z-index: 1;
 }
 
 .ribbon-l-govt {
