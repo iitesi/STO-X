@@ -49,6 +49,14 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
+
+
+		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
+			<cfset onApplicationStart() />
+		</cfif>
+
+
+
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
 			<cfset var action = ListFirst(rc.action, ':')>
 			<cfreturn view( "main/notfound" )>

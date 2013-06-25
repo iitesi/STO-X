@@ -1,5 +1,5 @@
 <cfoutput>
-	<div class="roundtrip clearfix">
+	<div class="legs clearfix">
 		<cfset nCount = ArrayLen(rc.Filter.getLegs())-1>
 		<cfloop array="#rc.Filter.getLegs()#" index="nLeg" item="sLeg">
 			<a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLeg-1#')#" class="btn legbtn" title="#sLeg#">

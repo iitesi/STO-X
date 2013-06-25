@@ -26,7 +26,7 @@
 			<span class="#ribbonClass#"></span>
 			<!--- // end ribbon --->
 
-			<p align="center">DEBUGGING:  #ncount#</p>
+			<p align="center">DEBUGGING:  #ncount# [ #stTrip.preferred# | #bDisplayFare# | #stTrip.PrivateFare# ] </p>
 
 			<table height="#variables.minheight#" width="100%">
 			<tr>

@@ -53,7 +53,7 @@ F = first
 				</div>
 			</div>
 
-			<div class="pull-right">
+			<div class="filterbar">
 				<h4>Filter</h4>
 				<div class="navbar">
 					<div class="navbar-inner">

@@ -1,12 +1,71 @@
+<cfoutput>
+<!---
+AIR CODES
+-----------------------
+1 = refundable
+0 = non refundable
+-----------------------
+Y = economy
+C = business
+F = first
+-----------------------
+(X) = not selected
+
+
+0	number	106
+1	number	225  331
+
+C	number	18
+F	number	19
+Y	number	294  331
+ --->
+
+<cfset totalFlights = 0>
+
+<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")>
+	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.1>
+</cfif>
+
+<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")>
+	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.0>
+</cfif>
+
+<p>Total Flights (1+0) =  #totalFlights#</p>
+
+
+
+FROM SESSION.SEARCHES0[rc.SearchID]<br>
+================================================================================<br>
+acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
+asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
+asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
+asortbag2 =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag2)#<br>
+sortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
+sortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
+asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)#<br>
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpriced)#" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
+<cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
+</cfoutput>
+
+
+
+
+
+
+
+
+
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
 	<cfif nLegs EQ 2>
-		<cfset variables.minheight = 325>
+		<cfset variables.minheight = 250>
 	<cfelseif nLegs EQ 1>
-		<cfset variables.minheight = 225>
+		<cfset variables.minheight = 150>
 	<cfelseif nLegs EQ 3>
-		<cfset variables.minheight = 395>
+		<cfset variables.minheight = 300>
 	</cfif>
 </cfsilent>
 
@@ -28,6 +87,9 @@
 			</h1>
 		</cfif>
 
+		<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
+
+
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 				#View('air/legs')#
 		</cfif>
@@ -46,6 +108,8 @@
 
 			<br clear="both">
 
+
+
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
@@ -58,7 +122,10 @@
 			<!--- Display standard fare based search --->
 			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
-				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey) AND nCount LTE 50>
+
+				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)
+					AND nCount LTE 150>
+
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
 					#View('air/badge')#
