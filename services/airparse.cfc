@@ -393,30 +393,37 @@ addGroups
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-findResults
---->
-	<cffunction name="findResults" output="false">
+	<cffunction name="findResults" output="false" hint="I populate the stResults struct with flight numbers for fares and classes (0,1,Y,C,F).">
 		<cfargument name="stTrips" 	required="true">
 
 		<cfset local.stResults = {}>
+
+		<!--- set default values for fares and class --->
+		<cfset local.stResults.Y = 0>
+		<cfset local.stResults.C = 0>
+		<cfset local.stResults.F = 0>
+		<cfset local.stResults.0 = 0>
+		<cfset local.stResults.1 = 0>
+
 		<cfset local.sClass = ''>
 		<cfset local.bRef = ''>
-		<cfloop collection="#arguments.stTrips#" item="local.nTripKey">
-			<cfset sClass = arguments.stTrips[nTripKey].Class>
-			<cfset bRef = arguments.stTrips[nTripKey].Ref>
-			<cfif NOT structKeyExists(stResults, sClass)>
-				<cfset stResults[sClass] = 0>
-			</cfif>
-			<cfif NOT structKeyExists(stResults, bRef)>
-				<cfset stResults[bRef] = 0>
-			</cfif>
-			<cfset stResults[sClass] = stResults[sClass] + 1>
-			<cfset stResults[bRef] = stResults[bRef] + 1>
 
+		<cfloop collection="#arguments.stTrips#" item="local.nTripKey">
+			<cfset local.sClass = arguments.stTrips[nTripKey].Class>
+			<cfset local.bRef = arguments.stTrips[nTripKey].Ref>
+
+			<cfif NOT structKeyExists(stResults, local.sClass)>
+				<cfset stResults[local.sClass] = 0>
+			</cfif>
+			<cfif NOT structKeyExists(stResults, local.bRef)>
+				<cfset stResults[local.bRef] = 0>
+			</cfif>
+
+			<cfset stResults[local.sClass] = stResults[local.sClass] + 1>
+			<cfset stResults[local.bRef] = stResults[local.bRef] + 1>
 		</cfloop>
 
-		<cfreturn stResults/>
+		<cfreturn local.stResults/>
 	</cffunction>
 
 <!---
@@ -439,10 +446,7 @@ addJavascript
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-addJavascriptPerTrip - used only in the above function
---->
-	<cffunction name="addJavascriptPerTrip" output="false">
+	<cffunction name="addJavascriptPerTrip" output="false" access="private" hint="addJavascriptPerTrip - used only in the above function">
 		<cfargument name="sTrip" 	required="true">
 		<cfargument name="stTrip" 	required="true">
 		<cfargument name="sCabin" 	required="true">
@@ -460,16 +464,16 @@ addJavascriptPerTrip - used only in the above function
 			 * 	6	Cabin Class			Y, C, F
 			 * 	7	Stops				0/1/2
 		--->
-		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
-		<cfset sJavascript = ListAppend(sJavascript, (ArrayIsEmpty(arguments.stTrip.aPolicies) ? 1 : 0))><!--- Policy --->
-		<cfset sJavascript = ListAppend(sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
-		<cfset sJavascript = ListAppend(sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
-		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
-		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Preferred)><!--- Preferred --->
-		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.sCabin#"')><!--- Cabin Class --->
-		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Stops)><!--- Stops --->
+		<cfset local.sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, (ArrayIsEmpty(arguments.stTrip.aPolicies) ? 1 : 0))><!--- Policy --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, arguments.stTrip.Preferred)><!--- Preferred --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '"#arguments.sCabin#"')><!--- Cabin Class --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, arguments.stTrip.Stops)><!--- Stops --->
 
-		<cfreturn sJavascript/>
+		<cfreturn local.sJavascript/>
 	</cffunction>
 
 <!---
