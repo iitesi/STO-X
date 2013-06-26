@@ -122,6 +122,7 @@ doLowFare
 				<cfset thread.sMessage = sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
 			</cfthread>
+			<!--- <cfdump var="#cfthread#" abort="true">  --->
 		</cfif>
 
 		<cfreturn sThreadName>
@@ -149,7 +150,7 @@ prepareSOAPHeader
 		
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
-		<cfdump var="#arguments.filter#">
+		
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -172,7 +173,7 @@ prepareSOAPHeader
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
 													<cfloop array="#aCabins#" index="local.sCabin">
-														<air:CabinClass  Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+														<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 													</cfloop>
 												</air:PermittedCabins>
 											</cfif>
@@ -221,12 +222,15 @@ prepareSOAPHeader
 									</cfloop>
 								</cfif>
 								<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="false" AllowChangeOfAirport="false" ProhibitOvernightLayovers="true" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
-									<air:ProhibitedCarriers>
+									<air:PermittedCarriers>
+										<com:Carrier Code="DL"/>
+									</air:PermittedCarriers>
+									<!--- <air:ProhibitedCarriers>
 										<com:Carrier Code="ZK"/>
 										<com:Carrier Code="SY"/>
 										<com:Carrier Code="NK"/>
 										<com:Carrier Code="G4"/>
-									</air:ProhibitedCarriers>
+									</air:ProhibitedCarriers> --->
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
 								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
@@ -250,6 +254,8 @@ prepareSOAPHeader
 			</cfoutput>
 		</cfsavecontent>
 		
+		<!--- <cfdump var="#sMessage#" abort="true"> --->
+
 		<cfreturn sMessage/>
 	</cffunction>
 
