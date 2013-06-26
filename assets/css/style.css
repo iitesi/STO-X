@@ -907,6 +907,37 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     margin-left: .7em;
 }
 
+.hotel-panel table{
+    border: none;
+}
+
+tr.hotel-room{
+    width: 100%;
+    border: none;
+}
+
+tr.hotel-room td{
+    vertical-align: top;
+    padding: 10px 5px 10px 5px;
+}
+    .room-description{
+        width: 65%;
+    }
+
+    .room-rate-code{
+        white-space: nowrap;
+        width: 15%;
+    }
+
+    .room-rate{
+        white-space: nowrap;
+        width: 20%;
+    }
+
+    .odd{
+        background-color: #F0F0F0;
+    }
+
 
 /*
 ----------------------------------------------------------------------------------------------------------
