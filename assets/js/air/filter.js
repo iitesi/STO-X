@@ -10,8 +10,8 @@ $(document).ready(function(){
 		$(this).parent().hide();
 	});
 
-	$('.closefilterwell').on('click', function() {
-		$('.filterselection').slideUp();
+	$('.closewell').on('click', function() {
+		$(this).parent().slideUp();
 	});
 
 	$('#removefilters').on('click', function() {

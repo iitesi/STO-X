@@ -1,16 +1,24 @@
-<cfcomponent>
+<cfcomponent extends="abstract">
 
-<!---
-init
---->
-	<cfset variables.fw = ''>
-	<cffunction name="init" output="false">
-		<cfargument name="fw">
+	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
+		<cfargument name="rc">
 
-		<cfset variables.fw = arguments.fw>
+		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
 
-		<cfreturn this>
+		<cfif structKeyExists(session, "searches")>
+			<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
+		</cfif>
+
+		<cfif result IS true>
+			<cfset rc.message.AddInfo("Saved search deleted successfully!")>
+			<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
+		<cfelse>
+				<cfthrow message="Error removing a flight from the breadcrumb bar!"/>
+		</cfif>
+
+		<cfreturn />
 	</cffunction>
+
 
 <!---
 lowfare
@@ -50,13 +58,13 @@ lowfare
 
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 availability
 --->
 	<cffunction name="availability" output="true">
 		<cfargument name="rc">
-		
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset arguments.rc.sPriority = 'LOW'>
 			<!--- Throw out a threads --->
@@ -106,10 +114,10 @@ price
 
 <!---
 popup
---->	
+--->
 	<cffunction name="popup" output="true">
 		<cfargument name="rc">
-		
+
 		<cfset rc.bSuppress = 1>
 		<cfif rc.sDetails EQ 'seatmap'>
 			<!--- Move needed variables into the rc scope. --->
@@ -133,16 +141,16 @@ popup
 			<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
 			<cfset variables.fw.service('general.getUser', 'qProfile')>
 		</cfif>
-		
+
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 seatmap
 --->
 	<cffunction name="seatmap" output="true">
 		<cfargument name="rc">
-		
+
 		<!--- Move needed variables into the rc scope. --->
 		<cfset rc.bSuppress = 1>
 		<cfset rc.sCabin = 'Y'>
@@ -152,19 +160,19 @@ seatmap
 		<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-		
+
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 email
 --->
 	<cffunction name="email" output="true">
 		<cfargument name="rc">
-		
+
 		<cfset rc.bSuppress = 1>
 		<cfset variables.fw.service('email.email', 'void')>
-		
+
 		<cfreturn />
 	</cffunction>
 	<cffunction name="endemail" output="true">
@@ -174,5 +182,5 @@ email
 
 		<cfreturn />
 	</cffunction>
-	
+
 </cfcomponent>

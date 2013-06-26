@@ -12,10 +12,46 @@ init
 
 		<cfset setUAPI(arguments.UAPI)>
 		<cfset setAirParse(arguments.AirParse)>
-		
+
 		<cfreturn this>
 	</cffunction>
-	
+
+
+	<cffunction name="removeFlight" output="false" hint="I remove a flight from the database based on searchID.">
+		<cfargument name="searchID">
+		<cfset var result = 'true'>
+
+		<cftransaction action="begin">
+			<cftry>
+				<cfquery>
+					DELETE
+					FROM Searches
+					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+
+				<cfquery>
+					DELETE
+					FROM Searches_Legs
+					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+
+				<!---
+				TODO: we should really be touching session here!
+				4:04 PM Wednesday, June 26, 2013 - Jim Priest - jpriest@shortstravel.com
+ 				--->
+				<cfset StructDelete(session.searches, arguments.searchID)>
+				<cfset StructDelete(session.filters, arguments.searchID)>
+
+				<cfcatch type="any">
+					<cftransaction action="rollback" />
+					<cfset result = false>
+				</cfcatch>
+			</cftry>
+		</cftransaction>
+
+		<cfreturn result />
+	</cffunction>
+
 <!---
 threadLowFare
 --->
@@ -52,10 +88,10 @@ threadLowFare
 			</cfloop> --->
 		</cfif>
 		<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
-	
+
 		<cfreturn >
 	</cffunction>
-	
+
 <!---
 doLowFare
 --->
@@ -68,7 +104,7 @@ doLowFare
 		<cfargument name="Account"      required="true">
 		<cfargument name="Policy"       required="true">
 		<cfargument name="sLowFareSearchID"	required="false"	default="">
-		
+
 		<cfset local.sThreadName = ''>
 		<!---<cfset arguments.stPricing = {}>--->
 		<!--- Don't go back to the UAPI if we already got the data. --->
@@ -114,7 +150,7 @@ doLowFare
 					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, stTrips)>
 					<!---<cfset session.searches[arguments.SearchID].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = ''>--->
 					<!--- Finish up the results --->
-					<cfset void = getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
 					<cfset thread.aResponse = aResponse>
 					<cfset thread.sMessage = sMessage>
@@ -126,6 +162,7 @@ doLowFare
 
 		<cfreturn sThreadName>
 	</cffunction>
+
 
 
 <!---
@@ -146,7 +183,7 @@ prepareSOAPHeader
 			ORDER BY Depart_DateTime
 			</cfquery>
 		</cfif>
-		
+
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
 		<cfdump var="#arguments.filter#">
@@ -249,7 +286,7 @@ prepareSOAPHeader
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
-		
+
 		<cfreturn sMessage/>
 	</cffunction>
 

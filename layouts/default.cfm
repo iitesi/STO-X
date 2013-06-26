@@ -78,14 +78,17 @@
 			</header>
 
 			<section id="main-content">
+				<cfoutput>
 				<div class="container">
+					#view( "helpers/messages" )#
 					<!--- Simple test to see if session still exists. --->
 					<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
-						<cfoutput>#body#</cfoutput>
+						#body#
 					<cfelse>
-						<cfoutput>Your session has timed out due to inactivity. Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.</cfoutput>
+						Your session has timed out due to inactivity. Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
 					</cfif>
 				</div>
+				</cfoutput>
 			</section>
 
 			<footer id="footer">
