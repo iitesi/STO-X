@@ -40,6 +40,8 @@
 												<li><a href="##" data-value="14:00">Afternoon</a></li>
 												<li><a href="##" data-value="18:00">Evening</a></li>
 												<li><a href="##" data-value="23:00">Red Eye</a></li>
+												<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
+												<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
 												<li><a href="##" data-value="08:00"> 8:00 AM</a></li>
 												<li><a href="##" data-value="09:00"> 9:00 AM</a></li>
 												<li><a href="##" data-value="10:00">10:00 AM</a></li>
@@ -82,6 +84,8 @@
 												<li><a href="##" data-value="14:00">Afternoon</a></li>
 												<li><a href="##" data-value="18:00">Evening</a></li>
 												<li><a href="##" data-value="23:00">Red Eye</a></li>
+												<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
+												<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
 												<li><a href="##" data-value="08:00"> 8:00 AM</a></li>
 												<li><a href="##" data-value="09:00"> 9:00 AM</a></li>
 												<li><a href="##" data-value="10:00">10:00 AM</a></li>
@@ -129,11 +133,9 @@
 </div>
 
 <!--- Modal window to be displayed while search is occurring. --->
-<div id="pleaseWait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
+<div id="pleaseWait" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
 	<div class="modal-header">
-		<h3 id="waitModalHeader">Please Wait</h3>
+		<h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
 	</div>
-	<div id="waitModalBody" class="modal-body">
-		<p><i class="icon-spinner icon-spin icon-large"></i> Searching for...</p>
-	</div>
+	<div id="waitModalBody" class="modal-body"></div>
 </div>

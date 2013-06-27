@@ -133,6 +133,7 @@ body {
 }
 
 .carType {
+	font-size: 10px;
 	text-transform: uppercase;
 	font-weight: bold;
 }
