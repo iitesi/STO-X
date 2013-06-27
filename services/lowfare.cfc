@@ -259,16 +259,17 @@ prepareSOAPHeader
 								</cfif>
 								<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="false" AllowChangeOfAirport="false" ProhibitOvernightLayovers="true" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
 
-									<air:PermittedCarriers>
+<!--- 									<air:PermittedCarriers>
 										<com:Carrier Code="DL"/>
 									</air:PermittedCarriers>
-
-									<!--- <air:ProhibitedCarriers>
-										<com:Carrier Code="ZK"/>
-										<com:Carrier Code="SY"/>
-										<com:Carrier Code="NK"/>
+ --->
+									<air:ProhibitedCarriers>
 										<com:Carrier Code="G4"/>
-									</air:ProhibitedCarriers> --->
+										<com:Carrier Code="NK"/>
+										<com:Carrier Code="VX"/>
+										<com:Carrier Code="ZK"/>
+									</air:ProhibitedCarriers>
+
 
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
