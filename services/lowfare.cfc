@@ -12,10 +12,46 @@ init
 
 		<cfset setUAPI(arguments.UAPI)>
 		<cfset setAirParse(arguments.AirParse)>
-		
+
 		<cfreturn this>
 	</cffunction>
-	
+
+	<cffunction name="removeFlight" output="false" hint="I remove a flight from the database based on searchID.">
+		<cfargument name="searchID">
+		<cfset var result = 'true'>
+
+		<cftransaction action="begin">
+			<cftry>
+				<cfquery>
+					DELETE
+					FROM Searches
+					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+
+				<cfquery>
+					DELETE
+					FROM Searches_Legs
+					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+
+				<!---
+				TODO: we should really NOT be touching session here!
+				4:04 PM Wednesday, June 26, 2013 - Jim Priest - jpriest@shortstravel.com
+ 				--->
+				<cfset StructDelete(session.searches, arguments.searchID)>
+				<cfset StructDelete(session.filters, arguments.searchID)>
+
+				<cfcatch type="any">
+					<cftransaction action="rollback" />
+					<cfset result = false>
+				</cfcatch>
+			</cftry>
+		</cftransaction>
+
+		<cfreturn result />
+	</cffunction>
+
+
 <!---
 threadLowFare
 --->
@@ -52,10 +88,10 @@ threadLowFare
 			</cfloop> --->
 		</cfif>
 		<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
-	
+
 		<cfreturn >
 	</cffunction>
-	
+
 <!---
 doLowFare
 --->
@@ -68,7 +104,7 @@ doLowFare
 		<cfargument name="Account"      required="true">
 		<cfargument name="Policy"       required="true">
 		<cfargument name="sLowFareSearchID"	required="false"	default="">
-		
+
 		<cfset local.sThreadName = ''>
 		<!---<cfset arguments.stPricing = {}>--->
 		<!--- Don't go back to the UAPI if we already got the data. --->
@@ -147,10 +183,10 @@ prepareSOAPHeader
 			ORDER BY Depart_DateTime
 			</cfquery>
 		</cfif>
-		
+
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
-		
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -222,15 +258,18 @@ prepareSOAPHeader
 									</cfloop>
 								</cfif>
 								<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="false" AllowChangeOfAirport="false" ProhibitOvernightLayovers="true" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
+
 									<air:PermittedCarriers>
 										<com:Carrier Code="DL"/>
 									</air:PermittedCarriers>
-									<!--- <air:ProhibitedCarriers>
+
+									<air:ProhibitedCarriers>
 										<com:Carrier Code="ZK"/>
 										<com:Carrier Code="SY"/>
 										<com:Carrier Code="NK"/>
 										<com:Carrier Code="G4"/>
-									</air:ProhibitedCarriers> --->
+									</air:ProhibitedCarriers>
+
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
 								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
@@ -253,7 +292,7 @@ prepareSOAPHeader
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
-		
+
 		<!--- <cfdump var="#sMessage#" abort="true"> --->
 
 		<cfreturn sMessage/>
