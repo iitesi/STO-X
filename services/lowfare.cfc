@@ -263,12 +263,12 @@ prepareSOAPHeader
 										<com:Carrier Code="DL"/>
 									</air:PermittedCarriers>
 
-									<air:ProhibitedCarriers>
+									<!--- <air:ProhibitedCarriers>
 										<com:Carrier Code="ZK"/>
 										<com:Carrier Code="SY"/>
 										<com:Carrier Code="NK"/>
 										<com:Carrier Code="G4"/>
-									</air:ProhibitedCarriers>
+									</air:ProhibitedCarriers> --->
 
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
