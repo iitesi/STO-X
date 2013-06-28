@@ -55,18 +55,19 @@
 		<cfargument name="Filter" required="false" default="X">
 		<cfargument name="stPricing" required="true">
 
+
+
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
-
 		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
 		<cfif StructKeyExists(arguments, "sCabins")>
-			<cfset local.sCabins = Replace(Replace(Replace(arguments.sCabins, 'Economy', 'Y'), 'Business', 'C'), 'First', 'F')><!--- Handles the words or codes for classes. --->
+			<cfset local.sCabins = arguments.sCabins>
 		</cfif>
 
-		<cfset local.aCabins = ListToArray(sCabins)>
+		<cfset local.aCabins = ListToArray(local.sCabins)>
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
-		<cfset local.stThreads = {}>
 		<cfset local.sThreadName = ''>
+		<cfset local.stThreads = {}>
 
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
