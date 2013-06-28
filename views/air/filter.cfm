@@ -91,9 +91,11 @@ F = first
 									<cfloop array="#aCarriers#" index="Carrier" >
 										<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
 									</cfloop>
+
+									<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-search"></i> More Airlines</a>
 								</div>
 
-								<div id="class" class="span2">
+								<div id="class" class="span3">
 									<b>Class</b>
 
 									<!--- Y = economy/coach --->
@@ -108,7 +110,7 @@ F = first
 										<label for="ClassC" class="checkbox" title="No results"><input type="checkbox" id="ClassC" name="ClassC" value="C" disabled>Business (no results)</label>
 									</cfif>
 									<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Find Business Class Fares"><i class="icon-search"></i> Business Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Find Business Class Fares"><i class="icon-search"></i> More Business Class</a><br />
 									</cfif>
 
 									<!--- F = first class --->
@@ -116,25 +118,29 @@ F = first
 										<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F">First
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
 									<cfelse>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Find First Class Fares"><i class="icon-search"></i> First Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares"><i class="icon-search"></i> First Class</a><br />
 									</cfif>
 								</div>
 
-								<div id="fares" class="span3">
+								<div id="fares" class="span2">
 									<b>Fares</b>
+
 									<!--- 1 = nonrefundable --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
 										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
-										<label for="Fare0" class="checkbox" title="Filter by non-refundable fares"><input type="checkbox" id="Fare0" name="Fare0" value="0">Non Refundable
+										<label for="Fare0" class="checkbox" title="Filter by non-refundable fares"><input type="checkbox" id="Fare0" name="Fare0" value="0"> Non Refundable
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</small></label>
 									</cfif>
+
 									<!--- 0 = refundable --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
 										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
-										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" v♠alue="1" <cfif rc.bRefundable EQ 1>checked</cfif>>Refundable
+										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" v♠alue="1"> Refundable
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
-									<cfelse>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&bRefundable=1" title="Find Refundable Fares"><i class="icon-search"></i> Refundable</a><br />
+									</cfif>
+
+									<cfif rc.bRefundable EQ 0>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-search"></i> More Refundable</a>
 									</cfif>
 								</div>
 							</cfoutput>
@@ -145,7 +151,10 @@ F = first
 						</div>
 					</div> <!--- row --->
 
-					<button type="button" class="closewell close pull-right" title="Close filters"><i class="icon-remove"></i></button>
+					<span class="pull-right">
+						<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
+						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+					</span>
 				</div> <!--- well filterselection --->
 			</div>
 		</div><!-- // class=sixteen columns -->
