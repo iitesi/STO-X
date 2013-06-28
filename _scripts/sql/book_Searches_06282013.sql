@@ -11,5 +11,6 @@ ADD
 	,Arrival_DateTimeActual VARCHAR(20) NULL
 	,Arrival_DateTimeStart DATETIME NULL
 	,Arrival_DateTimeEnd DATETIME NULL
-	,Air_CityCode BIT NULL
+	,AirFrom_CityCode BIT NULL
+	,AirTo_CityCode BIT NULL
 GO
