@@ -346,6 +346,12 @@ ul.tabs li a.active {
 	padding-right: 2em;
 }
 
+.noFlightsFound {
+	display: none;
+	margin-bottom: 3em;
+}
+
+
 
 /*
 ----------------------------------------------------------------------------------------------------------
@@ -799,6 +805,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .page-header h2 {
 	line-height: 0;
+}
+
+.newsearch {
+	padding-top: 5px;
 }
 
 /*

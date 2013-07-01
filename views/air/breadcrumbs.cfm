@@ -1,12 +1,13 @@
 <!---How many searches include air?--->
 <cfset nAirCount = 0>
+<cfset nTempCount = 0>
+
 <cfloop collection="#session.filters#" index="filterSearchID">
 	<cfif session.filters[filterSearchID].getAir()>
 		<cfset nAirCount++>
 	</cfif>
 </cfloop>
 
-<cfset nTempCount = 0>
 
 <cfoutput>
 	<ul class="breadcrumb upper">
