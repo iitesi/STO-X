@@ -347,7 +347,9 @@ getSearchCriteria
 
 		<cfset var carPickupAirport = arguments.search.getCarPickupAirport() />
 		<cfset var carPickupDateTime = arguments.search.getCarPickupDateTime() />
+		<cfset var carPickupDateTimeActual = arguments.search.getCarPickupDateTimeActual() />
 		<cfset var carDropoffDateTime = arguments.search.getCarDropoffDateTime() />
+		<cfset var carDropoffDateTimeActual = arguments.search.getCarDropoffDateTimeActual() />
 		<cfset var formData = {} />
 
 		<!--- Pre-set the form variables in the car change search form with the old search parameters. --->
@@ -356,72 +358,30 @@ getSearchCriteria
 		</cfif>
 
 		<cfset formData.carPickupDate = (isDate(carPickupDateTime) ? dateFormat(carPickupDateTime, 'mmm dd, yyyy') : 'pick up date') />
-		<cfset formData.carPickupTimeValue = (isDate(carPickupDateTime) ? timeFormat(carPickupDateTime, 'HH:mm') : '08:00') />
-		<cfset formData.carPickupTimeDisplay = (isDate(carPickupDateTime) ? timeFormat(carPickupDateTime, 'hh:mm tt') : '08:00 AM') />
+		<cfif isNumeric(left(trim(carPickupDateTimeActual), 1))>
+			<cfset formData.carPickupTimeValue = timeFormat(carPickupDateTime, 'HH:mm') />
+			<cfset formData.carPickupTimeDisplay = timeFormat(carPickupDateTime, 'hh:mm tt') />			
+		<cfelseif len(trim(carPickupDateTimeActual))>
+			<cfset formData.carPickupTimeValue = carPickupDateTimeActual />
+			<cfset formData.carPickupTimeDisplay = carPickupDateTimeActual />			
+		<cfelse>
+			<cfset formData.carPickupTimeValue = '08:00' />
+			<cfset formData.carPickupTimeDisplay = '08:00 AM' />			
+		</cfif>
 
 		<cfset formData.carDropoffDate = (isDate(carDropoffDateTime) ? dateFormat(carDropoffDateTime, 'mmm dd, yyyy') : 'drop off date') />
-		<cfset formData.carDropoffTimeValue = (isDate(carDropoffDateTime) ? timeFormat(carDropoffDateTime, 'HH:mm') : '08:00') />
-		<cfset formData.carDropoffTimeDisplay = (isDate(carDropoffDateTime) ? timeFormat(carDropoffDateTime, 'hh:mm tt') : '08:00 AM') />
+		<cfif isNumeric(left(trim(carDropoffDateTimeActual), 1))>
+			<cfset formData.carDropoffTimeValue = timeFormat(carDropoffDateTime, 'HH:mm') />
+			<cfset formData.carDropoffTimeDisplay = timeFormat(carDropoffDateTime, 'hh:mm tt') />
+		<cfelseif len(trim(carDropoffDateTimeActual))>
+			<cfset formData.carDropoffTimeValue = carDropoffDateTimeActual />
+			<cfset formData.carDropoffTimeDisplay = carDropoffDateTimeActual />			
+		<cfelse>
+			<cfset formData.carDropoffTimeValue = '08:00' />
+			<cfset formData.carDropoffTimeDisplay = '08:00 AM' />			
+		</cfif>
 
 		<cfreturn formData />
 	</cffunction>
-
-<!---
-updateSearch
---->
-	<!--- <cffunction name="updateSearch" access="remote" output="false" returnformat="json">
-		<cfargument name="searchID" required="true" />
-		<cfargument name="carPickupAirport" required="true" />
-		<cfargument name="carPickupDate" required="true" />
-		<cfargument name="carPickupTime" required="true" />
-		<cfargument name="carDropoffDate" required="true" />
-		<cfargument name="carDropoffTime" required="true" />
-
-		<cfset var result = new com.shortstravel.RemoteResponse() />
-
-		<cfif structKeyExists( arguments, "carPickupDate" ) AND isDate( arguments.carPickupDate )>
-			<cftry>
-				<cfset arguments.carPickupDateTime = createDateTime( year( arguments.carPickupDate ), month( arguments.carPickupDate ), day( arguments.carPickupDate ), hour( arguments.carPickupTime ), minute( arguments.carPickupTime ), 0 ) />
-				<cfcatch type="any">
-					<cfset arguments.carPickupDateTime = createDateTime( year( arguments.carPickupDate ), month( arguments.carPickupDate ), day( arguments.carPickupDate ), 0, 0, 0 ) />
-				</cfcatch>
-			</cftry>
-		</cfif>
-		<cfif structKeyExists( arguments, "carDropoffDate" ) AND isDate( arguments.carDropoffDate )>
-			<cftry>
-				<cfset arguments.carDropoffDateTime = createDateTime( year( arguments.carDropoffDate ), month( arguments.carDropoffDate ), day( arguments.carDropoffDate ), hour( arguments.carDropoffTime ), minute( arguments.carDropoffTime ), 0 ) />
-				<cfcatch type="any">
-					<cfset arguments.carDropoffDateTime = createDateTime( year( arguments.carDropoffDate ), month( arguments.carDropoffDate ), day( arguments.carDropoffDate ), 0, 0, 0 ) />
-				</cfcatch>
-			</cftry>
-		</cfif>
-
-		<cftry>
-			<cfquery datasource="book">
-				UPDATE Searches
-				SET CarPickup_Airport = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.carPickupAirport#" />
-					,CarPickup_DateTime = 
-						<cfif isDate( arguments.carPickupDateTime )>
-							<cfqueryparam value="#CreateODBCDateTime(arguments.carPickupDateTime)#" cfsqltype="cf_sql_timestamp" />
-						<cfelse>
-							NULL
-						</cfif>
-					,CarDropoff_DateTime = 
-						<cfif isDate( arguments.carDropoffDateTime )>
-							<cfqueryparam value="#CreateODBCDateTime(arguments.carDropoffDateTime)#" cfsqltype="cf_sql_timestamp">
-						<cfelse>
-							NULL
-						</cfif>
-				WHERE Search_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.searchID#" />
-			</cfquery>
-
-			<cfcatch type="any">
-				<cfset result.addError( "An error occurred while updating your car search." ) />
-				<cfset result.setSuccess( false ) />
-			</cfcatch>
-		</cftry>
-
-        <cfreturn result />
-	</cffunction> --->
 
 </cfcomponent>

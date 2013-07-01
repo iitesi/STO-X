@@ -95,9 +95,58 @@ formSubmit = function( event ){
 	formData.car = 1;
 	formData.carPickupAirport = $("#car-location" ).val();
 	formData.carPickupDate = $("#car-pickup-date" ).val();
-	formData.carPickupTime = $("#car-pickup-time" ).val();
+	formData.carPickupTimeActual = $("#car-pickup-time" ).val();
+
+	switch (formData.carPickupTimeActual) {
+		case "Anytime":
+			formData.carPickupTime = "00:00";
+			break;
+		case "Early Morning":
+			formData.carPickupTime = "06:00";
+			break;
+		case "Late Morning":
+			formData.carPickupTime = "10:00";
+			break;
+		case "Afternoon":
+			formData.carPickupTime = "14:00";
+			break;
+		case "Evening":
+			formData.carPickupTime = "18:00";
+			break;
+		case "Red Eye":
+			formData.carPickupTime = "23:00";
+			break;
+		default:
+			formData.carPickupTime = formData.carPickupTimeActual;
+			break;
+	}
+
 	formData.carDropoffDate = $("#car-dropoff-date" ).val();
-	formData.carDropoffTime = $("#car-dropoff-time" ).val();
+	formData.carDropoffTimeActual = $("#car-dropoff-time" ).val();
+
+	switch (formData.carDropoffTimeActual) {
+		case "Anytime":
+			formData.carDropoffTime = "00:00";
+			break;
+		case "Early Morning":
+			formData.carDropoffTime = "06:00";
+			break;
+		case "Late Morning":
+			formData.carDropoffTime = "10:00";
+			break;
+		case "Afternoon":
+			formData.carDropoffTime = "14:00";
+			break;
+		case "Evening":
+			formData.carDropoffTime = "18:00";
+			break;
+		case "Red Eye":
+			formData.carDropoffTime = "23:00";
+			break;
+		default:
+			formData.carDropoffTime = formData.carDropoffTimeActual;
+			break;
+	}
 
 	$.ajax({
 		type: "POST",
