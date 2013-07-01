@@ -133,6 +133,7 @@ body {
 }
 
 .carType {
+	font-size: 10px;
 	text-transform: uppercase;
 	font-weight: bold;
 }
@@ -338,6 +339,11 @@ ul.tabs li a.active {
 .filter .navbar-inner {
 	padding-left: 8px;
 	padding-right: 8px;
+}
+
+.spinner {
+	color: #045596;
+	padding-right: 2em;
 }
 
 

@@ -40,9 +40,11 @@ OR NOT rc.Filter.getAir()>
 					<td>
 					<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
-							<span class="preferred blue bold">PREFERRED</span><br>
+							<span class="ribbon ribbon-r-pref"></span>
+							<!--- <span class="preferred blue bold">PREFERRED</span><br> --->
 						</cfif>
-						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-bottom:10px;">
+						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
+						<!--- <img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-bottom:10px;"> --->
 					</div>
 					</td>
 				</cfloop>
@@ -69,9 +71,11 @@ OR NOT rc.Filter.getAir()>
 							<td>
 								<div style="width:150px;position:relative;float:left;">
 									<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-										<span class="preferred blue bold">PREFERRED</span><br>
+										<span class="ribbon ribbon-r-pref"></span>
+										<!--- <span class="preferred blue bold">PREFERRED</span><br> --->
 									</cfif>
 									<span class="carType">#vehicleClass#</span><br />
+
 									<!--- Had to add the style width below for IE. --->
 									<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;"><br />
 								</div>
@@ -85,7 +89,7 @@ OR NOT rc.Filter.getAir()>
 											<!--- If out of policy --->
 											<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
 												<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span><br />
-												<cfset buttonType="" />												
+												<cfset buttonType="" />
 											</cfif>
 											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 											<!--- If best/lowest rate --->
@@ -95,7 +99,8 @@ OR NOT rc.Filter.getAir()>
 											</cfif>
 											<!--- If corporate/contracted rate --->
 											<cfif stRate.Corporate>
-												CONTRACTED
+												<span class="ribbon ribbon-r-cont"></span>
+												<!--- CONTRACTED --->
 											</cfif><br />
 											<cfif stRate.Currency IS 'USD'>
 												<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />

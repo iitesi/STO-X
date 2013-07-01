@@ -1,14 +1,4 @@
-﻿<cfcomponent output="false">
-
-	<cfset variables.fw = "">
-	<cffunction name="init" access="public" output="false" returntype="any">
-		<cfargument name="fw">
-
-		<cfset variables.fw = arguments.fw>
-        <cfset variables.bf = fw.getBeanFactory()>
-
-		<cfreturn this>
-	</cffunction>
+﻿<cfcomponent extends="abstract" output="false">
 
 <!---
 setApplication

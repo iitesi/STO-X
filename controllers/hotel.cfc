@@ -1,14 +1,4 @@
-<cfcomponent>
-
-<!--- init --->
-	<cfset variables.fw = ''>
-	<cffunction name="init" output="false">
-		<cfargument name="fw">
-
-		<cfset variables.fw = arguments.fw>
-
-		<cfreturn this>
-	</cffunction>
+<cfcomponent extends="abstract">
 
 <!--- default --->
 	<cffunction name="default" output="false">
@@ -27,7 +17,7 @@
 
 		<cfreturn />
 	</cffunction>
-	
+
 <!--- search --->
 	<cffunction name="search" output="false">
 		<cfargument name="rc">
@@ -56,13 +46,13 @@
 
 		<cfreturn />
 	</cffunction>
-	
+
 <!--- skip --->
 	<cffunction name="skip" output="false">
 		<cfargument name="rc" />
-		
+
 		<cfset variables.fw.service('hotelsearch.skipHotel', 'void')>
-				
+
 		<cfreturn />
 	</cffunction>
 
@@ -78,13 +68,13 @@
 		<cfreturn />
 	</cffunction>
 
-<!--- popup --->	
+<!--- popup --->
 	<cffunction name="popup" output="true">
 		<cfargument name="rc">
-		
+
 		<cfset rc.bSuppress = 1>
-		
+
 		<cfreturn />
 	</cffunction>
-	
+
 </cfcomponent>
