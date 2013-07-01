@@ -195,7 +195,11 @@
     <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="accountId" type="numeric" required="true" />
 
-        <cfreturn getBean( "AccountService" ).load( arguments.accountId ) />
+		<cfif NOT structKeyExists( application.accounts, arguments.accountId )>
+			<cfreturn getBean( "setup" ).setAccount( AcctID = arguments.accountId ) />
+		<cfelse>
+			<cfreturn application.accounts[ arguments.accountId ] />
+		</cfif>
 
     </cffunction>
 

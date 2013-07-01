@@ -6,6 +6,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
+	$scope.account = {};
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
 	$scope.visibleHotels = [];
@@ -28,9 +29,16 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
+
 		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
+
 				$scope.search = result.data;
+
+				SearchService.loadAccount( $scope.search.acctID )
+					.then( function( result ){
+						$scope.account = result;
+					});
 				$scope.initializeMap();
 			});
 	}
@@ -42,7 +50,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	})
 
 	$scope.loadPolicy = function( policyId ){
-		HotelService.loadPolicy( policyId )
+		SearchService.loadPolicy( policyId )
 			.then( function( result ){
 				$scope.policy = result;
 				$scope.search.checkInDate = new Date( $scope.search.checkInDate );
@@ -197,23 +205,45 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.buildAmenitiesArrayFromSearchResults = function( amenities, hotels ){
 
+		var corpAmenities = ['Air Conditioning','High Speed Internet','Breakfast','Coffee Shop','Computer Bus Center','Concierge Level','Continental Breakfast','Free Transportation','Handicap Facilities',
+			'Health Club','Microwave Oven','Kitchen','Laundry/Valet','Lounge','Meeting Facilities','Multilingual','Non-Smoking Room','Parking','Free Parking','POOL Pool','Refrigerator','Restaurant','Room Service','Private Bath'];
+
+		/* This is for future use if/when we decide to populate the account branch
+		var leisureAmenities = ['Air Conditioning','Child Care','Balcony','Children\'s Programs','High Speed Internet','Breakfast','Casino','Coffee Shop','Children Stay Free','Computer Bus Center','Concierge Desk',
+			'Concierge Level','Connect Rooms','Continental Breakfast','Entertainment','Family Plan','Free Transportation','Game Room','Golf','Handicap Facilities','Health Club','Microwave Oven','Kitchen','Laundry/Valet',
+			'Lounge','Meal Plan','Meeting Facilities','Mini Bar','Movies In Room','Multilingual','Non-Smoking Room','Parking','Free Parking','Small Pets Allowed','Pool','Indoor Pool','Outdoor Pool','Refrigerator','Restaurant',
+			'Room Service','Sauna','Skiing','Snow Skiing','Water Skiing','Spa','Tennis Court','Private Bath','Wet Bar','Jogging Track','Sofa Bed','Photo Copy Service'];
+		*/
+		var availableAmenities = corpAmenities;
+
 		for( var i=0; i < hotels.length; i++ ){
 			var hotel = hotels[i];
 
 			for( var k=0; k < hotel.Amenities.length; k++ ){
 
-				var found = false;
-				for( var m=0; m < amenities.length; m++ ){
-					if( amenities[m].name.toLowerCase() == hotel.Amenities[k].toLowerCase() ){
-						found = true;
-						break;
+				//First decide if the current amenity is in the availableAmenities array
+				var inList = false;
+				for( var a=0; a < availableAmenities.length; a++ ){
+					if( availableAmenities[a].toLowerCase() == hotel.Amenities[k].toLowerCase() ){
+						inList = true;
 					}
 				}
 
-				if( !found ){
-					amenities.push( {name: hotel.Amenities[k], checked: false } );
-				}
+				//If the amenity is in the approved list, check to see if it's already in the list to build filters from
+				if( inList == true ){
 
+					var found = false;
+					for( var m=0; m < amenities.length; m++ ){
+						if( amenities[m].name.toLowerCase() == hotel.Amenities[k].toLowerCase() ){
+							found = true;
+							break;
+						}
+					}
+
+					if( !found ){
+						amenities.push( {name: hotel.Amenities[k], checked: false } );
+					}
+				}
 			}
 		}
 		amenities.sort( function(a,b) {
@@ -267,7 +297,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				filteredHotels.push( $scope.hotels[i] );
 			}
 		}
-
 		$scope.filteredHotels = filteredHotels;
 	}
 
@@ -443,7 +472,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.calculatePages = function(){
 		var pages = $scope.filteredHotels.length / $scope.filterItems.resultsPerPage;
-		if ( pages%1 > 0 ){
+		if( pages > 0 && pages < 1 ){
+			return 1;
+		} else if ( pages > 1 && pages%1 > 0 ){
 			pages = parseInt( pages );
 			pages++;
 		}
