@@ -92,39 +92,44 @@ F = first
 										<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
 									</cfloop>
 
-									<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-search"></i> More Airlines</a>
+									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines"><i class="icon-plus-sign"></i> More Airlines</a>
+									</cfif>
 								</div>
 
 								<div id="class" class="span3">
 									<b>Class</b>
-
 									<!--- Y = economy/coach --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
 										<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y">Economy<br/ > <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
 									</cfif>
 
 									<!--- C = business --->
-									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")>
-										<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C" <!--- <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'C'>checked</cfif> --->>Business<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
-									<cfelseif StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
-										<label for="ClassC" class="checkbox" title="No results"><input type="checkbox" id="ClassC" name="ClassC" value="C" disabled>Business (no results)</label>
-									</cfif>
-									<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Find Business Class Fares"><i class="icon-search"></i> More Business Class</a><br />
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.C NEQ 0
+										OR session.filterStatus.cabinSearch.C NEQ 0)>
+										<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="F"> Business
+										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
 									</cfif>
 
 									<!--- F = first class --->
-									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")>
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.F NEQ 0
+										OR session.filterStatus.cabinSearch.C NEQ 0)>
 										<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F">First
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
-									<cfelse>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares"><i class="icon-search"></i> First Class</a><br />
+									</cfif>
+
+									<cfif session.filterStatus.cabinSearch.C EQ 0>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares"><i class="icon-plus-sign"></i> More Business Class</a><br />
+									</cfif>
+									<cfif session.filterStatus.cabinSearch.F EQ 0>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares"><i class="icon-plus-sign"></i> More First Class</a><br />
 									</cfif>
 								</div>
 
 								<div id="fares" class="span2">
 									<b>Fares</b>
-
 									<!--- 1 = nonrefundable --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
 										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
@@ -134,13 +139,15 @@ F = first
 
 									<!--- 0 = refundable --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
-										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
+										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.1 NEQ 0
+										OR session.filterStatus.refundableSearch NEQ 0)>
 										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" v♠alue="1"> Refundable
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
 									</cfif>
 
-									<cfif rc.bRefundable EQ 0>
-										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-search"></i> More Refundable</a>
+									<cfif session.filterStatus.refundableSearch EQ 0>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-plus-sign"></i> More Refundable</a>
 									</cfif>
 								</div>
 							</cfoutput>

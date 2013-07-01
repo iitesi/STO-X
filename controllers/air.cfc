@@ -22,7 +22,11 @@
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
-	    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+		<cfif structKeyExists(arguments.rc, "airlines") AND arguments.rc.airlines EQ 1>
+			<cfset rc.filter.setAirlines("")>
+		</cfif>
+
+    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<!--- Throw out a threads --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
