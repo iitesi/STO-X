@@ -561,11 +561,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
-	$scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-		console.log( "ngRepeatFinished event fired" );
-		$scope.updateToolTips();
-	});
-
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
@@ -574,16 +569,3 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 });
 
-var directives = angular.module('app.directives',[])
-    .directive('onFinishRender', function ($timeout) {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            if (scope.$last === true) {
-                $timeout(function () {
-                    scope.$emit('ngRepeatFinished');
-                });
-            }
-        }
-    }
-});

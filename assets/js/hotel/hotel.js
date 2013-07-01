@@ -152,7 +152,7 @@ Hotel.prototype.hasCorporateRate = function(){
 	var hasRate = false;
 
 	for( var i = 0; i < this.rooms.length; i++ ){
-		if( this.rooms[1].isCorporateRate ){
+		if( this.rooms[i].isCorporateRate ){
 			hasRate = true;
 			break;
 		}
