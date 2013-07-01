@@ -1,16 +1,9 @@
-<cfcomponent>
+<cfcomponent extends="abstract">
 
-	<cfset variables.fw = "">
-	<cffunction name="init" output="false" returntype="any">
-		<cfargument name="fw">
-		<cfset variables.fw = arguments.fw>
-		<cfreturn this>
-	</cffunction>
-	
 <!--- availability --->
 	<cffunction name="availability" output="false">
 		<cfargument name="rc">
-		
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset rc.sPriority = 'HIGH'>
 			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
@@ -36,7 +29,7 @@
 
 		<cfreturn />
 	</cffunction>
-	
+
 <!--- search --->
 	<!--- <cffunction name="search" output="false">
 		<cfargument name="rc">

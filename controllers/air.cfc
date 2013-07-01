@@ -1,24 +1,32 @@
-<cfcomponent>
+<cfcomponent extends="abstract">
 
-<!---
-init
---->
-	<cfset variables.fw = ''>
-	<cffunction name="init" output="false">
-		<cfargument name="fw">
-
-		<cfset variables.fw = arguments.fw>
-
-		<cfreturn this>
-	</cffunction>
-
-<!---
-lowfare
---->
-	<cffunction name="lowfare" output="false">
+	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
 		<cfargument name="rc">
 
-	    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
+
+		<cfif structKeyExists(session, "searches")>
+			<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
+		</cfif>
+
+		<cfif result IS true>
+			<cfset rc.message.AddInfo("Saved search deleted successfully!")>
+			<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
+		<cfelse>
+				<cfthrow message="Error removing a flight from the breadcrumb bar!"/>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
+		<cfargument name="rc">
+
+		<cfif structKeyExists(arguments.rc, "airlines") AND arguments.rc.airlines EQ 1>
+			<cfset rc.filter.setAirlines("")>
+		</cfif>
+
+    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<!--- Throw out a threads --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<!--- Do the low fare search. --->
@@ -26,11 +34,15 @@ lowfare
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
-            <cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 		</cfif>
+
+		<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
+		<cfset checkFilterStatus(arguments.rc)>
 
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="endlowfare" output="false">
 		<cfargument name="rc">
 
@@ -50,13 +62,13 @@ lowfare
 
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 availability
 --->
 	<cffunction name="availability" output="true">
 		<cfargument name="rc">
-		
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset arguments.rc.sPriority = 'LOW'>
 			<!--- Throw out a threads --->
@@ -71,6 +83,7 @@ availability
 
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="endavailability" output="true">
 		<cfargument name="rc">
 
@@ -86,30 +99,19 @@ availability
 		<cfreturn />
 	</cffunction>
 
-<!---
-price
---->
-	<cffunction name="price" output="false">
+	<cffunction name="price" output="false" hint="I run doAirPrice.">
 		<cfargument name="rc">
-
 		<cfset fw.getBeanFactory().getBean('AirPrice').doAirPrice(argumentcollection=arguments.rc)>
-
-		<cfreturn />
-	</cffunction>
-	<cffunction name="endprice" output="true">
-		<cfargument name="rc">
-
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&filter=all')>
-
 		<cfreturn />
 	</cffunction>
 
 <!---
 popup
---->	
+--->
 	<cffunction name="popup" output="true">
 		<cfargument name="rc">
-		
+
 		<cfset rc.bSuppress = 1>
 		<cfif rc.sDetails EQ 'seatmap'>
 			<!--- Move needed variables into the rc scope. --->
@@ -133,16 +135,16 @@ popup
 			<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
 			<cfset variables.fw.service('general.getUser', 'qProfile')>
 		</cfif>
-		
+
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 seatmap
 --->
 	<cffunction name="seatmap" output="true">
 		<cfargument name="rc">
-		
+
 		<!--- Move needed variables into the rc scope. --->
 		<cfset rc.bSuppress = 1>
 		<cfset rc.sCabin = 'Y'>
@@ -152,27 +154,58 @@ seatmap
 		<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-		
+
 		<cfreturn />
 	</cffunction>
-	
-<!---
-email
---->
-	<cffunction name="email" output="true">
+
+	<cffunction name="email" output="true" hint="I send an email">
 		<cfargument name="rc">
-		
 		<cfset rc.bSuppress = 1>
 		<cfset variables.fw.service('email.email', 'void')>
-		
+		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
 		<cfreturn />
 	</cffunction>
-	<cffunction name="endemail" output="true">
+
+	<cffunction name="checkFilterStatus" access="private" output="false" hint="Setup some session flags to save if the user has clicked on any of the 'find more' links in the filter">
 		<cfargument name="rc">
 
-		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
+		<!--- This could probably be handled better but this works given the time constraints
+			4:24 PM Friday, June 28, 2013 - Jim Priest - jpriest@shortstravel.com --->
 
-		<cfreturn />
+		<!--- run on first search --->
+			<cfif NOT structKeyExists(session, "filterStatus")>
+				<cfset session.filterStatus = {}>
+				<cfset session.filterStatus.searchID = arguments.rc.searchID>
+				<cfset session.filterStatus.airlines = 0>
+				<cfset session.filterStatus.refundableSearch = 0>
+				<cfset session.filterStatus.cabinSearch = {}>
+				<cfset session.filterStatus.cabinSearch.C = 0>
+				<cfset session.filterStatus.cabinSearch.F = 0>
+			</cfif>
+
+			<!--- reset filterStatus if new search is created --->
+			<cfif arguments.rc.searchID NEQ session.filterStatus.searchID>
+				<cfset session.filterStatus.searchId = arguments.rc.searchID>
+				<cfset session.filterStatus.airlines = 0>
+				<cfset session.filterStatus.refundableSearch = 0>
+				<cfset session.filterStatus.cabinSearch = {}>
+				<cfset session.filterStatus.cabinSearch.C = 0>
+				<cfset session.filterStatus.cabinSearch.F = 0>
+		</cfif>
+
+		<!--- update filterStatus if 'find more' fares/class/airlines is clicked in filter --->
+		<cfif StructKeyExists(arguments.rc, "bRefundable") and arguments.rc.bRefundable EQ 1>
+			<cfset session.filterStatus.refundableSearch = 1>
+		</cfif>
+		<cfif StructKeyExists(arguments.rc, "sCabins") and arguments.rc.sCabins EQ "C">
+			<cfset session.filterStatus.cabinSearch.C = 1>
+		</cfif>
+		<cfif StructKeyExists(arguments.rc, "sCabins") and arguments.rc.sCabins EQ "F">
+			<cfset session.filterStatus.cabinSearch.F = 1>
+		</cfif>
+		<cfif StructKeyExists(arguments.rc, "airlines") and arguments.rc.airlines EQ "1">
+			<cfset session.filterStatus.airlines = 1>
+		</cfif>
 	</cffunction>
-	
+
 </cfcomponent>

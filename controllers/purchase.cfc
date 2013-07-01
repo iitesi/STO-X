@@ -1,4 +1,4 @@
-<cfcomponent output="false">
+<cfcomponent extends="abstract" output="false">
 
 	<cfset variables.fw = "">
 	<cffunction name="init" access="public" output="false" returntype="any">
@@ -12,12 +12,12 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
-		
+
 		<!--- <cfset rc.stAir = session.searches[arguments.rc.SearchID].stItinerary.Air>
 		<cfset variables.bf.getBean("AirCreate").doAirCreate(argumentcollection=arguments.rc)> --->
 		<!--- <cfset session.Users[1] = fw.getBeanFactory().getBean('TravelerService').load(3605, 1)>
 		<cfset rc.stItinerary = session.searches[rc.SearchID].stItinerary> --->
-		
+
 		<cfreturn />
 	</cffunction>
 
@@ -25,7 +25,7 @@
 		<cfargument name="rc">
 
 		<cfset rc.Hotel = session.searches[rc.searchID].stItinerary.Hotel>
-		
+
 		<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').load( session.userID )>
 
 		<cfset rc.Traveler.addLoyaltyProgram( fw.getBeanFactory().getBean('LoyaltyProgramService').load( session.userID, '', 'h' ) )>
@@ -48,7 +48,7 @@
 		<cfset rc.Traveler.setBranchID( fw.getBeanFactory().getBean('UserService').getBranchID( session.acctID, 'string' ) )>
 
 		<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( rc.Traveler, rc.Payment, rc.Hotel, rc.Filter )>
-		
+
 		<cfset rc.Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( rc.Hotel, rc.response )>
 
 		<cfif rc.Hotel.getConfirmation() EQ ''>
@@ -57,7 +57,7 @@
 		<cfelse>
 			<cfdump var="#rc.Hotel#" abort="true">
 		</cfif>
-		
+
 		<!--- <cfdump var="#rc.Traveler#">
 		<cfdump var="#rc.Payment#">
 		<cfdump var="#rc.Vehicle#">
@@ -91,7 +91,7 @@
 		<cfset rc.Traveler.setBranchID( fw.getBeanFactory().getBean('UserService').getBranchID( session.acctID, 'string' ) )>
 
 		<cfset rc.response = fw.getBeanFactory().getBean('VehicleAdapter').create( rc.Traveler, rc.Payment, rc.Vehicle, rc.Filter )>
-		
+
 		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( rc.Vehicle, rc.response )>
 
 		<cfif rc.Vehicle.getConfirmation() EQ ''>
@@ -105,5 +105,5 @@
 
 		<cfreturn />
 	</cffunction>
-	
+
 </cfcomponent>

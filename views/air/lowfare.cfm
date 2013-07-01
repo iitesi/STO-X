@@ -30,10 +30,8 @@ Y	number	294  331
 	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.0>
 </cfif>
 
+<!---
 <p>Total Flights (1+0) =  #totalFlights#</p>
-
-
-
 FROM SESSION.SEARCHES0[rc.SearchID]<br>
 ================================================================================<br>
 acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
@@ -47,15 +45,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
 <cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
 <cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
+<cfdump var="#session.searches[rc.SearchID]#"  expand="false"/> --->
 </cfoutput>
-
-
-
-
-
-
-
-
 
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
@@ -89,11 +80,13 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 		<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
 
-
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 				#View('air/legs')#
 		</cfif>
 	</div>
+
+<!--- TODO: messaging
+		christine says we can probably get rid of sUserMessage -need to investigate and remove --->
 
 	<cfif structKeyExists(session.searches[rc.SearchID], 'sUserMessage')>
 		<div id="usermessage" class="error">#session.searches[rc.SearchID].sUserMessage#</div>
@@ -123,8 +116,10 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
 
-				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)
-					AND nCount LTE 150>
+				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
+
+				<!--- TODO: Limit badge display
+				AND nCount LTE 150 --->
 
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>

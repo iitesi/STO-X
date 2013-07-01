@@ -185,7 +185,7 @@ function filterAir() {
 		}
 	}
 
-
+	$('.spinner').hide();
 	console.log('Air Count =' + aCount);
 	return false;
 }
@@ -632,7 +632,7 @@ function filterCar(howFilter) {
 		}
 		else {
 			$( "#" + car[0] ).hide();
-		}			
+		}
 																							//console.log(car)
 		/* if (($( "#fltrCategory" + car[1] ).is(':checked') == true)
 		|| ($( "#fltrVendor" + car[2] ).is(':checked') == true)

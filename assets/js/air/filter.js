@@ -1,17 +1,16 @@
 $(document).ready(function(){
-
 //------------------------------------------------------------------------------
 // FILTER
 //------------------------------------------------------------------------------
 	// hide filter bar and message div by default
-	$('.filterselection, #filtermsg').hide();
+	$('.filterselection, #filtermsg, .spinner').hide();
 
 	$('#filtermsg .close').on('click', function() {
 		$(this).parent().hide();
 	});
 
-	$('.closefilterwell').on('click', function() {
-		$('.filterselection').slideUp();
+	$('.closewell').on('click', function() {
+		$(this).parent().slideUp();
 	});
 
 	$('#removefilters').on('click', function() {
@@ -47,6 +46,7 @@ $(document).ready(function(){
 	 		$('#SingleCarrier').val('0')
 	 		$("#singlecarrierbtn").parent().removeClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -59,6 +59,7 @@ $(document).ready(function(){
 	 		$('#InPolicy').val('0')
 	 		$("#inpolicybtn").parent().removeClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -71,6 +72,7 @@ $(document).ready(function(){
 	 		$('#NonStops').val('0')
 	 		$("#nonstopbtn").parent().removeClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -82,6 +84,7 @@ $(document).ready(function(){
 		} else {
 			$("#airlinebtn").parent().addClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -99,6 +102,7 @@ $(document).ready(function(){
 		} else {
 			$("#classbtn").parent().addClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -108,7 +112,7 @@ $(document).ready(function(){
 		$("#classbtn").parent().addClass('active');
 	}
 
-	// Fares (set of checkboxs - default = all checked)
+	// Fares (set of checkboxes - default = all checked)
 	$('input[name^="Fare"]').on('change', function() {
 		var fields = $('#fares').find('input[name^="Fare"]:checked');
 		if (!fields.length){
@@ -116,6 +120,7 @@ $(document).ready(function(){
 		} else {
 			$("#farebtn").parent().addClass('active');
 		}
+		$('.spinner').show();
 		filterAirDelay.run();
 	});
 
@@ -129,6 +134,8 @@ $(document).ready(function(){
 // SORTING
 //------------------------------------------------------------------------------
 	$('[id^=sortby]').on('click', function() {
+			$('.spinner').show();
+
 			// sort flights
 			sortAir( $(this).attr("id") );
 

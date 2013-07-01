@@ -1,18 +1,6 @@
-<cfcomponent>
+<cfcomponent extends="abstract" output="false">
 
 <!---
-init
---->
-	<cfset variables.fw = ''>
-	<cffunction name="init" output="false">
-		<cfargument name="fw">
-
-		<cfset variables.fw = arguments.fw>
-
-		<cfreturn this>
-	</cffunction>
-
-<!--- 
 default
 --->
 	<cffunction name="default" output="false">
@@ -35,5 +23,5 @@ default
 		</cfif>
 
 	</cffunction>
-	
+
 </cfcomponent>
