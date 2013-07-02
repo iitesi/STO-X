@@ -1,5 +1,12 @@
-var app = angular.module( 'hotelSearch' , [ 'app.controllers','app.services','app.directives' ]);
+var app = angular.module( 'hotelSearch' , [ 'app.controllers','app.services' ]);
 
+app.directive('hotelRepeatDirective', function() {
+	return function(scope, element, attrs) {
+	if (scope.$last){
+		$("[rel='tooltip']").tooltip();
+	}
+  };
+});
 
 app.config([ '$routeProvider', function( $routeProvider) {
 	$routeProvider.
