@@ -24,6 +24,11 @@
 			.modal-body {
 				overflow-y: auto;
 			}
+			.dropdown-menu {
+				max-height: 260px;
+				overflow-y: auto;
+				overflow-x: hidden;
+			}
 		</style>
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />
