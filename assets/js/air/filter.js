@@ -2,18 +2,15 @@ $(document).ready(function(){
 //------------------------------------------------------------------------------
 // FILTER
 //------------------------------------------------------------------------------
-	// hide filter bar and message div by default
-	$('.filterselection, #filtermsg, .spinner').hide();
 
-	$('#filtermsg .close').on('click', function() {
-		$(this).parent().hide();
-	});
+	// hide filter bar and message div by default
+	$('.filterselection, .spinner').hide();
 
 	$('.closewell').on('click', function() {
-		$(this).parent().slideUp();
+		$(this).parent().parent().slideUp();
 	});
 
-	$('#removefilters').on('click', function() {
+	$('.removefilters').on('click', function() {
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
@@ -26,14 +23,11 @@ $(document).ready(function(){
 		sortAir( sortbyprice );
 
 		// TODO: hack to show all flights by default
-		// 9:59 AM Thursday, June 20, 2013 - Jim Priest - jpriest@shortstravel.com
 		$('[id^="flight"]').show();
-
 	});
 
 	$('.filterby').on('click', function() {
 		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1});
-		scrollTo("filtermsg");
 	});
 
 // toggle active button state if filter is active
@@ -151,7 +145,7 @@ $(document).ready(function(){
 			}
 	});
 
-}); // $(document).ready(function(){
+}); // end of $(document).ready(function()
 
 // -----------------------------------------------------------------------------
 // MISC FUNCTIONS

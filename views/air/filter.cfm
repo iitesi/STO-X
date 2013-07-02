@@ -20,11 +20,6 @@ F = first
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
-<div id="filtermsg" class="alert">
-	<button type="button" class="close">&times;</button>
-	<span></span>
-</div>
-
 <div id="filterbar" class="filter">
 	<div class="row">
 		<div class="sixteen columns">
@@ -69,7 +64,7 @@ F = first
 				</div>
 				<div>
 					<cfoutput>
-						<h4>XXX of #StructCount(session.searches[rc.SearchID].stTrips)# flights displayed <a href="##" id="removefilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+						<h4><span id="flightCount">#totalflights# of #totalflights#</span> flights displayed  <a href="##" class="removefilters pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
 					</cfoutput>
 				</div>
 
