@@ -11,16 +11,6 @@ F = first
 (X) = not selected
  --->
 
-<cfset totalFlights = 0>
-<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")>
-	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.1>
-</cfif>
-<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")>
-	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.0>
-</cfif>
-
-<p>Total = #totalflights#</p>
-
 <!---
 acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
 asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>

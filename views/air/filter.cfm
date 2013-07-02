@@ -64,7 +64,7 @@ F = first
 				</div>
 				<div>
 					<cfoutput>
-						<h4><span id="flightCount">#totalflights# of #totalflights#</span> flights displayed  <a href="##" class="removefilters pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+						<h4><span id="flightCount">#rc.totalflights# of #rc.totalflights#</span> flights displayed  <a href="##" class="removefilters pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
 					</cfoutput>
 				</div>
 
