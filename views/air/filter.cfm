@@ -34,8 +34,8 @@ F = first
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
-										<li><a href="#" id="sortbyprice1bag"title="Sort by price with 1 bag">Price + 1 Bag</a></li>
-										<li><a href="#" id="sortbyprice2bag"title="Sort by price with 2 bags">Price + 2 Bags</a></li>
+										<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
+										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
 									</ul>
 								<cfelse>
 									<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
@@ -88,7 +88,7 @@ F = first
 									</cfloop>
 
 									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
-										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines"><i class="icon-plus-sign"></i> More Airlines</a>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="findMoreModal" data-modal="airlines"><i class="icon-plus-sign"></i> More Airlines</a>
 									</cfif>
 								</div>
 
@@ -96,7 +96,7 @@ F = first
 									<b>Class</b>
 									<!--- Y = economy/coach --->
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
-										<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y">Economy<br/ > <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
+										<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y">Economy<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
 									</cfif>
 
 									<!--- C = business --->
@@ -116,10 +116,10 @@ F = first
 									</cfif>
 
 									<cfif session.filterStatus.cabinSearch.C EQ 0>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares"><i class="icon-plus-sign"></i> More Business Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares" class="findMoreModal" data-modal="business class fares"><i class="icon-plus-sign"></i> More Business Class</a><br />
 									</cfif>
 									<cfif session.filterStatus.cabinSearch.F EQ 0>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares"><i class="icon-plus-sign"></i> More First Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares" class="findMoreModal" data-modal="first class fares"><i class="icon-plus-sign"></i> More First Class</a><br />
 									</cfif>
 								</div>
 
@@ -137,12 +137,12 @@ F = first
 										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')
 										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.1 NEQ 0
 										OR session.filterStatus.refundableSearch NEQ 0)>
-										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" v♠alue="1"> Refundable
+										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1"> Refundable
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
 									</cfif>
 
 									<cfif session.filterStatus.refundableSearch EQ 0>
-										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares"><i class="icon-plus-sign"></i> More Refundable</a>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares" class="findMoreModal" data-modal="refundable fares"><i class="icon-plus-sign"></i> More Refundable</a>
 									</cfif>
 								</div>
 							</cfoutput>

@@ -62,7 +62,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-				#View('air/legs')#
+<!--- 				#View('air/legs')# --->
 		</cfif>
 	</div>
 
@@ -80,7 +80,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 			#View('air/filter')#
 
-			<br clear="both">
+			<!--- <br clear="both"> --->
 
 
 
@@ -90,7 +90,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
 				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 				<cfset nCount++>
-				#View('air/badge')#
+				<!--- #View('air/badge')# --->
 			</cfloop>
 
 			<!--- Display standard fare based search --->
@@ -104,7 +104,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
-					#View('air/badge')#
+					<!--- #View('air/badge')# --->
 				</cfif>
 			</cfloop>
 
@@ -128,7 +128,9 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			</script>
 
 		<div class="container noFlightsFound">
-			<br clear="both">
+
+<!--- 			<br clear="both"> --->
+
 			<h1>No Flights Available</h1>
 			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
 		</div>
@@ -147,6 +149,12 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<input type="hidden" name="SearchID" value="#rc.SearchID#">
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 	</form>
-
 </cfoutput>
 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+	</div>
+	<div id="myModalBody" class="modal-body"></div>
+</div>

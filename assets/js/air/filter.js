@@ -3,6 +3,11 @@ $(document).ready(function(){
 // FILTER
 //------------------------------------------------------------------------------
 
+	$('.findMoreModal').on('click', function() {
+		$('#myModal').modal();
+		$('#myModalBody').text( '...more ' + $(this).attr('data-modal') + '.' );
+	});
+
 	// hide filter bar and message div by default
 	$('.filterselection, .spinner').hide();
 
