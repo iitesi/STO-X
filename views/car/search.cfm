@@ -34,12 +34,12 @@
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu">
-												<li><a href="##" data-value="00:00">Any time</a></li>
-												<li><a href="##" data-value="06:00">Early Morning</a></li>
-												<li><a href="##" data-value="10:00">Late Morning</a></li>
-												<li><a href="##" data-value="14:00">Afternoon</a></li>
-												<li><a href="##" data-value="18:00">Evening</a></li>
-												<li><a href="##" data-value="23:00">Red Eye</a></li>
+												<li><a href="##" data-value="Anytime">Anytime</a></li>
+												<li><a href="##" data-value="Early Morning">Early Morning</a></li>
+												<li><a href="##" data-value="Late Morning">Late Morning</a></li>
+												<li><a href="##" data-value="Afternoon">Afternoon</a></li>
+												<li><a href="##" data-value="Evening">Evening</a></li>
+												<li><a href="##" data-value="Red Eye">Red Eye</a></li>
 												<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
 												<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
 												<li><a href="##" data-value="08:00"> 8:00 AM</a></li>
@@ -78,12 +78,12 @@
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu">
-												<li><a href="##" data-value="00:00">Any time</a></li>
-												<li><a href="##" data-value="06:00">Early Morning</a></li>
-												<li><a href="##" data-value="10:00">Late Morning</a></li>
-												<li><a href="##" data-value="14:00">Afternoon</a></li>
-												<li><a href="##" data-value="18:00">Evening</a></li>
-												<li><a href="##" data-value="23:00">Red Eye</a></li>
+												<li><a href="##" data-value="Anytime">Anytime</a></li>
+												<li><a href="##" data-value="Early Morning">Early Morning</a></li>
+												<li><a href="##" data-value="Late Morning">Late Morning</a></li>
+												<li><a href="##" data-value="Afternoon">Afternoon</a></li>
+												<li><a href="##" data-value="Evening">Evening</a></li>
+												<li><a href="##" data-value="Red Eye">Red Eye</a></li>
 												<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
 												<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
 												<li><a href="##" data-value="08:00"> 8:00 AM</a></li>

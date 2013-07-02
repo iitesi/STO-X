@@ -954,6 +954,10 @@ tr.hotel-room td{
         background-color: #F0F0F0;
     }
 
+#changeSearchWindow div.form-row{
+    margin-bottom: 10px;
+}
+
 
 /*
 ----------------------------------------------------------------------------------------------------------

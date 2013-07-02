@@ -45,6 +45,16 @@ services.factory( "SearchService", function( $http ){
 				});
 	}
 
+	SearchService.loadPolicy = function( policyId ){
+		return $http.get( "/booking/RemoteProxy.cfc?method=getPolicy&policyId=" + policyId )
+			.then( function( response ){ return response.data })
+	}
+
+	SearchService.loadAccount = function( accountId ){
+		return $http.get( "/booking/RemoteProxy.cfc?method=getAccount&accountId=" + accountId )
+			.then( function( response ){ return response.data })
+	}
+
 	return SearchService;
 });
 
@@ -94,11 +104,6 @@ services.factory( "HotelService", function( $http ){
 					Hotel.selectedImage = "";
 				}
 			})
-	}
-
-	HotelService.loadPolicy = function( policyId ){
-		return $http.get( "/booking/RemoteProxy.cfc?method=getPolicy&policyId=" + policyId )
-			.then( function( response ){ return response.data })
 	}
 
 	HotelService.selectRoom = function( Search, Hotel, Room ){
