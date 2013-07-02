@@ -62,7 +62,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-<!--- 				#View('air/legs')# --->
+				#View('air/legs')#
 		</cfif>
 	</div>
 
@@ -80,17 +80,13 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 			#View('air/filter')#
 
-			<!--- <br clear="both"> --->
-
-
-
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
 			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
 				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 				<cfset nCount++>
-				<!--- #View('air/badge')# --->
+				#View('air/badge')#
 			</cfloop>
 
 			<!--- Display standard fare based search --->
@@ -98,13 +94,9 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
 
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
-
-				<!--- TODO: Limit badge display
-				AND nCount LTE 150 --->
-
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
-					<!--- #View('air/badge')# --->
+					#View('air/badge')#
 				</cfif>
 			</cfloop>
 
@@ -128,9 +120,6 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			</script>
 
 		<div class="container noFlightsFound">
-
-<!--- 			<br clear="both"> --->
-
 			<h1>No Flights Available</h1>
 			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
 		</div>
