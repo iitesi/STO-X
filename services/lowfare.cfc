@@ -190,10 +190,18 @@
 								OR arguments.Filter.getAirType() EQ 'OW'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
-											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+											<cfif arguments.filter.getAirFromCityCode() EQ 1>
+												<com:City Code="#arguments.Filter.getDepartCity()#" />
+											<cfelse>
+												<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+											</cfif>
 										</air:SearchOrigin>
 										<air:SearchDestination>
-											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+											<cfif arguments.filter.getAirToCityCode() EQ 1>
+												<com:City Code="#arguments.Filter.getArrivalCity()#" />
+											<cfelse>
+												<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+											</cfif>
 										</air:SearchDestination>
 										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
 										<air:AirLegModifiers>
@@ -210,10 +218,18 @@
 								<cfif arguments.Filter.getAirType() EQ 'RT'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
-											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+											<cfif arguments.filter.getAirToCityCode() EQ 1>
+												<com:City Code="#arguments.Filter.getArrivalCity()#" />
+											<cfelse>
+												<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+											</cfif>
 										</air:SearchOrigin>
 										<air:SearchDestination>
-											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+											<cfif arguments.filter.getAirFromCityCode() EQ 1>
+												<com:City Code="#arguments.Filter.getDepartCity()#" />
+											<cfelse>
+												<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+											</cfif>
 										</air:SearchDestination>
 										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
 										<air:AirLegModifiers>
@@ -230,10 +246,18 @@
 									<cfloop query="qSearchLegs">
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
-												<com:Airport Code="#qSearchLegs.Depart_City#" />
+												<cfif arguments.filter.getAirFromCityCode() EQ 1>
+													<com:City Code="#arguments.Filter.getDepartCity()#" />
+												<cfelse>
+													<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+												</cfif>
 											</air:SearchOrigin>
 											<air:SearchDestination>
-												<com:Airport Code="#qSearchLegs.Arrival_City#" />
+												<cfif arguments.filter.getAirToCityCode() EQ 1>
+													<com:City Code="#arguments.Filter.getArrivalCity()#" />
+												<cfelse>
+													<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+												</cfif>
 											</air:SearchDestination>
 											<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
 											<air:AirLegModifiers>
