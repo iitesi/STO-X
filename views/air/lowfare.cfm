@@ -47,7 +47,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<h1>#rc.Filter.getAirHeading()#</h1>
 			<ul  class="unstyled">
 				<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#<small></h2></li>
+					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
 				</cfloop>
 			</ul>
 		<cfelse>
