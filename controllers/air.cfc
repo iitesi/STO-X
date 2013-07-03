@@ -39,22 +39,11 @@
 
 		<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
 		<cfset checkFilterStatus(arguments.rc)>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="endlowfare" output="false">
-		<cfargument name="rc">
+		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<!---
-			<cfif arguments.rc.Filter.getHotel()
-			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
-			</cfif>
-			--->
 			<cfif arguments.rc.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -62,6 +51,7 @@
 
 		<cfreturn />
 	</cffunction>
+
 
 <!---
 availability
@@ -80,7 +70,7 @@ availability
 			<!--- Select --->
 			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
-
+		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 		<cfreturn />
 	</cffunction>
 
@@ -207,5 +197,19 @@ seatmap
 			<cfset session.filterStatus.airlines = 1>
 		</cfif>
 	</cffunction>
+
+	<cffunction name="getTotalFlights" access="private" hint="I pull the total number of flights out of the session scope.">
+		<cfargument name="rc" required="true">
+		<cfset var totalFlights = 0>
+		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails.stResults, "1")>
+			<cfset totalFlights = totalFlights + session.searches[arguments.rc.SearchID].stLowFareDetails.stResults.1>
+		</cfif>
+		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails.stResults, "0")>
+			<cfset totalFlights = totalFlights + session.searches[arguments.rc.SearchID].stLowFareDetails.stResults.0>
+		</cfif>
+
+		<cfreturn totalFlights />
+	</cffunction>
+
 
 </cfcomponent>

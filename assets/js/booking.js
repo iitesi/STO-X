@@ -101,104 +101,83 @@ function getUnusedTickets(userid, acctid) {
 	7	Stops							0/1/2
 ----------------------------------------------------------------------*/
 function filterAir() {
-	var aCount = 0;
-	var classy = $( "#ClassY:checked" ).val();  	// economy class
-	var classc = $( "#ClassC:checked" ).val();		// business class
-	var classf = $( "#ClassF:checked" ).val();		// first class
-	var fare0 = $( "#Fare0:checked" ).val();  		// non-refundable
-	var fare1 = $( "#Fare1:checked" ).val();			// refundable
-	var nonstops = $( "input:checkbox[name=NonStops]:checked" ).val();
-	var inpolicy = $( "input:checkbox[name=InPolicy]:checked" ).val();
-	var singlecarrier = $( "input:checkbox[name=SingleCarrier]:checked" ).val();
+	var carriercount = 0;
+	var showCount = 0;
+	var hideCount = 0;
+	var loopcnt = 0;
+	var classy = $("#ClassY:checked").val();
+	var classc = $("#ClassC:checked").val();
+	var classf = $("#ClassF:checked").val();
+	var fare0 = $("#Fare0:checked").val();
+	var fare1 = $("#Fare1:checked").val();
+	var nonstops = $("#NonStops").val();
+	var inpolicy = $("#InPolicy").val();
+	var singlecarrier = $("#SingleCarrier").val();
 
-// console.log('-----------------------------------------------------------------');
-// console.log('nonstops - '+nonstops);
-// console.log('inpolicy - '+inpolicy);
-// console.log('singlecarrier - '+singlecarrier);
-// console.log('ran');
+	// console.log('-------------------------');
+	// console.log('Y - '+classy);
+	// console.log('C - '+classc);
+	// console.log('F - '+classf);
+	// console.log('0 - '+fare0);
+	// console.log('1 - '+fare1);
+	// console.log('nonstops - '+nonstops);
+	// console.log('inpolicy - '+inpolicy);
+	// console.log('singlecarrier - '+singlecarrier);
+	// console.log('-------------------------');
 
 	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 		var flight = flightresults[loopcnt];
-
-// console.log('-start------------------------------------------------------------');
-// console.log(flight)
-
 		if ((flight[6] == 'Y' && classy == undefined)
 			|| (flight[6] == 'C' && classc == undefined)
 			|| (flight[6] == 'F' && classf == undefined)
 			|| (flight[4] == 0 && fare0 == undefined)
 			|| (flight[4] == 1 && fare1 == undefined)
-			|| (nonstops == 'on' && flight[7] != 0)
-			|| (inpolicy == 'on' && flight[1] != 1)
-			|| (singlecarrier == 'on' && flight[2] != 0)) {
+			|| (nonstops == 1 && flight[7] != 0)
+			|| (inpolicy == 1 && flight[1] != 1)
+			|| (singlecarrier == 1 && flight[2] != 0)) {
 
-		$( '#flight' + flight[0] ).hide( 'fade' );
-
-		// THIS WORKS TO DISPLAY *ALL* FLIGHTS
-		// NEED TO DETERMINE FIRST LOAD?
-		// $( '#' + flight[0] ).show( 'fade' );
-
-		$('#filtermsg').addClass('alert-error');
-		$('#filtermsg span').text('OH NO THERE ARE NO FLIGHTS! #1')
-
-// console.log('hide - '+flight[0]);
-// console.log('hide - classofservice Y - '+(flight[6] == 'Y' && classy == undefined));
-// // console.log('hide - fares - '+(fares != flight[4]));
-// console.log('hide - nonstops - '+(nonstops == 'on' && flight[7] != 0));
-// console.log('hide - inpolicy - '+(inpolicy == 'on' && flight[1] != 1));
-// // console.log('hide - classofservice - '+(classOfService != flight[6]));
-// console.log('hide - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
-// console.log('-end--------------------------------------------------------------');
-
-
+			// if the flight matches any of the criteria above - we'll hide it
+			$( '#flight' + flight[0] ).hide( 'fade' );
 		}	else {
+			// check which airlines are checked
 			carriercount = 0;
 			for (var i = 0; i < flight[3].length; i++) {
 				if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
 					carriercount++;
 				}
-			}
+			} // for flight loop
 
 			if (carriercount == 0) {
 				$( '#flight' + flight[0] ).hide( 'fade' );
-
-					$('#filtermsg').addClass('alert-error');
-					$('#filtermsg span').text('OH NO THERE ARE NO FLIGHTS! #2')
-
 			}	else {
+				showCount++;
 				$( '#flight' + flight[0] ).show( 'fade' );
+			} // (carriercount == 0)
+		} // if/else
+	} // for loop
 
-					$('#filtermsg').removeClass('alert-error').addClass('alert-success');
-					$('#filtermsg span').text(' WHEW - THERE ARE FLIGHTS NOW!')
+	console.log('Show Count =' + showCount);
+	console.log('Hide Count =' + hideCount);
+	console.log(flightresults.length);
 
-				aCount++;
-
-				//console.log('---------------------------------------------------------------------');
-				//console.log('show - '+flight[0]);
-				//console.log('show - classofservice - '+(classofservice != flight[6]));
-				//console.log('show - fares - '+(fares != flight[4]));
-				//console.log('show - nonstops - '+(nonstops == 'on' && flight[7] != 0));
-				//console.log('show - inpolicy - '+(inpolicy == 'on' && flight[1] != 1));
-				//console.log('show - classofservice - '+(classofservice != flight[6]));
-				//console.log('show - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
-			}
-		}
+	if(showCount == 0){
+		$('.noFlightsFound').show();
 	}
 
+ 	$('#flightCount').text(showCount + ' of ' + flightresults.length);
 	$('.spinner').hide();
-	console.log('Air Count =' + aCount);
 	return false;
-}
+} // function filterAir()
+
 
 function sortAir(sort) {
 	var sortlist = eval( sort );
-	console.log(sortlist);
+	// console.log(sortlist);
 	for (var t = 0; t < sortlist.length; t++) {
 		$( "#aircontent" ).append( $( "#flight" + sortlist[t] ) );
 	}
 	return false;
 }
-
 
 function AirPrice(searchid, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",

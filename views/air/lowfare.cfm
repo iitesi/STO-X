@@ -1,6 +1,5 @@
 <cfoutput>
-<!---
-AIR CODES
+<!--- AIR CODES
 -----------------------
 1 = refundable
 0 = non refundable
@@ -10,42 +9,24 @@ C = business
 F = first
 -----------------------
 (X) = not selected
-
-
-0	number	106
-1	number	225  331
-
-C	number	18
-F	number	19
-Y	number	294  331
  --->
 
-<cfset totalFlights = 0>
-
-<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")>
-	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.1>
-</cfif>
-
-<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")>
-	<cfset totalFlights = totalFlights + session.searches[rc.SearchID].stLowFareDetails.stResults.0>
-</cfif>
-
 <!---
-<p>Total Flights (1+0) =  #totalFlights#</p>
-FROM SESSION.SEARCHES0[rc.SearchID]<br>
-================================================================================<br>
 acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
 asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
 asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
 asortbag2 =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag2)#<br>
-sortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
-sortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
+asortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
+asortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
 asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)#<br>
 <cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpriced)#" />
 <cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
-<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
 <cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
-<cfdump var="#session.searches[rc.SearchID]#"  expand="false"/> --->
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
+<cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
+<cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
+
+--->
 </cfoutput>
 
 <cfsilent>
@@ -99,10 +80,6 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 			#View('air/filter')#
 
-			<br clear="both">
-
-
-
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
@@ -117,10 +94,6 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
 
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
-
-				<!--- TODO: Limit badge display
-				AND nCount LTE 150 --->
-
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
 					#View('air/badge')#
@@ -146,30 +119,31 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 					</cfloop>];
 			</script>
 
-			<!---
-			TODO: add message when there are no flights when filtering
-			3:45 PM Thursday, June 20, 2013 - Jim Priest - jpriest@shortstravel.com
-			--->
-			<br clear="both">
-			<h1>SOMETHING SHOULD GO HERE IF THERE ARE NO FLIGHTS WHEN FILTERING</h1>
-
-<cfelse>
-
+		<div class="container noFlightsFound">
+			<h1>No Flights Available</h1>
+			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
+		</div>
+	<cfelse>
 		<div class="container">
 			<h3>No Flights Returned</h2>
 			<p>There were no flights found based on your search criteria.</p>
 			<p>Please <a href="#application.sPortalURL#">change your search</a> and try again.</p>
 			<br /><br /><br /><br /><br /><br />
 		</div>
-
-		</cfif>
-	</div>
+	</cfif>
+</div>
 
 	<form method="post" action="#buildURL('air.lowfare')#" id="lowfareForm">
 		<input type="hidden" name="bSelect" value="1">
 		<input type="hidden" name="SearchID" value="#rc.SearchID#">
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 	</form>
-
 </cfoutput>
 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+	</div>
+	<div id="myModalBody" class="modal-body"></div>
+</div>
