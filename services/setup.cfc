@@ -112,6 +112,8 @@
 					<cfcase value="MD" >
 						<cfset var local.breadCrumb = "">
 
+						<!--- FYI legs are also added in com/shortstravel/search/searchManager.load() --->
+
 						<cfloop query="getsearchlegs">
 							<cfif Len(local.breadCrumb)>
 								<cfif ListLast(local.breadCrumb, '-') NEQ depart_city AND  depart_city NEQ arrival_city>
@@ -129,7 +131,6 @@
 						<cfset searchfilter.setAirHeading("Multi-city Destinations")>
 						<cfset searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(getSearchLegs.Depart_DateTime[getSearchLegs.recordCount], 'm/d')#")>
 					</cfcase>
-
 				</cfswitch>
 
 			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
