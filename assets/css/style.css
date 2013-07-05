@@ -334,6 +334,7 @@ ul.tabs li a.active {
 	box-shadow:         4px 4px 10px rgba(50, 50, 50, 0.5);
 	position: absolute;
 	z-index: 99;
+	display: none;
 }
 
 .filter .navbar-inner {
