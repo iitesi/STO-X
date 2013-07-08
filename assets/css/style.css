@@ -345,6 +345,7 @@ ul.tabs li a.active {
 .spinner {
 	color: #045596;
 	padding-right: 2em;
+	display: none;
 }
 
 .noFlightsFound {

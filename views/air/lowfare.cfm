@@ -32,10 +32,9 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
+	<cfset variables.minheight = 200>
 	<cfif nLegs EQ 2>
 		<cfset variables.minheight = 250>
-	<cfelseif nLegs EQ 1>
-		<cfset variables.minheight = 150>
 	<cfelseif nLegs EQ 3>
 		<cfset variables.minheight = 300>
 	</cfif>

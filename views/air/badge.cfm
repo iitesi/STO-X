@@ -1,5 +1,4 @@
-<cfparam name="variables.minheight" default="100"/>
-
+<cfparam name="variables.minheight" default="200"/>
 <cfset ribbonClass = "">
 
 <cfsavecontent variable="sBadge" trim="#true#">
