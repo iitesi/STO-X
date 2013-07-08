@@ -133,7 +133,7 @@
 </div>
 
 <!--- Modal window to be displayed while search is occurring. --->
-<div id="pleaseWait" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
+<div id="pleaseWait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myPleaseWaitWindow" aria-hidden="true">
 	<div class="modal-header">
 		<h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
 	</div>
