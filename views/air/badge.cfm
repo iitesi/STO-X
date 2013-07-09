@@ -1,4 +1,4 @@
-<cfparam name="variables.minheight" default="200"/>
+<cfparam name="variables.minheight" default="250"/>
 <cfset ribbonClass = "">
 
 <cfsavecontent variable="sBadge" trim="#true#">
@@ -7,7 +7,7 @@
 
 			<!--- display ribbon --->
 
-			<!--- TODO - all this should be moved into contoller / service as 'getRibbon()'
+			<!--- TODO - all this should be moved into controller / service as 'getRibbon()'
 			3:45 PM Monday, June 24, 2013 - Jim Priest - jpriest@shortstravel.com --->
 			<cfif stTrip.preferred EQ 1>
 				<cfset ribbonClass = "ribbon-l-pref">
