@@ -65,10 +65,11 @@
 
 	<cffunction name="getCarPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="acctID" type="numeric" required="true"/>
+		<cfargument name="userID" type="numeric" required="true"/>
 		<cfargument name="valueID" type="numeric" required="false" default="0"/>
 		<cfargument name="vendor" type="string" required="false" default=""/>
 
-		<cfreturn getBean( "PaymentService" ).getCarPayments( acctID = arguments.acctID, valueID = arguments.valueID, vendor = arguments.vendor ) />
+		<cfreturn getBean( "PaymentService" ).getCarPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID, vendor = arguments.vendor ) />
 	</cffunction>
 
 
