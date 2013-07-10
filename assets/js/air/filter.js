@@ -3,9 +3,9 @@ $(document).ready(function(){
 // FILTER
 //------------------------------------------------------------------------------
 
-	$('.findMoreModal').on('click', function() {
+	$('.airModal').on('click', function() {
 		$('#myModal').modal();
-		$('#myModalBody').text( '...more ' + $(this).attr('data-modal') + '.' );
+		$('#myModalBody').text( $(this).attr('data-modal') );
 	});
 
 	$('.closewell').on('click', function() {

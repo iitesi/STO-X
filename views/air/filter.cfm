@@ -86,7 +86,7 @@ F = first
 									</cfloop>
 
 									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
-										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="findMoreModal" data-modal="airlines"><i class="icon-plus-sign"></i> More Airlines</a>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="icon-plus-sign"></i> More Airlines</a>
 									</cfif>
 								</div>
 
@@ -114,10 +114,10 @@ F = first
 									</cfif>
 
 									<cfif session.filterStatus.cabinSearch.C EQ 0>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares" class="findMoreModal" data-modal="business class fares"><i class="icon-plus-sign"></i> More Business Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="icon-plus-sign"></i> More Business Class</a><br />
 									</cfif>
 									<cfif session.filterStatus.cabinSearch.F EQ 0>
-										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares" class="findMoreModal" data-modal="first class fares"><i class="icon-plus-sign"></i> More First Class</a><br />
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="icon-plus-sign"></i> More First Class</a><br />
 									</cfif>
 								</div>
 
@@ -140,7 +140,7 @@ F = first
 									</cfif>
 
 									<cfif session.filterStatus.refundableSearch EQ 0>
-										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares" class="findMoreModal" data-modal="refundable fares"><i class="icon-plus-sign"></i> More Refundable</a>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="icon-plus-sign"></i> More Refundable</a>
 									</cfif>
 								</div>
 							</cfoutput>
