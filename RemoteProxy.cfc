@@ -15,6 +15,44 @@
 
 		<cfreturn getBean( "UserService" ).load( arguments.userId ) />
 	</cffunction>
+	
+
+	<cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="userID" type="numeric" required="true"/>
+		<cfargument name="acctID" type="numeric" required="true"/>
+
+		<cfreturn getBean( "UserService" ).loadFullUser( arguments.userId, arguments.acctID ) />
+	</cffunction>
+	
+
+	<cffunction name="loadOrgUnit" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="acctID" type="numeric" required="true">
+		<cfargument name="valueID" type="numeric" required="true">
+		<cfargument name="userID" type="numeric" required="true">
+
+		<cfreturn getBean( "OrgUnitService" ).loadOrgUnit( acctID = arguments.acctID, valueID = arguments.valueID, userID = arguments.userID ) />
+	</cffunction>
+
+
+	<cffunction name="getOrgUnitValues" returntype="any" access="remote" output="false" returnformat="JSON">
+		<cfargument name="ouID" required="true">
+		<cfargument name="conditionalSort1" required="false" default="">
+		<cfargument name="conditionalSort2" required="false" default="">
+		<cfargument name="conditionalSort3" required="false" default="">
+		<cfargument name="conditionalSort4" required="false" default="">
+		<cfargument name="conditionalSort5" required="false" default="">
+		<cfargument name="returnFormat" type="string" required="false" default="array"/>
+
+		<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
+																			, conditionalSort1 = arguments.conditionalSort1
+																			, conditionalSort2 = arguments.conditionalSort2
+																			, conditionalSort3 = arguments.conditionalSort3
+																			, conditionalSort4 = arguments.conditionalSort4
+																			, conditionalSort5 = arguments.conditionalSort5
+																			, returnFormat = arguments.returnFormat ) />
+
+		<cfreturn serializeJSON( qOrgUnitValues ) />
+	</cffunction>
 
 
 	<cffunction name="getUserCCEmails" returntype="any" access="remote" output="false" hint="" returnformat="json">
@@ -22,6 +60,25 @@
 		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
 
 		<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
+	</cffunction>
+	
+
+	<cffunction name="getCarPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="acctID" type="numeric" required="true"/>
+		<cfargument name="userID" type="numeric" required="true"/>
+		<cfargument name="valueID" type="numeric" required="false" default="0"/>
+		<cfargument name="vendor" type="string" required="false" default=""/>
+
+		<cfreturn getBean( "PaymentService" ).getCarPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID, vendor = arguments.vendor ) />
+	</cffunction>
+
+
+	<cffunction name="getUserPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="userId" type="numeric" required="true"/>
+		<cfargument name="acctID" type="numeric" required="true"/>
+		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
+
+		<cfreturn getBean( "PaymentService" ).getUserPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID ) />
 	</cffunction>
 
 

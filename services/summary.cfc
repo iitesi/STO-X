@@ -1,11 +1,38 @@
 <cfcomponent output="false">
 
-    <cffunction name="init" returntype="any" access="public" output="false" hint="I initialize this component">
+	<cffunction name="init" returntype="any" access="public" output="false" hint="I initialize this component">
 
-        <cfreturn this />
-    </cffunction>
+		<cfreturn this />
+	</cffunction>
 
-<!---
+	<cffunction name="travelerJSON" returntype="any" returnformat="plain" access="remote" output="false">
+		<cfargument name="searchID" required="true" type="numeric">
+		<cfargument name="travelerNumber" required="true" type="numeric">
+
+		<cfreturn  serializeJSON(session.searches[arguments.searchID].travelers[arguments.travelerNumber])/>
+	</cffunction>
+
+	<cffunction name="getOutOfPolicy" output="false">
+		<cfargument name="acctID" required="true" type="numeric">
+		
+		<cfquery name="local.qOutOfPolicy" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+			SELECT FareSavingsCode
+				, Description
+			FROM FareSavingsCode
+			WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+				AND FareSavingsCodeID NOT IN (35)
+				<cfif arguments.acctID NEQ 348>
+					AND Acct_ID IS NULL
+				<cfelse>
+					AND Acct_ID = <cfqueryparam value="348" cfsqltype="cf_sql_integer">
+				</cfif>
+			ORDER BY FareSavingsCode
+		</cfquery>
+		
+		<cfreturn qOutOfPolicy>
+	</cffunction>
+
+<!--- <!---
 saveSummary
 --->
 	<cffunction name="saveSummary" output="false">
@@ -195,7 +222,7 @@ saveSummary
 
 		<!--- Hotel Payment --->
 
-		<!--- Air Options --->
+		Air Options
 		<cfset stTraveler.Window_Aisle = Seats>
 		<cfloop array="#stItinerary.Air.Carriers#" index="nCarrierKey" item="sCarrier">
 			<cfset stTraveler.Air_FF[sCarrier] = local['Air_FF#sCarrier#']>
@@ -350,28 +377,6 @@ determineFees
 	</cffunction>
 
 <!---
-getOutOfPolicy
---->
-	<cffunction name="getOutOfPolicy" output="false">
-		<cfargument name="Acct_ID" default="#session.AcctID#">
-		
-		<cfquery name="local.qOutOfPolicy" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
-		SELECT FareSavingsCode, Description
-		FROM FareSavingsCode
-		WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		AND FareSavingsCodeID NOT IN (35)
-		<cfif arguments.Acct_ID NEQ 348>
-			AND Acct_ID IS NULL
-		<cfelse>
-			AND Acct_ID = <cfqueryparam value="348" cfsqltype="cf_sql_integer">
-		</cfif>
-		ORDER BY FareSavingsCode
-		</cfquery>
-		
-		<cfreturn qOutOfPolicy>
-	</cffunction>
-
-<!---
 getTXExceptionCodes
 --->
 	<cffunction name="getTXExceptionCodes" output="false">
@@ -386,5 +391,5 @@ getTXExceptionCodes
 		
 		<cfreturn qTXExceptionCodes>
 	</cffunction>
-
+ --->
 </cfcomponent>

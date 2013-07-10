@@ -1,21 +1,59 @@
-<cfif NOT structIsEmpty(session.searches[rc.SearchID].stItinerary)>
-	<!--- <cfif application.Accounts[session.AcctID].CouldYou> --->
-		<cfoutput>
-            <a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
-            <a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a> -
-            <a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>-
-            <a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
-		</cfoutput>
-	<!--- </cfif> --->
-	<!--- <cfset variables.stItinerary = session.searches[rc.SearchID].stItinerary>
-	<cfset variables.Air = (structKeyExists(stItinerary, 'Air') ? true : false)>
-	<cfset variables.Hotel = (structKeyExists(stItinerary, 'Hotel') ? true : false)>
-	<cfset variables.Car = (structKeyExists(stItinerary, 'Car') ? true : false)>
-	<cfif air>
-		<cfset variables.nLowestFare = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].Total>
-	</cfif>
+<!--- to do : move css once it is completed --->
+<style>
+.form-horizontal select, textarea, input {
+	padding: 0px;
+}
+</style>
 	<cfoutput>
-		<form method="post" action="#buildURL('summary')#">
+		<a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
+		<a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a> -
+		<a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>-
+		<a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
+	</cfoutput>
+
+	<form class="form-horizontal">
+
+		<cfoutput>
+
+			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
+			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
+			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
+			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
+			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
+			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
+			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
+			<input type="hidden" name="vendor" id="vendor" value="#(rc.vehicleSelected ? rc.Vehicle.getVendorCode() : '')#">
+			<div id="traveler" class="tab_content">
+				<p>
+					<div class="summarydiv" style="background-color: ##FFF">
+						#View('summary/traveler')#
+					</div>
+
+					<div class="summarydiv" style="background-color: ##FFF">
+						<div id="paymentForm"><td valign="top">#view( 'summary/payment' )#</td></div>
+					</div>
+					<br class="clearfix">
+
+					<cfset tripTotal = 0>
+					
+					#View('summary/air')#
+<!--- 					<br class="clearfix">
+
+					<cfif Car>
+						#View('summary/car')#
+						<br class="clearfix">
+					</cfif>
+
+					#View('summary/buttons')# --->
+				</p>
+			</div>
+			
+		</cfoutput>
+				
+		<script src="assets/js/summary/summary.js"></script>
+	</form>				
+			
+		<!--- <form method="post" action="#buildURL('summary')#">
 			<input type="hidden" name="SearchID" id="SearchID" value="#rc.SearchID#">
 			<input type="hidden" name="Air" id="Air" value="#Air#">
 			<input type="hidden" name="Car" id="Car" value="#Car#">
@@ -37,7 +75,7 @@
 			<input type="hidden" id="bDB" value="#stCD.DB#">
 			<input type="hidden" id="bCD" value="#stCD.CD#">
 			<cfset variables.nTraveler = 1>
-			<cfset variables.bTotalTrip = 0>
+			<cfset variables.tripTotal = 0>
 			<cfset variables.stTraveler = (StructKeyExists(session.searches[rc.SearchID].stTravelers, nTraveler) ? session.searches[rc.SearchID].stTravelers[nTraveler] : {})>
 			<div id="traveler" class="tab_content">
 				<p>
@@ -61,8 +99,8 @@
 					#View('summary/buttons')#
 				</p>
 			</div>
-		</form>
-		<cfdump var="#session.searches[rc.SearchID].stTravelers#">
+		</form> --->
+		<!---<cfdump var="#session.searches[rc.SearchID].stTravelers#">
 		<cfdump var="#stItinerary.Car#">
 		<!--- <cfset sType = (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')> --->
 		<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
@@ -79,10 +117,10 @@
 			//setUser(User);
 			<!---//setTravelerForm(1, 1, #userID#);--->
 		});
-		</script>
-	</cfoutput> --->
-<cfelse>
+		</script>--->
+
+<!--- <cfelse>
 	<cfoutput>
 		#View('summary/error')#
 	</cfoutput>
-</cfif>
+</cfif> --->

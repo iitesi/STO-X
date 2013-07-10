@@ -23,20 +23,30 @@
 	</bean>
 
 	<bean id="General" class="booking.services.general" />
+	<bean id="Summary" class="booking.services.summary" />
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+		<constructor-arg name="LoyaltyProgramService"><ref bean="LoyaltyProgramService" /></constructor-arg>
 	</bean>
 
 	<bean id="AccountService" class="com.shortstravel.account.AccountService">
-			<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
-			<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
 	</bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="OrgUnitManager" class="com.shortstravel.traveler.OrgUnitManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="OrgUnitService" class="com.shortstravel.traveler.OrgUnitService">
+		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /> </constructor-arg>
 	</bean>
 
 	<bean id="UserManager" class="com.shortstravel.security.UserManager">
@@ -86,10 +96,7 @@
 
     <bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
 		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
-	</bean>
-
-	<bean id="Summary" class="booking.services.summary" >
-		<constructor-arg name="TravelerService"><ref bean="TravelerService" /></constructor-arg>
+		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
 
 	<bean id="AirCreate" class="booking.services.AirCreate" >

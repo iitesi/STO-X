@@ -50,13 +50,12 @@
 		<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( rc.Traveler, rc.Payment, rc.Hotel, rc.Filter )>
 
 		<cfset rc.Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( rc.Hotel, rc.response )>
-<cfdump var="#rc.message#" abort="true">
 
-		<cfif rc.Vehicle.getConfirmation() EQ ''>
+		<cfif rc.Hotel.getConfirmation() EQ ''>
 			<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
 			<cfdump var="#rc.errorMessage#" abort="true">
 		<cfelse>
-			<cfdump var="#rc.Vehicle#" abort="true">
+			<cfdump var="#rc.Hotel#" abort="true">
 		</cfif>
 
 		<!--- <cfdump var="#rc.Traveler#">
