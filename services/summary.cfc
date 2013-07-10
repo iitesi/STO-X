@@ -32,6 +32,19 @@
 		<cfreturn qOutOfPolicy>
 	</cffunction>
 
+	<cffunction name="getStates" output="false">
+		
+		<cfquery name="local.qStates" datasource="book" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+			SELECT State_Code
+				, State_Name
+			FROM LU_States
+			WHERE State_Country = 'United States'
+			ORDER BY State_Code
+		</cfquery>
+		
+		<cfreturn qStates>
+	</cffunction>
+
 <!--- <!---
 saveSummary
 --->

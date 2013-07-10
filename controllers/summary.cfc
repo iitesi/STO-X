@@ -46,6 +46,7 @@ default
 
 		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( rc.Filter.getProfileID(), rc.Filter.getAcctID() )>
 		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID() )>
+		<cfset rc.qStates = fw.getBeanFactory().getBean('Summary').getStates()>
 		<!--- <cfset rc.OrgUnit = fw.getBeanFactory().getBean('OrgUnitService').load( acctID = rc.Filter.getAcctID()
 																				, valueID = rc.Filter.getValueID()
 																				, include = 'values' )> --->

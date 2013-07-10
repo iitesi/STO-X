@@ -21,8 +21,10 @@
 			<input type="text" name="middleName" id="middleName" placeholder="Middle" class="input-medium">
 			<input type="text" name="lastName" id="lastName" placeholder="Last" class="input-medium">
 			<br>
-			<input type="checkbox" name="noMiddleName" value="1">
-			<span class="help-inline">No Middle Name</span>
+			<label class="checkbox">
+				<input type="checkbox" name="noMiddleName" value="1">
+				No Middle Name
+			</label>
 		</div>
 	</div>
 
