@@ -1,24 +1,5 @@
 <cfcomponent extends="abstract">
 
-	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
-		<cfargument name="rc">
-
-		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
-
-		<cfif structKeyExists(session, "searches")>
-			<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
-		</cfif>
-
-		<cfif result IS true>
-			<cfset rc.message.AddInfo("Saved search deleted successfully!")>
-			<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
-		<cfelse>
-				<cfthrow message="Error removing a flight from the breadcrumb bar!"/>
-		</cfif>
-
-		<cfreturn />
-	</cffunction>
-
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
@@ -50,30 +31,21 @@
 		<cfreturn />
 	</cffunction>
 
-
-<!---
-availability
---->
-	<cffunction name="availability" output="true">
+	<cffunction name="availability" output="true" hint="I get info on legs when button is clicked on search results.">
 		<cfargument name="rc">
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset arguments.rc.sPriority = 'LOW'>
-			<!--- Throw out a threads --->
+			<!--- Throw out a threads and get availability --->
+			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
-			<!--- Do the availability search. --->
-			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
 			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
-		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
-		<cfreturn />
-	</cffunction>
 
-	<cffunction name="endavailability" output="true">
-		<cfargument name="rc">
+		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
@@ -94,10 +66,7 @@ availability
 		<cfreturn />
 	</cffunction>
 
-<!---
-popup
---->
-	<cffunction name="popup" output="true">
+	<cffunction name="popup" output="true" hint="I get detaials, seats, bags for modal">
 		<cfargument name="rc">
 
 		<cfset rc.bSuppress = 1>
@@ -127,10 +96,7 @@ popup
 		<cfreturn />
 	</cffunction>
 
-<!---
-seatmap
---->
-	<cffunction name="seatmap" output="true">
+	<cffunction name="seatmap" output="true" hint="I make a seat map.">
 		<cfargument name="rc">
 
 		<!--- Move needed variables into the rc scope. --->
@@ -154,6 +120,27 @@ seatmap
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
+		<cfargument name="rc">
+
+		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
+
+		<cfif structKeyExists(session, "searches")>
+			<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
+		</cfif>
+
+		<cfif result IS true>
+			<cfset rc.message.AddInfo("Saved search deleted successfully!")>
+			<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
+		<cfelse>
+				<cfthrow message="Error removing a flight from the breadcrumb bar!"/>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+
+<!--- PRIVATE METHODS --->
 	<cffunction name="checkFilterStatus" access="private" output="false" hint="Setup some session flags to save if the user has clicked on any of the 'find more' links in the filter">
 		<cfargument name="rc">
 
@@ -208,6 +195,8 @@ seatmap
 
 		<cfreturn totalFlights />
 	</cffunction>
+
+
 
 
 </cfcomponent>
