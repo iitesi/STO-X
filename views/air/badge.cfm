@@ -25,7 +25,10 @@
 			<span class="#ribbonClass#"></span>
 			<!--- // end ribbon --->
 
-			<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | #stTrip.PrivateFare# ] </p>
+
+			<cfif IsLocalHost(cgi.local_addr)>
+				<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
+			</cfif>
 
 			<table height="#variables.minheight#" width="100%">
 			<tr>

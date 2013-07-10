@@ -309,12 +309,6 @@ ul.tabs li a.active {
 	left:0; /* Bring back on-screen when needed */
 }
 
-
-/*  AIR FILTER BAR */
-.filter {
-	margin-left: 1em;
-}
-
 .filter h4, .filter h4 a {
 	color: #666;
 	margin: 0;
@@ -818,6 +812,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	LEGS
 ----------------------------------------------------------------------------------------------------------
 */
+
+.legs {padding-bottom: 1em;}
 
 .legbtn {
 	margin-right: 1em;

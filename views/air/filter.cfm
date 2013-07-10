@@ -21,11 +21,9 @@ F = first
 </cfsilent>
 
 <div id="filterbar" class="filter">
-	<div class="row">
-		<div class="sixteen columns">
-
-			<div class="sortby pull-left">
-				<h4>Sort</h4>
+	<div class="sixteen columns">
+		<div class="sortby pull-left">
+			<h4>Sort</h4>
 				<div class="navbar">
 					<div class="navbar-inner">
 						<ul class="nav">
@@ -159,6 +157,5 @@ F = first
 					</span>
 				</div> <!--- well filterselection --->
 			</div>
-		</div><!-- // class=sixteen columns -->
-	</div><!-- // class=row -->
-</div><!-- // class=filter -->
+		</div><!--- // class=sixteen columns --->
+</div><!--- // class=filter --->
