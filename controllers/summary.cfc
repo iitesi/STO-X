@@ -15,9 +15,7 @@ default
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfif structKeyExists(rc.itinerary, 'Air')>
-			<!--- Air doesn't have an object to populate yet --->
-			<!--- <cfset rc.Air = rc.itinerary.Air> --->
-			<cfset rc.Air = ''>
+			<cfset rc.Air = rc.itinerary.Air>
 		<cfelse>
 			<cfset rc.Air = ''>
 		</cfif>
@@ -47,6 +45,7 @@ default
 		</cfif>
 
 		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( rc.Filter.getProfileID(), rc.Filter.getAcctID() )>
+		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID() )>
 		<!--- <cfset rc.OrgUnit = fw.getBeanFactory().getBean('OrgUnitService').load( acctID = rc.Filter.getAcctID()
 																				, valueID = rc.Filter.getValueID()
 																				, include = 'values' )> --->

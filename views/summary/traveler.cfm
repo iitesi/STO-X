@@ -4,7 +4,7 @@
 	<div class="control-group">
 		<label class="control-label" for="userID">Change Traveler</label>
 		<div class="controls">
-			<select name="userID" id="userID">
+			<select name="userID" id="userID" class="input-xlarge">
 			<option value="">SELECT A TRAVELER</option>
 			<option value="0">GUEST TRAVELER</option>
 			<cfloop query="rc.allTravelers">
@@ -15,39 +15,28 @@
 	</div>
 
 	<div class="control-group">
-		<label class="control-label" for="firstName">First Name</label>
+		<label class="control-label" for="firstName">Full Name</label>
 		<div class="controls">
-			<input type="text" name="firstName" id="firstName">
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label" for="middleName">Middle Name</label>
-		<div class="controls">
-			<input type="text" name="middleName" id="middleName">
+			<input type="text" name="firstName" id="firstName" placeholder="First" class="input-medium">
+			<input type="text" name="middleName" id="middleName" placeholder="Middle" class="input-medium">
+			<input type="text" name="lastName" id="lastName" placeholder="Last" class="input-medium">
+			<br>
 			<input type="checkbox" name="noMiddleName" value="1">
-			No Middle Name
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label" for="lastName">Last Name</label>
-		<div class="controls">
-			<input type="text" name="lastName" id="lastName">
+			<span class="help-inline">No Middle Name</span>
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label" for="phoneNumber">Business Phone</label>
 		<div class="controls">
-			<input type="text" name="phoneNumber" id="phoneNumber">
+			<input type="text" name="phoneNumber" id="phoneNumber" class="input-medium">
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label" for="wirelessPhone">Wireless Phone</label>
 		<div class="controls">
-			<input type="text" name="wirelessPhone" id="wirelessPhone">
+			<input type="text" name="wirelessPhone" id="wirelessPhone" class="input-medium">
 		</div>
 	</div>
 

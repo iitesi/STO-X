@@ -12,6 +12,26 @@
 		<cfreturn  serializeJSON(session.searches[arguments.searchID].travelers[arguments.travelerNumber])/>
 	</cffunction>
 
+	<cffunction name="getOutOfPolicy" output="false">
+		<cfargument name="acctID" required="true" type="numeric">
+		
+		<cfquery name="local.qOutOfPolicy" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+			SELECT FareSavingsCode
+				, Description
+			FROM FareSavingsCode
+			WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+				AND FareSavingsCodeID NOT IN (35)
+				<cfif arguments.acctID NEQ 348>
+					AND Acct_ID IS NULL
+				<cfelse>
+					AND Acct_ID = <cfqueryparam value="348" cfsqltype="cf_sql_integer">
+				</cfif>
+			ORDER BY FareSavingsCode
+		</cfquery>
+		
+		<cfreturn qOutOfPolicy>
+	</cffunction>
+
 <!--- <!---
 saveSummary
 --->
@@ -354,28 +374,6 @@ determineFees
 		</cfif> --->
 		
 		<cfreturn stFees />
-	</cffunction>
-
-<!---
-getOutOfPolicy
---->
-	<cffunction name="getOutOfPolicy" output="false">
-		<cfargument name="Acct_ID" default="#session.AcctID#">
-		
-		<cfquery name="local.qOutOfPolicy" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
-		SELECT FareSavingsCode, Description
-		FROM FareSavingsCode
-		WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		AND FareSavingsCodeID NOT IN (35)
-		<cfif arguments.Acct_ID NEQ 348>
-			AND Acct_ID IS NULL
-		<cfelse>
-			AND Acct_ID = <cfqueryparam value="348" cfsqltype="cf_sql_integer">
-		</cfif>
-		ORDER BY FareSavingsCode
-		</cfquery>
-		
-		<cfreturn qOutOfPolicy>
 	</cffunction>
 
 <!---

@@ -23,13 +23,31 @@
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
 			<input type="hidden" name="vendor" id="vendor" value="#(rc.vehicleSelected ? rc.Vehicle.getVendorCode() : '')#">
+			<div id="traveler" class="tab_content">
+				<p>
+					<div class="summarydiv" style="background-color: ##FFF">
+						#View('summary/traveler')#
+					</div>
 
-			<table>
-			<tr>
-				<td valign="top">#view( 'summary/traveler' )#</td>
-				<td valign="top">#view( 'summary/payment' )#</td>
-			</tr>
-			</table>
+					<div class="summarydiv" style="background-color: ##FFF">
+						<div id="paymentForm"><td valign="top">#view( 'summary/payment' )#</td></div>
+					</div>
+					<br class="clearfix">
+
+					<cfset tripTotal = 0>
+					
+					#View('summary/air')#
+<!--- 					<br class="clearfix">
+
+					<cfif Car>
+						#View('summary/car')#
+						<br class="clearfix">
+					</cfif>
+
+					#View('summary/buttons')# --->
+				</p>
+			</div>
+			
 		</cfoutput>
 				
 		<script src="assets/js/summary/summary.js"></script>
@@ -57,7 +75,7 @@
 			<input type="hidden" id="bDB" value="#stCD.DB#">
 			<input type="hidden" id="bCD" value="#stCD.CD#">
 			<cfset variables.nTraveler = 1>
-			<cfset variables.bTotalTrip = 0>
+			<cfset variables.tripTotal = 0>
 			<cfset variables.stTraveler = (StructKeyExists(session.searches[rc.SearchID].stTravelers, nTraveler) ? session.searches[rc.SearchID].stTravelers[nTraveler] : {})>
 			<div id="traveler" class="tab_content">
 				<p>
