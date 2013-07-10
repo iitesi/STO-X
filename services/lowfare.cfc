@@ -55,8 +55,6 @@
 		<cfargument name="Filter" required="false" default="X">
 		<cfargument name="stPricing" required="true">
 
-
-
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
 		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
@@ -80,18 +78,7 @@
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-
-			<!--- If sMessage is defined then no results pulled back.  cfdump for dev purposes only. --->
-			<!--- <cfloop collection="#cfthread#" index="local.sKey">
-				<cfif structKeyExists(cfthread[sKey], 'sMessage')>
-					<cfdump var="#cfthread[sKey]#" abort>
-				</cfif>
-			</cfloop> --->
-
 		</cfif>
-
-		<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
-
 		<cfreturn >
 	</cffunction>
 
@@ -111,7 +98,10 @@
 			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
 			<cfset local[sThreadName] = {}>
-			<!--- Kick off the thread. --->
+
+
+			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
+			sResponse to see what uAPI is getting or sending back --->
 			<cfthread
 				action="run"
 				name="#sThreadName#"
@@ -127,8 +117,9 @@
 				<!--- Call the UAPI. --->
 				<cfset sResponse 	= getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
 
-				<!--- Get the next reference key --->
-				<!---<cfset thread.sLowFareSearchID = getAirParse().parseSearchID(sResponse)>--->
+				<!--- Dump any error returned
+				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
+				--->
 
 				<!--- Format the UAPI response. --->
 				<cfset aResponse 	= getUAPI().formatUAPIRsp(sResponse)>
@@ -144,7 +135,7 @@
 				<cfif NOT StructIsEmpty(stTrips)>
 					<!--- Merge all data into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, stTrips)>
-					<!--- Finish up the results --->
+					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 					<cfset void = getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
 					<cfset thread.aResponse = aResponse>
@@ -153,7 +144,6 @@
 				<cfset thread.sMessage = sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
 			</cfthread>
-			<!--- <cfdump var="#cfthread#" abort="true">  --->
 		</cfif>
 
 		<cfreturn sThreadName>
@@ -168,7 +158,13 @@
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<cfquery name="local.qSearchLegs">
-				SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
+				SELECT Depart_City
+				, Arrival_City
+				, Depart_DateTime
+				, Depart_TimeType
+				, Depart_DateTimeActual
+				, Depart_DateTimeStart
+				, Depart_DateTimeEnd
 				FROM Searches_Legs
 				WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
 				ORDER BY Depart_DateTime
@@ -178,6 +174,13 @@
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
 
+<!---
+****************************************************************************
+				ANY CHANGES MADE BELOW PROBABLY NEED TO ALSO BE MADE IN
+						   airAvailability.cfc   prepareSoapHeader()
+****************************************************************************
+--->
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -186,8 +189,9 @@
 						<cfif arguments.sLowFareSearchID EQ ''>
 							<air:LowFareSearchReq TargetBranch="#arguments.Account.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0" AuthorizedBy="Test">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
-								<cfif arguments.Filter.getAirType() EQ 'RT'
-								OR arguments.Filter.getAirType() EQ 'OW'>
+
+								<!--- For one way and first leg of rounttrip we get depart info --->
+								<cfif arguments.Filter.getAirType() EQ 'RT'	OR arguments.Filter.getAirType() EQ 'OW'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
 											<cfif arguments.filter.getAirFromCityCode() EQ 1>
@@ -203,7 +207,21 @@
 												<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
 											</cfif>
 										</air:SearchDestination>
-										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
+
+										<cfif arguments.filter.getDepartDateTimeActual() EQ "Anytime">
+											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
+										<cfelse>
+											<cfif arguments.filter.getDepartTimeType() EQ "A">
+												<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchArvTime>
+											<cfelse>
+												<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchDepTime>
+											</cfif>
+										</cfif>
+
 										<air:AirLegModifiers>
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
@@ -215,6 +233,8 @@
 										</air:AirLegModifiers>
 									</air:SearchAirLeg>
 								</cfif>
+
+								<!--- for second leg of round trip we get return info--->
 								<cfif arguments.Filter.getAirType() EQ 'RT'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
@@ -231,7 +251,21 @@
 												<com:Airport Code="#arguments.Filter.getDepartCity()#" />
 											</cfif>
 										</air:SearchDestination>
-										<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+
+										<cfif arguments.filter.getArrivalDateTimeActual() EQ "Anytime">
+											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+										<cfelse>
+											<cfif arguments.filter.getDepartTimeType() EQ "A">
+												<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchArvTime>
+											<cfelse>
+												<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchDepTime>
+											</cfif>
+										</cfif>
+
 										<air:AirLegModifiers>
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
@@ -242,6 +276,8 @@
 											</cfif>
 										</air:AirLegModifiers>
 									</air:SearchAirLeg>
+
+								<!--- for multi-city trips loop over SearchesLegs --->
 								<cfelseif arguments.Filter.getAirType() EQ 'MD'>
 									<cfloop query="qSearchLegs">
 										<air:SearchAirLeg>
@@ -259,7 +295,15 @@
 													<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
 												</cfif>
 											</air:SearchDestination>
-											<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+
+											<cfif qSearchLegs.Depart_DateTimeActual EQ "Anytime">
+												<air:SearchArvTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+											<cfelse>
+												<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTime, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(qSearchLegs.Depart_DateTimeStart, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeStart, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(qSearchLegs.Depart_DateTimeEnd, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeEnd, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchDepTime>
+											</cfif>
+
 											<air:AirLegModifiers>
 												<cfif NOT arrayIsEmpty(aCabins)>
 													<air:PermittedCabins>
@@ -288,15 +332,8 @@
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
 								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
-									<!---TODO <cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
-										<air:AccountCodes>
-											<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
-												<com:AccountCode Code="#GetToken(sPF, 3, ',')#" ProviderCode="1V" SupplierCode="#GetToken(sPF, 2, ',')#" />
-											</cfloop>
-										</air:AccountCodes>
-									</cfif>--->
 								</air:AirPricingModifiers>
-								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" /><!---TODO #arguments.stAccount.PCC_Booking#--->
+								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" />
 							</air:LowFareSearchReq>
 						<cfelse>
 							<air:RetrieveLowFareSearchReq TargetBranch="#arguments.stAccount.sBranch#" SearchId="#arguments.sLowFareSearchID#" ProviderCode="1V" PartNumber="1">
@@ -307,8 +344,6 @@
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
-
-		<!--- <cfdump var="#sMessage#" abort="true"> --->
 
 		<cfreturn sMessage/>
 	</cffunction>

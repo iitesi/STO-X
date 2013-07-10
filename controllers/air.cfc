@@ -27,13 +27,11 @@
 		</cfif>
 
     <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			<!--- Throw out a threads --->
+    	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
-			<!--- Do the low fare search. --->
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
-			<!--- Select --->
 			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 		</cfif>
 

@@ -32,12 +32,11 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
+	<cfset variables.minheight = 200>
 	<cfif nLegs EQ 2>
-		<cfset variables.minheight = 250>
-	<cfelseif nLegs EQ 1>
-		<cfset variables.minheight = 150>
-	<cfelseif nLegs EQ 3>
-		<cfset variables.minheight = 300>
+		<cfset variables.minheight = 275>
+	<cfelseif nLegs GT 2>
+		<cfset variables.minheight = 350>
 	</cfif>
 </cfsilent>
 
@@ -47,7 +46,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<h1>#rc.Filter.getAirHeading()#</h1>
 			<ul  class="unstyled">
 				<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#<small></h2></li>
+					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
 				</cfloop>
 			</ul>
 		<cfelse>

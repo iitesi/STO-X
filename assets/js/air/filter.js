@@ -8,9 +8,6 @@ $(document).ready(function(){
 		$('#myModalBody').text( '...more ' + $(this).attr('data-modal') + '.' );
 	});
 
-	// hide filter bar and message div by default
-	$('.filterselection, .spinner').hide();
-
 	$('.closewell').on('click', function() {
 		$(this).parent().parent().slideUp();
 	});
