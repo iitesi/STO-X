@@ -82,23 +82,46 @@
 		<cfreturn >
 	</cffunction>
 
-	<cffunction name="doLowFare" output="false" hint="I kick off thread to hit uAPI.">
-		<cfargument name="Filter"		required="true">
-		<cfargument name="sCabin" 		required="true">
-		<cfargument name="bRefundable"	required="true">
-		<cfargument name="sPriority"	required="true">
-		<cfargument name="stPricing" 	required="true">
-		<cfargument name="Account"      required="true">
-		<cfargument name="Policy"       required="true">
-		<cfargument name="sLowFareSearchID"	required="false"	default="">
+	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
+		<cfargument name="SearchID">
+		<cfargument name="Group">
+		<cfargument name="nTrip">
 
-		<cfset local.sThreadName = ''>
+		<!--- Initialize or overwrite the CouldYou air section --->
+		<cfset session.searches[arguments.SearchID].CouldYou.Air = {} />
+		<cfset session.searches[arguments.SearchID]['Air'] = true />
+		<!--- Move over the information into the stItinerary --->
+		<cfset session.searches[arguments.SearchID].stItinerary.Air = session.searches[arguments.SearchID].stTrips[arguments.nTrip]>
+		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
+		<!--- Loop through the searches structure and delete all other searches --->
+		<cfloop collection="#session.searches#" index="local.nKey">
+			<cfif IsNumeric(nKey) AND nKey NEQ arguments.SearchID>
+				<cfset StructDelete(session.searches, nKey)>
+			</cfif>
+		</cfloop>
+
+		<cfreturn />
+	</cffunction>
+
+
+<!--- PRIVATE METHODS ===================================================== --->
+
+	<cffunction name="doLowFare" access="private" output="false" hint="I kick off thread to hit uAPI.">
+		<cfargument name="Filter" required="true">
+		<cfargument name="sCabin" required="true">
+		<cfargument name="bRefundable" required="true">
+		<cfargument name="sPriority" required="true">
+		<cfargument name="stPricing" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sLowFareSearchID"	required="false" default="">
+
+		<cfset local.sThreadName = "">
+
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable)>
-			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
 			<cfset local[sThreadName] = {}>
-
 
 			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
 			sResponse to see what uAPI is getting or sending back --->
@@ -113,24 +136,24 @@
 				bRefundable="#arguments.bRefundable#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset sMessage 	= prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
+				<cfset sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
 				<!--- Call the UAPI. --->
-				<cfset sResponse 	= getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
+				<cfset sResponse = getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
 
 				<!--- Dump any error returned
 				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
 				--->
 
 				<!--- Format the UAPI response. --->
-				<cfset aResponse 	= getUAPI().formatUAPIRsp(sResponse)>
+				<cfset aResponse = getUAPI().formatUAPIRsp(sResponse)>
 				<!--- Parse the segments. --->
-				<cfset stSegments 	= getAirParse().parseSegments(aResponse)>
+				<cfset stSegments = getAirParse().parseSegments(aResponse)>
 				<!--- Parse the trips. --->
-				<cfset stTrips 		= getAirParse().parseTrips(aResponse, stSegments)>
+				<cfset stTrips = getAirParse().parseTrips(aResponse, stSegments)>
 				<!--- Add group node --->
-				<cfset stTrips 		= getAirParse().addGroups(stTrips)>
+				<cfset stTrips = getAirParse().addGroups(stTrips)>
 				<!--- Add group node --->
-				<cfset stTrips 		= getAirParse().addPreferred(stTrips, arguments.Account)>
+				<cfset stTrips = getAirParse().addPreferred(stTrips, arguments.Account)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
 				<cfif NOT StructIsEmpty(stTrips)>
 					<!--- Merge all data into the current session structures. --->
@@ -149,7 +172,7 @@
 		<cfreturn sThreadName>
 	</cffunction>
 
-	<cffunction name="prepareSOAPHeader" returntype="string" output="false" hint="I prepare the SOAP header.">
+	<cffunction name="prepareSOAPHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
 		<cfargument name="Filter" required="true">
 		<cfargument name="sCabins"  required="true">
 		<cfargument name="bRefundable" required="true">
@@ -346,27 +369,6 @@
 		</cfsavecontent>
 
 		<cfreturn sMessage/>
-	</cffunction>
-
-	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
-		<cfargument name="SearchID">
-		<cfargument name="Group">
-		<cfargument name="nTrip">
-
-		<!--- Initialize or overwrite the CouldYou air section --->
-		<cfset session.searches[arguments.SearchID].CouldYou.Air = {} />
-		<cfset session.searches[arguments.SearchID]['Air'] = true />
-		<!--- Move over the information into the stItinerary --->
-		<cfset session.searches[arguments.SearchID].stItinerary.Air = session.searches[arguments.SearchID].stTrips[arguments.nTrip]>
-		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
-		<!--- Loop through the searches structure and delete all other searches --->
-		<cfloop collection="#session.searches#" index="local.nKey">
-			<cfif IsNumeric(nKey) AND nKey NEQ arguments.SearchID>
-				<cfset StructDelete(session.searches, nKey)>
-			</cfif>
-		</cfloop>
-
-		<cfreturn />
 	</cffunction>
 
 </cfcomponent>
