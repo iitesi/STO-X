@@ -9,7 +9,7 @@ function HotelRoom(){
 	this.totalForStay = 0;
 	this.totalForStayCurrency = '';
 	this.totalIncludesMessage = '';
-	this.inPolicy = true;
+	this.isInPolicy = true;
 	this.ratePlanType = '';
 	this.baseRate = 0;
 	this.baseRateCurrency = '';

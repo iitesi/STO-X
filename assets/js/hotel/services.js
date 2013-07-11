@@ -127,7 +127,8 @@ services.factory( "HotelService", function( $http ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=selectHotelRoom&searchId=" + Search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
-							+ '&totalForStay=' + Room.totalForStay )
+							+ '&totalForStay=' + Room.totalForStay
+							+ '&isInPolicy=' + Room.isInPolicy )
 			.then( function( response ){ return response.data })
 	}
 	return HotelService;
