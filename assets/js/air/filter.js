@@ -3,6 +3,11 @@ $(document).ready(function(){
 // FILTER
 //------------------------------------------------------------------------------
 
+	// hide modal window if user hits the back button
+	$(window).on("unload", function() {
+	  	$('#myModal').modal('hide');
+	});
+
 	$('.airModal').on('click', function() {
 		$('#myModal').modal();
 		$('#myModalBody').text( $(this).attr('data-modal') );
