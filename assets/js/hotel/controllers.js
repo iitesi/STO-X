@@ -172,6 +172,16 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			if( !Hotel.roomsReturned ){
 				$scope.getHotelRates( Hotel, false );
 			}
+
+			var datapoints = [];
+			if( Hotel.StarRating == 0 ){
+				datapoints.push( 'rating' );
+			}
+			if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
+				datapoints.push( 'images' );
+			}
+
+			HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );
 		}
 
 		$scope.visibleHotels = visibleHotels;
@@ -258,7 +268,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.loadExtendedHotelData = function( Hotel ){
 
 		if( !Hotel.details.loaded ){
-			HotelService.getExtendedData( Hotel );
+			HotelService.getExtendedData( $scope.searchId, Hotel );
 		}
 
 	}

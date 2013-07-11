@@ -249,6 +249,26 @@
 				<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
 			</cfloop>
 
+			<cfquery name="local.locations" datasource="book" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
+				SELECT Office_ID, Office_Name
+				FROM Account_Offices
+				WHERE Acct_ID = <cfqueryparam value="#arguments.acctId#" cfsqltype="cf_sql_integer">
+				AND Status = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+				ORDER BY Office_Name
+			</cfquery>
+
+			<cfset stTemp.Offices = arrayNew(1) />
+
+			<cfif locations.recordCount >
+
+				<cfloop query="locations">
+					<cfset local.location = structNew() />
+					<cfset location.name = locations.Office_Name />
+					<cfset location.id = locations.Office_ID />
+					<cfset arrayAppend( stTemp.Offices, duplicate( location ) ) />
+				</cfloop>
+			</cfif>
+
 			<cfset application.Accounts[arguments.AcctID] = stTemp>
 		</cfif>
 
