@@ -1,4 +1,8 @@
-<cfcomponent extends="abstract">
+<cfcomponent extends="abstract" accessors="true">
+
+	<!--- // DEPENDENCY INJECTION --->
+	<cfproperty name="general" setter="true" getter="false">
+
 
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
@@ -69,25 +73,21 @@
 	<cffunction name="popup" output="true" hint="I get details, seats, bags and for modal popup for each badge.">
 		<cfargument name="rc">
 
-		<cfswitch expression="#arguments.rc.sDetails#">
-			<cfcase value="seatmap">
+				<!--- seatmap --->
 				<cfset rc.sCabin = 'Y'>
 				<cfset rc.nTripID = arguments.rc.nTripID>
 				<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-			</cfcase>
-			<cfcase value="details">
-				<!--- do nothing --->
-			</cfcase>
-			<cfcase value="baggage">
+
+				<!---details: do nothing --->
+
+				<!--- baggage --->
 				<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
-			</cfcase>
-			<cfcase value="email">
-				<cfset rc.UserID = session.User_ID>
-				<cfset variables.fw.service('general.getUser', 'qUser')>
-				<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
-				<cfset variables.fw.service('general.getUser', 'qProfile')>
-			</cfcase>
-		</cfswitch>
+
+				<!--- email --->
+				<cfset local.UserID = session.UserID>
+				<cfset rc.qUser = variables.general.getUser( local.userID )>
+				<cfset local.userId = session.filters[arguments.rc.searchID].getProfileID()>
+				<cfset rc.qProfile = variables.general.getUser( local.userID )>
 
 		<cfreturn />
 	</cffunction>

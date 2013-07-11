@@ -1,10 +1,13 @@
-<cfset aRef = ["0","1"]>
-<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.SearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
-<cfif rc.Group EQ ''>
-	<cfset stTrip = session.searches[rc.SearchID].stTrips[rc.nTripID]>
-<cfelse>
-	<cfset stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID]>
-</cfif>
+<cfsilent>
+	<cfset aRef = ["0","1"]>
+	<cfset aMyCabins = ListToArray(Replace(LCase(StructKeyList(session.searches[rc.SearchID].stLowFareDetails.stPricing)), 'f', 'F'))>
+	<cfif rc.Group EQ ''>
+		<cfset stTrip = session.searches[rc.SearchID].stTrips[rc.nTripID]>
+	<cfelse>
+		<cfset stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID]>
+	</cfif>
+</cfsilent>
+
 <cfoutput>
 	<div class="roundall" style="padding:10px;background-color:##FFFFFF; display:table;font-size:11px;width:#300*2#px">
 		<table>
@@ -61,24 +64,24 @@
 										</strong>
 									</p>
 									<p>
-										<span title="#application.stAirports[stSegment.Origin]#">#stSegment.Origin#</a> - 
+										<span title="#application.stAirports[stSegment.Origin]#">#stSegment.Origin#</a> -
 										#DateFormat(stSegment.DepartureTime, 'mmm d,')# at
 										#TimeFormat(stSegment.DepartureTime, 'h:mm tt')#
 									</p>
 									<cfif stSegment.ChangeOfPlane>
 										<p>
 											Plane Change
-										</p>						
+										</p>
 									</cfif>
 									<cfif stSegment.FlightTime NEQ ''>
 										<p class="fade">
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											Flight Time 
+											Flight Time
 											#int(stSegment.FlightTime/60)#h #stSegment.FlightTime%60#m
-										</p>						
+										</p>
 									</cfif>
 									<p>
-										<span title="#application.stAirports[stSegment.Destination]#">#stSegment.Destination#</a> - 
+										<span title="#application.stAirports[stSegment.Destination]#">#stSegment.Destination#</a> -
 										#DateFormat(stSegment.ArrivalTime, 'mmm d,')# at
 										#TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#
 									</p>
@@ -96,7 +99,7 @@
 										<cfset minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime)>
 										Layover:
 										#int(minites/60)#h #minites%60#m
-										in 
+										in
 										<span title="#application.stAirports[stSegment.Destination]#">#stSegment.Destination#</span>
 									</div>
 								</cfif>

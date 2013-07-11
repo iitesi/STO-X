@@ -1,24 +1,24 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="UAPI">
-	
+
 <!--- doAirPrice --->
 	<cffunction name="doSeatMap" output="false">
-		<cfargument name="SearchID" 	required="true">
-		<cfargument name="nTripID"	 	required="true">
-		<cfargument name="nSegment"		required="false"	default="">
-		<cfargument name="Group"		required="false"    default="">
-		<cfargument name="sCabin" 		required="false"	default="Y">
-		<cfargument name="stAccount"	required="false" 	default="#application.Accounts[session.AcctID]#">
-		
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
-		<cfset local.sResponse = UAPI.callUAPI('AirService', sMessage, SearchID)>
-		<cfset stResponse = UAPI.formatUAPIRsp(sResponse)>
-		<cfset local.stSeats = parseSeats(stResponse)>
-		
-		<cfreturn stSeats>
+		<cfargument name="searchID" required="true">
+		<cfargument name="nTripID" required="true">
+		<cfargument name="nSegment"	required="false" default="">
+		<cfargument name="group" required="false" default="">
+		<cfargument name="sCabin" required="false" default="Y">
+		<cfargument name="stAccount" required="false" default="#application.Accounts[session.AcctID]#">
+
+		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.searchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
+		<cfset local.sResponse = UAPI.callUAPI('AirService', local.sMessage, arguments.searchID)>
+		<cfset local.stResponse = UAPI.formatUAPIRsp(local.sResponse)>
+		<cfset local.stSeats = parseSeats(local.stResponse)>
+
+		<cfreturn local.stSeats />
 	</cffunction>
-	
+
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
 		<cfargument name="stAccount" 	required="true">
@@ -27,7 +27,7 @@
 		<cfargument name="nSegment" 	required="false"	default="">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="Group" 		required="false"	default="">
-		
+
 		<cfif arguments.Group EQ ''>
 			<cfif arguments.nSegment EQ ''>
 				<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
@@ -88,63 +88,57 @@
 
 		<cfreturn sMessage/>
 	</cffunction>
-	
-<!---
-parseSeats
---->
-	<cffunction name="parseSeats" returntype="struct" output="false">
+
+	<cffunction name="parseSeats" access="private" output="false" hint="I parse seats from uAPI data.">
 		<cfargument name="stResponse"	required="true">
-		
+
 		<cfset local.stSeats = {}>
 		<cfset local.nRow = ''>
 		<cfset local.sColumn = ''>
 
 		<cfloop array="#arguments.stResponse#" index="local.stRow">
-			<cfif stRow.XMLName EQ 'air:Row'>
-				<cfloop array="#stRow.XMLChildren#" index="local.stFacility">
+			<cfif local.stRow.XMLName EQ 'air:Row'>
+				<cfloop array="#local.stRow.XMLChildren#" index="local.stFacility">
 
-					<cfif stFacility.XMLName EQ 'air:Facility'>
+					<cfif local.stFacility.XMLName EQ 'air:Facility'>
 						<!---
-						Seat Types
-						Seat, Aisle, Open, Unknown
+						Seat Types: Seat, Aisle, Open, Unknown
 						--->
-						<cfif stFacility.XMLAttributes.Type EQ 'Seat'>
-							<cfset nRow = GetToken(stFacility.XMLAttributes.SeatCode, 1, '-')>
-							<cfset sColumn = GetToken(stFacility.XMLAttributes.SeatCode, 2, '-')>
+						<cfif local.stFacility.XMLAttributes.Type EQ 'Seat'>
+							<cfset local.nRow = GetToken(local.stFacility.XMLAttributes.SeatCode, 1, '-')>
+							<cfset local.sColumn = GetToken(local.stFacility.XMLAttributes.SeatCode, 2, '-')>
 							<!---
-							Seat Availabilities
-							Available, Occupied, Reserved, AdvancedBoardingPass, InterlineCheckin, Codeshare, 
-							Protected, PartnerAirline, AdvSeatSelection, Blocked, Extra, RBDRestriction, Group, 
-							NoSeat
+							Seat Availabilities: 	Available, Occupied, Reserved, AdvancedBoardingPass, InterlineCheckin, Codeshare,
+							Protected, PartnerAirline, AdvSeatSelection, Blocked, Extra, RBDRestriction, Group,	NoSeat
 							--->
-							<cfset stSeats['Columns'][sColumn] = ''>
-							<cfset stSeats[nRow][sColumn].Avail = stFacility.XMLAttributes.Availability>
+							<cfset local.stSeats['Columns'][local.sColumn] = ''>
+							<cfset local.stSeats[local.nRow][local.sColumn].Avail = local.stFacility.XMLAttributes.Availability>
 							<cfloop array="#stFacility.XMLChildren#" index="local.stCharacteristic">
-								<!--- 
+								<!---
 								Seat Characteristics
-								ExitRow, Wing, Left, Right, Forward, Rear, UpperDeck, LowerDeck, DesignatedRBD, ExtraLegRoom, 
-								BufferRow, RowDoesNotExist, SeatRestrictionsApply, MovieScreen, Aisle, PaidGeneralSeat, 
-								RearGalley, NearToiletBulkhead, Window, RestrictedRecline, PreferentialRestrictedGeneral, 
+								ExitRow, Wing, Left, Right, Forward, Rear, UpperDeck, LowerDeck, DesignatedRBD, ExtraLegRoom,
+								BufferRow, RowDoesNotExist, SeatRestrictionsApply, MovieScreen, Aisle, PaidGeneralSeat,
+								RearGalley, NearToiletBulkhead, Window, RestrictedRecline, PreferentialRestrictedGeneral,
 								LegRest, NoSeat, Middle, RBDSpecific, Bassinet, Blocked, Handicapped, BufferZone,
 								ElectronicConnection
 								--->
-								<cfif stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
-									<cfset stSeats['ExitRow'][nRow] = 1>
-								<cfelseif stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
-									<cfset stSeats[nRow][sColumn][stCharacteristic.XMLAttributes.Value] = 1>
+								<cfif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
+									<cfset local.stSeats['ExitRow'][local.nRow] = 1>
+								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
+									<cfset local.stSeats[local.nRow][local.sColumn][local.stCharacteristic.XMLAttributes.Value] = 1>
 								</cfif>
 							</cfloop>
-						<cfelseif stFacility.XMLAttributes.Type EQ 'Aisle'>
-							<cfset stSeats['Aisle'][sColumn] = 1>
+						<cfelseif local.stFacility.XMLAttributes.Type EQ 'Aisle'>
+							<cfset local.stSeats['Aisle'][local.sColumn] = 1>
 						</cfif>
 					</cfif>
 				</cfloop>
-			<cfelseif stRow.XMLName EQ 'FaultString'>
-				<cfset stSeats.Error = stRow.XMLText>
+			<cfelseif local.stRow.XMLName EQ 'FaultString'>
+				<cfset local.stSeats.Error = local.stRow.XMLText>
 			</cfif>
 		</cfloop>
-		
-		<cfreturn  stSeats/>
-	</cffunction>	
-	
+
+		<cfreturn local.stSeats />
+	</cffunction>
+
 </cfcomponent>

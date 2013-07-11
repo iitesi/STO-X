@@ -3,7 +3,21 @@
 </cfsilent>
 
 <cfoutput>
-	<div>
+    <ul class="nav nav-tabs">
+	    <li class="active"><a href="##home" data-toggle="tab">Details</a></li>
+	    <li><a href="##profile" data-toggle="tab">Seat Map</a></li>
+	    <li><a href="##messages" data-toggle="tab">Bags</a></li>
+	    <li><a href="##settings" data-toggle="tab">Email</a></li>
+    </ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="home"><h2>Details</h2>#view('air/details')#</div>
+			<div class="tab-pane" id="profile"><h2>Seats</h2> #view('air/seatmap')# </div>
+			<div class="tab-pane" id="messages"><h2>Bags</h2> #view('air/baggage')# </div>
+			<div class="tab-pane" id="settings"><h2>Email</h2> #view('air/email')# </div>
+		</div>
+
+
+	<!--- <div>
 		<cfif rc.bSelection EQ 0>
 			<ul id="details-tabs">
 				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#Group#'>
@@ -33,5 +47,5 @@
 		<div id="tabcontent">
 			#view('air/#rc.sDetails#')#
 		</div>
-	</div>
+	</div> --->
 </cfoutput>
