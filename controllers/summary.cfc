@@ -29,16 +29,10 @@ default
 			<cfset rc.Hotel = ''>
 		</cfif>
 
-		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Car') ? true : false)>
-		<cfif structKeyExists(rc.itinerary, 'Car')
-			AND NOT isObject(rc.itinerary.Car)>
-			<!--- Convert car into an object --->
-			<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( rc.itinerary.Car )>
-			<cfset rc.itinerary.Car = rc.Vehicle>
-		<cfelseif structKeyExists(rc.itinerary, 'Car')
-			AND isObject(rc.itinerary.Car)>
+		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false)>
+		<cfif  structKeyExists(rc.itinerary, 'Vehicle')>
 			<!--- Car is already in an object --->
-			<cfset rc.Vehicle = rc.itinerary.Car>
+			<cfset rc.Vehicle = rc.itinerary.Vehicle>
 		<cfelse>
 			<!--- Car was not selected --->
 			<cfset rc.Vehicle = ''>
@@ -47,6 +41,7 @@ default
 		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( rc.Filter.getProfileID(), rc.Filter.getAcctID() )>
 		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID() )>
 		<cfset rc.qStates = fw.getBeanFactory().getBean('Summary').getStates()>
+		<cfset rc.qTXExceptionCodes = fw.getBeanFactory().getBean('Summary').getTXExceptionCodes()>
 		<!--- <cfset rc.OrgUnit = fw.getBeanFactory().getBean('OrgUnitService').load( acctID = rc.Filter.getAcctID()
 																				, valueID = rc.Filter.getValueID()
 																				, include = 'values' )> --->

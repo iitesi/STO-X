@@ -36,6 +36,27 @@ $(document).ready(function(){
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
+		if (vehicleSelected == 'true') {
+			$( "#carFF" ).val( '' );
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					if (traveler.loyaltyProgram[i].shortCode == vendor) {
+						$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
+					}
+				}
+			}
+		}
+
+		if (airSelected == 'true') {
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					// if (traveler.loyaltyProgram[i].shortCode == vendor) {
+					// 	$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
+					// }
+				}
+			}
+		}
+
 		$.ajax({type:"POST",
 			url: 'RemoteProxy.cfc?method=loadOrgUnit',
 			data: 	{
