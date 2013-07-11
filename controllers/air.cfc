@@ -78,8 +78,6 @@
 				<cfset rc.nSegment = url.nSegment>
 			</cfif>
 			<cfparam name="rc.bSelection" default="0">
-			<!--- init objects --->
-			<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 			<!--- Do the search. --->
 			<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 		<cfelseif rc.sDetails EQ 'details'>
@@ -104,8 +102,6 @@
 		<cfset rc.sCabin = 'Y'>
 		<cfset rc.nTripID = url.nTripID>
 		<cfset rc.nSegment = url.nSegment>
-		<!--- init objects --->
-		<cfset variables.fw.service('UAPI.init', 'objUAPI')>
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 
