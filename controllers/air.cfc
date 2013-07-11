@@ -66,30 +66,28 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="popup" output="true" hint="I get detaials, seats, bags for modal">
+	<cffunction name="popup" output="true" hint="I get details, seats, bags and for modal popup for each badge.">
 		<cfargument name="rc">
 
-		<cfset rc.bSuppress = 1>
-		<cfif rc.sDetails EQ 'seatmap'>
-			<!--- Move needed variables into the rc scope. --->
-			<cfset rc.sCabin = 'Y'>
-			<cfset rc.nTripID = url.nTripID>
-			<cfif structKeyExists(url, "nSegment")>
-				<cfset rc.nSegment = url.nSegment>
-			</cfif>
-			<cfparam name="rc.bSelection" default="0">
-			<!--- Do the search. --->
-			<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-		<cfelseif rc.sDetails EQ 'details'>
-			<!--- do nothing --->
-		<cfelseif rc.sDetails EQ 'baggage'>
-			<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
-		<cfelseif rc.sDetails EQ 'email'>
-			<cfset rc.UserID = session.User_ID>
-			<cfset variables.fw.service('general.getUser', 'qUser')>
-			<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
-			<cfset variables.fw.service('general.getUser', 'qProfile')>
-		</cfif>
+		<cfswitch expression="#arguments.rc.sDetails#">
+			<cfcase value="seatmap">
+				<cfset rc.sCabin = 'Y'>
+				<cfset rc.nTripID = arguments.rc.nTripID>
+				<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+			</cfcase>
+			<cfcase value="details">
+				<!--- do nothing --->
+			</cfcase>
+			<cfcase value="baggage">
+				<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
+			</cfcase>
+			<cfcase value="email">
+				<cfset rc.UserID = session.User_ID>
+				<cfset variables.fw.service('general.getUser', 'qUser')>
+				<cfset rc.UserID = session.searches[rc.SearchID].ProfileID>
+				<cfset variables.fw.service('general.getUser', 'qProfile')>
+			</cfcase>
+		</cfswitch>
 
 		<cfreturn />
 	</cffunction>

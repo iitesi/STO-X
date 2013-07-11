@@ -1,3 +1,7 @@
+<cfsilent>
+	<cfparam name="rc.bSelection" default="0">
+</cfsilent>
+
 <cfoutput>
 	<div>
 		<cfif rc.bSelection EQ 0>
