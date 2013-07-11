@@ -3,9 +3,14 @@ $(document).ready(function(){
 // FILTER
 //------------------------------------------------------------------------------
 
-	$('.findMoreModal').on('click', function() {
+	// hide modal window if user hits the back button
+	$(window).on("unload", function() {
+	  	$('#myModal').modal('hide');
+	});
+
+	$('.airModal').on('click', function() {
 		$('#myModal').modal();
-		$('#myModalBody').text( '...more ' + $(this).attr('data-modal') + '.' );
+		$('#myModalBody').text( $(this).attr('data-modal') );
 	});
 
 	$('.closewell').on('click', function() {

@@ -115,8 +115,8 @@
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 2, 'icon-star-empty': item.hotel.StarRating < 2}"></i>
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 3, 'icon-star-empty': item.hotel.StarRating < 3}"></i>
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 4, 'icon-star-empty': item.hotel.StarRating < 4}"></i>
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>{{ item.hotel.starRating}}
-                                    </span>
+                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>
+                                    </span>{{ item.hotel.starRating}}
                                 </div>
                                 <div class="btn-group hotel-detail-buttons">
                                     <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
@@ -345,7 +345,7 @@
             <div class="btn-group" id="hotel-search-type" data-toggle="buttons-radio" style="float: right;">
                 <button id="hotel-search-airport" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='airport'}" ng-click="search.hotelSearch='airport'">Airport</button>
                 <button id="hotel-search-address" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='address'}" ng-click="search.hotelSearch='address'">Address</button>
-                <!--<button id="hotel-search-location" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='office'}" ng-click="search.hotelSearch='office'">Offices/Venues</button>-->
+                <button id="hotel-search-location" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='office'}" ng-click="search.hotelSearch='office'" ng-show="account.OFFICES.length">Offices/Venues</button>
             </div>
         </div>
 
@@ -369,6 +369,19 @@
             </div>
         </div>
 
+        <div class="form-row" id="hotel-office-wrapper" ng-show="search.hotelSearch=='office' && account.OFFICES.length">
+            <div class="btn-group" style="margin-right: 10px;">
+                <button class="btn">{{search.selectedLocation}}&nbsp;</button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="office in account.OFFICES">
+                        <a href="javascript:void(0)" ng-click="search.officeID=office.ID;search.selectedLocation=office.NAME">{{office.NAME}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!--
         <div id="hotel-location-wrapper" ng-show="search.hotelSearch=='office'">
             <div class="form-element-label">

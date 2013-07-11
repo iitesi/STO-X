@@ -33,6 +33,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
 	<cfset variables.minheight = 200>
+	<cfset variables.nDisplayGroup = "">
+	<cfset variables.bSelected = false>
 	<cfif nLegs EQ 2>
 		<cfset variables.minheight = 275>
 	<cfelseif nLegs GT 2>
@@ -65,15 +67,15 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		</cfif>
 	</div>
 
-<!--- TODO: messaging
-		christine says we can probably get rid of sUserMessage -need to investigate and remove --->
-
+	<!---
+	TODO: not sure if / what this is used for?
+	2:31 PM Wednesday, July 10, 2013 - Jim Priest - jpriest@shortstravel.com --->
 	<cfif structKeyExists(session.searches[rc.SearchID], 'sUserMessage')>
 		<div id="usermessage" class="error">#session.searches[rc.SearchID].sUserMessage#</div>
 		<cfset structDelete(session.searches[rc.SearchID], 'sUserMessage')>
 	</cfif>
 
-	<cfset variables.nDisplayGroup = ''>
+
 	<div id="aircontent">
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 
@@ -91,7 +93,6 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			<!--- Display standard fare based search --->
 			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
-
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
@@ -118,7 +119,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 					</cfloop>];
 			</script>
 
-		<div class="container noFlightsFound">
+		<div class="clearfix noFlightsFound">
 			<h1>No Flights Available</h1>
 			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
 		</div>

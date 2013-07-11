@@ -12,10 +12,10 @@ init
 
 		<cfset setUAPI(arguments.UAPI)>
 		<cfset setAirParse(arguments.AirParse)>
-		
+
 		<cfreturn this>
 	</cffunction>
-	
+
 <!---
 selectLeg
 --->
@@ -25,10 +25,10 @@ selectLeg
 		<cfargument name="nTrip">
 
 		<cfset session.searches[arguments.SearchID].stSelected[arguments.Group] = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTrip]>
-				
+
 		<cfreturn />
 	</cffunction>
-	
+
 <!---
 threadAvailability
 --->
@@ -58,8 +58,6 @@ threadAvailability
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<!--- <cfdump eval=stThreads> --->
-			<!---<cfdump eval=cfthread abort>--->
 		</cfif>
 
 		<cfreturn >
@@ -69,74 +67,80 @@ threadAvailability
 doAirAvailability
 --->
 	<cffunction name="doAvailability" output="false">
-		<cfargument name="Filter"   	required="true">
-		<cfargument name="Group"		required="true">
-		<cfargument name="Account"      required="true">
-		<cfargument name="Policy"       required="true">
-		<cfargument name="sPriority"	required="false"	default="NORMAL">
-		<cfargument name="stGroups"		required="false"	default="#structNew()#">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Group" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sPriority" required="false"	default="NORMAL">
+		<cfargument name="stGroups" required="false" default="#structNew()#">
 
-		<cfset local.sThreadName = ''>
+		<cfset local.sThreadName = "">
+
 		<!--- Don't go back to the getUAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stGroups, arguments.Group)>
-			<!--- Name of the thread thrown out. --->
 			<cfset sThreadName = 'Group'&arguments.Group>
-			<!--- Kick off the thread. --->
+
+			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
+			sResponse to see what uAPI is getting or sending back --->
+
+	<!---
 			<cfthread
-			action="run"
-			name="#sThreadName#"
-			priority="#arguments.sPriority#"
-			Filter="#arguments.Filter#"
-			Group="#arguments.Group#"
-			Account="#arguments.Account#"
-			Policy="#arguments.Policy#">
-				<cfset local.sNextRef = 'ROUNDONE'>
+				action="run"
+				name="#sThreadName#"
+				priority="#arguments.sPriority#"
+				Filter="#arguments.Filter#"
+				Group="#arguments.Group#"
+				Account="#arguments.Account#"
+				Policy="#arguments.Policy#">
+ --->
+
+ 				<cfset local.sNextRef = 'ROUNDONE'>
 				<cfset local.nCount = 0>
 				<cfloop condition="sNextRef NEQ ''">
 					<cfset local.nCount++>
 					<!--- Put together the SOAP message. --->
-					<cfset local.sMessage 			= 	prepareSoapHeader(arguments.Filter, arguments.Group, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''), arguments.Account)>
-					<!---<cfdump var="#sMessage#" abort>--->
+					<cfset local.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (sNextRef NEQ 'ROUNDONE' ? sNextRef : ''), arguments.Account)>
 					<!--- Call the getUAPI. --->
-					<cfset local.sResponse 			= 	getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
+					<cfset local.sResponse = getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
 					<!--- Format the getUAPI response. --->
-					<cfset local.aResponse 			= 	getUAPI().formatUAPIRsp(sResponse)>
+					<cfset local.aResponse = getUAPI().formatUAPIRsp(sResponse)>
 					<!--- Create unique segment keys. --->
-					<cfset sNextRef 				= 	getAirParse().parseNextReference(aResponse)>
+					<cfset sNextRef =	getAirParse().parseNextReference(aResponse)>
 					<cfif nCount GT 3>
-						<cfset sNextRef				= ''>
+						<cfset sNextRef	= ''>
 					</cfif>
-					<!--- <cfdump eval=sNextRef> --->
 					<!--- Create unique segment keys. --->
-					<cfset local.stSegmentKeys 		= 	parseSegmentKeys(aResponse)>
+					<cfset local.stSegmentKeys = parseSegmentKeys(aResponse)>
 					<!--- Add in the connection references --->
-					<cfset stSegmentKeys 			= 	addSegmentRefs(aResponse, stSegmentKeys)>
+					<cfset stSegmentKeys = addSegmentRefs(aResponse, stSegmentKeys)>
 					<!--- Parse the segments. --->
-					<cfset local.stSegments 		= 	parseSegments(aResponse, stSegmentKeys)>
+					<cfset local.stSegments = parseSegments(aResponse, stSegmentKeys)>
 					<!--- Create a look up list opposite of the stSegmentKeys --->
-					<cfset local.stSegmentKeyLookUp = 	parseKeyLookUp(stSegmentKeys)>
+					<cfset local.stSegmentKeyLookUp = parseKeyLookUp(stSegmentKeys)>
 					<!--- Parse the trips. --->
-					<cfset local.stAvailTrips 		= 	parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
+					<cfset local.stAvailTrips = parseConnections(aResponse, stSegments, stSegmentKeys, stSegmentKeyLookUp)>
 					<!--- Add group node --->
-					<cfset stAvailTrips				= 	getAirParse().addGroups(stAvailTrips, 'Avail')>
+					<cfset stAvailTrips	= getAirParse().addGroups(stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
-					<cfset stAvailTrips 			= 	getAirParse().addPreferred(stAvailTrips, arguments.Account)>
+					<cfset stAvailTrips = getAirParse().addPreferred(stAvailTrips, arguments.Account)>
 					<!--- Run policy on all the results --->
-					<cfset stAvailTrips				= 	getAirParse().checkPolicy(stAvailTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
+					<cfset stAvailTrips	= getAirParse().checkPolicy(stAvailTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
 					<!--- Create javascript structure per trip. --->
-					<cfset stAvailTrips				= 	getAirParse().addJavascript(stAvailTrips, 'Avail')>
+					<cfset stAvailTrips	=	getAirParse().addJavascript(stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], stAvailTrips)>
 				</cfloop>
 				<!--- Add list of available carriers per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group]	= getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
 				<!--- Add sorting per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] 	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
 				<!--- Mark this leg as priced --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] 		= 1>
-			</cfthread>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
+
+			<!--- </cfthread> --->
+
 		</cfif>
 
 		<cfreturn sThreadName>
@@ -226,7 +230,7 @@ parseSegmentKeys
 --->
 	<cffunction name="parseSegmentKeys" output="false">
 		<cfargument name="stResponse"	required="true">
-		
+
 		<cfset local.stSegmentKeys = {}>
 		<cfset local.sIndex = ''>
 		<!--- Create list of fields that make up a distint segment. --->
@@ -248,7 +252,7 @@ parseSegmentKeys
 				</cfloop>
 			</cfif>
 		</cfloop>
-			
+
 		<cfreturn stSegmentKeys />
 	</cffunction>
 
@@ -258,7 +262,7 @@ addSegmentRefs
 	<cffunction name="addSegmentRefs" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegmentKeys">
-		
+
 		<cfset local.sAPIKey = ''>
 		<cfset local.cnt = 0>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
@@ -272,7 +276,7 @@ addSegmentRefs
 				</cfloop>
 			</cfif>
 		</cfloop>
-			
+
 		<cfreturn arguments.stSegmentKeys />
 	</cffunction>
 
@@ -281,12 +285,12 @@ parseKeyLookup - schedule
 --->
 	<cffunction name="parseKeyLookup" output="false">
 		<cfargument name="stSegmentKeys">
-		
+
 		<cfset local.stSegmentKeyLookUp = {}>
 		<cfloop collection="#arguments.stSegmentKeys#" item="local.sKey">
 			<cfset stSegmentKeyLookUp[stSegmentKeys[sKey].nLocation] = sKey>
 		</cfloop>
-		
+
 		<cfreturn stSegmentKeyLookUp />
 	</cffunction>
 
@@ -296,7 +300,7 @@ parseSegments
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
-		
+
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
@@ -327,7 +331,7 @@ parseSegments
 				</cfloop>
 			</cfif>
 		</cfloop>
-			
+
 		<cfreturn stSegments />
 	</cffunction>
 
@@ -339,7 +343,7 @@ parseConnections - schedule
 		<cfargument name="stSegments">
 		<cfargument name="stSegmentKeys">
 		<cfargument name="stSegmentKeyLookUp">
-		
+
 		<!--- Create a structure to hold FIRST connection points --->
 		<cfset local.stSegmentIndex = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
@@ -384,8 +388,8 @@ parseConnections - schedule
 			<cfset stTrips[nHashNumeric].Class = 'X'>
 			<cfset stTrips[nHashNumeric].Ref = 'X'>
 		</cfloop>
-		
+
 		<cfreturn stTrips />
 	</cffunction>
-	
+
 </cfcomponent>

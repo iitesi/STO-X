@@ -19,6 +19,7 @@ services.factory( "SearchService", function( $http ){
 			hotelCity: search.hotelCity,
 			hotelState: search.hotelState,
 			hotelZip: search.hotelZip,
+			officeID: search.officeID,
 			checkInDate: dateFormat( search.checkInDate, 'mm/dd/yyyy' ),
 			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' )
 		 	}
@@ -81,27 +82,43 @@ services.factory( "HotelService", function( $http ){
 			})
 	}
 
-	HotelService.getExtendedData = function( Hotel ){
-		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelDetails&propertyId=" + Hotel.PropertyId )
+	HotelService.getExtendedData = function( searchId, Hotel, datapoints ){
+		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		if ( typeof datapoints != 'undefined' ){
+			remoteURL = remoteURL + '&datapoints=' + datapoints;
+		}
+		return $http.get( remoteURL  )
 			.then( function( response ){
-				Hotel.details.loaded = true;
-				Hotel.details.description = response.data.data.description;
-				Hotel.details.cancellation = response.data.data.cancellation;
-				Hotel.details.creditCard = response.data.data.creditCardPolicy;
-				Hotel.details.directions = response.data.data.directions;
-				Hotel.details.facility = response.data.data.facility;
-				Hotel.details.guarantee =  response.data.data.guarantee;
-				Hotel.details.location = response.data.data.location;
-				Hotel.details.ratingService = response.data.data.ratingService;
-				Hotel.details.recreation = response.data.data.recreation;
-				Hotel.details.services =  response.data.data.services;
-				Hotel.details.starRating = response.data.data.starRating;
-				Hotel.details.transportation = response.data.data.transportation;
-				Hotel.images = response.data.data.images;
-				if( Hotel.images.length ){
-					Hotel.selectedImage = Hotel.images[0].imageURL;
-				} else {
-					Hotel.selectedImage = "";
+				if( typeof response.data.data.starRating != 'undefined' ){
+					Hotel.StarRating = response.data.data.starRating;
+				}
+
+				if( typeof response.data.data.images != 'undefined' ){
+					Hotel.images = response.data.data.images;
+					if( Hotel.images.length ){
+						Hotel.selectedImage = Hotel.images[0].imageURL;
+					} else {
+						Hotel.selectedImage = "";
+					}
+				}
+
+				if( typeof response.data.data.signatureImage != 'undefined' ){
+					Hotel.SignatureImage = response.data.data.signatureImage;
+				}
+
+				if( typeof response.data.data.description != 'undefined' ){
+					Hotel.details.loaded = true;
+					Hotel.details.description = response.data.data.description;
+					Hotel.details.cancellation = response.data.data.cancellation;
+					Hotel.details.creditCard = response.data.data.creditCardPolicy;
+					Hotel.details.directions = response.data.data.directions;
+					Hotel.details.facility = response.data.data.facility;
+					Hotel.details.guarantee =  response.data.data.guarantee;
+					Hotel.details.location = response.data.data.location;
+					Hotel.details.ratingService = response.data.data.ratingService;
+					Hotel.details.recreation = response.data.data.recreation;
+					Hotel.details.services =  response.data.data.services;
+					Hotel.details.transportation = response.data.data.transportation;
 				}
 			})
 	}
