@@ -18,11 +18,13 @@
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
 			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
+			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
 			<input type="hidden" name="vendor" id="vendor" value="#(rc.vehicleSelected ? rc.Vehicle.getVendorCode() : '')#">
+			
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv" style="background-color: ##FFF">
@@ -37,14 +39,8 @@
 					<cfset tripTotal = 0>
 					
 					#View('summary/air')#
-<!--- 					<br class="clearfix">
-
-					<cfif Car>
-						#View('summary/car')#
-						<br class="clearfix">
-					</cfif>
-
-					#View('summary/buttons')# --->
+					<br class="clearfix">
+					#View('summary/vehicle')#
 				</p>
 			</div>
 			

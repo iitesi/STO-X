@@ -9,12 +9,12 @@
 
 			<!--- TODO - all this should be moved into controller / service as 'getRibbon()'
 			3:45 PM Monday, June 24, 2013 - Jim Priest - jpriest@shortstravel.com --->
-			<cfif stTrip.preferred EQ 1>
+			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
+				<cfset ribbonClass = "ribbon-l-pref-cont">
+			<cfelseif stTrip.preferred EQ 1>
 				<cfset ribbonClass = "ribbon-l-pref">
 			<cfelseif bDisplayFare AND stTrip.PrivateFare>
 				<cfset ribbonClass = "ribbon-l-cont">
-			<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
-				<cfset ribbonClass = "ribbon-l-pref-cont">
 			</cfif>
 
 			<!--- finally add default 'ribbon class' --->

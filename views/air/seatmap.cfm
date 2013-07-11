@@ -44,7 +44,7 @@
 						<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 							<cfset nSegmentCount++>
 							<td>
-								Seat: <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled>
+								Seat: <!--- <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled> --->
 							</td>
 							<cfif bFound EQ 1>
 								<cfset bFound = 0>
@@ -53,7 +53,7 @@
 							<cfif rc.nSegment EQ sSegKey>
 								<cfset bFound = 1>
 								<cfset stSegments = stSegment>
-								<cfset sCurrentSeat = session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']>
+								<!--- <cfset sCurrentSeat = session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']> --->
 							</cfif>
 						</cfloop>
 					</cfloop>
@@ -73,10 +73,10 @@
 		</ul>
 		<div id="seats">
 			<strong>
-				<img class="carrierimg" src="assets/img/airlines/#stSegments.Carrier#.png" style="float:left;padding-right:20px;">
-				#application.stAirVendors[stSegments.Carrier].Name# Flt ###stSegments.FlightNumber# <br>
-				#application.stAirports[stSegments.Origin]# (#stSegments.Origin#) to #application.stAirports[stSegments.Destination]# (#stSegments.Destination#) <br>
-				#DateFormat(stSegments.DepartureTime, 'ddd, mmm d')# - #TimeFormat(stSegments.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegments.ArrivalTime, 'h:mm tt')#
+				<img class="carrierimg" src="assets/img/airlines/#stSegment.Carrier#.png" style="float:left;padding-right:20px;">
+				#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber# <br>
+				#application.stAirports[stSegment.Origin]# (#stSegment.Origin#) to #application.stAirports[stSegment.Destination]# (#stSegment.Destination#) <br>
+				#DateFormat(stSegment.DepartureTime, 'ddd, mmm d')# - #TimeFormat(stSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#
 			</strong>
 			<br><br>
 			<cfif NOT StructKeyExists(rc.stSeats, 'Error')>

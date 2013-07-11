@@ -32,6 +32,33 @@
 		<cfreturn qOutOfPolicy>
 	</cffunction>
 
+	<cffunction name="getStates" output="false">
+		
+		<cfquery name="local.qStates" datasource="book" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+			SELECT State_Code
+				, State_Name
+			FROM LU_States
+			WHERE State_Country = 'United States'
+			ORDER BY State_Code
+		</cfquery>
+		
+		<cfreturn qStates>
+	</cffunction>
+
+	<cffunction name="getTXExceptionCodes" output="false">
+		
+		<cfquery name="local.qTXExceptionCodes" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+			SELECT FareSavingsCode
+				, Description
+			FROM FareSavingsCode
+			WHERE Acct_ID = <cfqueryparam value="235" cfsqltype="cf_sql_integer">
+				AND STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+			ORDER BY FareSavingsCode
+		</cfquery>
+		
+		<cfreturn qTXExceptionCodes>
+	</cffunction>
+
 <!--- <!---
 saveSummary
 --->
@@ -379,17 +406,5 @@ determineFees
 <!---
 getTXExceptionCodes
 --->
-	<cffunction name="getTXExceptionCodes" output="false">
-		
-		<cfquery name="local.qTXExceptionCodes" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
-		SELECT *
-		FROM FareSavingsCode
-		WHERE Acct_ID = <cfqueryparam value="235" cfsqltype="cf_sql_integer">
-		AND STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-		ORDER BY FareSavingsCode
-		</cfquery>
-		
-		<cfreturn qTXExceptionCodes>
-	</cffunction>
  --->
 </cfcomponent>

@@ -1,4 +1,6 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true">
+
+	<cfproperty name="UAPI">
 	
 <!--- doAirPrice --->
 	<cffunction name="doSeatMap" output="false">
@@ -10,8 +12,8 @@
 		<cfargument name="stAccount"	required="false" 	default="#application.Accounts[session.AcctID]#">
 		
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.SearchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
-		<cfset local.sResponse = application.objUAPI.callUAPI('AirService', sMessage, SearchID)>
-		<cfset stResponse = application.objUAPI.formatUAPIRsp(sResponse)>
+		<cfset local.sResponse = UAPI.callUAPI('AirService', sMessage, SearchID)>
+		<cfset stResponse = UAPI.formatUAPIRsp(sResponse)>
 		<cfset local.stSeats = parseSeats(stResponse)>
 		
 		<cfreturn stSeats>

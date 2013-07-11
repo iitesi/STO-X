@@ -75,10 +75,11 @@
 
 	<cffunction name="getUserPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
+		<cfargument name="arrangerID" required="false" default=""/>
 		<cfargument name="acctID" type="numeric" required="true"/>
 		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
 
-		<cfreturn getBean( "PaymentService" ).getUserPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID ) />
+		<cfreturn getBean( "PaymentService" ).getUserPayments( acctID = arguments.acctID, userID = arguments.userID, arrangerID = arguments.arrangerID, valueID = arguments.valueID ) />
 	</cffunction>
 
 

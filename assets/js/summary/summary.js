@@ -8,6 +8,7 @@ $(document).ready(function(){
 	var airSelected = $( "#airSelected" ).val();
 	var hotelSelected = $( "#hotelSelected" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
+	var arrangerID = $( "#arrangerID" ).val();
 
 	getTraveler();
 
@@ -35,6 +36,27 @@ $(document).ready(function(){
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
+		if (vehicleSelected == 'true') {
+			$( "#carFF" ).val( '' );
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					if (traveler.loyaltyProgram[i].shortCode == vendor) {
+						$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
+					}
+				}
+			}
+		}
+
+		if (airSelected == 'true') {
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					// if (traveler.loyaltyProgram[i].shortCode == vendor) {
+					// 	$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
+					// }
+				}
+			}
+		}
+
 		$.ajax({type:"POST",
 			url: 'RemoteProxy.cfc?method=loadOrgUnit',
 			data: 	{
@@ -57,6 +79,7 @@ $(document).ready(function(){
 				url: 'RemoteProxy.cfc?method=getUserPayments',
 				data: 	{
 							  userID : traveler.userId
+							, arrangerID : arrangerID
 							, acctID : acctID
 							, valueID : valueID
 						},
@@ -65,7 +88,18 @@ $(document).ready(function(){
 					if (airSelected == 'true') {
 						$( "#airFOPID" ).html('')
 						$( "#airFOPID" ).append('<option value=""></option>')
-						$( "#airFOPID" ).append('<option value="0">MANUAL ENTRY</option>')
+						var manualEntry = 1;
+						for( var i=0, l=payments.length; i<l; i++ ) {
+							if (payments[i].airUse == true) {
+								if (payments[i].exclusive == 1) {
+									manualEntry = 0;
+								}
+							}
+						}
+						if (manualEntry == 1) {
+							$( "#airFOPID" ).append('<option value="0">MANUAL ENTRY</option>')
+						}
+						var personalCardOnFile = 0
 						for( var i=0, l=payments.length; i<l; i++ ) {
 							if (payments[i].airUse == true) {
 								if (payments[i].fopDescription == '') {
@@ -75,17 +109,37 @@ $(document).ready(function(){
 									$( "#airFOPID" ).append('<option value="bta_' + payments[i].btaID + '">' + payments[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
 								}
 								else if (payments[i].fopID != '') {
+									if (payments[i].userID == traveler.userId) {
+										personalCardOnFile = 1
+									}
 									$( "#airFOPID" ).append('<option value="fop_' + payments[i].fopID + '">' + payments[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
 								}
 							}
+						}
+						if (traveler.userId != 0 && traveler.userId != arrangerID && manualEntry == 1 && personalCardOnFile == 0) {
+							$( "#airSaveCardDiv" ).show();
+						}
+						else {
+							$( "#airSaveCardDiv" ).hide();
 						}
 					}
 					if (hotelSelected == 'true') {
 						$( "#hotelFOPID" ).html('')
 						$( "#hotelFOPID" ).append('<option value=""></option>')
-						$( "#hotelFOPID" ).append('<option value="0">MANUAL ENTRY</option>')
+						var manualEntry = 1;
 						for( var i=0, l=payments.length; i<l; i++ ) {
-							if (payments[i].airUse == true) {
+							if (payments[i].hotelUse == true) {
+								if (payments[i].exclusive == 1) {
+									manualEntry = 0;
+								}
+							}
+						}
+						if (manualEntry == 1) {
+							$( "#hotelFOPID" ).append('<option value="0">MANUAL ENTRY</option>')
+						}
+						var personalCardOnFile = 0
+						for( var i=0, l=payments.length; i<l; i++ ) {
+							if (payments[i].hotelUse == true) {
 								if (payments[i].fopDescription == '') {
 									payments[i].fopDescription = traveler.firstName + ' ' + traveler.lastName;
 								}
@@ -93,9 +147,18 @@ $(document).ready(function(){
 									$( "#hotelFOPID" ).append('<option value="bta_' + payments[i].btaID + '">' + payments[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
 								}
 								else if (payments[i].fopID != '') {
+									if (payments[i].userID == traveler.userId) {
+										personalCardOnFile = 1
+									}
 									$( "#hotelFOPID" ).append('<option value="fop_' + payments[i].fopID + '">' + payments[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
 								}
 							}
+						}
+						if (traveler.userId != 0 && traveler.userId != arrangerID && manualEntry == 1 && personalCardOnFile == 0) {
+							$( "#hotelSaveCardDiv" ).show();
+						}
+						else {
+							$( "#hotelSaveCardDiv" ).hide();
 						}
 					}
 				}
@@ -121,11 +184,11 @@ $(document).ready(function(){
 								$( "#carFOPID" ).append('<option value="DB_' + payments[i].directBillNumber + '">' + payments[i].fopDescription + '</option>')
 							}
 							if (payments[i].corporateDiscountNumber != '') {
-								$( "#carFOPID" ).append('<option value="DB_' + payments[i].corporateDiscountNumber + '">INDIVIDUAL PAY AT COUNTER</option>')
+								$( "#carFOPID" ).append('<option value="DB_' + payments[i].corporateDiscountNumber + '">Present your credit card at the pick-up counter</option>')
 							}
 						}
 						else {
-							$( "#carFOPID" ).append('<option value="0">PRESENT CARD AT COUNTER</option>')
+							$( "#carFOPID" ).append('<option value="0">Present your credit card at the pick-up counter</option>')
 						}
 					}
 				}
@@ -301,6 +364,24 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#hotelManual" ).hide()
+		}
+	})
+
+	$( "#airSaveCard" ).click(function() {
+		if ($( "#airSaveCard" ).attr('checked')) {
+			$( "#airSaveNameDiv" ).show()
+		}
+		else {
+			$( "#airSaveNameDiv" ).hide()
+		}
+	})
+
+	$( "#hotelSaveCard" ).click(function() {
+		if ($( "#hotelSaveCard" ).attr('checked')) {
+			$( "#hotelSaveNameDiv" ).show()
+		}
+		else {
+			$( "#hotelSaveNameDiv" ).hide()
 		}
 	})
 

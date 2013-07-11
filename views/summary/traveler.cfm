@@ -17,12 +17,14 @@
 	<div class="control-group">
 		<label class="control-label" for="firstName">Full Name</label>
 		<div class="controls">
-			<input type="text" name="firstName" id="firstName" placeholder="First" class="input-medium">
-			<input type="text" name="middleName" id="middleName" placeholder="Middle" class="input-medium">
-			<input type="text" name="lastName" id="lastName" placeholder="Last" class="input-medium">
+			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-medium">
+			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-medium">
+			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-medium">
 			<br>
-			<input type="checkbox" name="noMiddleName" value="1">
-			<span class="help-inline">No Middle Name</span>
+			<label class="checkbox">
+				<input type="checkbox" name="noMiddleName" value="1">
+				No Middle Name
+			</label>
 		</div>
 	</div>
 
@@ -34,7 +36,7 @@
 	</div>
 
 	<div class="control-group">
-		<label class="control-label" for="wirelessPhone">Wireless Phone</label>
+		<label class="control-label" for="wirelessPhone">Mobile Phone</label>
 		<div class="controls">
 			<input type="text" name="wirelessPhone" id="wirelessPhone" class="input-medium">
 		</div>
@@ -55,7 +57,7 @@
 	</div>
 
 	<div class="control-group">
-		<label class="control-label" for="month">Birthday</label>
+		<label class="control-label" for="month">Birth Date</label>
 		<div class="controls">
 			<select name="month" id="month" class="input-medium">
 			<option value=""></option>

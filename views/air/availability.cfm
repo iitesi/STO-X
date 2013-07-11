@@ -16,7 +16,7 @@
 <div class="page-header">
 	<cfif rc.filter.getAirType() IS "MD">
 		<h1>#rc.Filter.getAirHeading()#</h1>
-		<ul  class="unstyled">
+		<ul class="unstyled">
 			<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
 				<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
 			</cfloop>

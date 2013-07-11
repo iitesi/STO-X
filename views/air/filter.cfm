@@ -159,3 +159,4 @@ F = first
 			</div>
 		</div><!--- // class=sixteen columns --->
 </div><!--- // class=filter --->
+<div class="clearfix"></div>

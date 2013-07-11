@@ -11,7 +11,8 @@
 			<cfset arguments.rc.search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
 			<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria(argumentcollection=arguments.rc) />
 		<cfelse>
-			<cfset fw.getBeanFactory().getBean('car').selectCar(argumentcollection=arguments.rc)>
+			<!--- Move over the information into the stItinerary --->
+			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>
 		</cfif>
 
 		<cfreturn />

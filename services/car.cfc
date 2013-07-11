@@ -179,6 +179,7 @@ checkPolicy
 		<cfset local.aPolicy = {}>
 		<cfset local.bActive = 1>
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyCar) GT 0 ? 1 : 0)>
+		<cfset local.preferred = ''>
 		
 		<cfquery name="local.getsearch">
 			SELECT 	CarPickup_DateTime, CarDropoff_DateTime
@@ -191,6 +192,11 @@ checkPolicy
 			<cfloop collection="#stCars[sCategory]#" item="local.sVendor">
 				<cfset aPolicy = []>
 				<cfset bActive = 1>
+				<cfset preferred = 0>
+				<cfif ArrayFindNoCase(arguments.Account.aPreferredCar, sVendor)
+				AND ArrayFindNoCase(arguments.Policy.aCarSizes, sCategory)>
+					<cfset preferred = 1>
+				</cfif>
 				<!--- Out of policy if they cannot book non preferred vendors. --->
 				<cfif arguments.Policy.Policy_CarPrefRule EQ 1
 				AND NOT ArrayFindNoCase(arguments.Account.aPreferredCar, sVendor)>
@@ -213,6 +219,7 @@ checkPolicy
 					<cfset ArrayAppend(aPolicy, 'Out of policy vendor')>
 				</cfif>
 				<cfif bActive>
+					<cfset stCars[sCategory][sVendor].preferred = preferred>
 					<cfset stCars[sCategory][sVendor].Policy = (ArrayIsEmpty(aPolicy) ? true : false)>
 					<cfset stCars[sCategory][sVendor].aPolicies = aPolicy>
 				<cfelse>
@@ -319,24 +326,6 @@ getCategories
 		</cfloop>
 		
 		<cfreturn stCarCategories/>
-	</cffunction>
-
-<!---
-selectCar
---->
-	<cffunction name="selectCar" output="false">
-		<cfargument name="SearchID">
-		<cfargument name="sCategory">
-		<cfargument name="sVendor">
-
-		<!--- Initialize or overwrite the CouldYou car section --->
-		<cfset session.searches[arguments.SearchID].CouldYou.Car = {} >
-		<cfset session.searches[arguments.SearchID].Car = true >
-		<!--- Move over the information into the stItinerary --->
-		<cfset session.searches[arguments.SearchID].stItinerary.Car = session.searches[arguments.SearchID].stCars[arguments.sCategory][arguments.sVendor]>
-		<cfset session.searches[arguments.SearchID].stItinerary.Car.VendorCode = arguments.sVendor>
-
-		<cfreturn />
 	</cffunction>
 
 <!---

@@ -203,18 +203,25 @@
 			}>
 
 			<cfquery name="local.qAccount">
-				SELECT Accounts.Acct_ID, Accounts.Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
+				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
 					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email, CouldYou
-				FROM Accounts, <cfif getUseLinkedDatabases()>zeus.</cfif>Corporate_Production.dbo.Accounts CPAccounts<!--- CouldYou is in the Corporate_Production accounts table --->
+					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
+				FROM Accounts
+				WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+					AND Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<cfquery name="local.qCouldYou" datasource="Corporate_Production">
+				SELECT CouldYou
+				FROM Accounts
 				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 					AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
-					AND Accounts.Acct_ID = CPAccounts.Acct_ID
 			</cfquery>
 
 			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
 				<cfset stTemp[sCol] = qAccount[sCol]>
 			</cfloop>
+			<cfset stTemp.CouldYou = qCouldYou.CouldYou>
 
 			<cfset stTemp.sBranch = Branches[qAccount.PCC_Booking]>
 			<cfset stTemp.Air_PF = ListToArray(stTemp.Air_PF, '~')>
