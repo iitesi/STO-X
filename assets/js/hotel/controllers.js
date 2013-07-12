@@ -555,15 +555,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.selectRoom = function( Hotel, Room ){
 		HotelService.selectRoom( $scope.search,  Hotel, Room )
 			.then( function( response ){
-
 				if( response.success == true ){
-					if( $scope.search.car == 1 ){
-						$location.path( '/booking/index.cfm?action=car.availability&SearchID=' + $scope.search.searchID );
-						$scope.apply();
-					} else {
-						$location.path( '/booking/index.cfm?action=summary&SearchID=' + $scope.search.searchID );
-						$scope.apply();
-					}
+					window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID;
 				} else {
 					$scope.errors = response.errors;
 				}
