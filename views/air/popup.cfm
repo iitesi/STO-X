@@ -10,10 +10,10 @@
 	    <li><a href="##settings" data-toggle="tab">Email</a></li>
     </ul>
 		<div class="tab-content">
-			<div class="tab-pane active" id="home"><h2>Details</h2>#view('air/details')#</div>
-			<div class="tab-pane" id="profile"><h2>Seats</h2> #view('air/seatmap')# </div>
-			<div class="tab-pane" id="messages"><h2>Bags</h2> #view('air/baggage')# </div>
-			<div class="tab-pane" id="settings"><h2>Email</h2> #view('air/email')# </div>
+			<div class="tab-pane active" id="home">#view('air/details')#</div>
+			<div class="tab-pane" id="profile">#view('air/seatmap')# </div>
+			<div class="tab-pane" id="messages">#view('air/baggage')# </div>
+			<div class="tab-pane" id="settings">#view('air/email')# </div>
 		</div>
 
 
