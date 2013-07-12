@@ -105,6 +105,17 @@
 				OR arguments.nCouldYou NEQ 0>
 
 				<cfthread action="join" name="#threadNames#" />
+					
+				<cfset local.threadError = false>						
+				<cfloop list="#threadNames#" index="local.thread">
+					<cfif NOT structKeyExists(cfthread[thread], 'stCars')>
+						<cfdump var="#cfthread[thread]#">
+						<cfset threadError = true>						
+					</cfif>
+				</cfloop>
+				<cfif threadError>
+					<cfabort>
+				</cfif>
 
 				<cfset stCars = mergeCars((structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
 				<cfset session.searches[SearchID].stCarVendors = getVendors(stCars, arguments.Account)>
