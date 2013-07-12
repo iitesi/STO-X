@@ -553,15 +553,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.selectRoom = function( Hotel, Room ){
-		HotelService.selectRoom( $scope.search,  Hotel, Room )
-			.then( function( response ){
-				if( response.success == true ){
-					window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID;
-				} else {
-					$scope.errors = response.errors;
-				}
-			});
-
+		console.log( Room );
+		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
+							+ '&propertyId=' + Hotel.PropertyId
+							+ '&ratePlanType=' + Room.ratePlanType
+							+ '&totalForStay=' + Room.totalForStay
+							+ '&isInPolicy=' + Room.isInPolicy;
 	}
 
 	/* Items executed when controller is loaded */
