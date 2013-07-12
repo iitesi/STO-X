@@ -18,8 +18,10 @@
 		<label class="control-label" for="firstName">Full Name</label>
 		<div class="controls">
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-medium">
-			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-medium">
+			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
 			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-medium">
+			<input type="text" name="firstName" id="firstName2">
+			<input type="text" name="lastName" id="lastName2">
 			<br>
 			<label class="checkbox">
 				<input type="checkbox" name="noMiddleName" value="1">

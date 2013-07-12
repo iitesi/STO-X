@@ -13,6 +13,7 @@
 		<cfelse>
 			<!--- Move over the information into the stItinerary --->
 			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>
+			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = session.searches[rc.SearchID].stItinerary.Vehicle.setVendorCode( rc.sVendor )>
 		</cfif>
 
 		<cfreturn />
