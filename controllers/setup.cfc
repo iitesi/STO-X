@@ -128,21 +128,5 @@ setGroup
 
 		<cfreturn />
 	</cffunction>
-
-<!--- close
-	<cffunction name="close" output="false">
-		<cfargument name="rc">
-
-		<cfset variables.fw.service('security.close', 'nNewSearchID')>
-
-		<cfreturn />
-	</cffunction>
-	<cffunction name="endclose" output="false">
-		<cfargument name="rc">
-
-		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.nNewSearchID#')>
-
-		<cfreturn />
-	</cffunction>
-    --->
+	
 </cfcomponent>
