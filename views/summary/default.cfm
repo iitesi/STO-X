@@ -11,9 +11,9 @@
 		<a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
 	</cfoutput>
 
-	<form class="form-horizontal">
-
-		<cfoutput>
+	<cfoutput>
+	
+		<form method="post" class="form-horizontal" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
@@ -21,7 +21,9 @@
 			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
+			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.airSelected ? arrayToList(rc.Air.Carriers) : '')#">
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
+			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getRooms()[1].getChainCode() : '')#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
 			<input type="hidden" name="vendor" id="vendor" value="#(rc.vehicleSelected ? rc.Vehicle.getVendorCode() : '')#">
 			
@@ -39,8 +41,9 @@
 					<cfset tripTotal = 0>
 					
 					#View('summary/air')#
-					<br class="clearfix">
+					#View('summary/hotel')#
 					#View('summary/vehicle')#
+					#View('summary/buttons')#
 				</p>
 			</div>
 			
