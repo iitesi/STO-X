@@ -100,7 +100,7 @@ doAirAvailability
 					<!--- Put together the SOAP message. --->
 					<cfset local.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (local.sNextRef NEQ 'ROUNDONE' ? local.sNextRef : ''), arguments.Account)>
 					<!--- Call the getUAPI. --->
-					<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.Filter.getSearchID())>
+					<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 					<!--- Format the getUAPI response. --->
 					<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 					<!--- Create unique segment keys. --->

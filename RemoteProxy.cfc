@@ -21,7 +21,11 @@
 		<cfargument name="userID" type="numeric" required="true"/>
 		<cfargument name="acctID" type="numeric" required="true"/>
 
-		<cfreturn getBean( "UserService" ).loadFullUser( arguments.userId, arguments.acctID ) />
+		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId, acctID = arguments.acctID )>
+		<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+		<cfset Traveler.setBookingDetail( BookingDetail )>
+
+		<cfreturn Traveler />
 	</cffunction>
 	
 

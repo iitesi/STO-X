@@ -76,7 +76,7 @@
 							<option value="#State_Code#">#State_Code#</option>
 						</cfloop>
 					</select>
-					<input type="text" name="airBillingZip" maxlength="15" class="input-small">
+					<input type="text" name="airBillingZip" id="airBillingZip" maxlength="15" class="input-small">
 				</div>
 			</div>
 

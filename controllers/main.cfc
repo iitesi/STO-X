@@ -1,8 +1,5 @@
 <cfcomponent extends="abstract" output="false">
 
-<!---
-default
---->
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
@@ -16,7 +13,7 @@ default
 				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
 			<cfif arguments.rc.Filter.getCar()
-			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Car')>
+			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Vehicle')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>

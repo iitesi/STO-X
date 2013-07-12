@@ -2,9 +2,6 @@
 
 	<cfproperty name="VehicleAdapter">
 
-<!---
-init
---->
 	<cffunction name="init" output="false">
 		<cfargument name="VehicleAdapter">
 
@@ -13,9 +10,6 @@ init
 		<cfreturn this>
 	</cffunction>
 	
-<!---
-doAvailability
---->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="Filter" 	required="true">
 		<cfargument name="Account"	required="true">
@@ -36,7 +30,7 @@ doAvailability
 
 		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
-		<cfif arguments.Filter.getAir()
+		<!--- <cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
 			AND arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()>
 
@@ -53,70 +47,88 @@ doAvailability
 
 		</cfif>
 
-		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
+		<cfset session.Filters[arguments.SearchID] = arguments.Filter> --->
+
+		<cfset structDelete(session.searches[SearchID], 'stCars')>
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
-		OR StructIsEmpty(session.searches[SearchID].stCars)
-		OR arguments.nCouldYou NEQ 0>
+			OR StructIsEmpty(session.searches[SearchID].stCars)
+			OR arguments.nCouldYou NEQ 0>
 
-			<cfset local.nUniqueThreadName = arguments.nCouldYou + 100 /><!--- nCouldYou is negative at times, so make sure it's positive so cfthread can read the names properly --->
-			<cfset local.stThreads = {}>
+			<cfset local.threadNames = ''>
+			<cfset local.stCars = ''>
+
 			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
-			<cfif isStruct(CDNumbers) AND NOT structIsEmpty(CDNumbers)>
-				<cfset stThreads['stCorporateRates'&nUniqueThreadName] = ''>
+			<cfif isStruct(CDNumbers) 
+				AND NOT structIsEmpty(CDNumbers)>
+				<cfset threadNames = 'corporateRates'>
+				<cfset local.corporateRates = ''>
 				<cfthread
-				name="stCorporateRates#nUniqueThreadName#"
-				Filter="#arguments.Filter#"
-				Account="#arguments.Account#"
-				Policy="#arguments.Policy#"
-				nCouldYou="#arguments.nCouldYou#"
-				CDNumbers="#CDNumbers#">
+					name="corporateRates"
+					Filter="#arguments.Filter#"
+					Account="#arguments.Account#"
+					Policy="#arguments.Policy#"
+					nCouldYou="#arguments.nCouldYou#"
+					CDNumbers="#CDNumbers#">
 					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers)>
 					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
-					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true)>
 					<cfif arguments.nCouldYou EQ 0>
-						<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-						<cfset local.stCars     = addJavascript(stCars)>
-						<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : StructNew('linked')), stCars, arguments.Account)>
-						<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : StructNew('linked')), stCars)>
-						<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+						<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+						<cfset thread.stCars = addJavascript(stCars)>
 					<cfelse>
-						<cfset thread.stCars     = stCars>
+						<cfset thread.stCars = stCars>
 					</cfif>
 				</cfthread>
 			</cfif>
 			
-			<cfset stThreads['stPublicRates'&nUniqueThreadName] = ''>
+			<cfset threadNames = listAppend(threadNames, 'publicRates')>
+			<cfset local.publicRates = ''>
 			<cfthread
-			name="stPublicRates#nUniqueThreadName#"
-			Filter="#arguments.Filter#"
-			Account="#arguments.Account#"
-			Policy="#arguments.Policy#"
-			nCouldYou="#arguments.nCouldYou#">
+				name="publicRates"
+				Filter="#arguments.Filter#"
+				Account="#arguments.Account#"
+				Policy="#arguments.Policy#"
+				nCouldYou="#arguments.nCouldYou#">
 				<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou)>
 				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 				<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 				<cfif arguments.nCouldYou EQ 0>
-					<cfset local.stCars     = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-					<cfset local.stCars     = addJavascript(stCars)>
-					<cfset session.searches[SearchID].stCarVendors      = getVendors((structKeyExists(session.searches[SearchID], 'stCarVendors') ? session.searches[SearchID].stCarVendors : StructNew('linked')), stCars, arguments.Account)>
-					<cfset session.searches[SearchID].stCarCategories   = getCategories((structKeyExists(session.searches[SearchID], 'stCarCategories') ? session.searches[SearchID].stCarCategories : StructNew('linked')), stCars)>
-					<cfset session.searches[SearchID].stCars            = mergeCars(stCars)>
+					<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<cfset thread.stCars = addJavascript(stCars)>
 				<cfelse>
-					<cfset thread.stCars     = stCars>
+					<cfset thread.stCars = stCars>
 				</cfif>
 			</cfthread>
 
 			<cfif arguments.sPriority EQ 'HIGH'
-			OR arguments.nCouldYou NEQ 0>
-				<cfthread action="join" name="#StructKeyList(stThreads)#" />
+				OR arguments.nCouldYou NEQ 0>
+
+				<cfthread action="join" name="#threadNames#" />
+					
+				<cfset local.threadError = false>						
+				<cfloop list="#threadNames#" index="local.thread">
+					<cfif NOT structKeyExists(cfthread[thread], 'stCars')>
+						<cfdump var="#cfthread[thread]#">
+						<cfset threadError = true>						
+					</cfif>
+				</cfloop>
+				<cfif threadError>
+					<cfabort>
+				</cfif>
+
+				<cfset stCars = mergeCars((structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
+				<cfset session.searches[SearchID].stCarVendors = getVendors(stCars, arguments.Account)>
+				<cfset session.searches[SearchID].stCarCategories = getCategories(stCars)>
+				<cfset session.searches[SearchID].stCars = stCars>
+				
 				<cfif arguments.nCouldYou NEQ 0>
-					<cfif structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars, sCarType)
-					AND structKeyExists(cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
-						<cfset CarRate = cfthread['stCorporateRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
-					<cfelseif structKeyExists(cfthread['stPublicRates#nUniqueThreadName#'].stCars, sCarType)
-					AND structKeyExists(cfthread['stPublicRates#nUniqueThreadName#'].stCars[sCarType], sCarChain)>
-						<cfset CarRate = cfthread['stPublicRates#nUniqueThreadName#'].stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					<cfif structKeyExists(corporateRates.stCars, sCarType)
+					AND structKeyExists(corporateRates.stCars[sCarType], sCarChain)>
+						<cfset CarRate = corporateRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					<cfelseif structKeyExists(publicRates.stCars, sCarType)
+					AND structKeyExists(publicRates.stCars[sCarType], sCarChain)>
+						<cfset CarRate = publicRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
 					</cfif>
 				</cfif>
 			</cfif>
@@ -127,48 +139,38 @@ doAvailability
 		<cfreturn CarRate>
 	</cffunction>
 
-<!---
-mergeCars
---->
 	<cffunction name="mergeCars" output="false">
-		<cfargument name="stNewCars"    required="true">
+		<cfargument name="corporateRates">
+		<cfargument name="publicRates">
 
-		<cfset local.stCars = (structKeyExists(session.searches[SearchID], 'stCars') ? session.searches[SearchID].stCars : {})>
-		<cfset local.stNewCars = arguments.stNewCars>
+		<cfset local.corporateRates = arguments.corporateRates>
+		<cfset local.cars = arguments.publicRates>
 		<!---If they are both structs that contain values--->
-		<cfif IsStruct(stCars) AND IsStruct(stNewCars)>
-			<!---Loop through the new car struct to be added to the session--->
-			<cfloop collection="#stNewCars#" item="local.stNewClass" index="local.sNewClass">
+		<cfif isStruct(corporateRates) AND isStruct(publicRates)>
+			<!---Loop through the corporate struct --->
+			<cfloop collection="#corporateRates#" item="local.classItem" index="local.corporateClass">
 				<!---If the car category already exists--->
-				<cfif structKeyExists(stCars, sNewClass)>
+				<cfif structKeyExists(cars, corporateClass)>
 					<!---Loop through each vendor--->
-					<cfloop collection="#stNewClass#" item="local.stNewVendor" index="local.sNewVendor">
+					<cfloop collection="#classItem#" item="local.vendorItem" index="local.coporateVendor">
 						<!---If the new one is a corporate rate, just add/override it.--->
-						<cfif stNewVendor.Corporate>
-							<cfset stCars[sNewClass][sNewVendor] = stNewVendor>
-						<!---If it isn't a corporate rate, if it doesn't exist then add it.--->
-						<cfelseif NOT structKeyExists(stCars[sNewClass], sNewVendor)>
-							<cfset stCars[sNewClass][sNewVendor] = stNewVendor>
-						</cfif>
+						<cfset cars[corporateClass][coporateVendor] = vendorItem>
 					</cfloop>
 				<!---If the car category doesn't exists just add the whole struct for that category--->
 				<cfelse>
-					<cfset stCars[sNewClass] = stNewClass>
+					<cfset cars[corporateClass] = classItem>
 				</cfif>
 			</cfloop>
-		<cfelseif IsStruct(stNewCars)>
-			<cfset stCars = stNewCars>
+		<cfelseif isStruct(corporateRates)>
+			<cfset cars = corporateRates>
 		</cfif>
-		<cfif NOT IsStruct(stCars)>
-			<cfset stCars = {}>
+		<cfif NOT isStruct(cars)>
+			<cfset cars = {}>
 		</cfif>
 
-		<cfreturn stCars/>
+		<cfreturn cars/>
 	</cffunction>
 	
-<!---
-checkPolicy
---->
 	<cffunction name="checkPolicy" output="false">
 		<cfargument name="stCars"  	required="true">
 		<cfargument name="SearchID"	required="true">
@@ -231,9 +233,6 @@ checkPolicy
 		<cfreturn stCars/>
 	</cffunction>
 
-<!---
-findLowestCarRate
---->
 	<cffunction name="findLowestCarRate" output="false">
 		<cfargument name="stCars"    required="true">
 
@@ -257,9 +256,6 @@ findLowestCarRate
 		<cfreturn fLowestCarRate />
 	</cffunction>
 
-<!---
-addJavascript
---->
 	<cffunction name="addJavascript" output="false">
 		<cfargument name="stCars" 	required="true">
 		
@@ -280,16 +276,12 @@ addJavascript
 		<cfreturn stCars/>
 	</cffunction>
 
-<!---
-getVendors
---->
 	<cffunction name="getVendors" output="false">
-		<cfargument name="stCarVendors"	required="true">
-		<cfargument name="stCars" 	    required="true">
-		<cfargument name="Account" 	    required="true">
+		<cfargument name="stCars" required="true">
+		<cfargument name="Account" required="true">
 		
 		<cfset local.stCars = arguments.stCars>
-		<cfset local.stCarVendors = (IsStruct(arguments.stCarVendors) ? arguments.stCarVendors : StructNew('linked'))>
+		<cfset local.stCarVendors = StructNew('linked')>
 		<cfloop collection="#stCars#" item="local.sClassCategory">
 			<cfloop collection="#stCars[sClassCategory]#" item="local.sVendor">
 				<!---Add preferred vendors first--->
@@ -308,15 +300,11 @@ getVendors
 		<cfreturn stCarVendors/>
 	</cffunction>
 
-<!---
-getCategories
---->
 	<cffunction name="getCategories" output="false">
-		<cfargument name="stCarCategories"	required="true">
-		<cfargument name="stCars" 	        required="true">
+		<cfargument name="stCars" required="true">
 
 		<cfset local.stCars = arguments.stCars>
-		<cfset local.stCarCategories = (IsStruct(arguments.stCarCategories) ? arguments.stCarCategories : StructNew('linked'))>
+		<cfset local.stCarCategories = StructNew('linked')>
 		<!--- If you update this list, update it in parseCars too --->
 		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV']>
 		<cfloop array="#aClassCategories#" index="local.sCategory">
@@ -328,9 +316,6 @@ getCategories
 		<cfreturn stCarCategories/>
 	</cffunction>
 
-<!---
-getSearchCriteria
---->
 	<cffunction name="getSearchCriteria" output="false">
 		<cfargument name="search" required="true" />
 
