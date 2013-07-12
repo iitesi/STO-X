@@ -138,7 +138,7 @@
 				<!--- Put together the SOAP message. --->
 				<cfset sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
 				<!--- Call the UAPI. --->
-				<cfset sResponse = getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID())>
+				<cfset sResponse = getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
 				<!--- Dump any error returned
 				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
