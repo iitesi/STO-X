@@ -1,12 +1,16 @@
-
-
-
 <cfoutput>
-<img class="carrierimg" src="assets/img/airlines/#rc.qBaggage.ShortCode#.png" style="float:left;padding-right:20px;">
-<h3>#rc.qBaggage.Name# Baggage Fees (one-way)</h3>
+	<div id="baggage">
 
-<cfif rc.qBaggage.CreateUpdate_Datetime NEQ "">
+	<img class="popuplogo pull-left" src="assets/img/airlines/#rc.qBaggage.ShortCode#.png">
+	<div class="pull-left">
+		<h3>#rc.qBaggage.Name# Baggage Fees <small>(one-way)</small></h3>
+	</div>
 
+	<div class="clearfix"></div>
+
+
+
+	<cfif rc.qBaggage.CreateUpdate_Datetime NEQ "">
 		<table class="table">
 			<tr>
 				<td>&nbsp;</td>
@@ -33,9 +37,7 @@
 				<td colspan="2">Additional Fees Apply</td>
 			</tr>
 		</table>
-
 	<cfelse>
-
 			<p>&nbsp;</p>
 			<p>
 				<span class="icon-stack">
@@ -52,5 +54,6 @@
 		<li>Short's Travel Management does not take payment for baggage fees.</li>
 		<li>You will pay the airline upon online check-in or airport check-in for all baggage fees.</li>
 	</ul>
+</div>
 </cfoutput>
 

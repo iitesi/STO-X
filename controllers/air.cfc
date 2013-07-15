@@ -93,6 +93,8 @@
 				<cfset local.userId = session.filters[arguments.rc.searchID].getProfileID()>
 				<cfset rc.qProfile = variables.general.getUser( local.userID )>
 
+				<cfset variables.fw.setLayout("popup")>
+
 		<cfreturn />
 	</cffunction>
 
@@ -106,7 +108,6 @@
 		<cfset rc.nSegment = url.nSegment>
 		<!--- Do the search. --->
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-
 		<cfreturn />
 	</cffunction>
 

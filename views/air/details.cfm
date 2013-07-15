@@ -15,11 +15,8 @@
 	<cfset stGroup = stTrip.Groups[Group]>
 
 	<div class="media">
-		<span class="pull-left">
-			<i class="icon-plane icon-large"></i>
-		</span>
 		<div class="media-body">
-			<span class="media-heading"><h2>#application.stAirports[stGroup.Origin]# (#stGroup.Origin#) to #application.stAirports[stGroup.Destination]# (#stGroup.Destination#) <small>:: #DateFormat(stGroup.DepartureTime, 'dddd, mmm d')#</small></h2></span>
+			<span class="media-heading"><h3>#application.stAirports[stGroup.Origin]# (#stGroup.Origin#) to #application.stAirports[stGroup.Destination]# (#stGroup.Destination#) <small>:: #DateFormat(stGroup.DepartureTime, 'dddd, mmm d')#</small></h3></span>
 			<span class="muted">Trip duration: #stGroup.TravelTime#</span>
 		</div>
 	</div>
@@ -29,9 +26,6 @@
 	<cfloop collection="#stGroup.Segments#" item="nSegment" >
 		<cfset nCnt++>
 		<cfset stSegment = stGroup.Segments[nSegment]>
-
-
-
 		<div class="media">
 			<a class="pull-left" href="##">
 				<img class="carrierimg" src="assets/img/airlines/#stSegment.Carrier#_sm.png">
@@ -67,6 +61,5 @@
 		</cfif>
 
 	</cfloop>
-	<hr>
 </cfloop>
 </cfoutput>

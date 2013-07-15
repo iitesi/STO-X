@@ -1,51 +1,26 @@
 <cfsilent>
 	<cfparam name="rc.bSelection" default="0">
+	<cfparam name="rc.details" default="details">
 </cfsilent>
 
+<!--- 3:43 PM Monday, July 15, 2013 - Jim Priest - jpriest@shortstravel.com
+active tabs from link are not included with bootstrap :\
+alternatives are to check url and set active (as I did below)
+or use js which has issues - see: https://github.com/twitter/bootstrap/issues/2415 --->
+
 <cfoutput>
+	<cfif rc.bSelection EQ 0>
     <ul class="nav nav-tabs">
-	    <li class="active"><a href="##home" data-toggle="tab">Details</a></li>
-	    <li><a href="##profile" data-toggle="tab">Seat Map</a></li>
-	    <li><a href="##messages" data-toggle="tab">Bags</a></li>
-	    <li><a href="##settings" data-toggle="tab">Email</a></li>
+	    <li <cfif rc.sDetails EQ 'details'>class="active"</cfif>><a href="##tab-details" data-toggle="tab">Details</a></li>
+	    <li <cfif rc.sDetails EQ 'seatmap'>class="active"</cfif>><a href="##tab-seatmap" data-toggle="tab">Seat Map</a></li>
+	    <li <cfif rc.sDetails EQ 'baggage'>class="active"</cfif>><a href="##tab-baggage" data-toggle="tab">Bags</a></li>
+	    <li <cfif rc.sDetails EQ 'email'>class="active"</cfif>><a href="##tab-email" data-toggle="tab">Email</a></li>
     </ul>
 		<div class="tab-content">
-			<div class="tab-pane active" id="home">#view('air/details')#</div>
-			<div class="tab-pane" id="profile">#view('air/seatmap')# </div>
-			<div class="tab-pane" id="messages">#view('air/baggage')# </div>
-			<div class="tab-pane" id="settings">#view('air/email')# </div>
+			<div class="tab-pane <cfif rc.sDetails EQ 'details'>active</cfif>" id="tab-details">#view('air/details')#</div>
+			<div class="tab-pane <cfif rc.sDetails EQ 'seatmap'>active</cfif>" id="tab-seatmap">#view('air/seatmap')# </div>
+			<div class="tab-pane <cfif rc.sDetails EQ 'baggage'>active</cfif>" id="tab-baggage">#view('air/baggage')# </div>
+			<div class="tab-pane <cfif rc.sDetails EQ 'email'>active</cfif>" id="tab-email">#view('air/email')# </div>
 		</div>
-
-
-	<!--- <div>
-		<cfif rc.bSelection EQ 0>
-			<ul id="details-tabs">
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#Group#'>
-				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=air.popup&sDetails=details&#sURL#')">
-					<li <cfif rc.sDetails EQ 'details'>class="selected"</cfif>>
-						Details
-					</li>
-				</a>
-				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=air.popup&sDetails=seatmap&#sURL#')">
-					<li <cfif rc.sDetails EQ 'seatmap'>class="selected"</cfif>>
-						Seats
-					</li>
-				</a>
-				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=air.popup&sDetails=baggage&#sURL#')">
-					<li <cfif rc.sDetails EQ 'baggage'>class="selected"</cfif>>
-						Bags
-					</li>
-				</a>
-				<a onClick="$('##tabcontent').html('One moment please.');$('##overlayContent').load('?action=air.popup&sDetails=email&#sURL#')">
-					<li <cfif rc.sDetails EQ 'email'>class="selected"</cfif>>
-						Email
-					</li>
-				</a>
-			</ul>
-		</cfif>
-		<br clear="all">
-		<div id="tabcontent">
-			#view('air/#rc.sDetails#')#
-		</div>
-	</div> --->
+	</cfif>
 </cfoutput>

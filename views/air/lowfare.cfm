@@ -138,12 +138,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<input type="hidden" name="SearchID" value="#rc.SearchID#">
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 	</form>
-</cfoutput>
 
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
-	</div>
-	<div id="myModalBody" class="modal-body"></div>
-</div>
+<!--- TODO - need to call default loading  --->
+#View('modal/popup')#
+
+</cfoutput>
