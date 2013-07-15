@@ -420,8 +420,10 @@ $(document).ready(function() {
  // bootstrap tooltips
  //  add  " rel='tooltip' " to element and it will use that elements title text as toolip
 	$(function () {
-		$("[rel='tooltip']").tooltip();
+		$("[rel='tooltip']").tooltip({container: 'body'});
 	});
+
+	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true});
 
 	$("#SoldOut")
 	.button()
