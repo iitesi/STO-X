@@ -1,3 +1,25 @@
+
+
+
+
+
+<!---     <div class="tabbable tabs-left"> <!-- Only required for left/right tabs -->
+    <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Section 1</a></li>
+    <li><a href="#tab2" data-toggle="tab">Section 2</a></li>
+    </ul>
+    <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+    <p>I'm in Section 1.</p>
+    </div>
+    <div class="tab-pane" id="tab2">
+    <p>Howdy, I'm in Section 2.</p>
+    </div>
+    </div>
+    </div> --->
+
+
+
 <cfsetting showdebugoutput="false">
 <cfoutput>
 	<div id="seatcontent">
@@ -26,8 +48,8 @@
 					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 						<td>
 							<li>
-								<a <cfif rc.nSegment EQ sSegKey>class="active"</cfif> onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');">
-									#stSegment.Carrier##stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
+								<a class="<cfif rc.nSegment EQ sSegKey>active</cfif>" onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');" >
+									X #stSegment.Carrier# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
 								</a>
 							</li>
 						</td>

@@ -702,25 +702,25 @@ div.checkbox {
 	padding:0 0 5px;
 }
 .Available {
-	background-image:url(../img/available.png);
+	background-image:url(../img/seats/available.png);
 }
 .Preferential, .Extra, .Group {
-	background-image:url(../img/preferred.png);
+	background-image:url(../img/seats/preferred.png);
 }
 .Occupied, .Reserved, .Protected, .RBDRestriction,  .AdvancedBoardingPass{
-	background-image:url(../img/occupied.png);
+	background-image:url(../img/seats/occupied.png);
 }
 .InterlineCheckin, .Codeshare, .PartnerAirline, .AdvSeatSelection, .Unknown {
-	background-image:url(../img/unknown.png);
+	background-image:url(../img/seats/unknown.png);
 }
 .NoSeat, .Blocked {
-	background-image:url(../img/seatna.png);
+	background-image:url(../img/seats/seatna.png);
 }
 .wingmiddle {
 	background-color:#CCCCCC;
 }
 .currentseat {
-	background-image:url(../img/currentseat.png);
+	background-image:url(../img/seats/currentseat.png);
 }
 
 /*
