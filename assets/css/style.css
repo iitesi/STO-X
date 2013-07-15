@@ -1,5 +1,9 @@
 /* Save and include the following CSS styles on your page. */
 
+.popover-content, .popover-title {
+	text-align: left;
+}
+
 .changesearch {
 	color: blue;
 	font-size: 14px;

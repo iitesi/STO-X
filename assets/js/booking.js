@@ -423,6 +423,8 @@ $(document).ready(function() {
 		$("[rel='tooltip']").tooltip({container: 'body'});
 	});
 
+	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true});
+
 	$("#SoldOut")
 	.button()
 	.change(function() {
