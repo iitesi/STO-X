@@ -28,6 +28,8 @@
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
+		<!--- <cfset arguments.nCouldYou = 1 /> --->
+
 		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
 		<!--- <cfif arguments.Filter.getAir()
@@ -77,7 +79,7 @@
 						<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 						<cfset thread.stCars = addJavascript(stCars)>
 					<cfelse>
-						<cfset thread.stCars = stCars>
+						<cfset thread.stCars = addJavascript(stCars)>
 					</cfif>
 				</cfthread>
 			</cfif>
@@ -97,7 +99,7 @@
 					<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 					<cfset thread.stCars = addJavascript(stCars)>
 				<cfelse>
-					<cfset thread.stCars = stCars>
+					<cfset thread.stCars = addJavascript(stCars)>
 				</cfif>
 			</cfthread>
 
@@ -123,12 +125,12 @@
 				<cfset session.searches[SearchID].stCars = stCars>
 				
 				<cfif arguments.nCouldYou NEQ 0>
-					<cfif structKeyExists(corporateRates.stCars, sCarType)
-					AND structKeyExists(corporateRates.stCars[sCarType], sCarChain)>
-						<cfset CarRate = corporateRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
-					<cfelseif structKeyExists(publicRates.stCars, sCarType)
-					AND structKeyExists(publicRates.stCars[sCarType], sCarChain)>
-						<cfset CarRate = publicRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					<cfif structKeyExists(cfthread.corporateRates.stCars, sCarType)
+					AND structKeyExists(cfthread.corporateRates.stCars[sCarType], sCarChain)>
+						<cfset CarRate = cfthread.corporateRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
+					<cfelseif structKeyExists(cfthread.publicRates.stCars, sCarType)
+					AND structKeyExists(cfthread.publicRates.stCars[sCarType], sCarChain)>
+						<cfset CarRate = cfthread.publicRates.stCars[sCarType][sCarChain].EstimatedTotalAmount>
 					</cfif>
 				</cfif>
 			</cfif>
