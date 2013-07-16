@@ -39,7 +39,7 @@
 						<select name="carReasonCode" id="carReasonCode" class="input-xlarge">
 						<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
-						<option value="S">>Required car size sold out</option>
+						<option value="S">Required car size sold out</option>
 						<option value="V">Required car vendor sold out</option>
 						<option value="M">Required a larger car size due to ## of travelers/equipment</option>
 						<option value="C">Required rental rate was higher than another company</option>
@@ -80,10 +80,16 @@
 					</strong>
 
 					<strong>
+						<cfif rc.Vehicle.getLocation() EQ 'TERMINAL'>
+							ON
+						</cfif>
 						#uCase(rc.Vehicle.getLocation())#<br>
 					</strong>
 
-					#uCase(rc.Vehicle.getVehicleClass())# #rc.Vehicle.getDoorCount()# DOOR<br>
+					#uCase(rc.Vehicle.getVehicleClass())# 
+					<cfif rc.Vehicle.getDoorCount() NEQ ''>
+						#rc.Vehicle.getDoorCount()# DOOR
+					</cfif><br>
 
 					<strong>
 						PICK-UP:
@@ -114,7 +120,9 @@
 					Taxes quoted at pick-up<br>
 
 					<span class="blue bold">
-						Car payment and cancellation policy
+						<span rel="tooltip" class="outofpolicy" title="Payment is taken by the vendor. You may cancel at anytime for no fee.">
+							Car payment and cancellation policy
+						</span>
 					</span>
 
 				</td>

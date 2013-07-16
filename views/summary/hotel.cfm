@@ -1,5 +1,5 @@
 <cfoutput>
-
+<!--- <cfdump var="#rc.Hotel#" /> --->
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
 
@@ -87,7 +87,7 @@
 					#uCase(rc.Hotel.getZip())#
 					#uCase(rc.Hotel.getCountry())#<br>
 
-					#uCase(rc.Hotel.getRooms()[1].getDescription())#<br>
+					<div style="width:630px;overflow:hidden;">#uCase(rc.Hotel.getRooms()[1].getDescription())#</div><br>
 
 					<strong>
 						CHECK-IN:
@@ -95,23 +95,50 @@
 						&nbsp;&nbsp;&nbsp;
 						CHECK-OUT: 
 						#uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
+						<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
+						(#nights# NIGHT<cfif nights GT 1>S</cfif>)
 					</strong>
 
 				</td>
 
 				<td width="200" valign="top">
+					<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
+						<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+						<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
+						<cfset hotelText = 'Total rate including taxes'>
+					<cfelse>
+						<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+						<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
+					</cfif>
 
-					<cfset tripTotal = (rc.Hotel.getRooms()[1].getTotalForStayCurrency() EQ 'USD' ? tripTotal + rc.Hotel.getRooms()[1].getTotalForStay() : 'CURR')>
+					<cfset tripTotal = (currency EQ 'USD' ? tripTotal + hotelTotal : 'CURR')>
 
 					<span class="blue bold large">
-						#(rc.Hotel.getRooms()[1].getTotalForStayCurrency() EQ 'USD' ? DollarFormat(rc.Hotel.getRooms()[1].getTotalForStay()) : rc.Hotel.getRooms()[1].getTotalForStay()&' '&rc.Hotel.getRooms()[1].getTotalForStayCurrency())#<br>
+						#(currency EQ 'USD' ? DollarFormat(hotelTotal) : hotelTotal&' '&currency)#<br>
 					</span>
 
-					Estimated Rate<br>
-					Taxes quoted at check-in<br>
+					#hotelText#<br>
 
+					<cfsavecontent variable="hotelPolicies">
+						<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''
+							OR rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''
+							OR rc.Hotel.getRooms()[1].getCancellationPolicy() NEQ ''>
+							<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''>
+								Deposit: #rc.Hotel.getRooms()[1].getDepositPolicy()#<br>
+							</cfif>
+							<cfif rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''>
+								Guarantee: #rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+							</cfif>
+							Cancellation: #rc.Hotel.getRooms()[1].getCancellationPolicy()#<br>
+						<cfelse>
+							Hotel policies are not available at this time.
+						</cfif>
+					</cfsavecontent>
 					<span class="blue bold">
-						Hotel payment and cancellation policy
+						<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
+							Hotel payment and cancellation policy
+						</a>
 					</span>
 
 				</td>
