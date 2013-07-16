@@ -77,10 +77,8 @@
 					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true)>
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-						<cfset thread.stCars = addJavascript(stCars)>
-					<cfelse>
-						<cfset thread.stCars = addJavascript(stCars)>
 					</cfif>
+					<cfset thread.stCars = addJavascript(stCars)>
 				</cfthread>
 			</cfif>
 			
@@ -97,10 +95,8 @@
 				<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-					<cfset thread.stCars = addJavascript(stCars)>
-				<cfelse>
-					<cfset thread.stCars = addJavascript(stCars)>
 				</cfif>
+				<cfset thread.stCars = addJavascript(stCars)>
 			</cfthread>
 
 			<cfif arguments.sPriority EQ 'HIGH'
