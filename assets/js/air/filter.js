@@ -14,7 +14,6 @@ $(document).ready(function(){
 	});
 
 	$('#usermessage').on('click', function() {
-		console.log('close me');
 		$(this).slideUp();
 	});
 
