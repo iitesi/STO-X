@@ -67,15 +67,6 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		</cfif>
 	</div>
 
-	<!---
-	TODO: not sure if / what this is used for?
-	2:31 PM Wednesday, July 10, 2013 - Jim Priest - jpriest@shortstravel.com --->
-	<cfif structKeyExists(session.searches[rc.SearchID], 'sUserMessage')>
-		<div id="usermessage" class="error">#session.searches[rc.SearchID].sUserMessage#</div>
-		<cfset structDelete(session.searches[rc.SearchID], 'sUserMessage')>
-	</cfif>
-
-
 	<div id="aircontent">
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 

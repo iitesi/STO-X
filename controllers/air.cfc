@@ -113,9 +113,14 @@
 
 	<cffunction name="email" output="true" hint="I send an email">
 		<cfargument name="rc">
+
 		<cfset rc.bSuppress = 1>
-		<cfset variables.fw.service('email.email', 'void')>
+
+		<cfset variables.fw.service('email.email', '')> <!--- , 'void' --->
+
+		<cfset rc.message.AddInfo("Your email has been sent.")>
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
+
 		<cfreturn />
 	</cffunction>
 

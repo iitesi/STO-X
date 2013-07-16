@@ -13,6 +13,11 @@ $(document).ready(function(){
 		$('#myModalBody').text( $(this).attr('data-modal') );
 	});
 
+	$('#usermessage').on('click', function() {
+		console.log('close me');
+		$(this).slideUp();
+	});
+
 	$('.closewell').on('click', function() {
 		$(this).parent().parent().slideUp();
 	});

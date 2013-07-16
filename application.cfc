@@ -42,6 +42,7 @@
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
+		<cfset application.developerEmail = "jpriest@shortstravel.com">
 	</cffunction>
 
 	<cffunction name="setupSession">

@@ -440,8 +440,7 @@ $(document).ready(function() {
 	$(".radiobuttons").buttonset();
 	$("#HotelChains").button();
 	$("#HotelAmenities").button();
-
-});
+}); // end of document ready
 
 function loadImage(image, property_id) {
 	$( "#hotelimage" + property_id ).html('');
@@ -926,3 +925,7 @@ function setPaymentForm(nTraveler) {
 		}
 	});
 }
+
+
+
+
