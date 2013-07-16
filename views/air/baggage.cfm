@@ -14,7 +14,7 @@
 		<table class="table">
 			<tr>
 				<td>&nbsp;</td>
-				<td class="bold">Paid at online-checkin</td>
+				<td class="bold">Paid at online check-in</td>
 				<td class="bold">Paid at airport check-in</td>
 			</tr>
 			<tr>
