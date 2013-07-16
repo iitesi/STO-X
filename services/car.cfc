@@ -358,4 +358,10 @@
 		<cfreturn formData />
 	</cffunction>
 
+	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="struct" hint="">
+		<cfargument name="Search" type="any" required="true" />
+		<cfargument name="requestedDate" type="date" required="true" />
+
+		<cfreturn structNew() />
+	</cffunction>
 </cfcomponent>

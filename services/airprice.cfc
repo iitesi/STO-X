@@ -211,4 +211,19 @@ addstPriced
 		<cfreturn local.stPriced>
 	</cffunction>
 
+	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="struct" hint="">
+		<cfargument name="Search" type="any" required="true" />
+		<cfargument name="requestedDate" type="date" required="true" />
+
+		<cfset var airArgs = structNew() />
+		<cfset airArgs.searchId = arguments.Search.getSearchId() />
+		<cfset airArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
+		<cfset airArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
+		<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
+		<cfset airArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
+
+		<cfreturn this.doAirPrice( argumentCollection = airArgs ) />
+
+	</cffunction>
+
 </cfcomponent>
