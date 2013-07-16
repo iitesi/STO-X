@@ -358,10 +358,30 @@
 		<cfreturn formData />
 	</cffunction>
 
-	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="struct" hint="">
+	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="any" hint="">
 		<cfargument name="Search" type="any" required="true" />
 		<cfargument name="requestedDate" type="date" required="true" />
+		
+		<cfset var carArgs = structNew() />
+		<cfset carArgs.Filter = arguments.Search />
+		<cfset carArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
+		<cfset carArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
+		<cfset carArgs.sCarChain = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVendorCode() />
+		<cfset carArgs.sCarType = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVehicleClass() />
+		<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
 
-		<cfreturn structNew() />
+		<cfset var car = this.doAvailability( argumentCollection = carArgs ) />
+		
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		</cfif>
+
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "car" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.car = structNew() />
+		</cfif>
+		
+		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = car />
+		
+		<cfreturn car />
 	</cffunction>
 </cfcomponent>
