@@ -138,7 +138,7 @@
 			<cfset session.searches[SearchID].stCars.fLowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
 		</cfif>
 
-		<cfreturn CarRate>
+		<cfreturn stCars>
 	</cffunction>
 
 	<cffunction name="mergeCars" output="false">
@@ -363,7 +363,9 @@
 	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="any" hint="">
 		<cfargument name="Search" type="any" required="true" />
 		<cfargument name="requestedDate" type="date" required="true" />
-		
+
+		<cfset var PreviouslySelectedCar = session.searches[ arguments.Search.getSearchID() ].stItinerary.Vehicle />
+		<cfset var Car = "" />
 		<cfset var carArgs = structNew() />
 		<cfset carArgs.Filter = arguments.Search />
 		<cfset carArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
@@ -372,17 +374,23 @@
 		<cfset carArgs.sCarType = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVehicleClass() />
 		<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
 
-		<cfset var car = this.doAvailability( argumentCollection = carArgs ) />
-		
+		<cfset var cars = this.doAvailability( argumentCollection = carArgs ) />
+
 		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
 			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
 		</cfif>
 
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "car" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.car = structNew() />
+		<cfif isStruct( Cars )
+			AND structKeyExists( Cars, "#PreviouslySelectedCar.getVehicleClass()#Car")
+			AND structKeyExists( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ], PreviouslySelectedCar.getVendorCode() )>
+
+			<cfset Car = new com.shortstravel.vehicle.Vehicle() />
+			<cfset Car.setVendorCode( PreviouslySelectedCar.getVendorCode() ) />
+			<cfset Car.populateFromStruct( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ][ PreviouslySelectedCar.getVendorCode() ] ) />
+
 		</cfif>
-		
-		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = car />
+
+		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = Car />
 		
 		<cfreturn car />
 	</cffunction>

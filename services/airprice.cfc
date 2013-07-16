@@ -211,7 +211,7 @@ addstPriced
 		<cfreturn local.stPriced>
 	</cffunction>
 
-	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="struct" hint="">
+	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="any" hint="">
 		<cfargument name="Search" type="any" required="true" />
 		<cfargument name="requestedDate" type="date" required="true" />
 
@@ -224,12 +224,12 @@ addstPriced
 
 		<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
 
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		<cfif NOT isStruct( flight ) OR structIsEmpty( flight )>
+			<cfset flight = "" />
 		</cfif>
 
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "air" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air = structNew() />
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
 		</cfif>
 
 		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />

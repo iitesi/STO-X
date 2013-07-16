@@ -298,7 +298,6 @@
 		<cfif Search.getHotel()>
 			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Search, arguments.requestedDate ) />
 		</cfif>
-
 		<cfif Search.getCar()>
 			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Search, arguments.requestedDate ) />
 		</cfif>
