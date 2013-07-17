@@ -1,5 +1,6 @@
 <cfcomponent name="BookingDetail" extends="com.shortstravel.AbstractEntity" accessors="true">
 
+	<cfproperty name="airNeeded" />
 	<cfproperty name="airBillingAddress" />
 	<cfproperty name="airBillingCity" />
 	<cfproperty name="airBillingName" />
@@ -13,10 +14,12 @@
 	<cfproperty name="airReasonCode" />
 	<cfproperty name="airSaveCard" />
 	<cfproperty name="airSaveName" />
+	<cfproperty name="carNeeded" />
 	<cfproperty name="carFF" />
 	<cfproperty name="carFOPID" />
 	<cfproperty name="carReasonCode" />
 	<cfproperty name="createProfile" />
+	<cfproperty name="hotelNeeded" />
 	<cfproperty name="hotelBillingName" />
 	<cfproperty name="hotelCCExpiration" />
 	<cfproperty name="hotelCCMonth" />
@@ -43,6 +46,7 @@
 
 	<cffunction name="init" returntype="any" access="remote" output="false">
 
+		<cfset setAirNeeded( false )>
 		<cfset setAirBillingAddress( '' )>
 		<cfset setAirBillingCity( '' )>
 		<cfset setAirBillingName( '' )>
@@ -58,10 +62,12 @@
 		<cfset setAirReasonCode( '' )>
 		<cfset setAirSaveCard( false )>
 		<cfset setAirSaveName( '' )>
+		<cfset setCarNeeded( false )>
 		<cfset setCarFF( '' )>
 		<cfset setCarFOPID( '' )>
 		<cfset setCarReasonCode( '' )>
 		<cfset setCreateProfile( false )>
+		<cfset setHotelNeeded( false )>
 		<cfset setHotelBillingName( '' )>
 		<cfset setHotelCCExpiration( '' )>
 		<cfset setHotelCCMonth( '' )>

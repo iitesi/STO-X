@@ -33,6 +33,8 @@
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
 		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
 		<constructor-arg name="LoyaltyProgramService"><ref bean="LoyaltyProgramService" /></constructor-arg>
+		<constructor-arg name="OrgUnitService"><ref bean="OrgUnitService" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
 	<bean id="AccountService" class="com.shortstravel.account.AccountService">

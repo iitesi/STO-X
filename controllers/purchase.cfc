@@ -71,22 +71,9 @@
 	<cffunction name="car" output="false">
 		<cfargument name="rc">
 
-		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stItinerary.Car )>
+		<cfset rc.Vehicle = session.searches[rc.SearchID].stItinerary.Vehicle>
 
-		<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').load( 3605 )>
-
-		<cfset rc.Traveler.addLoyaltyProgram( fw.getBeanFactory().getBean('LoyaltyProgramService').load( 3605, '', 'c' ) )>
-
-		<cfset rc.Payment = fw.getBeanFactory().getBean('PaymentService').loadCar( 1, 0, rc.Vehicle.getVendorCode() )>
-
-		<cfset rc.Traveler.setCCEmails( fw.getBeanFactory().getBean('UserService').getUserCCEmails( session.userID, 'string' ) )>
 		<cfset rc.Traveler.setHomeAirport( fw.getBeanFactory().getBean('UserService').getAirportPrefs( session.userID, session.acctID, 'string' ) )>
-
-		<cfset rc.Traveler.setSort1( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 1, 'string' ) )>
-		<cfset rc.Traveler.setSort2( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 2, 'string' ) )>
-		<cfset rc.Traveler.setSort3( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 3, 'string' ) )>
-		<cfset rc.Traveler.setSort4( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 4, 'string' ) )>
-
 		<cfset rc.Traveler.setAccountID( fw.getBeanFactory().getBean('UserService').getAccountID( session.userID, session.acctID, 'string' ) )>
 		<cfset rc.Traveler.setBranchID( fw.getBeanFactory().getBean('UserService').getBranchID( session.acctID, 'string' ) )>
 
