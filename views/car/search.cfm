@@ -17,6 +17,9 @@
 								</div>
 								<div class="form-element-content">
 									<input type="text" class="input-block-level airport-select2" id="car-location" name="car-location" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
+									<div id="car-location_hidden" class="hidden">
+										<span class="required">Airport is missing or invalid. Begin typing to select your airport from the list.</span>
+									</div>
 								</div>
 							</div>
 							<div class="row" id="car-pickup-wrapper">
@@ -25,7 +28,10 @@
 								</div>
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
-										<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" />
+										<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label start-date" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" data-date-format="mm/dd/yyyy" />
+										<div id="car-pickup-date_hidden" class="hidden">
+											<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+										</div>
 									</div>
 									<div style="width: 30%; float: left;">
 										<div class="btn-group">
@@ -69,7 +75,10 @@
 								</div>
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
-										<input id="car-dropoff-date" type="text" name="car-dropoff-date" class="inline-label" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" />
+										<input id="car-dropoff-date" type="text" name="car-dropoff-date" class="inline-label end-date" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" data-date-format="mm/dd/yyyy" />
+										<div id="car-dropoff-date_hidden" class="hidden">
+											<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+										</div>
 									</div>
 									<div style="width: 30%; float: left;">
 										<div class="btn-group">

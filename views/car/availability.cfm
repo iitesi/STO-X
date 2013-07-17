@@ -114,7 +114,7 @@ OR NOT rc.Filter.getAir()>
 											</cfif>
 											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#thisRate#">
 										<cfelse>
-											UNAVAILABLE
+											<br />UNAVAILABLE
 										</cfif>
 									</div>
 								</td>
