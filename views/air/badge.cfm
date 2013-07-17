@@ -1,14 +1,11 @@
 <cfparam name="variables.minheight" default="250"/>
 <cfset ribbonClass = "">
+<cfset carrierList = "">
 
 <cfsavecontent variable="sBadge" trim="#true#">
 	<cfoutput>
 		<div class="badge">
-
 			<!--- display ribbon --->
-
-			<!--- TODO - all this should be moved into controller / service as 'getRibbon()'
-			3:45 PM Monday, June 24, 2013 - Jim Priest - jpriest@shortstravel.com --->
 			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
 				<cfset ribbonClass = "ribbon-l-pref-cont">
 			<cfelseif stTrip.preferred EQ 1>
@@ -24,7 +21,6 @@
 			<!--- display ribbon --->
 			<span class="#ribbonClass#"></span>
 			<!--- // end ribbon --->
-
 
 			<cfif IsLocalHost(cgi.local_addr)>
 				<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
@@ -78,6 +74,10 @@
 				<cfloop collection="#stGroup.Segments#" item="nSegment" >
 					<cfset nCnt++>
 					<cfset stSegment = stGroup.Segments[nSegment]>
+					<cfif NOT listFind(carrierList, stSegment.Carrier)>
+						<cfset carrierList = ListAppend(carrierList, stSegment.Carrier)>
+					</cfif>
+
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
@@ -94,15 +94,22 @@
 			<tr>
 				<td height="100%" valign="bottom" colspan="4">
 
+					<!--- set bag fee into var so we can display in a tooltip below --->
+					<cfsavecontent variable="tooltip">
+						<cfloop list="#carrierList#" index="carrier">
+							#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
+						</cfloop>
+					</cfsavecontent>
+
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-					LINKS:
+LINKS:
 					<a href="?action=air.popup&sDetails=details&#sURL#" >Details <span class="divider">/</span></a>
 
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 						<a href="?action=air.popup&sDetails=seatmap&#sURL#" >Seats <span class="divider">/</span></a>
 					</cfif>
 
-					<a href="?action=air.popup&sDetails=baggage&#sURL#" >Bags <span class="divider">/</span></a>
+					<a href="?action=air.popup&sDetails=baggage&#sURL#" rel="popover" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">Bags <span class="divider">/</span></a>
 
 					<a href="?action=air.popup&sDetails=email&#sURL#" >Email</a>
 
@@ -131,10 +138,8 @@ POPUP:
 		</div>
 	</cfoutput>
 </cfsavecontent>
+
+<!--- display badge --->
 <cfoutput>
-	<div id="flight#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
-		#sBadge#
-	</div>
+	<div id="flight#nTripKey#" style="min-height:#variables.minheight#px;float:left;">#sBadge#</div>
 </cfoutput>
-
-
