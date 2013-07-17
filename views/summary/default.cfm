@@ -59,8 +59,6 @@
 						</div>
 					</div>
 
-					<cfset tripTotal = 0>
-					
 					<div id="airDiv" class="clearfix">
 						#View('summary/air')#
 					</div>

@@ -114,8 +114,6 @@
 						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
 					</cfif>
 
-					<cfset tripTotal = (currency EQ 'USD' ? tripTotal + hotelTotal : 'CURR')>
-
 					<span class="blue bold large">
 						#(currency EQ 'USD' ? DollarFormat(hotelTotal) : hotelTotal&' '&currency)#<br>
 					</span>

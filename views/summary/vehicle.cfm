@@ -112,8 +112,6 @@
 
 				<td width="200" valign="top">
 
-					<cfset tripTotal = (rc.Vehicle.getCurrency() EQ 'USD' ? tripTotal + rc.Vehicle.getEstimatedTotalAmount() : 'CURR')>
-
 					<span class="blue bold large">
 						#(rc.Vehicle.getCurrency() EQ 'USD' ? DollarFormat(rc.Vehicle.getEstimatedTotalAmount()) : rc.Vehicle.getEstimatedTotalAmount()&' '&rc.Vehicle.getCurrency())#<br>
 					</span>
