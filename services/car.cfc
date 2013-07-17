@@ -28,7 +28,9 @@
 			<cfset session.searches[SearchID] = {} />
 		</cfif>
 
-		<!--- <cfset arguments.nCouldYou = 1 /> --->
+		<!--- <cfset arguments.nCouldYou = 2 />
+		<cfset arguments.sCarChain = 'ZE' />
+		<cfset arguments.sCarType = 'EconomyCar' /> --->
 
 		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
@@ -71,10 +73,20 @@
 					Account="#arguments.Account#"
 					Policy="#arguments.Policy#"
 					nCouldYou="#arguments.nCouldYou#"
-					CDNumbers="#CDNumbers#">
-					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers)>
+					CDNumbers="#CDNumbers#"
+					sCarChain="#arguments.sCarChain#"
+					sCarType="#arguments.sCarType#">
+					<cfif arguments.nCouldYou EQ 0>
+						<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers) />
+					<cfelse>
+						<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers, arguments.sCarChain, arguments.sCarType) />
+					</cfif>
 					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
-					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true)>
+					<cfif len(arguments.sCarType)>
+						<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true, arguments.sCarType) />
+					<cfelse>
+						<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true) />
+					</cfif>
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 					</cfif>
@@ -89,10 +101,20 @@
 				Filter="#arguments.Filter#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
-				nCouldYou="#arguments.nCouldYou#">
-				<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou)>
+				nCouldYou="#arguments.nCouldYou#"
+				sCarChain="#arguments.sCarChain#"
+				sCarType="#arguments.sCarType#">
+				<cfif arguments.nCouldYou EQ 0>
+					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou) />
+				<cfelse>
+					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, arguments.sCarChain, arguments.sCarType) />
+				</cfif>
 				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
-				<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations)>
+				<cfif len(arguments.sCarType)>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, false, arguments.sCarType) />
+				<cfelse>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, false) />
+				</cfif>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				</cfif>
