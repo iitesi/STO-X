@@ -214,27 +214,41 @@ addstPriced
 	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="any" hint="">
 		<cfargument name="Search" type="any" required="true" />
 		<cfargument name="requestedDate" type="date" required="true" />
+		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-		<cfset var airArgs = structNew() />
-		<cfset airArgs.searchId = arguments.Search.getSearchId() />
-		<cfset airArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
-		<cfset airArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
-		<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
-		<cfset airArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
+		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou )
+			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.air )
+			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.air )
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ])
+			AND arguments.requery IS false>
 
-		<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
+			<cfreturn session.searches[ arguments.Search.getSearchID() ].couldYou.hotel[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] />
 
-		<cfif NOT isStruct( flight ) OR structIsEmpty( flight )>
-			<cfset flight = "" />
+		<cfelse>
+
+			<cfset var airArgs = structNew() />
+			<cfset airArgs.searchId = arguments.Search.getSearchId() />
+			<cfset airArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
+			<cfset airArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
+			<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
+			<cfset airArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
+
+			<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
+
+			<cfif NOT isStruct( flight ) OR structIsEmpty( flight )>
+				<cfset flight = "" />
+			</cfif>
+
+			<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
+				<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+			</cfif>
+
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />
+
+			<cfreturn flight />
+
 		</cfif>
-
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
-		</cfif>
-
-		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />
-
-		<cfreturn flight />
 
 	</cffunction>
 
