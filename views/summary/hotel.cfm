@@ -33,12 +33,13 @@
 				</td>
 
 				<td colspan="3">
-					<cfset isInPolicy = 0> <!--- rc.Hotel.getIsInPolicy() --->
+					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
 					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="Over maximum daily rate">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
 
 					<!--- All accounts when out of policy --->
-					<cfif NOT isInPolicy
-						AND rc.Policy.Policy_HotelReasonCode EQ 1>
+					<cfif rc.showAll 
+						OR (NOT isInPolicy
+						AND rc.Policy.Policy_HotelReasonCode)>
 
 						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge">
 						<option value="">Select Reason for Booking Out of Policy</option>
@@ -51,10 +52,11 @@
 					</cfif>
 
 					<!--- State of Texas --->
-					<cfif rc.Filter.getAcctID() EQ 235>
+					<cfif rc.showAll 
+						OR rc.Filter.getAcctID() EQ 235>
 
 						<select name="udid112" id="udid112" class="input-xlarge">
-						<option value="">SELECT AN EXCEPTION CODE</option>
+						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
@@ -70,9 +72,9 @@
 				<td width="50"></td>
 				
 				<td valign="top" width="120">
-
-					<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
-
+					<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
+						<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
+					</cfif>
 				</td>
 
 				<td width="630">
@@ -120,21 +122,7 @@
 
 					#hotelText#<br>
 
-					<cfsavecontent variable="hotelPolicies">
-						<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''
-							OR rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''
-							OR rc.Hotel.getRooms()[1].getCancellationPolicy() NEQ ''>
-							<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''>
-								Deposit: #rc.Hotel.getRooms()[1].getDepositPolicy()#<br>
-							</cfif>
-							<cfif rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''>
-								Guarantee: #rc.Hotel.getRooms()[1].getGuaranteePolicy()#
-							</cfif>
-							Cancellation: #rc.Hotel.getRooms()[1].getCancellationPolicy()#<br>
-						<cfelse>
-							Hotel policies are not available at this time.
-						</cfif>
-					</cfsavecontent>
+					<!--- hotelPolicies are set on the payment.cfm page --->
 					<span class="blue bold">
 						<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 							Hotel payment and cancellation policy

@@ -5,35 +5,79 @@ $(document).ready(function(){
 		formSubmit( event, this );
 	});
 
+	var todaysDate = new Date();
 	var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
+
 	var pickupVal = $("#car-pickup-date").val();
 	var pickupDate = new Date(pickupVal);
 	var dropoffVal = $("#car-dropoff-date").val();
 	var dropoffDate = new Date(dropoffVal);
 
-	$("#start-calendar-wrapper" ).datepicker( { startDate: calendarStartDate } )
-		.on( "changeDate", function( event ){
-			$("#car-pickup-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
-			$("#end-calendar-wrapper" ).datepicker('setStartDate', event.date );
-			$("#end-calendar-wrapper" ).datepicker('update', event.date.format( "yyyy-mm-dd" ) );
-			$("#car-dropoff-date" ).val( '' );
+	$("#start-calendar-wrapper").datepicker({startDate: dateFormat(calendarStartDate, "mm/dd/yyyy")})
+		.on("changeDate", function( event ){
+			$("#car-pickup-date").val(event.date.format("mm/dd/yyyy", true));
+			$("#end-calendar-wrapper").datepicker('setStartDate', event.date);
+			$("#end-calendar-wrapper").datepicker('update', event.date.format("yyyy-mm-dd"));
 		});
 
-	$("#end-calendar-wrapper" ).datepicker( { startDate: calendarStartDate } )
-		.on( "changeDate", function( event ){
-			$("#car-dropoff-date" ).val( event.date.format( "mmm dd, yyyy", true ) );
+	$("#end-calendar-wrapper").datepicker({startDate: dateFormat(calendarStartDate, "mm/dd/yyyy")})
+		.on("changeDate", function( event ){
+			$("#car-dropoff-date").val(event.date.format("mm/dd/yyyy", true));
 		});
 
-	$("#start-calendar-wrapper" ).data( 'datepicker' ).setDate( pickupDate );
-	$("#start-calendar-wrapper" ).data( 'datepicker' ).update();
-	$("#end-calendar-wrapper" ).data( 'datepicker' ).setDate( dropoffDate );
-	$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
+	$("#start-calendar-wrapper").data('datepicker').date = null;
+	$("#end-calendar-wrapper").data('datepicker').date = null;
 
-	/* $("#start-calendar-wrapper").datepicker("setDate", pickupDate);
-	$("#end-calendar-wrapper").datepicker("setDate", dropoffDate); */
+	$("#start-calendar-wrapper").data('datepicker').setDate(pickupDate);
+	$("#start-calendar-wrapper").data('datepicker').update();
+	$("#end-calendar-wrapper").data('datepicker').setDate(dropoffDate);
+	$("#end-calendar-wrapper").data('datepicker').update();
+
+	$(".start-date").on("change", function() {
+		var thisDate = new Date($(this).val());
+		var originalCarDropoffDate = $("#car-dropoff-date").val();
+		var carDropoffDate = new Date(originalCarDropoffDate);
+
+		if (thisDate < todaysDate) {thisDate = todaysDate;}
+
+		$("#car-pickup-date").val(thisDate.format("mm/dd/yyyy"));
+		$("#start-calendar-wrapper").data('datepicker').setDate(thisDate);
+		$("#start-calendar-wrapper").data('datepicker').update();
+
+		if ((originalCarDropoffDate == '') || (thisDate > carDropoffDate)) {
+			$("#car-dropoff-date").val(thisDate.format("mm/dd/yyyy"));
+			$("#end-calendar-wrapper").data('datepicker').setDate(thisDate);
+			$("#end-calendar-wrapper").data('datepicker').update();
+		}
+		else {
+			$("#car-dropoff-date").val(carDropoffDate.format("mm/dd/yyyy"));
+		}
+	});
+
+	$(".end-date").on("change", function() {
+		var thisDate = new Date($(this).val());
+		var originalCarPickupDate = $("#car-pickup-date").val();
+		var carPickupDate = new Date(originalCarPickupDate);
+
+		if (thisDate < todaysDate) {thisDate = todaysDate;}
+
+		$("#car-dropoff-date").val(thisDate.format("mm/dd/yyyy"));
+		$("#end-calendar-wrapper").data('datepicker').setDate(thisDate);
+		$("#end-calendar-wrapper").data('datepicker').update();
+
+		if ((originalCarPickupDate == '') || (carPickupDate > thisDate)) {
+			$("#car-pickup-date").val(thisDate.format("mm/dd/yyyy"));
+			$("#start-calendar-wrapper").data('datepicker').setDate(thisDate);
+			$("#start-calendar-wrapper").data('datepicker').update();
+		}
+		else {
+			$("#car-pickup-date").val(carPickupDate.format("mm/dd/yyyy"));
+		}
+	});
 
 	$(".airport-select2" ).select2({
 		data: airports,
+		minimumInputLength: 2,
 		width: "100%",
 		sortResults: sortResults
 	});
@@ -79,23 +123,38 @@ Array.prototype.move = function (old_index, new_index) {
 
 formSubmit = function( event ){
 	event.preventDefault();
+	// Purge any/all error validation being displayed and start anew
+	var formErrors = new Array("car-location","car-pickup-date","car-dropoff-date");
+	removeErrors(formErrors);
+	var formErrors = new Array();
+	var todaysDate = new Date();
+	todaysDateFormatted = [(todaysDate.getMonth()+1).padLeft(),todaysDate.getDate().padLeft(),todaysDate.getFullYear()].join('/');
 
 	//Build what text appears in the modal window based on what was selected in the form.
 	setModalWindowText();
 
-	//TODO: Implement form validation rules
-
 	//Disable the submit button to prevent duplicate search calls
-	$("#btnFormSubmit" ).addClass( "disabled" );
+	$("#btnFormSubmit" ).addClass("disabled");
 
 	var formData = {};
-	formData.searchID = $("#searchID" ).val();
+	formData.searchID = $("#searchID").val();
 
 	//Add the car values to the formData
 	formData.car = 1;
-	formData.carPickupAirport = $("#car-location" ).val();
-	formData.carPickupDate = $("#car-pickup-date" ).val();
-	formData.carPickupTimeActual = $("#car-pickup-time" ).val();
+	formData.carPickupAirport = $("#car-location").val();
+	if ($("#car-location").val() == '') {formErrors.push("car-location");}
+	formData.carPickupDate = $("#car-pickup-date").val();
+	jsCarPickupDate = new Date($("#car-pickup-date").val());
+	jsCarPickupDateNextDay = new Date(jsCarPickupDate);
+	jsCarPickupDateNextDay.setDate(jsCarPickupDate.getDate()+1);
+	jsCarPickupDateNextDayFormatted = [(jsCarPickupDateNextDay.getMonth()+1).padLeft(),jsCarPickupDateNextDay.getDate().padLeft(),jsCarPickupDateNextDay.getFullYear()].join('/');
+	if (($("#car-pickup-date").val() == '') || (!isDate($("#car-pickup-date").val()))) {formErrors.push("car-pickup-date");}
+	else if (jsCarPickupDate < todaysDate) {
+		$("#car-pickup-date").val(todaysDateFormatted);
+		$("#start-calendar-wrapper").data('datepicker').setDate(todaysDate);
+		$("#start-calendar-wrapper").data('datepicker').update();
+	}
+	formData.carPickupTimeActual = $("#car-pickup-time").val();
 
 	switch (formData.carPickupTimeActual) {
 		case "Anytime":
@@ -121,8 +180,20 @@ formSubmit = function( event ){
 			break;
 	}
 
-	formData.carDropoffDate = $("#car-dropoff-date" ).val();
-	formData.carDropoffTimeActual = $("#car-dropoff-time" ).val();
+	formData.carDropoffDate = $("#car-dropoff-date").val();
+	jsCarDropoffDate = new Date($("#car-dropoff-date").val());
+	if (($("#car-dropoff-date").val() == '') || (!isDate($("#car-dropoff-date").val()))) {formErrors.push("car-dropoff-date");}
+	else if (jsCarDropoffDate < jsCarPickupDate) {
+		$("#car-dropoff-date").val(jsCarPickupDateNextDayFormatted);
+		$("#end-calendar-wrapper").data('datepicker').setDate(jsCarPickupDateNextDay);
+		$("#end-calendar-wrapper").data('datepicker').update();
+	}
+	else if (jsCarDropoffDate < todaysDate) {
+		$("#car-dropoff-date").val(todaysDateFormatted);
+		$("#end-calendar-wrapper").data('datepicker').setDate(todaysDate);
+		$("#end-calendar-wrapper").data('datepicker').update();
+	}
+	formData.carDropoffTimeActual = $("#car-dropoff-time").val();
 
 	switch (formData.carDropoffTimeActual) {
 		case "Anytime":
@@ -148,7 +219,9 @@ formSubmit = function( event ){
 			break;
 	}
 
-	$.ajax({
+	console.log(formErrors);
+	console.log(formData);
+	/* $.ajax({
 		type: "POST",
 		url: "/search/RemoteProxy.cfc?method=saveSearch",
 		data: formData,
@@ -163,8 +236,96 @@ formSubmit = function( event ){
 			}
 		},
 		dataType: "json"
-	});
+	}); */
 };
+
+displayErrors = function(formErrors) {
+	for (var i = 0; i < formErrors.length; i++) {
+		var thisField = eval("$('#" + formErrors[i] + "')");
+		if (formErrors[i] == 'hotel-out-date') {
+			var thisHiddenField = eval("$('#hotel-in-date_hidden')");
+		}
+		else {
+			var thisHiddenField = eval("$('#" + formErrors[i] + "_hidden')");
+		}
+		thisField.addClass("highlight");
+		thisHiddenField.removeClass("hidden");
+	}
+}
+
+removeErrors = function(formErrors) {
+	for (var i = 0; i < formErrors.length; i++) {
+		if (formErrors[i].substring(0, 5) == 'multi') {
+			for (var j = 1; j < 4; j++) {
+				var thisField = eval("$('#" + formErrors[i] + j + "')");
+				var thisHiddenField = eval("$('#" + formErrors[i] + j + "_hidden')");
+				thisField.removeClass("highlight");
+				thisHiddenField.addClass("hidden");
+			}
+		}
+		else {
+			var thisField = eval("$('#" + formErrors[i] + "')");
+			var thisHiddenField = eval("$('#" + formErrors[i] + "_hidden')");
+			thisField.removeClass("highlight");
+			thisHiddenField.addClass("hidden");
+		}
+	}
+}
+
+Number.prototype.padLeft = function(base,chr){
+	var  len = (String(base || 10).length - String(this).length)+1;
+	return len > 0? new Array(len).join(chr || '0')+this : this;
+}
+
+function isDate(value) {
+    try {
+    	value = value.split("/");
+
+        var MonthIndex = value[0];
+        var DayIndex = value[1]; 
+        var YearIndex = value[2];
+        var OK = true;
+        if (!(MonthIndex.length == 1 || MonthIndex.length == 2)) {
+            OK = false;
+        }
+        if (OK && !(DayIndex.length == 1 || DayIndex.length == 2)) {
+            OK = false;
+        }
+        if (OK && YearIndex.length != 4) {
+            OK = false;
+        }
+
+        if (OK) {
+            var Month = parseInt(MonthIndex, 10);
+            var Day = parseInt(DayIndex, 10);
+            var Year = parseInt(YearIndex, 10);
+ 
+            if (OK = (Year >= new Date().getFullYear())) {
+                if (OK = (Month <= 12 && Month > 0)) {
+                    var LeapYear = (((Year % 4) == 0) && ((Year % 100) != 0) || ((Year % 400) == 0));   
+                    
+                    if(OK = Day > 0) {
+                        if (Month == 2) {  
+                            OK = LeapYear ? Day <= 29 : Day <= 28;
+                        } 
+                        else {
+                            if ((Month == 4) || (Month == 6) || (Month == 9) || (Month == 11)) {
+                                OK = Day <= 30;
+                            }
+                            else {
+                                OK = Day <= 31;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return OK;
+    }
+    catch (e) {
+        return false;
+    }
+}
 
 setModalWindowText = function(){
 	//If car is checked, add car-related text to the modal window.

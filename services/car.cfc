@@ -351,7 +351,7 @@
 			<cfset formData.carPickupAirport = carPickupAirport />
 		</cfif>
 
-		<cfset formData.carPickupDate = (isDate(carPickupDateTime) ? dateFormat(carPickupDateTime, 'mmm dd, yyyy') : 'pick up date') />
+		<cfset formData.carPickupDate = (isDate(carPickupDateTime) ? dateFormat(carPickupDateTime, 'mm/dd/yyyy') : 'pick up date') />
 		<cfif isNumeric(left(trim(carPickupDateTimeActual), 1))>
 			<cfset formData.carPickupTimeValue = timeFormat(carPickupDateTime, 'HH:mm') />
 			<cfset formData.carPickupTimeDisplay = timeFormat(carPickupDateTime, 'hh:mm tt') />			
@@ -363,7 +363,7 @@
 			<cfset formData.carPickupTimeDisplay = '08:00 AM' />			
 		</cfif>
 
-		<cfset formData.carDropoffDate = (isDate(carDropoffDateTime) ? dateFormat(carDropoffDateTime, 'mmm dd, yyyy') : 'drop off date') />
+		<cfset formData.carDropoffDate = (isDate(carDropoffDateTime) ? dateFormat(carDropoffDateTime, 'mm/dd/yyyy') : 'drop off date') />
 		<cfif isNumeric(left(trim(carDropoffDateTimeActual), 1))>
 			<cfset formData.carDropoffTimeValue = timeFormat(carDropoffDateTime, 'HH:mm') />
 			<cfset formData.carDropoffTimeDisplay = timeFormat(carDropoffDateTime, 'hh:mm tt') />

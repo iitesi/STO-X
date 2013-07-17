@@ -33,11 +33,12 @@
 					#(rc.Vehicle.getPolicy() ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Vehicle.getAPolicies())#">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
 
 					<!--- All accounts when out of policy --->
-					<cfif NOT rc.Vehicle.getPolicy()
-						AND rc.Policy.Policy_CarReasonCode EQ 1>
+					<cfif rc.showAll 
+						OR (NOT rc.Vehicle.getPolicy()
+						AND rc.Policy.Policy_CarReasonCode EQ 1)>
 
 						<select name="carReasonCode" id="carReasonCode" class="input-xlarge">
-						<option value="">SELECT REASON FOR BOOKING OUTSIDE POLICY</option>
+						<option value="">Select Reason for Booking Outside Policy</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
 						<option value="S">Required car size sold out</option>
 						<option value="V">Required car vendor sold out</option>
@@ -49,10 +50,11 @@
 					</cfif>
 
 					<!--- STATE OF TEXAS --->
-					<cfif rc.Filter.getAcctID() EQ 235>
+					<cfif rc.showAll 
+						OR rc.Filter.getAcctID() EQ 235>
 
-						<select name="udid1111" id="udid1111" class="input-xlarge">
-						<option value="">SELECT AN EXCEPTION CODE</option>
+						<select name="udid111" id="udid111" class="input-xlarge">
+						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
@@ -120,9 +122,9 @@
 					Taxes quoted at pick-up<br>
 
 					<span class="blue bold">
-						<span rel="tooltip" class="outofpolicy" title="Payment is taken by the vendor. You may cancel at anytime for no fee.">
+						<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
 							Car payment and cancellation policy
-						</span>
+						</a>
 					</span>
 
 				</td>

@@ -15,13 +15,19 @@
 
 		<cfreturn getBean( "UserService" ).load( arguments.userId ) />
 	</cffunction>
-	
 
 	<cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userID" type="numeric" required="true"/>
 		<cfargument name="acctID" type="numeric" required="true"/>
+	    <cfargument name="valueID" type="numeric" required="true"/>
+	    <cfargument name="arrangerID" type="numeric" required="true"/>
+	    <cfargument name="vendor" type="string" required="false" default=""/>
 
-		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId, acctID = arguments.acctID )>
+		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
+																	, acctID = arguments.acctID 
+																	, valueID = arguments.valueID
+																	, arrangerID = arguments.arrangerID
+																	, vendor = arguments.vendor)>
 		<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 		<cfset Traveler.setBookingDetail( BookingDetail )>
 

@@ -6,7 +6,8 @@
 		
 		<div class="control-group">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment</strong></label>
-			<div class="controls">
+			<div class="controls" id="airFOPIDDiv">
+				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="airFOPID" id="airFOPID">
 				</select>
 			</div>
@@ -49,14 +50,14 @@
 			<div class="control-group">
 				<label class="control-label" for="airBillingName">Name on Card</label>
 				<div class="controls">
-					<input type="text" name="airBillingName" id="airBillingName" size="20" maxlength="50">
+					<input type="text" name="airBillingName" id="airBillingName" maxlength="50">
 				</div>
 			</div>
 
 			<div class="control-group">
 				<label class="control-label" for="airBillingAddress">Billing Address</label>
 				<div class="controls">
-					<input type="text" name="airBillingAddress" id="airBillingAddress" size="20" maxlength="50">
+					<input type="text" name="airBillingAddress" id="airBillingAddress" maxlength="50">
 				</div>
 			</div>
 
@@ -98,6 +99,12 @@
 
 		</div>
 
+		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="not done yet!" href="##" />
+				Flight change/cancellation policy
+			</a>
+		</div>
+
 	</cfif>
 
 	<cfif rc.hotelSelected>
@@ -105,6 +112,7 @@
 		<div class="control-group">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment</strong></label>
 			<div class="controls">
+				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="hotelFOPID" id="hotelFOPID">
 				</select>
 			</div>
@@ -162,16 +170,45 @@
 
 		</div>
 
+		<cfsavecontent variable="hotelPolicies">
+			<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''
+				OR rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''
+				OR rc.Hotel.getRooms()[1].getCancellationPolicy() NEQ ''>
+				<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''>
+					Deposit: #rc.Hotel.getRooms()[1].getDepositPolicy()#<br>
+				</cfif>
+				<cfif rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''>
+					Guarantee: #rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+				</cfif>
+				Cancellation: #rc.Hotel.getRooms()[1].getCancellationPolicy()#<br>
+			<cfelse>
+				Hotel policies are not available at this time.
+			</cfif>
+		</cfsavecontent>
+
+		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="#hotelPolicies#" href="##" />
+				Hotel payment and cancellation policy
+			</a>
+		</div>
+
 	</cfif>
 
 	<cfif rc.vehicleSelected>
 		
 		<div class="control-group">
-			<label class="control-label" for="carFOPID">Car Payment</label>
+			<label class="control-label" for="carFOPID"><strong>Car Payment</strong></label>
 			<div class="controls">
+				<i id="carSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="carFOPID" id="carFOPID">
 				</select>
 			</div>
+		</div>
+
+		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
+				Car payment and cancellation policy
+			</a>
 		</div>
 
 	</cfif>
