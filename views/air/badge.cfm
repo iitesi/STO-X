@@ -95,15 +95,38 @@
 				<td height="100%" valign="bottom" colspan="4">
 
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+					LINKS:
+					<a href="?action=air.popup&sDetails=details&#sURL#" >Details <span class="divider">/</span></a>
+
+					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+						<a href="?action=air.popup&sDetails=seatmap&#sURL#" >Seats <span class="divider">/</span></a>
+					</cfif>
+
+					<a href="?action=air.popup&sDetails=baggage&#sURL#" >Bags <span class="divider">/</span></a>
+
+					<a href="?action=air.popup&sDetails=email&#sURL#" >Email</a>
+
+				</td>
+			</tr>
+
+			<tr>
+				<td height="100%" valign="bottom" colspan="4">
+
+					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+POPUP:
 					<a href="?action=air.popup&sDetails=details&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Details <span class="divider">/</span></a>
+
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 						<a href="?action=air.popup&sDetails=seatmap&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Seats <span class="divider">/</span></a>
 					</cfif>
+
 					<a href="?action=air.popup&sDetails=baggage&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Bags <span class="divider">/</span></a>
+
 					<a href="?action=air.popup&sDetails=email&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Email</a>
 
 				</td>
 			</tr>
+
 		</table>
 		</div>
 	</cfoutput>
