@@ -162,6 +162,8 @@ function filterAir() {
 
 	if(showCount == 0){
 		$('.noFlightsFound').show();
+	} else {
+		$('.noFlightsFound').hide();
 	}
 
  	$('#flightCount').text(showCount + ' of ' + flightresults.length);
@@ -423,7 +425,7 @@ $(document).ready(function() {
 		$("[rel='tooltip']").tooltip({container: 'body'});
 	});
 
-	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true});
+	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true, placement:"bottom"});
 
 	$("#SoldOut")
 	.button()

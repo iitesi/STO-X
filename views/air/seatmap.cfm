@@ -1,3 +1,12 @@
+<cfsilent>
+	<cfparam name="rc.bSelection" default="0">
+	<cfset sCurrentSeat = ''>
+	<cfset sNextSegKey = ''>
+	<cfset bFound = 0>
+	<cfset nSegmentCount = 0>
+	<cfset breadCount = 0>
+</cfsilent>
+
 <cfoutput>
 	<div id="seatcontent">
 		<cfif rc.Group EQ ''>
@@ -18,78 +27,45 @@
 			<cfset stGroups = session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID].Groups>
 		</cfif>
 
-<cfset segmentCount = 0>
-<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
-	<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
-	<cfset segmentCount++>
-	</cfloop>
-</cfloop>
+		<!--- get the current segment --->
+		<cfset currentSegment = structFindKey(stGroups,rc.nSegment)[1].value>
 
-<cfset breadCount = 0>
+		<!--- get how many segments there are in this trip --->
+		<cfset segmentCount = 0>
+		<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
+			<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
+				<cfset segmentCount++>
+			</cfloop>
+		</cfloop>
+
 		<ul class="breadcrumb">
-				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
-				<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
-					<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
-						<cfset breadCount++>
-							<li>
-								<a class="<cfif rc.nSegment EQ sSegKey>active</cfif>" onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');" >
-									#stSegment.Carrier# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
-								</a>
-								<cfif segmentCount NEQ breadCount>
-									<span class="divider">/</span>
-								</cfif>
-							</li>
-					</cfloop>
+			<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
+			<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
+				<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
+					<cfset breadCount++>
+						<li class="<cfif rc.nSegment EQ sSegKey>active</cfif>">
+							<span title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');" >
+								#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
+							</span>
+							<cfif segmentCount NEQ breadCount>
+								<span class="divider">/</span>
+							</cfif>
+						</li>
 				</cfloop>
-
-			<cfset sCurrentSeat = ''>
-			<cfset sNextSegKey = ''>
-			<cfset bFound = 0>
-			<cfset nSegmentCount = 0>
-			<cfif rc.bSelection>
-				<tr>
-					<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
-						<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
-							<cfset nSegmentCount++>
-							<td>
-								Seat: <!--- <input type="text" id="Seat#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#_popup" size="4" maxlength="5" value="#session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']#" disabled> --->
-							</td>
-							<cfif bFound EQ 1>
-								<cfset bFound = 0>
-								<cfset sNextSegKey = sSegKey>
-							</cfif>
-							<cfif rc.nSegment EQ sSegKey>
-								<cfset bFound = 1>
-								<cfset stSegments = stSegment>
-								<!--- <cfset sCurrentSeat = session.searches[rc.SearchID].stTravelers[1].stSeats['#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#']> --->
-							</cfif>
-						</cfloop>
-					</cfloop>
-				</tr>
-				<cfif sNextSegKey NEQ ''>
-					<tr>
-						<td colspan="#nSegmentCount#" align="right">
-							<br><br>
-							<a onClick="$('##seats').html('One moment please...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sNextSegKey#&bSelection=1');">
-								Next Segment >>
-							</a>
-						</td>
-					</tr>
-				</cfif>
-			</cfif>
-			</table>
+			</cfloop>
 		</ul>
 
-
 		<div id="seats">
-			<img class="popuplogo pull-left" src="assets/img/airlines/#stSegment.Carrier#.png">
+			<!--- show seatmap heading --->
+			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#.png">
 			<div class="media-heading pull-left">
-				<h3>#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber# #application.stAirports[stSegment.Origin]# (#stSegment.Origin#) to #application.stAirports[stSegment.Destination]# (#stSegment.Destination#)</h3>
-				#DateFormat(stSegment.DepartureTime, 'ddd, mmm d')# - #TimeFormat(stSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#
-
+				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin]# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination]# (#currentSegment.Destination#)</h3>
+				#DateFormat(currentSegment.DepartureTime, 'ddd, mmm d')# - #TimeFormat(currentSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(currentSegment.ArrivalTime, 'h:mm tt')#
 			</div>
 			<div class="clearfix"></div>
+			<br>
 
+		<!--- show seatmap rc.stSeats is returned from doSeatMap --->
 			<cfif NOT StructKeyExists(rc.stSeats, 'Error')>
 				<cfif StructKeyExists(rc.stSeats, 'ExitRow')>
 					<cfset stExitRows = rc.stSeats.ExitRow>
@@ -105,13 +81,8 @@
 				<cfset aRows = structKeyArray(rc.stSeats)>
 				<cfset ArraySort(aRows, "numeric")>
 
-<br><br>
-
-
-				<!---
-				Display wing
-				--->
-				<table class="popUpTable">
+		<!--- Display wing	--->
+			<table class="popUpTable">
 				<tr>
 					<cfset start = 0>
 					<cfloop array="#aRows#" index="nRow">
@@ -129,10 +100,7 @@
 					</cfloop>
 				</tr>
 
-
-				<!---
-				Display seats
-				--->
+			<!---	Display seats	--->
 				<tr>
 					<cfloop array="#aRows#" index="nRow">
 						<td>
@@ -140,7 +108,7 @@
 							<cfloop array="#aColumns#" index="sColumn">
 								<cfif structKeyExists(stAisles, sColumn)>
 									<tr>
-										<td>#nRow#</td>
+										<td align="center">#nRow#</td>
 									</tr>
 								</cfif>
 								<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
@@ -150,9 +118,7 @@
 								<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 								<tr>
 									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
-										<cfif rc.bSelection	AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-											<a href="##" onClick="selectSeats('#stSegments.Carrier#', #stSegments.FlightNumber#, '#nRow##sColumn#', '#stSegments.Origin#', '#stSegments.Destination#');return false;" style="text-decoration:none;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
-										</cfif>
+										&nbsp;
 									</td>
 								</tr>
 							</cfloop>
@@ -161,9 +127,7 @@
 					</cfloop>
 				</tr>
 
-				<!---
-				Display wing
-				--->
+				<!--- Display wing --->
 				<tr>
 					<cfloop array="#aRows#" index="nRow">
 						<td>
@@ -179,12 +143,10 @@
 						</td>
 					</cfloop>
 				</tr>
-				</table>
+			</table>
 
 
-				<!---
-				Display legend
-				--->
+		<!--- Display legend	--->
 				<br>
 				<table class="popUpTable">
 				<tr>
@@ -203,7 +165,7 @@
 				</tr>
 				</table>
 			<cfelse>
-				<div id="seatcontent">#rc.stSeats.Error#</div>
+				<div id="seatcontent"><p>#rc.stSeats.Error#</p></div>
 			</cfif>
 		</div>
 	</div>

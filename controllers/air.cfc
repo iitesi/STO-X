@@ -94,20 +94,16 @@
 				<cfset rc.qProfile = variables.general.getUser( local.userID )>
 
 				<cfset variables.fw.setLayout("popup")>
-
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="seatmap" output="true" hint="I make a seat map.">
+	<cffunction name="seatmap" output="true" hint="I get data to make a seat map.">
 		<cfargument name="rc">
-
-		<!--- Move needed variables into the rc scope. --->
-		<cfset rc.bSuppress = 1>
 		<cfset rc.sCabin = 'Y'>
-		<cfset rc.nTripID = url.nTripID>
-		<cfset rc.nSegment = url.nSegment>
-		<!--- Do the search. --->
+		<cfset rc.nTripID = arguments.rc.nTripID>
+		<cfset rc.nSegment = arguments.rc.nSegment>
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		<cfset request.layout = false>
 		<cfreturn />
 	</cffunction>
 

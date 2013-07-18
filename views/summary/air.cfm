@@ -36,8 +36,9 @@
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
-					<cfif NOT inPolicy
-						AND rc.Policy.Policy_AirReasonCode EQ 1>
+					<cfif rc.showAll 
+						OR (NOT inPolicy
+						AND rc.Policy.Policy_AirReasonCode EQ 1)>
 
 						<select name="airReasonCode" id="airReasonCode" class="input-xlarge">
 						<option value="">Select Reason for Booking Out of Policy</option>
@@ -53,11 +54,12 @@
 					AND they are in policy OR the above drop down isn't showing
 					AND they want to capture lost savings
 					--->
-					<cfif rc.Air.Total GT lowestFare
+					<cfif rc.showAll 
+						OR (rc.Air.Total GT lowestFare
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
-						AND rc.Policy.Policy_AirLostSavings EQ 1>
+						AND rc.Policy.Policy_AirLostSavings EQ 1)>
 
-						<select name="lostSavings" id="lostSavings">
+						<select name="lostSavings" id="lostSavings" class="input-xlarge">
 						<option value="">Select Reason for Not Booking the Lowest Fare</option>
 						<cfloop query="rc.qOutOfPolicy">
 							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
@@ -67,22 +69,23 @@
 					<!---
 					If the fare is the same
 					--->
-					<cfelseif rc.Air.Total EQ lowestFare>
+					<!--- <cfelseif rc.Air.Total EQ lowestFare>
 
-						<input type="hidden" name="lostSavings" value="C">
+						<input type="hidden" name="lostSavings" value="C"> --->
 
 					</cfif>
 
 					<!--- State of Texas --->
-					<cfif rc.Filter.getAcctID() EQ 235>
+					<cfif rc.showAll 
+						OR rc.Filter.getAcctID() EQ 235>
 
 						<select name="udid113" id="udid113" class="input-xlarge">
-						<option value="">SELECT AN EXCEPTION CODE</option>
+						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
 						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
-
+						
 					</cfif>
 
 				</td>
@@ -146,8 +149,6 @@
 
 				<td width="200" valign="top">
 
-					<cfset tripTotal = tripTotal + rc.Air.Total>
-
 					<span class="blue bold large">
 						#dollarFormat(rc.Air.Total)#<br>
 					</span>
@@ -156,7 +157,9 @@
 					#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
 
 					<span class="blue bold">
-						Flight change/cancellation policy
+						<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="not done yet!" href="##" />
+							Flight change/cancellation policy
+						</a>
 					</span>
 
 				</td>
@@ -183,26 +186,24 @@ FREQUENT PROGRAM NUMBER
 
 					</cfloop>
 <!---
-SPECIAL REQUEST
---->
-					<cfif rc.Policy.Policy_AllowRequests EQ 1>
-						 <!--- #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')# --->
-
-						<textarea name="specialRequests" id="specialRequests" cols="40" rows="1" placeholder="Notes for our travel consultants"> </textarea>
-						&nbsp;&nbsp;&nbsp;
-
-					</cfif>
-<!---
 ADDITIONAL REQUESTS
 --->
 					Special Requests
-					<select name="serviceRequests" id="serviceRequests">
+					<select name="specialNeeds" id="specialNeeds">
 					<option value="">SPECIAL REQUESTS</option>
 					<option value="BLND">BLIND</option>
 					<option value="DEAF">DEAF</option>
 					<option value="UMNR">UNACCOMPANIED MINOR</option>
 					<option value="WCHR">WHEELCHAIR</option>
 					</select>
+					<br>
+<!---
+SPECIAL REQUEST
+--->
+					<cfif rc.showAll 
+						OR rc.Policy.Policy_AllowRequests>
+						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#">
+					</cfif>
 				
 				</td>
 

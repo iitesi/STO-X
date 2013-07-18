@@ -1,5 +1,6 @@
 <cfcomponent name="BookingDetail" extends="com.shortstravel.AbstractEntity" accessors="true">
 
+	<cfproperty name="airNeeded" />
 	<cfproperty name="airBillingAddress" />
 	<cfproperty name="airBillingCity" />
 	<cfproperty name="airBillingName" />
@@ -9,14 +10,17 @@
 	<cfproperty name="airCCMonth" />
 	<cfproperty name="airCCNumber" />
 	<cfproperty name="airCCYear" />
+	<cfproperty name="airCCCVV" />
 	<cfproperty name="airFOPID" />
 	<cfproperty name="airReasonCode" />
 	<cfproperty name="airSaveCard" />
 	<cfproperty name="airSaveName" />
+	<cfproperty name="carNeeded" />
 	<cfproperty name="carFF" />
 	<cfproperty name="carFOPID" />
 	<cfproperty name="carReasonCode" />
 	<cfproperty name="createProfile" />
+	<cfproperty name="hotelNeeded" />
 	<cfproperty name="hotelBillingName" />
 	<cfproperty name="hotelCCExpiration" />
 	<cfproperty name="hotelCCMonth" />
@@ -29,7 +33,7 @@
 	<cfproperty name="hotelSaveName" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="password" />
-	<cfproperty name="saveChanges" />
+	<cfproperty name="saveProfile" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="serviceRequests" />
 	<cfproperty name="sort1" />
@@ -43,6 +47,7 @@
 
 	<cffunction name="init" returntype="any" access="remote" output="false">
 
+		<cfset setAirNeeded( false )>
 		<cfset setAirBillingAddress( '' )>
 		<cfset setAirBillingCity( '' )>
 		<cfset setAirBillingName( '' )>
@@ -54,14 +59,17 @@
 		<cfset setAirCCMonth( '' )>
 		<cfset setAirCCNumber( '' )>
 		<cfset setAirCCYear( '' )>
+		<cfset setAirCCCVV( '' )>
 		<cfset setAirFOPID( '' )>
 		<cfset setAirReasonCode( '' )>
 		<cfset setAirSaveCard( false )>
 		<cfset setAirSaveName( '' )>
+		<cfset setCarNeeded( false )>
 		<cfset setCarFF( '' )>
 		<cfset setCarFOPID( '' )>
 		<cfset setCarReasonCode( '' )>
 		<cfset setCreateProfile( false )>
+		<cfset setHotelNeeded( false )>
 		<cfset setHotelBillingName( '' )>
 		<cfset setHotelCCExpiration( '' )>
 		<cfset setHotelCCMonth( '' )>
@@ -74,7 +82,7 @@
 		<cfset setHotelSaveName( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setPassword( '' )>
-		<cfset setSaveChanges( false )>
+		<cfset setSaveProfile( false )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setServiceRequests( '' )>
 		<cfset setSort1( '' )>

@@ -4,16 +4,31 @@
 	padding: 0px;
 }
 </style>
-	<cfoutput>
-		<a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
-		<a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a> -
-		<a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>-
-		<a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
-	</cfoutput>
 
-	<cfoutput>
-	
+<cfoutput>
+	<div style="width:1000px;">
+
+		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
+			<div class="page-header">
+				<div class="legs clearfix">
+					<cfset count = 0>
+					<cfloop array="#session.searches[rc.searchID].Travelers#" index="travIndex" item="trav">
+						<cfset count++>
+						<cfif trav.getFirstName() NEQ ''>
+							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn">
+								#count#. #trav.getFirstName()# #trav.getLastName()#</a>
+						<cfelse>
+							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn">
+								#count#. Traveler</a>
+						</cfif>
+					</cfloop>
+				</div>
+			</div>
+		</cfif>
+
 		<form method="post" class="form-horizontal" action="#buildURL('summary?searchID=#rc.searchID#')#">
+
+			<cfparam name="rc.showAll" default="0">
 
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
@@ -21,105 +36,51 @@
 			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
-			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.airSelected ? arrayToList(rc.Air.Carriers) : '')#">
+			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
-			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getRooms()[1].getChainCode() : '')#">
+			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getChainCode() : '')#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
 			<input type="hidden" name="vendor" id="vendor" value="#(rc.vehicleSelected ? rc.Vehicle.getVendorCode() : '')#">
+			<input type="hidden" name="auxFee" id="auxFee" value="#rc.fees.auxFee#">
+			<input type="hidden" name="airFee" id="airFee" value="#rc.fees.airFee#">
+			<input type="hidden" name="requestFee" id="requestFee" value="#rc.fees.requestFee#">
 			
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv" style="background-color: ##FFF">
-						#View('summary/traveler')#
+					<div class="summarydiv" style="background-color: ##FFF;min-wdith:600px;">
+						<div id="travelerForm">
+							#View('summary/traveler')#
+						</div>
 					</div>
 
-					<div class="summarydiv" style="background-color: ##FFF">
-						<div id="paymentForm"><td valign="top">#view( 'summary/payment' )#</td></div>
+					<div class="summarydiv" style="background-color: ##FFF;min-wdith:600px;">
+						<div id="paymentForm">
+							#view( 'summary/payment' )#
+						</div>
 					</div>
-					<br class="clearfix">
 
-					<cfset tripTotal = 0>
-					
-					#View('summary/air')#
-					#View('summary/hotel')#
-					#View('summary/vehicle')#
+					<div id="airDiv" class="clearfix">
+						#View('summary/air')#
+					</div>
+					<div id="hotelDiv" class="clearfix">
+						#View('summary/hotel')#
+					</div>
+					<div id="carDiv" class="clearfix">
+						#View('summary/vehicle')#
+					</div>
+					#View('summary/tripsummary')#
 					#View('summary/buttons')#
 				</p>
 			</div>
-			
-		</cfoutput>
 				
-		<script src="assets/js/summary/summary.js"></script>
-	</form>				
-			
-		<!--- <form method="post" action="#buildURL('summary')#">
-			<input type="hidden" name="SearchID" id="SearchID" value="#rc.SearchID#">
-			<input type="hidden" name="Air" id="Air" value="#Air#">
-			<input type="hidden" name="Car" id="Car" value="#Car#">
-			<input type="hidden" name="Hotel" id="Hotel" value="#Hotel#">
-			<input type="hidden" name="nTraveler" id="nTraveler" value="1">
-			<cfif air>
-				<input type="hidden" name="sCarriers" id="sCarriers" value="#ArrayToList(stItinerary.Air.Carriers)#">
-			</cfif>
-			<cfif Car>
-				<input type="hidden" id="sCarVendor" value="#stItinerary.Car.VendorCode#">
-			</cfif>
-			<!---<cfif StructKeyExists(Policy, 'CDNumbers')
-			AND StructKeyExists(Policy.CDNumbers, stItinerary.Car.VendorCode)>
-				<cfset variables.stCD = Policy.stCDNumbers[stItinerary.Car.VendorCode]>
-			<cfelse>todo--->
-				<cfset variables.stCD.DB = ''>
-				<cfset variables.stCD.CD = ''>
-			<!---</cfif>--->
-			<input type="hidden" id="bDB" value="#stCD.DB#">
-			<input type="hidden" id="bCD" value="#stCD.CD#">
-			<cfset variables.nTraveler = 1>
-			<cfset variables.tripTotal = 0>
-			<cfset variables.stTraveler = (StructKeyExists(session.searches[rc.SearchID].stTravelers, nTraveler) ? session.searches[rc.SearchID].stTravelers[nTraveler] : {})>
-			<div id="traveler" class="tab_content">
-				<p>
-					<div class="summarydiv" style="background-color: ##FFF">
-						#View('summary/user')#
-					</div>
+			<script src="assets/js/summary/summary.js"></script>
+		</form>
+	</div>
 
-					<div class="summarydiv" style="background-color: ##FFF">
-						<div id="paymentForm"><table width="500"><tr><td></td></tr></table></div>
-					</div>
-					<br class="clearfix">
+	<a href="?action=couldyou&SearchID=#rc.SearchID#">CouldYou</a> -
+	<a href="?action=purchase&SearchID=#rc.SearchID#">Purchase</a> -
+	<a href="?action=purchase.car&SearchID=#rc.SearchID#">Car Create</a>-
+	<a href="?action=purchase.hotel&SearchID=#rc.SearchID#">Hotel Create</a>
+</cfoutput>
 
-					#View('summary/air')#
-					<br class="clearfix">
-
-					<cfif Car>
-						#View('summary/car')#
-						<br class="clearfix">
-					</cfif>
-
-					#View('summary/buttons')#
-				</p>
-			</div>
-		</form> --->
-		<!---<cfdump var="#session.searches[rc.SearchID].stTravelers#">
-		<cfdump var="#stItinerary.Car#">
-		<!--- <cfset sType = (StructKeyExists(stTraveler, 'Type') ? stTraveler.Type : 'New')> --->
-		<!--- <cfdump var="#session.searches[rc.SearchID].stTravelers#"> --->
-		<cfif NOT structKeyExists(session.searches[rc.SearchID].stTravelers[nTraveler], 'User_ID')>
-			<cfset userID = rc.Filter.getProfileID()>
-		<cfelse>
-			<cfset userID = session.searches[rc.SearchID].stTravelers[nTraveler].User_ID>
-		</cfif>
-		<script type="text/javascript">
-		$(document).ready(function() {
-			getAuthorizedTravelers(#userID#, #session.acctID#);
-			getUser(#userID#);
-			getUserCCEmails(#userID#);
-			//setUser(User);
-			<!---//setTravelerForm(1, 1, #userID#);--->
-		});
-		</script>--->
-
-<!--- <cfelse>
-	<cfoutput>
-		#View('summary/error')#
-	</cfoutput>
-</cfif> --->
+<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" /> --->
