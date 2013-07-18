@@ -10,6 +10,17 @@
 		<script type="text/javascript">
 			<cfoutput>shortstravel.search = #serializeJSON( rc.Filter )#;</cfoutput>
 			<cfoutput>shortstravel.itinerary = #serializeJSON( session.searches[ rc.searchID ].stItinerary )#;</cfoutput>
+			shortstravel.itinerary.total = 0;
+			if( typeof shortstravel.itinerary.AIR != 'undefined' ){
+				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.AIR.TOTAL );
+			}
+			if( typeof shortstravel.itinerary.HOTEL != "undefined" ){
+				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+			}
+			if( typeof shortstravel.itinerary.VEHICLE != "undefined" ){
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.VEHICLE.estimatedTotalAmount );
+			}
+
 		</script>
 	</cfsavecontent>
 
@@ -69,3 +80,14 @@
 		</div>
 	</div>
 </cfoutput>
+
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+	</div>
+	<div id="myModalBody" class="modal-body">
+		Ways to save you money.....
+
+	</div>
+</div>
