@@ -22,38 +22,51 @@
 			<span class="#ribbonClass#"></span>
 			<!--- // end ribbon --->
 
-			<cfif IsLocalHost(cgi.local_addr)>
+<!--- 			<cfif IsLocalHost(cgi.local_addr)>
 				<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
-			</cfif>
+			</cfif> --->
 
-			<table height="#variables.minheight#" width="100%">
+			<table height="#variables.minheight#" width="100%" border="0">
 			<tr>
 				<td colspan="2" align="center">
 					#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br>')#
 					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
-					#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#
+					<strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong>
 				</td>
-				<td colspan="2" class="fares" align="right">
+				<td colspan="2" class="fares" align="center">
 					<cfif bDisplayFare>
+
 						#(stTrip.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
-						<input type="submit" class="button#stTrip.Policy#policy" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
-						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
+
+
+						<cfset btnClass = "">
+						<cfif stTrip.policy EQ 1>
+							<cfset btnClass = "btn-primary">
+						</cfif>
+
+
+
+						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
+						<br>#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
 					<cfelse>
 						<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
 					</cfif>
 				</td>
 			</tr>
+			<tr>
+				<td colspan="4">&nbsp;</td>
+			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group" >
 				<cfset stGroup = stTrip.Groups[Group]>
 				<tr>
-					<td> </td>
+					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Origin]#">
 						<strong>#stGroup.Origin#</strong>
 					</td>
-					<td> </td>
+					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Destination]#">
-													<strong>#stGroup.Destination#</strong>
+						<strong>#stGroup.Destination#</strong>
 					</td>
 				</tr>
 				<tr>
@@ -90,47 +103,49 @@
 						</td>
 					</tr>
 				</cfloop>
+
+					<tr>
+						<td colspan="4">&nbsp;</td>
+					</tr>
+
 			</cfloop>
-			<tr>
+
+			<!--- set bag fee into var so we can display in a tooltip below --->
+			<cfsavecontent variable="tooltip">
+				<cfloop list="#carrierList#" index="carrier">
+					#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
+				</cfloop>
+			</cfsavecontent>
+
+
+<!--- TODO: clean this up - used to debug details popup.
+	comment out the request.layout = false in popup.cfm and enable this to load the
+	details info via a link instead of inside a popup modal window
+	5:13 PM Wednesday, July 17, 2013 - Jim Priest - jpriest@shortstravel.com
+
+<tr>
 				<td height="100%" valign="bottom" colspan="4">
-
-					<!--- set bag fee into var so we can display in a tooltip below --->
-					<cfsavecontent variable="tooltip">
-						<cfloop list="#carrierList#" index="carrier">
-							#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
-						</cfloop>
-					</cfsavecontent>
-
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
 LINKS:
 					<a href="?action=air.popup&sDetails=details&#sURL#" >Details <span class="divider">/</span></a>
-
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 						<a href="?action=air.popup&sDetails=seatmap&#sURL#" >Seats <span class="divider">/</span></a>
 					</cfif>
-
 					<a href="?action=air.popup&sDetails=baggage&#sURL#" rel="popover" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">Bags <span class="divider">/</span></a>
-
 					<a href="?action=air.popup&sDetails=email&#sURL#" >Email</a>
-
 				</td>
 			</tr>
+ --->
 
 			<tr>
-				<td height="100%" valign="bottom" colspan="4">
-
+				<td height="100%" valign="bottom" align="center" colspan="4">
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-POPUP:
-					<a href="?action=air.popup&sDetails=details&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Details <span class="divider">/</span></a>
-
+					<a href="?action=air.popup&sDetails=details&#sURL#" data-toggle="modal" data-target="##popupModal">Details <span class="divider">/</span></a>
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-						<a href="?action=air.popup&sDetails=seatmap&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Seats <span class="divider">/</span></a>
+						<a href="?action=air.popup&sDetails=seatmap&#sURL#" data-toggle="modal" data-target="##popupModal">Seats <span class="divider">/</span></a>
 					</cfif>
-
-					<a href="?action=air.popup&sDetails=baggage&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Bags <span class="divider">/</span></a>
-
-					<a href="?action=air.popup&sDetails=email&#sURL#" data-toggle="modal" data-target="##popupModal" data-backdrop="static">Email</a>
-
+					<a href="?action=air.popup&sDetails=baggage&#sURL#" data-toggle="modal" data-target="##popupModal">Bags <span class="divider">/</span></a>
+					<a href="?action=air.popup&sDetails=email&#sURL#" data-toggle="modal" data-target="##popupModal">Email</a>
 				</td>
 			</tr>
 
