@@ -73,6 +73,7 @@ shortstravel.couldyou = {
 			if( completed ){
 				shortstravel.couldyou.updateCalendar();
 				shortstravel.couldyou.buildAlternativesTable();
+				$('#myModal').modal( 'hide' );
 			}
 		})
 
@@ -83,7 +84,7 @@ shortstravel.couldyou = {
 		var total = 0;
 
 		//Get air total
-		if( shortstravel.couldyou.data[ selectedDate ].air != "" ){
+		if( shortstravel.search.air == 1 && shortstravel.couldyou.data[ selectedDate ].air != "" ){
 			for( tripId in shortstravel.couldyou.data[ selectedDate ].air ){
 				var airTotal = shortstravel.couldyou.data[ selectedDate ].air[ tripId ].TOTAL;
 				if( typeof airTotal != 'number' ){
@@ -94,13 +95,13 @@ shortstravel.couldyou = {
 		}
 
 		//Get hotel total
-		if( shortstravel.couldyou.data[ selectedDate ].hotel != "" ){
+		if( shortstravel.search.hotel == 1 && shortstravel.couldyou.data[ selectedDate ].hotel != "" ){
 			var hotelTotal = shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay;
 			total = total + hotelTotal;
 		}
 
 		//Get vehicle total
-		if( shortstravel.couldyou.data[ selectedDate ].air != "" ){
+		if( shortstravel.search.car == 1 && shortstravel.couldyou.data[ selectedDate ].air != "" ){
 			var vehicleTotal = shortstravel.couldyou.data[ selectedDate ].vehicle.estimatedTotalAmount;
 			if( typeof vehicleTotal != 'number' ){
 				vehicleTotal = parseFloat( vehicleTotal );
@@ -132,7 +133,7 @@ shortstravel.couldyou = {
 				$('#calendar1').fullCalendar( 'renderEvent', ev, true );
 				dateCell.removeClass('ui-widget-content' ).addClass('fc-notAvailable');
 			} else {
-				var selectedDayTotal = 1325; //TODO: Call function to calculate total price of the previously selected itinerary
+				var selectedDayTotal = shortstravel.itinerary.total;
 				var dailyTotal = shortstravel.couldyou.data[ prop ].total;
 
 				if( dailyTotal >= selectedDayTotal ){
@@ -185,14 +186,17 @@ shortstravel.couldyou = {
 				row += '<td>&nbsp;-&nbsp;</td>';
 
 			} else {
-				var row = '<tr>';
+				var row = '<tr';
+				if( shortstravel.couldyou.data[ prop ].total >= shortstravel.itinerary.total ){
+					row += ' class="fc-higherPrice">'
+				} else if( shortstravel.couldyou.data[ prop ].total < shortstravel.itinerary.total ){
+					row += ' class="fc-lowerPrice">'
+				} else {
+					row += '>'
+				}
 				row += '<td>' + shortstravel.couldyou.data[prop].total +'</td>';
-				row += '<td>&nbsp;</td>';
+				row += '<td>' + Math.round( shortstravel.couldyou.data[prop].total - shortstravel.itinerary.total ) + '</td>';
 			}
-
-
-
-
 
 			row += '<td>' + dateFormat( shortstravel.couldyou.data[prop].departureDate, "ddd, mmm dd" ) + '</td>';
 			row += '<td>' + dateFormat( shortstravel.couldyou.data[prop].arrivalDate, "ddd, mmm dd" ) + '</td>';
@@ -206,7 +210,7 @@ shortstravel.couldyou = {
 };
 
 $(document).ready(function(){
-
+	$('#myModal').modal();
 	shortstravel.couldyou.setupDates();
 
 	$('#calendar1').fullCalendar({
@@ -232,7 +236,7 @@ $(document).ready(function(){
 		if( i != 0 ){
 			var d = new Date( shortstravel.couldyou.dates.originalDepart );
 			d.setDate( d.getDate() + i );
-			shortstravel.couldyou.getCouldYouForDate( 282389, dateFormat( d, 'mm-dd-yyyy' ) );
+			shortstravel.couldyou.getCouldYouForDate( shortstravel.search.searchID, dateFormat( d, 'mm-dd-yyyy' ) );
 		}
 	}
 
