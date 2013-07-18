@@ -17,7 +17,7 @@
 								</div>
 								<div class="form-element-content">
 									<input type="text" class="input-block-level airport-select2" id="car-location" name="car-location" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
-									<div id="car-location_hidden" class="hidden">
+									<div id="car-location_hidden" class="hidden" style="float:left;">
 										<span class="required">Airport is missing or invalid. Begin typing to select your airport from the list.</span>
 									</div>
 								</div>
@@ -29,9 +29,6 @@
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
 										<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label start-date" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" data-date-format="mm/dd/yyyy" />
-										<div id="car-pickup-date_hidden" class="hidden">
-											<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
-										</div>
 									</div>
 									<div style="width: 30%; float: left;">
 										<div class="btn-group">
@@ -67,6 +64,9 @@
 											</ul>
 										</div>
 									</div>
+									<div id="car-pickup-date_hidden" class="hidden" style="float:left;">
+										<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+									</div>
 								</div>
 							</div>
 							<div class="row" id="car-dropoff-wrapper">
@@ -76,9 +76,6 @@
 								<div class="form-element-content">
 									<div style="width: 50%; float: left;">
 										<input id="car-dropoff-date" type="text" name="car-dropoff-date" class="inline-label end-date" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" data-date-format="mm/dd/yyyy" />
-										<div id="car-dropoff-date_hidden" class="hidden">
-											<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
-										</div>
 									</div>
 									<div style="width: 30%; float: left;">
 										<div class="btn-group">
@@ -114,6 +111,9 @@
 											</ul>
 										</div>
 									</div>
+									<div id="car-dropoff-date_hidden" class="hidden" style="float:left;">
+										<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -135,7 +135,8 @@
 		<div class="modal-footer">
 			<!--- Search button that, when clicked, will trigger modal window before results are displayed. --->
 			<div id="submit-wrapper" class="row" style="text-align: right;">
-				<a href="#pleaseWait" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" type="submit" data-toggle="modal" data-backdrop="static">Update Search</a>
+				<!--- <a href="#pleaseWait" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" type="submit" data-toggle="modal" data-backdrop="static">Update Search</a> --->
+				<a href="##" id="btnFormSubmit" class="btn btn-large btn-primary btn-small" type="submit">Update Search</a>
 			</div>
 		</div>
 	</div>

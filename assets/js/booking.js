@@ -426,6 +426,7 @@ $(document).ready(function() {
 	});
 
 	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true, placement:"bottom"});
+	$("[rel='poptop']").popover({container: 'body', trigger:"hover", html: true, placement:"top"});
 
 	$("#SoldOut")
 	.button()

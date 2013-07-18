@@ -35,6 +35,7 @@ $(document).ready(function(){
 
 		// TODO: hack to show all flights by default
 		$('[id^="flight"]').show();
+		filterAirDelay.run();
 	});
 
 	$('.filterby').on('click', function() {

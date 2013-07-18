@@ -1,8 +1,8 @@
 $(document).ready(function(){
-	$("button.btn" ).on( "click", function(event){ event.preventDefault() });
-	$("#btnFormSubmit" ).on( "click", function(event){ 
-		$('#displaySearchWindow').modal('hide');
-		formSubmit( event, this );
+	$("button.btn").on("click", function(event){ event.preventDefault() });
+	$("#btnFormSubmit").on("click", function(event){ 
+		/* $('#displaySearchWindow').modal('hide'); */
+		formSubmit(event, this);
 	});
 
 	var todaysDate = new Date();
@@ -40,9 +40,11 @@ $(document).ready(function(){
 
 		if (thisDate < todaysDate) {thisDate = todaysDate;}
 
-		$("#car-pickup-date").val(thisDate.format("mm/dd/yyyy"));
-		$("#start-calendar-wrapper").data('datepicker').setDate(thisDate);
-		$("#start-calendar-wrapper").data('datepicker').update();
+		if (isDate(thisDate)) {
+			$("#car-pickup-date").val(thisDate.format("mm/dd/yyyy"));
+			$("#start-calendar-wrapper").data('datepicker').setDate(thisDate);
+			$("#start-calendar-wrapper").data('datepicker').update();
+		}
 
 		if ((originalCarDropoffDate == '') || (thisDate > carDropoffDate)) {
 			$("#car-dropoff-date").val(thisDate.format("mm/dd/yyyy"));
@@ -61,9 +63,11 @@ $(document).ready(function(){
 
 		if (thisDate < todaysDate) {thisDate = todaysDate;}
 
-		$("#car-dropoff-date").val(thisDate.format("mm/dd/yyyy"));
-		$("#end-calendar-wrapper").data('datepicker').setDate(thisDate);
-		$("#end-calendar-wrapper").data('datepicker').update();
+		if (isDate(thisDate)) {
+			$("#car-dropoff-date").val(thisDate.format("mm/dd/yyyy"));
+			$("#end-calendar-wrapper").data('datepicker').setDate(thisDate);
+			$("#end-calendar-wrapper").data('datepicker').update();
+		}
 
 		if ((originalCarPickupDate == '') || (carPickupDate > thisDate)) {
 			$("#car-pickup-date").val(thisDate.format("mm/dd/yyyy"));
@@ -130,11 +134,8 @@ formSubmit = function( event ){
 	var todaysDate = new Date();
 	todaysDateFormatted = [(todaysDate.getMonth()+1).padLeft(),todaysDate.getDate().padLeft(),todaysDate.getFullYear()].join('/');
 
-	//Build what text appears in the modal window based on what was selected in the form.
-	setModalWindowText();
-
 	//Disable the submit button to prevent duplicate search calls
-	$("#btnFormSubmit" ).addClass("disabled");
+	$("#btnFormSubmit").addClass("disabled");
 
 	var formData = {};
 	formData.searchID = $("#searchID").val();
@@ -219,24 +220,36 @@ formSubmit = function( event ){
 			break;
 	}
 
-	console.log(formErrors);
-	console.log(formData);
-	/* $.ajax({
-		type: "POST",
-		url: "/search/RemoteProxy.cfc?method=saveSearch",
-		data: formData,
-		success: function( response ){
-			if( response.success == true ){
-				window.location = "/booking/index.cfm?action=car.availability&searchId=" + formData.searchID + "&requery=true";
-			}else{
-				//TODO: Process any errors returned from the server
+	if (formErrors.length) {
+		// console.log(formErrors);
+		displayErrors(formErrors);
+		$("#btnFormSubmit").removeClass("disabled");
+	}
+	else {
+		//Build what text appears in the modal window based on what was selected in the form.
+		setModalWindowText();
 
-				//Enable the submit button since this search wasn't saved
-				$("#btnFormSubmit" ).addClass( "enabled" );
-			}
-		},
-		dataType: "json"
-	}); */
+		$('#displaySearchWindow').modal('hide');
+		$('#pleaseWait').modal({backdrop: "static", show: true});
+
+		// console.log(formData);
+		$.ajax({
+			type: "POST",
+			url: "/search/RemoteProxy.cfc?method=saveSearch",
+			data: formData,
+			success: function( response ){
+				if( response.success == true ){
+					window.location = "/booking/index.cfm?action=car.availability&searchId=" + formData.searchID + "&requery=true";
+				}else{
+					//TODO: Process any errors returned from the server
+
+					//Enable the submit button since this search wasn't saved
+					$("#btnFormSubmit" ).addClass( "enabled" );
+				}
+			},
+			dataType: "json"
+		});
+	}
 };
 
 displayErrors = function(formErrors) {
