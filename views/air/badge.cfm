@@ -3,9 +3,8 @@
 <cfset carrierList = "">
 
 <cfsavecontent variable="sBadge" trim="#true#">
-	<cfoutput>
-		<div class="badge">
-			<!--- display ribbon --->
+
+			<!--- create ribbon --->
 			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
 				<cfset ribbonClass = "ribbon-l-pref-cont">
 			<cfelseif stTrip.preferred EQ 1>
@@ -14,39 +13,37 @@
 				<cfset ribbonClass = "ribbon-l-cont">
 			</cfif>
 
-			<!--- finally add default 'ribbon class' --->
+			<!--- finally add default 'ribbon' class --->
 			<cfif Len(ribbonClass)>
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
-			<!--- display ribbon --->
-			<span class="#ribbonClass#"></span>
-			<!--- // end ribbon --->
 
-<!--- 			<cfif IsLocalHost(cgi.local_addr)>
+
+
+	<cfoutput>
+		<div class="badge">
+			<!--- display ribbon --->
+			<span class="#ribbonclass#"></span>
+
+			<!--- TODO: uncomment for debugging
+			<cfif IsLocalHost(cgi.local_addr)>
 				<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif> --->
 
 			<table height="#variables.minheight#" width="100%" border="0">
-			<tr>
-				<td colspan="2" align="center">
-					#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br>')#
+			<tr align="center">
+				<td width="50%" colspan="2">
 					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
-					<strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong>
+					<strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong><br>
 				</td>
-				<td colspan="2" class="fares" align="center">
+				<td colspan="2">
 					<cfif bDisplayFare>
-
-						#(stTrip.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
-						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
-
-
+						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#
+						<br>
 						<cfset btnClass = "">
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
 						</cfif>
-
-
-
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
 						<br>#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
 					<cfelse>
@@ -54,6 +51,12 @@
 					</cfif>
 				</td>
 			</tr>
+			<cfif !bSelected AND !stTrip.Policy>
+			<tr align="center">
+				<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
+				<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span>')#</td>
+			</tr>
+			</cfif>
 			<tr>
 				<td colspan="4">&nbsp;</td>
 			</tr>
