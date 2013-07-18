@@ -120,7 +120,22 @@
 
 					#hotelText#<br>
 
-					<!--- hotelPolicies are set on the payment.cfm page --->
+					<cfsavecontent variable="hotelPolicies">
+						<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''
+							OR rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''
+							OR rc.Hotel.getRooms()[1].getCancellationPolicy() NEQ ''>
+							<cfif rc.Hotel.getRooms()[1].getDepositPolicy() NEQ ''>
+								Deposit: #rc.Hotel.getRooms()[1].getDepositPolicy()#<br>
+							</cfif>
+							<cfif rc.Hotel.getRooms()[1].getGuaranteePolicy() NEQ ''>
+								Guarantee: #rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+							</cfif>
+							Cancellation: #rc.Hotel.getRooms()[1].getCancellationPolicy()#<br>
+						<cfelse>
+							Hotel policies are not available at this time.
+						</cfif>
+					</cfsavecontent>
+		
 					<span class="blue bold">
 						<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 							Hotel payment and cancellation policy
