@@ -2,8 +2,15 @@
 
 	<cfsavecontent variable="localAssets">
 		<link href="/booking/assets/css/fullcalendar.css" rel="stylesheet">
+		<link href="/booking/assets/css/custom-theme/jquery-ui-1.8.23.custom.css" rel="stylesheet">
 		<script src="/booking/assets/js/fullcalendar.min.js"></script>
+		<script src="/booking/assets/js/purl.js"></script>
+		<script src="/booking/assets/js/date.format.js"></script>
 		<script src="/booking/assets/js/couldyou.js"></script>
+		<script type="text/javascript">
+			<cfoutput>shortstravel.search = #serializeJSON( rc.Filter )#;</cfoutput>
+			<cfoutput>shortstravel.itinerary = #serializeJSON( session.searches[ rc.searchID ].stItinerary )#;</cfoutput>
+		</script>
 	</cfsavecontent>
 
 	<cfhtmlhead text="#localAssets#" />
@@ -31,6 +38,24 @@
 					&nbsp;<br>
 					&nbsp;<br>
 					&nbsp;<br>
+				</div>
+
+				<div>
+
+					<table id="alternativesTable" class="table" width="100%">
+						<thead>
+							<tr>
+								<th class="fc-day-header ui-widget-header fc-first">Trip Cost</th>
+								<th class="fc-day-header ui-widget-header">Savings</th>
+								<th class="fc-day-header ui-widget-header">Depart</th>
+								<th class="fc-day-header ui-widget-header fc-last">Return</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+
 				</div>
 			</div>
 
