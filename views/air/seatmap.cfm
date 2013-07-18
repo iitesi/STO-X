@@ -165,7 +165,7 @@
 				</tr>
 				</table>
 			<cfelse>
-				<div id="seatcontent">#rc.stSeats.Error#</div>
+				<div id="seatcontent"><p>#rc.stSeats.Error#</p></div>
 			</cfif>
 		</div>
 	</div>
