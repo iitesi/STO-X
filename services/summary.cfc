@@ -247,17 +247,23 @@
 		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
 
 			<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0>
-				<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15>
+				<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
+					OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
 					<cfset error.airCCNumber = ''>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirCCMonth() EQ ''>
-					<cfset error.airCCMonth = ''>
+				<cfif arguments.Traveler.getBookingDetail().getAirCCMonth() EQ ''
+					OR arguments.Traveler.getBookingDetail().getAirCCYear() EQ ''>
+					<cfset error.airCCExpiration = ''>
+				<cfelse>
+					<cfset local.airCCExpiration = createDate(arguments.Traveler.getBookingDetail().getAirCCYear(), arguments.Traveler.getBookingDetail().getAirCCMonth(), 1)>
+					<cfset airCCExpiration = createDate(year(airCCExpiration), month(airCCExpiration), daysInMonth(airCCExpiration))>
+					<cfif airCCExpiration LTE now()>
+						<cfset error.airCCExpiration = ''>
+					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirCCYear() EQ ''>
-					<cfset error.airCCYear = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingCVV() EQ ''>
-					<cfset error.airBillingCVV = ''>
+				<cfif arguments.Traveler.getBookingDetail().getAirCCCVV() EQ ''
+					OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCCVV())>
+					<cfset error.airCCCVV = ''>
 				</cfif>
 				<cfif arguments.Traveler.getBookingDetail().getAirBillingName() EQ ''>
 					<cfset error.airBillingName = ''>
@@ -272,7 +278,7 @@
 					<cfset error.airBillingState = ''>
 				</cfif>
 				<cfif arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
-					<cfset error.airBillingZip = ''>
+					<cfset error.airBillingState = ''>
 				</cfif>
 			</cfif>
 
@@ -311,14 +317,15 @@
 				<cfif Len(arguments.Traveler.getBookingDetail().getHotelCCNumber()) LT 15>
 					<cfset error.hotelCCNumber = ''>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getHotelCCMonth() EQ ''>
-					<cfset error.hotelCCMonth = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getHotelCCYear() EQ ''>
-					<cfset error.hotelCCYear = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getHotelBillingCVV() EQ ''>
-					<cfset error.hotelBillingCVV = ''>
+				<cfif arguments.Traveler.getBookingDetail().getHotelCCMonth() EQ ''
+					OR arguments.Traveler.getBookingDetail().getHotelCCYear() EQ ''>
+					<cfset error.hotelCCExpiration = ''>
+				<cfelse>
+					<cfset local.hotelCCExpiration = createDate(arguments.Traveler.getBookingDetail().getHotelCCYear(), arguments.Traveler.getBookingDetail().getHotelCCMonth(), 1)>
+					<cfset hotelCCExpiration = createDate(year(hotelCCExpiration), month(hotelCCExpiration), daysInMonth(hotelCCExpiration))>
+					<cfif hotelCCExpiration LTE now()>
+						<cfset error.hotelCCExpiration = ''>
+					</cfif>
 				</cfif>
 				<cfif arguments.Traveler.getBookingDetail().getHotelBillingName() EQ ''>
 					<cfset error.hotelBillingName = ''>

@@ -10,6 +10,7 @@
 	<cfproperty name="airCCMonth" />
 	<cfproperty name="airCCNumber" />
 	<cfproperty name="airCCYear" />
+	<cfproperty name="airCCCVV" />
 	<cfproperty name="airFOPID" />
 	<cfproperty name="airReasonCode" />
 	<cfproperty name="airSaveCard" />
@@ -32,7 +33,7 @@
 	<cfproperty name="hotelSaveName" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="password" />
-	<cfproperty name="saveChanges" />
+	<cfproperty name="saveProfile" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="serviceRequests" />
 	<cfproperty name="sort1" />
@@ -58,6 +59,7 @@
 		<cfset setAirCCMonth( '' )>
 		<cfset setAirCCNumber( '' )>
 		<cfset setAirCCYear( '' )>
+		<cfset setAirCCCVV( '' )>
 		<cfset setAirFOPID( '' )>
 		<cfset setAirReasonCode( '' )>
 		<cfset setAirSaveCard( false )>
@@ -80,7 +82,7 @@
 		<cfset setHotelSaveName( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setPassword( '' )>
-		<cfset setSaveChanges( false )>
+		<cfset setSaveProfile( false )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setServiceRequests( '' )>
 		<cfset setSort1( '' )>

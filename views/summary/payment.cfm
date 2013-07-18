@@ -15,14 +15,14 @@
 
 		<div id="airManual" class="hide">
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="airCCNumber">Card Number</label>
 				<div class="controls">
 					<input type="text" name="airCCNumber" id="airCCNumber" size="20" maxlength="16" autocomplete="off">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="airCCMonth">Expiration</label>
 				<div class="controls">
 					<select name="airCCMonth" id="airCCMonth" class="input-medium">
@@ -40,35 +40,35 @@
 				</div>
 			</div>
 
-			<div class="control-group">
-				<label class="control-label" for="airBillingCVV">CVV Security Code</label>
+			<div class="control-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
+				<label class="control-label" for="airCCCVV">CVV Security Code</label>
 				<div class="controls">
-					<input type="text" name="airBillingCVV" id="airBillingCVV" maxlength="4" autocomplete="off" class="input-small">
+					<input type="text" name="airCCCVV" id="airCCCVV" maxlength="4" autocomplete="off" class="input-small">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
 				<label class="control-label" for="airBillingName">Name on Card</label>
 				<div class="controls">
 					<input type="text" name="airBillingName" id="airBillingName" maxlength="50">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
 				<label class="control-label" for="airBillingAddress">Billing Address</label>
 				<div class="controls">
 					<input type="text" name="airBillingAddress" id="airBillingAddress" maxlength="50">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
 				<label class="control-label" for="airBillingCity">City</label>
 				<div class="controls">
 					<input type="text" name="airBillingCity" id="airBillingCity" maxlength="50" class="input-medium">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
 				<label class="control-label" for="airBillingState">State, Zip</label>
 				<div class="controls">
 					<select name="airBillingState" id="airBillingState" class="input-small">
@@ -90,7 +90,7 @@
 				</div>
 			</div>
 
-			<div class="control-group hide" id="airSaveNameDiv">
+			<div class="control-group hide #(structKeyExists(rc.errors, 'airSaveName') ? 'error' : '')#" id="airSaveNameDiv">
 				<label class="control-label" for="airSaveName">Name this card</label>
 				<div class="controls">
 					<input type="text" name="airSaveName" id="airSaveName" maxlength="50" class="input-medium">
@@ -120,23 +120,23 @@
 
 		<div id="hotelManual" class="hide">
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCNumber">Card Number</label>
 				<div class="controls">
 					<input type="text" name="hotelCCNumber" id="hotelCCNumber" size="20" maxlength="16" autocomplete="off">
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCMonth">Expiration</label>
 				<div class="controls">
-					<select name="hotelCC_Month" id="hotelCCMonth" class="input-medium">
+					<select name="hotelCCMonth" id="hotelCCMonth" class="input-medium">
 						<option value=""></option>
 						<cfloop from="1" to="12" index="m">
 							<option value="#m#">#MonthAsString(m)#</option>
 						</cfloop>
 					</select>
-					<select name="hotelCC_Year" id="hotelCCYear" class="input-small">
+					<select name="hotelCCYear" id="hotelCCYear" class="input-small">
 						<option value=""></option>
 						<cfloop from="#Year(Now())#" to="#Year(Now())+20#" index="y">
 							<option value="#y#">#y#</option>
@@ -145,7 +145,7 @@
 				</div>
 			</div>
 
-			<div class="control-group">
+			<div class="control-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
 				<label class="control-label" for="hotelBillingName">Name on Card</label>
 				<div class="controls">
 					<input type="text" name="hotelBillingName" id="hotelBillingName" size="20" maxlength="50">
@@ -161,7 +161,7 @@
 				</div>
 			</div>
 
-			<div class="control-group hide" id="hotelSaveNameDiv">
+			<div class="control-group hide #(structKeyExists(rc.errors, 'hotelSaveName') ? 'error' : '')#" id="hotelSaveNameDiv">
 				<label class="control-label" for="hotelSaveName">Name this card</label>
 				<div class="controls">
 					<input type="text" name="hotelSaveName" id="hotelSaveName" maxlength="50" class="input-medium">

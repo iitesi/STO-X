@@ -158,7 +158,7 @@
 
 	</cfif>
 
-	<div class="control-group">
+	<div class="control-group" id="saveProfileDiv">
 		<label class="control-label" for="saveProfile"></label>
 		<div class="controls">
 			<label class="saveProfile">

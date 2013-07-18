@@ -78,7 +78,7 @@
 		<cfif structKeyExists(rc, 'trigger')>
 			<cfparam name="rc.noMiddleName" default="0">
 			<cfparam name="rc.createProfile" default="0">
-			<cfparam name="rc.saveChanges" default="0">
+			<cfparam name="rc.saveProfile" default="0">
 			<cfparam name="rc.airSaveCard" default="0">
 			<cfparam name="rc.hotelSaveCard" default="0">
 			<cfparam name="rc.airNeeded" default="0">
@@ -163,14 +163,19 @@
 																			, Policy = rc.Policy
 																			, acctID = rc.Filter.getAcctID()
 																			, searchID = rc.searchID )>
-			<cfif rc.trigger EQ 'ADD A TRAVELER'>
-				<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
-				<cfif rc.travelerNumber LTE 4>
-					<cfset rc.travelerNumber = rc.travelerNumber>
-				<cfelse>
-					<cfset rc.travelerNumber = 1>
+			<cfif structIsEmpty(rc.errors)>
+				<cfif rc.saveProfile>
+					<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = rc.Traveler )>
 				</cfif>
-				<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
+				<cfif rc.trigger EQ 'ADD A TRAVELER'>
+					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
+					<cfif rc.travelerNumber LTE 4>
+						<cfset rc.travelerNumber = rc.travelerNumber>
+					<cfelse>
+						<cfset rc.travelerNumber = 1>
+					</cfif>
+					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" abort="true" /> --->

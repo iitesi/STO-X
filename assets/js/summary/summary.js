@@ -97,6 +97,13 @@ $(document).ready(function(){
 			$( "#noMiddleName" ).attr( 'checked', false );
 
 		}
+		if (traveler.bookingDetail.saveProfile == 'true') {
+			$( "#saveProfile" ).attr( 'checked', true );
+		}
+		else {
+			$( "#saveProfile" ).attr( 'checked', false );
+
+		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
 			if (traveler.middleName.length >= 2) {
@@ -109,6 +116,7 @@ $(document).ready(function(){
 			$( "#lastName" ).prop('disabled', true);
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
+			$( "#saveProfileDiv" ).show();
 		}
 		else {
 			$( "#fullNameDiv" ).show();
@@ -116,6 +124,7 @@ $(document).ready(function(){
 			$( "#lastName" ).prop('disabled', false);
 			$( "#firstName2" ).val( '' );
 			$( "#lastName2" ).val( '' );
+			$( "#saveProfileDiv" ).hide();
 		}
 		$( "#phoneNumber" ).val( traveler.phoneNumber );
 		$( "#wirelessPhone" ).val( traveler.wirelessPhone );
@@ -303,6 +312,7 @@ $(document).ready(function(){
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
 			$( "#" + typeOfService + "CCYear" ).val( traveler.bookingDetail[typeOfService + 'CCYear'] );
+			$( "#" + typeOfService + "CCCVV" ).val( traveler.bookingDetail[typeOfService + 'CCCVV'] );
 			$( "#" + typeOfService + "BillingName" ).val( traveler.bookingDetail[typeOfService + 'BillingName'] );
 			if (typeOfService == 'air') {
 				$( "#" + typeOfService + "BillingAddress" ).val( traveler.bookingDetail[typeOfService + 'BillingAddress'] );
