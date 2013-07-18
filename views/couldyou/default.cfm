@@ -27,11 +27,17 @@
 	<cfhtmlhead text="#localAssets#" />
 </cfsilent>
 
+<style>
+	.minlineheight {
+		line-height:10px;
+	}
+</style>
+
 <cfoutput>
 	<!--Page title row-->
 	<div class="container">
 		<div class="row-fluid">
-			<div class="span12">
+			<div class="span32">
 				<div class="page-header">
 					<h1>Could you save within 14 days for this same trip?<br><small> We are finding an average of $<span id="dollarSavings">XXX.XX</span> in <span id="percentSavings">XX</span>% of searches</small></h1>
 					<p>Select a date below to save or continue to purchase</p>
@@ -45,10 +51,96 @@
 			<div class="span6">
 				<h2>Trip Summary for <span id="tripStartDate">#dateFormat( rc.startDate, "ddd, mmm d" )#</span> to <span id="tripEndDate">#dateFormat( rc.endDate, "ddd, mmm d" )#</span></h2>
 				<div class="badge hotel">
-					&nbsp;<br>
-					&nbsp;<br>
-					&nbsp;<br>
-					&nbsp;<br>
+
+						<div class="minlineheight">
+							<div class="span3"></div>
+							<div class="span3"><strong>Base Rate</strong></div>
+							<div class="span3"><strong>Taxes</strong></div>
+							<div class="span3"><strong>Total</strong></div>
+						</div>
+
+						<cfset tripTotal = 0>
+						<cfset tripCurrency = 'USD'>
+
+						<cfif rc.airSelected>
+
+							<div class="minlineheight" id="airTotalRow">
+								<div class="span3">Flight</div>
+								<div class="span3">#numberFormat(rc.Air.Base, '$____.__')#</div>
+								<div class="span3">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
+								<div class="span3" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+							</div>
+							<input type="hidden" id="airTotal" value="#rc.Air.Total#">
+
+							<cfset tripTotal = tripTotal + rc.Air.Total>
+							<cfset tripCurrency = 'USD'>
+
+						</cfif>
+						<cfif rc.hotelSelected>
+
+							<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
+								<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+								<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
+								<cfset hotelText = 'Including taxes'>
+							<cfelse>
+								<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+								<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+								<cfset hotelText = 'Quoted at check-in'>
+							</cfif>
+
+							<div class="minlineheight" id="hotelTotalRow">
+								<div class="span3">Hotel</div>
+								<div class="span3"></div>
+								<div class="span3">#hotelText#</div>
+								<div class="span3" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : hotelTotal&' '&currency)#</div>
+							</div>
+							<input type="hidden" id="hotelTotal" value="#hotelTotal#">
+
+							<cfset tripTotal = (currency EQ 'USD' ? tripTotal + hotelTotal : 0)>
+							<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
+
+						</cfif>
+
+						<cfif rc.vehicleSelected>
+
+							<cfset currency = rc.Vehicle.getCurrency()>
+							<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
+
+							<div class="minlineheight" id="carTotalRow">
+								<div class="span3">Car</div>
+								<div class="span3"></div>
+								<div class="span3">Quoted at pick-up</div>
+								<div class="span3" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : vehicleTotal&' '&currency)#</div>
+							</div>
+							<input type="hidden" id="carTotal" value="#vehicleTotal#">
+
+							<cfset tripTotal = (currency EQ 'USD' ? tripTotal + vehicleTotal : 0)>
+							<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
+
+						</cfif>
+
+						<div class="minlineheight" id="bookingTotalRow">
+							<div class="span3">Booking Fee</div>
+							<div class="span3"></div>
+							<div class="span3"></div>
+							<div class="span3" id="bookingTotalCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+						</div>
+						<input type="hidden" id="bookingTotal" value="#rc.fees.fee#">
+
+						<cfif tripCurrency EQ 'USD'>
+
+							<cfset tripTotal = tripTotal + rc.fees.fee>
+
+							<div class="minlineheight">
+								<div class="span12 minlineheight"><hr width="100%" style="margin: 0;"></div>
+							</div>
+
+							<div class="minlineheight" id="bookingTotalRow">
+								<div class="span9 blue"><strong>Trip cost for current traveler</strong></div>
+								<div class="span3 blue" id="totalCol"><strong>#numberFormat(tripTotal, '$____.__')#</strong></div>
+							</div>
+
+						</cfif>
 				</div>
 
 				<div>
