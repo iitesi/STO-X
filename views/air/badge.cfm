@@ -103,11 +103,9 @@
 						</td>
 					</tr>
 				</cfloop>
-
-					<tr>
-						<td colspan="4">&nbsp;</td>
-					</tr>
-
+				<tr>
+					<td colspan="4">&nbsp;</td>
+				</tr>
 			</cfloop>
 
 			<!--- set bag fee into var so we can display in a tooltip below --->
@@ -144,7 +142,7 @@ LINKS:
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 						<a href="?action=air.popup&sDetails=seatmap&#sURL#" data-toggle="modal" data-target="##popupModal">Seats <span class="divider">/</span></a>
 					</cfif>
-					<a href="?action=air.popup&sDetails=baggage&#sURL#" data-toggle="modal" data-target="##popupModal">Bags <span class="divider">/</span></a>
+					<a href="?action=air.popup&sDetails=baggage&#sURL#" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">Bags <span class="divider">/</span></a>
 					<a href="?action=air.popup&sDetails=email&#sURL#" data-toggle="modal" data-target="##popupModal">Email</a>
 				</td>
 			</tr>

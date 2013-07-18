@@ -150,7 +150,7 @@ F = first
 							</div>
 						</div>
 					</div> <!--- row --->
-
+					<br><br>
 					<span class="pull-right">
 						<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
 						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
