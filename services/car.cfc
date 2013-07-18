@@ -383,11 +383,11 @@
 		<cfargument name="requestedDate" type="date" required="true" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou )
+		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
 			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle )
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "vehicle" )
 			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ])
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle, dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) )
 			AND arguments.requery IS false>
 
 			<cfreturn session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] />
