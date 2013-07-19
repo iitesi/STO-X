@@ -57,9 +57,11 @@ threadAvailability
 		</cfloop>
 
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads)>
+		<cfif NOT StructIsEmpty(stThreads)
+			AND sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
+		
 		<cfreturn >
 	</cffunction>
 
@@ -84,7 +86,7 @@ doAirAvailability
 			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
 			sResponse to see what uAPI is getting or sending back --->
 
-<!--- 			<cfthread
+			<cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
@@ -92,7 +94,7 @@ doAirAvailability
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#">
- --->
+
  				<cfset local.sNextRef = 'ROUNDONE'>
 				<cfset local.nCount = 0>
 				<cfloop condition="local.sNextRef NEQ ''">
@@ -148,7 +150,7 @@ doAirAvailability
 				* In the view it will be empty.
 				--->
 
-<!--- 			</cfthread> --->
+			</cfthread>
 
 		</cfif>
 
