@@ -104,6 +104,16 @@
 
 		<div id="hotelManual" class="hide">
 
+			<div class="control-group" id="copyAirCCDiv">
+				<label class="control-label" for="copyAirCC"></label>
+				<div class="controls">
+					<label class="copyAirCC">
+						<input type="checkbox" name="copyAirCC" id="copyAirCC" value="1">
+						Copy air payment
+					</label>
+				</div>
+			</div>
+
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCNumber">Card Number</label>
 				<div class="controls">

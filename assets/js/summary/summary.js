@@ -270,7 +270,6 @@ $(document).ready(function(){
 	function loadPayments(traveler, typeOfService) {
 		var payments = traveler.payment
 		$( "#" + typeOfService + "FOPID" ).html('')
-		//$( "#" + typeOfService + "FOPID" ).append('<option value=""></option>')
 		var manualEntry = 1;
 		for( var i=0, l=traveler.payment.length; i<l; i++ ) {
 			if (traveler.payment[i][typeOfService + 'Use'] == true) {
@@ -313,6 +312,21 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingCity" ).val( traveler.bookingDetail[typeOfService + 'BillingCity'] );
 				$( "#" + typeOfService + "BillingState" ).val( traveler.bookingDetail[typeOfService + 'BillingState'] );
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
+			}
+			else {
+				if (airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+					$( "#copyAirCCDiv" ).hide();
+				}
+				else {
+					$( "#copyAirCCDiv" ).show();
+					if (traveler.bookingDetail.copyAirCC == 1) {
+						$( "#copyAirCC" ).attr( 'checked', true );
+					}
+					else {
+						$( "#copyAirCC" ).attr( 'checked', false );
+
+					}
+				}
 			}
 		}
 		else {
@@ -431,6 +445,13 @@ $(document).ready(function(){
 			$( "#carTotalRow" ).hide();
 			recalculateTotal();
 		}
+	})
+
+	$( "#copyAirCC" ).click(function() {
+		$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
+		$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
+		$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
+		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
 	})
 
 	//NASCAR custom code for conitional logic for sort1/second org unit displayed/department number

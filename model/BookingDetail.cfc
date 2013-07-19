@@ -18,6 +18,7 @@
 	<cfproperty name="carFF" />
 	<cfproperty name="carFOPID" />
 	<cfproperty name="carReasonCode" />
+	<cfproperty name="copyAirCC" />
 	<cfproperty name="createProfile" />
 	<cfproperty name="hotelNeeded" />
 	<cfproperty name="hotelBillingName" />
@@ -65,6 +66,7 @@
 		<cfset setCarFF( '' )>
 		<cfset setCarFOPID( '' )>
 		<cfset setCarReasonCode( '' )>
+		<cfset setCopyAirCC( false )>
 		<cfset setCreateProfile( false )>
 		<cfset setHotelNeeded( false )>
 		<cfset setHotelBillingName( '' )>

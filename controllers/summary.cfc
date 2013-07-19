@@ -10,13 +10,26 @@
 		<!--- for testing purposes --->
 
 		<cfparam name="rc.travelerNumber" default="1">
+		<cfparam name="rc.remove" default="">
+		<cfparam name="rc.add" default="">
+
 		<cfset rc.errors = {}>
 
-		<cfif structKeyExists(rc, 'remove')
-			AND rc.remove EQ 1>
+		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>
 			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=1')>
 		</cfif>
+
+		<cfif rc.add EQ 'hotel'>
+			<cfset session.Filters[rc.searchID].setHotel(true)>
+			<cfset variables.fw.redirect('hotel.search?searchID=#rc.searchID#')>
+		</cfif>
+
+		<cfif rc.add EQ 'car'>
+			<cfset session.Filters[rc.searchID].setCar(true)>
+			<cfset variables.fw.redirect('car.availability?searchID=#rc.searchID#')>
+		</cfif>
+
 		<cfif NOT listFind('1,2,3,4', rc.travelerNumber)>
 			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=1')>
 		</cfif>

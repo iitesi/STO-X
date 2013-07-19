@@ -192,7 +192,6 @@ FREQUENT PROGRAM NUMBER
 <!---
 ADDITIONAL REQUESTS
 --->
-					Special Requests
 					<select name="specialNeeds" id="specialNeeds">
 					<option value="">SPECIAL REQUESTS</option>
 					<option value="BLND">BLIND</option>
@@ -206,7 +205,7 @@ SPECIAL REQUEST
 --->
 					<cfif rc.showAll 
 						OR rc.Policy.Policy_AllowRequests>
-						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#">
+						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
 					</cfif>
 				
 				</td>
