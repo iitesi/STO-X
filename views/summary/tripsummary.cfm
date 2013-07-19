@@ -73,7 +73,7 @@
 
 		</cfif>
 
-		<div class="row minlineheight" id="bookingTotalRow">
+		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingTotalRow">
 			<div class="span1">Booking Fee</div>
 			<div class="span1"></div>
 			<div class="span2"></div>

@@ -1,12 +1,6 @@
 <cfoutput>
 
-	<cfif rc.travelerNumber NEQ 1>
-		<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#" style="float:right">
-			<span class="icon-large icon-remove-sign"></span> Remove Traveler
-		</a>
-	</cfif>
-
-	<span class="underline-heading"> <h2>Traveler</h2></span>
+	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
 
 	<div class="control-group">
 		<label class="control-label" for="userID">Change Traveler</label>		
@@ -21,7 +15,7 @@
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
+	<div id="fullNameDiv" class="control-group #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
 		<label class="control-label" for="firstName">Full Name</label>
 		<div class="controls">
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">

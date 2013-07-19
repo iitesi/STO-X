@@ -274,10 +274,8 @@
 				<cfif arguments.Traveler.getBookingDetail().getAirBillingCity() EQ ''>
 					<cfset error.airBillingCity = ''>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''>
-					<cfset error.airBillingState = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
+				<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''
+					OR arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
 					<cfset error.airBillingState = ''>
 				</cfif>
 			</cfif>

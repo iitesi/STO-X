@@ -1,6 +1,6 @@
 <cfoutput>
 
-	<span class="underline-heading"> <h2>Payment</h2></span>
+	<h2>PAYMENT</h2>
 
 	<cfif rc.airSelected>
 		
@@ -81,22 +81,6 @@
 				</div>
 			</div>
 
-			<div class="control-group hide" id="airSaveCardDiv">
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox" name="airSaveCard" id="airSaveCard" value="1">
-						Save this card to my profile
-					</label>
-				</div>
-			</div>
-
-			<div class="control-group hide #(structKeyExists(rc.errors, 'airSaveName') ? 'error' : '')#" id="airSaveNameDiv">
-				<label class="control-label" for="airSaveName">Name this card</label>
-				<div class="controls">
-					<input type="text" name="airSaveName" id="airSaveName" maxlength="50" class="input-medium">
-				</div>
-			</div>
-
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
@@ -149,22 +133,6 @@
 				<label class="control-label" for="hotelBillingName">Name on Card</label>
 				<div class="controls">
 					<input type="text" name="hotelBillingName" id="hotelBillingName" size="20" maxlength="50">
-				</div>
-			</div>
-
-			<div class="control-group hide" id="hotelSaveCardDiv">
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox" name="hotelSaveCard" id="hotelSaveCard" value="1">
-						Save this card to my profile
-					</label>
-				</div>
-			</div>
-
-			<div class="control-group hide #(structKeyExists(rc.errors, 'hotelSaveName') ? 'error' : '')#" id="hotelSaveNameDiv">
-				<label class="control-label" for="hotelSaveName">Name this card</label>
-				<div class="controls">
-					<input type="text" name="hotelSaveName" id="hotelSaveName" maxlength="50" class="input-medium">
 				</div>
 			</div>
 

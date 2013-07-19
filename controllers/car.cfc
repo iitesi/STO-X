@@ -1,6 +1,5 @@
 <cfcomponent extends="abstract">
 
-<!--- availability --->
 	<cffunction name="availability" output="false">
 		<cfargument name="rc">
 
@@ -32,7 +31,6 @@
 		<cfreturn />
 	</cffunction>
 
-<!--- search --->
 	<!--- <cffunction name="search" output="false">
 		<cfargument name="rc">
 
@@ -44,7 +42,6 @@
 		<cfreturn />
 	</cffunction> --->
 
-<!--- changeSearch --->
 	<!--- <cffunction name="changeSearch" output="false">
 		<cfargument name="rc">
 

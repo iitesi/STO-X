@@ -300,12 +300,6 @@ $(document).ready(function(){
 		if (manualEntry == 1) {
 			$( "#" + typeOfService + "FOPID" ).append('<option value="0">Enter a new card</option>')
 		}
-		if (traveler.userId != 0 && traveler.userId != arrangerID && manualEntry == 1 && personalCardOnFile == 0) {
-			$( "#" + typeOfService + "SaveCardDiv" ).show();
-		}
-		else {
-			$( "#" + typeOfService + "SaveCardDiv" ).hide();
-		}
 		$( "#" + typeOfService + "FOPID" ).val( traveler.bookingDetail[typeOfService + 'FOPID'] );
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
 			$( "#" + typeOfService + "Manual" ).show();
@@ -324,14 +318,6 @@ $(document).ready(function(){
 		else {
 			$( "#" + typeOfService + "Manual" ).hide();
 		}
-		// if (traveler.bookingDetail[typeOfService + 'SaveCard'] === 0) {
-		// 	$( "#" + typeOfService + "SaveCard" ).attr( 'checked', false );
-		// }
-		// else {
-		// 	$( "#" + typeOfService + "SaveCard" ).attr( 'checked', true );
-
-		// }
-		$( "#" + typeOfService + "SaveName" ).val( traveler.bookingDetail[typeOfService + 'SaveName'] );
 	}
 
 	function loadCarPayments(traveler) {
@@ -376,6 +362,12 @@ $(document).ready(function(){
 		if ( $( "#specialRequests" ).val() != '') {
 			fee = requestFee;
 		}
+		if (fee == 0) {
+			$( "#bookingTotalRow" ).hide();
+		}
+		else {
+			$( "#bookingTotalRow" ).show();
+		}
 		total += fee;
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
@@ -399,24 +391,6 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#hotelManual" ).hide()
-		}
-	})
-
-	$( "#airSaveCard" ).click(function() {
-		if ($( "#airSaveCard" ).attr('checked')) {
-			$( "#airSaveNameDiv" ).show()
-		}
-		else {
-			$( "#airSaveNameDiv" ).hide()
-		}
-	})
-
-	$( "#hotelSaveCard" ).click(function() {
-		if ($( "#hotelSaveCard" ).attr('checked')) {
-			$( "#hotelSaveNameDiv" ).show()
-		}
-		else {
-			$( "#hotelSaveNameDiv" ).hide()
 		}
 	})
 

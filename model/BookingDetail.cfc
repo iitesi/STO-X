@@ -13,8 +13,7 @@
 	<cfproperty name="airCCCVV" />
 	<cfproperty name="airFOPID" />
 	<cfproperty name="airReasonCode" />
-	<cfproperty name="airSaveCard" />
-	<cfproperty name="airSaveName" />
+	<cfproperty name="bookingFee" />
 	<cfproperty name="carNeeded" />
 	<cfproperty name="carFF" />
 	<cfproperty name="carFOPID" />
@@ -29,10 +28,9 @@
 	<cfproperty name="hotelFF" />
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
-	<cfproperty name="hotelSaveCard" />
-	<cfproperty name="hotelSaveName" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="password" />
+	<cfproperty name="preTrip" />
 	<cfproperty name="saveProfile" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="serviceRequests" />
@@ -62,8 +60,7 @@
 		<cfset setAirCCCVV( '' )>
 		<cfset setAirFOPID( '' )>
 		<cfset setAirReasonCode( '' )>
-		<cfset setAirSaveCard( false )>
-		<cfset setAirSaveName( '' )>
+		<cfset setBookingFee( 0 )>
 		<cfset setCarNeeded( false )>
 		<cfset setCarFF( '' )>
 		<cfset setCarFOPID( '' )>
@@ -78,10 +75,9 @@
 		<cfset setHotelFF( '' )>
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
-		<cfset setHotelSaveCard( false )>
-		<cfset setHotelSaveName( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setPassword( '' )>
+		<cfset setPreTrip( false )>
 		<cfset setSaveProfile( false )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setServiceRequests( '' )>
