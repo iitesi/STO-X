@@ -11,7 +11,7 @@
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+    	<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
     	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>

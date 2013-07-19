@@ -3,9 +3,6 @@
 	<cfproperty name="UAPI">
 	<cfproperty name="AirParse">
 
-<!---
-init
---->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
 		<cfargument name="AirParse">
@@ -16,9 +13,6 @@ init
 		<cfreturn this>
 	</cffunction>
 
-<!---
-selectLeg
---->
 	<cffunction name="selectLeg" output="false">
 		<cfargument name="SearchID">
 		<cfargument name="Group">
@@ -29,9 +23,6 @@ selectLeg
 		<cfreturn />
 	</cffunction>
 
-<!---
-threadAvailability
---->
 	<cffunction name="threadAvailability" output="false">
 		<cfargument name="Filter"	required="true">
 		<cfargument name="Account"  required="true">
@@ -65,9 +56,6 @@ threadAvailability
 		<cfreturn >
 	</cffunction>
 
-<!---
-doAirAvailability
---->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="Filter" required="true">
 		<cfargument name="Group" required="true">
@@ -157,9 +145,6 @@ doAirAvailability
 		<cfreturn sThreadName>
 	</cffunction>
 
-<!---
-prepareSoapHeader
---->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
 		<cfargument name="Filter"   	required="true">
 		<cfargument name="Group"	 	required="true">
@@ -236,9 +221,6 @@ prepareSoapHeader
 		<cfreturn message/>
 	</cffunction>
 
-<!---
-parseSegmentKeys
---->
 	<cffunction name="parseSegmentKeys" output="false">
 		<cfargument name="stResponse"	required="true">
 
@@ -267,9 +249,6 @@ parseSegmentKeys
 		<cfreturn stSegmentKeys />
 	</cffunction>
 
-<!---
-addSegmentRefs
---->
 	<cffunction name="addSegmentRefs" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegmentKeys">
@@ -291,9 +270,6 @@ addSegmentRefs
 		<cfreturn arguments.stSegmentKeys />
 	</cffunction>
 
-<!---
-parseKeyLookup - schedule
---->
 	<cffunction name="parseKeyLookup" output="false">
 		<cfargument name="stSegmentKeys">
 
@@ -305,9 +281,6 @@ parseKeyLookup - schedule
 		<cfreturn stSegmentKeyLookUp />
 	</cffunction>
 
-<!---
-parseSegments
---->
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
@@ -346,9 +319,6 @@ parseSegments
 		<cfreturn stSegments />
 	</cffunction>
 
-<!---
-parseConnections - schedule
---->
 	<cffunction name="parseConnections" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegments">
