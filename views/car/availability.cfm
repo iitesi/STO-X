@@ -86,11 +86,11 @@ OR NOT rc.Filter.getAir()>
 											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 											<!--- If out of policy --->
 											<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
-												<cfif stRate.EstimatedTotalAmount NEQ session.searches[SearchID].stCars.fLowestCarRate>
+												<cfif stRate.EstimatedTotalAmount NEQ session.searches[SearchID].lowestCarRate>
 													<br />
 												</cfif>
 												<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span>
-												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
+												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
 													<br />
 												</cfif>
 												<cfset buttonType="" />
@@ -98,7 +98,7 @@ OR NOT rc.Filter.getAir()>
 												<br />
 											</cfif>
 											<!--- If best/lowest rate --->
-											<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].stCars.fLowestCarRate>
+											<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
 												<span class="green">BEST RATE</span>
 												<cfset buttonType="btn-success" />
 											</cfif>

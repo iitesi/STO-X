@@ -153,7 +153,9 @@
 				</cfif>
 			</cfif>
 
-			<cfset session.searches[SearchID].stCars.fLowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
+			<cfif structKeyExists(session.searches[SearchID], 'stCars')>
+				<cfset session.searches[SearchID].lowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
+			</cfif>
 		</cfif>
 
 		<cfreturn CarRate>
