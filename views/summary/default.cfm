@@ -6,7 +6,9 @@
 </style>
 
 <cfoutput>
-	<div style="width:1000px;">
+	<div style="width:1000px;" id="summaryForm">
+		
+		<h1>Purchase Reservation</h1>
 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
@@ -47,26 +49,33 @@
 			
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv" style="background-color: ##FFF;min-wdith:600px;">
-						<div id="travelerForm">
-							#View('summary/traveler')#
-						</div>
+					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+						<table width="1000">
+							<tr>
+								<td valign="top">
+									<div id="travelerForm">
+										#View('summary/traveler')#
+									</div>
+								</td>
+								<td valign="top">
+									<div id="paymentForm" style="padding-left:20px;">
+										#view( 'summary/payment' )#
+									</div>
+								</td>
+							</tr>
+						</table>
 					</div>
 
-					<div class="summarydiv" style="background-color: ##FFF;min-wdith:600px;">
-						<div id="paymentForm">
-							#view( 'summary/payment' )#
+					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+						<div id="airDiv" class="clearfix">
+							#View('summary/air')#
 						</div>
-					</div>
-
-					<div id="airDiv" class="clearfix">
-						#View('summary/air')#
-					</div>
-					<div id="hotelDiv" class="clearfix">
-						#View('summary/hotel')#
-					</div>
-					<div id="carDiv" class="clearfix">
-						#View('summary/vehicle')#
+						<div id="hotelDiv" class="clearfix">
+							#View('summary/hotel')#
+						</div>
+						<div id="carDiv" class="clearfix">
+							#View('summary/vehicle')#
+						</div>
 					</div>
 					#View('summary/tripsummary')#
 					#View('summary/buttons')#

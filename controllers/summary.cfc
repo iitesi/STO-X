@@ -55,7 +55,7 @@
 																						, acctID = rc.Filter.getAcctID() 
 																						, valueID = rc.Filter.getValueID()
 																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = rc.Vehicle.getVendorCode())>
+																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
@@ -66,7 +66,7 @@
 																						, acctID = rc.Filter.getAcctID() 
 																						, valueID = rc.Filter.getValueID()
 																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = rc.Vehicle.getVendorCode())>
+																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>

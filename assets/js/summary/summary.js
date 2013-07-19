@@ -298,7 +298,7 @@ $(document).ready(function(){
 			}
 		}
 		if (manualEntry == 1) {
-			$( "#" + typeOfService + "FOPID" ).append('<option value="0">MANUAL ENTRY</option>')
+			$( "#" + typeOfService + "FOPID" ).append('<option value="0">Enter a new card</option>')
 		}
 		if (traveler.userId != 0 && traveler.userId != arrangerID && manualEntry == 1 && personalCardOnFile == 0) {
 			$( "#" + typeOfService + "SaveCardDiv" ).show();
@@ -324,13 +324,13 @@ $(document).ready(function(){
 		else {
 			$( "#" + typeOfService + "Manual" ).hide();
 		}
-		if (traveler.bookingDetail[typeOfService + 'SaveCard'] === 0) {
-			$( "#" + typeOfService + "SaveCard" ).attr( 'checked', false );
-		}
-		else {
-			$( "#" + typeOfService + "SaveCard" ).attr( 'checked', true );
+		// if (traveler.bookingDetail[typeOfService + 'SaveCard'] === 0) {
+		// 	$( "#" + typeOfService + "SaveCard" ).attr( 'checked', false );
+		// }
+		// else {
+		// 	$( "#" + typeOfService + "SaveCard" ).attr( 'checked', true );
 
-		}
+		// }
 		$( "#" + typeOfService + "SaveName" ).val( traveler.bookingDetail[typeOfService + 'SaveName'] );
 	}
 
@@ -346,7 +346,7 @@ $(document).ready(function(){
 						optionShow = true;
 					}
 					if (traveler.payment[i].corporateDiscountNumber != '') {
-						$( "#carFOPID" ).append('<option value="DB_' + traveler.payment[i].corporateDiscountNumber + '">Present your credit card at the pick-up counter</option>')
+						$( "#carFOPID" ).append('<option value="CD_' + traveler.payment[i].corporateDiscountNumber + '">Present your credit card at the pick-up counter</option>')
 						optionShow = true;
 					}
 				}

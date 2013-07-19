@@ -24,32 +24,31 @@
 	<cffunction name="hotel" output="false">
 		<cfargument name="rc">
 
+		<cfparam name="rc.travelerNumber" default="1">
+		
 		<cfset rc.Hotel = session.searches[rc.searchID].stItinerary.Hotel>
+		<cfset rc.Traveler = session.searches[rc.searchID].Travelers[rc.travelerNumber]>
 
-		<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').load( session.userID )>
+		<!--- Populate sort fields --->
+		<cfset local.sort1 = ''>
+		<cfset local.sort2 = ''>
+		<cfset local.sort3 = ''>
+		<cfset local.sort4 = ''>
+		<cfloop array="#rc.Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
+			<cfif orgUnit.getOUType() EQ 'sort'>
+				<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
+			</cfif>
+		</cfloop>
+		<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
+		<cfset statmentInformation = trim(statmentInformation)>
 
-		<cfset rc.Traveler.addLoyaltyProgram( fw.getBeanFactory().getBean('LoyaltyProgramService').load( session.userID, '', 'h' ) )>
+		<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( Traveler = rc.Traveler
+																				, Hotel = rc.Hotel
+																				, Filter = rc.Filter
+																				, statmentInformation = statmentInformation )>
 
-		<cfset rc.Payment = fw.getBeanFactory().getBean('PaymentService').new( )>
-		<cfset rc.Payment.setAcctNum( '4111111111111111' )>
-		<cfset rc.Payment.setExpireDate( createDate( 2014, 06, 30 ) )>
-		<cfset rc.Payment.setHotelUse( true )>
-		<cfset rc.Payment.setFOPCode( 'VI' )>
-
-		<cfset rc.Traveler.setCCEmails( fw.getBeanFactory().getBean('UserService').getUserCCEmails( session.userID, 'string' ) )>
-		<cfset rc.Traveler.setHomeAirport( fw.getBeanFactory().getBean('UserService').getAirportPrefs( session.userID, session.acctID, 'string' ) )>
-
-		<cfset rc.Traveler.setSort1( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 1, 'string' ) )>
-		<cfset rc.Traveler.setSort2( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 2, 'string' ) )>
-		<cfset rc.Traveler.setSort3( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 3, 'string' ) )>
-		<cfset rc.Traveler.setSort4( fw.getBeanFactory().getBean('UserService').getUserSorts( session.userID, session.acctID, 4, 'string' ) )>
-
-		<cfset rc.Traveler.setAccountID( fw.getBeanFactory().getBean('UserService').getAccountID( session.userID, session.acctID, 'string' ) )>
-		<cfset rc.Traveler.setBranchID( fw.getBeanFactory().getBean('UserService').getBranchID( session.acctID, 'string' ) )>
-
-		<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( rc.Traveler, rc.Payment, rc.Hotel, rc.Filter )>
-
-		<cfset rc.Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( rc.Hotel, rc.response )>
+		<cfset rc.Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = rc.Hotel
+																				, response = rc.response )>
 
 		<cfif rc.Hotel.getConfirmation() EQ ''>
 			<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
@@ -71,22 +70,76 @@
 	<cffunction name="car" output="false">
 		<cfargument name="rc">
 
+		<cfparam name="rc.travelerNumber" default="1">
+
 		<cfset rc.Vehicle = session.searches[rc.SearchID].stItinerary.Vehicle>
+		<cfset rc.Air = (structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') ? session.searches[rc.SearchID].stItinerary.Air : '')>
+		<cfset rc.Traveler = session.searches[rc.searchID].Travelers[rc.travelerNumber]>
 
-		<cfset rc.Traveler.setHomeAirport( fw.getBeanFactory().getBean('UserService').getAirportPrefs( session.userID, session.acctID, 'string' ) )>
-		<cfset rc.Traveler.setAccountID( fw.getBeanFactory().getBean('UserService').getAccountID( session.userID, session.acctID, 'string' ) )>
-		<cfset rc.Traveler.setBranchID( fw.getBeanFactory().getBean('UserService').getBranchID( session.acctID, 'string' ) )>
+		<!--- Find the correct direct bill and corporate discount numbers --->
+		<cfset local.directBillNumber = ''>
+		<cfset local.corporateDiscountNumber = ''>
+		<cfset local.directBillType = ''>
+		<cfloop array="#rc.Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
+			<cfif payment.getCarUse() EQ 1>
+				<cfif len(payment.getDirectBillNumber()) GT 0
+					AND rc.Traveler.getBookingDetail().getCarFOPID() EQ 'DB_'&payment.getDirectBillNumber()>
+					<cfset directBillNumber = payment.getDirectBillNumber()>
+					<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+					<cfset directBillType = payment.getDirectBillType()>
+				<cfelseif len(payment.getCorporateDiscountNumber()) GT 0
+					AND rc.Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getDirectBillNumber()>
+					<cfset directBillNumber = ''>
+					<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+					<cfset directBillType = payment.getDirectBillType()>
+				</cfif>
+			</cfif>
+		</cfloop>
 
-		<cfset rc.response = fw.getBeanFactory().getBean('VehicleAdapter').create( rc.Traveler, rc.Payment, rc.Vehicle, rc.Filter )>
+		<!--- Find arriving flight details --->
+		<cfset local.carrier = ''>
+		<cfset local.flightNumber = ''>
+		<cfif isStruct(rc.Air)>
+			<cfloop collection="#rc.Air.Groups[0].Segments#" index="local.segmentIndex" item="local.segment">
+				<cfset carrier = segment.carrier>
+				<cfset flightNumber = segment.flightNumber>
+			</cfloop>
+		</cfif>
 
-		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( rc.Vehicle, rc.response )>
-
+		<!--- Populate sort fields --->
+		<cfset local.sort1 = ''>
+		<cfset local.sort2 = ''>
+		<cfset local.sort3 = ''>
+		<cfset local.sort4 = ''>
+		<cfloop array="#rc.Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
+			<cfif orgUnit.getOUType() EQ 'sort'>
+				<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
+			</cfif>
+		</cfloop>
+		<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
+		<cfset statmentInformation = trim(statmentInformation)>
+		
+		<!--- Call the UAPI to sell the vehicle --->
+		<cfset rc.response = fw.getBeanFactory().getBean('VehicleAdapter').create( Traveler = rc.Traveler
+																				, Vehicle = rc.Vehicle
+																				, Filter = rc.Filter
+																				, directBillNumber = directBillNumber
+																				, corporateDiscountNumber = corporateDiscountNumber
+																				, directBillType = directBillType
+																				, carrier = carrier
+																				, flightNumber = flightNumber
+																				, statmentInformation = statmentInformation )>
+		<!--- Parse the vehicle --->
+		<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = rc.Vehicle
+																						, response = rc.response )>
+		<!--- Validate the confirmation --->
 		<cfif rc.Vehicle.getConfirmation() EQ ''>
 			<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-			<cfdump var="#rc.errorMessage#" abort="true">
+			<cfdump var="#rc.errorMessage#">
 		<cfelse>
-			<cfdump var="#rc.Vehicle#" abort="true">
+			<cfdump var="#rc.Vehicle#">
 		</cfif>
+		<cfset session.searches[rc.SearchID].stItinerary.Vehicle = rc.Vehicle>
 
 		<cfabort>
 
