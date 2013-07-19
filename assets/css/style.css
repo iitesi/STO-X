@@ -156,6 +156,18 @@ body {
 	margin-left: 3px;
 }
 
+.alert-success {
+	font-size: 15px;
+	font-weight: bold;
+	line-height: 160%;
+}
+
+.confirm-header {
+	font-size: 18px;
+	font-weight: bold;
+	margin-left: 12px;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	BADGE LINKS
