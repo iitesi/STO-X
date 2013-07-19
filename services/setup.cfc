@@ -71,12 +71,7 @@
 			<cfquery name="local.getAirportData" datasource="book">
 				SELECT Airport_Name, Airport_City, Airport_State
 				FROM lu_FullAirports
-				WHERE Airport_Code =
-					<cfif getsearch.Car>
-						<cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
-					<cfelse>
-						<cfqueryparam value="#getsearch.Arrival_City#" cfsqltype="cf_sql_varchar" />
-					</cfif>
+				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
 			<cfif getsearch.Air>
