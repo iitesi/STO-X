@@ -27,7 +27,7 @@
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
 		suppressImplicitService = true,
-		trace = true,
+		trace = false,
 		unhandledExtensions = 'cfc',
 		unhandledPaths = '/external',
 		usingSubsystems = false
