@@ -3,7 +3,7 @@
 	<cfif rc.vehicleSelected>
 		<br class="clearfix">
 
-		<div class="carrow" style="padding:0 0 15px 0;">
+		<!--- <div class="carrow" style="padding:0 0 15px 0;"> --->
 
 			<div style="float:right;padding-right:20px;"><a href="#buildURL('car.availability?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
 
@@ -37,7 +37,7 @@
 						OR (NOT rc.Vehicle.getPolicy()
 						AND rc.Policy.Policy_CarReasonCode EQ 1)>
 
-						<select name="carReasonCode" id="carReasonCode" class="input-xlarge">
+						<select name="carReasonCode" id="carReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'carReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Outside Policy</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
 						<option value="S">Required car size sold out</option>
@@ -53,7 +53,7 @@
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
 
-						<select name="udid111" id="udid111" class="input-xlarge">
+						<select name="udid111" id="udid111" class="input-xlarge #(structKeyExists(rc.errors, 'udid111') ? 'error' : '')#">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
@@ -146,7 +146,7 @@
 
 			</tr>
 			</table>
-		</div>
+		<!--- </div> --->
 
 	</cfif>
 

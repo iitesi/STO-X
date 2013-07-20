@@ -3,9 +3,6 @@
 	<cfproperty name="UAPI">
 	<cfproperty name="AirParse">
 
-<!---
-init
---->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
 		<cfargument name="AirParse">
@@ -16,9 +13,6 @@ init
 		<cfreturn this>
 	</cffunction>
 
-<!---
-selectLeg
---->
 	<cffunction name="selectLeg" output="false">
 		<cfargument name="SearchID">
 		<cfargument name="Group">
@@ -29,9 +23,6 @@ selectLeg
 		<cfreturn />
 	</cffunction>
 
-<!---
-threadAvailability
---->
 	<cffunction name="threadAvailability" output="false">
 		<cfargument name="Filter"	required="true">
 		<cfargument name="Account"  required="true">
@@ -57,15 +48,14 @@ threadAvailability
 		</cfloop>
 
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads)>
+		<cfif NOT StructIsEmpty(stThreads)
+			AND sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
+		
 		<cfreturn >
 	</cffunction>
 
-<!---
-doAirAvailability
---->
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="Filter" required="true">
 		<cfargument name="Group" required="true">
@@ -84,7 +74,7 @@ doAirAvailability
 			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
 			sResponse to see what uAPI is getting or sending back --->
 
-<!--- 			<cfthread
+			<cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
@@ -92,7 +82,7 @@ doAirAvailability
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#">
- --->
+
  				<cfset local.sNextRef = 'ROUNDONE'>
 				<cfset local.nCount = 0>
 				<cfloop condition="local.sNextRef NEQ ''">
@@ -148,16 +138,13 @@ doAirAvailability
 				* In the view it will be empty.
 				--->
 
-<!--- 			</cfthread> --->
+			</cfthread>
 
 		</cfif>
 
 		<cfreturn sThreadName>
 	</cffunction>
 
-<!---
-prepareSoapHeader
---->
 	<cffunction name="prepareSoapHeader" returntype="string" output="false">
 		<cfargument name="Filter"   	required="true">
 		<cfargument name="Group"	 	required="true">
@@ -234,9 +221,6 @@ prepareSoapHeader
 		<cfreturn message/>
 	</cffunction>
 
-<!---
-parseSegmentKeys
---->
 	<cffunction name="parseSegmentKeys" output="false">
 		<cfargument name="stResponse"	required="true">
 
@@ -265,9 +249,6 @@ parseSegmentKeys
 		<cfreturn stSegmentKeys />
 	</cffunction>
 
-<!---
-addSegmentRefs
---->
 	<cffunction name="addSegmentRefs" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegmentKeys">
@@ -289,9 +270,6 @@ addSegmentRefs
 		<cfreturn arguments.stSegmentKeys />
 	</cffunction>
 
-<!---
-parseKeyLookup - schedule
---->
 	<cffunction name="parseKeyLookup" output="false">
 		<cfargument name="stSegmentKeys">
 
@@ -303,9 +281,6 @@ parseKeyLookup - schedule
 		<cfreturn stSegmentKeyLookUp />
 	</cffunction>
 
-<!---
-parseSegments
---->
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
@@ -344,9 +319,6 @@ parseSegments
 		<cfreturn stSegments />
 	</cffunction>
 
-<!---
-parseConnections - schedule
---->
 	<cffunction name="parseConnections" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegments">

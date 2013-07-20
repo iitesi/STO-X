@@ -53,7 +53,7 @@
 
 		<cfset session.Filters[arguments.SearchID] = arguments.Filter> --->
 
-		<cfset structDelete(session.searches[SearchID], 'stCars')>
+		<!--- <cfset structDelete(session.searches[SearchID], 'stCars')> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 			OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -153,7 +153,9 @@
 				</cfif>
 			</cfif>
 
-			<cfset session.searches[SearchID].stCars.fLowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
+			<cfif structKeyExists(session.searches[SearchID], 'stCars')>
+				<cfset session.searches[SearchID].lowestCarRate = findLowestCarRate(session.searches[SearchID].stCars) />
+			</cfif>
 		</cfif>
 
 		<cfreturn stCars>

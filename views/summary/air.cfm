@@ -5,7 +5,7 @@
 		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total />
 		<cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)>
 
-		<div class="carrow" style="padding:0 0 15px 0;">
+		<!--- <div class="carrow" style="padding:0 0 15px 0;width:1000px"> --->
 
 			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
 
@@ -40,7 +40,7 @@
 						OR (NOT inPolicy
 						AND rc.Policy.Policy_AirReasonCode EQ 1)>
 
-						<select name="airReasonCode" id="airReasonCode" class="input-xlarge">
+						<select name="airReasonCode" id="airReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Out of Policy</option>
 						<cfloop query="rc.qOutOfPolicy">
 							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
@@ -59,12 +59,14 @@
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 						AND rc.Policy.Policy_AirLostSavings EQ 1)>
 
-						<select name="lostSavings" id="lostSavings" class="input-xlarge">
-						<option value="">Select Reason for Not Booking the Lowest Fare</option>
-						<cfloop query="rc.qOutOfPolicy">
-							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-						</cfloop>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						<div class="#(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
+							<select name="lostSavings" id="lostSavings" class="input-xlarge">
+							<option value="">Select Reason for Not Booking the Lowest Fare</option>
+							<cfloop query="rc.qOutOfPolicy">
+								<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+							</cfloop>
+							</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						</div>
 
 					<!---
 					If the fare is the same
@@ -79,12 +81,14 @@
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
 
-						<select name="udid113" id="udid113" class="input-xlarge">
-						<option value="">Select an Exception Code</option>
-						<cfloop query="rc.qTXExceptionCodes">
-							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
-						</cfloop>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
+							<select name="udid113" id="udid113" class="input-xlarge">
+							<option value="">Select an Exception Code</option>
+							<cfloop query="rc.qTXExceptionCodes">
+								<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
+							</cfloop>
+							</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						</div>
 						
 					</cfif>
 
@@ -188,7 +192,6 @@ FREQUENT PROGRAM NUMBER
 <!---
 ADDITIONAL REQUESTS
 --->
-					Special Requests
 					<select name="specialNeeds" id="specialNeeds">
 					<option value="">SPECIAL REQUESTS</option>
 					<option value="BLND">BLIND</option>
@@ -202,14 +205,14 @@ SPECIAL REQUEST
 --->
 					<cfif rc.showAll 
 						OR rc.Policy.Policy_AllowRequests>
-						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#">
+						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
 					</cfif>
 				
 				</td>
 
 			</tr>
 			</table>
-		</div>
+		<!--- </div> --->
 
 	</cfif>
 

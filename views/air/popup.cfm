@@ -11,10 +11,10 @@ or use js which has issues - see: https://github.com/twitter/bootstrap/issues/24
 <cfoutput>
 	<cfif rc.bSelection EQ 0>
     <ul class="nav nav-tabs">
-	    <li <cfif rc.sDetails EQ 'details'>class="active"</cfif>><a href="##tab-details" data-toggle="tab">Details</a></li>
-	    <li <cfif rc.sDetails EQ 'seatmap'>class="active"</cfif>><a href="##tab-seatmap" data-toggle="tab">Seat Map</a></li>
-	    <li <cfif rc.sDetails EQ 'baggage'>class="active"</cfif>><a href="##tab-baggage" data-toggle="tab">Bags</a></li>
-	    <li <cfif rc.sDetails EQ 'email'>class="active"</cfif>><a href="##tab-email" data-toggle="tab">Email</a></li>
+	    <li <cfif rc.sDetails EQ 'details'>class="active"</cfif>><a href="##tab-details" data-toggle="tab" title="View details">Details</a></li>
+	    <li <cfif rc.sDetails EQ 'seatmap'>class="active"</cfif>><a href="##tab-seatmap" data-toggle="tab" title="View seat map">Seat Map</a></li>
+	    <li <cfif rc.sDetails EQ 'baggage'>class="active"</cfif>><a href="##tab-baggage" data-toggle="tab" title="View baggage fees">Bags</a></li>
+	    <li <cfif rc.sDetails EQ 'email'>class="active"</cfif>><a href="##tab-email" data-toggle="tab" title="Email this intinerary">Email</a></li>
     </ul>
 		<div class="tab-content">
 			<div class="tab-pane <cfif rc.sDetails EQ 'details'>active</cfif>" id="tab-details">#view('air/details')#</div>

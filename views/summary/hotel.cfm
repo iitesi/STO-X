@@ -3,9 +3,9 @@
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
 
-		<div class="carrow" style="padding:0 0 15px 0;">
+		<!--- <div class="carrow" style="padding:0 0 15px 0;"> --->
 
-			<div style="float:right;padding-right:20px;"><a href="#buildURL('car.availability?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
+			<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
 
 			<table width="1000">
 			<tr>
@@ -41,7 +41,7 @@
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
 
-						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge">
+						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Out of Policy</option>
 						<option value="P">Required property sold out</option>
 						<option value="R">Required room rate sold out</option>
@@ -55,7 +55,7 @@
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
 
-						<select name="udid112" id="udid112" class="input-xlarge">
+						<select name="udid112" id="udid112" class="input-xlarge #(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
@@ -163,7 +163,7 @@
 
 			</tr>
 			</table>
-		</div>
+		<!--- </div> --->
 
 	</cfif>
 

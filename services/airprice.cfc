@@ -3,9 +3,6 @@
 	<cfproperty name="UAPI">
 	<cfproperty name="AirParse">
 
-<!---
-init
---->
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
 		<cfargument name="AirParse">
@@ -16,9 +13,6 @@ init
 		<cfreturn this>
 	</cffunction>
 
-<!---
-doAirPrice
---->
 	<cffunction name="doAirPrice" output="false">
 		<cfargument name="SearchID" 	required="true">
 		<cfargument name="Account"      required="true">
@@ -54,13 +48,13 @@ doAirPrice
 
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
-		<!---<cfdump var="#sMessage#" abort>--->
+		<!--- <cfdump var="#sMessage#" abort> --->
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= UAPI.formatUAPIRsp(sResponse)>
-		<!---<cfdump var="#aResponse#" abort>--->
+		<!--- <cfdump var="#aResponse#" abort> --->
 		<!--- Parse the segments. --->
 		<cfset stSegments	= AirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
@@ -107,9 +101,6 @@ doAirPrice
 		<cfreturn stTrips>
 	</cffunction>
 
-<!---
-prepareSOAPHeader
---->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
 		<cfargument name="stSelected" 	required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
@@ -184,9 +175,6 @@ prepareSOAPHeader
 		<cfreturn sMessage/>
 	</cffunction>
 
-<!---
-getTripKey
---->
 	<cffunction name="getTripKey" output="false">
 		<cfargument name="stTrips" 	required="true">
 
@@ -198,9 +186,6 @@ getTripKey
 		<cfreturn nTripKey>
 	</cffunction>
 
-<!---
-addstPriced
---->
 	<cffunction name="addstPriced" output="false">
 		<cfargument name="stPriced" 	required="true">
 		<cfargument name="nTripKey" 	required="true">

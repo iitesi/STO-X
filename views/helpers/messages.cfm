@@ -8,7 +8,7 @@
 		</cfif>
 
 		<div id="usermessage" class="alert #typeClass#">
-		USER MSG: 	#message#
+			#message#
 			<button type="button" class="closemsg close pull-right" title="Close message"><i class="icon-remove"></i></button>
 		</div>
 	</cfoutput>

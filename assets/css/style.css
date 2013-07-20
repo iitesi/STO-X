@@ -9,7 +9,13 @@
 	font-size: 14px;
 }
 
-
+#summaryForm .error {
+	border-color: #b94a48;
+	color: #b94a48;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+}
 a {
     color: #2E76CF;
 }
@@ -150,6 +156,18 @@ body {
 	margin-left: 3px;
 }
 
+.alert-success {
+	font-size: 15px;
+	font-weight: bold;
+	line-height: 160%;
+}
+
+.confirm-header {
+	font-size: 18px;
+	font-weight: bold;
+	margin-left: 12px;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	BADGE LINKS
@@ -158,7 +176,17 @@ body {
 
 .outofpolicy {
 	cursor: pointer;
-	border-bottom: 1px dashed #999;
+	position: relative;
+}
+/*hack to control the gap between the text and the underline*/
+.outofpolicy::after {
+  border-bottom: 1px dotted #ccc;
+  bottom: 0;
+  content: '';
+  height: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
 
 ul.tabs {
@@ -472,7 +500,7 @@ footer[role="contentinfo"]{
 }
 
 .btnmargin {
-	margin: 3px 0;
+	margin: 5px 0;
 }
 
 /*

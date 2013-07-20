@@ -274,10 +274,8 @@
 				<cfif arguments.Traveler.getBookingDetail().getAirBillingCity() EQ ''>
 					<cfset error.airBillingCity = ''>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''>
-					<cfset error.airBillingState = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
+				<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''
+					OR arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
 					<cfset error.airBillingState = ''>
 				</cfif>
 			</cfif>
@@ -299,7 +297,7 @@
 				AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
 				AND arguments.Policy.Policy_AirLostSavings EQ 1>
 				<cfif arguments.Traveler.getBookingDetail().getLostSavings() EQ ''>
-					<cfset error.airReasonCode = ''>
+					<cfset error.lostSavings = ''>
 				</cfif>
 			</cfif>
 			<cfif arguments.acctID EQ 235>
@@ -342,6 +340,24 @@
 			<cfif arguments.acctID EQ 235>
 				<cfif arguments.Traveler.getBookingDetail().getUDID112() EQ ''>
 					<cfset error.udid112 = ''>
+				</cfif>
+			</cfif>
+
+		</cfif>
+
+		<cfif isObject(arguments.Vehicle)
+			AND arguments.Traveler.getBookingDetail().getCarNeeded()>
+
+			<cfif NOT arguments.Vehicle.getPolicy()
+				AND arguments.Policy.Policy_CarReasonCode EQ 1>
+				<cfif arguments.Traveler.getBookingDetail().getCarReasonCode() EQ ''>
+					<cfset error.carReasonCode = ''>
+				</cfif>
+			</cfif>
+
+			<cfif arguments.acctID EQ 235>
+				<cfif arguments.Traveler.getBookingDetail().getUDID111() EQ ''>
+					<cfset error.udid111 = ''>
 				</cfif>
 			</cfif>
 

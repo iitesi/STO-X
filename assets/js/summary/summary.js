@@ -270,7 +270,6 @@ $(document).ready(function(){
 	function loadPayments(traveler, typeOfService) {
 		var payments = traveler.payment
 		$( "#" + typeOfService + "FOPID" ).html('')
-		//$( "#" + typeOfService + "FOPID" ).append('<option value=""></option>')
 		var manualEntry = 1;
 		for( var i=0, l=traveler.payment.length; i<l; i++ ) {
 			if (traveler.payment[i][typeOfService + 'Use'] == true) {
@@ -298,13 +297,7 @@ $(document).ready(function(){
 			}
 		}
 		if (manualEntry == 1) {
-			$( "#" + typeOfService + "FOPID" ).append('<option value="0">MANUAL ENTRY</option>')
-		}
-		if (traveler.userId != 0 && traveler.userId != arrangerID && manualEntry == 1 && personalCardOnFile == 0) {
-			$( "#" + typeOfService + "SaveCardDiv" ).show();
-		}
-		else {
-			$( "#" + typeOfService + "SaveCardDiv" ).hide();
+			$( "#" + typeOfService + "FOPID" ).append('<option value="0">Enter a new card</option>')
 		}
 		$( "#" + typeOfService + "FOPID" ).val( traveler.bookingDetail[typeOfService + 'FOPID'] );
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
@@ -320,18 +313,25 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingState" ).val( traveler.bookingDetail[typeOfService + 'BillingState'] );
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
+			else {
+				if (airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+					$( "#copyAirCCDiv" ).hide();
+				}
+				else {
+					$( "#copyAirCCDiv" ).show();
+					if (traveler.bookingDetail.copyAirCC == 1) {
+						$( "#copyAirCC" ).attr( 'checked', true );
+					}
+					else {
+						$( "#copyAirCC" ).attr( 'checked', false );
+
+					}
+				}
+			}
 		}
 		else {
 			$( "#" + typeOfService + "Manual" ).hide();
 		}
-		if (traveler.bookingDetail[typeOfService + 'SaveCard'] === 0) {
-			$( "#" + typeOfService + "SaveCard" ).attr( 'checked', false );
-		}
-		else {
-			$( "#" + typeOfService + "SaveCard" ).attr( 'checked', true );
-
-		}
-		$( "#" + typeOfService + "SaveName" ).val( traveler.bookingDetail[typeOfService + 'SaveName'] );
 	}
 
 	function loadCarPayments(traveler) {
@@ -346,7 +346,7 @@ $(document).ready(function(){
 						optionShow = true;
 					}
 					if (traveler.payment[i].corporateDiscountNumber != '') {
-						$( "#carFOPID" ).append('<option value="DB_' + traveler.payment[i].corporateDiscountNumber + '">Present your credit card at the pick-up counter</option>')
+						$( "#carFOPID" ).append('<option value="CD_' + traveler.payment[i].corporateDiscountNumber + '">Present your credit card at the pick-up counter</option>')
 						optionShow = true;
 					}
 				}
@@ -376,6 +376,12 @@ $(document).ready(function(){
 		if ( $( "#specialRequests" ).val() != '') {
 			fee = requestFee;
 		}
+		if (fee == 0) {
+			$( "#bookingTotalRow" ).hide();
+		}
+		else {
+			$( "#bookingTotalRow" ).show();
+		}
 		total += fee;
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
@@ -399,24 +405,6 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#hotelManual" ).hide()
-		}
-	})
-
-	$( "#airSaveCard" ).click(function() {
-		if ($( "#airSaveCard" ).attr('checked')) {
-			$( "#airSaveNameDiv" ).show()
-		}
-		else {
-			$( "#airSaveNameDiv" ).hide()
-		}
-	})
-
-	$( "#hotelSaveCard" ).click(function() {
-		if ($( "#hotelSaveCard" ).attr('checked')) {
-			$( "#hotelSaveNameDiv" ).show()
-		}
-		else {
-			$( "#hotelSaveNameDiv" ).hide()
 		}
 	})
 
@@ -457,6 +445,13 @@ $(document).ready(function(){
 			$( "#carTotalRow" ).hide();
 			recalculateTotal();
 		}
+	})
+
+	$( "#copyAirCC" ).click(function() {
+		$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
+		$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
+		$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
+		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
 	})
 
 	//NASCAR custom code for conitional logic for sort1/second org unit displayed/department number
