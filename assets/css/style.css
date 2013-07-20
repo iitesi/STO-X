@@ -955,6 +955,14 @@ tr.hotel-room td{
     font-weight: bold;
 }
 
+#alternativesTable tbody tr{
+   cursor: hand;
+}
+
+.selected{
+   outline: 1px solid darkblue;
+}
+
 #alternativesTable td{
     width: 25%;
     text-align: left;
