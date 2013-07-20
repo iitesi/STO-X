@@ -25,6 +25,10 @@
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
+
+			<!--- if they click the buy button - remove other flights from the session --->
+			<cfset removeOtherFlights(arguments.rc)>
+
 			<cfif arguments.rc.Filter.getHotel()
 				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
 				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -120,7 +124,8 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
+<!--- PRIVATE METHODS --->
+	<cffunction name="removeflight" access="private" output="false" hint="I take a searchID and remove a flight from the session.">
 		<cfargument name="rc">
 
 		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
@@ -139,8 +144,20 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="removeOtherFlights" access="private" output="false" hint="I take a searchID and remove all other flights from the session.">
+		<cfargument name="rc">
 
-<!--- PRIVATE METHODS --->
+		<cfset local.flightsToDelete =  StructKeyArray(session.filters)>
+		<cfset  ArrayDeleteAt(local.flightsToDelete, ArrayFind(local.flightsToDelete, arguments.rc.searchID))>
+
+		<cfloop array="#local.flightsToDelete#" item="searchID">
+			<cfset StructDelete(session.filters, searchID)>
+			<cfset StructDelete(session.searches, searchID)>
+		</cfloop>
+
+		<cfreturn />
+	</cffunction>
+
 	<cffunction name="checkFilterStatus" access="private" output="false" hint="Setup some session flags to save if the user has clicked on any of the 'find more' links in the filter">
 		<cfargument name="rc">
 
