@@ -11,8 +11,8 @@
 		<button class="btn pull-right" data-dismiss="modal" aria-hidden="true">Close</button>
 		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
 	</div>
-	<div class="modal-body">
+	<div id="popupModalBody" class="modal-body">
 		<!--- populated via js --->
-		<i class="icon-spinner icon-spin"></i> One moment, we're fetching your flight details...
+		<i class="icon-spinner icon-spin"></i> One moment, we are fetching your flight details...
 	</div>
 </div>
