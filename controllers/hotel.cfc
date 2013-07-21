@@ -6,17 +6,9 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="before" output="false">
-		<cfargument name="rc">
-
-		<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
-
-		<cfreturn />
-	</cffunction>
-
 	<cffunction name="search" output="false">
 		<cfargument name="rc">
-
+			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
 		<cfreturn />
 	</cffunction>
 
