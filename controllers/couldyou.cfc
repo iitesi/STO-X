@@ -2,12 +2,37 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
-
 		<!---TODO: Replace this with logic to get the start/end date based on services selected--->
 		<cfset rc.startDate = arguments.rc.Filter.getCheckInDate() />
 		<cfset rc.endDate = arguments.rc.Filter.getCheckOutDate() />
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
+
+		<!---Check to see if currency values are all the same...if not, redirect to summary--->
+		<cfset var currencies = arrayNew(1) />
+
+		<cfif rc.Filter.getAir()>
+			<cfset arrayAppend( currencies, "USD" ) />
+		</cfif>
+		<cfif rc.Filter.getHotel()>
+			<cfif rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() !=  "" >
+				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() ) />
+			<cfelse>
+				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getBaseRateCurrency() ) />
+			</cfif>
+		</cfif>
+		<cfif rc.Filter.getCar()>
+			<cfset arrayAppend( currencies, rc.itinerary.vehicle.getCurrency() ) />
+		</cfif>
+
+		<cfloop array="#currencies#" item="local.currency" index="local.idx">
+			<cfif idx GT 1 AND currency NEQ currencies[ idx-1 ]>
+				<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+			</cfif>
+		</cfloop>
+
+		<cfdump var="#currencies#"/><cfabort>
+		<!---End currency equality check--->
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '')>
