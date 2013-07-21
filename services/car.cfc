@@ -21,6 +21,7 @@
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
+		<cfset stCars = structNew() />
 
 		<!--- If coming from the "Change Your Search" form, destroy the session and build anew. --->
 		<cfif structKeyExists(arguments, "requery")>
