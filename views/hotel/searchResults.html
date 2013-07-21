@@ -139,7 +139,7 @@
                                         <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
                                     </div>
                                     <span class="large blue bold daily-rate" >
-                                        <span ng-show="item.hotel.rooms[1].dailyRateCurrency == 'USD'">$</span><span ng-show="!item.hotel.rooms[1].dailyRateCurrency == 'USD'">{{rooms[1].dailyRateCurrency}}</span>{{item.hotel.findLowestRoomRate()}}
+                                        <span ng-show="item.hotel.rooms[0].totalForStayCurrency == 'USD'">$</span>{{item.hotel.findLowestRoomRate()}}<span ng-hide="item.hotel.rooms[0].totalForStayCurrency == 'USD'"> {{item.hotel.rooms[0].totalForStayCurrency}}</span>
                                     </span>
 
                                     <button
@@ -265,7 +265,7 @@
                                                 <button style="width: 75%"
                                                     ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': room.isInPolicy}"
                                                     ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                                    <span class="medium bold"><span ng-show="room.dailyRateCurrency == 'USD'">$</span><span ng-show="!room.dailyRateCurrency == 'USD'">{{room.dailyRateCurrency}}</span>{{room.dailyRate}}</span>
+                                                    <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                                 </button>
                                             </td>
                                         </tr>
