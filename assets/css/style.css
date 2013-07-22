@@ -936,6 +936,18 @@ tr.hotel-room td{
 	font-size: 20px;
 }
 
+.searchModal {
+	margin-left: -400px;
+	margin-top: -30px;
+	width: 800px;
+}
+
+.searchModal .modal-body {
+	max-height: 550px;
+	overflow: auto;
+}
+
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	DETAILS POPUP (details, bags, seats, email)

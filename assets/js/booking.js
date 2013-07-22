@@ -443,6 +443,18 @@ $(document).ready(function() {
 	$(".radiobuttons").buttonset();
 	$("#HotelChains").button();
 	$("#HotelAmenities").button();
+
+	// open search widget in modal / iframe
+	// url is defined in search button / link
+	$('#searhModalButton').click(function(){
+		var frameSrc = $(this).attr('data-framesrc');
+		console.log(frameSrc);
+		$('#searchModal').on('show', function () {
+			$('iframe').attr("src",frameSrc);
+		});
+		$('#searchModal').modal({show:true})
+	});
+
 }); // end of document ready
 
 function loadImage(image, property_id) {

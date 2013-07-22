@@ -1,3 +1,4 @@
+
 <cfcomponent extends="org.corfield.framework">
 
 	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
@@ -43,6 +44,7 @@
 		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.developerEmail = "jpriest@shortstravel.com">
+		<cfset application.baseURL = "">
 	</cffunction>
 
 	<cffunction name="setupSession">

@@ -12,18 +12,18 @@
 				<meta name="description" content="">
 				<meta name="author" content="">
 
-				<!-- Le Styles -->
-				<link href="assets/css/bootstrap.min.css" rel="stylesheet">
-				<link href="assets/css/skeleton.css" rel="stylesheet">
-				<link href="assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
-				<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+			<cfoutput>
+				<link href="#application.baseURL#assets/css/bootstrap.min.css" rel="stylesheet">
+				<link href="#application.baseURL#assets/css/skeleton.css" rel="stylesheet">
+				<link href="#application.baseURL#assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+				<link href="#application.baseURL#assets/css/font-awesome.min.css" rel="stylesheet" >
 				<!--[if IE 7]>
-					<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css">
+					<link rel="stylesheet" href="#application.baseURL#assets/css/font-awesome-ie7.min.css">
 				<![endif]-->
 
 
-				<link href="assets/css/layout.css" rel="stylesheet">
-				<link href="assets/css/style.css" rel="stylesheet">
+				<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
+				<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
 
 				<!--[if lt IE 9]>
 							<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -32,9 +32,10 @@
 
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 				<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-				<script src="assets/js/jquery.plugins.min.js"></script>
-				<script src="assets/js/bootstrap.min.js"></script>
-				<script src="assets/js/booking.js"></script><!---Custom--->
+				<script src="#application.baseURL#assets/js/jquery.plugins.min.js"></script>
+				<script src="#application.baseURL#assets/js/bootstrap.min.js"></script>
+				<script src="#application.baseURL#assets/js/booking.js"></script><!---Custom--->
+		</cfoutput>
 		</head>
 
 		<cfsilent>
@@ -64,14 +65,16 @@
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
 
-							<div class="one columns newsearch">
-								<!---
-								TODO: switch this out to use modal window to call widget STM-652
-								10:37 AM Tuesday, June 04, 2013 - Jim Priest - jpriest@shortstravel.com
-								--->
-								<a href="/search/?acctid=1&userid=3605" class="btn" title="Start a new search"><i class="icon-search"></i></a>
-							</div>
+						<!--- button to open search in modal window --->
+						<div class="one columns newsearch">
+							<cfoutput>
+							<a href="##" id="searhModalButton" class="btn" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
+							</cfoutput>
+						</div>
 
+						<cfoutput>#View('modal/search')#</cfoutput>
+
+						<!--- // end modal window --->
 
 							<div class="fifteen columns">
 								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
@@ -124,8 +127,19 @@
 
 		</div>
 
-		</body>
 
+ <div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button class="btn pull-right" data-dismiss="modal" aria-hidden="true">Close</button>
+		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+</div>
+
+
+
+		</body>
 		</html>
 </cfif>
 
@@ -137,3 +151,5 @@
 	<cfdump var="#session.searches[rc.SearchID]#" expand="false">
 </cfif>
  --->
+
+
