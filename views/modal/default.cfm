@@ -10,7 +10,7 @@ Destroy window upon closure or submittal.
 
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 		<h3 id="myModalHeader">DETAILS</h3>
 	</div>
 	<div id="myModalBody" class="modal-body">

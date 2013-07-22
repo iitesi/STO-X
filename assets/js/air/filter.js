@@ -1,6 +1,7 @@
 $(document).ready(function(){
+
 //------------------------------------------------------------------------------
-// FILTER
+// MODAL
 //------------------------------------------------------------------------------
 
 	// hide modal window if user hits the back button
@@ -8,15 +9,27 @@ $(document).ready(function(){
 	  	$('#myModal').modal('hide');
 	});
 
-	$('#popupModal').on('hidden', function() {
-		$(this).removeData('modal');
-		$('#popupModalBody').html( '<i class="icon-spinner icon-spin"></i> One moment, we are fetching your flight details...' );
-	});
-
 	$('.airModal').on('click', function() {
 		$('#myModal').modal();
 		$('#myModalBody').text( $(this).attr('data-modal') );
 	});
+
+	$('.breadcrumbModal').on('click', function() {
+		$('#popupModal').modal();
+		$('#popupModalHeader').html( '<i class="icon-spinner icon-spin"></i> One moment...' );
+		$('#popupModalBody').html( 'We are loading your previous search results...' );
+	});
+
+	$('#popupModal').on('hidden', function() {
+		$(this).removeData('modal');
+		$('#popupModalHeader').html( '<i class="icon-spinner icon-spin"></i> One moment...' );
+		$('#popupModalBody').html( 'One moment, we are fetching your flight details...' );
+	});
+
+//------------------------------------------------------------------------------
+// FILTER
+//------------------------------------------------------------------------------
+
 
 	$('#usermessage').on('click', function() {
 		$(this).slideUp();

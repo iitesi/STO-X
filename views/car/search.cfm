@@ -1,7 +1,7 @@
 <div id="displaySearchWindow" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
 	<div class="searchContainer">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 			<h3 id="myModalHeader">CHANGE CAR SEARCH</h3>
 		</div>
 		<cfoutput>

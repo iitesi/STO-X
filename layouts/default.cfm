@@ -130,7 +130,7 @@
 
  <div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 	<div class="modal-header">
-		<button class="btn pull-right" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
 	</div>
 	<div class="modal-body">
