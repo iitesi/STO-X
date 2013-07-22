@@ -392,12 +392,21 @@ shortstravel.couldyou = {
 		if( typeof shortstravel.itinerary.AIR == 'object' ){
 			return '$ ' + roundedCost;
 		} else {
-
-			if( shortstravel.itinerary.VEHICLE.currency == 'USD' ){
-				return '$ ' + roundedCost;
-			} else {
-				return roundedCost + shortstravel.itinerary.VEHICLE.currency;
+			if( typeof shortstravel.itinerary.HOTEL != 'undefined' ){
+				if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
+					return '$ ' + roundedCost;
+				} else {
+					return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].dailyRateCurrency;
+				}
 			}
+			if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){
+				if( shortstravel.itinerary.VEHICLE.currency == 'USD' ){
+					return '$ ' + roundedCost;
+				} else {
+					return roundedCost + shortstravel.itinerary.VEHICLE.currency;
+				}
+			}
+
 		}
 
 	},
