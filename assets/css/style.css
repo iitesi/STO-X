@@ -970,3 +970,43 @@ tr.hotel-room td{
 #seats .popuplogo {padding: 1em 1em 0;}
 
 .media-heading h3 {margin-bottom: 0;}
+
+
+/*
+----------------------------------------------------------------------------------------------------------
+	FULLCALENDAR styles
+----------------------------------------------------------------------------------------------------------
+*/
+
+.fc-originalDate{ background-color: #ffffff; border: 1px solid #b7cfdf; }
+.fc-notAvailable{ background-color: #efefef; border: 1px solid #b7cfdf; }
+.fc-maxSavings{ background-color: #e1efe1; border: 1px solid #b7cfdf; }
+.fc-lowerPrice{ background-color: #e2effc; border: 1px solid #b7cfdf; }
+.fc-higherPrice{ background-color: #fcefef; border: 1px solid #b7cfdf; }
+
+#alternativesTable{
+    width: 96%;
+    margin: 10px;
+}
+
+#alternativesTable th{
+    width: 25%;
+    text-align: left;
+    font-weight: bold;
+}
+
+#alternativesTable tbody tr{
+   cursor: hand;
+}
+
+.selected{
+   outline: 1px solid darkblue;
+}
+
+#alternativesTable td{
+    width: 25%;
+    text-align: left;
+    border: 1px solid gray;
+}
+
+

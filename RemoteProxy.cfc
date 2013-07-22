@@ -266,6 +266,29 @@
 
     </cffunction>
 
+	<cffunction name="couldYou" access="remote" output="false" returntype="any" returnFormat="json" hint="I perform a CouldYou search for a particular search on the specified day">
+		<cfargument name="searchId" type="numeric" required="true" />
+		<cfargument name="requestedDate" type="date" required="true" />
+
+		<cfset var cy = structNew() />
+		<cfset var cy.requestedDate = arguments.requestedDate />
+		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+
+		<cfif Search.getAir()>
+			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Search, arguments.requestedDate ) />
+		</cfif>
+
+		<cfif Search.getHotel()>
+			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Search, arguments.requestedDate ) />
+		</cfif>
+		<cfif Search.getCar()>
+			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Search, arguments.requestedDate ) />
+		</cfif>
+
+		<cfreturn cy />
+
+	</cffunction>
+
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
 

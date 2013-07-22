@@ -25,6 +25,11 @@
 			AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Hotel')>
 				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
 			</cfif>
+
+			<cfif application.Accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
+				<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
+			</cfif>
+
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
