@@ -84,7 +84,7 @@ shortstravel.couldyou = {
 
 		} else {
 
-			$.getJSON( '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate, function( data ){
+			$.getJSON( '/booking/RemoteProxyMock.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate, function( data ){
 				shortstravel.couldyou.data[ requestedDate ].air = data.AIR;
 				shortstravel.couldyou.data[ requestedDate ].hotel = data.HOTEL;
 				shortstravel.couldyou.data[ requestedDate ].vehicle = data.CAR;
@@ -119,6 +119,7 @@ shortstravel.couldyou = {
 				}
 
 				if( completed ){
+					shortstravel.couldyou.calculateMaxSavingDates();
 					shortstravel.couldyou.updateCalendar();
 					shortstravel.couldyou.buildAlternativesTable();
 					$('#myModal').modal( 'hide' );
@@ -161,6 +162,29 @@ shortstravel.couldyou = {
 		return Math.round(total * 100 ) / 100;
 	},
 
+	calculateMaxSavingDates: function(){
+		var maxSavings = 0;
+		for( prop in shortstravel.couldyou.data ){
+			if( shortstravel.couldyou.data[ prop ].message.indexOf( 'not available' ) == -1 ){
+				var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( shortstravel.couldyou.data[ prop ].total ) );
+				if( dailySavings > maxSavings ){
+					maxSavings = dailySavings;
+				}
+			}
+		}
+
+		if( maxSavings > 0 ){
+			for( prop in shortstravel.couldyou.data ){
+				if( shortstravel.couldyou.data[ prop ].message.indexOf( 'not available' ) == -1 ){
+					var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( shortstravel.couldyou.data[ prop ].total ) );
+					if( dailySavings == maxSavings ){
+						shortstravel.couldyou.dates.maxSavings.push( prop );
+					}
+				}
+			}
+		}
+	},
+
 	updateCalendar: function(){
 
 		for( var prop in shortstravel.couldyou.data ){
@@ -201,16 +225,25 @@ shortstravel.couldyou = {
 					$('#calendar1').fullCalendar( 'renderEvent', ev, true );
 					dateCell.removeClass('ui-widget-content' ).addClass('fc-higherPrice');
 				} else if( Math.round( dailyTotal ) < Math.round( selectedDayTotal ) && d.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
+					if( $.inArray( prop, shortstravel.couldyou.dates.maxSavings ) != -1 ){
+						var eventColor = '#e1efe1';
+						var cellClass = 'fc-maxSavings';
+					} else {
+						var eventColor = '#e2effc';
+						var cellClass = 'fc-lowerPrice';
+					}
+
+
 					var ev = {
 						title: shortstravel.couldyou.data[ prop ].message.toString(),
 						allDay: true,
 						start: d,
-						color: '#e2effc',
+						color: eventColor,
 						textColor: "#000"
 
 					}
 					$('#calendar1').fullCalendar( 'renderEvent', ev, true );
-					dateCell.removeClass('ui-widget-content' ).addClass('fc-lowerPrice');
+					dateCell.removeClass('ui-widget-content' ).addClass( cellClass);
 
 				} else {
 					var ev = {
@@ -253,7 +286,11 @@ shortstravel.couldyou = {
 					row += ' class="fc-higherPrice">'
 				} else if( Math.round( shortstravel.couldyou.data[ prop ].total ) < Math.round( shortstravel.itinerary.total ) ){
 					numCheaperDates++;
-					row += ' class="fc-lowerPrice">'
+					if( $.inArray( prop, shortstravel.couldyou.dates.maxSavings ) != -1 ){
+						row += ' class="fc-maxSavings">';
+					} else {
+						row += ' class="fc-lowerPrice">';
+					}
 				} else {
 					row += '>'
 				}
@@ -330,7 +367,10 @@ shortstravel.couldyou = {
 		if( typeof places != "number" ){
 			places = 0;
 		}
-		var roundedCost = ( Math.round( cost * (Math.pow(10,places)) ) / (Math.pow(10,places)) ).toFixed(2);
+		var roundedCost = ( Math.round( cost * (Math.pow(10,places)) ) / (Math.pow(10,places)) );
+		if( places != 0 ){
+			roundedCost = roundedCost.toFixed( places );
+		}
 
 		if( typeof shortstravel.itinerary.AIR == 'object' ){
 			return '$ ' + roundedCost;
