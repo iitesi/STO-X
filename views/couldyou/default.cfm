@@ -49,7 +49,8 @@
 	<div class="container">
 		<div class="row-fluid">
 			<div class="span6">
-				<h2 style="margin-left: 10px;">Trip Summary for <span id="tripStartDate">#dateFormat( rc.startDate, "ddd, mmm d" )#</span> to <span id="tripEndDate">#dateFormat( rc.endDate, "ddd, mmm d" )#</span></h2>
+				<h2 style="margin-left: 10px;">Trip Summary for <span class="tripStartDate">#dateFormat( rc.startDate, "ddd, mmm d" )#</span>
+					<cfif rc.Filter.getAirType() NEQ "OW">to <span class="tripEndDate">#dateFormat( rc.endDate, "ddd, mmm d" )#</span></cfif></h2>
 				<div class="badge hotel">
 
 						<div class="minlineheight">
@@ -155,25 +156,27 @@
 				</div>
 			</div>
 
-			<div class="row-fluid">
-				<div class="span6">
-					<h2 id="numCheaperDates" style="margin-left: 10px;"></h2>
-					<table id="alternativesTable" class="table" width="100%">
-						<thead>
-							<tr>
-								<th class="fc-day-header ui-widget-header fc-first">Trip Cost</th>
-								<th class="fc-day-header ui-widget-header">Savings</th>
-								<th class="fc-day-header ui-widget-header">Depart</th>
-								<th class="fc-day-header ui-widget-header fc-last">Return</th>
-							</tr>
-						</thead>
-						<tbody>
+			<div class="span6">
+				<h2 id="numCheaperDates" style="margin-left: 10px;"></h2>
+				<table id="alternativesTable" class="table" width="100%">
+					<thead>
+						<tr>
+							<th class="fc-day-header ui-widget-header fc-first">Trip Cost</th>
+							<th class="fc-day-header ui-widget-header">Savings</th>
+							<th class="fc-day-header ui-widget-header">Depart</th>
+							<th class="fc-day-header ui-widget-header fc-last">Return</th>
+						</tr>
+					</thead>
+					<tbody>
 
-						</tbody>
-					</table>
+					</tbody>
+				</table>
 
+				<div style="margin-top: 30px; margin-right: 30px; text-align: right;">
 
-
+					<p><b>You are booking <span class="tripStartDate">#dateFormat( rc.startDate, "ddd, mmm d" )#</span>
+						<cfif rc.Filter.getAirType() NEQ "OW">to <span class="tripEndDate">#dateFormat( rc.endDate, "ddd, mmm d" )#</span></cfif></b></p>
+					<p><button id="btnContinuePurchase" class="btn btn-primary" value="#dateFormat( rc.startDate, "mm-dd-yyyy" )#" onClick="shortstravel.couldyou.continueToPurchase();">CONTINUE TO PURCHASE</button></p>
 				</div>
 			</div>
 		</div>
