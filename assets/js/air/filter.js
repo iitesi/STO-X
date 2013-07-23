@@ -9,6 +9,16 @@ $(document).ready(function(){
 	  	$('#myModal').modal('hide');
 	});
 
+	// open search widget in modal / iframe
+	// url is defined in search button / link
+	$('.searchModalButton').click(function(){
+		var frameSrc = $(this).attr('data-framesrc');
+		$('#searchModal').on('show', function () {
+			$('iframe').attr("src",frameSrc);
+		});
+		$('#searchModal').modal({show:true})
+	});
+
 	$('.airModal').on('click', function() {
 		$('#myModal').modal();
 		$('#myModalBody').text( $(this).attr('data-modal') );
@@ -29,8 +39,6 @@ $(document).ready(function(){
 //------------------------------------------------------------------------------
 // FILTER
 //------------------------------------------------------------------------------
-
-
 	$('#usermessage').on('click', function() {
 		$(this).slideUp();
 	});

@@ -60,7 +60,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			</h1>
 		</cfif>
 
-		<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;searchid=#rc.searchID#&amp;requery=true" title="Start a new search"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 				#View('air/legs')#

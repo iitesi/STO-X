@@ -68,7 +68,7 @@
 						<!--- button to open search in modal window --->
 						<div class="one columns newsearch">
 							<cfoutput>
-							<a href="##" id="searhModalButton" class="btn" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
+							<a href="##" class="btn searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
 							</cfoutput>
 						</div>
 
@@ -143,13 +143,10 @@
 		</html>
 </cfif>
 
-
-
-<!---
-<cfif IsLocalHost(cgi.remote_addr)>
+<!--- uncomment for debugging
+<cfif IsLocalHost(cgi.local_addr)>
 	<cfdump var="#application#" expand="false">
 	<cfdump var="#session.searches[rc.SearchID]#" expand="false">
+	<cfdump var="#session.filters#" expand="false">
 </cfif>
- --->
-
-
+--->
