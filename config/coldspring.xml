@@ -10,10 +10,16 @@
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+        <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
     </bean>
 
     <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+    </bean>
+
+    <bean id="AirAdapter" class="com.travelport.AirAdapter">
+        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+        <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
     </bean>
 
     <bean id="seatmap" class="booking.services.seatmap">
