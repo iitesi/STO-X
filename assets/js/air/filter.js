@@ -27,13 +27,13 @@ $(document).ready(function(){
 	$('.breadcrumbModal').on('click', function() {
 		$('#popupModal').modal();
 		$('#popupModalHeader').html( '<i class="icon-spinner icon-spin"></i> One moment...' );
-		$('#popupModalBody').html( 'We are loading your previous search results...' );
+		$('#popupModalBody').html( 'We are retrieving your previous search results...' );
 	});
 
 	$('#popupModal').on('hidden', function() {
 		$(this).removeData('modal');
 		$('#popupModalHeader').html( '<i class="icon-spinner icon-spin"></i> One moment...' );
-		$('#popupModalBody').html( 'One moment, we are fetching your flight details...' );
+		$('#popupModalBody').html( 'One moment, we are retrieving your flight details...' );
 	});
 
 //------------------------------------------------------------------------------

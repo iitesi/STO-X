@@ -13,6 +13,6 @@
 	</div>
 	<div id="popupModalBody" class="modal-body">
 		<!--- populated via js --->
-		<i class="icon-spinner icon-spin"></i> One moment, we are fetching your flight details...
+		<i class="icon-spinner icon-spin"></i> One moment, we are retrieving your flight details...
 	</div>
 </div>
