@@ -35,7 +35,7 @@
 
 		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
-		<!--- <cfif arguments.Filter.getAir()
+		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
 			AND arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()>
 
@@ -52,9 +52,9 @@
 
 		</cfif>
 
-		<cfset session.Filters[arguments.SearchID] = arguments.Filter> --->
+		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
 
-		<!--- <cfset structDelete(session.searches[SearchID], 'stCars')> --->
+		<cfset structDelete(session.searches[SearchID], 'stCars')>
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 			OR StructIsEmpty(session.searches[SearchID].stCars)
