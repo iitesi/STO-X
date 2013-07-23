@@ -127,8 +127,7 @@
 		<cfreturn />
 	</cffunction>
 
-<!--- PRIVATE METHODS --->
-	<cffunction name="removeflight" access="private" output="false" hint="I take a searchID and remove a flight from the session.">
+	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
 		<cfargument name="rc">
 
 		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
@@ -147,6 +146,7 @@
 		<cfreturn />
 	</cffunction>
 
+<!--- PRIVATE METHODS --->
 	<cffunction name="removeOtherFlights" access="private" output="false" hint="I take a searchID and remove all other flights from the session.">
 		<cfargument name="rc">
 
