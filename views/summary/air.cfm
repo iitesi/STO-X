@@ -159,9 +159,8 @@
 
 					Total including taxes and refunds<br>
 					#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
-
 					<span class="blue bold">
-						<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="not done yet!" href="##" />
+						<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue" href="##" />
 							Flight change/cancellation policy
 						</a>
 					</span>
@@ -217,3 +216,19 @@ SPECIAL REQUEST
 	</cfif>
 
 </cfoutput>
+<!--- <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
+
+<div id="myModal" class="modal hide fade">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Flight change/cancellation policy</h3>
+	</div>
+	<div class="modal-body">
+		<cfoutput>
+			<p>#replace(replace(replace(rc.Air.fareRules[1], '---', '<br>'), '--', '<br>'), '-', '<br>')#</p>
+		</cfoutput>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn">Close</a>
+	</div>
+</div> --->

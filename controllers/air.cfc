@@ -18,7 +18,31 @@
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+			<!--- <cfset local.fareRules = ''>
+			<cfset session.searches[rc.searchID].stItinerary.Air.fareRules = []>
+			<cfset session.searches[rc.searchID].stItinerary.Air.cancellationPolicy = []>
+			<cfset session.searches[rc.searchID].stItinerary.Air.changeFee = []>
+			<cfloop array="#session.searches[rc.searchID].stItinerary.Air.fareRuleKey#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
+				<cfset fareRules = fw.getBeanFactory().getBean('AirAdapter').airFareRulesReq( fareRuleKey = fareRuleKey
+																							, Filter = rc.Filter )>
+				<cfif fareRules NEQ ''
+					AND NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.fareRules, fareRules)>
+					<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.fareRules, fareRules)>
+					<cfset local.nonref = find('TICKET IS NON-REFUNDABLE', fareRules)>
+					<cfset local.cancellationPolicy = 'Cancellations: Ticket is #(nonref GT 0 ? 'non-' : '')#refundable.'>
+					<cfif NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.cancellationPolicy, cancellationPolicy)>
+						<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.cancellationPolicy, cancellationPolicy)>
+					</cfif>
+					<cfset local.start = find('CHARGE USD ', fareRules)+11>
+					<cfset local.end = find(' FOR REISSUE', fareRules)>
+					<cfset local.changeFee = trim(mid(fareRules, start, end-start))>
+					<cfif NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.changeFee, changeFee)>
+						<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.changeFee, changeFee)>
+					</cfif>
+				</cfif>
+			</cfloop> --->
 		</cfif>
+		<!--- <cfdump var="#session.searches[rc.searchID].stItinerary.Air#" abort="true" /> --->
 
 		<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
 		<cfset checkFilterStatus(arguments.rc)>

@@ -149,7 +149,7 @@
 				<!--- Parse the segments. --->
 				<cfset stSegments = getAirParse().parseSegments(aResponse)>
 				<!--- Parse the trips. --->
-				<cfset stTrips = getAirParse().parseTrips(aResponse, stSegments)>
+				<cfset stTrips = getAirParse().parseTrips(response = aResponse, stSegments = stSegments)>
 				<!--- Add group node --->
 				<cfset stTrips = getAirParse().addGroups(stTrips)>
 				<!--- Add group node --->

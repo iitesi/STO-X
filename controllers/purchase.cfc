@@ -44,37 +44,41 @@
 																					, nTrip = rc.Air.nTrip
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 1
-																				 )>
-<!--- <cfdump var="#trip#" /><cfabort /> --->
-			<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[rc.Air.nTrip].sXML )>
+																				)>
 
-			<cfset rc.response = fw.getBeanFactory().getBean('AirAdapter').create( Traveler = rc.Traveler
-																					, Air = rc.Air
-																					, airPricing = airPricing
-																					, Filter = rc.Filter
-																					, statmentInformation = statmentInformation
-																				 )>
+			<cfif NOT structIsEmpty(trip)>
+				<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[rc.Air.nTrip].sXML )>
 
-<!--- <cfdump var="#rc.response#" /><cfabort /> --->
-			<cfset rc.Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = rc.Air
-																					, response = rc.response )>
+				<cfset rc.response = fw.getBeanFactory().getBean('AirAdapter').create( Traveler = rc.Traveler
+																						, Air = rc.Air
+																						, airPricing = airPricing
+																						, Filter = rc.Filter
+																						, statmentInformation = statmentInformation
+																					 )>
 
-			<!--- <cfif rc.Hotel.getConfirmation() EQ ''>
-				<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-				<cfdump var="#rc.errorMessage#">
-				<cfset providerLocatorCode = ''>
-				<cfset universalLocatorCode = ''>
-			<cfelse> --->
-				<cfset providerLocatorCode = rc.Air.ProviderLocatorCode>
-				<cfset universalLocatorCode = rc.Air.UniversalLocatorCode>
-				<cfdump var="Air">
-				<cfdump var="#providerLocatorCode#">
-				<cfdump var="#universalLocatorCode#">
-			<!--- </cfif> --->
-			<cfset session.searches[rc.SearchID].stItinerary.Air = rc.Air>
+	<!--- <cfdump var="#rc.response#" /><cfabort /> --->
+				<cfset rc.Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = rc.Air
+																						, response = rc.response )>
 
-			<cfif providerLocatorCode NEQ ''>
-				<cfset version++>
+				<!--- <cfif rc.Hotel.getConfirmation() EQ ''>
+					<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+					<cfdump var="#rc.errorMessage#">
+					<cfset providerLocatorCode = ''>
+					<cfset universalLocatorCode = ''>
+				<cfelse> --->
+					<cfset providerLocatorCode = rc.Air.ProviderLocatorCode>
+					<cfset universalLocatorCode = rc.Air.UniversalLocatorCode>
+					<cfdump var="Air">
+					<cfdump var="#providerLocatorCode#">
+					<cfdump var="#universalLocatorCode#">
+				<!--- </cfif> --->
+				<cfset session.searches[rc.SearchID].stItinerary.Air = rc.Air>
+
+				<cfif providerLocatorCode NEQ ''>
+					<cfset version++>
+				</cfif>
+			<cfelse>
+				<cfset arrayAppend( rc.errorMessage, 'Could not price record.' )>
 			</cfif>
 		</cfif>
 
@@ -100,13 +104,9 @@
 
 			<cfif rc.Hotel.getConfirmation() EQ ''>
 				<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-				<cfdump var="#rc.errorMessage#">
 			<cfelse>
 				<cfset providerLocatorCode = rc.Hotel.getProviderLocatorCode()>
 				<cfset universalLocatorCode = rc.Hotel.getUniversalLocatorCode()>
-				<cfdump var="Hotel">
-				<cfdump var="#providerLocatorCode#">
-				<cfdump var="#universalLocatorCode#">
 			</cfif>
 			<cfset session.searches[rc.SearchID].stItinerary.Hotel = rc.Hotel>
 
@@ -172,14 +172,10 @@
 			<!--- Validate the confirmation --->
 			<cfif rc.Vehicle.getConfirmation() EQ ''>
 				<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-				<cfdump var="#rc.errorMessage#">
 			<cfelse>
 				<!--- <cfdump var="#rc.Vehicle#"> --->
 				<cfset providerLocatorCode = rc.Vehicle.getProviderLocatorCode()>
 				<cfset universalLocatorCode = rc.Vehicle.getUniversalLocatorCode()>
-				<cfdump var="Vehicle">
-				<cfdump var="#providerLocatorCode#">
-				<cfdump var="#universalLocatorCode#">
 			</cfif>
 			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = rc.Vehicle>
 
@@ -188,6 +184,12 @@
 			</cfif>
 		</cfif>
 
+		<cfif arrayIsEmpty(rc.errorMessage)>
+			<cfdump var="providerLocatorCode - #providerLocatorCode#">
+			<cfdump var="universalLocatorCode - #universalLocatorCode#">
+		<cfelse>
+			<cfdump var="#rc.errorMessage#">
+		</cfif>
 		<cfabort>
 
 		<cfreturn />

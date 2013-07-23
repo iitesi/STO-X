@@ -49,9 +49,6 @@ doLowFare
 		<cfreturn >
 	</cffunction>
 
-<!---
-parseSegments
---->
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"	required="true">
 
@@ -61,7 +58,6 @@ parseSegments
 			'air:AirSegmentList' - found in low fare and availability search
 			'air:AirItinerary' - found in air pricing
 			--->
-
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'
 			OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
 				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
@@ -91,9 +87,6 @@ parseSegments
 		<cfreturn stSegments />
 	</cffunction>
 
-<!---
-parseSearchID
---->
 	<cffunction name="parseSearchID" output="false">
 		<cfargument name="sResponse"	required="true">
 
@@ -108,9 +101,6 @@ parseSearchID
 		<cfreturn sLowFareSearchID />
 	</cffunction>
 
-<!---
-parseNextReference
---->
 	<cffunction name="parseNextReference" output="false">
 		<cfargument name="stResponse"	required="true">
 
@@ -124,12 +114,9 @@ parseNextReference
 		<cfreturn sNextRef />
 	</cffunction>
 
-<!---
-parseTrips
---->
 	<cffunction name="parseTrips" output="false">
-		<cfargument name="stResponse"		required="true">
-		<cfargument name="stSegments"		required="true">
+		<cfargument name="response" required="true">
+		<cfargument name="stSegments" required="true">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -138,14 +125,14 @@ parseTrips
 		<cfset local.sSegmentKey = 0>
 		<cfset local.sIndex = ''>
 		<cfset local.aIndexKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-
+		<cfset local.changePenalty = 0>
 		<!---
 		Custom code for air pricing to move the 'air:AirPriceResult' up a node to work with the current parsing code.
         --->
-		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
+		<cfloop array="#arguments.response#" index="local.stAirPricingSolution">
 			<cfif stAirPricingSolution.XMLName EQ 'air:AirPriceResult'>
 				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.test">
-					<cfset ArrayAppend(arguments.stResponse, test)>
+					<cfset ArrayAppend(arguments.response, test)>
 				</cfloop>
 			</cfif>
 		</cfloop>
@@ -153,16 +140,21 @@ parseTrips
 		<!---
 		Create a quick struct containing the private fare information
 		--->
-		<cfset local.stFares = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stFareInfoList">
-			<cfif stFareInfoList.XMLName EQ 'air:FareInfoList'>
-				<cfloop array="#stFareInfoList.XMLChildren#" index="local.stFareInfo">
-					<cfset stFares[stFareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(stFareInfo.XMLAttributes, 'PrivateFare') ? stFareInfo.XMLAttributes.PrivateFare EQ 'true' : false)>
+		<cfset local.fare = {}>
+		<cfloop array="#arguments.response#" index="local.fareInfoListIndex" item="local.fareInfoList">
+			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
+				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
+					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') ? fareInfo.XMLAttributes.PrivateFare EQ 'true' : false)>
+					<!--- <cfloop array="#fareInfo.XMLChildren#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
+						<cfif fareRuleKey.XMLName EQ 'air:FareRuleKey'>
+							<cfset fare[fareInfo.XMLAttributes.Key].fareRuleKey = fareRuleKey.XMLText>
+						</cfif>
+					</cfloop> --->
 				</cfloop>
 			</cfif>
 		</cfloop>
 
-		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
+		<cfloop array="#arguments.response#" index="local.stAirPricingSolution">
 
 			<cfif stAirPricingSolution.XMLName EQ 'air:AirPricingSolution'>
 
@@ -185,6 +177,7 @@ parseTrips
 						<cfset local.sOverallClass = 'E'>
 						<cfset local.sPTC = ''>
 						<cfset local.nCount = 0>
+						<cfset fareRuleKey = []>
 <!---
 MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
@@ -196,9 +189,10 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								<cfset sPTC = stAirPricingNode2.XMLAttributes.Code>
 							<cfelseif stAirPricingNode2.XMLName EQ 'air:FareInfoRef'>
 								<!--- Private fares 1/0 --->
-								<cfif stFares[stAirPricingNode2.XMLAttributes.Key].PrivateFare>
+								<cfif fare[stAirPricingNode2.XMLAttributes.Key].PrivateFare>
 									<cfset bPrivateFare = true>
 								</cfif>
+								<!--- <cfset arrayAppend(fareRuleKey, fare[stAirPricingNode2.XMLAttributes.Key].fareRuleKey)> --->
 							<cfelseif stAirPricingNode2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
 								<cfset local.sClass = (StructKeyExists(stAirPricingNode2.XMLAttributes, 'CabinClass') ? stAirPricingNode2.XMLAttributes.CabinClass : 'Economy')>
@@ -213,7 +207,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								</cfif>
 							<cfelseif stAirPricingNode2.XMLName EQ 'air:ChangePenalty'>
 								<!--- Refundable or non refundable --->
+								<cfset changePenalty = 0>
 								<cfloop array="#stAirPricingNode2.XMLChildren#" index="local.stFare">
+									<cfif changePenalty LTE replace(stFare.XMLText, 'USD', '')>
+										<cfset changePenalty = replace(stFare.XMLText, 'USD', '')>
+									</cfif>
 									<cfset bRefundable = (bRefundable EQ 1 AND stFare.XMLText GT 0 ? 0 : 1)>
 								</cfloop>
 							</cfif>
@@ -225,6 +223,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset stTrip.PTC = sPTC>
 						<cfset stTrip.Class = sOverallClass>
 						<cfset stTrip.Ref = bRefundable>
+						<!--- <cfset stTrip.fareRuleKey = fareRuleKey> --->
+						<cfset stTrip.changePenalty = changePenalty>
+						<!--- <cfdump var="#stTrip#" abort="true" /> --->
 					</cfif>
 				</cfloop>
 
