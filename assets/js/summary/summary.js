@@ -286,13 +286,13 @@ $(document).ready(function(){
 				}
 				var selected = '';
 				if (traveler.payment[i].btaID != '') {
-					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + ' ending in ' + payments[i].acctNum4 + '</option>')
 				}
 				else if (traveler.payment[i].fopID != '') {
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
-					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].fopID + '">' + traveler.payment[i].fopDescription + ' ending in ' + payments[i].acctNum + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].fopID + '">' + traveler.payment[i].fopDescription + ' ending in ' + payments[i].acctNum4 + '</option>')
 				}
 			}
 		}

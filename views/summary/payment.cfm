@@ -104,7 +104,7 @@
 
 		<div id="hotelManual" class="hide">
 
-			<div class="control-group" id="copyAirCCDiv">
+			<div class="control-group #(rc.airSelected EQ 0 ? 'hide' : '')#" id="copyAirCCDiv">
 				<label class="control-label" for="copyAirCC"></label>
 				<div class="controls">
 					<label class="copyAirCC">

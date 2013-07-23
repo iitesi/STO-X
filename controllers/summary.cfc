@@ -89,6 +89,14 @@
 		</cfif>
 
 		<cfif structKeyExists(rc, 'trigger')>
+			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
+																						, acctID = rc.Filter.getAcctID() 
+																						, valueID = rc.Filter.getValueID()
+																						, arrangerID = rc.Filter.getUserID()
+																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
+			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
 			<cfparam name="rc.noMiddleName" default="0">
 			<cfparam name="rc.createProfile" default="0">
 			<cfparam name="rc.saveProfile" default="0">
@@ -188,6 +196,8 @@
 						<cfset rc.travelerNumber = 1>
 					</cfif>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
+				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
+					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
 		</cfif>
