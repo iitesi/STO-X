@@ -413,7 +413,7 @@ shortstravel.couldyou = {
 
 	continueToPurchase: function(){
 		window.location = '/booking/index.cfm?action=couldyou.processSelection&searchId=' + shortstravel.search.searchID
-			+ "&originalDate=" + dateFormat( shortstravel.couldyou.dates.originalDepart, 'mm-dd-yyyy' )
+			+ "&originalDate=" + dateFormat( shortstravel.couldyou.dates.originalDepart, 'mm-dd-yyyy', true )
 			+ "&selectedDate=" + $("#btnContinuePurchase" ).val();
 	}
 };

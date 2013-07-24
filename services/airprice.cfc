@@ -212,12 +212,15 @@
 
 		<cfelse>
 
+			<cfset var originalDepartDate = createDate( year( arguments.Search.getDepartDateTime() ), month( arguments.Search.getDepartDateTime() ), day( arguments.Search.getDepartDateTime() ) ) />
+			<cfset var newDepartDate = createDate( year( arguments.requestedDate ), month( arguments.requestedDate ), day( arguments.requestedDate ) ) />
 			<cfset var airArgs = structNew() />
+
 			<cfset airArgs.searchId = arguments.Search.getSearchId() />
 			<cfset airArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
 			<cfset airArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
 			<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
-			<cfset airArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
+			<cfset airArgs.nCouldYou = dateDiff( 'd', originalDepartDate, newDepartDate ) />
 
 			<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
 
