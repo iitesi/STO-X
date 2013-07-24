@@ -13,6 +13,11 @@
         <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
     </bean>
 
+	<bean id="TerminalEntry" class="com.travelport.TerminalEntry">
+        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+        <constructor-arg name="UserService"><ref bean="UserService" /></constructor-arg>
+    </bean>
+
     <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
     </bean>
@@ -152,11 +157,6 @@
 	</bean>
 
 	<bean id="HotelSearchManager" class="booking.services.hotelsearch" />
-
-	<bean id="TerminalEntry" class="booking.services.terminalentry" >
-		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-		<constructor-arg name="General"><ref bean="General" /></constructor-arg>
-	</bean>
 
 	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
 
