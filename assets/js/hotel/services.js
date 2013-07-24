@@ -19,6 +19,7 @@ services.factory( "SearchService", function( $http ){
 			hotelCity: search.hotelCity,
 			hotelState: search.hotelState,
 			hotelZip: search.hotelZip,
+			hotelAirport: $("#hotel-airport" ).val(),
 			officeID: search.officeID,
 			checkInDate: dateFormat( search.checkInDate, 'mm/dd/yyyy' ),
 			checkOutDate: dateFormat( search.checkOutDate, 'mm/dd/yyyy' )
