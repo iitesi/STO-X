@@ -19,9 +19,7 @@
 	}
 </style>
 
-<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" label="session.searches[rc.SearchID].travelers" abort> --->
-
-<div style="width:1000px;">
+<div style="width:960px;">
 	<div class="container">
 		<div class="page-header">
 			<cfoutput>
@@ -30,7 +28,7 @@
 		</div>
 	</div>
 	<div>
-		<div id="reservationMessage" class="alert alert-success">
+		<div id="reservationMessage" class="alert alert-success" style="width:920px;">
 			<!--- TO DO: Put in cfif logic when not a pre-trip. --->
 			WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
 			YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.

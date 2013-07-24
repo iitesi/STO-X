@@ -8,15 +8,19 @@
 						<cfoutput>
 							#view('confirmation/air')#
 						</cfoutput>
+						<cfif rc.hotelSelected OR rc.vehicleSelected>
+							<hr />
+						</cfif>
 					</cfif>
-					<hr />
 					<!--- If hotel --->
 					<cfif rc.hotelSelected>
 						<cfoutput>
 							#view('confirmation/hotel')#
 						</cfoutput>
+						<cfif rc.vehicleSelected>
+							<hr />
+						</cfif>
 					</cfif>
-					<hr />
 					<!--- If car --->
 					<cfif rc.vehicleSelected>
 						<cfoutput>

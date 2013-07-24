@@ -108,3 +108,4 @@
 	</div>
 
 </cfoutput>
+<cfdump var="#rc.filter#" />

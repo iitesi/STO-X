@@ -15,11 +15,21 @@
 	<cffunction name="select">
 		<cfargument name="rc" />
 
-		<cfset success = variables.bf.getBean( "HotelService" ).selectRoom( searchId=arguments.rc.searchId,
-													 propertyId=arguments.rc.propertyId,
-													 ratePlanType=arguments.rc.ratePlanType,
-													 totalForStay=arguments.rc.totalForStay,
-													 isInPolicy=arguments.rc.isInPolicy ) />
+		<cfset local.HotelService = variables.bf.getBean( "HotelService" ) />
+		<cfset success = HotelService.selectRoom( searchId=arguments.rc.searchId,
+												 propertyId=arguments.rc.propertyId,
+												 ratePlanType=arguments.rc.ratePlanType,
+												 totalForStay=arguments.rc.totalForStay,
+												 isInPolicy=arguments.rc.isInPolicy ) />
+
+		<cfset local.HotelService.getRoomRateRules( searchId=arguments.rc.searchId,
+												 	propertyId=arguments.rc.propertyId,
+												 	ratePlanType=arguments.rc.ratePlanType ) />
+		<cfif NOT arguments.rc.Filter.getHotel()>
+			<cfset arguments.rc.Filter.setHotel( true ) />
+			<cfset variables.bf.getBean( "SearchService" ).save( searchID=arguments.rc.searchId, hotel=true ) />
+		</cfif>
+
 
 		<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'vehicle')>
 
