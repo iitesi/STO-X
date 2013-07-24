@@ -180,7 +180,7 @@ body {
 }
 /*hack to control the gap between the text and the underline*/
 .popuplink::after {
-  border-bottom: 1px dotted #ccc;
+  border-bottom: 1px dotted #999;
   bottom: 0;
   content: '';
   height: 0;
