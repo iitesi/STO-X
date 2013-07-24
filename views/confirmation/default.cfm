@@ -19,8 +19,6 @@
 	}
 </style>
 
-<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" label="session.searches[rc.SearchID].travelers" abort> --->
-
 <div style="width:1000px;">
 	<div class="container">
 		<div class="page-header">

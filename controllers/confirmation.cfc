@@ -13,13 +13,6 @@
 		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false) />
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '') />
 
-		<!--- <cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy(acctID = rc.Filter.getAcctID()) />
-
-		<cfset rc.fees = fw.getBeanFactory().getBean('Summary').determineFees(userID = rc.Filter.getUserID()
-																			, acctID = rc.Filter.getAcctID()
-																			, Air = rc.Air 
-																			, Filter = rc.Filter) /> --->
-
 		<cfset rc.Travelers = session.searches[rc.SearchID].travelers />
 		<cfset rc.airTravelers = arrayNew(1) />
 		<cfset rc.hotelTravelers = arrayNew(1) />
@@ -41,13 +34,3 @@
 		<cfreturn />
 	</cffunction>
 </cfcomponent>
-
-
-
-<!--- <cfcomponent extends="abstract">
-
-	<cffunction name="default" output="false">
-
-			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
-
-</cfcomponent> --->

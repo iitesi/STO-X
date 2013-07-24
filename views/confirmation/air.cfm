@@ -1,3 +1,4 @@
+<!--- <cfdump var="#rc.Traveler[1]#"> --->
 <cfoutput>
 	<table width="100%">
 		<tr>
@@ -46,7 +47,7 @@
 									#uCase(segment.Cabin)#
 								</td>
 								<td>
-									SEAT xxx
+									SEAT xxx <!--- TO DO: Seat --->
 								</td>
 								<td>
 									#uCase(application.stEquipment[segment.Equipment])#
@@ -88,11 +89,11 @@
 									<td colspan="2"></td>						
 							</cfif>
 							<td width="12%"><span class="blue"><strong>DL Confirmation</strong></span></td>
-							<td width="28%"><span class="blue"><strong>xxx<!--- #rc.Air.getConfirmation()# ---></strong></span></td>
+							<td width="8%"><span class="blue"><strong>xxx<!--- TO DO: #rc.Air.getConfirmation()# ---></strong></span></td>
 							<td width="8%"><strong>DL Flyer ##</strong></td>
-							<td>xxx<!--- TO DO: Loyalty # ---></td>
+							<td>xxx<!--- TO DO: Flyer # ---></td>
 							<td><strong>Seat Pref</strong></td>
-							<td>xxx<!--- TO DO: Loyalty # ---></td>
+							<td>#rc.Traveler[travelerIndex].getWindowAisle()#</td>
 						</tr>
 						<!--- If special service or note --->
 						<tr>
@@ -111,10 +112,14 @@
 							<td><strong>Note</strong></td>
 							<td>#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
 						</tr>
-						<tr>
-							<td colspan="2"></td>
-							<td colspan="6"><hr class="dashed" /></td>
-						</tr>
+						<cfif travelerIndex NEQ arrayLen(rc.vehicleTravelers)>
+							<tr>
+								<td colspan="2"></td>
+								<td colspan="6"><hr class="dashed" /></td>
+							</tr>
+						<cfelse>
+							<tr><td colspan="8" style="height:12px;"></td></tr>
+						</cfif>
 					</table>
 				</td>
 			</tr>
