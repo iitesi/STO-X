@@ -3,7 +3,7 @@
 	<h2>PAYMENT</h2>
 
 	<cfif rc.airSelected>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment</strong></label>
 			<div class="controls" id="airFOPIDDiv">
@@ -84,7 +84,7 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
+			<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue." href="##" />
 				Flight change/cancellation policy
 			</a>
 		</div>
@@ -92,7 +92,7 @@
 	</cfif>
 
 	<cfif rc.hotelSelected>
-			
+
 		<div class="control-group">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment</strong></label>
 			<div class="controls">
@@ -165,7 +165,7 @@
 		</cfsavecontent>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="#hotelPolicies#" href="##" />
+			<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="#hotelPolicies#" href="##" />
 				Hotel payment and cancellation policy
 			</a>
 		</div>
@@ -173,7 +173,7 @@
 	</cfif>
 
 	<cfif rc.vehicleSelected>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="carFOPID"><strong>Car Payment</strong></label>
 			<div class="controls">
@@ -184,7 +184,7 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
+			<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
 				Car payment and cancellation policy
 			</a>
 		</div>
