@@ -50,7 +50,7 @@
 			</div>
 		</div>
 		<div class="filter">
-			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <a href="#" class="pull-right">Continue without car</a>
+			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><a href="#buildURL('summary?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfoutput>
 		</div>
 		<div class="row well filterselection">
 			<cfoutput>
