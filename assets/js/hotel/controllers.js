@@ -502,7 +502,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.configureChangeSearchForm = function(){
 
 		//Now that we have the search data, we're going to set the search parameters into the change search form
-		$(".airport-select2").select2( "val", $scope.search.hotelAirport );
+		$(".airport-select2").select2("val", $scope.search.hotelAirport );
 
 		//Initialization for the change search modal window
 		$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
@@ -533,6 +533,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$("#end-calendar-wrapper" ).data( 'datepicker' ).update();
 		$(".airport-select2" ).select2({
 			data: airports,
+			minimumInputLength: 2,
 			width: "100%",
 			sortResults: function(results, container, query) {
 				if (query.term) {
