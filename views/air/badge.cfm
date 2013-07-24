@@ -45,7 +45,9 @@
 							<cfset btnClass = "btn-primary">
 						</cfif>
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
-						<br>#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
+						<br>
+						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
+							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
 					<cfelse>
 						<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
 					</cfif>
@@ -54,7 +56,7 @@
 			<cfif !bSelected AND !stTrip.Policy>
 			<tr align="center">
 				<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
-				<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span>')#</td>
+				<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span>')#</td>
 			</tr>
 			</cfif>
 			<tr>
@@ -117,26 +119,6 @@
 					#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
 				</cfloop>
 			</cfsavecontent>
-
-
-<!--- TODO: clean this up - used to debug details popup.
-	comment out the request.layout = false in popup.cfm and enable this to load the
-	details info via a link instead of inside a popup modal window
-	5:13 PM Wednesday, July 17, 2013 - Jim Priest - jpriest@shortstravel.com
-
-<tr>
-				<td height="100%" valign="bottom" colspan="4">
-					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-LINKS:
-					<a href="?action=air.popup&sDetails=details&#sURL#" >Details <span class="divider">/</span></a>
-					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-						<a href="?action=air.popup&sDetails=seatmap&#sURL#" >Seats <span class="divider">/</span></a>
-					</cfif>
-					<a href="?action=air.popup&sDetails=baggage&#sURL#" rel="popover" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">Bags <span class="divider">/</span></a>
-					<a href="?action=air.popup&sDetails=email&#sURL#" >Email</a>
-				</td>
-			</tr>
- --->
 
 			<tr>
 				<td height="100%" valign="bottom" align="center" colspan="4">

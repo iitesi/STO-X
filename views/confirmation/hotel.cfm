@@ -25,7 +25,7 @@
 					</tr>
 					<tr>
 						<td rowspan="4"></td>
-						<td rowspan="4" width="14%">
+						<td rowspan="4" width="12%">
 							<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
 								<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
 							</cfif>
@@ -65,7 +65,7 @@
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="6%"></td>
-							<td width="14%">
+							<td width="12%">
 								<cfif arrayLen(rc.hotelTravelers) GT 1>
 									<span class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></span>
 								</cfif>

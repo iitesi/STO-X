@@ -174,13 +174,13 @@ body {
 ----------------------------------------------------------------------------------------------------------
 */
 
-.outofpolicy {
+.popuplink {
 	cursor: pointer;
 	position: relative;
 }
 /*hack to control the gap between the text and the underline*/
-.outofpolicy::after {
-  border-bottom: 1px dotted #ccc;
+.popuplink::after {
+  border-bottom: 1px dotted #999;
   bottom: 0;
   content: '';
   height: 0;

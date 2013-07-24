@@ -101,6 +101,7 @@
                             <span class="ribbon ribbon-r-cont" ng-show="!item.hotel.preferredVendor && item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate()"></span>
                             <span class="ribbon ribbon-r-pref-govt" ng-show="item.hotel.preferredVendor && item.hotel.hasGovernmentRate()"></span>
                             <span class="ribbon ribbon-r-pref-cont" ng-show="item.hotel.preferredVendor && item.hotel.hasCorporateRate()"></span>
+                            <span class="ribbon ribbon-r-govt" ng-show="!item.hotel.preferredVendor && item.hotel.hasGovernmentRate()"></span>
 
                             <div class="signature-image">
                                 <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">

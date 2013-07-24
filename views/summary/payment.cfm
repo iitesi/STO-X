@@ -166,7 +166,7 @@
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
 			<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
-				Hotel payment and cancellation policy
+				Hotel payment and cancellation policy  
 			</a>
 		</div>
 

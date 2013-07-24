@@ -39,6 +39,7 @@
 
 	<bean id="General" class="booking.services.general" />
 	<bean id="Summary" class="booking.services.summary" />
+	<bean id="confirmation" class="booking.services.confirmation" />
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>

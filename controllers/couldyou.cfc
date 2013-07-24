@@ -66,41 +66,114 @@
 		<cfargument name="rc">
 
 		<cfif rc.selectedDate NEQ rc.originalDate>
-
+			<cfset var newVals = structNew() />
+			<cfset newVals.searchId = rc.searchID />
 			<cfset var Search = session.filters[ rc.searchId ] />
 			<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
 
 			<cfif Search.getAir()>
+				<!---Update search object in session--->
+				<cfset var tripLength = abs( dateDiff( "d", Search.getDepartDateTime(), Search.getArrivalDateTime() ) ) />
+				<cfset var newArrivalDate = dateAdd( "d", tripLength, rc.selectedDate ) />
 				<cfset var tripIDs = structKeyList( couldYou.air[ rc.selectedDate ] ) />
 				<cfset var newFlight = couldYou.air[ rc.selectedDate ][ listGetAt( tripIDs, 1 ) ] />
+				<!---This may need to be populated differently--->
+				<cfset var newFlight.aPolicies = arrayNew(1) />
+				<cfset var newFlight.policy = Search.getPolicyID() />
+				<cfset newVals.departDateTime = createDateTime( year( rc.selectedDate ),
+																 month( rc.selectedDate ),
+																 day( rc.selectedDate ),
+																 hour( Search.getDepartDateTime() ),
+																 minute( Search.getDepartDateTime() ),
+																 second( Search.getDepartDateTime() ) ) />
+				<cfset newVals.arrivalDateTime = createDateTime( year( newArrivalDate ),
+																  month( newArrivalDate ),
+																  day( newArrivalDate ),
+																  hour( Search.getArrivalDateTime() ),
+																  minute( Search.getArrivalDateTime() ),
+																  second( Search.getArrivalDateTime() ) ) />
 
-				<!---Update search object in session--->
+				<cfif NOT Search.getHotel()>
+					<cfset newVals.checkInDate = rc.selectedDate />
+					<cfset newVals.checkOutDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
+					<cfset Search.setCheckInDate( newVals.checkInDate ) />
+					<cfset Search.setCheckOutDate( newVals.checkOutDate ) />
+				</cfif>
+
+				<cfif NOT Search.getCar()>
+					<cfset newVals.carPickupDate = rc.selectedDate />
+					<cfset newVals.carDropoffDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
+					<cfset Search.setCarPickupDateTime( newVals.carPickupDate ) />
+					<cfset Search.setCarDropoffDateTime( newVals.carDropoffDate ) />
+				</cfif>
+
+				<cfset Search.setDepartDateTime( newVals.departDateTime ) />
+				<cfset Search.setArrivalDateTime( newVals.arrivalDateTime ) />
 
 				<!---Update the stItinerary--->
-				<cfset var session.searches[ rc.searchId ].stItinerary.air = newFlight />
+				<cfset session.searches[ rc.searchId ].stItinerary.air = newFlight />
 			</cfif>
 
 			<cfif Search.getHotel()>
-				<cfset var newHotel = couldYou.hotel[ rc.selectedDate ] />
-
 				<!---Update search object in session--->
+				<cfset var tripLength = abs( dateDiff( "d", Search.getCheckInDate(), Search.getCheckOutDate() ) ) />
+				<cfset var newHotel = couldYou.hotel[ rc.selectedDate ] />
+				<cfset newVals.checkInDate = rc.selectedDate />
+				<cfset newVals.checkOutDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
+				<cfset Search.setCheckInDate( newVals.checkInDate ) />
+				<cfset Search.setCheckOutDate( newVals.checkOutDate ) />
+
+				<cfif NOT Search.getCar()>
+					<cfset newVals.carPickupDate = rc.selectedDate />
+					<cfset newVals.carDropoffDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
+					<cfset Search.setCarPickupDateTime( newVals.carPickupDate ) />
+					<cfset Search.setCarDropoffDateTime( newVals.carDropoffDate ) />
+				</cfif>
+
 
 				<!---Update the stItinerary--->
-				<cfset var session.searches[ rc.searchId ].stItinerary.hotel = newHotel />
+				<cfset session.searches[ rc.searchId ].stItinerary.hotel = newHotel />
+
+				<cfset variables.bf.getBean( "HotelService" ).getRoomRateRules( searchId=arguments.rc.searchId,
+																				propertyId=newHotel.getPropertyID(),
+																				ratePlanType=newHotel.getRooms()[1].getRatePlanType() ) />
 
 			</cfif>
 
 			<cfif Search.getCar()>
-				<cfset var newVehicle = couldYou.vehicle[ rc.selectedDate ] />
-
 				<!---Update search object in session--->
+				<cfset var tripLength = abs( dateDiff( "d", Search.getCarPickupDateTime(), Search.getCarDropoffDateTime() ) ) />
+				<cfset var newDropOffDate = dateAdd( "d", tripLength, rc.selectedDate ) />
+				<cfset var newVehicle = couldYou.vehicle[ rc.selectedDate ] />
+				<cfset newVals.carPickupDate = createDateTime( year( rc.selectedDate ),
+																	month( rc.selectedDate ),
+																	day( rc.selectedDate ),
+																	hour( Search.getCarPickupDateTime() ),
+																	minute( Search.getCarPickupDateTime() ),
+																	second( Search.getCarPickupDateTime() ) ) />
+				<cfset newVals.carDropoffDate = createDateTime( year( newDropOffDate ),
+																	month( newDropOffDate ),
+																	day( newDropOffDate ),
+																	hour( Search.getCarDropoffDateTime() ),
+																	minute( Search.getCarDropoffDateTime() ),
+																	second( Search.getCarDropoffDateTime() ) ) />
+
+				<cfset Search.setCarPickupDateTime( newVals.carPickupDateTime ) />
+				<cfset Search.setCarDropoffDateTime( newVals.carDropoffDateTime ) />
+
+				<cfif NOT Search.getAir() AND NOT Search.getHotel()>
+					<cfset newVals.checkInDate = rc.selectedDate />
+					<cfset newVals.checkOutDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
+					<cfset Search.setCheckInDate( newVals.carPickupDateTime ) />
+					<cfset Search.setCheckOutDate( newVals.carDropoffDateTime ) />
+				</cfif>
 
 				<!---Update the stItinerary--->
-				<cfset var session.searches[ rc.searchId ].stItinerary.vehicle = newVehicle />
+				<cfset session.searches[ rc.searchId ].stItinerary.vehicle = newVehicle />
 			</cfif>
 
 			<!---Save the updated search object to the database--->
-
+			<cfset fw.getBeanFactory().getBean('SearchService').save( argumentCollection = newVals ) />
 
 		</cfif>
 

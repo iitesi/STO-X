@@ -13,7 +13,7 @@
 			<tr>
 
 				<td></td>
-				
+
 				<td valign="top">
 
 					<cfif rc.Air.privateFare AND rc.Air.preferred>
@@ -36,7 +36,7 @@
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR (NOT inPolicy
 						AND rc.Policy.Policy_AirReasonCode EQ 1)>
 
@@ -54,7 +54,7 @@
 					AND they are in policy OR the above drop down isn't showing
 					AND they want to capture lost savings
 					--->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR (rc.Air.Total GT lowestFare
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 						AND rc.Policy.Policy_AirLostSavings EQ 1)>
@@ -78,7 +78,7 @@
 					</cfif>
 
 					<!--- State of Texas --->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR rc.Filter.getAcctID() EQ 235>
 
 						<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
@@ -89,7 +89,7 @@
 							</cfloop>
 							</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
 						</div>
-						
+
 					</cfif>
 
 				</td>
@@ -98,13 +98,13 @@
 			<tr>
 
 				<td width="50"></td>
-				
+
 				<td valign="top" width="120">
 
 					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
 
 					#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
-					
+
 				</td>
 
 				<td with="630">
@@ -160,7 +160,7 @@
 					Total including taxes and refunds<br>
 					#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
 					<span class="blue bold">
-						<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue" href="##" />
+						<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
 							Flight change/cancellation policy
 						</a>
 					</span>
@@ -169,7 +169,7 @@
 			<tr>
 
 			<tr>
-				<td colspan="4"><br></td>		
+				<td colspan="4"><br></td>
 			</tr>
 
 			<tr>
@@ -202,11 +202,11 @@ ADDITIONAL REQUESTS
 <!---
 SPECIAL REQUEST
 --->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR rc.Policy.Policy_AllowRequests>
 						<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
 					</cfif>
-				
+
 				</td>
 
 			</tr>
