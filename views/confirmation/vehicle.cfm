@@ -20,7 +20,7 @@
 					</tr>
 					<tr>
 						<td rowspan="4"></td>
-						<td rowspan="4" width="14%">
+						<td rowspan="4" width="12%">
 							<img alt="#rc.Vehicle.getVendorCode()#" src="assets/img/cars/#rc.Vehicle.getVendorCode()#.png">
 						</td>
 						<td <!--- width="200" ---> colspan="2">
@@ -68,7 +68,7 @@
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="6%"></td>
-							<td width="14%">
+							<td width="12%">
 								<cfif arrayLen(rc.vehicleTravelers) GT 1>
 									<span class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></span>
 								</cfif>

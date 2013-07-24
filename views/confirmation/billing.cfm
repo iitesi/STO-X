@@ -1,6 +1,6 @@
 <!--- <cfdump var="#rc.Traveler[1].getBookingDetail()#" label="rc.Traveler.bookingDetail" abort> --->
 <cfoutput>
-	<div class="carrow" style="width:946px;margin-bottom:26px;">
+	<div class="carrow" style="width:946px;padding:0px;margin-bottom:26px;">
 		<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 			<cfset totalText = "Total" />
 			<cfset totalAmount = 0 />
@@ -123,7 +123,9 @@
 					</td>
 				</tr>
 			</table>
-			<hr />
+			<cfif travelerIndex NEQ arrayLen(rc.Travelers)>
+				<hr />
+			</cfif>
 		</cfloop>
 	</div>
 </cfoutput>

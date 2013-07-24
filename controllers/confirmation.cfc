@@ -22,6 +22,9 @@
 			<cfset rc.Traveler[travelerIndex] = session.searches[rc.SearchID].travelers[travelerIndex] />
 			<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
 				<cfset arrayAppend(rc.airTravelers, travelerIndex) />
+				<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getAirReasonCode())>
+					<cfset rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason(rc.Traveler[travelerIndex].getBookingDetail().getAirReasonCode()) />
+				</cfif>
 			</cfif>
 			<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
 				<cfset arrayAppend(rc.hotelTravelers, travelerIndex) />

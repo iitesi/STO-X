@@ -14,54 +14,61 @@
 								<span class="ribbon ribbon-l-cont"></span>
 							</cfif>
 						</td>
-						<td colspan="9">
+						<td colspan="2">
 							<h2>FLIGHT</h2>
 						</td>
 					</tr>
 					<tr>
-						<td rowspan="4"></td>
-						<td rowspan="4" width="14%">
+						<td></td>
+						<td width="12%">
 							<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br />
 							<strong>#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#</strong>
 						</td>
-
-						<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
-							<cfset count = 0>
-							<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
-								<cfset count++>
-								<td>
-									<cfif count EQ 1>
-										<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
-									</cfif>
-								</td>
-								<td title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
-									#segment.Carrier# #segment.FlightNumber#
-								</td>
-								<td title="#application.stAirports[segment.Origin]# - #application.stAirports[segment.Destination]#">
-									#segment.Origin# - #segment.Destination#
-								</td>
-								<td>
-									#timeFormat(group.DepartureTime, 'h:mmt')# - #timeFormat(group.ArrivalTime, 'h:mmt')#
-								</td>
-								<td>
-									#uCase(segment.Cabin)#
-								</td>
-								<td>
-									SEAT xxx <!--- TO DO: Seat --->
-								</td>
-								<td>
-									#uCase(application.stEquipment[segment.Equipment])#
-								</td>
-								<td>
-									#group.TravelTime#
-								</td>
-								</tr>
-								<tr>
+						<td width="82%">
+							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+								<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
+									<cfset count = 0>
+									<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
+										<cfset count++>
+										<tr>
+											<td width="110">
+												<cfif count EQ 1>
+													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
+												</cfif>
+											</td>
+											<td width="80" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
+												#segment.Carrier# #segment.FlightNumber#
+											</td>
+											<td width="110" title="#application.stAirports[segment.Origin]# - #application.stAirports[segment.Destination]#">
+												#segment.Origin# - #segment.Destination#
+											</td>
+											<td width="120">
+												#timeFormat(group.DepartureTime, 'h:mmt')# - #timeFormat(group.ArrivalTime, 'h:mmt')#
+											</td>
+											<td width="80">
+												#uCase(segment.Cabin)#
+											</td>
+											<td width="100">
+												SEAT xxx <!--- TO DO: Seat --->
+											</td>
+											<td>
+												#uCase(application.stEquipment[segment.Equipment])#
+											</td>
+											<td>
+												<cfif count NEQ 1>
+													#group.TravelTime#
+												</cfif>
+											</td>
+										</tr>
+									</cfloop>
 									<cfif groupIndex NEQ (structCount(rc.Air.Groups) - 1)>
-										<td colspan="8"><hr class="dashed" /></td></tr><tr>
+										<tr>
+											<td colspan="8"><hr class="dashed" /></td>
+										</tr>
 									</cfif>
-							</cfloop>
-						</cfloop>
+								</cfloop>
+							</table>
+						</td>
 					</tr>
 				</table>
 			</td>
@@ -69,48 +76,49 @@
 		<tr><td style="height:12px;"></td></tr>
 		<!--- For each traveler with a flight --->
 		<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">
+			<!--- <cfdump var="#rc.Traveler[travelerIndex].getBookingDetail()#" abort> --->
 			<tr>
 				<td>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="6%"></td>
-							<td width="14%">
+							<td width="12%">
 								<cfif arrayLen(rc.vehicleTravelers) GT 1>
 									<span class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></span>
 								</cfif>
 							</td>
 							<cfif arrayLen(rc.Air.aPolicies)>
-									<td width="12%"><strong>OUT OF POLICY</strong></td>
-									<td colspan="3">#ArrayToList(rc.Air.getAPolicies())#</td>
-									<td width="8%"><strong>Reason</strong></td>
-									<td>#rc.Traveler[travelerIndex].getBookingDetail().getAirReasonCode()#</td>
+									<td width="110"><strong>OUT OF POLICY</strong></td>
+									<td colspan="3">#ArrayToList(rc.Air.aPolicies)#</td>
+									<td width="80"><strong>Reason</strong></td>
+									<td>#rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription#</td>
 								</tr>
 								<tr>
 									<td colspan="2"></td>						
 							</cfif>
-							<td width="12%"><span class="blue"><strong>DL Confirmation</strong></span></td>
-							<td width="8%"><span class="blue"><strong>xxx<!--- TO DO: #rc.Air.getConfirmation()# ---></strong></span></td>
-							<td width="8%"><strong>DL Flyer ##</strong></td>
-							<td>xxx<!--- TO DO: Flyer # ---></td>
+							<td width="110"><span class="blue"><strong>DL Confirmation</strong></span></td>
+							<td width="80"><span class="blue"><strong>xxx<!--- TO DO: #rc.Air.getConfirmation()# ---></strong></span></td>
+							<td width="110"><strong>DL Flyer ##</strong></td>
+							<td width="120">xxx<!--- TO DO: Flyer # ---></td>
 							<td><strong>Seat Pref</strong></td>
 							<td>#rc.Traveler[travelerIndex].getWindowAisle()#</td>
 						</tr>
 						<!--- If special service or note --->
 						<tr>
 							<td colspan="4"></td>
-							<td><strong>Special Svc</strong></td>
-							<td>
+							<td valign="top"><strong>Special Svc</strong></td>
+							<td valign="top">
 								<cfif len(#rc.Traveler[travelerIndex].getSpecialNeeds()#)>
 									<cfswitch expression="#rc.Traveler[travelerIndex].getSpecialNeeds()#">
-										<cfcase value="BLND">BLIND</cfcase>
-										<cfcase value="DEAF">DEAF</cfcase>
-										<cfcase value="UMNR">UNACCOMPANIED MINOR</cfcase>
-										<cfcase value="WCHR">WHEELCHAIR</cfcase>
+										<cfcase value="BLND">Blind</cfcase>
+										<cfcase value="DEAF">Deaf</cfcase>
+										<cfcase value="UMNR">Unaccompanied Minor</cfcase>
+										<cfcase value="WCHR">Wheelchair</cfcase>
 									</cfswitch>
 								</cfif>								
 							</td>
-							<td><strong>Note</strong></td>
-							<td>#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
+							<td valign="top"><strong>Note</strong></td>
+							<td valign="top">#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
 						</tr>
 						<cfif travelerIndex NEQ arrayLen(rc.vehicleTravelers)>
 							<tr>
