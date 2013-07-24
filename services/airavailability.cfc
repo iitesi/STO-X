@@ -52,7 +52,7 @@
 			AND sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
-		
+
 		<cfreturn >
 	</cffunction>
 
@@ -145,19 +145,33 @@
 		<cfreturn sThreadName>
 	</cffunction>
 
-	<cffunction name="prepareSoapHeader" returntype="string" output="false">
-		<cfargument name="Filter"   	required="true">
-		<cfargument name="Group"	 	required="true">
-		<cfargument name="sNextRef"	 	required="true">
-		<cfargument name="Account"      required="true">
+	<cffunction name="prepareSoapHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Group" required="true">
+		<cfargument name="sNextRef" required="true">
+		<cfargument name="Account" required="true">
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<cfquery name="local.qSearchLegs">
-			SELECT Depart_City, Arrival_City, Depart_DateTime, Depart_TimeType
-			FROM Searches_Legs
-			WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
+				SELECT Depart_City
+				, Arrival_City
+				, Depart_DateTime
+				, Depart_TimeType
+				, Depart_DateTimeActual
+				, Depart_DateTimeStart
+				, Depart_DateTimeEnd
+				FROM Searches_Legs
+				WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
+				ORDER BY Depart_DateTime
 			</cfquery>
 		</cfif>
+
+<!---
+****************************************************************************
+				ANY CHANGES MADE BELOW PROBABLY NEED TO ALSO BE MADE IN
+						   lowfare.cfc   prepareSoapHeader()
+****************************************************************************
+--->
 
 		<cfsavecontent variable="local.message">
 			<cfoutput>
@@ -172,24 +186,87 @@
 							<cfif arguments.Group EQ 0>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
-										<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+										<cfif arguments.filter.getAirFromCityCode() EQ 1>
+											<com:City Code="#arguments.Filter.getDepartCity()#" />
+										<cfelse>
+											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+										</cfif>
 									</air:SearchOrigin>
 									<air:SearchDestination>
-										<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+										<cfif arguments.filter.getAirToCityCode() EQ 1>
+											<com:City Code="#arguments.Filter.getArrivalCity()#" />
+										<cfelse>
+											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+										</cfif>
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
+
+									<cfif arguments.filter.getDepartDateTimeActual() EQ "Anytime">
+										<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
+									<cfelse>
+										<cfif arguments.filter.getDepartTimeType() EQ "A">
+											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+												<!--- <com:TimeRange EarliestTime="#DateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" /> --->
+											</air:SearchArvTime>
+										<cfelse>
+											<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+												<!--- <com:TimeRange EarliestTime="#DateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" /> --->
+											</air:SearchDepTime>
+										</cfif>
+									</cfif>
+
+									<air:AirLegModifiers>
+										<cfif NOT arrayIsEmpty(aCabins)>
+											<air:PermittedCabins>
+												<cfloop array="#aCabins#" index="local.sCabin">
+													<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+												</cfloop>
+											</air:PermittedCabins>
+										</cfif>
+									</air:AirLegModifiers>
 								</air:SearchAirLeg>
 							</cfif>
+
 							<cfif arguments.Group EQ 1 AND arguments.Filter.getAirType() EQ 'RT'>
 								<air:SearchAirLeg>
 									<air:SearchOrigin>
-										<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+										<cfif arguments.filter.getAirToCityCode() EQ 1>
+											<com:City Code="#arguments.Filter.getArrivalCity()#" />
+										<cfelse>
+											<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+										</cfif>
 									</air:SearchOrigin>
 									<air:SearchDestination>
-										<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+										<cfif arguments.filter.getAirFromCityCode() EQ 1>
+											<com:City Code="#arguments.Filter.getDepartCity()#" />
+										<cfelse>
+											<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+										</cfif>
 									</air:SearchDestination>
-									<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+									<cfif arguments.filter.getArrivalDateTimeActual() EQ "Anytime">
+										<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+									<cfelse>
+										<cfif arguments.filter.getDepartTimeType() EQ "A">
+											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+												<!--- <com:TimeRange EarliestTime="#DateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" /> --->
+											</air:SearchArvTime>
+										<cfelse>
+											<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+												<!--- <com:TimeRange EarliestTime="#DateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" /> --->
+											</air:SearchDepTime>
+										</cfif>
+									</cfif>
+									<air:AirLegModifiers>
+										<cfif NOT arrayIsEmpty(aCabins)>
+											<air:PermittedCabins>
+												<cfloop array="#aCabins#" index="local.sCabin">
+													<air:CabinClass  Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+												</cfloop>
+											</air:PermittedCabins>
+										</cfif>
+									</air:AirLegModifiers>
 								</air:SearchAirLeg>
+
+							<!--- for multi-city trips loop over SearchesLegs --->
 							<cfelseif arguments.Group NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
 								<cfset local.cnt = 0>
 								<cfloop query="qSearchLegs">
@@ -197,19 +274,60 @@
 									<cfif arguments.Group EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
-												<com:Airport Code="#qSearchLegs.Depart_City#" />
+												<cfif arguments.filter.getAirFromCityCode() EQ 1>
+													<com:City Code="#arguments.Filter.getDepartCity()#" />
+												<cfelse>
+													<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+												</cfif>
 											</air:SearchOrigin>
 											<air:SearchDestination>
-												<com:Airport Code="#qSearchLegs.Arrival_City#" />
+												<cfif arguments.filter.getAirToCityCode() EQ 1>
+													<com:City Code="#arguments.Filter.getArrivalCity()#" />
+												<cfelse>
+													<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+												</cfif>
 											</air:SearchDestination>
-											<air:SearchDepTime PreferredTime="#DateFormat(arguments.Filter.getDepartDateTime(), 'yyyy-mm-dd')#" />
+
+											<cfif qSearchLegs.Depart_DateTimeActual EQ "Anytime">
+												<air:SearchArvTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+											<cfelse>
+												<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTime, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(qSearchLegs.Depart_DateTimeStart, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeStart, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(qSearchLegs.Depart_DateTimeEnd, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeEnd, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												</air:SearchDepTime>
+											</cfif>
+
+											<air:AirLegModifiers>
+												<cfif NOT arrayIsEmpty(aCabins)>
+													<air:PermittedCabins>
+														<cfloop array="#aCabins#" index="local.sCabin">
+															<air:CabinClass  Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+														</cfloop>
+													</air:PermittedCabins>
+												</cfif>
+											</air:AirLegModifiers>
+
 										</air:SearchAirLeg>
 									</cfif>
 								</cfloop>
 							</cfif>
 							<cfif arguments.sNextRef EQ ''>
 								<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="true" AllowChangeOfAirport="false" ProhibitOvernightLayovers="true" MaxSolutions="300" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
+									<cfif Len(arguments.filter.getAirlines()) EQ 2>
+										<air:PermittedCarriers>
+											<com:Carrier Code="#arguments.filter.getAirlines()#"/>
+										</air:PermittedCarriers>
+									<cfelse>
+										<air:ProhibitedCarriers>
+											<com:Carrier Code="G4"/>
+											<com:Carrier Code="NK"/>
+											<com:Carrier Code="VX"/>
+											<com:Carrier Code="ZK"/>
+										</air:ProhibitedCarriers>
+									</cfif>
 								</air:AirSearchModifiers>
+								<com:SearchPassenger Code="ADT" />
+								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
+								</air:AirPricingModifiers>
 								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" />
 							</cfif>
 						</air:AvailabilitySearchReq>
