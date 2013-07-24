@@ -165,7 +165,7 @@
 		</cfsavecontent>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="#hotelPolicies#" href="##" />
+			<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 				Hotel payment and cancellation policy
 			</a>
 		</div>
@@ -184,7 +184,7 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
+			<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
 				Car payment and cancellation policy
 			</a>
 		</div>

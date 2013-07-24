@@ -4,8 +4,9 @@
 		<cfargument name="rc">
 
 		<cfparam name="rc.travelerNumber" default="1">
-		<cfset rc.errorMessage = []>
-		
+		<cfset local.errorMessage = []>
+		<cfset local.errorType = ''>
+
 		<cfset rc.Traveler = session.searches[rc.searchID].Travelers[rc.travelerNumber]>
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
@@ -32,6 +33,21 @@
 		<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
 		<cfset statmentInformation = trim(statmentInformation)>
 
+		<cfset local.responseMessage = ''>
+		<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																						, searchID = rc.searchID )>
+
+		<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, pcc = rc.Traveler.getBAR()[1].PCC
+																						, bar = rc.Traveler.getBAR()[1].Name
+																						, par = rc.Traveler.getPAR()
+																						, searchID = rc.searchID)>
+		<cfset local.profileFound = true>
+		<cfif parResponse.error>
+			<cfset local.profileFound = false>
+		</cfif>
+
 		<!--- Sell Air --->
 		<cfif rc.airSelected
 			AND rc.Traveler.getBookingDetail().getAirNeeded()>
@@ -44,6 +60,7 @@
 																					, nTrip = rc.Air.nTrip
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 1
+																					, profileFound = profileFound
 																				)>
 
 			<cfif NOT structIsEmpty(trip)>
@@ -57,35 +74,35 @@
 																					 )>
 
 	<!--- <cfdump var="#rc.response#" /><cfabort /> --->
+				<cfset rc.Air.UniversalLocatorCode = ''>
 				<cfset rc.Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = rc.Air
 																						, response = rc.response )>
 
-				<!--- <cfif rc.Hotel.getConfirmation() EQ ''>
-					<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-					<cfdump var="#rc.errorMessage#">
-					<cfset providerLocatorCode = ''>
-					<cfset universalLocatorCode = ''>
-				<cfelse> --->
+				<cfif rc.Air.UniversalLocatorCode EQ ''>
+					<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+					<cfdump var="#errorMessage#">
+					<cfset errorType = 'air'><cfabort />
+				<cfelse>
 					<cfset providerLocatorCode = rc.Air.ProviderLocatorCode>
 					<cfset universalLocatorCode = rc.Air.UniversalLocatorCode>
 					<cfdump var="Air">
 					<cfdump var="#providerLocatorCode#">
 					<cfdump var="#universalLocatorCode#">
-				<!--- </cfif> --->
+				</cfif>
 				<cfset session.searches[rc.SearchID].stItinerary.Air = rc.Air>
 
 				<cfif providerLocatorCode NEQ ''>
 					<cfset version++>
 				</cfif>
 			<cfelse>
-				<cfset arrayAppend( rc.errorMessage, 'Could not price record.' )>
+				<cfset arrayAppend( errorMessage, 'Could not price record.' )>
 			</cfif>
 		</cfif>
 
 		<!--- Sell Hotel --->
 		<cfif rc.hotelSelected
 			AND rc.Traveler.getBookingDetail().getHotelNeeded()
-			AND arrayIsEmpty(rc.errorMessage)>
+			AND arrayIsEmpty(errorMessage)>
 
 			<cfset rc.Hotel.getProviderLocatorCode('')>
 			<cfset rc.Hotel.getUniversalLocatorCode('')>
@@ -103,7 +120,8 @@
 																					, response = rc.response )>
 
 			<cfif rc.Hotel.getConfirmation() EQ ''>
-				<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+				<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+				<cfset errorType = 'hotel'>
 			<cfelse>
 				<cfset providerLocatorCode = rc.Hotel.getProviderLocatorCode()>
 				<cfset universalLocatorCode = rc.Hotel.getUniversalLocatorCode()>
@@ -118,7 +136,7 @@
 		<!--- Sell Vehicle --->
 		<cfif rc.vehicleSelected
 			AND rc.Traveler.getBookingDetail().getCarNeeded()
-			AND arrayIsEmpty(rc.errorMessage)>
+			AND arrayIsEmpty(errorMessage)>
 
 			<cfset rc.Vehicle.getProviderLocatorCode('')>
 			<cfset rc.Vehicle.getUniversalLocatorCode('')>
@@ -171,7 +189,8 @@
 																							, response = rc.response )>
 			<!--- Validate the confirmation --->
 			<cfif rc.Vehicle.getConfirmation() EQ ''>
-				<cfset rc.errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+				<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
+				<cfset errorType = 'vehicle'>
 			<cfelse>
 				<!--- <cfdump var="#rc.Vehicle#"> --->
 				<cfset providerLocatorCode = rc.Vehicle.getProviderLocatorCode()>
@@ -184,13 +203,77 @@
 			</cfif>
 		</cfif>
 
-		<cfif arrayIsEmpty(rc.errorMessage)>
-			<cfdump var="providerLocatorCode - #providerLocatorCode#">
-			<cfdump var="universalLocatorCode - #universalLocatorCode#">
-		<cfelse>
-			<cfdump var="#rc.errorMessage#">
+		<cfif arrayIsEmpty(errorMessage)>
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, pnr = providerLocatorCode
+																							, searchID = rc.searchID )>
+		
+			<cfdump var="#responseMessage#" />
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').moveBARPAR( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, pcc = rc.Traveler.getBAR()[1].PCC
+																							, bar = rc.Traveler.getBAR()[1].Name
+																							, par = rc.Traveler.getPAR()
+																							, searchID = rc.searchID )>
+
+			<cfdump var="#responseMessage#" />
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, userID = rc.Filter.getUserID()
+																							, searchID = rc.searchID )>
+
+			<cfdump var="#responseMessage#" />
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID )>
+		
+			<cfdump var="#responseMessage#" />
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID )>
+		
+			<cfdump var="#responseMessage#" />
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID )>
+		
+			<cfdump var="#responseMessage#" />
+			
+			<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID )>
+
+			<cfabort />
 		</cfif>
-		<cfabort>
+
+		<cfif arrayIsEmpty(errorMessage)>
+			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
+		<cfelse>
+			<cfset local.errorList = arrayToList(rc.errorMessage)>
+			<cfif errorType EQ 'hotel'
+				AND (find('NEED GUEST CREDIT CARD IN CARD DEPOSIT FORMAT TO BOOK', errorList)
+				OR find('INVALID /G- TYPE OR FORMAT', errorList)
+				OR find('INVALID NEED DEPOSIT IN /G- FIELD', errorList)
+				OR find('ADVANCED DEPOSIT REQUIRED', errorList)
+				OR find('INVALID GUARANTEE INDICATOR', errorList)
+				OR find('DEPOSIT REQ', errorList)
+				OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList)
+				OR find('DEPOSIT REQUIRED PLEASE CORRECT', errorList))>
+				<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
+				<cfset rc.message.addError('It appears the property you are trying to book requires a prepayment. Please review the hotel payment and cancellation policy and submit your booking again.')>
+			<cfelse>
+				<cfset rc.message.addError(errorList)>
+			</cfif>
+			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
+		</cfif>
+
+<cfabort />
 
 		<cfreturn />
 	</cffunction>
