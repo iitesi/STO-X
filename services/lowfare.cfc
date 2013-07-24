@@ -180,18 +180,8 @@
 		<cfargument name="Account" required="false"	default="">
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
-			<cfquery name="local.qSearchLegs">
-				SELECT Depart_City
-				, Arrival_City
-				, Depart_DateTime
-				, Depart_TimeType
-				, Depart_DateTimeActual
-				, Depart_DateTimeStart
-				, Depart_DateTimeEnd
-				FROM Searches_Legs
-				WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
-				ORDER BY Depart_DateTime
-			</cfquery>
+			<!--- grab leg query out of filter --->
+			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->

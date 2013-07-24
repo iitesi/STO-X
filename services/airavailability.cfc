@@ -152,18 +152,8 @@
 		<cfargument name="Account" required="true">
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
-			<cfquery name="local.qSearchLegs">
-				SELECT Depart_City
-				, Arrival_City
-				, Depart_DateTime
-				, Depart_TimeType
-				, Depart_DateTimeActual
-				, Depart_DateTimeStart
-				, Depart_DateTimeEnd
-				FROM Searches_Legs
-				WHERE Search_ID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_numeric" />
-				ORDER BY Depart_DateTime
-			</cfquery>
+			<!--- grab leg query out of filter --->
+			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
 <!---
@@ -269,30 +259,30 @@
 							<!--- for multi-city trips loop over SearchesLegs --->
 							<cfelseif arguments.Group NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
 								<cfset local.cnt = 0>
-								<cfloop query="qSearchLegs">
+								<cfloop query="local.qSearchLegs">
 									<cfset cnt++>
 									<cfif arguments.Group EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
 												<cfif arguments.filter.getAirFromCityCode() EQ 1>
-													<com:City Code="#arguments.Filter.getDepartCity()#" />
+													<com:City Code="#depart_city#" />
 												<cfelse>
-													<com:Airport Code="#arguments.Filter.getDepartCity()#" />
+													<com:Airport Code="#depart_city#" />
 												</cfif>
 											</air:SearchOrigin>
 											<air:SearchDestination>
 												<cfif arguments.filter.getAirToCityCode() EQ 1>
-													<com:City Code="#arguments.Filter.getArrivalCity()#" />
+													<com:City Code="#arrival_city#" />
 												<cfelse>
-													<com:Airport Code="#arguments.Filter.getArrivalCity()#" />
+													<com:Airport Code="#arrival_city#" />
 												</cfif>
 											</air:SearchDestination>
 
-											<cfif qSearchLegs.Depart_DateTimeActual EQ "Anytime">
-												<air:SearchArvTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+											<cfif local.qSearchLegs.Depart_DateTimeActual EQ "Anytime">
+												<air:SearchArvTime PreferredTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
 											<cfelse>
-												<air:SearchDepTime PreferredTime="#DateFormat(qSearchLegs.Depart_DateTime, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTime, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
-													<com:TimeRange EarliestTime="#DateFormat(qSearchLegs.Depart_DateTimeStart, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeStart, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(qSearchLegs.Depart_DateTimeEnd, 'yyyy-mm-dd') & 'T' & TimeFormat(qSearchLegs.Depart_DateTimeEnd, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
+												<air:SearchDepTime PreferredTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTime, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
+													<com:TimeRange EarliestTime="#DateFormat(local.qSearchLegs.Depart_DateTimeStart, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTimeStart, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(local.qSearchLegs.Depart_DateTimeEnd, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTimeEnd, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
 												</air:SearchDepTime>
 											</cfif>
 
