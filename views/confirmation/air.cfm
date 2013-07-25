@@ -52,7 +52,9 @@
 												SEAT xxx <!--- TO DO: Seat --->
 											</td>
 											<td>
-												#uCase(application.stEquipment[segment.Equipment])#
+												<cfif segment.Equipment NEQ ''>
+													#uCase(application.stEquipment[segment.Equipment])#
+												</cfif>
 											</td>
 											<td>
 												<cfif count NEQ 1>
