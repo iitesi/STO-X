@@ -9,7 +9,7 @@
 <div id="popupModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="popupModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-		<h3 id="popupModalHeader"></h3>
+		<h3 id="popupModalHeader">Flight Details</h3>
 	</div>
 	<div id="popupModalBody" class="modal-body">
 		<!--- populated via js --->
