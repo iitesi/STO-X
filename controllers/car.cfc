@@ -53,7 +53,7 @@
 		</cfif>
 
 		<cfif arguments.rc.Filter.getHotel() AND NOT StructKeyExists(session.searches[arguments.rc.searchID].stItinerary, "Hotel")>
-			<cfset variables.fw.redirect("hotel.availability?SearchID=#arguments.rc.searchID#") />
+			<cfset variables.fw.redirect("hotel.search?SearchID=#arguments.rc.searchID#") />
 		<cfelseif arguments.rc.Filter.getHotel()
 			AND StructKeyExists(session.searches[arguments.rc.searchID].stItinerary, "Hotel")
 			AND application.accounts[arguments.rc.Filter.getAcctID()].couldYou EQ 1>
