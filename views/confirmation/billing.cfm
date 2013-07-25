@@ -12,9 +12,10 @@
 						<div class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></div>
 						<div class="blue"><strong>Reservation Code: ABVDE4 <!--- TO DO: Reservation Code ---></strong></div>
 						<div style="height:24px;"></div>
-						<div><strong>Department:</strong> IT Department <!--- TO DO: Department ---></strong></div>
-						<div><strong>Cost Center:</strong> 6548787 <!--- TO DO: Cost Center ---></strong></div>
-						<div><strong>Job Code:</strong> 1243434 <!--- TO DO: Job Code ---></strong></div>
+
+						<cfloop array="#rc.Traveler[travelerIndex].getOrgUnit()#" index="orgUnitIndex" item="orgUnit">
+							<div><strong>#orgUnit.getOUName()#:</strong> #orgUnit.getValueDisplay()#</strong></div>
+						</cfloop>
 					</td>
 					<td valign="top">
 						<table width="100%">

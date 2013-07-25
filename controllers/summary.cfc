@@ -171,8 +171,14 @@
 				<cfset inputName = orgUnit.getOUType() & orgUnit.getOUPosition()>
 				<cfif orgunit.getOUFreeform()>
 					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueReport( rc[inputName] )>
+					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueDisplay( rc[inputName] )>
 				<cfelse>
 					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueID( rc[inputName] )>
+					<cfset local.qOUValue = fw.getBeanFactory().getBean('OrgUnitService').getOrgUnitValues( ouID = orgUnit.getOUID()
+																											, valueID = rc[inputname]
+																											, returnFormat = 'query' )>
+					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueReport( qOUValue.Value_Report )>
+					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueDisplay( qOUValue.Value_Display )>
 				</cfif>
 			</cfloop>
 			<cfset rc.Traveler.setBirthdate( birthdate )>

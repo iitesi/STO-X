@@ -46,6 +46,7 @@
 
 	<cffunction name="getOrgUnitValues" returntype="any" access="remote" output="false" returnformat="JSON">
 		<cfargument name="ouID" required="true">
+		<cfargument name="valueID" required="false" default="0">
 		<cfargument name="conditionalSort1" required="false" default="">
 		<cfargument name="conditionalSort2" required="false" default="">
 		<cfargument name="conditionalSort3" required="false" default="">
@@ -54,6 +55,7 @@
 		<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
 		<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
+																			, valueID = arguments.valueID
 																			, conditionalSort1 = arguments.conditionalSort1
 																			, conditionalSort2 = arguments.conditionalSort2
 																			, conditionalSort3 = arguments.conditionalSort3
