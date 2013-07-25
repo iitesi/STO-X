@@ -293,6 +293,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			var amenity = $scope.filterItems.amenities[j];
 			amenity.checked = false;
 		}
+		for( var r=0; r < $scope.filterItems.ratings.length; r++ ){
+			var rating = $scope.filterItems.ratings[r];
+			rating.checked = false;
+		}
 		$scope.filterItems.noSoldOut = false;
 		$scope.filterItems.inPolicyOnly = false;
 		$scope.filterItems.vendorsFilterApplied = false;
