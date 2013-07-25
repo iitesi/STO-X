@@ -88,15 +88,18 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.getSearchResults = function( requery ){
 		SearchService.doSearch( $scope.searchId, requery )
 			.then( function(result){
-				$scope.hotels = result;
-				$scope.totalProperties = result.length;
+				$scope.hotels = result.hotels;
+				$scope.filteredHotels = result.hotels;
+				$scope.totalProperties = result.hotels.length;
 				$scope.searchCompleted = true;
+				$scope.messages = result.messages;
+				$scope.errors = result.errors;
 
 				//Build vendor array for filter
-				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result );
+				$scope.buildVendorArrayFromSearchResults( $scope.filterItems.vendors, result.hotels );
 
 				//Build the amenities array for filter
-				$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result );
+				$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result.hotels );
 
 				$('#searchWindow').modal('hide');
 			});

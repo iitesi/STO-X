@@ -36,15 +36,18 @@ services.factory( "SearchService", function( $http ){
 	SearchService.doSearch = function( searchId, requery ) {
 		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&requery=" + requery )
 			.then( function(response) {
-				var hotels = [];
+				var result = {};
+				result.hotels = [];
 
-				for (var i = 0; i < response.data.length; i++) {
+				for (var i = 0; i < response.data.data.length; i++) {
 					var h = new Hotel();
-					h.populate( response.data[i] );
-					hotels.push( h );
+					h.populate( response.data.data[i] );
+					result.hotels.push( h );
 				}
-				return hotels;
-				});
+				result.messages = response.data.messages;
+				result.errors = response.data.errors;
+				return result;
+			});
 	}
 
 	SearchService.loadPolicy = function( policyId ){
