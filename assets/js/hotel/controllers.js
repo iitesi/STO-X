@@ -19,12 +19,20 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.filterItems.resultsPerPage = 20;
 	$scope.filterItems.vendors = [];
 	$scope.filterItems.amenities = [];
+	$scope.filterItems.ratings = [
+		{rating: 5, checked: false},
+		{rating: 4, checked: false},
+		{rating: 3, checked: false},
+		{rating: 2, checked: false},
+		{rating: 1, checked: false}
+	];
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 	$scope.filterItems.vendorsFilterApplied = false;
 	$scope.filterItems.amenitiesFilterApplied = false;
 	$scope.filterItems.showVendorFilter = false;
 	$scope.filterItems.showAmenitiesFilter = false;
+	$scope.filterItems.showRatingsFilter = false;
 
 
 	/* Methods that this controller uses to get work done */
@@ -371,6 +379,38 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					if( found == false ){
 						display = false;
 						break;
+					}
+				}
+			}
+		}
+
+		// Ratings check
+		if( display ){
+			var selectedRatings = [];
+
+			//Check to see if the user has selected any ratings to filter by
+			for( var r=0; r < $scope.filterItems.ratings.length; r++ ){
+				var item = $scope.filterItems.ratings[r];
+				if( item.checked ){
+					selectedRatings.push( item.rating );
+				}
+			}
+
+			if( selectedRatings.length ){
+				if( hotel.StarRating == 0 ){
+					display = false;
+				} else {
+					var found = false;
+
+					for( var sr=0; sr < selectedRatings.length; sr ++ ){
+						if( hotel.StarRating == selectedRatings[sr] ){
+							found = true;
+							break;
+						}
+					}
+
+					if( found == false ){
+						display = false;
 					}
 				}
 			}
