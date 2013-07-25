@@ -56,12 +56,10 @@ $(document).ready(function(){
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+
 		// reset sorting and filters
 		sortAir( sortbyprice );
-
-		// TODO: hack to show all flights by default
-		$('[id^="flight"]').show();
-		filterAirDelay.run();
+		resetAirDelay.run();
 	});
 
 	$('.filterby').on('click', function() {
@@ -195,11 +193,12 @@ function scrollTo(id)
   $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
 }
 
-// This throttles requests to filter() so if the person quickly clicks several
+// This throttles requests to filterAir() so if the person quickly clicks several
 // filters we don't fire filterAir() multiple times.
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/
 
 var filterAirDelay = new FunctionGuard(filterAir);
+var resetAirDelay = new FunctionGuard(filterAir, 1000, null, 'true');
 
 function FunctionGuard(fn, quietTime, context /*,fixed args*/) {
     this.fn = fn;

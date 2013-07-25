@@ -100,9 +100,8 @@ function getUnusedTickets(userid, acctid) {
 	6	Cabin Class				Y, C, F
 	7	Stops							0/1/2
 ----------------------------------------------------------------------*/
-function filterAir() {
+function filterAir(reset) {
 	var carriercount = 0;
-	var showCount = 0;
 	var hideCount = 0;
 	var loopcnt = 0;
 	var classy = $("#ClassY:checked").val();
@@ -113,52 +112,89 @@ function filterAir() {
 	var nonstops = $("#NonStops").val();
 	var inpolicy = $("#InPolicy").val();
 	var singlecarrier = $("#SingleCarrier").val();
+	var showCount = 0;
+	var showFlight = false;
 
-	// console.log('-------------------------');
-	// console.log('Y - '+classy);
-	// console.log('C - '+classc);
-	// console.log('F - '+classf);
-	// console.log('0 - '+fare0);
-	// console.log('1 - '+fare1);
-	// console.log('nonstops - '+nonstops);
-	// console.log('inpolicy - '+inpolicy);
-	// console.log('singlecarrier - '+singlecarrier);
-	// console.log('-------------------------');
+	// see if any airlines are checked in filter
+	var airfields = $('#airlines').find('input[name="carrier"]:checked');
 
-	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
-		var flight = flightresults[loopcnt];
-		if ((flight[6] == 'Y' && classy == undefined)
-			|| (flight[6] == 'C' && classc == undefined)
-			|| (flight[6] == 'F' && classf == undefined)
-			|| (flight[4] == 0 && fare0 == undefined)
-			|| (flight[4] == 1 && fare1 == undefined)
-			|| (nonstops == 1 && flight[7] != 0)
-			|| (inpolicy == 1 && flight[1] != 1)
-			|| (singlecarrier == 1 && flight[2] != 0)) {
 
-			// if the flight matches any of the criteria above - we'll hide it
-			$( '#flight' + flight[0] ).hide( 'fade' );
-		}	else {
-			// check which airlines are checked
-			carriercount = 0;
-			for (var i = 0; i < flight[3].length; i++) {
-				if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
-					carriercount++;
-				}
-			} // for flight loop
 
-			if (carriercount == 0) {
+	// reset is passed from air/filter.js  resetAirDelay() and is used to clear filters
+	if(reset != 'true'){
+		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
+			var flight = flightresults[loopcnt];
+
+// console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
+// console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
+// console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare0 = ' + fare0);
+// console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
+// console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
+// console.log('-------------------------------')
+
+			if (
+					(flight[1] == 0 && inpolicy == 1 )
+					|| (flight[2] == 1 && singlecarrier == 1 )
+					|| (flight[7] == 1 && nonstops == 1)
+					// (flight[6] == 'Y' && classy == undefined)
+					// || (flight[6] == 'C' && classc == undefined)
+					// || (flight[6] == 'F' && classf == undefined)
+					// || (flight[4] == 0 && fare0 == undefined)
+					// || (flight[4] == 1 && fare1 == undefined)
+					// || (flight[7] != 0 && nonstops == 1)
+					// || (flight[1] != 1 && inpolicy == 1 )
+					// || (flight[2] != 0 && singlecarrier == 1 )
+				) {
+
+				// if the flight matches any of the criteria above - we'll hide it
 				$( '#flight' + flight[0] ).hide( 'fade' );
 			}	else {
-				showCount++;
-				$( '#flight' + flight[0] ).show( 'fade' );
-			} // (carriercount == 0)
-		} // if/else
-	} // for loop
+				// check which airlines are checked
 
-	console.log('Show Count =' + showCount);
-	console.log('Hide Count =' + hideCount);
-	console.log(flightresults.length);
+				// set some defaults
+				carriercount = 0;
+				showFlight = false;
+
+		// check first to see if ANY airlines are checked
+		// if not - don't loop through this carriers
+		if (airfields.length) {
+				showFlight = false;
+				for (var i = 0; i < flight[3].length; i++) {
+					if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
+						carriercount++;
+					} // if carrier is checked
+				} // for flight loop
+
+				if (carriercount != 0) {
+					showCount++;
+					showFlight = true;
+				} // if (carriercount == 0)
+		} else {
+			showCount++;
+			showFlight = true;
+			// $( '#flight' + flight[0] ).show( 'fade' );
+		} // if airfields.length
+
+
+		if(showFlight == true){
+			$( '#flight' + flight[0] ).show( 'fade' );
+		} else {
+			$( '#flight' + flight[0] ).hide( 'fade' );
+		}
+
+
+			} // if/else - check of all filter switches
+		} // for loop
+	} else {
+			// reset showcount to total # of flights
+		showCount = flightresults.length;
+		// show all badges
+		$('[id^="flight"]').show();
+	} // if reset
+
+	// console.log('Show Count =' + showCount);
+	// console.log('Hide Count =' + hideCount);
+	// console.log(flightresults.length);
 
 	if(showCount == 0){
 		$('.noFlightsFound').show();
