@@ -1,4 +1,3 @@
-<cfoutput>
 <!--- AIR CODES
 -----------------------
 1 = refundable
@@ -9,9 +8,7 @@ C = business
 F = first
 -----------------------
 (X) = not selected
- --->
 
-<!---
 acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
 asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
 asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
@@ -25,9 +22,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
 <cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
 <cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
-
 --->
-</cfoutput>
 
 <cfsilent>
 	<cfset variables.bDisplayFare = true>

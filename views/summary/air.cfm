@@ -107,9 +107,8 @@
 
 				</td>
 
-				<td with="630">
-
-					<table width="600" padding="0" align="center">
+				<td width="630">
+ 					<table width="600" padding="0" align="center">
 					<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
 						<cfset count = 0>
 						<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
@@ -137,9 +136,22 @@
 									#uCase(segment.Cabin)#
 								</td>
 
+
+
+
 								<td>
+
+<!--- &nTripID=#nTripKey#&Group=#nDisplayGroup# --->
+<cfset sURL = 'SearchID=#rc.SearchID#'>
+<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Seat Map <span class="divider">/</span></a>
+
 									Seat Map
 								</td>
+
+
+
+
+
 							</tr>
 						</cfloop>
 						<tr>
@@ -214,6 +226,9 @@ SPECIAL REQUEST
 		<!--- </div> --->
 
 	</cfif>
+
+#View('modal/popup')#
+
 
 </cfoutput>
 <!--- <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>

@@ -128,6 +128,18 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="summarypopup" output="true" hint="I get seat map for modal popup for summary page.">
+		<cfargument name="rc">
+
+				<cfset rc.sCabin = 'Y'>
+				<cfset rc.nTripID = arguments.rc.nTripID>
+				<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+
+				<cfset variables.fw.setLayout("popup")>
+		<cfreturn />
+	</cffunction>
+
+
 	<cffunction name="seatmap" output="true" hint="I get data to make a seat map.">
 		<cfargument name="rc">
 		<cfset rc.sCabin = 'Y'>

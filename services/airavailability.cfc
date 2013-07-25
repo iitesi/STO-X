@@ -204,6 +204,7 @@
 										</cfif>
 									</cfif>
 
+									<!---
 									<air:AirLegModifiers>
 										<cfif NOT arrayIsEmpty(aCabins)>
 											<air:PermittedCabins>
@@ -213,6 +214,8 @@
 											</air:PermittedCabins>
 										</cfif>
 									</air:AirLegModifiers>
+								--->
+
 								</air:SearchAirLeg>
 							</cfif>
 
@@ -245,6 +248,7 @@
 											</air:SearchDepTime>
 										</cfif>
 									</cfif>
+									<!---
 									<air:AirLegModifiers>
 										<cfif NOT arrayIsEmpty(aCabins)>
 											<air:PermittedCabins>
@@ -254,6 +258,7 @@
 											</air:PermittedCabins>
 										</cfif>
 									</air:AirLegModifiers>
+								--->
 								</air:SearchAirLeg>
 
 							<!--- for multi-city trips loop over SearchesLegs --->
@@ -286,6 +291,7 @@
 												</air:SearchDepTime>
 											</cfif>
 
+											<!---
 											<air:AirLegModifiers>
 												<cfif NOT arrayIsEmpty(aCabins)>
 													<air:PermittedCabins>
@@ -295,6 +301,7 @@
 													</air:PermittedCabins>
 												</cfif>
 											</air:AirLegModifiers>
+											--->
 
 										</air:SearchAirLeg>
 									</cfif>
@@ -316,8 +323,10 @@
 									</cfif>
 								</air:AirSearchModifiers>
 								<com:SearchPassenger Code="ADT" />
+								<!---
 								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								</air:AirPricingModifiers>
+								--->
 								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" />
 							</cfif>
 						</air:AvailabilitySearchReq>
