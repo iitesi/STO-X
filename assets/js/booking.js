@@ -125,31 +125,28 @@ function filterAir(reset) {
 		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 			var flight = flightresults[loopcnt];
 
-// console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
-// console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
-// console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare0 = ' + fare0);
-// console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
-// console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
-// console.log('-------------------------------')
+		// console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
+		// console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
+		// console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
+		// console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
+		// console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
+		// console.log('-------------------------------')
 
 			if (
-					(flight[1] == 0 && inpolicy == 1 )
+						 (flight[1] == 0 && inpolicy == 1 )
 					|| (flight[2] == 1 && singlecarrier == 1 )
 					|| (flight[7] == 1 && nonstops == 1)
-					// (flight[6] == 'Y' && classy == undefined)
-					// || (flight[6] == 'C' && classc == undefined)
-					// || (flight[6] == 'F' && classf == undefined)
-					// || (flight[4] == 0 && fare0 == undefined)
-					// || (flight[4] == 1 && fare1 == undefined)
-					// || (flight[7] != 0 && nonstops == 1)
-					// || (flight[1] != 1 && inpolicy == 1 )
-					// || (flight[2] != 0 && singlecarrier == 1 )
+					|| (flight[4] == 0 && fare0 == undefined)
+					|| (flight[4] == 1 && fare1 == undefined)
+					|| (flight[6] == 'Y' && classy == undefined)
+					|| (flight[6] == 'C' && classc == undefined)
+					|| (flight[6] == 'F' && classf == undefined)
 				) {
 
 				// if the flight matches any of the criteria above - we'll hide it
 				$( '#flight' + flight[0] ).hide( 'fade' );
 			}	else {
-				// check which airlines are checked
+				// otherwise check which airlines are checked
 
 				// set some defaults
 				carriercount = 0;

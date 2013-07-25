@@ -66,9 +66,13 @@
 				</cfloop>];
 		</script>
 
-		<div class="clearfix noFlightsFound">
+		<div class="clearfix"></div>
+
+		<div class="noFlightsFound">
+			<div class="container">
 			<h1>No Flights Available</h1>
 			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
+			</div>
 		</div>
 	<cfelse>
 		<div class="container">

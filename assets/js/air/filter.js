@@ -60,6 +60,9 @@ $(document).ready(function(){
 		// reset sorting and filters
 		sortAir( sortbyprice );
 		resetAirDelay.run();
+
+		// TODO: hack to show all flights by default
+		// $('[id^="flight"]').show();
 	});
 
 	$('.filterby').on('click', function() {
