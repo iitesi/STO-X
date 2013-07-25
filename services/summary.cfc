@@ -164,6 +164,8 @@
 		<cfset fees.complex = (feeType NEQ 'OINTLRD' AND feeType NEQ 'INTLRD' ? false : true)>
 		<cfset fees.agent = qAgentSine.AccountID>
 		<cfset fees.airFee = (qSpecificFee.Fee_Amount NEQ '' ? qSpecificFee.Fee_Amount : 0)>
+		<cfset fees.airFeeType = feeType>
+		<cfset fees.auxFeeType = auxFeeType>
 
 		<cfreturn fees />
 	</cffunction>
@@ -364,6 +366,68 @@
 		</cfif>
 
 		<cfreturn error/>
+	</cffunction>
+
+	<cffunction name="determineApproval" output="false">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Traveler" required="true">
+		
+		<cfset local.approval = {}>
+		<cfset approval.approvalNeeded = false>
+		<cfset approval.approvers = ''>
+
+		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()
+			AND arguments.Policy.Policy_AirApproval EQ 1
+			AND arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop_'>
+			<cfset approval.approvalNeeded = true>
+		</cfif>
+		
+		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded()
+			AND arguments.Policy.Policy_HotelApproval EQ 1
+			AND arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop_'>
+			<cfset approval.approvalNeeded = true>
+		</cfif>
+		
+		<cfif arguments.Traveler.getBookingDetail().getCarNeeded()
+			AND arguments.Policy.Policy_CarApproval EQ 1
+			AND arguments.Traveler.getBookingDetail().getCarFOPID() DOES NOT CONTAIN 'fop_'>
+			<cfset approval.approvalNeeded = true>
+			<!--- <cfif arguments.CarCC_Type EQ 1>Direct Bill car
+				<cfset approval = 'Y'>
+			</cfif> --->
+		</cfif>
+
+		<cfif approval.approvalNeeded>
+			<cfset local.qTravelApprovers = ''>
+			<cfif arguments.Filter.getAcctID() NEQ 350>
+				<cfif arguments.Traveler.getAccountID() NEQ ''>
+					<cfstoredproc procedure="sp_getAllTravelApprovers" datasource="Corporate_Production">
+						<cfprocparam value="#arguments.Traveler.getAccountID()#" cfsqltype="cf_sql_varchar" />
+						<cfprocresult name="qTravelApprovers" />
+					</cfstoredproc>
+				</cfif>
+			<cfelseif arguments.Filter.getAcctID() EQ 350><!--- Dillard University --->
+				<cfset local.sort2 = ''>
+				<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.OrgUnit">
+					<cfif OrgUnit.getOUType() EQ 'Sort'
+						AND OrgUnit.getOUPosition() EQ 2>
+						<cfset sort2 = OrgUnit.getValueID()>
+					</cfif>
+				</cfloop>
+				<cfif sort2 NEQ ''>
+					<cfquery name="qTravelApprovers" datasource="Corporate_Production">
+						SELECT Email
+						FROM Approval_Users, Users
+						WHERE Dept_ID = <cfqueryparam value="#sort2#" cfsqltype="cf_sql_varchar">
+							AND Approval_Users.User_ID = Users.User_ID
+					</cfquery>						
+				</cfif>
+			</cfif>
+			<cfset approval.approvers = replace(valueList(qTravelApprovers.Email), ',', ', ', 'ALL')>
+		</cfif>
+		
+		<cfreturn approval>
 	</cffunction>
 	
 </cfcomponent>

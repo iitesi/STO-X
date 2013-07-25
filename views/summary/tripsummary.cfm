@@ -73,13 +73,16 @@
 
 		</cfif>
 
-		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingTotalRow">
+		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow">
 			<div class="span1">Booking Fee</div>
 			<div class="span1"></div>
 			<div class="span2"></div>
-			<div class="span1" id="bookingTotalCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+			<div class="span1" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
 		</div>
-		<input type="hidden" id="bookingTotal" value="#rc.fees.fee#">
+		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
+		<input type="hidden" name="agent" value="#rc.fees.agent#">
+		<input type="hidden" name="airFeeType" value="#rc.fees.airFeeType#">
+		<input type="hidden" name="auxFeeType" value="#rc.fees.auxFeeType#">
 
 		<cfif tripCurrency EQ 'USD'>
 
@@ -94,3 +97,4 @@
 
 	</div>
 </cfoutput>
+<!--- <cfdump var="#rc.fees#" /> --->

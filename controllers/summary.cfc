@@ -191,9 +191,6 @@
 																			, acctID = rc.Filter.getAcctID()
 																			, searchID = rc.searchID )>
 			<cfif structIsEmpty(rc.errors)>
-				<cfif rc.saveProfile>
-					<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = rc.Traveler )>
-				</cfif>
 				<cfif rc.trigger EQ 'ADD A TRAVELER'>
 					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
 					<cfif rc.travelerNumber LTE 4>

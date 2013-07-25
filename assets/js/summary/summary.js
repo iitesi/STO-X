@@ -182,18 +182,13 @@ $(document).ready(function(){
 			$( "#hotelReasonCode" ).val( traveler.bookingDetail.hotelReasonCode );
 			$( "#udid112" ).val( traveler.bookingDetail.udid112 );
 
-			if (loadMethod == 'change') {
-				$( "#hotelFF" ).val( '' );
-				for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
-					if (traveler.loyaltyProgram[i] !== null) {
-						if (traveler.loyaltyProgram[i].shortCode == chainCode && traveler.loyaltyProgram[i].custType == 'H') {
-							$( "#hotelFF" ).val( traveler.loyaltyProgram[i].acctNum );
-						}
+			$( "#hotelFF" ).val( '' );
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					if (traveler.loyaltyProgram[i].shortCode == chainCode && traveler.loyaltyProgram[i].custType == 'H') {
+						$( "#hotelFF" ).val( traveler.loyaltyProgram[i].acctNum );
 					}
 				}
-			}
-			else {
-				$( "#hotelFF" ).val( traveler.bookingDetail.hotelFF );
 			}
 		}
 		else {
@@ -215,18 +210,13 @@ $(document).ready(function(){
 			$( "#carReasonCode" ).val( traveler.bookingDetail.carReasonCode );
 			$( "#udid111" ).val( traveler.bookingDetail.udid111 );
 
-			if (loadMethod == 'change') {
-				$( "#carFF" ).val( '' );
-				for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
-					if (traveler.loyaltyProgram[i] !== null) {
-						if (traveler.loyaltyProgram[i].shortCode == vendor && traveler.loyaltyProgram[i].custType == 'C') {
-							$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
-						}
+			$( "#carFF" ).val( '' );
+			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
+				if (traveler.loyaltyProgram[i] !== null) {
+					if (traveler.loyaltyProgram[i].shortCode == vendor && traveler.loyaltyProgram[i].custType == 'C') {
+						$( "#carFF" ).val( traveler.loyaltyProgram[i].acctNum );
 					}
 				}
-			}
-			else {
-				$( "#carFF" ).val( traveler.bookingDetail.carFF );
 			}
 		}
 		else {
@@ -377,10 +367,10 @@ $(document).ready(function(){
 			fee = requestFee;
 		}
 		if (fee == 0) {
-			$( "#bookingTotalRow" ).hide();
+			$( "#bookingFeeRow" ).hide();
 		}
 		else {
-			$( "#bookingTotalRow" ).show();
+			$( "#bookingFeeRow" ).show();
 		}
 		total += fee;
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )

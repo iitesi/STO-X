@@ -59,6 +59,7 @@
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
 						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
 
 					</cfif>
 
