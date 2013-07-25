@@ -36,23 +36,35 @@
 		<cfreturn />
 	</cffunction>
 
-	<!--- <cffunction name="search" output="false">
+	<cffunction name="skip" output="false">
 		<cfargument name="rc">
 
-		<cfset rc.bSuppress = 1 />
+		<cfset arguments.rc.Filter.setCar(0) />
+		<cfset variables.bf.getBean("SearchService").save(searchID=arguments.rc.searchID, car=0) />
 
-		<cfset arguments.rc.search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
-		<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria(argumentcollection=arguments.rc) />
+		<cfif structKeyExists(session.searches[arguments.rc.searchID].stItinerary, "Vehicle")>
+			<cfset structDelete(session.searches[arguments.rc.searchID].stItinerary, "Vehicle") />
+		</cfif>
+		<cfif structKeyExists(session.searches[arguments.rc.searchID], "stCars")>
+			<cfset structDelete(session.searches[arguments.rc.searchID], "stCars") />
+		</cfif>
+		<cfif structKeyExists(session.searches[arguments.rc.searchID], "CouldYou") AND structKeyExists(session.searches[arguments.rc.searchID].CouldYou, "Car")>
+			<cfset structDelete(session.searches[arguments.rc.searchID].CouldYou, "Car") />
+		</cfif>
+
+		<cfif arguments.rc.Filter.getHotel() AND NOT StructKeyExists(session.searches[arguments.rc.searchID].stItinerary, "Hotel")>
+			<cfset variables.fw.redirect("hotel.availability?SearchID=#arguments.rc.searchID#") />
+		<cfelseif arguments.rc.Filter.getHotel()
+			AND StructKeyExists(session.searches[arguments.rc.searchID].stItinerary, "Hotel")
+			AND application.accounts[arguments.rc.Filter.getAcctID()].couldYou EQ 1>
+
+			<cfset variables.fw.redirect("couldyou?SearchID=#arguments.rc.searchID#") />
+		<cfelseif NOT arguments.rc.Filter.getHotel() AND application.accounts[arguments.rc.Filter.getAcctID()].couldYou EQ 1>
+			<cfset variables.fw.redirect("couldyou?SearchID=#arguments.rc.searchID#") />
+		<cfelse>
+			<cfset variables.fw.redirect("summary?SearchID=#arguments.rc.searchID#") />
+		</cfif>
 
 		<cfreturn />
-	</cffunction> --->
-
-	<!--- <cffunction name="changeSearch" output="false">
-		<cfargument name="rc">
-
-		<cfset fw.getBeanFactory().getBean('car').updateSearch(argumentcollection=arguments.rc) />
-
-		<cfreturn />
-	</cffunction> --->
-
+	</cffunction>
 </cfcomponent>

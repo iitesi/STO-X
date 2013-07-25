@@ -14,10 +14,11 @@
 		<cfargument name="Filter" 	required="true">
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"   required="true">
-		<cfargument name="sCarChain"required="false"    default="">
-		<cfargument name="sCarType" required="false"    default="">
-		<cfargument name="nCouldYou"required="false"    default="0">
-		<cfargument name="sPriority"required="false"    default="LOW">
+		<cfargument name="sCarChain"	required="false"    default="">
+		<cfargument name="sCarType" 	required="false"    default="">
+		<cfargument name="nCouldYou"	required="false"    default="0">
+		<cfargument name="sPriority"	required="false"    default="LOW">
+		<cfargument name="nFromHotel"	required="false"    default="0">
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
@@ -54,7 +55,7 @@
 
 		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
 
-		<cfset structDelete(session.searches[SearchID], 'stCars')>
+		<!--- <cfset structDelete(session.searches[SearchID], 'stCars')> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 			OR StructIsEmpty(session.searches[SearchID].stCars)
@@ -123,7 +124,8 @@
 			</cfthread>
 
 			<cfif arguments.sPriority EQ 'HIGH'
-				OR arguments.nCouldYou NEQ 0>
+				OR arguments.nCouldYou NEQ 0
+				OR arguments.nFromHotel NEQ 0>
 
 				<cfthread action="join" name="#threadNames#" />
 					
