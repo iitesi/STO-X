@@ -103,7 +103,7 @@ F = first
 									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")
 										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.C NEQ 0
 										OR session.filterStatus.cabinSearch.C NEQ 0)>
-										<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="F"> Business
+										<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C"> Business
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
 									</cfif>
 
@@ -133,10 +133,10 @@ F = first
 									</cfif>
 
 									<!--- 0 = refundable --->
-									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
-										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')
+									<cfif (structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
+										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1'))
 										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.1 NEQ 0
-										OR session.filterStatus.refundableSearch NEQ 0)>
+										AND session.filterStatus.refundableSearch NEQ 0)>
 										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1"> Refundable
 										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
 									</cfif>

@@ -2,12 +2,14 @@
 <div class="container">
     <div class="row-fluid">
         <!--Errors row-->
-        <div class="span12 alert alert-error" ng-show="errors.length">
+        <div class="alert alert-error" ng-show="errors.length">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
             <span ng-repeat="error in errors">{{error}}</span>
         </div>
 
         <!--Messages row-->
-        <div class="span12 alert alert-info" ng-show="messages.length">
+        <div class="alert alert-info" ng-show="messages.length">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
             <span ng-repeat="message in messages">{{message}}</span>
         </div>
     </div>
@@ -35,10 +37,13 @@
             <div class="navbar-inner">
                 <ul class="nav">
                     <li ng-class="{'active': filterItems.vendorsFilterApplied }">
-                        <a href="javascript: void(0)" ng-click="filterItems.showVendorFilter=!filterItems.showVendorFilter;filterItems.showAmenitiesFilter=false;"  >Hotel Chain <i class="icon-caret-down"></i></a>
+                        <a href="javascript: void(0)" ng-click="filterItems.showVendorFilter=!filterItems.showVendorFilter;filterItems.showAmenitiesFilter=false;filterItems.showRatingsFilter=false"  >Hotel Chain <i class="icon-caret-down"></i></a>
                     </li>
                     <li ng-class="{'active': filterItems.amenitiesFilterApplied }">
-                        <a href="javascript: void(0)" ng-click="filterItems.showAmenitiesFilter=!filterItems.showAmenitiesFilter;filterItems.showVendorFilter=false;" >Amenities <i class="icon-caret-down"></i></a>
+                        <a href="javascript: void(0)" ng-click="filterItems.showAmenitiesFilter=!filterItems.showAmenitiesFilter;filterItems.showVendorFilter=false;filterItems.showRatingsFilter=false;" >Amenities <i class="icon-caret-down"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0)" ng-click="filterItems.showRatingsFilter=!filterItems.showRatingsFilter;filterItems.showAmenitiesFilter=false;filterItems.showVendorFilter=false;">Rating <i class="icon-caret-down"></i></a>
                     </li>
 
                     <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly">In Policy</a></li>
@@ -65,6 +70,23 @@
                 </div>
             </div>
         </div>
+        
+        <div class="well" ng-show="filterItems.showRatingsFilter">
+            <div class="row">
+                <div class="span9" ng-repeat="item in filterItems.ratings">
+                    <label><input type="checkbox" value="{{item.rating}}" ng-model="item.checked">
+                        <span class="rating">
+                            <i ng-class="{'icon-star': item.rating >= 1, 'icon-star-empty': item.rating < 1}"></i>
+                            <i ng-class="{'icon-star': item.rating >= 2, 'icon-star-empty': item.rating < 2}"></i>
+                            <i ng-class="{'icon-star': item.rating >= 3, 'icon-star-empty': item.rating < 3}"></i>
+                            <i ng-class="{'icon-star': item.rating >= 4, 'icon-star-empty': item.rating < 4}"></i>
+                            <i ng-class="{'icon-star': item.rating >= 5, 'icon-star-empty': item.rating < 5}"></i>
+                        </span>{{ i }}
+                    </label>
+                </div>
+
+            </div>
+        </div>
 
     </div>
 </div>
@@ -81,7 +103,7 @@
         </div>
 
         <div class="span6">
-            <a href="#" class="pull-right">Continue without hotel</a>
+            <a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a>
         </div>
     </div>
 </div>
@@ -117,7 +139,7 @@
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 3, 'icon-star-empty': item.hotel.StarRating < 3}"></i>
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 4, 'icon-star-empty': item.hotel.StarRating < 4}"></i>
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>
-                                    </span>{{ item.hotel.starRating}}
+                                    </span>
                                 </div>
                                 <div class="btn-group hotel-detail-buttons">
                                     <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
@@ -300,7 +322,7 @@
         </div>
 
         <div class="span6">
-            <a href="#" class="pull-right">Continue without hotel</a>
+            <a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a>
         </div>
     </div>
 </div>

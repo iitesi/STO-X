@@ -27,8 +27,9 @@
 
 			<!--- TODO: uncomment for debugging
 			<cfif IsLocalHost(cgi.local_addr)>
-				<p align="center">DEBUGGING: #nTripKey# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
-			</cfif> --->
+						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
+			</cfif>
+			--->
 
 			<table height="#variables.minheight#" width="100%" border="0">
 			<tr align="center">
