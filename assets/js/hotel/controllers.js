@@ -568,5 +568,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.loadSearch( $scope.searchId );
 
+	$('.continue-link').attr( 'href', '/booking/index.cfm?action=hotel.skip&searchId=' + $scope.searchId );
+
 });
 

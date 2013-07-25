@@ -12,7 +12,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="select">
+	<cffunction name="select" output="false">
 		<cfargument name="rc" />
 
 		<cfset local.HotelService = variables.bf.getBean( "HotelService" ) />
@@ -57,14 +57,38 @@
 	<cffunction name="skip" output="false">
 		<cfargument name="rc" />
 
-		<cfset variables.fw.service('hotelsearch.skipHotel', 'void')>
-
-		<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
-			<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
+		<cfset arguments.rc.Filter.setHotel( false ) />
+		<cfset variables.bf.getBean( "SearchService" ).save( searchID=arguments.rc.searchId, hotel=false ) />
+		<cfif structKeyExists( session.searches[ arguments.rc.searchId ].stItinerary, "Hotel" )>
+			<cfset structDelete( session.searches[ arguments.rc.searchId ].stItinerary, "Hotel" ) />
 		</cfif>
-		<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+		<cfif structKeyExists( session.searches[ arguments.rc.searchId ], "Hotels" )>
+			<cfset structDelete( session.searches[ arguments.rc.searchId ], "Hotels" ) />
+		</cfif>
+		<cfif structKeyExists( session.searches[ arguments.rc.searchId ], "CouldYou" ) AND structKeyExists( session.searches[ arguments.rc.searchId ].CouldYou, "Hotel" )>
+			<cfset structDelete( session.searches[ arguments.rc.searchId ].CouldYou, "Hotel" ) />
+		</cfif>
 
-		<cfreturn />
+		<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'vehicle')>
+
+			<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
+
+		<cfelseif arguments.rc.Filter.getCar()
+			AND StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')
+			AND application.accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
+
+			<cfset variables.fw.redirect('couldyou?SearchID=#arguments.rc.Filter.getSearchID()#')>
+
+		<cfelseif NOT arguments.rc.Filter.getCar() AND application.accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
+
+			<cfset variables.fw.redirect('couldyou?SearchID=#arguments.rc.Filter.getSearchID()#')>
+
+		<cfelse>
+
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+
+		</cfif>
+
 	</cffunction>
 
 </cfcomponent>
