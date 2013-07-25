@@ -44,13 +44,11 @@
 
 		<cfif arguments.SearchID NEQ 0>
 			<cfquery name="local.getsearch">
-			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_DateTime, Hotel, Policy_ID,
-			Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime, Airlines,
-			International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date, Hotel_Search,
-			Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID, Hotel_Radius
-			, air_heading
-			, car_heading
-			, hotel_heading
+			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_Airport, CarDropoff_DateTime,
+			Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
+			Airlines, International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date,
+			Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID,
+			Hotel_Radius, air_heading, car_heading, hotel_heading
 			FROM Searches
 			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 			ORDER BY Search_ID DESC
@@ -68,10 +66,16 @@
 				</cfquery>
 			</cfif>
 
-			<cfquery name="local.getAirportData" datasource="book">
+			<cfquery name="local.getCarPickupAirportData" datasource="book">
 				SELECT Airport_Name, Airport_City, Airport_State
 				FROM lu_FullAirports
 				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+
+			<cfquery name="local.getCarDropoffAirportData" datasource="book">
+				SELECT Airport_Name, Airport_City, Airport_State
+				FROM lu_FullAirports
+				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarDropoff_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
 			<cfif getsearch.Air>
@@ -134,10 +138,12 @@
 
 			<!--- Set carHeading. --->
 			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
-				<cfset searchfilter.setCarHeading(getAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
+				<cfif structKeyExists(getsearch, 'CarDropoff_Airport') AND Len(Trim(getsearch.CarDropoff_Airport)) AND (getsearch.CarDropoff_Airport NEQ getsearch.CarPickup_Airport)>
+					<cfset searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&'</small> - ' &getCarDropoffAirportData.Airport_Name&' ('&getsearch.CarDropoff_Airport&') <small>:: ' &DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
+				<cfelse>
+					<cfset searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
+				</cfif>
 			</cfif>
-
-
 
 			<!--- Set searchFilters into the session as session.filters! =================================== --->
 			<cfset session.Filters[arguments.SearchID] = searchfilter>
