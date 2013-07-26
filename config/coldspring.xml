@@ -134,6 +134,7 @@
 
 	<bean id="lowfare" class="booking.services.lowfare" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 	</bean>
 
@@ -145,6 +146,7 @@
 
 	<bean id="AirPrice" class="booking.services.AirPrice" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 	</bean>
 
