@@ -135,7 +135,6 @@
 									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
 								</cfif>
 							</td>
->>>>>>> 67d8ce628e3623ad2db38b1bff6caec4a133cb5e
 
 							<td title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 								#segment.Carrier# #segment.FlightNumber#
@@ -152,10 +151,6 @@
 							<td>
 								#uCase(segment.Cabin)#
 							</td>
-
-<<<<<<< HEAD
-
-
 
 								<td>
 
@@ -175,10 +170,6 @@
 						<tr>
 							<td colspan="6">
 							<hr>
-=======
-							<td>
-								Seat Map
->>>>>>> 67d8ce628e3623ad2db38b1bff6caec4a133cb5e
 							</td>
 						</tr>
 					</cfloop>
