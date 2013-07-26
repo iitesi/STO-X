@@ -1,13 +1,16 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="UAPI">
+	<cfproperty name="uAPISchemas" />
 	<cfproperty name="AirParse">
 
 	<cffunction name="init" output="false">
 		<cfargument name="UAPI">
+    	<cfargument name="uAPISchemas" type="any" required="true" />
 		<cfargument name="AirParse">
 
 		<cfset setUAPI(arguments.UAPI)>
+    	<cfset setUAPISchemas( arguments.uAPISchemas ) />
 		<cfset setAirParse(arguments.AirParse)>
 
 		<cfreturn this>
@@ -156,9 +159,6 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
-		<cfset local.airVersion = 'air_v22_0'>
-		<cfset local.commonVersion = 'common_v19_0'>
-
 <!---
 ****************************************************************************
 				ANY CHANGES MADE BELOW PROBABLY NEED TO ALSO BE MADE IN
@@ -172,8 +172,8 @@
 					<soapenv:Header/>
 					<soapenv:Body>
 						<air:AvailabilitySearchReq TargetBranch="#arguments.Account.sBranch#"
-							xmlns:air="http://www.travelport.com/schema/#airVersion#"
-							xmlns:com="http://www.travelport.com/schema/#commonVersion#">
+							xmlns:air="http://www.travelport.com/schema/#getUAPISchemas().air#"
+							xmlns:com="http://www.travelport.com/schema/#getUAPISchemas().common#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<cfif arguments.sNextRef NEQ ''>
 								<com:NextResultReference>#arguments.sNextRef#</com:NextResultReference>

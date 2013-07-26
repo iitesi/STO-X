@@ -1,17 +1,21 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
-	<cfproperty name="AirParse">
+	<cfproperty name="uAPI" />
+	<cfproperty name="uAPISchemas" />
+	<cfproperty name="AirParse" />
 
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
-		<cfargument name="AirParse">
+    <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+    	<cfargument name="uAPI" type="any" required="true" />
+    	<cfargument name="uAPISchemas" type="any" required="true" />
+    	<cfargument name="AirParse" type="any" required="false" default="" />
 
-		<cfset setUAPI(arguments.UAPI)>
-		<cfset setAirParse(arguments.AirParse)>
+    	<cfset setUAPI( arguments.uAPI ) />
+    	<cfset setUAPISchemas( arguments.uAPISchemas ) />
+    	<cfset setAirParse( arguments.AirParse ) />
 
-		<cfreturn this>
-	</cffunction>
+        <cfreturn this />
+         
+     </cffunction>
 
 	<cffunction name="doAirPrice" output="false">
 		<cfargument name="SearchID" 	required="true">
@@ -111,17 +115,14 @@
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
-		<cfset local.airVersion = 'air_v22_0'>
-		<cfset local.commonVersion = 'common_v19_0'>
-
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
 						<air:AirPriceReq
-							xmlns:air="http://www.travelport.com/schema/#airVersion#"
-							xmlns:com="http://www.travelport.com/schema/#commonVersion#"
+							xmlns:air="http://www.travelport.com/schema/#getUAPISchemas().air#"
+							xmlns:com="http://www.travelport.com/schema/#getUAPISchemas().common#"
 							TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
