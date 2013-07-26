@@ -108,20 +108,6 @@
 
 			</td>
 
-<<<<<<< HEAD
-				<td width="630">
- 					<table width="600" padding="0" align="center">
-					<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
-						<cfset count = 0>
-						<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
-							<cfset count++>
-							<tr>
-								<td>
-									<cfif count EQ 1>
-										<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
-									</cfif>
-								</td>
-=======
 			<td with="630">
 
 				<table width="600" padding="0" align="center">
@@ -245,27 +231,9 @@ SPECIAL REQUEST
 
 	</cfif>
 
-<<<<<<< HEAD
+
 #View('modal/popup')#
 
 
 </cfoutput>
-<!--- <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
 
-<div id="myModal" class="modal hide fade">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Flight change/cancellation policy</h3>
-	</div>
-	<div class="modal-body">
-		<cfoutput>
-			<p>#replace(replace(replace(rc.Air.fareRules[1], '---', '<br>'), '--', '<br>'), '-', '<br>')#</p>
-		</cfoutput>
-	</div>
-	<div class="modal-footer">
-		<a href="#" class="btn">Close</a>
-	</div>
-</div> --->
-=======
-</cfoutput>
->>>>>>> 67d8ce628e3623ad2db38b1bff6caec4a133cb5e
