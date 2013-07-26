@@ -94,8 +94,10 @@
 					<cfset local.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (local.sNextRef NEQ 'ROUNDONE' ? local.sNextRef : ''), arguments.Account)>
 					<!--- Call the getUAPI. --->
 					<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
+
 					<!--- Format the getUAPI response. --->
 					<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
+
 					<!--- Create unique segment keys. --->
 					<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
 					<cfif local.nCount GT 3>
@@ -313,7 +315,13 @@
 								</cfloop>
 							</cfif>
 							<cfif arguments.sNextRef EQ ''>
-								<air:AirSearchModifiers DistanceType="MI" IncludeFlightDetails="false" RequireSingleCarrier="true" AllowChangeOfAirport="false" ProhibitOvernightLayovers="true" MaxSolutions="300" MaxConnections="1" MaxStops="1" ProhibitMultiAirportConnection="true" PreferNonStop="true">
+								<air:AirSearchModifiers
+									DistanceType="MI"
+									IncludeFlightDetails="false"
+									AllowChangeOfAirport="false"
+									ProhibitOvernightLayovers="true"
+									ProhibitMultiAirportConnection="true"
+									PreferNonStop="true">
 									<cfif Len(arguments.filter.getAirlines()) EQ 2>
 										<air:PermittedCarriers>
 											<com:Carrier Code="#arguments.filter.getAirlines()#"/>
