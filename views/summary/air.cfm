@@ -138,8 +138,24 @@
 								#uCase(segment.Cabin)#
 							</td>
 
-							<td>
-								Seat Map
+								<td>
+
+<!--- &nTripID=#nTripKey#&Group=#nDisplayGroup# --->
+<cfset sURL = 'SearchID=#rc.SearchID#'>
+<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Seat Map <span class="divider">/</span></a>
+
+									Seat Map
+								</td>
+
+
+
+
+
+							</tr>
+						</cfloop>
+						<tr>
+							<td colspan="6">
+							<hr>
 							</td>
 						</tr>
 					</cfloop>
@@ -215,4 +231,9 @@ SPECIAL REQUEST
 
 	</cfif>
 
+
+#View('modal/popup')#
+
+
 </cfoutput>
+
