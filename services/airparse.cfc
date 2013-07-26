@@ -122,7 +122,7 @@ doLowFare
 		<cfset local.nCount = 0>
 		<cfset local.sSegmentKey = 0>
 		<cfset local.sIndex = ''>
-		<cfset local.aIndexKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
+		<cfset local.distinctFields = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
 		<cfset local.changePenalty = 0>
 		<!---
 		Custom code for air pricing to move the 'air:AirPriceResult' up a node to work with the current parsing code.
@@ -162,6 +162,7 @@ doLowFare
 				<cfset nCount = 0>
 				<cfset nDuration = 0>
 				<cfset local.bPrivateFare = false>
+				<cfset local.tripKey = ''>
 
 				<cfloop array="#responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
@@ -170,6 +171,11 @@ doLowFare
 						<cfloop array="#airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif journey.XMLName EQ 'air:AirSegmentRef'>
 								<cfset stTrip.Segments[journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, journey.XMLAttributes.Key) ? arguments.stSegments[journey.XMLAttributes.Key] : {}>
+								
+								<cfloop array="#distinctFields#" index="local.field">
+									<cfset tripKey &= stTrip.Segments[journey.XMLAttributes.Key][field]>
+								</cfloop>
+
 							</cfif>
 						</cfloop>
 
@@ -229,21 +235,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<!--- <cfdump var="#stTrip#" abort="true" /> --->
 					</cfif>
 				</cfloop>
-
-				<!---
-				TRIP KEY
-				--->
-				<cfset sIndex = ''>
-				<cfloop array="#responseNode.XMLChildren#" index="local.stAirSegmentRef">
-					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
-						<cfloop array="#aIndexKeys#" index="local.stSegment">
-							<cfset sIndex &= structKeyExists(arguments.stSegments,stAirSegmentRef.XMLAttributes.Key) AND structKeyExists(arguments.stSegments[stAirSegmentRef.XMLAttributes.Key],stSegment) ? arguments.stSegments[stAirSegmentRef.XMLAttributes.Key][stSegment] : ''>
-						</cfloop>
-					</cfif>
-				</cfloop>
-				<cfset sTripKey = getUAPI().hashNumeric(sIndex&sOverallClass&bRefundable)>
+				<cfset sTripKey = getUAPI().hashNumeric( tripKey&sOverallClass&bRefundable )>
 				<cfset stTrips[sTripKey] = stTrip>
-
 			</cfif>
 		</cfloop>
 

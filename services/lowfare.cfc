@@ -152,8 +152,10 @@
 				<cfset stSegments = getAirParse().parseSegments(aResponse)>
 				<!--- Parse the trips. --->
 				<cfset stTrips = getAirParse().parseTrips(response = aResponse, stSegments = stSegments)>
+<!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
 				<cfset stTrips = getAirParse().addGroups(stTrips)>
+<!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
 				<cfset stTrips = getAirParse().addPreferred(stTrips, arguments.Account)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
@@ -356,6 +358,7 @@
 											<com:Carrier Code="ZK"/>
 										</air:ProhibitedCarriers>
 									</cfif>
+									<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
 								</air:AirSearchModifiers>
 								<com:SearchPassenger
 									Code="ADT" />

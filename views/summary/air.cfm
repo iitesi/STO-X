@@ -111,7 +111,7 @@
 			<td with="630">
 
 				<table width="600" padding="0" align="center">
-				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
+				<!--- <cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
 						<cfset count++>
@@ -164,7 +164,7 @@
 						<hr>
 						</td>
 					</tr>
-				</cfloop>
+				</cfloop> --->
 				</table>
 			</td>
 
