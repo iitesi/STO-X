@@ -156,6 +156,9 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
+		<cfset local.airVersion = 'air_v22_0'>
+		<cfset local.commonVersion = 'common_v19_0'>
+
 <!---
 ****************************************************************************
 				ANY CHANGES MADE BELOW PROBABLY NEED TO ALSO BE MADE IN
@@ -168,7 +171,9 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AvailabilitySearchReq TargetBranch="#arguments.Account.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+						<air:AvailabilitySearchReq TargetBranch="#arguments.Account.sBranch#"
+							xmlns:air="http://www.travelport.com/schema/#airVersion#"
+							xmlns:com="http://www.travelport.com/schema/#commonVersion#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<cfif arguments.sNextRef NEQ ''>
 								<com:NextResultReference>#arguments.sNextRef#</com:NextResultReference>

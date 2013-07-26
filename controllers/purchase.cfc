@@ -123,8 +123,8 @@
 			AND rc.Traveler.getBookingDetail().getHotelNeeded()
 			AND arrayIsEmpty(errorMessage)>
 
-			<cfset rc.Hotel.getProviderLocatorCode('')>
-			<cfset rc.Hotel.getUniversalLocatorCode('')>
+			<cfset rc.Hotel.setProviderLocatorCode('')>
+			<cfset rc.Hotel.setUniversalLocatorCode('')>
 
 			<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
 																					, searchID = rc.searchID
@@ -166,8 +166,9 @@
 			AND rc.Traveler.getBookingDetail().getCarNeeded()
 			AND arrayIsEmpty(errorMessage)>
 
-			<cfset rc.Vehicle.getProviderLocatorCode('')>
-			<cfset rc.Vehicle.getUniversalLocatorCode('')>
+			<cfset rc.Vehicle.setProviderLocatorCode('')>
+			<cfset rc.Vehicle.setUniversalLocatorCode('')>
+			<cfset local.lowestRateOffered = session.searches[rc.searchID].lowestCarRate>
 
 			<!--- Find the correct direct bill and corporate discount numbers --->
 			<cfset local.directBillNumber = ''>
@@ -215,6 +216,7 @@
 																					, universalLocatorCode = universalLocatorCode
 																					, version = version
 																					, profileFound = profileFound
+																					, lowestRateOffered = lowestRateOffered
 																				)>
 			<!--- Parse the vehicle --->
 			<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = rc.Vehicle

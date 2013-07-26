@@ -97,7 +97,7 @@
 	<div id="orgUnits"> </div>
 
 	<cfif rc.travelerNumber EQ 1>
-
+		
 		<input type="hidden" name="airNeeded" id="airNeeded" value="#(rc.airSelected ? 1 : 0)#">
 		<input type="hidden" name="hotelNeeded" id="hotelNeeded" value="#(rc.hotelSelected ? 1 : 0)#">
 		<input type="hidden" name="carNeeded" id="carNeeded" value="#(rc.vehicleSelected ? 1 : 0)#">

@@ -111,12 +111,18 @@
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
+		<cfset local.airVersion = 'air_v22_0'>
+		<cfset local.commonVersion = 'common_v19_0'>
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AirPriceReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+						<air:AirPriceReq
+							xmlns:air="http://www.travelport.com/schema/#airVersion#"
+							xmlns:com="http://www.travelport.com/schema/#commonVersion#"
+							TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>

@@ -213,7 +213,7 @@
 		</cfif>
 		<cfif NOT arguments.Traveler.getBookingDetail().getAirNeeded()
 			AND NOT arguments.Traveler.getBookingDetail().getHotelNeeded()
-			AND NOT arguments.Traveler.getBookingDetail().getVehicleNeeded()>
+			AND NOT arguments.Traveler.getBookingDetail().getCarNeeded()>
 			<cfset error.travelServices = ''>
 		</cfif>
 		<!--- <cfloop query="qAllOUs" group="OU_ID">

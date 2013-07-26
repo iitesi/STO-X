@@ -87,7 +87,11 @@
 			<!--- Traveler is already in an object --->
 			<cfset rc.Traveler = session.searches[rc.SearchID].travelers[rc.travelerNumber]>
 		</cfif>
-
+		<cfif rc.travelerNumber EQ 1>
+			<cfset rc.Traveler.getBookingDetail().setAirNeeded( (rc.airSelected ? 1 : 0) )>
+			<cfset rc.Traveler.getBookingDetail().setHotelNeeded( (rc.hotelSelected ? 1 : 0) )>
+			<cfset rc.Traveler.getBookingDetail().setCarNeeded( (rc.vehicleSelected ? 1 : 0) )>
+		</cfif>
 		<cfif structKeyExists(rc, 'trigger')>
 			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID() 
