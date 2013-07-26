@@ -24,15 +24,21 @@
 		<cfset local.CarRate = 0>
 		<cfset stCars = structNew() />
 
-		<!--- If coming from the "Change Your Search" form, destroy the session and build anew. --->
+		<!--- If coming from the "Change Your Search" form, destroy the car-related sessions and build anew. --->
 		<cfif structKeyExists(arguments, "requery")>
-			<cfset StructDelete(session.searches, SearchID) />
-			<cfset session.searches[SearchID] = {} />
-		</cfif>
+			<cfif structKeyExists(session.searches[SearchID].stItinerary, "Vehicle")>
+				<cfset structDelete(session.searches[SearchID].stItinerary, "Vehicle") />
+			</cfif>
+			<cfif structKeyExists(session.searches[SearchID], "stCars")>
+				<cfset structDelete(session.searches[SearchID], "stCars") />
+			</cfif>
+			<cfif structKeyExists(session.searches[SearchID], "CouldYou") AND structKeyExists(session.searches[SearchID].CouldYou, "Car")>
+				<cfset structDelete(session.searches[SearchID].CouldYou, "Car") />
+			</cfif>
 
-		<!--- <cfset arguments.nCouldYou = 2 />
-		<cfset arguments.sCarChain = 'ZE' />
-		<cfset arguments.sCarType = 'EconomyCar' /> --->
+			<!--- <cfset StructDelete(session.searches, SearchID) />
+			<cfset session.searches[SearchID] = {} /> --->
+		</cfif>
 
 		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
@@ -345,6 +351,7 @@
 		<cfargument name="search" required="true" />
 
 		<cfset var carPickupAirport = arguments.search.getCarPickupAirport() />
+		<cfset var carDropoffAirport = arguments.search.getCarDropoffAirport() />
 		<cfset var carPickupDateTime = arguments.search.getCarPickupDateTime() />
 		<cfset var carPickupDateTimeActual = arguments.search.getCarPickupDateTimeActual() />
 		<cfset var carDropoffDateTime = arguments.search.getCarDropoffDateTime() />
@@ -354,6 +361,10 @@
 		<!--- Pre-set the form variables in the car change search form with the old search parameters. --->
 		<cfif len(trim(carPickupAirport))>
 			<cfset formData.carPickupAirport = carPickupAirport />
+		</cfif>
+
+		<cfif len(trim(carDropoffAirport))>
+			<cfset formData.carDropoffAirport = carDropoffAirport />
 		</cfif>
 
 		<cfset formData.carPickupDate = (isDate(carPickupDateTime) ? dateFormat(carPickupDateTime, 'mm/dd/yyyy') : 'pick up date') />

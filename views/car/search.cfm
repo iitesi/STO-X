@@ -10,15 +10,25 @@
 					<form id="carSearchForm" class="form-search">
 						<input type="hidden" id="searchID" name="searchID" value="#rc.searchID#" />
 						<div id="car-options" class="full-width">
-							<!--- <div class="form-search-heading">Change Car Search</div> --->
 							<div class="row">
 								<div class="form-element-label">
-									<label for="car-location">location</label>
+									<label>&nbsp;</label>
 								</div>
 								<div class="form-element-content">
-									<input type="text" class="input-block-level airport-select2" id="car-location" name="car-location" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
-									<div id="car-location_hidden" class="hidden" style="float:left;">
-										<span class="required">Airport is missing or invalid. Begin typing to select your airport from the list.</span>
+									<div id="car-dropoff-option" class="btn-group" data-toggle="buttons-radio" style="float:left; text-align:right;">
+										<button id="car-dropoff-same" class="car-dropoff-option btn btn-mini btn-primary" value="same">Same Drop-off</button>
+										<button id="car-dropoff-different" class="car-dropoff-option btn btn-mini" value="different">Different Drop-off</button>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-element-label">
+									<label for="car-pickup-airport">location</label>
+								</div>
+								<div class="form-element-content">
+									<input type="text" class="input-block-level airport-select2" id="car-pickup-airport" name="car-pickup-airport" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
+									<div id="car-pickup-airport_hidden" class="hidden" style="float:left;">
+										<span class="required">Pick-up airport is missing or invalid. Begin typing to select your airport from the list.</span>
 									</div>
 								</div>
 							</div>
@@ -66,6 +76,17 @@
 									</div>
 									<div id="car-pickup-date_hidden" class="hidden" style="float:left;">
 										<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+									</div>
+								</div>
+							</div>
+							<div class="row hidden" id="car-dropoff-airport-wrapper">
+								<div class="form-element-label">
+									<label for="car-dropoff-airport">location</label>
+								</div>
+								<div class="form-element-content">
+									<input type="text" class="input-block-level airport-select2" id="car-dropoff-airport" name="car-dropoff-airport" value="#rc.formData.carDropoffAirport#" placeholder="#rc.formData.carDropoffAirport#" />
+									<div id="car-dropoff-airport_hidden" class="hidden" style="float:left;">
+										<span class="required">Drop-off airport is missing or invalid. Begin typing to select your airport from the list.</span>
 									</div>
 								</div>
 							</div>

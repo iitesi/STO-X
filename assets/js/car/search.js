@@ -5,6 +5,17 @@ $(document).ready(function(){
 		formSubmit(event, this);
 	});
 
+	$("button.car-dropoff-option").on("click", function(event){toggleCarFormFields(event, this)});
+	var pickupAirport = $("#car-pickup-airport").val();
+	var dropoffAirport = $("#car-dropoff-airport").val();
+
+	if ((dropoffAirport == '') || (dropoffAirport == pickupAirport)) {
+		toggleCarFormFields(event, "#car-dropoff-same");
+	}
+	else {
+		toggleCarFormFields(event, "#car-dropoff-different");
+	}
+
 	var todaysDate = new Date();
 	var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy" );
 
@@ -79,7 +90,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".airport-select2" ).select2({
+	$(".airport-select2").select2({
 		data: airports,
 		minimumInputLength: 2,
 		width: "100%",
@@ -102,6 +113,22 @@ $(document).ready(function(){
 		$(".btn:first-child", group).val( $(this).attr( "data-value" ) );
 	});
 });
+
+toggleCarFormFields = function(event, btn){
+	var selectedCarDropoffButton = $(btn);
+	var btnValue = selectedCarDropoffButton.val();
+
+	if (btnValue == 'same') {
+		$(".car-dropoff-option").removeClass("btn-primary");
+		$("#car-dropoff-same").addClass("btn-primary");
+		$("#car-dropoff-airport-wrapper").addClass("hidden");
+	}
+	else if (btnValue == 'different') {
+		$(".car-dropoff-option").removeClass("btn-primary");
+		$("#car-dropoff-different").addClass("btn-primary");
+		$("#car-dropoff-airport-wrapper").removeClass("hidden");
+	}
+};
 
 sortResults = function(results, container, query) {
 	if (query.term) {
@@ -128,7 +155,7 @@ Array.prototype.move = function (old_index, new_index) {
 formSubmit = function( event ){
 	event.preventDefault();
 	// Purge any/all error validation being displayed and start anew
-	var formErrors = new Array("car-location","car-pickup-date","car-dropoff-date");
+	var formErrors = new Array("car-pickup-airport","car-pickup-date","car-dropoff-airport","car-dropoff-date");
 	removeErrors(formErrors);
 	var formErrors = new Array();
 	var todaysDate = new Date();
@@ -139,11 +166,19 @@ formSubmit = function( event ){
 
 	var formData = {};
 	formData.searchID = $("#searchID").val();
+	var carDropoffOption = $("div#car-dropoff-option button.btn-primary").val();
 
 	//Add the car values to the formData
 	formData.car = 1;
-	formData.carPickupAirport = $("#car-location").val();
-	if ($("#car-location").val() == '') {formErrors.push("car-location");}
+	formData.carPickupAirport = $("#car-pickup-airport").val();
+	if ($("#car-pickup-airport").val() == '') {formErrors.push("car-pickup-airport");}
+	formData.carDropoffAirport = $("#car-dropoff-airport").val();
+	if (carDropoffOption == 'same') {
+		formData.carDropoffAirport = $("#car-pickup-airport").val();
+	}
+	else if ((carDropoffOption == 'different') && ($("#car-dropoff-airport").val() == '')) {
+		formErrors.push("car-dropoff-airport");
+	}
 	formData.carPickupDate = $("#car-pickup-date").val();
 	jsCarPickupDate = new Date($("#car-pickup-date").val());
 	jsCarPickupDateNextDay = new Date(jsCarPickupDate);
@@ -221,7 +256,6 @@ formSubmit = function( event ){
 	}
 
 	if (formErrors.length) {
-		// console.log(formErrors);
 		displayErrors(formErrors);
 		$("#btnFormSubmit").removeClass("disabled");
 	}
@@ -232,7 +266,6 @@ formSubmit = function( event ){
 		$('#displaySearchWindow').modal('hide');
 		$('#pleaseWait').modal({backdrop: "static", show: true});
 
-		// console.log(formData);
 		$.ajax({
 			type: "POST",
 			url: "/search/RemoteProxy.cfc?method=saveSearch",
@@ -255,12 +288,7 @@ formSubmit = function( event ){
 displayErrors = function(formErrors) {
 	for (var i = 0; i < formErrors.length; i++) {
 		var thisField = eval("$('#" + formErrors[i] + "')");
-		if (formErrors[i] == 'hotel-out-date') {
-			var thisHiddenField = eval("$('#hotel-in-date_hidden')");
-		}
-		else {
-			var thisHiddenField = eval("$('#" + formErrors[i] + "_hidden')");
-		}
+		var thisHiddenField = eval("$('#" + formErrors[i] + "_hidden')");
 		thisField.addClass("highlight");
 		thisHiddenField.removeClass("hidden");
 	}
@@ -342,6 +370,12 @@ function isDate(value) {
 
 setModalWindowText = function(){
 	//If car is checked, add car-related text to the modal window.
-	$( "#waitModalBody" ).append("<h3>CAR</h3>");
-	$( "#waitModalBody" ).append("<p>We are finding cars available at " + $("#car-location").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
+	var carDropoffOption = $("div#car-dropoff-option button.btn-primary").val();
+	$("#waitModalBody").append("<h3>CAR</h3>");
+	if (carDropoffOption == 'different') {
+		$("#waitModalBody").append("<p>We are finding cars available at " + $("#car-pickup-airport").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-airport").val() + " " + $("#car-dropoff-date").val() + ".<p>");
+	}
+	else {
+		$("#waitModalBody").append("<p>We are finding cars available at " + $("#car-pickup-airport").val() + " " + $("#car-pickup-date").val() + " - " + $("#car-dropoff-date").val() + ".<p>");
+	}
 };
