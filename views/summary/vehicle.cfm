@@ -96,7 +96,7 @@
 
 					<strong>
 						PICK-UP:
-						#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#<br>
+						#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))# (#rc.Filter.getCarPickupAirport()#)<br>
 					</strong>
 
 				</td>
@@ -105,7 +105,7 @@
 
 					<strong>
 						DROP-OFF: 
-						#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#
+						#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))# (#rc.Filter.getCarDropoffAirport()#)
 
 					</strong>
 

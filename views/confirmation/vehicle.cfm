@@ -23,7 +23,7 @@
 						<td rowspan="4" width="12%">
 							<img alt="#rc.Vehicle.getVendorCode()#" src="assets/img/cars/#rc.Vehicle.getVendorCode()#.png">
 						</td>
-						<td <!--- width="200" ---> colspan="2">
+						<td colspan="2">
 							<strong>#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])#</strong>
 						</td>
 					</tr>
@@ -44,16 +44,16 @@
 						</td>
 					</tr>
 					<tr>
-						<td width="18%">
+						<td width="22%">
 							<strong>
 								PICK-UP:
-								#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#
+								#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))# (#rc.Filter.getCarPickupAirport()#)
 							</strong>
 						</td>
 						<td>
 							<strong>
 								DROP-OFF: 
-								#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#
+								#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))# (#rc.Filter.getCarDropoffAirport()#)
 							</strong>
 						</td>
 					</tr>
@@ -77,7 +77,7 @@
 									<td width="12%"><strong>OUT OF POLICY</strong></td>
 									<td width="28%">#ArrayToList(rc.Vehicle.getAPolicies())#</td>
 									<td width="8%"><strong>Reason</strong></td>
-									<td>#rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode()#</td>
+									<td width="34%">#rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode()#</td>
 								</tr>
 								<tr>
 									<td colspan="2"></td>						
@@ -85,7 +85,7 @@
 							<td width="12%"><span class="blue"><strong>Car Confirmation</strong></span></td>
 							<td width="28%"><span class="blue"><strong>#rc.Vehicle.getConfirmation()#</strong></span></td>
 							<td width="8%"><strong>Loyalty ##</strong></td>
-							<td>#rc.Traveler[travelerIndex].getBookingDetail().getCarFF()#</td>
+							<td width="34%">#rc.Traveler[travelerIndex].getBookingDetail().getCarFF()#</td>
 						</tr>
 						<cfif travelerIndex NEQ arrayLen(rc.vehicleTravelers)>
 							<tr>
