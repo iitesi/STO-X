@@ -27,13 +27,13 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
-	<cfset variables.minheight = 200>
+	<cfset variables.minheight = 250>
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
 	<cfif nLegs EQ 2>
-		<cfset variables.minheight = 275>
+		<cfset variables.minheight = 325>
 	<cfelseif nLegs GT 2>
-		<cfset variables.minheight = 350>
+		<cfset variables.minheight = 375>
 	</cfif>
 </cfsilent>
 
