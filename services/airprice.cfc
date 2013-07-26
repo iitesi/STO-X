@@ -1,17 +1,21 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
-	<cfproperty name="AirParse">
+	<cfproperty name="uAPI" />
+	<cfproperty name="uAPISchemas" />
+	<cfproperty name="AirParse" />
 
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
-		<cfargument name="AirParse">
+    <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+    	<cfargument name="uAPI" type="any" required="true" />
+    	<cfargument name="uAPISchemas" type="any" required="true" />
+    	<cfargument name="AirParse" type="any" required="false" default="" />
 
-		<cfset setUAPI(arguments.UAPI)>
-		<cfset setAirParse(arguments.AirParse)>
+    	<cfset setUAPI( arguments.uAPI ) />
+    	<cfset setUAPISchemas( arguments.uAPISchemas ) />
+    	<cfset setAirParse( arguments.AirParse ) />
 
-		<cfreturn this>
-	</cffunction>
+        <cfreturn this />
+         
+     </cffunction>
 
 	<cffunction name="doAirPrice" output="false">
 		<cfargument name="SearchID" 	required="true">
@@ -116,7 +120,10 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AirPriceReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+						<air:AirPriceReq
+							xmlns:air="http://www.travelport.com/schema/#getUAPISchemas().air#"
+							xmlns:com="http://www.travelport.com/schema/#getUAPISchemas().common#"
+							TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>

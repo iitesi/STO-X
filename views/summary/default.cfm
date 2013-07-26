@@ -108,4 +108,4 @@
 	</div>
 
 </cfoutput>
-<cfdump var="#rc.filter#" />
+<cfdump var="#rc.traveler.getbookingdetail()#" />

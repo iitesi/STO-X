@@ -62,12 +62,18 @@
 			</cfif>
 		</cfif>
 
+		<cfset local.airVersion = 'air_v22_0'>
+		<cfset local.commonVersion = 'common_v19_0'>
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 				<soapenv:Header/>
 					<soapenv:Body>
-						<air:SeatMapReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+						<air:SeatMapReq
+							TargetBranch="#arguments.stAccount.sBranch#"
+							xmlns:air="http://www.travelport.com/schema/#airVersion#"
+							xmlns:com="http://www.travelport.com/schema/#commonVersion#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 								<air:AirSegment
 									Key="#nSegment#T"

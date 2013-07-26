@@ -10,20 +10,24 @@
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
         <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
     </bean>
 
 	<bean id="TerminalEntry" class="com.travelport.TerminalEntry">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
         <constructor-arg name="UserService"><ref bean="UserService" /></constructor-arg>
     </bean>
 
     <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
     </bean>
 
     <bean id="AirAdapter" class="com.travelport.AirAdapter">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
         <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
     </bean>
 
@@ -135,6 +139,7 @@
 
 	<bean id="airavailability" class="booking.services.airavailability" >
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 	</bean>
 

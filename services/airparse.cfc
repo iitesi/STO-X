@@ -1,17 +1,15 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
+	<cfproperty name="uAPI" />
 
-<!---
-init
---->
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
+    <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+    	<cfargument name="uAPI" type="any" required="true" />
 
-		<cfset setUAPI(arguments.UAPI)>
+    	<cfset setUAPI( arguments.uAPI ) />
 
-		<cfreturn this>
-	</cffunction>
+        <cfreturn this />
+         
+    </cffunction>
 
 <!---
 doLowFare

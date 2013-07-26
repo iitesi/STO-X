@@ -1,11 +1,11 @@
 <cfoutput>
-<!--- <cfdump var="#rc.Hotel#" /> --->
+
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
 
 		<!--- <div class="carrow" style="padding:0 0 15px 0;"> --->
 
-			<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
+		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
 
 			<table width="1000">
 			<tr>
@@ -61,6 +61,7 @@
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
 						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
 
 					</cfif>
 
@@ -108,9 +109,13 @@
 						<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
 						<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
 						<cfset hotelText = 'Total rate including taxes'>
-					<cfelse>
+					<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
 						<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
 						<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
+					<cfelse>
+						<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+						<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
 						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
 					</cfif>
 
