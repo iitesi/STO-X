@@ -121,8 +121,8 @@
 					<soapenv:Header/>
 					<soapenv:Body>
 						<air:AirPriceReq
-							xmlns:air="http://www.travelport.com/schema/#getUAPISchemas().air#"
-							xmlns:com="http://www.travelport.com/schema/#getUAPISchemas().common#"
+							xmlns:air="#getUAPISchemas().air#"
+							xmlns:com="#getUAPISchemas().common#"
 							TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>

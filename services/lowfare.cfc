@@ -203,8 +203,8 @@
 					<soapenv:Body>
 						<cfif arguments.sLowFareSearchID EQ ''>
 							<air:LowFareSearchReq TargetBranch="#arguments.Account.sBranch#"
-								xmlns:air="http://www.travelport.com/schema/#getUAPISchemas().air#"
-								xmlns:com="http://www.travelport.com/schema/#getUAPISchemas().common#">
+								xmlns:air="#getUAPISchemas().air#"
+								xmlns:com="#getUAPISchemas().common#">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 
 								<!--- For one way and first leg of rounttrip we get depart info --->

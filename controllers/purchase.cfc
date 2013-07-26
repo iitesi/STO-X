@@ -45,7 +45,7 @@
 																						, searchID = rc.searchID )>
 
 		<cfset local.profileFound = true>
-		<cfif rc.Traveler.getPAR() NEQ ''>
+		<!--- <cfif rc.Traveler.getPAR() NEQ ''>
 			<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pcc = rc.Traveler.getBAR()[1].PCC
@@ -59,7 +59,7 @@
 			</cfif>
 		<cfelse>
 			<cfset profileFound = false>
-		</cfif>
+		</cfif> --->
 		profileFound<br>
 		<cfdump var="#profileFound#" />
 
