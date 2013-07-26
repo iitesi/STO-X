@@ -90,6 +90,8 @@ services.factory( "HotelService", function( $http ){
 		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		if ( typeof datapoints != 'undefined' ){
 			remoteURL = remoteURL + '&datapoints=' + datapoints;
+		}else{
+			remoteURL = remoteURL + '&datapoints=all'
 		}
 		return $http.get( remoteURL  )
 			.then( function( response ){
@@ -100,7 +102,7 @@ services.factory( "HotelService", function( $http ){
 				if( typeof response.data.data.images != 'undefined' ){
 					Hotel.images = response.data.data.images;
 					if( Hotel.images.length ){
-						Hotel.selectedImage = Hotel.images[0].imageURL;
+						Hotel.selectedImage = Hotel.images[0].IMAGEURL;
 					} else {
 						Hotel.selectedImage = "";
 					}

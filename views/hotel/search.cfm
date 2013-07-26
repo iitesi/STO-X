@@ -24,7 +24,7 @@
 
 
 <cfsetting showdebugoutput="false" />
-<div ng-app="hotelSearch">
+<div id="hotel-search-wrapper" ng-app="hotelSearch">
 	<div ng-view></div>
 </div>
 

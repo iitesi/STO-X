@@ -165,7 +165,7 @@ Hotel.prototype.hasGovernmentRate = function(){
 	var hasRate = false;
 
 	for( var i = 0; i < this.rooms.length; i++ ){
-		if( this.rooms[1].isGovernmentRate ){
+		if( this.rooms[i].isGovernmentRate ){
 			hasRate = true;
 			break;
 		}
