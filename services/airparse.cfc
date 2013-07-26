@@ -179,6 +179,14 @@ doLowFare
 							</cfif>
 						</cfloop>
 
+					<cfelseif airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
+						
+						<cfset stTrip.Segments[airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, airPricingSolution.XMLAttributes.Key) ? arguments.stSegments[airPricingSolution.XMLAttributes.Key] : {}>
+								
+						<cfloop array="#distinctFields#" index="local.field">
+							<cfset tripKey &= stTrip.Segments[airPricingSolution.XMLAttributes.Key][field]>
+						</cfloop>
+
 					<cfelseif airPricingSolution.XMLName EQ 'air:AirPricingInfo'>
 
 						<cfset local.sOverallClass = 'E'>
