@@ -19,11 +19,14 @@
 		<cfargument name="nCouldYou"	required="false"    default="0">
 		<cfargument name="sPriority"	required="false"    default="LOW">
 		<cfargument name="nFromHotel"	required="false"    default="0">
-		<cfargument name="location" 	required="false"    default="">
+		<cfargument name="pickUpLocation" 	required="false"    default="">
+		<cfargument name="dropOffLocation" 	required="false"    default="">
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
 		<cfset stCars = structNew() />
+
+		<cfparam name="session.searches[arguments.searchID].vehicleLocations" default="#structNew()#">
 
 		<!--- If coming from the "Change Your Search" form, destroy the car-related sessions and build anew. --->
 		<cfif structKeyExists(arguments, "requery")>
@@ -70,8 +73,19 @@
 			OR StructIsEmpty(session.searches[SearchID].stCars)
 			OR arguments.nCouldYou NEQ 0>
 
-			<cfset session.searches[arguments.searchID].vehicleLocations = VehicleAdapter.getVehicleLocations( Filter = arguments.Filter
-																											, Account = arguments.Account )>
+			<cfif NOT structKeyExists(session.searches[arguments.searchID].vehicleLocations, arguments.Filter.getCarPickupAirport())>
+				<cfset session.searches[arguments.searchID].vehicleLocations[arguments.Filter.getCarPickupAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
+																																							, date = arguments.Filter.getCarPickupDateTime()
+																																							, airport = arguments.Filter.getCarPickupAirport()
+																																							, Filter = arguments.Filter )>
+			</cfif>
+
+			<cfif NOT structKeyExists(session.searches[arguments.searchID].vehicleLocations, arguments.Filter.getCarDropoffAirport())>
+				<cfset session.searches[arguments.searchID].vehicleLocations[arguments.Filter.getCarDropoffAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
+																																							, date = arguments.Filter.getCarPickupDateTime()
+																																							, airport = arguments.Filter.getCarDropoffAirport()
+																																							, Filter = arguments.Filter )>
+			</cfif>
 
 <!--- <cfdump var="#session.searches[arguments.searchID].vehicleLocations#" /><cfabort /> --->
 			<cfset local.threadNames = ''>
@@ -91,18 +105,21 @@
 					CDNumbers="#CDNumbers#"
 					sCarChain="#arguments.sCarChain#"
 					sCarType="#arguments.sCarType#"
-					location="#arguments.location#">
+					pickUpLocation="#arguments.pickUpLocation#"
+					dropOffLocation="#arguments.dropOffLocation#">
 					<cfif arguments.nCouldYou EQ 0>
 						<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
 																			, Account = arguments.Account
-																			, location = arguments.location
-																			, CDNumbers = CDNumbers) />
+																			, pickUpLocation = arguments.pickUpLocation
+																			, dropOffLocation = arguments.dropOffLocation
+																			, corporateDiscount = CDNumbers) />
 					<cfelse>
 						<cfset local.response = VehicleAdapter.getVehicles(Filter = arguments.Filter
 																			, Account = arguments.Account
-																			, location = arguments.location
+																			, pickUpLocation = arguments.pickUpLocation
+																			, dropOffLocation = arguments.dropOffLocation
 																			, couldYou = arguments.nCouldYou
-																			, CDNumbers = CDNumbers
+																			, corporateDiscount = CDNumbers
 																			, carChain = arguments.sCarChain
 																			, carType = arguments.sCarType) />
 					</cfif>
@@ -129,17 +146,20 @@
 				nCouldYou="#arguments.nCouldYou#"
 				sCarChain="#arguments.sCarChain#"
 				sCarType="#arguments.sCarType#"
-				location="#arguments.location#">
+				pickUpLocation="#arguments.pickUpLocation#"
+				dropOffLocation="#arguments.dropOffLocation#">
 
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
 																		, Account = arguments.Account
-																		, location = arguments.location) />
+																		, pickUpLocation = arguments.pickUpLocation
+																		, dropOffLocation = arguments.dropOffLocation ) />
 				<cfelse>
 					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
 																		, Account = arguments.Account
 																		, couldYou = arguments.nCouldYou
-																		, location = arguments.location
+																		, pickUpLocation = arguments.pickUpLocation
+																		, dropOffLocation = arguments.dropOffLocation
 																		, carChain = arguments.sCarChain
 																		, carType = arguments.sCarType) />
 				</cfif>
@@ -160,7 +180,7 @@
 				OR arguments.nFromHotel NEQ 0>
 
 				<cfthread action="join" name="#threadNames#" />
-					
+
 				<cfset local.threadError = false>						
 				<cfloop list="#threadNames#" index="local.thread">
 					<cfif NOT structKeyExists(cfthread[thread], 'stCars')>

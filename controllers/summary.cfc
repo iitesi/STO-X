@@ -141,7 +141,7 @@
 				</cfloop>
 				<cfset local.seats = {}>
 				<cfloop list="#rc.seatFieldNames#" index="local.seat">
-					<cfset seats[seat] = rc[seat]>
+					<cfset seats[seat] = uCase( rc[seat] )>
 				</cfloop>
 				<cfset rc.Traveler.getBookingDetail().setSeats( seats )>
 			</cfif>

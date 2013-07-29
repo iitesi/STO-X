@@ -3,9 +3,15 @@
 	<cffunction name="availability" output="false">
 		<cfargument name="rc">
 
+		<cfparam name="rc.pickUpLocationKey" default="">
+		<cfparam name="rc.dropOffLocationKey" default="">
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			<cfif structKeyExists(rc, 'location')>
-				<cfset rc.location = session.searches[rc.searchID].vehicleLocations[rc.location]>
+			<cfif rc.pickUpLocationKey NEQ ''>
+				<cfset rc.pickUpLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()][rc.pickUpLocationKey]>
+			</cfif>
+			<cfif rc.dropOffLocationKey NEQ ''>
+				<cfset rc.dropOffLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropOffAirport()][rc.dropOffLocationKey]>
 			</cfif>
 			<cfset rc.sPriority = 'HIGH'>
 			<cfset fw.getBeanFactory().getBean('car').doAvailability( argumentcollection = arguments.rc )>

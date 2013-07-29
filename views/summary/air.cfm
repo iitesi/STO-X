@@ -140,14 +140,15 @@
 							</td>
 
 							<td>
-								<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
-									Seat Map
-									<cfset fieldName = 'seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#'>
-									<cfset seatFieldNames = listAppend(seatFieldNames, fieldName)>
-									<input type="text" id="#fieldName#_display" disabled class="input-mini">
-								</a>
-								<input type="hidden" name="#fieldName#" id="#fieldName#" value="A1">
-
+								<cfif NOT listFind('WN,F9', segment.Carrier)>
+									<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
+										Seat Map
+										<cfset fieldName = 'seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#'>
+										<cfset seatFieldNames = listAppend(seatFieldNames, fieldName)>
+										<input type="text" id="#fieldName#_display" disabled class="input-mini">
+									</a>
+									<input type="hidden" name="#fieldName#" id="#fieldName#" value="A1">
+								</cfif>
 							</td>
 
 						</tr>
@@ -160,7 +161,7 @@
 				</cfloop>
 				</table>
 			</td>
-			<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
+			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
 
 			<td width="200" valign="top">
 

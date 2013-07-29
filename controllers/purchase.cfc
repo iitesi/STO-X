@@ -89,7 +89,7 @@
 							AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getFOPID())
 							OR (Payment.getFOPID() NEQ ''
 								AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
-							<cfset cardNumber = PaymentService.decryption(Payment.getAcctNum())>
+							<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
 							<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
 						</cfif>
 					</cfloop>
@@ -98,16 +98,15 @@
 					<cfset cardCVV = rc.Traveler.getBookingDetail().getAirCCCVV()>
 					<cfset cardExpiration = rc.Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(rc.Traveler.getBookingDetail().getAirCCMonth(), '00')>
 				</cfif>
-				<cfif LEFT(cardNumber, 1) EQ 4>
-					<cfset cardType = 'VI'>
-				<cfelseif LEFT(cardNumber, 1) EQ 5>
+				<cfset local.cardType = 'VI'>
+				<cfif LEFT(cardNumber, 1) EQ 5>
 					<cfset cardType = 'MC'>
 				<cfelseif LEFT(cardNumber, 1) EQ 6>
 					<cfset cardType = 'DS'>
 				<cfelseif LEFT(cardNumber, 1) EQ 3>
 					<cfset cardType = 'AX'>
 				</cfif>
-				<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
+				<!--- <cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
 																							, hostToken = hostToken
 																							, Air = rc.Air
 																							, cardNumber = cardNumber
@@ -115,12 +114,13 @@
 																							, cardExpiration = cardExpiration
 																							, searchID = rc.searchID)>
 				authResponse<br>
-				<cfdump var="#authResponse#" />
+				<cfdump var="#authResponse#" /> --->
 				<cfset local.cardAuth = ''>
-				<cfif NOT authResponse.error>
+				<!--- <cfif NOT authResponse.error>
 					<cfset cardAuth = authResponse.message>
-				</cfif>
+				</cfif> --->
 				<cfset rc.response = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+																					, bookingPCC = rc.Account.PCC_Booking
 																					, Traveler = rc.Traveler
 																					, Profile = Profile
 																					, Air = rc.Air
@@ -167,6 +167,7 @@
 			<cfset rc.Hotel.setUniversalLocatorCode('')>
 
 			<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+																					, bookingPCC = rc.Account.PCC_Booking
 																					, searchID = rc.searchID
 																					, Traveler = rc.Traveler
 																					, Profile = Profile
@@ -242,6 +243,7 @@
 			
 			<!--- Sell vehicle --->
 			<cfset rc.response = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch 
+																					, bookingPCC = rc.Account.PCC_Booking
 																					, Traveler = rc.Traveler
 																					, Profile = Profile
 																					, Vehicle = rc.Vehicle
@@ -301,6 +303,36 @@
 			moveBARPAR<br>
 			<cfdump var="#responseMessage#" />
 
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addAutoTicketRemark( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, bookingPCC = rc.Account.PCC_Booking
+																									, searchID = rc.searchID )>
+
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addTicketDate( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID )>
+
+			<cfif rc.hotelSelected>
+				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, serviceType = 'H'
+																										, startDate = rc.Filter.getCheckInDate()
+																										, reasonCode = rc.Traveler.getBookingDetail().getCarReasonCode()
+																										, lowestRateOffered = 0
+																										, searchID = rc.searchID )>
+
+			</cfif>
+			<cfif rc.vehicleSelected>
+				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, serviceType = 'C'
+																										, startDate = rc.Filter.getCarPickupDateTime()
+																										, reasonCode = rc.Traveler.getBookingDetail().getHotelReasonCode()
+																										, lowestRateOffered = session.searches[rc.searchID].lowestCarRate
+																										, searchID = rc.searchID )>
+
+			</cfif>
+
 			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
 																							, hostToken = hostToken
 																							, userID = rc.Filter.getUserID()
@@ -308,13 +340,14 @@
 
 			addReceivedBy<br>
 			<cfdump var="#responseMessage#" />
-
-			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
-																							, hostToken = hostToken
-																							, searchID = rc.searchID )>
-		
-			removeSecondName<br>
-			<cfdump var="#responseMessage#" />
+			<cfif profileFound>
+				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
+																								, hostToken = hostToken
+																								, searchID = rc.searchID )>
+			
+				removeSecondName<br>
+				<cfdump var="#responseMessage#" />
+			</cfif>
 
 			<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																							, hostToken = hostToken
@@ -338,35 +371,26 @@
 				<cfdump var="#responseMessage#" />
 			</cfif>
 
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').removeDuplicateAccounting( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID )>
+
+			<cfset local.queue = ''>
 			<cfif NOT rc.Traveler.getBookingDetail().getApprovalNeeded()
 				AND rc.Traveler.getBookingDetail().getSpecialRequests() EQ ''>
-				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, bookingPCC = rc.Account.PCC_Booking
-																								, queue = '90'
-																								, searchID = rc.searchID )>
-			
-				queueRecord<br>
-				<cfdump var="#responseMessage#" />
+				<cfset queue = '90'>
 			<cfelseif rc.Traveler.getBookingDetail().getApprovalNeeded()>
-				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, bookingPCC = rc.Account.PCC_Booking
-																								, queue = '34*CHA'
-																								, searchID = rc.searchID )>
-			
-				queueRecord<br>
-				<cfdump var="#responseMessage#" />
+				<cfset queue = '34*CHA'>
 			<cfelse>
-				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, bookingPCC = rc.Account.PCC_Booking
-																								, queue = '34*CSR'
-																								, searchID = rc.searchID )>
-			
-				queueRecord<br>
-				<cfdump var="#responseMessage#" />
+				<cfset queue = '34*CSR'>
 			</cfif>
+			<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, bookingPCC = rc.Account.PCC_Booking
+																							, queue = queue
+																							, searchID = rc.searchID )>
+			queueRecord<br>
+			<cfdump var="#responseMessage#" />
 			
 			<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																							, hostToken = hostToken

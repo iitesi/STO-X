@@ -126,28 +126,6 @@ OR NOT rc.Filter.getAir()>
 			</cfloop>
 		</div>
 		
-		<br clear="both">
-		<br clear="both">
-		<br clear="both">
-		
-		<cfif rc.Filter.getCarPickupAirport() EQ rc.Filter.getCarDropOffAirport()>
-			<h1>Search other locations</h1>
-			<table>
-			<cfloop array="#session.searches[rc.searchID].vehicleLocations#" index="vehicleLocationIndex" item="vehicleLocation">
-				<tr>
-					<td>
-						<a href="#buildURL('car.availability?searchID=#rc.searchID#&location=#vehicleLocationIndex#')#">
-							#application.stCarVendors[vehicleLocation.vendorCode]# - 
-							#vehicleLocation.street#
-							#vehicleLocation.city#
-							#vehicleLocation.country#
-						</a>
-					</td>
-				</tr>
-			</cfloop>
-			</table>
-		</cfif>
-
 	</cfoutput>
 <cfelse>
 	<cfoutput>
