@@ -219,7 +219,8 @@
 
 		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
 		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfsavecontent var="local.callbackFunction">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
 				<cfoutput>#arguments.callback#(#serializeJSON( Rooms )#)</cfoutput>
 			</cfsavecontent>
 			<cfreturn callbackFunction />
