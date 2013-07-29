@@ -980,7 +980,11 @@ function GetValueFromChild(selectedSegmentSeat) {
 	// write seat to hidden field
 	$("#segment_" + seatArray[0]).val( seatArray[1] );
 	// write seat to summary page
- 	$("#" + seatArray[0]).text( seatArray[1] );
+ 	$("#" + seatArray[0] + " span").text( seatArray[1] );
+ 	// append seat to url so we can show it selected if they open seatmap again
+	var oldLink = $("#" + seatArray[0] + " a").attr( 'href' );
+	$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	// scroll to flight info
  	scrollTo('airDiv');
  }
 

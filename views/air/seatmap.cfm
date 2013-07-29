@@ -1,7 +1,9 @@
 <cfsilent>
 	<cfparam name="rc.bSelection" default="0">
 	<cfparam name="rc.Summary" default="false">
-	<cfset sCurrentSeat = ''>
+	<cfparam name="rc.seat" default="">
+
+	<cfset sCurrentSeat = rc.seat>
 	<cfset sNextSegKey = ''>
 	<cfset bFound = 0>
 	<cfset nSegmentCount = 0>
@@ -62,6 +64,9 @@
 
 		<div id="seats">
 			<!--- show seatmap heading --->
+
+#rc.seat#
+
 			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#.png">
 			<div class="media-heading pull-left">
 				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin]# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination]# (#currentSegment.Destination#)</h3>

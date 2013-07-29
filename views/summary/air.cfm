@@ -110,14 +110,14 @@
 
 			<td width="630">
 
+
 				<cfset seatFieldNames = "">
+				<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
+
+
 
 				<table width="600" padding="0" align="center">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
-
-
-
-
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
@@ -143,12 +143,15 @@
 							<td>
 								#uCase(segment.Cabin)#
 							</td>
-							<td>
+
+<!--- seats --->
+							<td id="#segmentIndex#">
 								<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
 								<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
-								&nbsp; <span class="label label-success" id="#segmentIndex#"></span>
+								&nbsp; <span class="label label-success"></span>
 								<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
 							</td>
+
 						</tr>
 					</cfloop>
 					<tr>
