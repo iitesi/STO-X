@@ -140,12 +140,12 @@
 
 							<td>
 
-							<!---  --->
-							<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
-								Seat Map
-								<input type="text" id="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#_display" disabled class="input-mini">
-								<input type="text" name="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#" id="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#" disabled class="input-mini">
-							</a>
+								<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
+									Seat Map
+									<cfset fieldName = 'seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#'>
+									<input type="text" id="#fieldName#_display" disabled class="input-mini">
+									<input type="text" name="#fieldName#" id="#fieldName#">
+								</a>
 
 							</td>
 
