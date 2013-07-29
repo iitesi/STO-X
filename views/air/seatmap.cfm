@@ -1,5 +1,6 @@
 <cfsilent>
 	<cfparam name="rc.bSelection" default="0">
+	<cfparam name="rc.Summary" default="false">
 	<cfset sCurrentSeat = ''>
 	<cfset sNextSegKey = ''>
 	<cfset bFound = 0>
@@ -38,6 +39,8 @@
 			</cfloop>
 		</cfloop>
 
+	<!--- hide breadcrumb bar for summary modal --->
+	<cfif rc.action NEQ "air.summarypopup">
 		<ul class="breadcrumb">
 			<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
 			<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
@@ -54,6 +57,8 @@
 				</cfloop>
 			</cfloop>
 		</ul>
+	</cfif>
+
 
 		<div id="seats">
 			<!--- show seatmap heading --->
@@ -117,19 +122,30 @@
 								<cfset sDesc = Replace(sDesc, ',', ', ')>
 								<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 								<tr>
-									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#" 
-									<cfif structKeyExists(rc, 'summary')
-										AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-										onClick="$('##seat#currentSegment.Carrier##currentSegment.FlightNumber#').val('#nRow##sColumn#');return false;"
-									</cfif>>
-										&nbsp;
-									</td>
+
+<!--- 	CHRIS CODE
+<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" style="display: block;" title="#sDesc#" id="#nRow##sColumn#"
+<cfif structKeyExists(rc, 'summary') AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+	onClick="$('##seat#currentSegment.Carrier##currentSegment.FlightNumber#').val('#nRow##sColumn#');return false;console.log('clicked');"
+</cfif>>
+</td> --->
+
+ <!--- JIM CODE --->
+<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+	<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+		<a href="##" style="display: block;" class="availableSeat" id="#rc.nSegment#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+	</cfif>
+</td>
+
+
 								</tr>
 							</cfloop>
 							</table>
 						</td>
 					</cfloop>
 				</tr>
+
+
 
 				<!--- Display wing --->
 				<tr>
@@ -172,4 +188,17 @@
 			</cfif>
 		</div>
 	</div>
+
+	<script>
+		$(document).ready(function() {
+			$('.availableSeat').on('click', function() {
+				var seatSelected =  $(this).attr('id');
+				console.log( seatSelected );
+				window.parent.GetValueFromChild( seatSelected );
+				$('##popupModal').modal('hide');
+				$(this).removeData('modal');
+			});
+		});
+	</script>
+
 </cfoutput>
