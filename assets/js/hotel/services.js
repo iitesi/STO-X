@@ -67,7 +67,7 @@ services.factory( "HotelService", function( $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
 	HotelService.getHotelRates = function( searchId, Hotel, policy, requery ) {
-		var url = "http://shorts-api.local/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&callback=roomRateCallback&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
+		var url = "http://shorts-api.local/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&callback=JSON_CALLBACK&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
 		return $http.jsonp( url )
 			.then( function( response ){
 				var rooms = [];
