@@ -211,12 +211,21 @@
 
     </cffunction>
 
-    <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="json" output="false" hint="">
+    <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
         <cfargument name="propertyId" type="numeric" required="true" />
+        <cfargument name="callback" type="string" required="false" />
         <cfargument name="requery" type="boolean" required="false" default="false" />
 
-        <cfreturn getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
+		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfsavecontent var="local.callbackFunction">
+				<cfoutput>#arguments.callback#(#serializeJSON( Rooms )#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn serializeJSON( Rooms ) />
+		</cfif>
 
     </cffunction>
 
