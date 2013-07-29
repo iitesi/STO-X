@@ -1,6 +1,17 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="UAPI">
+	<cfproperty name="uAPISchemas">
+
+	<cffunction name="init" output="false" hint="Init method.">
+		<cfargument name="UAPI">
+		<cfargument name="uAPISchemas">
+
+		<cfset setUAPI(arguments.UAPI)>
+		<cfset setUAPISchemas(arguments.uAPISchemas)>
+
+		<cfreturn this>
+	</cffunction>
 
 <!--- doAirPrice --->
 	<cffunction name="doSeatMap" output="false">
@@ -62,9 +73,6 @@
 			</cfif>
 		</cfif>
 
-		<cfset local.airVersion = 'air_v22_0'>
-		<cfset local.commonVersion = 'common_v19_0'>
-
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -72,19 +80,19 @@
 					<soapenv:Body>
 						<air:SeatMapReq
 							TargetBranch="#arguments.stAccount.sBranch#"
-							xmlns:air="#airVersion#"
-							xmlns:com="#commonVersion#">
+							xmlns:air="http://www.travelport.com/schema/air_v22_0"
+							xmlns:com="http://www.travelport.com/schema/common_v19_0">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
-								<air:AirSegment
-									Key="#nSegment#T"
-									Carrier="#stSegment.Carrier#"
-									FlightNumber="#stSegment.FlightNumber#"
-									Origin="#stSegment.Origin#"
-									Destination="#stSegment.Destination#"
-									DepartureTime="#DateFormat(stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm')#:00"
-									ProviderCode="1V"
-									Group="#stSegment.Group#">
-								</air:AirSegment>
+							<air:AirSegment
+								Key="#nSegment#T"
+								Carrier="#stSegment.Carrier#"
+								FlightNumber="#stSegment.FlightNumber#"
+								Origin="#stSegment.Origin#"
+								Destination="#stSegment.Destination#"
+								DepartureTime="#DateFormat(stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm')#:00"
+								ProviderCode="1V"
+								Group="#stSegment.Group#">
+							</air:AirSegment>
 							<air:BookingCode Code="Y" />
 						</air:SeatMapReq>
 					</soapenv:Body>

@@ -162,4 +162,25 @@
 		</div>
 	</div>
 
+	<cfif rc.airSelected
+		AND rc.Filter.getAirType() EQ 'RT'
+		AND rc.Policy.Policy_HotelNotBooking EQ 1
+		AND NOT rc.hotelSelected>
+		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
+			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel</label>
+			<div class="controls">
+				<select name="hotelNotBooked" id="hotelNotBooked">
+				<option value=""></option>
+				<option value="A">I will book my hotel later</option>
+				<option value="B">I am attending a conference with pre-arranged hotel</option>
+				<option value="C">I have a negotiated rate that is not available online</option>
+				<option value="D">I have a preferred hotel that is not available online</option>
+				<option value="E">I will shop around at other websites</option>
+				<option value="F">I will be staying with family/friends</option>
+				<option value="G">I do not need a hotel for this trip </option>
+				</select>
+			</div>
+		</div>
+	</cfif>
+					
 </cfoutput>

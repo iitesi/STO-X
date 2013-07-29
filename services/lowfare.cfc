@@ -82,6 +82,7 @@
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
+
 		<cfreturn >
 	</cffunction>
 
@@ -170,6 +171,7 @@
 				</cfif>
 				<cfset thread.sMessage = sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
+				<cfset session.searches[arguments.searchID].stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
 

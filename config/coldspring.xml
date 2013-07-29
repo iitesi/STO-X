@@ -33,6 +33,7 @@
 
     <bean id="seatmap" class="booking.services.seatmap">
         <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
     </bean>
 
 	<bean id="setup" class="booking.services.setup" >

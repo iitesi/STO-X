@@ -339,44 +339,43 @@ addGroups
 		<cfset local.nDuration = ''>
 		<cfset local.nOverrideGroup = 0>
 		<!--- Loop through all the trips --->
-		<cfloop collection="#stTrips#" item="local.sTrip">
+		<cfloop collection="#stTrips#" index="local.tripIndex" item="local.trip">
 			<cfset stGroups = StructNew('linked')>
 			<cfset aCarriers = {}>
 			<cfset nDuration = 0>
 			<cfset nTotalStops = 0>
-			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">
-				<cfset stSegment = stTrips[sTrip].Segments[nSegment]>
-				<cfset nOverrideGroup = stSegment.Group>
-				<cfset stSegment.Group = nOverrideGroup>
+			<cfloop collection="#trip.Segments#" index="local.segmentIndex" item="local.segment">
+				<cfset nOverrideGroup = segment.Group>
+				<cfset segment.Group = nOverrideGroup>
 				<cfif NOT structKeyExists(stGroups, nOverrideGroup)>
-					<cfset stGroups[nOverrideGroup].Segments 		= StructNew('linked')>
-					<cfset stGroups[nOverrideGroup].DepartureTime 	= stSegment.DepartureTime>
-					<cfset stGroups[nOverrideGroup].Origin			= stSegment.Origin>
-					<cfset stGroups[nOverrideGroup].TravelTime		= '#int(stSegment.TravelTime/60)#h #stSegment.TravelTime%60#m'>
-					<cfset nDuration = stSegment.TravelTime + nDuration>
+					<cfset stGroups[nOverrideGroup].Segments = StructNew('linked')>
+					<cfset stGroups[nOverrideGroup].DepartureTime = segment.DepartureTime>
+					<cfset stGroups[nOverrideGroup].Origin = segment.Origin>
+					<cfset stGroups[nOverrideGroup].TravelTime = '#int(segment.TravelTime/60)#h #segment.TravelTime%60#m'>
+					<cfset nDuration = segment.TravelTime + nDuration>
 					<cfset nStops = -1>
 				</cfif>
-				<cfset stGroups[nOverrideGroup].Segments[nSegment]= stSegment>
-				<cfset stGroups[nOverrideGroup].ArrivalTime	 	= stSegment.ArrivalTime>
-				<cfset stGroups[nOverrideGroup].Destination		= stSegment.Destination>
-				<cfset local.aCarriers[stSegment.Carrier] = ''>
+				<cfset stGroups[nOverrideGroup].Segments[segmentIndex] = segment>
+				<cfset stGroups[nOverrideGroup].ArrivalTime = segment.ArrivalTime>
+				<cfset stGroups[nOverrideGroup].Destination = segment.Destination>
+				<cfset local.aCarriers[segment.Carrier] = ''>
 				<cfset nStops++>
-				<cfset stGroups[nOverrideGroup].Stops				= nStops>
+				<cfset stGroups[nOverrideGroup].Stops = nStops>
 				<cfif nStops GT nTotalStops>
 					<cfset nTotalStops = nStops>
 				</cfif>
 			</cfloop>
-			<cfset stTrips[sTrip].Groups 	= stGroups>
-			<cfset stTrips[sTrip].Duration 	= nDuration>
-			<cfset stTrips[sTrip].Stops 	= nTotalStops>
+			<cfset stTrips[tripIndex].Groups = stGroups>
+			<cfset stTrips[tripIndex].Duration = nDuration>
+			<cfset stTrips[tripIndex].Stops = nTotalStops>
 			<cfif arguments.sType EQ 'Avail'>
-				<cfset stTrips[sTrip].Depart= stGroups[nOverrideGroup].DepartureTime>
+				<cfset stTrips[tripIndex].Depart = stGroups[nOverrideGroup].DepartureTime>
 			<cfelse>
-				<cfset stTrips[sTrip].Depart= stGroups[0].DepartureTime>
+				<cfset stTrips[tripIndex].Depart = stGroups[0].DepartureTime>
 			</cfif>
-			<cfset stTrips[sTrip].Arrival 	= stGroups[nOverrideGroup].ArrivalTime>
-			<cfset stTrips[sTrip].Carriers 	= structKeyArray(aCarriers)>
-			<cfset StructDelete(stTrips[sTrip], 'Segments')>
+			<cfset stTrips[tripIndex].Arrival = stGroups[nOverrideGroup].ArrivalTime>
+			<cfset stTrips[tripIndex].Carriers = structKeyArray(aCarriers)>
+			<cfset StructDelete(stTrips[tripIndex], 'Segments')>
 		</cfloop>
 
 		<cfreturn stTrips/>

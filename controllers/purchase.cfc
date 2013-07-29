@@ -45,7 +45,7 @@
 																						, searchID = rc.searchID )>
 
 		<cfset local.profileFound = true>
-		<!--- <cfif rc.Traveler.getPAR() NEQ ''>
+		<cfif rc.Traveler.getPAR() NEQ ''>
 			<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pcc = rc.Traveler.getBAR()[1].PCC
@@ -59,7 +59,7 @@
 			</cfif>
 		<cfelse>
 			<cfset profileFound = false>
-		</cfif> --->
+		</cfif>
 		profileFound<br>
 		<cfdump var="#profileFound#" />
 
@@ -76,10 +76,50 @@
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 1
 																				)>
-
 			<cfif NOT structIsEmpty(trip)>
-				<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[rc.Air.nTrip].sXML )>
+				<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[structKeyList(trip)].sXML )>
 
+				
+				<cfset local.cardNumber = ''>
+				<cfset local.cardCVV = ''>
+				<cfset local.cardExpiration = ''>
+				<cfif rc.Traveler.getBookingDetail().getAirFOPID() NEQ 0>
+					<cfloop array="#rc.Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
+						<cfif (Payment.getBTAID() NEQ ''
+							AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getFOPID())
+							OR (Payment.getFOPID() NEQ ''
+								AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
+							<cfset cardNumber = PaymentService.decryption(Payment.getAcctNum())>
+							<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
+						</cfif>
+					</cfloop>
+				<cfelse>
+					<cfset cardNumber = rc.Traveler.getBookingDetail().getAirCCNumber()>
+					<cfset cardCVV = rc.Traveler.getBookingDetail().getAirCCCVV()>
+					<cfset cardExpiration = rc.Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(rc.Traveler.getBookingDetail().getAirCCMonth(), '00')>
+				</cfif>
+				<cfif LEFT(cardNumber, 1) EQ 4>
+					<cfset cardType = 'VI'>
+				<cfelseif LEFT(cardNumber, 1) EQ 5>
+					<cfset cardType = 'MC'>
+				<cfelseif LEFT(cardNumber, 1) EQ 6>
+					<cfset cardType = 'DS'>
+				<cfelseif LEFT(cardNumber, 1) EQ 3>
+					<cfset cardType = 'AX'>
+				</cfif>
+				<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, Air = rc.Air
+																							, cardNumber = cardNumber
+																							, cardType = cardType
+																							, cardExpiration = cardExpiration
+																							, searchID = rc.searchID)>
+				authResponse<br>
+				<cfdump var="#authResponse#" />
+				<cfset local.cardAuth = ''>
+				<cfif NOT authResponse.error>
+					<cfset cardAuth = authResponse.message>
+				</cfif>
 				<cfset rc.response = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																					, Traveler = rc.Traveler
 																					, Profile = Profile
@@ -87,9 +127,9 @@
 																					, airPricing = airPricing
 																					, Filter = rc.Filter
 																					, statmentInformation = statmentInformation
+																					, cardAuth = cardAuth
 																					, profileFound = profileFound
 																				 )>
-
 	<!--- <cfdump var="#rc.response#" /><cfabort /> --->
 				<cfset rc.Air.UniversalLocatorCode = ''>
 				<cfset rc.Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = rc.Air
@@ -275,6 +315,20 @@
 		
 			removeSecondName<br>
 			<cfdump var="#responseMessage#" />
+
+			<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, Air = rc.Air
+																							, pcc = rc.Traveler.getBAR()[1].PCC
+																							, cardNumber = cardNumber
+																							, cardType = cardType
+																							, cardExpiration = cardExpiration
+																							, cardAuth = cardAuth
+																							, searchID = rc.searchID )>
+		
+			removeSecondName<br>
+			<cfdump var="#responseMessage#" /> --->
+
 			<cfif rc.airSelected>
 				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken

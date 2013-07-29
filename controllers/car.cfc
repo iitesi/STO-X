@@ -4,11 +4,14 @@
 		<cfargument name="rc">
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+			<cfif structKeyExists(rc, 'location')>
+				<cfset rc.location = session.searches[rc.searchID].vehicleLocations[rc.location]>
+			</cfif>
 			<cfset rc.sPriority = 'HIGH'>
-			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('car').doAvailability( argumentcollection = arguments.rc )>
 			<!--- Below two lines used for populating the change search form. --->
 			<cfset arguments.rc.search = fw.getBeanFactory().getBean( "SearchService" ).load( arguments.rc.searchId ) />
-			<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria(argumentcollection=arguments.rc) />
+			<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria( argumentcollection = arguments.rc ) />
 		<cfelse>
 			<!--- Move over the information into the stItinerary --->
 			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>

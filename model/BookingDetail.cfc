@@ -27,6 +27,7 @@
 	<cfproperty name="copyAirCC" />
 	<cfproperty name="createProfile" />
 	<cfproperty name="hotelNeeded" />
+	<cfproperty name="hotelNotBooked" />
 	<cfproperty name="hotelBillingName" />
 	<cfproperty name="hotelCCExpiration" />
 	<cfproperty name="hotelCCMonth" />
@@ -41,6 +42,7 @@
 	<cfproperty name="saveProfile" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="specialNeeds" />
+	<cfproperty name="seats" />
 	<cfproperty name="sort1" />
 	<cfproperty name="sort2" />
 	<cfproperty name="sort3" />
@@ -81,6 +83,7 @@
 		<cfset setCopyAirCC( false )>
 		<cfset setCreateProfile( false )>
 		<cfset setHotelNeeded( false )>
+		<cfset setHotelNotBooked( '' )>
 		<cfset setHotelBillingName( '' )>
 		<cfset setHotelCCExpiration( '' )>
 		<cfset setHotelCCMonth( '' )>
@@ -93,6 +96,7 @@
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
 		<cfset setSaveProfile( false )>
+		<cfset setSeats( [] )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setSpecialNeeds( '' )>
 		<cfset setSort1( '' )>

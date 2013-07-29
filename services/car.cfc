@@ -19,6 +19,7 @@
 		<cfargument name="nCouldYou"	required="false"    default="0">
 		<cfargument name="sPriority"	required="false"    default="LOW">
 		<cfargument name="nFromHotel"	required="false"    default="0">
+		<cfargument name="location" 	required="false"    default="">
 
 		<cfset local.SearchID = arguments.Filter.getSearchID()>
 		<cfset local.CarRate = 0>
@@ -44,7 +45,8 @@
 
 		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
-			AND arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()>
+			AND (arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()
+				OR arguments.Filter.getDepartDateTime() GT arguments.Filter.getCarPickupDateTime())>
 
 			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime )>
 
@@ -52,7 +54,8 @@
 
 		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
-			AND arguments.Filter.getArrivalDateTime() EQ arguments.Filter.getCarDropoffDateTime()
+			AND (arguments.Filter.getArrivalDateTime() EQ arguments.Filter.getCarDropoffDateTime()
+				OR arguments.Filter.getArrivalDateTime() LT arguments.Filter.getCarPickupDateTime())
 			AND arguments.Filter.getAirType() EQ 'RT'>
 
 			<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime )>
@@ -61,12 +64,16 @@
 
 		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
 
-		<!--- <cfset structDelete(session.searches[SearchID], 'stCars')> --->
+		<cfset structDelete(session.searches[SearchID], 'stCars')>
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 			OR StructIsEmpty(session.searches[SearchID].stCars)
 			OR arguments.nCouldYou NEQ 0>
 
+			<cfset session.searches[arguments.searchID].vehicleLocations = VehicleAdapter.getVehicleLocations( Filter = arguments.Filter
+																											, Account = arguments.Account )>
+
+<!--- <cfdump var="#session.searches[arguments.searchID].vehicleLocations#" /><cfabort /> --->
 			<cfset local.threadNames = ''>
 			<cfset local.stCars = ''>
 
@@ -83,11 +90,21 @@
 					nCouldYou="#arguments.nCouldYou#"
 					CDNumbers="#CDNumbers#"
 					sCarChain="#arguments.sCarChain#"
-					sCarType="#arguments.sCarType#">
+					sCarType="#arguments.sCarType#"
+					location="#arguments.location#">
 					<cfif arguments.nCouldYou EQ 0>
-						<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers) />
+						<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																			, Account = arguments.Account
+																			, location = arguments.location
+																			, CDNumbers = CDNumbers) />
 					<cfelse>
-						<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, CDNumbers, arguments.sCarChain, arguments.sCarType) />
+						<cfset local.response = VehicleAdapter.getVehicles(Filter = arguments.Filter
+																			, Account = arguments.Account
+																			, location = arguments.location
+																			, couldYou = arguments.nCouldYou
+																			, CDNumbers = CDNumbers
+																			, carChain = arguments.sCarChain
+																			, carType = arguments.sCarType) />
 					</cfif>
 					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 					<cfif len(arguments.sCarType)>
@@ -111,11 +128,20 @@
 				Policy="#arguments.Policy#"
 				nCouldYou="#arguments.nCouldYou#"
 				sCarChain="#arguments.sCarChain#"
-				sCarType="#arguments.sCarType#">
+				sCarType="#arguments.sCarType#"
+				location="#arguments.location#">
+
 				<cfif arguments.nCouldYou EQ 0>
-					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou) />
+					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																		, Account = arguments.Account
+																		, location = arguments.location) />
 				<cfelse>
-					<cfset local.response = VehicleAdapter.getVehicles(arguments.Filter, arguments.Account, arguments.nCouldYou, arguments.sCarChain, arguments.sCarType) />
+					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																		, Account = arguments.Account
+																		, couldYou = arguments.nCouldYou
+																		, location = arguments.location
+																		, carChain = arguments.sCarChain
+																		, carType = arguments.sCarType) />
 				</cfif>
 				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 				<cfif len(arguments.sCarType)>
@@ -230,6 +256,7 @@
 				AND ArrayFindNoCase(arguments.Policy.aCarSizes, sCategory)>
 					<cfset preferred = 1>
 				</cfif>
+
 				<!--- Out of policy if they cannot book non preferred vendors. --->
 				<cfif arguments.Policy.Policy_CarPrefRule EQ 1
 				AND NOT ArrayFindNoCase(arguments.Account.aPreferredCar, sVendor)>

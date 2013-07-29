@@ -111,7 +111,7 @@
 			<td with="630">
 
 				<table width="600" padding="0" align="center">
-				<!--- <cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
+				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
 						<cfset count++>
@@ -131,32 +131,23 @@
 							</td>
 
 							<td>
-								#timeFormat(group.DepartureTime, 'h:mmt')# - #timeFormat(group.ArrivalTime, 'h:mmt')#
+								#timeFormat(segment.DepartureTime, 'h:mmt')# - #timeFormat(segment.ArrivalTime, 'h:mmt')#
 							</td>
 
 							<td>
 								#uCase(segment.Cabin)#
 							</td>
 
-								<td>
+							<td>
 
-<!--- &nTripID=#nTripKey#&Group=#nDisplayGroup# --->
-<cfset sURL = 'SearchID=#rc.SearchID#'>
-<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Seat Map <span class="divider">/</span></a>
+							<!---  --->
+							<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+								Seat Map
+								<input type="text" name="seat[#segment.Carrier##segment.FlightNumber#]" disabled class="input-mini">
+							</a>
 
-									Seat Map
-								</td>
-
-
-
-
-
-							</tr>
-						</cfloop>
-						<tr>
-							<td colspan="6">
-							<hr>
 							</td>
+
 						</tr>
 					</cfloop>
 					<tr>
@@ -164,7 +155,7 @@
 						<hr>
 						</td>
 					</tr>
-				</cfloop> --->
+				</cfloop>
 				</table>
 			</td>
 

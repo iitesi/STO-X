@@ -55,9 +55,6 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-<!---
-setAcctID
---->
 	<cffunction name="setAcctID" output="false">
 		<cfargument name="rc">
 
@@ -66,9 +63,6 @@ setAcctID
 		<cfreturn />
 	</cffunction>
 
-<!---
-setAccount
---->
 	<cffunction name="setAccount" output="false">
 		<cfargument name="rc">
 
@@ -83,9 +77,6 @@ setAccount
 		<cfreturn />
 	</cffunction>
 
-<!---
-setPolicyID
---->
 	<cffunction name="setPolicyID" output="true">
 		<cfargument name="rc">
 
@@ -94,9 +85,6 @@ setPolicyID
 		<cfreturn />
 	</cffunction>
 
-<!---
-setPolicy
---->
 	<cffunction name="setPolicy" output="true">
 		<cfargument name="rc">
 
@@ -111,9 +99,6 @@ setPolicy
 		<cfreturn />
 	</cffunction>
 
-<!---
-setGroup
---->
 	<cffunction name="setGroup" output="false">
 		<cfargument name="rc">
 

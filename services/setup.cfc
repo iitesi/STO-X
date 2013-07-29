@@ -310,10 +310,11 @@
 				<cfset stTemp[sCol] = qPolicy[sCol]>
 			</cfloop>
 
-			<cfquery name="local.qPreferredCarSizes" datasource="book">
-			SELECT Car_Size, Policy_ID
-			FROM Policy_CarCategories
-			WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
+			<cfquery name="local.qPreferredCarSizes" datasource="Corporate_Production">
+				SELECT Car_Size
+					, Policy_ID
+				FROM Policy_CarSizes
+				WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 			<cfset stTemp.aCarSizes = []>
 			<cfloop query="qPreferredCarSizes">

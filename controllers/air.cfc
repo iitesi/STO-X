@@ -18,6 +18,7 @@
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+			<cfset session.searches[rc.searchID].stCars = {}>
 			<!--- <cfset local.fareRules = ''>
 			<cfset session.searches[rc.searchID].stItinerary.Air.fareRules = []>
 			<cfset session.searches[rc.searchID].stItinerary.Air.cancellationPolicy = []>
