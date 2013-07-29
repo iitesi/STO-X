@@ -117,7 +117,11 @@
 								<cfset sDesc = Replace(sDesc, ',', ', ')>
 								<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 								<tr>
-									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#" 
+									<cfif structKeyExists(rc, 'summary')
+										AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+										onClick="$('##seat#currentSegment.Carrier##currentSegment.FlightNumber#').val('#nRow##sColumn#');return false;"
+									</cfif>>
 										&nbsp;
 									</td>
 								</tr>
@@ -144,7 +148,6 @@
 					</cfloop>
 				</tr>
 			</table>
-
 
 		<!--- Display legend	--->
 				<br>

@@ -137,6 +137,8 @@ $(document).ready(function(){
 		$( "#gender" ).val( traveler.gender );
 
 		if (airSelected == 'true') {
+			var seatFieldNames = $( "#seatFieldNames" ).val();
+				seatFieldNames = seatFieldNames.split(',');
 			if (traveler.bookingDetail.airNeeded == '' || traveler.bookingDetail.airNeeded == 1)  {
 				$( "#airNeeded" ).attr( 'checked', true );
 				$( "#airDiv" ).show();
@@ -162,6 +164,13 @@ $(document).ready(function(){
 							$( "#airFF" + carriers[c] ).val( traveler.loyaltyProgram[i].acctNum );
 						}
 					}
+				}
+			}
+
+			for( var c=0, cl=seatFieldNames.length; c<cl; c++ ) {
+				if (traveler.bookingDetail.seats[seatFieldNames[c]] !== undefined) {
+					$( "#" + seatFieldNames[c] + "_display" ).val( traveler.bookingDetail.seats[seatFieldNames[c]] );
+					$( "#" + seatFieldNames[c] ).val( traveler.bookingDetail.seats[seatFieldNames[c]] );
 				}
 			}
 		}

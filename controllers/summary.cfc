@@ -92,6 +92,10 @@
 			<cfset rc.Traveler.getBookingDetail().setHotelNeeded( (rc.hotelSelected ? 1 : 0) )>
 			<cfset rc.Traveler.getBookingDetail().setCarNeeded( (rc.vehicleSelected ? 1 : 0) )>
 		</cfif>
+
+		<!---
+		FORM SELECTED
+		--->
 		<cfif structKeyExists(rc, 'trigger')>
 			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID() 
@@ -135,6 +139,11 @@
 						<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
 					</cfif>
 				</cfloop>
+				<cfset local.seats = {}>
+				<cfloop list="#rc.seatFieldNames#" index="local.seat">
+					<cfset seats[seat] = rc[seat]>
+				</cfloop>
+				<cfset rc.Traveler.getBookingDetail().setSeats( seats )>
 			</cfif>
 			<cfif rc.hotelSelected
 				OR rc.vehicleSelected>

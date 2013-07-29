@@ -110,6 +110,7 @@
 
 			<td with="630">
 
+				<cfset seatFieldNames = ''>
 				<table width="600" padding="0" align="center">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
 					<cfset count = 0>
@@ -139,12 +140,13 @@
 							</td>
 
 							<td>
-
-							<!---  --->
-							<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-								Seat Map
-								<input type="text" name="seat[#segment.Carrier##segment.FlightNumber#]" disabled class="input-mini">
-							</a>
+								<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
+									Seat Map
+									<cfset fieldName = 'seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#'>
+									<cfset seatFieldNames = listAppend(seatFieldNames, fieldName)>
+									<input type="text" id="#fieldName#_display" disabled class="input-mini">
+								</a>
+								<input type="hidden" name="#fieldName#" id="#fieldName#" value="A1">
 
 							</td>
 
@@ -158,6 +160,7 @@
 				</cfloop>
 				</table>
 			</td>
+			<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
 
 			<td width="200" valign="top">
 
