@@ -141,9 +141,10 @@
 							<td>
 
 							<!---  --->
-							<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+							<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
 								Seat Map
-								<input type="text" name="seat[#segment.Carrier##segment.FlightNumber#]" disabled class="input-mini">
+								<input type="text" id="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#_display" disabled class="input-mini">
+								<input type="text" name="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#" id="seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#" disabled class="input-mini">
 							</a>
 
 							</td>
