@@ -26,7 +26,7 @@
 		<cfset local.CarRate = 0>
 		<cfset stCars = structNew() />
 
-		<cfparam name="session.searches[arguments.searchID].vehicleLocations" default="#structNew()#">
+		<cfparam name="session.searches[ searchID ].vehicleLocations" default="#structNew()#">
 
 		<!--- If coming from the "Change Your Search" form, destroy the car-related sessions and build anew. --->
 		<cfif structKeyExists(arguments, "requery")>
@@ -65,7 +65,7 @@
 
 		</cfif>
 
-		<cfset session.Filters[arguments.SearchID] = arguments.Filter>
+		<cfset session.Filters[ searchID ] = arguments.Filter>
 
 		<cfset structDelete(session.searches[SearchID], 'stCars')>
 
@@ -73,21 +73,21 @@
 			OR StructIsEmpty(session.searches[SearchID].stCars)
 			OR arguments.nCouldYou NEQ 0>
 
-			<cfif NOT structKeyExists(session.searches[arguments.searchID].vehicleLocations, arguments.Filter.getCarPickupAirport())>
-				<cfset session.searches[arguments.searchID].vehicleLocations[arguments.Filter.getCarPickupAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
+			<cfif NOT structKeyExists(session.searches[ searchId ].vehicleLocations, arguments.Filter.getCarPickupAirport())>
+				<cfset session.searches[ searchId ].vehicleLocations[arguments.Filter.getCarPickupAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
 																																							, date = arguments.Filter.getCarPickupDateTime()
 																																							, airport = arguments.Filter.getCarPickupAirport()
 																																							, Filter = arguments.Filter )>
 			</cfif>
 
-			<cfif NOT structKeyExists(session.searches[arguments.searchID].vehicleLocations, arguments.Filter.getCarDropoffAirport())>
-				<cfset session.searches[arguments.searchID].vehicleLocations[arguments.Filter.getCarDropoffAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
+			<cfif NOT structKeyExists(session.searches[ searchId ].vehicleLocations, arguments.Filter.getCarDropoffAirport())>
+				<cfset session.searches[ searchId ].vehicleLocations[arguments.Filter.getCarDropoffAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
 																																							, date = arguments.Filter.getCarPickupDateTime()
 																																							, airport = arguments.Filter.getCarDropoffAirport()
 																																							, Filter = arguments.Filter )>
 			</cfif>
 
-<!--- <cfdump var="#session.searches[arguments.searchID].vehicleLocations#" /><cfabort /> --->
+<!--- <cfdump var="#session.searches[ searchId ].vehicleLocations#" /><cfabort /> --->
 			<cfset local.threadNames = ''>
 			<cfset local.stCars = ''>
 
