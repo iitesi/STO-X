@@ -54,8 +54,10 @@
 								<select name="pickUpLocationKey" class="filterby" onChange="submit();">
 									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
-										<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
-										</option>
+										<cfif rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city>
+											<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+											</option>
+										</cfif>
 									</cfloop>
 								</select>
 								<cfif rc.Filter.getCarPickUpAirport() NEQ rc.Filter.getCarDropoffAirport()>
@@ -63,8 +65,10 @@
 									<select name="dropOffLocationKey" class="filterby" onChange="submit();">
 										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
-											<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
-											</option>
+											<cfif rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city>
+												<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+												</option>
+											</cfif>
 										</cfloop>
 									</select>
 								</cfif>

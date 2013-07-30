@@ -20,6 +20,8 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="SearchID" value="#rc.SearchID#">
 			<input type="hidden" name="sCategory" id="sCategory" value="">
 			<input type="hidden" name="sVendor" id="sVendor" value="">
+			<input type="hidden" name="pickUpLocationKey" value="#rc.pickUpLocationKey#">
+			<input type="hidden" name="dropOffLocationKey" value="#rc.dropOffLocationKey#">
 		</form>
 
 		<!--- If no records can be retrieved from the initial search or change search form. --->
