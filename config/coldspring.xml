@@ -5,7 +5,7 @@
 	<import resource="/com/shortstravel/config/environment.xml" />
 
 	<bean id="UAPI" class="com.travelport.uapi">
-			<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
+		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
 	</bean>
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
@@ -43,7 +43,9 @@
 	</bean>
 
 	<bean id="General" class="booking.services.general" />
+
 	<bean id="Summary" class="booking.services.summary" />
+	
 	<bean id="confirmation" class="booking.services.confirmation" />
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
@@ -95,6 +97,7 @@
 		<constructor-arg name="UserManager"><ref bean="UserManager" /> </constructor-arg>
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /> </constructor-arg>
 		<constructor-arg name="HotelSearchManager"><ref bean="HotelSearchManager" /> </constructor-arg>
+		<constructor-arg name="LocationManager"><ref bean="LocationManager" /> </constructor-arg>
 	</bean>
 
 	<bean id="SearchManager" class="com.shortstravel.search.SearchManager">
@@ -130,18 +133,18 @@
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
 
-	<bean id="AirCreate" class="booking.services.AirCreate" >
+	<bean id="AirCreate" class="booking.services.AirCreate">
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
 		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
 	</bean>
 
-	<bean id="AirParse" class="booking.services.AirParse" >
+	<bean id="AirParse" class="booking.services.AirParse">
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 	</bean>
 
-	<bean id="lowfare" class="booking.services.lowfare" >
+	<bean id="lowfare" class="booking.services.lowfare">
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
