@@ -32,6 +32,18 @@
 			<cfset variables.bf.getBean( "SearchService" ).save( searchID=arguments.rc.searchId, hotel=true ) />
 		</cfif>
 
+		<cfset var hotelLowPrice = 99999 />
+
+		<cfif structKeyExists( session.searches[ arguments.rc.Filter.getSearchID() ], "hotels" ) AND isArray( session.searches[ arguments.rc.Filter.getSearchID() ].hotels )>
+			<cfloop array="#session.searches[ arguments.rc.Filter.getSearchID() ].hotels#" item="local.loopHotel">
+				<cfset var loopHotelLowPrice = loopHotel.findLowestRoomRate() />
+				<cfif loopHotelLowPrice NEQ 0 AND loopHotelLowPrice LT hotelLowPrice>
+					<cfset hotelLowPrice = loopHotelLowPrice />
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfset session.searches[ arguments.rc.Filter.getSearchID() ].lowestHotelRate = hotelLowPrice />
 
 		<cfif arguments.rc.Filter.getCar() AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'vehicle')>
 
