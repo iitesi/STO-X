@@ -9,32 +9,32 @@
 	</bean>
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-        <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
-    </bean>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
 
 	<bean id="TerminalEntry" class="com.travelport.TerminalEntry">
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-        <constructor-arg name="UserService"><ref bean="UserService" /></constructor-arg>
-    </bean>
+		<constructor-arg name="UserService"><ref bean="UserService" /></constructor-arg>
+	</bean>
 
-    <bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+	<bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-    </bean>
+	</bean>
 
-    <bean id="AirAdapter" class="com.travelport.AirAdapter">
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+	<bean id="AirAdapter" class="com.travelport.AirAdapter">
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-        <constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
-    </bean>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
 
-    <bean id="seatmap" class="booking.services.seatmap">
-        <constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+	<bean id="seatmap" class="booking.services.seatmap">
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-    </bean>
+	</bean>
 
 	<bean id="setup" class="booking.services.setup" >
 		<constructor-arg name="SearchService"><ref bean="SearchService" /></constructor-arg>
@@ -45,6 +45,14 @@
 	<bean id="General" class="booking.services.general" />
 	<bean id="Summary" class="booking.services.summary" />
 	<bean id="confirmation" class="booking.services.confirmation" />
+
+	<bean id="LocationService" class="com.shortstravel.location.locationService">
+		<constructor-arg name="LocationManager"><ref bean="LocationManager" /></constructor-arg>
+	</bean>
+
+	<bean id="LocationManager" class="com.shortstravel.location.LocationManager">
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+	</bean>
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
@@ -109,7 +117,7 @@
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
-    <bean id="LoyaltyProgramService" class="com.shortstravel.traveler.LoyaltyProgramService">
+	<bean id="LoyaltyProgramService" class="com.shortstravel.traveler.LoyaltyProgramService">
 		<constructor-arg name="LoyaltyProgramManager"><ref bean="LoyaltyProgramManager" /></constructor-arg>
 	</bean>
 
@@ -117,7 +125,7 @@
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 	</bean>
 
-    <bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
+	<bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
 		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
