@@ -61,15 +61,15 @@
 		</ul>
 	</cfif>
 
-
 		<div id="seats">
 			<!--- show seatmap heading --->
-
-#rc.seat#
-
 			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#.png">
 			<div class="media-heading pull-left">
-				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin]# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination]# (#currentSegment.Destination#)</h3>
+				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin]# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination]# (#currentSegment.Destination#)
+				<cfif structKeyExists(rc, "seat") AND Len(rc.seat)>
+				:: Selected Seat - #rc.seat#
+				</cfif>
+			</h3>
 				#DateFormat(currentSegment.DepartureTime, 'ddd, mmm d')# - #TimeFormat(currentSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(currentSegment.ArrivalTime, 'h:mm tt')#
 			</div>
 			<div class="clearfix"></div>

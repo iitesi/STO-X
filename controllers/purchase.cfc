@@ -3,408 +3,474 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<cfparam name="rc.travelerNumber" default="1">
-		<cfset local.errorMessage = []>
-		<cfset local.errorType = ''>
-
-		<cfset rc.Traveler = session.searches[rc.searchID].Travelers[rc.travelerNumber]>
-		<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = rc.Traveler.getUserID() )>
-		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
-		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
-		<cfset rc.Air = (structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') ? session.searches[rc.SearchID].stItinerary.Air : '')>
-		<cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'Hotel') ? true : false)>
-		<cfset rc.Hotel = (structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel') ? session.searches[rc.SearchID].stItinerary.Hotel : '')>
-		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false)>
-		<cfset rc.Vehicle = (structKeyExists(session.searches[rc.SearchID].stItinerary, 'Vehicle') ? session.searches[rc.SearchID].stItinerary.Vehicle : '')>
-		<cfset local.providerLocatorCode = ''>
-		<cfset local.universalLocatorCode = ''>
-		<cfset local.version = -1>
-
-		<!--- Populate sort fields --->
-		<cfset local.sort1 = ''>
-		<cfset local.sort2 = ''>
-		<cfset local.sort3 = ''>
-		<cfset local.sort4 = ''>
-		<cfloop array="#rc.Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
-			<cfif orgUnit.getOUType() EQ 'sort'>
-				<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
-			</cfif>
-		</cfloop>
-		<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
-		<cfset statmentInformation = trim(statmentInformation)>
-
-		<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
-																						, Filter = rc.Filter
-																						, Traveler = rc.Traveler )>
-
-		<cfset rc.Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
-		<cfset rc.Traveler.getBookingDetail().setApprovers( approval.approvers )>
-
-		<cfset local.responseMessage = ''>
-		<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																						, searchID = rc.searchID )>
-		<cfif hostToken EQ ''>
-			<cfset listAppend(errorMessage, 'Terminal - open session failed')>
-		<cfelse>
-			<!--- Find the profile in the GDS --->
-			<cfset local.profileFound = true>
-			<cfif rc.Traveler.getPAR() NEQ ''>
-				<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
-																							, hostToken = hostToken
-																							, pcc = rc.Traveler.getBAR()[1].PCC
-																							, bar = rc.Traveler.getBAR()[1].Name
-																							, par = rc.Traveler.getPAR()
-																							, searchID = rc.searchID)>
-				<cfif parResponse.error>
-					<cfset profileFound = false>
-				</cfif>
-			<cfelse>
-				<cfset profileFound = false>
-			</cfif>
-
-			<!--- Sell Air --->
-			<cfif rc.airSelected
-				AND rc.Traveler.getBookingDetail().getAirNeeded()>
-
-				<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
-																						, Account = rc.Account
-																						, Policy = rc.Policy
-																						, Class = rc.Air.Class
-																						, Ref = rc.Air.Ref
-																						, nTrip = rc.Air.nTrip
-																						, nCouldYou = 0
-																						, bSaveAirPrice = 1
-																					)>
-				<cfif structIsEmpty(trip)>
-					<cfset arrayAppend( errorMessage, 'Could not price record.' )>
-				<cfelse>
-					<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[structKeyList(trip)].sXML )>
-					<cfset local.cardNumber = ''>
-					<cfset local.cardCVV = ''>
-					<cfset local.cardExpiration = ''>
-					<cfif rc.Traveler.getBookingDetail().getAirFOPID() NEQ 0>
-						<cfloop array="#rc.Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
-							<cfif (Payment.getBTAID() NEQ ''
-								AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getFOPID())
-								OR (Payment.getFOPID() NEQ ''
-									AND rc.Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
-								<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
-								<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
-							</cfif>
-						</cfloop>
-					<cfelse>
-						<cfset cardNumber = rc.Traveler.getBookingDetail().getAirCCNumber()>
-						<cfset cardCVV = rc.Traveler.getBookingDetail().getAirCCCVV()>
-						<cfset cardExpiration = rc.Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(rc.Traveler.getBookingDetail().getAirCCMonth(), '00')>
-					</cfif>
-					<cfset local.cardType = 'VI'>
-					<cfif LEFT(cardNumber, 1) EQ 5>
-						<cfset cardType = 'MC'>
-					<cfelseif LEFT(cardNumber, 1) EQ 6>
-						<cfset cardType = 'DS'>
-					<cfelseif LEFT(cardNumber, 1) EQ 3>
-						<cfset cardType = 'AX'>
-					</cfif>
-					<!--- <cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, Air = rc.Air
-																								, cardNumber = cardNumber
-																								, cardType = cardType
-																								, cardExpiration = cardExpiration
-																								, searchID = rc.searchID)>
-					authResponse<br>
-					<cfdump var="#authResponse#" /> --->
-					<cfset local.cardAuth = ''>
-					<!--- <cfif NOT authResponse.error>
-						<cfset cardAuth = authResponse.message>
-					</cfif> --->
-					<cfset rc.response = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
-																						, bookingPCC = rc.Account.PCC_Booking
-																						, Traveler = rc.Traveler
-																						, Profile = Profile
-																						, Air = rc.Air
-																						, airPricing = airPricing
-																						, Filter = rc.Filter
-																						, statmentInformation = statmentInformation
-																						, cardAuth = cardAuth
-																						, profileFound = profileFound
-																					 )>
-					<cfset rc.Air.UniversalLocatorCode = ''>
-					<cfset rc.Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = rc.Air
-																							, response = rc.response )>
-					<cfif rc.Air.UniversalLocatorCode EQ ''>
-						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-					<cfelse>
-						<cfset providerLocatorCode = rc.Air.ProviderLocatorCode>
-						<cfset universalLocatorCode = rc.Air.UniversalLocatorCode>
-					</cfif>
-					<cfset session.searches[rc.SearchID].stItinerary.Air = rc.Air>
-
-					<cfif providerLocatorCode NEQ ''>
-						<cfset version++>
-					</cfif>
-				</cfif>
-			</cfif>
-
-			<!--- Sell Hotel --->
-			<cfif rc.hotelSelected
-				AND rc.Traveler.getBookingDetail().getHotelNeeded()
-				AND arrayIsEmpty(errorMessage)>
-
-				<cfset rc.Hotel.setProviderLocatorCode('')>
-				<cfset rc.Hotel.setUniversalLocatorCode('')>
-
-				<cfset rc.response = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
-																						, bookingPCC = rc.Account.PCC_Booking
-																						, searchID = rc.searchID
-																						, Traveler = rc.Traveler
-																						, Profile = Profile
-																						, Hotel = rc.Hotel
-																						, Filter = rc.Filter
-																						, statmentInformation = statmentInformation
-																						, providerLocatorCode = providerLocatorCode
-																						, universalLocatorCode = universalLocatorCode
-																						, version = version
-																						, profileFound = profileFound
-																					)>
-				<cfset rc.Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = rc.Hotel
-																						, response = rc.response )>
-				<cfif rc.Hotel.getConfirmation() EQ ''>
-					<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-					<cfset errorType = 'hotel'>
-				<cfelse>
-					<cfset providerLocatorCode = rc.Hotel.getProviderLocatorCode()>
-					<cfset universalLocatorCode = rc.Hotel.getUniversalLocatorCode()>
-				</cfif>
-				<cfif providerLocatorCode EQ ''
-					OR universalLocatorCode EQ ''>
-					<cfset errorMessage = 'Missing PNRs'>
-					<cfset errorType = 'hotel'>
-				</cfif>
-				<cfset session.searches[rc.SearchID].stItinerary.Hotel = rc.Hotel>
-
-				<cfif providerLocatorCode NEQ ''>
-					<cfset version++>	
-				</cfif>
-			</cfif>
-
-			<!--- Sell Vehicle --->
-			<cfif rc.vehicleSelected
-				AND rc.Traveler.getBookingDetail().getCarNeeded()
-				AND arrayIsEmpty(errorMessage)>
-
-				<cfset rc.Vehicle.setProviderLocatorCode('')>
-				<cfset rc.Vehicle.setUniversalLocatorCode('')>
-				<cfset local.lowestRateOffered = session.searches[rc.searchID].lowestCarRate>
-
-				<!--- Find the correct direct bill and corporate discount numbers --->
-				<cfset local.directBillNumber = ''>
-				<cfset local.corporateDiscountNumber = ''>
-				<cfset local.directBillType = ''>
-				<cfloop array="#rc.Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
-					<cfif payment.getCarUse() EQ 1>
-						<cfif len(payment.getDirectBillNumber()) GT 0
-							AND rc.Traveler.getBookingDetail().getCarFOPID() EQ 'DB_'&payment.getDirectBillNumber()>
-							<cfset directBillNumber = payment.getDirectBillNumber()>
-							<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
-							<cfset directBillType = payment.getDirectBillType()>
-						<cfelseif len(payment.getCorporateDiscountNumber()) GT 0
-							AND rc.Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getDirectBillNumber()>
-							<cfset directBillNumber = ''>
-							<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
-							<cfset directBillType = payment.getDirectBillType()>
-						</cfif>
+		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
+		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
+			
+		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+			<cfif arrayIsEmpty(errorMessage)>
+				<cfset local.providerLocatorCode = ''>
+				<cfset local.universalLocatorCode = ''>
+				<!--- Looks odd, but this is used to compare differences between their profile and what information
+				they entered into the summary page. --->
+				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = Traveler.getUserID() )>
+				<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
+				<cfset local.airSelected = (structKeyExists(itinerary, 'Air') ? true : false)>
+				<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')>
+				<cfset local.hotelSelected = (structKeyExists(itinerary, 'Hotel') ? true : false)>
+				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
+				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
+				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
+				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
+				<cfset local.version = -1>
+				
+				<!--- Populate sort fields --->
+				<cfset local.sort1 = ''>
+				<cfset local.sort2 = ''>
+				<cfset local.sort3 = ''>
+				<cfset local.sort4 = ''>
+				<cfloop array="#Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
+					<cfif orgUnit.getOUType() EQ 'sort'>
+						<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
 					</cfif>
 				</cfloop>
-
-				<!--- Find arriving flight details --->
-				<cfset local.carrier = ''>
-				<cfset local.flightNumber = ''>
-				<cfif isStruct(rc.Air)>
-					<cfloop collection="#rc.Air.Groups[0].Segments#" index="local.segmentIndex" item="local.segment">
-						<cfset carrier = segment.carrier>
-						<cfset flightNumber = segment.flightNumber>
-					</cfloop>
-				</cfif>
+				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
+				<cfset statmentInformation = trim(statmentInformation)>
 				
-				<!--- Sell vehicle --->
-				<cfset rc.response = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch 
-																						, bookingPCC = rc.Account.PCC_Booking
-																						, Traveler = rc.Traveler
-																						, Profile = Profile
-																						, Vehicle = rc.Vehicle
-																						, Filter = rc.Filter
-																						, directBillNumber = directBillNumber
-																						, corporateDiscountNumber = corporateDiscountNumber
-																						, directBillType = directBillType
-																						, carrier = carrier
-																						, flightNumber = flightNumber
-																						, statmentInformation = statmentInformation
-																						, providerLocatorCode = providerLocatorCode
-																						, universalLocatorCode = universalLocatorCode
-																						, version = version
-																						, profileFound = profileFound
-																						, lowestRateOffered = lowestRateOffered
-																					)>
-				<!--- Parse the vehicle --->
-				<cfset rc.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = rc.Vehicle
-																								, response = rc.response )>
-				<!--- Validate the confirmation --->
-				<cfif rc.Vehicle.getConfirmation() EQ ''>
-					<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( rc.response )>
-					<cfset errorType = 'vehicle'>
-				<cfelse>
-					<cfset providerLocatorCode = rc.Vehicle.getProviderLocatorCode()>
-					<cfset universalLocatorCode = rc.Vehicle.getUniversalLocatorCode()>
-					Vehicle<br>
-					providerLocatorCode<br>
-					<cfdump var="#providerLocatorCode#">
-					universalLocatorCode<br>
-					<cfdump var="#universalLocatorCode#">
+				<!--- Determine if pre trip approval is needed. --->
+				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
+																								, Filter = rc.Filter
+																								, Traveler = Traveler )>
+				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
+				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
+				
+				<!--- Open terminal session --->
+				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																								, searchID = rc.searchID )>
+				<cfif hostToken EQ ''>
+					<cfset listAppend(errorMessage, 'Terminal - open session failed')>
+					<cfset errorType = 'TerminalEntry.openSession'>
 				</cfif>
-				<cfif providerLocatorCode EQ ''
-					OR universalLocatorCode EQ ''>
-					<cfset errorMessage = 'Missing PNRs'>
-					<cfset errorType = 'vehicle'>
-				</cfif>
-				<cfset session.searches[rc.SearchID].stItinerary.Vehicle = rc.Vehicle>
 
-				<cfif providerLocatorCode NEQ ''>
-					<cfset version++>
+				<!--- Find the profile in the GDS --->
+				<cfset local.profileFound = true>
+				<cfif arrayIsEmpty(errorMessage)
+					AND Traveler.getPAR() NEQ ''>
+					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
+																								, hostToken = hostToken
+																								, pcc = Traveler.getBAR()[1].PCC
+																								, bar = Traveler.getBAR()[1].Name
+																								, par = Traveler.getPAR()
+																								, searchID = rc.searchID)>
+					<cfif parResponse.error>
+						<cfset profileFound = false>
+					</cfif>
+				<cfelse>
+					<cfset profileFound = false>
+				</cfif>
+
+				<!--- Sell Air --->
+				<cfif airSelected
+					AND Traveler.getBookingDetail().getAirNeeded()>
+					<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																							, Account = rc.Account
+																							, Policy = rc.Policy
+																							, sCabin = Air.Class
+																							, bRefundable = Air.Ref
+																							, nTrip = Air.nTrip
+																							, nCouldYou = 0
+																							, bSaveAirPrice = 1
+																						)>
+					<cfif structIsEmpty(trip)>
+						<cfset arrayAppend( errorMessage, 'Could not price record.' )>
+						<cfset errorType = 'Air.airPrice'>
+					<cfelse>
+						<cfif Air.total LT trip[Air.nTrip].total>
+							<cfset arrayAppend(errorMessage, 'Price increase from #dollarFormat(Air.total)# to #dollarFormat(trip[Air.nTrip].total)#')>
+							<cfset errorType = 'Air.airPrice'>
+							<cfset trip.nTrip = Air.nTrip>
+							<cfset session.searches[rc.SearchID].stItinerary.Air = trip>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.nTrip = nTrip>
+						<cfelse>
+							<cfset local.nTrip = Air.nTrip>
+							<cfset Air = trip[Air.nTrip]>
+							<cfset Air.nTrip = nTrip>
+							<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[structKeyList(trip)].sXML )>
+							<!--- Parse credit card information --->
+							<cfset local.cardNumber = ''>
+							<cfset local.cardCVV = ''>
+							<cfset local.cardExpiration = ''>
+							<cfset local.cardType = 'VI'>
+							<cfif Traveler.getBookingDetail().getAirFOPID() NEQ 0>
+								<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
+									<cfif (Payment.getBTAID() NEQ ''
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getFOPID())
+										OR (Payment.getFOPID() NEQ ''
+											AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
+										<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
+										<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
+									</cfif>
+								</cfloop>
+							<cfelse>
+								<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
+								<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
+								<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
+							</cfif>
+							<cfif LEFT(cardNumber, 1) EQ 5>
+								<cfset cardType = 'MC'>
+							<cfelseif LEFT(cardNumber, 1) EQ 6>
+								<cfset cardType = 'DS'>
+							<cfelseif LEFT(cardNumber, 1) EQ 3>
+								<cfset cardType = 'AX'>
+							</cfif>
+							<!--- Get credit card authorization --->
+							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, Air = Air
+																												, cardNumber = cardNumber
+																												, cardType = cardType
+																												, cardExpiration = cardExpiration
+																												, searchID = rc.searchID)>
+							<cfif authResponse.error>
+								<cfset arrayAppend( errorMessage, 'Credit card authorization error' )>
+								<cfset errorType = 'TerminalEntry.getCCAuth'>
+							<cfelse>
+								<cfif NOT authResponse.error>
+									<cfset cardAuth = authResponse.message>
+								</cfif>
+								<!--- Start new session due to credit card/emulation --->
+								<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																								, hostToken = hostToken
+																								, searchID = rc.searchID )>
+								<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																												, searchID = rc.searchID )>
+								
+								<cfif hostToken EQ ''>
+									<cfset listAppend(errorMessage, 'Terminal - open session failed')>
+									<cfset errorType = 'TerminalEntry.openSession'>
+								<cfelse>
+									<!--- Sell air --->
+									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+																												, bookingPCC = rc.Account.PCC_Booking
+																												, Traveler = Traveler
+																												, Profile = Profile
+																												, Air = Air
+																												, airPricing = airPricing
+																												, Filter = rc.Filter
+																												, statmentInformation = statmentInformation
+																												, cardNumber = cardNumber
+																												, cardType = cardType
+																												, cardExpiration = cardExpiration
+																												, cardCVV = cardCVV
+																												, cardAuth = cardAuth
+																												, profileFound = profileFound
+																											 )>
+									<cfset Air.ProviderLocatorCode = ''>
+									<cfset Air.UniversalLocatorCode = ''>
+									<!--- Parse sell results --->
+									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
+																										, response = airResponse )>
+									<!--- Parse error --->
+									<cfif Air.UniversalLocatorCode EQ ''>
+										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
+										<cfset errorType = 'Air'>
+									<cfelse>
+										<cfset providerLocatorCode = Air.ProviderLocatorCode>
+										<cfset universalLocatorCode = Air.UniversalLocatorCode>
+									</cfif>
+									<!--- Update session with new Air record --->
+									<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
+									<!--- Update universal version --->
+									<cfif providerLocatorCode NEQ ''>
+										<cfset version++>
+									</cfif>
+								</cfif>
+							</cfif>
+						</cfif>
+					</cfif>
+				</cfif>
+
+				<!--- Sell Hotel --->
+				<cfif hotelSelected
+					AND Traveler.getBookingDetail().getHotelNeeded()
+					AND arrayIsEmpty(errorMessage)>
+					<!--- Sell hotel --->
+					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, searchID = rc.searchID
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																									)>
+					<cfset Hotel.setProviderLocatorCode('')>
+					<cfset Hotel.setUniversalLocatorCode('')>
+					<!--- Parse sell results --->
+					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+																							, response = hotelResponse )>
+					<!--- Parse error --->
+					<cfif Hotel.getUniversalLocatorCode() EQ ''>
+						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( hotelResponse )>
+						<cfset errorType = 'Hotel'>
+					<cfelse>
+						<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
+						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
+					</cfif>
+					<!--- Update session with new Hotel record --->
+					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
+					<!--- Update universal version --->
+					<cfif providerLocatorCode NEQ ''>
+						<cfset version++>	
+					</cfif>
+				</cfif>
+
+				<!--- Sell Vehicle --->
+				<cfif vehicleSelected
+					AND Traveler.getBookingDetail().getCarNeeded()
+					AND arrayIsEmpty(errorMessage)>
+					<cfset local.lowestRateOffered = session.searches[rc.searchID].lowestCarRate>
+					<!--- Find the correct direct bill and corporate discount numbers --->
+					<cfset local.directBillNumber = ''>
+					<cfset local.corporateDiscountNumber = ''>
+					<cfset local.directBillType = ''>
+					<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
+						<cfif payment.getCarUse() EQ 1>
+							<cfif len(payment.getDirectBillNumber()) GT 0
+								AND Traveler.getBookingDetail().getCarFOPID() EQ 'DB_'&payment.getDirectBillNumber()>
+								<cfset directBillNumber = payment.getDirectBillNumber()>
+								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+								<cfset directBillType = payment.getDirectBillType()>
+							<cfelseif len(payment.getCorporateDiscountNumber()) GT 0
+								AND Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getDirectBillNumber()>
+								<cfset directBillNumber = ''>
+								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+								<cfset directBillType = payment.getDirectBillType()>
+							</cfif>
+						</cfif>
+					</cfloop>
+					<!--- Find arriving flight details --->
+					<cfset local.carrier = ''>
+					<cfset local.flightNumber = ''>
+					<cfif isStruct(Air)>
+						<cfloop collection="#Air.Groups[0].Segments#" index="local.segmentIndex" item="local.segment">
+							<cfset carrier = segment.carrier>
+							<cfset flightNumber = segment.flightNumber>
+						</cfloop>
+					</cfif>
+					<!--- Sell vehicle --->
+					<cfset local.vehicleResponse = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Vehicle = Vehicle
+																										, Filter = rc.Filter
+																										, directBillNumber = directBillNumber
+																										, corporateDiscountNumber = corporateDiscountNumber
+																										, directBillType = directBillType
+																										, carrier = carrier
+																										, flightNumber = flightNumber
+																										, statmentInformation = statmentInformation
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, lowestRateOffered = lowestRateOffered
+																									)>
+					<cfset Vehicle.setProviderLocatorCode('')>
+					<cfset Vehicle.setUniversalLocatorCode('')>
+					<!--- Parse the vehicle --->
+					<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
+																									, response = vehicleResponse )>
+					<!--- Parse error --->
+					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
+						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( vehicleResponse )>
+						<cfset errorType = 'Vehicle'>
+					<cfelse>
+						<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
+						<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
+					</cfif>
+					<!--- Update session with new Hotel record --->
+					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
+				</cfif>
+				<cfif arrayIsEmpty(errorMessage)>
+					<!--- Pull up the PNR for the terminal entry commands --->
+					<cfset local.responseMessage = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																											, hostToken = hostToken
+																											, pnr = providerLocatorCode
+																											, searchID = rc.searchID )>
+					<cfif responseMessage.error>
+						<cfset errorMessage = responseMessage.message>
+						<cfset errorType = 'TerminalEntry.displayPNR'>
+					<cfelse>
+						<!--- Move PAR and BAR or just BAR --->
+						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').moveBARPAR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pcc = Traveler.getBAR()[1].PCC
+																										, bar = Traveler.getBAR()[1].Name
+																										, par = Traveler.getPAR()
+																										, searchID = rc.searchID )>
+					</cfif>
+					<cfif responseMessage.error>
+						<cfset errorMessage = responseMessage.message>
+						<cfset errorType = 'TerminalEntry.moveBARPAR'>
+					<cfelse>
+						<!--- Add auto ticketing remarks : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addAutoTicketRemark( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, bookingPCC = rc.Account.PCC_Booking
+																												, searchID = rc.searchID )>
+					</cfif>
+					<cfif NOT responseMessage.error>
+						<!--- Add ticketing date : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addTicketDate( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, searchID = rc.searchID )>
+					</cfif>
+					<cfif NOT responseMessage.error
+						AND hotelSelected>
+						<!--- Add hotel lost savings code : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, serviceType = 'H'
+																												, startDate = rc.Filter.getCheckInDate()
+																												, reasonCode = Traveler.getBookingDetail().getCarReasonCode()
+																												, lowestRateOffered = 0
+																												, searchID = rc.searchID )>
+
+					</cfif>
+					<cfif NOT responseMessage.error
+						AND vehicleSelected>
+						<!--- Add vehicle lost savings code : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, serviceType = 'C'
+																												, startDate = rc.Filter.getCarPickupDateTime()
+																												, reasonCode = Traveler.getBookingDetail().getHotelReasonCode()
+																												, lowestRateOffered = session.searches[rc.searchID].lowestCarRate
+																												, searchID = rc.searchID )>
+
+					</cfif>
+					<cfif NOT responseMessage.error>
+						<!--- Add received by : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, userID = rc.Filter.getUserID()
+																										, searchID = rc.searchID )>
+					</cfif>
+					<cfif NOT responseMessage.error
+						AND profileFound>
+						<!--- Remove second name : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+					</cfif>
+
+					<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, Air = Air
+																									, pcc = Traveler.getBAR()[1].PCC
+																									, cardNumber = cardNumber
+																									, cardType = cardType
+																									, cardExpiration = cardExpiration
+																									, cardAuth = cardAuth
+																									, searchID = rc.searchID )>
+				
+					removeSecondName<br>
+					<cfdump var="#responseMessage#" /> --->
+					<cfif responseMessage.error>
+						<cfset errorMessage = responseMessage.message>
+						<cfset errorType = 'TerminalEntry.updateATFQ'>
+					<cfelseif airSelected>
+						<!--- Verify stored fare --->
+						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+					</cfif>
+					<cfif responseMessage.error>
+						<cfset errorMessage = responseMessage.message>
+						<cfset errorType = 'TerminalEntry.verifyStoredFare'>
+					<cfelse>
+						<!--- Remove duplicate accounting line : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').removeDuplicateAccounting( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+					</cfif>
+					<cfif NOT responseMessage.error>
+						<!--- Determine appropriate queue --->
+						<cfset local.queue = ''>
+						<cfif NOT Traveler.getBookingDetail().getApprovalNeeded()
+							AND Traveler.getBookingDetail().getSpecialRequests() EQ ''>
+							<cfset queue = '90'>
+						<cfelseif Traveler.getBookingDetail().getApprovalNeeded()>
+							<cfset queue = '34*CHA'>
+						<cfelse>
+							<cfset queue = '34*CSR'>
+						</cfif>
+						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, queue = queue
+																										, searchID = rc.searchID )>
+						<cfif responseMessage.error>
+							<cfset errorMessage = responseMessage.message>
+							<cfset errorType = 'TerminalEntry.queueRecord'>
+						</cfif>
+					</cfif>
+				</cfif>
+				<!--- Sign out of session if error or normal purchase flow --->
+				<cfif hostToken NEQ ''>
+					<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID )>
+				</cfif>
+				<cfif arrayIsEmpty(errorMessage)>
+					<!--- Save profile to database --->
+					<!--- <cfif Traveler.getSaveProfile()>
+						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
+					</cfif> --->
+					<cfoutput>
+						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
+					</cfoutput>
+					<cfabort />
+					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
+				<cfelse>
+					<cfset local.errorList = errorType>
+					<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
+					<!--- Error : hotel advance purchase --->
+					<cfif errorType EQ 'Hotel'
+						AND (find('NEED GUEST CREDIT CARD IN CARD DEPOSIT FORMAT TO BOOK', errorList)
+						OR find('INVALID /G- TYPE OR FORMAT', errorList)
+						OR find('INVALID NEED DEPOSIT IN /G- FIELD', errorList)
+						OR find('ADVANCED DEPOSIT REQUIRED', errorList)
+						OR find('INVALID GUARANTEE INDICATOR', errorList)
+						OR find('DEPOSIT REQ', errorList)
+						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList)
+						OR find('DEPOSIT REQUIRED PLEASE CORRECT', errorList))>
+						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
+						<cfset rc.message.addError('It appears the property you are trying to book requires a prepayment. Please review the hotel payment and cancellation policy and submit your booking again.')>
+					<!--- All other errors --->
+					<cfelse>
+						<cfset rc.message.addError(errorList)>
+					</cfif>
+					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
-
-			<cfif arrayIsEmpty(errorMessage)>
-				<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, pnr = providerLocatorCode
-																								, searchID = rc.searchID )>
-				<cfif NOT responseMessage.error>
-					<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').moveBARPAR( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, pcc = rc.Traveler.getBAR()[1].PCC
-																									, bar = rc.Traveler.getBAR()[1].Name
-																									, par = rc.Traveler.getPAR()
-																									, searchID = rc.searchID )>
-				</cfif>
-				<cfif NOT responseMessage.error>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').addAutoTicketRemark( targetBranch = rc.Account.sBranch
-																											, hostToken = hostToken
-																											, bookingPCC = rc.Account.PCC_Booking
-																											, searchID = rc.searchID )>
-				</cfif>
-				<cfif NOT responseMessage.error>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').addTicketDate( targetBranch = rc.Account.sBranch
-																											, hostToken = hostToken
-																											, searchID = rc.searchID )>
-				</cfif>
-				<cfif NOT responseMessage.error
-					AND rc.hotelSelected>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
-																											, hostToken = hostToken
-																											, serviceType = 'H'
-																											, startDate = rc.Filter.getCheckInDate()
-																											, reasonCode = rc.Traveler.getBookingDetail().getCarReasonCode()
-																											, lowestRateOffered = 0
-																											, searchID = rc.searchID )>
-
-				</cfif>
-				<cfif NOT responseMessage.error
-					AND rc.vehicleSelected>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').addLostSavings( targetBranch = rc.Account.sBranch
-																											, hostToken = hostToken
-																											, serviceType = 'C'
-																											, startDate = rc.Filter.getCarPickupDateTime()
-																											, reasonCode = rc.Traveler.getBookingDetail().getHotelReasonCode()
-																											, lowestRateOffered = session.searches[rc.searchID].lowestCarRate
-																											, searchID = rc.searchID )>
-
-				</cfif>
-				<cfif NOT responseMessage.error>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, userID = rc.Filter.getUserID()
-																									, searchID = rc.searchID )>
-				</cfif>
-				<cfif NOT responseMessage.error
-					AND profileFound>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, searchID = rc.searchID )>
-				</cfif>
-
-				<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, Air = rc.Air
-																								, pcc = rc.Traveler.getBAR()[1].PCC
-																								, cardNumber = cardNumber
-																								, cardType = cardType
-																								, cardExpiration = cardExpiration
-																								, cardAuth = cardAuth
-																								, searchID = rc.searchID )>
-			
-				removeSecondName<br>
-				<cfdump var="#responseMessage#" /> --->
-
-				<cfif NOT responseMessage.error
-					AND rc.airSelected>
-					<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, searchID = rc.searchID )>
-				</cfif>
-				<cfif NOT responseMessage.error>
-					<cfset fw.getBeanFactory().getBean('TerminalEntry').removeDuplicateAccounting( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, searchID = rc.searchID )>
-				</cfif>
-				<cfset local.queue = ''>
-				<cfif NOT rc.Traveler.getBookingDetail().getApprovalNeeded()
-					AND rc.Traveler.getBookingDetail().getSpecialRequests() EQ ''>
-					<cfset queue = '90'>
-				<cfelseif rc.Traveler.getBookingDetail().getApprovalNeeded()>
-					<cfset queue = '34*CHA'>
-				<cfelse>
-					<cfset queue = '34*CSR'>
-				</cfif>
-				<cfif NOT responseMessage.error>
-					<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').queueRecord( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, bookingPCC = rc.Account.PCC_Booking
-																									, queue = queue
-																									, searchID = rc.searchID )>
-				</cfif>
-				<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
-																								, hostToken = hostToken
-																								, searchID = rc.searchID )>
-			</cfif>
-		</cfif>
-
+		</cfloop>
 		<cfif arrayIsEmpty(errorMessage)>
+			<!--- Save profile to database --->
+			<cfif Traveler.getBookingDetail().getSaveProfile()>
+				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
+			</cfif>
+			<cfoutput>
+				<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
+			</cfoutput>
 			<cfabort />
 			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
-		<cfelse>
-			<cfset local.errorList = arrayToList(errorMessage)>
-			<cfif errorType EQ 'hotel'
-				AND (find('NEED GUEST CREDIT CARD IN CARD DEPOSIT FORMAT TO BOOK', errorList)
-				OR find('INVALID /G- TYPE OR FORMAT', errorList)
-				OR find('INVALID NEED DEPOSIT IN /G- FIELD', errorList)
-				OR find('ADVANCED DEPOSIT REQUIRED', errorList)
-				OR find('INVALID GUARANTEE INDICATOR', errorList)
-				OR find('DEPOSIT REQ', errorList)
-				OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList)
-				OR find('DEPOSIT REQUIRED PLEASE CORRECT', errorList))>
-				<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
-				<cfset rc.message.addError('It appears the property you are trying to book requires a prepayment. Please review the hotel payment and cancellation policy and submit your booking again.')>
-			<cfelse>
-				<cfset rc.message.addError(errorList)>
-			</cfif>
-			<!--- <cfif rc.saveProfile>
-				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = rc.Traveler )>
-			</cfif> --->
-			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 		</cfif>
-
-<cfabort />
 
 		<cfreturn />
 	</cffunction>

@@ -601,7 +601,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.selectRoom = function( Hotel, Room ){
-		console.log( Room );
 		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
