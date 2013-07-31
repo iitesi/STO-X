@@ -1,4 +1,3 @@
-<!--- <cfdump var="#rc.Traveler[1].getBookingDetail()#" label="rc.Traveler.bookingDetail" abort> --->
 <cfoutput>
 	<div class="carrow" style="width:946px;padding:0px;margin-bottom:26px;">
 		<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
@@ -9,7 +8,7 @@
 			<table width="100%" cellpadding="6" cellspacing="0">
 				<tr>
 					<td>
-						<div class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></div>
+						<div class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
 						<div class="blue"><strong>Reservation Code: ABVDE4 <!--- TO DO: Reservation Code ---></strong></div>
 						<div style="height:24px;"></div>
 
@@ -30,13 +29,24 @@
 							</tr>
 							<!--- If flight --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
+								<cfset airCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getAirCCNumber() />
+								<cfset airCardType = "" />
+								<cfif left(airCardNumber, 1) EQ 4>
+									<cfset airCardType = "VI" />
+								<cfelseif left(airCardNumber, 1) EQ 5>
+									<cfset airCardType = "MC" />
+								<cfelseif left(airCardNumber, 1) EQ 6>
+									<cfset airCardType = "DS" />
+								<cfelseif left(airCardNumber, 1) EQ 3>
+									<cfset airCardType = "AX" />
+								</cfif>
 								<cfset airCurrency = "USD" />
 								<cfset airBase = rc.Air.Base />
 								<cfset airTaxes = rc.Air.Taxes />
 								<cfset airTotal = rc.Air.Total />
 								<tr>
 									<td>Flight</td>
-									<td>VI... 1111 <!--- TO DO: CC Type and Last Four ---></td>
+									<td>#airCardType#... #right(airCardNumber, 4)#</td>
 									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : airTaxes&' '&airCurrency)#</td>
@@ -47,21 +57,38 @@
 							</cfif>
 							<!--- If hotel --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
+								<cfset hotelCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCNumber() />
+								<cfset hotelCardType = "" />
+								<cfif left(hotelCardNumber, 1) EQ 4>
+									<cfset hotelCardType = "VI" />
+								<cfelseif left(hotelCardNumber, 1) EQ 5>
+									<cfset hotelCardType = "MC" />
+								<cfelseif left(hotelCardNumber, 1) EQ 6>
+									<cfset hotelCardType = "DS" />
+								<cfelseif left(hotelCardNumber, 1) EQ 3>
+									<cfset hotelCardType = "AX" />
+								</cfif>
 								<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getTotalForStayCurrency() />
 									<cfset hotelBase = "" />
 									<cfset hotelTaxes = "INCLUDING TAXES" />
 									<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay() />
-								<cfelse>
+								<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
 									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getBaseRateCurrency() />
 									<cfset hotelBase = rc.Hotel.getRooms()[1].getBaseRate() />
 									<cfset hotelTaxes = "QUOTED AT CHECK-IN" />
 									<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate() />
 									<cfset totalText = "Estimated Total" />
+								<cfelse>
+									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency() />
+									<cfset hotelBase = rc.Hotel.getRooms()[1].getDailyRate()*nights />
+									<cfset hotelTaxes = "QUOTED AT CHECK-IN" />
+									<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights />
+									<cfset totalText = "Estimated Total" />
 								</cfif>
 								<tr>
 									<td>Hotel</td>
-									<td>VI... 1111 <!--- TO DO: CC Type and Last Four ---></td>
+									<td>#hotelCardType#... #right(hotelCardNumber, 4)#</td>
 									<td>AT CHECK-OUT</td>
 									<td align="right">
 										<cfif len(hotelBase)>
@@ -82,15 +109,24 @@
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getCarNeeded()>
 								<cfset vehicleCurrency = rc.Vehicle.getCurrency() />
 								<cfset vehicleBase = rc.Vehicle.getEstimatedTotalAmount() />
+								<cfset vehicleDropOffCharge = rc.Vehicle.getDropOffCharge() />
+								<cfset vehicleDropOffChargesIncluded = rc.Vehicle.getDropOffChargesIncluded() />
 								<tr>
 									<td>Car</td>
-									<td>VI... 1111 <!--- TO DO: CC Type and Last Four ---></td>
+									<td>PRESENT AT PICK-UP</td>
 									<td>AT DROP-OFF</td>
-									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : vehicleBase&' '&vehicleCurrency)#</td>
+									<td align="right">
+										#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : vehicleBase&' '&vehicleCurrency)#
+										<cfset vehicleTotal = vehicleBase />
+										<cfif NOT vehicleDropOffChargesIncluded>
+											&nbsp;(+ #(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleDropOffCharge) : vehicleDropOffCharge&' '&vehicleCurrency)# drop-off charge)
+											<cfset vehicleTotal = vehicleTotal + vehicleDropOffCharge />
+										</cfif>
+									</td>
 									<td align="right">QUOTED AT PICK-UP</td>
 									<cfset totalText = "Estimated Total" />
-									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : vehicleBase&' '&vehicleCurrency)#</td>
-									<cfset totalAmount = totalAmount + vehicleBase />
+									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleTotal) : vehicleTotal&' '&vehicleCurrency)#</td>
+									<cfset totalAmount = totalAmount + vehicleTotal />
 								</tr>
 								<cfif (rc.airSelected AND (vehicleCurrency NEQ airCurrency)) OR (rc.hotelSelected AND (vehicleCurrency NEQ hotelCurrency))>
 									<cfset displayTotal = false />
@@ -130,4 +166,3 @@
 		</cfloop>
 	</div>
 </cfoutput>
-<!--- <cfdump var="#rc.Traveler#" label="rc.Traveler"> --->

@@ -67,22 +67,32 @@
 							<td width="6%"></td>
 							<td width="12%">
 								<cfif arrayLen(rc.hotelTravelers) GT 1>
-									<span class="blue"><strong>#rc.Traveler[travelerIndex].getFirstName()# #rc.Traveler[travelerIndex].getLastName()#</strong></span>
+									<span class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></span>
 								</cfif>
 							</td>
 							<cfif NOT rc.Hotel.getRooms()[1].getIsInPolicy()>
 									<td width="12%"><strong>OUT OF POLICY</strong></td>
 									<td width="28%">Over maximum daily rate</td>
-									<td width="8%"><strong>Reason</strong></td>
-									<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#</td>
+									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
+										<td width="8%"><strong>Reason</strong></td>
+										<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#</td>
+									<cfelse>
+										<td width="8%"></td>
+										<td></td>
+									</cfif>
 								</tr>
 								<tr>
 									<td colspan="2"></td>						
 							</cfif>
 							<td width="12%"><span class="blue"><strong>Hotel Confirmation</strong></span></td>
 							<td width="28%"><span class="blue"><strong>#rc.Hotel.getConfirmation()#</strong></span></td>
-							<td width="8%"><strong>Loyalty ##</strong></td>
-							<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelFF()#</td>
+							<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelFF())>
+								<td width="8%"><strong>Loyalty ##</strong></td>
+								<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelFF()#</td>
+							<cfelse>
+								<td width="8%"></td>
+								<td></td>
+							</cfif>
 						</tr>
 						<cfif travelerIndex NEQ arrayLen(rc.hotelTravelers)>
 							<tr>

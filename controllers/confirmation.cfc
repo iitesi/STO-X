@@ -13,6 +13,28 @@
 		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false) />
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '') />
 
+		<cfif rc.Vehicle.getPickupLocationType() IS ''>
+			<cfset rc.pickupLocation = rc.Filter.getCarPickupAirport() />
+		<cfelse>
+			<cfset vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
+			<cfset rc.pickupLocation = application.stCarVendors[vehicleLocation[rc.Vehicle.getPickupLocationID()].vendorCode] & ' - '
+				& vehicleLocation[rc.Vehicle.getPickupLocationID()].street & ' ('
+				& vehicleLocation[rc.Vehicle.getPickupLocationID()].city & ')' />
+		</cfif>
+
+		<cfif rc.Vehicle.getDropoffLocationType() IS ''>
+			<cfif rc.Filter.getCarDropoffAirport() NEQ rc.Filter.getCarPickupAirport()>
+				<cfset rc.dropoffLocation = rc.Filter.getCarDropoffAirport() />
+			<cfelse>
+				<cfset rc.dropoffLocation = rc.pickupLocation />
+			</cfif>
+		<cfelse>
+			<cfset vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
+			<cfset rc.dropoffLocation = application.stCarVendors[vehicleLocation[rc.Vehicle.getDropoffLocationID()].vendorCode] & ' - '
+				& vehicleLocation[rc.Vehicle.getDropoffLocationID()].street & ' ('
+				& vehicleLocation[rc.Vehicle.getDropoffLocationID()].city & ')' />
+		</cfif>
+
 		<cfset rc.Travelers = session.searches[rc.SearchID].travelers />
 		<cfset rc.airTravelers = arrayNew(1) />
 		<cfset rc.hotelTravelers = arrayNew(1) />
