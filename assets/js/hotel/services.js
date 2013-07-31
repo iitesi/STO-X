@@ -67,8 +67,8 @@ services.factory( "HotelService", function( $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
 	HotelService.getHotelRates = function( searchId, Hotel, policy, requery ) {
-		var url = "http://shorts-api.local/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&callback=JSON_CALLBACK&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
-		return $http.jsonp( url )
+		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
+		return $http.get( url )
 			.then( function( response ){
 				var rooms = [];
 
@@ -88,13 +88,11 @@ services.factory( "HotelService", function( $http ){
 	}
 
 	HotelService.getExtendedData = function( searchId, Hotel, datapoints ){
-		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		var remoteURL = "http://shorts-api.local/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		if ( typeof datapoints != 'undefined' ){
 			remoteURL = remoteURL + '&datapoints=' + datapoints;
-		}else{
-			remoteURL = remoteURL + '&datapoints=all'
 		}
-		return $http.get( remoteURL  )
+		return $http.jsonp( remoteURL  )
 			.then( function( response ){
 				if( typeof response.data.data.starRating != 'undefined' ){
 					Hotel.StarRating = response.data.data.starRating;
