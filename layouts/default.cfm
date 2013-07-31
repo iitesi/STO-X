@@ -29,7 +29,7 @@
 
 			<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
 			<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
-			<cfif rc.filter.getPassthrough()>
+			<cfif rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
 						background-color: ###rc.filter.getBodyColor()#;
@@ -130,7 +130,7 @@
 				<div id="footer-top">
 					<div class="container">
 						<cfoutput>
-					    	<cfif rc.filter.getPassthrough()>
+					    	<cfif rc.filter.getPassthrough() EQ 1>
 								<a href="mailto:#rc.filter.getSiteEmail()#">QUESTIONS/COMMENTS</a><br />
 					    	<cfelse>
 								#View('main/policy')#
