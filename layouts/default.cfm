@@ -1,80 +1,102 @@
+<!--- <cfdump var="#rc#" abort> --->
 <cfif cgi.SCRIPT_NAME DOES NOT CONTAIN '.cfc'>
-		<!DOCTYPE html>
-		<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-		<!--[if IE 7]>    <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
-		<!--[if IE 8]>    <html class="lt-ie9" lang="en"> <![endif]-->
-		<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+	<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+	<!--[if IE 7]>    <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+	<!--[if IE 8]>    <html class="lt-ie9" lang="en"> <![endif]-->
+	<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
 
-		<head>
-				<meta charset="utf-8">
-				<title>STO .:. The New Generation of Corporate Online Booking</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<meta name="description" content="">
-				<meta name="author" content="">
+	<head>
+		<meta charset="utf-8">
+		<title>
+			<cfif len(rc.filter.getTitle())>
+				<cfoutput>#rc.filter.getTitle()#</cfoutput>
+			<cfelse>
+				STO .:. The New Generation of Corporate Online Booking
+			</cfif>
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<cfoutput>
+			<link href="#application.baseURL#assets/css/bootstrap.min.css" rel="stylesheet">
+			<link href="#application.baseURL#assets/css/skeleton.css" rel="stylesheet">
+			<link href="#application.baseURL#assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+			<link href="#application.baseURL#assets/css/font-awesome.min.css" rel="stylesheet" >
+			<!--[if IE 7]>
+				<link rel="stylesheet" href="#application.baseURL#assets/css/font-awesome-ie7.min.css">
+			<![endif]-->
 
-			<cfoutput>
-				<link href="#application.baseURL#assets/css/bootstrap.min.css" rel="stylesheet">
-				<link href="#application.baseURL#assets/css/skeleton.css" rel="stylesheet">
-				<link href="#application.baseURL#assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
-				<link href="#application.baseURL#assets/css/font-awesome.min.css" rel="stylesheet" >
-				<!--[if IE 7]>
-					<link rel="stylesheet" href="#application.baseURL#assets/css/font-awesome-ie7.min.css">
-				<![endif]-->
+			<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
+			<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
+			<cfif rc.filter.getPassthrough()>
+				<style type="text/css">
+					body {
+						background-color: ###rc.filter.getBodyColor()#;
+					}
+					##main-header, ##header-top {
+						background-color: ###rc.filter.getHeaderColor()#;
+					}
+				</style>
+			</cfif>
 
+			<!--[if lt IE 9]>
+						<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
 
-				<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
-				<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
-
-				<!--[if lt IE 9]>
-							<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-				<![endif]-->
-
-
-				<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-				<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-				<script src="#application.baseURL#assets/js/jquery.plugins.min.js"></script>
-				<script src="#application.baseURL#assets/js/bootstrap.min.js"></script>
-				<script src="#application.baseURL#assets/js/booking.js"></script><!---Custom--->
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+			<script src="#application.baseURL#assets/js/jquery.plugins.min.js"></script>
+			<script src="#application.baseURL#assets/js/bootstrap.min.js"></script>
+			<script src="#application.baseURL#assets/js/booking.js"></script><!---Custom--->
 		</cfoutput>
-		</head>
+	</head>
 
-		<cfsilent>
-			<cfparam name="session.userID" default="" />
-		</cfsilent>
-		<body>
-			<div id="main-wrapper" class="wide">
-
+	<cfsilent>
+		<cfparam name="session.userID" default="" />
+	</cfsilent>
+	<body>
+		<div id="main-wrapper" class="wide">
 			<header id="main-header">
-
 				<div id="header-top">
-						<div class="container">
-								<div class="sixteen columns">
-									<div id="logo-container">
-											<div id="logo-center"><!---logo here--->
-											<cfoutput>
-											<a href="#application.sPortalURL#" title="Home"><img src="assets/img/stm.gif" alt="Short's Travel Management"></a>
-											</cfoutput>
-											</div>
-									</div>
-									<cfoutput>#View('main/navigation')#</cfoutput>
+					<div class="container">
+						<div class="sixteen columns">
+							<div id="logo-container">
+								<div id="logo-center"><!---logo here--->
+									<cfoutput>
+										<cfif structKeyExists(rc, "filter") AND structKeyExists(rc.filter, "passthrough") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
+											<a href="#rc.filter.getSiteUrl()#" title="Home">
+										<cfelse>
+											<a href="#application.sPortalURL#" title="Home">
+										</cfif>
+										<cfif structKeyExists(rc, "account") AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\logos\#rc.account.logo#"))>
+											<img src="assets/img/logos/#rc.account.logo#" alt="#rc.account.account_name#" />
+										<cfelse>
+											<img src="assets/img/logos/stm.gif" alt="Short's Travel Management" />
+										</cfif>
+										</a>
+									</cfoutput>
 								</div>
+							</div>
+							<cfoutput>#View('main/navigation')#</cfoutput>
 						</div>
+					</div>
 				</div>
 
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
 
-						<!--- button to open search in modal window --->
-						<div class="one columns newsearch">
-							<cfoutput>
-							<a href="##" class="btn searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
-							</cfoutput>
-						</div>
+							<!--- button to open search in modal window --->
+							<div class="one columns newsearch">
+								<cfoutput>
+								<a href="##" class="btn searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
+								</cfoutput>
+							</div>
 
-						<cfoutput>#View('modal/search')#</cfoutput>
+							<cfoutput>#View('modal/search')#</cfoutput>
 
-						<!--- // end modal window --->
+							<!--- // end modal window --->
 
 							<div class="fifteen columns">
 								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
@@ -105,28 +127,28 @@
 			</section>
 
 			<footer id="footer">
-
-					<div id="footer-top">
-							<div class="container">
-					<cfoutput>
-						#View('main/policy')#
-						#View('main/unusedtickets')#
-					</cfoutput>
-							</div>
+				<div id="footer-top">
+					<div class="container">
+						<cfoutput>
+					    	<cfif rc.filter.getPassthrough()>
+								<a href="mailto:#rc.filter.getSiteEmail()#">QUESTIONS/COMMENTS</a><br />
+					    	<cfelse>
+								#View('main/policy')#
+								#View('main/unusedtickets')#
+							</cfif>
+						</cfoutput>
 					</div>
+				</div>
 
-					<div id="footer-bottom">
-							<div class="container">
-									<div class="eight columns">
-											Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
-									</div>
-							</div>
+				<div id="footer-bottom">
+					<div class="container">
+						<div class="eight columns">
+							Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
+						</div>
 					</div>
-
+				</div>
 			</footer>
-
 		</div>
-
 
  <div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 	<div class="modal-header">
@@ -137,10 +159,8 @@
 	</div>
 </div>
 
-
-
-		</body>
-		</html>
+	</body>
+	</html>
 </cfif>
 
 <!--- uncomment for debugging
