@@ -196,6 +196,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		$scope.visibleHotels = visibleHotels;
+		if( $scope.filterItems.currentPage > $scope.calculatePages() ){
+			$scope.filterItems.currentPage = 1;
+		};
 	})
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
