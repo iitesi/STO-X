@@ -189,7 +189,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				datapoints.push( 'rating' );
 			}
 			if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
-				datapoints.push( 'images' );
+				datapoints.push( 'signatureImage' );
 			}
 
 			HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );

@@ -63,7 +63,7 @@ services.factory( "SearchService", function( $http ){
 	return SearchService;
 });
 
-services.factory( "HotelService", function( $http ){
+services.factory( "HotelService", function( $window, $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
 	HotelService.getHotelRates = function( searchId, Hotel, policy, requery ) {
@@ -88,7 +88,7 @@ services.factory( "HotelService", function( $http ){
 	}
 
 	HotelService.getExtendedData = function( searchId, Hotel, datapoints ){
-		var remoteURL = "http://shorts-api.local/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		if ( typeof datapoints != 'undefined' ){
 			remoteURL = remoteURL + '&datapoints=' + datapoints;
 		}

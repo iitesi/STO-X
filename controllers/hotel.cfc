@@ -11,6 +11,8 @@
 
 		<cfset arguments.rc.nFromHotel = 1 />
 		<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+
+		<cfset arguments.rc.shortsAPIURL = fw.getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
 		<cfreturn />
 	</cffunction>
 

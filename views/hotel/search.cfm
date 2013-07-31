@@ -17,7 +17,10 @@
 		<script src="assets/js/hotel/services.js"></script>
 		<script src="assets/js/hotel/controllers.js"></script>
 		<script src="assets/js/hotel/app.js"></script>
-
+		<script type="text/javascript">
+			shortstravel = {};
+			<cfoutput>shortstravel.shortsAPIURL = '#rc.shortsAPIURL#';</cfoutput>
+		</script>
 	</cfsavecontent>
 	<cfhtmlhead text="#localAssets#" />
 </cfsilent>
