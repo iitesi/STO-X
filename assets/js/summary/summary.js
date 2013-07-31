@@ -551,5 +551,27 @@ $(document).ready(function(){
 			});
 		});
 	}
+}); // end of jQuery document ready
 
-});
+
+	// This is a functions that scrolls to #id
+function scrollTo(id) {
+  $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
+}
+
+function GetValueFromChild(selectedSegmentSeat) {
+ 	// tear down modal so we can select another one from seat link
+	$('#popupModal').on('hidden', function() {
+		$(this).removeData('modal');
+	});
+	var seatArray = selectedSegmentSeat.split('|');
+	// write seat to hidden field
+	$("#segment_" + seatArray[0]).val( seatArray[1] );
+	// write seat to summary page
+ 	$("#" + seatArray[0] + " span").text( seatArray[1] );
+ 	// append seat to url so we can show it selected if they open seatmap again
+	var oldLink = $("#" + seatArray[0] + " a").attr( 'href' );
+	$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	// scroll to flight info
+ 	scrollTo('airDiv');
+ }
