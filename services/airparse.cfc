@@ -193,12 +193,13 @@ doLowFare
 						<cfset local.sPTC = ''>
 						<cfset local.nCount = 0>
 						<cfset fareRuleKey = []>
+						<cfset local.bRefundable = 1>
 <!---
 MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 --->
 						<cfloop array="#airPricingSolution.XMLChildren#" index="local.airPricingSolution2">
-							<cfset local.bRefundable = 1>
+							<cfdump var="#airPricingSolution2.XMLName#" />
 							<cfif airPricingSolution2.XMLName EQ 'air:PassengerType'>
 								<!--- Passenger type codes --->
 								<cfset sPTC = airPricingSolution2.XMLAttributes.Code>
@@ -227,7 +228,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 									<cfif changePenalty LTE replace(stFare.XMLText, 'USD', '')>
 										<cfset changePenalty = replace(stFare.XMLText, 'USD', '')>
 									</cfif>
-									<cfset bRefundable = (bRefundable EQ 1 AND stFare.XMLText GT 0 ? 0 : 1)>
+									<cfset bRefundable = (bRefundable EQ 1 AND replace(stFare.XMLText, 'USD', '') GT 0 ? 0 : 1)>
 								</cfloop>
 							</cfif>
 						</cfloop>

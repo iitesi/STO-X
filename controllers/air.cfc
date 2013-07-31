@@ -101,8 +101,17 @@
 
 	<cffunction name="price" output="false" hint="I run doAirPrice.">
 		<cfargument name="rc">
+
 		<cfset fw.getBeanFactory().getBean('AirPrice').doAirPrice(argumentcollection=arguments.rc)>
+
+		<cfset session.searches[arguments.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
+		<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
+		<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
+		<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
+		<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
+
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&filter=all')>
+		
 		<cfreturn />
 	</cffunction>
 

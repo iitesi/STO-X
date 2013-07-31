@@ -63,25 +63,25 @@
 		<cfset stSegments	= AirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
 			<!--- Parse the trips. --->
-			<cfset stTrips		= AirParse.parseTrips(aResponse, stSegments)>
+			<cfset stTrips = AirParse.parseTrips(aResponse, stSegments)>
 			<!--- Add group node --->
-			<cfset stTrips		= AirParse.addGroups(stTrips)>
+			<cfset stTrips = AirParse.addGroups(stTrips)>
 			<!--- Check low fare. --->
-			<cfset stTrips 		= AirParse.addTotalBagFare(stTrips)>
+			<cfset stTrips = AirParse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
-			<cfset stTrips		= AirParse.addPreferred(stTrips, arguments.Account)>
+			<cfset stTrips = AirParse.addPreferred(stTrips, arguments.Account)>
 			<!---<cfdump var="#stTrips#" abort>--->
 			<!--- Add trip id to the list of priced items --->
-			<cfset nTripKey		= getTripKey(stTrips)>
+			<cfset nTripKey = getTripKey(stTrips)>
 			<!--- Save XML if needed - AirCreate --->
 			<cfif arguments.bSaveAirPrice>
 				<cfset stTrips[nTripKey].sXML = sResponse>
 			</cfif>
 			<cfif arguments.nCouldYou EQ 0>
 				<!--- Add trip id to the list of priced items --->
-				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
 				<!--- Merge all data into the current session structures. --->
-				<cfset session.searches[arguments.SearchID].stTrips 						= AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
+				<cfset session.searches[arguments.SearchID].stTrips = AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
 				<!--- Finish up the results --->
 				<cfset void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
 				<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
@@ -95,12 +95,6 @@
 		<cfelse>
 			<cfset session.searches[arguments.SearchID].sUserMessage = 'Fare type selected is unavailable for pricing.'>
 		</cfif>
-
-		<cfset session.searches[arguments.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 
 		<cfreturn stTrips>
 	</cffunction>

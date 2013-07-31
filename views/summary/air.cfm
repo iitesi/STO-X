@@ -109,13 +109,7 @@
 			</td>
 
 			<td width="630">
-
-
-				<cfset seatFieldNames = "">
-				<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
-
-
-
+				<cfset seatFieldNames = ''>
 				<table width="600" padding="0" align="center">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 					<cfset count = 0>
@@ -146,10 +140,13 @@
 
 <!--- seats --->
 							<td id="#segmentIndex#">
-								<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
-								<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
-								&nbsp; <span class="label label-success"></span>
-								<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
+								<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
+									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
+									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
+									&nbsp; <span class="label label-success" id="segment_#segmentIndex#_display"></span>
+									<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
+									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')>
+								</cfif>
 							</td>
 
 						</tr>
@@ -162,6 +159,8 @@
 				</cfloop>
 				</table>
 			</td>
+			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
+
 			<td width="200" valign="top">
 				<span class="blue bold large">
 					#dollarFormat(rc.Air.Total)#<br>
