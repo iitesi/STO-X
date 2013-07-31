@@ -190,12 +190,6 @@ $(document).ready(function(){
 // MISC FUNCTIONS
 // -----------------------------------------------------------------------------
 
-// This is a functions that scrolls to #id
-function scrollTo(id)
-{
-  $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
-}
-
 // This throttles requests to filterAir() so if the person quickly clicks several
 // filters we don't fire filterAir() multiple times.
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/

@@ -65,11 +65,12 @@
 	<cffunction name="processSelection" access="public" output="false" returntype="void" hint="">
 		<cfargument name="rc">
 
+		<cfset var newVals = structNew() />
+		<cfset newVals.searchId = rc.searchID />
+		<cfset var Search = session.filters[ rc.searchId ] />
+		<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
+
 		<cfif rc.selectedDate NEQ rc.originalDate>
-			<cfset var newVals = structNew() />
-			<cfset newVals.searchId = rc.searchID />
-			<cfset var Search = session.filters[ rc.searchId ] />
-			<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
 
 			<cfif Search.getAir()>
 				<!---Update search object in session--->
@@ -176,6 +177,50 @@
 			<cfset fw.getBeanFactory().getBean('SearchService').save( argumentCollection = newVals ) />
 
 		</cfif>
+
+		<!---Set lowest trip cost found by CouldYou--->
+		<cfset var dates = "" />
+			<cfset var tripLowPrice = 99999 />
+
+			<cfif structKeyExists( session.searches[ rc.searchId ], "couldYou" ) AND structKeyExists( session.searches[ rc.searchId ].couldYou, "AIR") >
+				<cfset dates = structKeyList( session.searches[ rc.searchId ].couldYou.air ) />
+			<cfelseif structKeyExists( session.searches[ rc.searchId ], "couldYou" ) AND structKeyExists( session.searches[ rc.searchId ].couldYou, "HOTEL") >
+				<cfset dates = structKeyList( session.searches[ rc.searchId ].couldYou.hotel ) />
+			<cfelseif structKeyExists( session.searches[ rc.searchId ], "couldYou" ) AND structKeyExists( session.searches[ rc.searchId ].couldYou, "VEHICLE") >
+				<cfset dates = structKeyList( session.searches[ rc.searchId ].couldYou.vehicle ) />
+			</cfif>
+
+			<cfloop list="#dates#" item="local.loopDate">
+				<cfset var loopDateTotal = 0 />
+				<cfset var includeDate = true />
+
+				<cfif structKeyExists( session.searches[ rc.searchId ], "couldYou" )>
+					<cfif  Search.getAir() AND structKeyExists( session.searches[ rc.searchId ].couldYou, "AIR" ) AND isStruct( session.searches[ rc.searchId ].couldYou.Air[ loopDate ] ) >
+						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.air[ loopDate ][ listGetAt( structKeyList(session.searches[ rc.searchId ].couldYou.air[ loopDate ] ), 1  ) ].TOTAL />
+					<cfelse>
+						<cfset includeDate = false />
+					</cfif>
+					<cfif Search.getHotel() AND structKeyExists( session.searches[ rc.searchid ].couldYou, "HOTEL" ) AND isObject( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ] ) AND isArray( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ].getRooms() )>
+						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ].getRooms()[ 1 ].getTotalForStay() />
+					<cfelse>
+						<cfset includeDate = false />
+					</cfif>
+					<cfif Search.getCar() AND structKeyExists( session.searches[ rc.searchid ].couldYou, "VEHICLE" ) AND isObject( session.searches[ rc.searchId ].couldYou.Vehicle[ loopDate ] ) >
+						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.vehicle.getEstimatedTotalAmount() />
+					<cfelse>
+						<cfset includeDate = false />
+					</cfif>
+				</cfif>
+
+				<cfif includeDate>
+					<cfif loopDateTotal NEQ 0 AND loopDateTotal LT tripLowPrice>
+						<cfset tripLowPrice = loopDateTotal />
+					</cfif>
+				</cfif>
+			</cfloop>
+
+			<cfset session.searches[ rc.searchId ].lowestCouldYouRate = tripLowPrice />
+
 
 		<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
 

@@ -83,10 +83,10 @@
 					</strong>
 
 					<strong>
-						<cfif rc.Vehicle.getLocation() EQ 'TERMINAL'>
+						<!--- <cfif rc.Vehicle.getLocation() EQ 'TERMINAL'>
 							ON
 						</cfif>
-						#uCase(rc.Vehicle.getLocation())#<br>
+						#uCase(rc.Vehicle.getLocation())#<br> --->
 					</strong>
 
 					#uCase(rc.Vehicle.getVehicleClass())# 

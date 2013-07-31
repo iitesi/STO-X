@@ -108,13 +108,18 @@
 
 			</td>
 
-			<td with="630">
+			<td width="630">
 
-				<cfset seatFieldNames = ''>
+
+				<cfset seatFieldNames = "">
+				<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
+
+
+
 				<table width="600" padding="0" align="center">
-				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex" >
+				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 					<cfset count = 0>
-					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex" >
+					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
 						<tr>
 							<td>
@@ -139,15 +144,12 @@
 								#uCase(segment.Cabin)#
 							</td>
 
-							<td>
-								<a href="?action=air.popup&sDetails=seatmap&searchID=#rc.searchID#&nTripID=#rc.Air.nTrip#&summary=1" class="popupModal" data-toggle="modal" data-target="##popupModal">
-									Seat Map
-									<cfset fieldName = 'seat#segment.Carrier##segment.FlightNumber##segment.Origin##segment.Destination#'>
-									<cfset seatFieldNames = listAppend(seatFieldNames, fieldName)>
-									<input type="text" id="#fieldName#_display" disabled class="input-mini">
-								</a>
-								<input type="hidden" name="#fieldName#" id="#fieldName#" value="A1">
-
+<!--- seats --->
+							<td id="#segmentIndex#">
+								<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
+								<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
+								&nbsp; <span class="label label-success"></span>
+								<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
 							</td>
 
 						</tr>
@@ -160,10 +162,7 @@
 				</cfloop>
 				</table>
 			</td>
-			<input type="text" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
-
 			<td width="200" valign="top">
-
 				<span class="blue bold large">
 					#dollarFormat(rc.Air.Total)#<br>
 				</span>

@@ -1,5 +1,6 @@
 <cfsilent>
 	<cfparam name="rc.filter" default="" />
+	<cfparam name="rc.locationKey" default="">
 	<cfsavecontent variable="filterHeader">
 		<script type='text/javascript' src='assets/js/bootstrap-datepicker.js'></script>
 		<script type='text/javascript' src='assets/js/date.format.js'></script>
@@ -40,15 +41,43 @@
 		<div>
 			<h4>Filter <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
 		</div>
-		<div class="navbar">
-			<div class="navbar-inner">
-				<ul class="nav">
-					<li><a href="#" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
-					<li><a href="#" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
-					<li><a href="#" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
-				</ul>
-			</div>
-		</div>
+		<cfoutput>
+			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
+				<div class="navbar">
+					<div class="navbar-inner">
+						<ul class="nav">
+							<li><a href="##" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
+							<li><a href="##" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
+							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
+							<li>
+								Pick-up Location
+								<select name="pickUpLocationKey" class="filterby" onChange="submit();">
+									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
+									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
+										<cfif rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city>
+											<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+											</option>
+										</cfif>
+									</cfloop>
+								</select>
+								<cfif rc.Filter.getCarPickUpAirport() NEQ rc.Filter.getCarDropoffAirport()>
+									Drop-off Location
+									<select name="dropOffLocationKey" class="filterby" onChange="submit();">
+										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
+										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
+											<cfif rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city>
+												<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+												</option>
+											</cfif>
+										</cfloop>
+									</select>
+								</cfif>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</form>
+		</cfoutput>
 		<div class="filter">
 			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfoutput>
 		</div>

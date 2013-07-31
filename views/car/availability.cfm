@@ -20,6 +20,8 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="SearchID" value="#rc.SearchID#">
 			<input type="hidden" name="sCategory" id="sCategory" value="">
 			<input type="hidden" name="sVendor" id="sVendor" value="">
+			<input type="hidden" name="pickUpLocationKey" value="#rc.pickUpLocationKey#">
+			<input type="hidden" name="dropOffLocationKey" value="#rc.dropOffLocationKey#">
 		</form>
 
 		<!--- If no records can be retrieved from the initial search or change search form. --->
@@ -126,28 +128,6 @@ OR NOT rc.Filter.getAir()>
 			</cfloop>
 		</div>
 		
-		<br clear="both">
-		<br clear="both">
-		<br clear="both">
-		
-		<cfif rc.Filter.getCarPickupAirport() EQ rc.Filter.getCarDropOffAirport()>
-			<h1>Search other locations</h1>
-			<table>
-			<cfloop array="#session.searches[rc.searchID].vehicleLocations#" index="vehicleLocationIndex" item="vehicleLocation">
-				<tr>
-					<td>
-						<a href="#buildURL('car.availability?searchID=#rc.searchID#&location=#vehicleLocationIndex#')#">
-							#application.stCarVendors[vehicleLocation.vendorCode]# - 
-							#vehicleLocation.street#
-							#vehicleLocation.city#
-							#vehicleLocation.country#
-						</a>
-					</td>
-				</tr>
-			</cfloop>
-			</table>
-		</cfif>
-
 	</cfoutput>
 <cfelse>
 	<cfoutput>

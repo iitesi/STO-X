@@ -476,7 +476,16 @@ $(document).ready(function() {
 	$(".radiobuttons").buttonset();
 	$("#HotelChains").button();
 	$("#HotelAmenities").button();
-}); // end of document ready
+
+	// -------------------------------
+	// MODALS
+	// -------------------------------
+	$('.summarySeatMapModal').on('click', function() {
+	 	$('#popupModalHeader').text( 'Select Seat' );
+		$('#popupModalBody').html( '<i class="icon-spinner icon-spin"></i> One moment, we are retrieving your seat map details...' );
+	});
+
+}); // end of jquery document ready
 
 function loadImage(image, property_id) {
 	$( "#hotelimage" + property_id ).html('');
@@ -962,6 +971,24 @@ function setPaymentForm(nTraveler) {
 	});
 }
 
+function GetValueFromChild(selectedSegmentSeat) {
+ 	// tear down modal so we can select another one from seat link
+	$('#popupModal').on('hidden', function() {
+		$(this).removeData('modal');
+	});
+	var seatArray = selectedSegmentSeat.split('|');
+	// write seat to hidden field
+	$("#segment_" + seatArray[0]).val( seatArray[1] );
+	// write seat to summary page
+ 	$("#" + seatArray[0] + " span").text( seatArray[1] );
+ 	// append seat to url so we can show it selected if they open seatmap again
+	var oldLink = $("#" + seatArray[0] + " a").attr( 'href' );
+	$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	// scroll to flight info
+ 	scrollTo('airDiv');
+ }
 
-
-
+// This is a functions that scrolls to #id
+function scrollTo(id) {
+  $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
+}
