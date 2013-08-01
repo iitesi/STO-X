@@ -56,7 +56,7 @@
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
 
-		<cfreturn >
+		<cfreturn />
 	</cffunction>
 
 	<cffunction name="doAvailability" output="false">
@@ -74,8 +74,8 @@
 			<cfset sThreadName = 'Group'&arguments.Group>
 			<cfset local[sThreadName] = {}>
 
-			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
-			sResponse to see what uAPI is getting or sending back --->
+			<!--- Note:  To debug: comment out opening and closing cfthread tags and
+			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
 			<cfthread
 				action="run"
@@ -86,43 +86,43 @@
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#">
 
- 				<cfset local.sNextRef = 'ROUNDONE'>
-				<cfset local.nCount = 0>
-				<cfloop condition="local.sNextRef NEQ ''">
-					<cfset local.nCount++>
+ 				<cfset attributes.sNextRef = 'ROUNDONE'>
+				<cfset attributes.nCount = 0>
+				<cfloop condition="attributes.sNextRef NEQ ''">
+					<cfset attributes.nCount++>
 					<!--- Put together the SOAP message. --->
-					<cfset local.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (local.sNextRef NEQ 'ROUNDONE' ? local.sNextRef : ''), arguments.Account)>
+					<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (attributes.sNextRef NEQ 'ROUNDONE' ? attributes.sNextRef : ''), arguments.Account)>
 					<!--- Call the getUAPI. --->
-					<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
+					<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
 					<!--- Format the getUAPI response. --->
-					<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
+					<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 
 					<!--- Create unique segment keys. --->
-					<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
-					<cfif local.nCount GT 3>
-						<cfset local.sNextRef	= ''>
+					<cfset attributes.sNextRef =	getAirParse().parseNextReference(attributes.aResponse)>
+					<cfif attributes.nCount GT 3>
+						<cfset attributes.sNextRef	= ''>
 					</cfif>
 					<!--- Create unique segment keys. --->
-					<cfset local.stSegmentKeys = parseSegmentKeys(local.aResponse)>
+					<cfset attributes.stSegmentKeys = parseSegmentKeys(attributes.aResponse)>
 					<!--- Add in the connection references --->
-					<cfset local.stSegmentKeys = addSegmentRefs(local.aResponse, local.stSegmentKeys)>
+					<cfset attributes.stSegmentKeys = addSegmentRefs(attributes.aResponse, attributes.stSegmentKeys)>
 					<!--- Parse the segments. --->
-					<cfset local.stSegments = parseSegments(local.aResponse, local.stSegmentKeys)>
+					<cfset attributes.stSegments = parseSegments(attributes.aResponse, attributes.stSegmentKeys)>
 					<!--- Create a look up list opposite of the stSegmentKeys --->
-					<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.stSegmentKeys)>
+					<cfset attributes.stSegmentKeyLookUp = parseKeyLookUp(attributes.stSegmentKeys)>
 					<!--- Parse the trips. --->
-					<cfset local.stAvailTrips = parseConnections(local.aResponse, local.stSegments, local.stSegmentKeys, local.stSegmentKeyLookUp)>
+					<cfset attributes.stAvailTrips = parseConnections(attributes.aResponse, attributes.stSegments, attributes.stSegmentKeys, attributes.stSegmentKeyLookUp)>
 					<!--- Add group node --->
-					<cfset local.stAvailTrips	= getAirParse().addGroups(local.stAvailTrips, 'Avail')>
+					<cfset attributes.stAvailTrips	= getAirParse().addGroups(attributes.stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
-					<cfset local.stAvailTrips = getAirParse().addPreferred(local.stAvailTrips, arguments.Account)>
+					<cfset attributes.stAvailTrips = getAirParse().addPreferred(attributes.stAvailTrips, arguments.Account)>
 					<!--- Run policy on all the results --->
-					<cfset local.stAvailTrips	= getAirParse().checkPolicy(local.stAvailTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
+					<cfset attributes.stAvailTrips	= getAirParse().checkPolicy(attributes.stAvailTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
 					<!--- Create javascript structure per trip. --->
-					<cfset local.stAvailTrips	=	getAirParse().addJavascript(local.stAvailTrips, 'Avail')>
+					<cfset attributes.stAvailTrips	=	getAirParse().addJavascript(attributes.stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], local.stAvailTrips)>
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], attributes.stAvailTrips)>
 				</cfloop>
 
 				<!--- Add list of available carriers per leg --->
@@ -133,21 +133,11 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-
-				<!--- TODO:
-				11:47 AM Thursday, July 11, 2013 - Jim Priest - jpriest@shortstravel.com
-				SOMEWHERE stAvailDetails is getting erased between here and where it is called in the view
-
-				Comment out thread tags and dump session scope here AND in the view.
-				* Here stAvailDetails will be populated.
-				* In the view it will be empty.
-				--->
-
 			</cfthread>
 
 		</cfif>
 
-		<cfreturn sThreadName>
+		<cfreturn local.sThreadName>
 	</cffunction>
 
 	<cffunction name="prepareSoapHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
