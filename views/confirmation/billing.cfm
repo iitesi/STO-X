@@ -17,15 +17,15 @@
 						</cfloop>
 					</td>
 					<td valign="top">
-						<table width="100%">
+						<table width="92%">
 							<tr><td colspan="6">&nbsp;</td></tr>
 							<tr>
-								<th align="left">&nbsp;</th>
-								<th align="left">CARD USED</th>
-								<th align="left">CHARGE DATE</th>
-								<th align="right">BASE RATE</th>
-								<th align="right">TAXES</th>
-								<th align="right">TOTAL</th>
+								<th align="left" width="40">&nbsp;</th>
+								<th align="left" width="100">CARD USED</th>
+								<th align="left" width="80">CHARGE DATE</th>
+								<th align="right" width="70">BASE RATE</th>
+								<th align="right" width="100">TAXES</th>
+								<th align="right" width="60">TOTAL</th>
 							</tr>
 							<!--- If flight --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
@@ -166,3 +166,4 @@
 		</cfloop>
 	</div>
 </cfoutput>
+<!--- <cfdump var="#rc.Traveler#" label="rc.Traveler"> --->
