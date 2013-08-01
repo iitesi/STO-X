@@ -149,7 +149,7 @@
 									</cfif>
 								</td>
 								<td valign="top"><strong>Note</strong></td>
-								<td valign="top">#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
+								<td valign="top" width="120">#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
 							</tr>
 						</cfif>
 						<cfif travelerIndex NEQ arrayLen(rc.vehicleTravelers)>
