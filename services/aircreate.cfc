@@ -86,7 +86,7 @@ doAirPrice
 
 		<!--- <cfset locator = 'V6GVR2'> --->
 
-		
+
 		<!---TE : Display PNR--->
 		<cfset local.Response	= getTerminalEntry().displayPNR(arguments.Account, hostToken, locator, arguments.SearchID, true)>
 		<cfdump var="#Response#">
@@ -200,9 +200,9 @@ prepareSoapHeader
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-                        <air:AirCreateReservationReq xmlns:air="http://www.travelport.com/schema/air_v18_0" TargetBranch="#arguments.Account.sBranch#">
-	                        <com:BillingPointOfSaleInfo xmlns:com="http://www.travelport.com/schema/common_v15_0" OriginApplication="UAPI" />
-                            <com:BookingTraveler xmlns:com="http://www.travelport.com/schema/common_v15_0" Key="0T" TravelerType="ADT" Gender="#Traveler.Gender#" DOB="#DateFormat(Traveler.Birthdate, 'yyyy-mm-dd')#">
+                        <air:AirCreateReservationReq xmlns:air="#getUAPISchemas().air#" TargetBranch="#arguments.Account.sBranch#">
+	                        <com:BillingPointOfSaleInfo xmlns:com="#getUAPISchemas().common#" OriginApplication="UAPI" />
+                            <com:BookingTraveler xmlns:com="#getUAPISchemas().common#" Key="0T" TravelerType="ADT" Gender="#Traveler.Gender#" DOB="#DateFormat(Traveler.Birthdate, 'yyyy-mm-dd')#">
                                 <com:BookingTravelerName First="#Traveler.First_Name#" Middle="#Traveler.Middle_Name#" Last="#Traveler.Last_Name#" />
 								<cfif profileFound AND OrigTraveler.Wireless_Phone NEQ Traveler.Wireless_Phone>
 									<com:PhoneNumber Location="#Filter.getDepartCity()#" Number="#Traveler.Wireless_Phone#" Type="Mobile" />
@@ -278,11 +278,11 @@ prepareSoapHeader
 
 		<cfreturn Message/>
 	</cffunction>
-	
+
 </cfcomponent>
 
 <!---
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:univ="http://www.travelport.com/schema/universal_v16_0" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:univ="http://www.travelport.com/schema/universal_v16_0" xmlns:air="#getUAPISchemas().air#" xmlns:com="#getUAPISchemas().common#">
    <soapenv:Header>
       <univ:SupportedVersions urVersion="?" airVersion="?" hotelVersion="?" vehicleVersion="?" passiveVersion="?" railVersion="?"/>
    </soapenv:Header>
