@@ -55,7 +55,13 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			</h1>
 		</cfif>
 
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;searchid=#rc.searchID#&amp;requery=true" title="Start a new search"><i class="icon-search"></i> Change Search</a></h2>
+		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() />
+		<cfelse>
+			<cfset frameSrc = application.sPortalURL />
+		</cfif>
+
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;searchid=#rc.searchID#&amp;requery=true" title="Start a new search"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 				#View('air/legs')#

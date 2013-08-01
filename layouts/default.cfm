@@ -1,4 +1,3 @@
-<!--- <cfdump var="#rc#" abort> --->
 <cfif cgi.SCRIPT_NAME DOES NOT CONTAIN '.cfc'>
 	<!DOCTYPE html>
 	<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -9,7 +8,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>
-			<cfif len(rc.filter.getTitle())>
+			<cfif structKeyExists(rc, "filter") AND len(rc.filter.getTitle())>
 				<cfoutput>#rc.filter.getTitle()#</cfoutput>
 			<cfelse>
 				STO .:. The New Generation of Corporate Online Booking
@@ -29,7 +28,7 @@
 
 			<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
 			<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
-			<cfif rc.filter.getPassthrough() EQ 1>
+			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
 						background-color: ###rc.filter.getBodyColor()#;
@@ -64,7 +63,7 @@
 							<div id="logo-container">
 								<div id="logo-center"><!---logo here--->
 									<cfoutput>
-										<cfif structKeyExists(rc, "filter") AND structKeyExists(rc.filter, "passthrough") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
+										<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
 											<a href="#rc.filter.getSiteUrl()#" title="Home">
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
@@ -86,11 +85,16 @@
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
+							<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+								<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() />
+							<cfelse>
+								<cfset frameSrc = application.sPortalURL />
+							</cfif>
 
 							<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
-								<a href="##" class="btn searchModalButton" data-framesrc="http://r.local/search/?acctid=#session.acctID#&amp;userid=#session.userID#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
+								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
 								</cfoutput>
 							</div>
 
@@ -130,7 +134,7 @@
 				<div id="footer-top">
 					<div class="container">
 						<cfoutput>
-					    	<cfif rc.filter.getPassthrough() EQ 1>
+					    	<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 								<a href="mailto:#rc.filter.getSiteEmail()#">QUESTIONS/COMMENTS</a><br />
 					    	<cfelse>
 								#View('main/policy')#
