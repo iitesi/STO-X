@@ -51,41 +51,6 @@
 		<cfreturn result />
 	</cffunction>
 
-	<cffunction name="threadLowFare" output="false" hint="I assemble info to pass to thread.">
-		<!--- arguments getting passed in from RC --->
-		<cfargument name="sPriority" required="false" default="HIGH">
-		<cfargument name="bRefundable" required="false" default="X">
-		<cfargument name="Filter" required="false" default="X">
-		<cfargument name="stPricing" required="true">
-
-		<!--- grab class from widget form --->
-		<cfset local.sCabins = arguments.filter.getClassOfService()>
-		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
-		<cfif StructKeyExists(arguments, "sCabins")>
-			<cfset local.sCabins = arguments.sCabins>
-		</cfif>
-
-		<cfset local.aCabins = ListToArray(local.sCabins)>
-		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
-		<cfset local.sThreadName = ''>
-		<cfset local.stThreads = {}>
-
-		<!--- Create a thread for every combination of cabin, fares and PTC. --->
-		<cfloop array="#aCabins#" index="local.sCabin">
-			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfset sThreadName = doLowFare(arguments.Filter, sCabin, bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy)>
-				<cfset stThreads[sThreadName] = ''>
-			</cfloop>
-		</cfloop>
-
-		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
-			<cfthread action="join" name="#structKeyList(stThreads)#" />
-		</cfif>
-
-		<cfreturn >
-	</cffunction>
-
 	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
 		<cfargument name="SearchID">
 		<cfargument name="Group">
@@ -108,6 +73,43 @@
 	</cffunction>
 
 
+	<cffunction name="threadLowFare" output="false" hint="I assemble info to pass to thread.">
+		<!--- arguments getting passed in from RC --->
+		<cfargument name="sPriority" required="false" default="HIGH">
+		<cfargument name="bRefundable" required="false" default="X">
+		<cfargument name="Filter" required="false" default="X">
+		<cfargument name="stPricing" required="true">
+
+		<!--- grab class from widget form --->
+		<cfset local.sCabins = arguments.filter.getClassOfService()>
+		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
+		<cfif StructKeyExists(arguments, "sCabins")>
+			<cfset local.sCabins = arguments.sCabins>
+		</cfif>
+
+		<cfset local.aCabins = ListToArray(local.sCabins)>
+		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
+		<cfset local.sThreadName = ''>
+		<cfset local.stThreads = {}>
+
+		<!--- Create a thread for every combination of cabin, fares and PTC. --->
+		<cfloop array="#aCabins#" index="local.sCabin">
+			<cfloop array="#aRefundable#" index="local.bRefundable">
+				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy)>
+				<cfset local.stThreads[local.sThreadName] = ''>
+			</cfloop>
+		</cfloop>
+
+		<!--- Join only if threads where thrown out. --->
+		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
+			<cfthread action="join" name="#structKeyList(stThreads)#" />
+<!--- 		<cfelse>
+			<cfthread action="join" /> --->
+		</cfif>
+
+		<cfreturn >
+	</cffunction>
+
 <!--- PRIVATE METHODS ===================================================== --->
 
 	<cffunction name="doLowFare" access="private" output="false" hint="I kick off thread to hit uAPI.">
@@ -125,10 +127,11 @@
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable)>
 			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
-			<cfset local[sThreadName] = {}>
+			<cfset local[local.sThreadName] = {}>
 
-			<!--- Note:  Comment out opening and closing cfthread tags and dump sMessage or
-			sResponse to see what uAPI is getting or sending back --->
+			<!--- Note:  To debug: comment out opening and closing cfthread tags and
+			dump sMessage or sResponse to see what uAPI is getting and sending back --->
+
 			<cfthread
 				action="run"
 				name="#sThreadName#"
@@ -140,36 +143,37 @@
 				bRefundable="#arguments.bRefundable#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
+				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
 				<!--- Call the UAPI. --->
-				<cfset sResponse = getUAPI().callUAPI('AirService', sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
+				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
+
 				<!--- Dump any error returned
 				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
 				--->
 
 				<!--- Format the UAPI response. --->
-				<cfset aResponse = getUAPI().formatUAPIRsp(sResponse)>
+				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 				<!--- Parse the segments. --->
-				<cfset stSegments = getAirParse().parseSegments(aResponse)>
+				<cfset attributes.stSegments = getAirParse().parseSegments(attributes.aResponse)>
 				<!--- Parse the trips. --->
-				<cfset stTrips = getAirParse().parseTrips(response = aResponse, stSegments = stSegments)>
+				<cfset attributes.stTrips = getAirParse().parseTrips(response = attributes.aResponse, stSegments = attributes.stSegments)>
 <!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
-				<cfset stTrips = getAirParse().addGroups(stTrips)>
+				<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 <!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
-				<cfset stTrips = getAirParse().addPreferred(stTrips, arguments.Account)>
+				<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
-				<cfif NOT StructIsEmpty(stTrips)>
+				<cfif NOT StructIsEmpty(attributes.stTrips)>
 					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, stTrips)>
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
 					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
-					<cfset void = getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
-					<cfset thread.aResponse = aResponse>
-					<cfset thread.sMessage = sMessage>
+					<cfset thread.aResponse = attributes.aResponse>
+					<cfset thread.sMessage = attributes.sMessage>
 				</cfif>
-				<cfset thread.sMessage = sMessage>
+				<cfset thread.sMessage = attributes.sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
 				<cfset session.searches[arguments.searchID].stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>

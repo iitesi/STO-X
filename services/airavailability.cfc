@@ -39,9 +39,9 @@
 		<!--- Create a thread for every leg.  Give priority to the group specifically selected. --->
 		<cfloop collection="#arguments.Filter.getLegs()#" item="local.nLeg">
 			<cfif arguments.Group EQ nLeg>
-				<cfset sPriority = 'HIGH'>
+				<cfset local.sPriority = 'HIGH'>
 			<cfelse>
-				<cfset sPriority = 'LOW'>
+				<cfset local.sPriority = 'LOW'>
 			</cfif>
 			<cfset sThreadName = doAvailability(arguments.Filter, nLeg-1, arguments.Account, arguments.Policy, sPriority)>
 
@@ -54,6 +54,8 @@
 		<cfif NOT StructIsEmpty(stThreads)
 			AND sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
+<!--- 		<cfelse>
+			<cfthread action="join" /> --->
 		</cfif>
 
 		<cfreturn />
@@ -64,22 +66,22 @@
 		<cfargument name="Group" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="sPriority" required="false"	default="NORMAL">
+		<cfargument name="sPriority" required="false"	default="HIGH">
 		<cfargument name="stGroups" required="false" default="#structNew()#">
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the getUAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stGroups, arguments.Group)>
-			<cfset sThreadName = 'Group'&arguments.Group>
-			<cfset local[sThreadName] = {}>
+			<cfset local.sThreadName = 'Group'&arguments.Group>
+			<cfset local[local.sThreadName] = {}>
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
 			<cfthread
 				action="run"
-				name="#sThreadName#"
+				name="#local.sThreadName#"
 				priority="#arguments.sPriority#"
 				Filter="#arguments.Filter#"
 				Group="#arguments.Group#"
@@ -134,7 +136,6 @@
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
 			</cfthread>
-
 		</cfif>
 
 		<cfreturn local.sThreadName>
