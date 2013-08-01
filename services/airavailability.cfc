@@ -54,8 +54,6 @@
 		<cfif NOT StructIsEmpty(stThreads)
 			AND sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-<!--- 		<cfelse>
-			<cfthread action="join" /> --->
 		</cfif>
 
 		<cfreturn />

@@ -103,11 +103,9 @@
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-<!--- 		<cfelse>
-			<cfthread action="join" /> --->
 		</cfif>
 
-		<cfreturn >
+		<cfreturn />
 	</cffunction>
 
 <!--- PRIVATE METHODS ===================================================== --->
