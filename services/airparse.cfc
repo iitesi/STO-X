@@ -2,19 +2,13 @@
 
 	<cfproperty name="uAPI" />
 
-    <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
-    	<cfargument name="uAPI" type="any" required="true" />
+	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+		<cfargument name="uAPI" type="any" required="true" />
+		<cfset setUAPI( arguments.uAPI ) />
+		<cfreturn this />
+	</cffunction>
 
-    	<cfset setUAPI( arguments.uAPI ) />
-
-        <cfreturn this />
-         
-    </cffunction>
-
-<!---
-doLowFare
---->
-	<cffunction name="finishLowFare" output="false">
+	<cffunction name="finishLowFare" output="false" hint="Do low fare.">
 		<cfargument name="SearchID"	required="true">
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"	required="true">
@@ -47,7 +41,7 @@ doLowFare
 		<cfreturn >
 	</cffunction>
 
-	<cffunction name="parseSegments" output="false">
+	<cffunction name="parseSegments" output="false" hint="I take XML from uAPI and parse segments from it.">
 		<cfargument name="stResponse"	required="true">
 
 		<cfset local.stSegments = {}>
@@ -85,7 +79,7 @@ doLowFare
 		<cfreturn stSegments />
 	</cffunction>
 
-	<cffunction name="parseSearchID" output="false">
+	<cffunction name="parseSearchID" output="false" hint="I get the search ID from uAPI response.">
 		<cfargument name="sResponse"	required="true">
 
 		<cfset local.stResponse = XMLParse(arguments.sResponse)>
@@ -99,12 +93,21 @@ doLowFare
 		<cfreturn sLowFareSearchID />
 	</cffunction>
 
-	<cffunction name="parseNextReference" output="false">
+	<cffunction name="parseNextReference" output="false" hint="I get NextResultReference from uAPI XML response.">
 		<cfargument name="stResponse"	required="true">
 
 		<cfset local.sNextRef = ''>
 		<cfloop array="#arguments.stResponse#" index="local.aNextResultReference">
-			<cfif aNextResultReference.XMLName EQ 'common_v15_0:NextResultReference'>
+
+		<!--- TODO: need to replace these schema references with something from
+			coldspring environment service
+
+			8:28 AM Thursday, August 01, 2013 - Jim Priest - jpriest@shortstravel.com
+
+			Was: common_v15_0:NextResultReference
+			Should be: common_v19_0:NextResultReference --->
+
+			<cfif aNextResultReference.XMLName EQ 'common_v19_0:NextResultReference'>
 				<cfset sNextRef = aNextResultReference.XMLText>
 			</cfif>
 		</cfloop>
@@ -112,7 +115,7 @@ doLowFare
 		<cfreturn sNextRef />
 	</cffunction>
 
-	<cffunction name="parseTrips" output="false">
+	<cffunction name="parseTrips" output="false" hint="I take response and segments and parse trip data.">
 		<cfargument name="response" required="true">
 		<cfargument name="stSegments" required="true">
 
@@ -167,11 +170,11 @@ doLowFare
 				<cfloop array="#responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
 					<cfif airPricingSolution.XMLName EQ 'air:Journey'>
-						
+
 						<cfloop array="#airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif journey.XMLName EQ 'air:AirSegmentRef'>
 								<cfset stTrip.Segments[journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, journey.XMLAttributes.Key) ? arguments.stSegments[journey.XMLAttributes.Key] : {}>
-								
+
 								<cfloop array="#distinctFields#" index="local.field">
 									<cfset tripKey &= stTrip.Segments[journey.XMLAttributes.Key][field]>
 								</cfloop>
@@ -180,9 +183,9 @@ doLowFare
 						</cfloop>
 
 					<cfelseif airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
-						
+
 						<cfset stTrip.Segments[airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, airPricingSolution.XMLAttributes.Key) ? arguments.stSegments[airPricingSolution.XMLAttributes.Key] : {}>
-								
+
 						<cfloop array="#distinctFields#" index="local.field">
 							<cfset tripKey &= stTrip.Segments[airPricingSolution.XMLAttributes.Key][field]>
 						</cfloop>
@@ -252,10 +255,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn  stTrips/>
 	</cffunction>
 
-<!---
-mergeSegments
---->
-	<cffunction name="mergeSegments" output="false">
+	<cffunction name="mergeSegments" output="false" hint="I merge passed in segments.">
 		<cfargument name="stSegments1" 	required="true">
 		<cfargument name="stSegments2" 	required="true">
 
@@ -276,10 +276,7 @@ mergeSegments
 		<cfreturn stSegments/>
 	</cffunction>
 
-<!---
-mergeTrips
---->
-	<cffunction name="mergeTrips" output="false">
+	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
 		<cfargument name="stTrips1" 	required="true">
 		<cfargument name="stTrips2" 	required="true">
 
@@ -304,10 +301,7 @@ mergeTrips
 		<cfreturn stCombinedTrips/>
 	</cffunction>
 
-<!---
-addPreferred
---->
-	<cffunction name="addPreferred" output="false">
+	<cffunction name="addPreferred" output="false" hint="I set preferred flag.">
 		<cfargument name="stTrips"  required="true">
 		<cfargument name="Account"	required="false">
 
@@ -324,10 +318,7 @@ addPreferred
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-addGroups
---->
-	<cffunction name="addGroups" output="false">
+	<cffunction name="addGroups" output="false" hint="I add groups.">
 		<cfargument name="stTrips" 	required="true">
 		<cfargument name="sType" 	required="false"	default="Fare">
 
@@ -429,10 +420,7 @@ addGroups
 		<cfreturn local.stResults/>
 	</cffunction>
 
-<!---
-addJavascript
---->
-	<cffunction name="addJavascript" output="false">
+	<cffunction name="addJavascript" output="false" hint="I build javascript for trip info to be used in views">
 		<cfargument name="stTrips" 	required="true">
 		<cfargument name="sType" 	required="false"	default="Fare">
 
@@ -479,10 +467,7 @@ addJavascript
 		<cfreturn local.sJavascript/>
 	</cffunction>
 
-<!---
-getCarriers
---->
-	<cffunction name="getCarriers" output="false">
+	<cffunction name="getCarriers" output="false" hint="Give a trip I pull out the carriers.">
 		<cfargument name="stTrips">
 
 		<cfset local.aCarriers = []>
@@ -497,10 +482,7 @@ getCarriers
 		<cfreturn aCarriers/>
 	</cffunction>
 
-<!---
-mergeTripsToAvail
---->
-	<cffunction name="mergeTripsToAvail" output="false">
+	<cffunction name="mergeTripsToAvail" output="false" hint="mergeTripsToAvail">
 		<cfargument name="stTrips"		required="true">
 		<cfargument name="stAvailTrips"	required="true">
 
@@ -537,16 +519,13 @@ mergeTripsToAvail
 		<cfreturn arguments.stAvailTrips/>
 	</cffunction>
 
-<!---
-checkPolicy
---->
-	<cffunction name="checkPolicy" output="false">
-		<cfargument name="stTrips"			required="true">
-		<cfargument name="SearchID"		    required="true">
-		<cfargument name="nLowFareTripKey"	required="true">
-		<cfargument name="sType" 			required="false">
-		<cfargument name="Account"      	required="true">
-		<cfargument name="Policy"       	required="true">
+	<cffunction name="checkPolicy" output="false" hint="I check the policy.">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="SearchID" required="true">
+		<cfargument name="nLowFareTripKey" required="true">
+		<cfargument name="sType" required="false">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
 
 		<cfset local.stTrips = arguments.stTrips>
 		<cfset local.stTrip = {}>
