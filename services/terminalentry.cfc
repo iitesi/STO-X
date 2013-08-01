@@ -15,7 +15,7 @@
 
 // 		<cfreturn this>
 // 	</cffunction>
-	
+
 // <!---
 // openSession
 // --->
@@ -29,7 +29,7 @@
 //                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 //                     <soapenv:Header/>
 //                     <soapenv:Body>
-//                         <ns3:CreateTerminalSessionReq Host="1V" TargetBranch="#arguments.Account.sBranch#" xmlns:ns2="http://www.travelport.com/schema/common_v12_0" xmlns:ns3="http://www.travelport.com/schema/terminal_v8_0">
+//                         <ns3:CreateTerminalSessionReq Host="1V" TargetBranch="#arguments.Account.sBranch#" xmlns:ns2="#getUAPISchemas().common#" xmlns:ns3="#getUAPISchemas().terminal#">
 //                             <ns2:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
 //                         </ns3:CreateTerminalSessionReq>
 //                     </soapenv:Body>
@@ -57,7 +57,7 @@
 //                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 //                     <soapenv:Header/>
 // 					<soapenv:Body>
-// 						<ter:EndTerminalSessionReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
+// 						<ter:EndTerminalSessionReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="#getUAPISchemas().terminal#" xmlns:com="#getUAPISchemas().common#">
 // 							<com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
 // 							<com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
 // 						</ter:EndTerminalSessionReq>
@@ -87,7 +87,7 @@
 //                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 //                     <soapenv:Header/>
 //                 <soapenv:Body>
-//                         <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
+//                         <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="#getUAPISchemas().teminal#" xmlns:com="#getUAPISchemas().common#">
 //                 <com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
 //             <com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
 //             <ter:TerminalCommand>#arguments.command#</ter:TerminalCommand>

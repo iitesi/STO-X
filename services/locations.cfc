@@ -1,9 +1,9 @@
 <cfcomponent output="false">
-	
+
 <!--- doLocations --->
 	<cffunction name="doLocations" output="false">
 		<cfargument name="SearchID" 	required="true">
-		
+
 		<cfset local.stAccount = application.Accounts[session.AcctID]>
 		<cfset local.stDates = getDates(SearchID)>
 		<cfset local.sLatLong = getAirportLatLong(SearchID)>
@@ -13,16 +13,16 @@
 		<cfset local.stLocations = parseLocations(aResponse)>
 		<cfset stLocations = getLatLong(stLocations)>
 		<cfset stLocations.Center = sLatLong>
-		
+
 		<!---<cfset session.searches[SearchID].stTrips = addJavascript(stTrips)>--->
-		
+
 		<cfreturn stLocations>
 	</cffunction>
-	
+
 <!--- getDates --->
 	<cffunction name="getDates" output="false">
 		<cfargument name="SearchID"	required="true">
-		
+
 		<cfset local.stDates = {}>
 		<cfset stDates.PickUp_DateTime = ''>
 		<cfset stDates.DropOff_DateTime = ''>
@@ -39,14 +39,14 @@
 			<cfset stDates.PickUp_DateTime = getsearch.Depart_DateTime>
 			<cfset stDates.DropOff_DateTime = getsearch.Arrival_DateTime>
 		</cfif>
-		
+
 		<cfreturn stDates>
 	</cffunction>
-	
+
 <!--- getAirportLatLong --->
 	<cffunction name="getAirportLatLong" output="false">
 		<cfargument name="SearchID"	required="true">
-		
+
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT Airport_Location
 		FROM lu_FullAirports
@@ -54,7 +54,7 @@
 								FROM Searches
 								WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />)
 		</cfquery>
-		
+
 		<cfset local.sLatLong = ''>
 		<cftry>
 			<cfhttp method="get" url="https://maps.google.com/maps/geo?q=#getsearch.Airport_Location#&output=xml&oe=utf8\&sensor=false&key=ABQIAAAAIHNFIGiwETbSFcOaab8PnBQ2kGXFZEF_VQF9vr-8nzO_JSz_PxTci5NiCJMEdaUIn3HA4o_YLE757Q" />
@@ -64,43 +64,43 @@
 				<cfset sLatLong = '0,0'>
 			</cfcatch>
 		</cftry>
-		
+
 		<cfreturn sLatLong />
 	</cffunction>
-	
+
 <!--- prepareSOAPHeader --->
 	<cffunction name="prepareSOAPHeader" output="false">
 		<cfargument name="SearchID" 	required="true">
 		<cfargument name="stDates" 		required="true">
 		<cfargument name="stAccount" 		required="true">
-		
+
 		<cfquery name="local.getsearch" datasource="book">
 		SELECT 'ALO' AS Arrival_City
 		FROM Searches
 		WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
-		
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<veh:VehicleLocationReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:veh="http://www.travelport.com/schema/vehicle_v17_0">
-							<com:BillingPointOfSaleInfo OriginApplication="UAPI" xmlns:com="http://www.travelport.com/schema/common_v15_0" />
+						<veh:VehicleLocationReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:veh="#getUAPISchemas().vehicle#">
+							<com:BillingPointOfSaleInfo OriginApplication="UAPI" xmlns:com="#getUAPISchemas().common#" />
 							<veh:PickupDateLocation Date="#DateFormat(arguments.stDates.PickUp_DateTime, 'yyyy-mm-dd')#" Location="#getsearch.Arrival_City#" LocationType="CityCenterDowntown" />
 						</veh:VehicleLocationReq>
 					</soapenv:Body>
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
-		
+
 		<cfreturn sMessage/>
 	</cffunction>
-	
+
 <!--- parseLocations --->
 	<cffunction name="parseLocations" output="false">
 		<cfargument name="stResponse"	required="true">
-		
+
 		<cfset local.stLocations = StructNew('linked')>
 		<cfset local.cnt = 0>
 		<cfloop array="#arguments.stResponse#" index="local.stVehicleLocation">
@@ -122,23 +122,23 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
-		
+
 		<cfreturn stLocations />
 	</cffunction>
-	
+
 <!--- getLatLong --->
 	<cffunction name="getLatLong" output="false">
 		<cfargument name="stLocations"	required="true">
-		
+
 		<cfset local.stLocations = arguments.stLocations>
 		<cfset local.sLatLong = ''>
-		
+
 		<cfquery name="local.qCity">
 		SELECT CityName, StateCode
 		FROM RCTY
 		WHERE Airports LIKE '%#stLocations[1].City#%'
 		</cfquery>
-		
+
 		<cfloop collection="#stLocations#" item="sLocation">
 			<cfset sLatLong = ''>
 			<cftry>
@@ -151,8 +151,8 @@
 			</cftry>
 			<cfset stLocations[sLocation].sLatLong = sLatLong>
 		</cfloop>
-		
+
 		<cfreturn stLocations />
 	</cffunction>
-	
+
 </cfcomponent>
