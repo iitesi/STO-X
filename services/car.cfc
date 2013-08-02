@@ -192,7 +192,7 @@
 					<cfabort>
 				</cfif>
 
-				<cfset stCars = mergeCars((structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
+				<cfset stCars = mergeCars((structKeyExists(cfthread, 'corporateRates') AND structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
 				<cfset session.searches[SearchID].stCarVendors = getVendors(stCars, arguments.Account)>
 				<cfset session.searches[SearchID].stCarCategories = getCategories(stCars)>
 				<cfset session.searches[SearchID].stCars = stCars>
