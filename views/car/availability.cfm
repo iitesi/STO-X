@@ -81,7 +81,7 @@ OR NOT rc.Filter.getAir()>
 							</td>
 
 							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-								<td>
+								<td width="120">
 									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
 										<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 											<cfset buttonType="btn-primary" />
