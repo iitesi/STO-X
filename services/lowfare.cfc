@@ -343,6 +343,9 @@
 										</air:SearchAirLeg>
 									</cfloop>
 								</cfif>
+
+	<!--- MaxSolutions="1" --->
+
 								<air:AirSearchModifiers
 									DistanceType="MI"
 									IncludeFlightDetails="false"

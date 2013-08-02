@@ -303,6 +303,9 @@
 									</cfif>
 								</cfloop>
 							</cfif>
+
+<!--- MaxSolutions="1" --->
+
 							<cfif arguments.sNextRef EQ ''>
 								<air:AirSearchModifiers
 									DistanceType="MI"
