@@ -58,8 +58,6 @@
 			<cfset onApplicationStart() />
 		</cfif>
 
-<cfthrow message="TESTING LOCALLY">
-
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
 			<cfset var action = ListFirst(rc.action, ':')>
 			<cfreturn view( "main/notfound" )>
@@ -82,7 +80,7 @@
 		<cfargument name="Exception" required=true/>
 		<cfargument name="EventName" type="String" required=true/>
 
-		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS false>
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
 			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
