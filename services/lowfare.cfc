@@ -148,17 +148,14 @@
 				<!--- Dump any error returned
 				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
 				--->
-
 				<!--- Format the UAPI response. --->
 				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 				<!--- Parse the segments. --->
 				<cfset attributes.stSegments = getAirParse().parseSegments(attributes.aResponse)>
 				<!--- Parse the trips. --->
 				<cfset attributes.stTrips = getAirParse().parseTrips(response = attributes.aResponse, stSegments = attributes.stSegments)>
-<!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
 				<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
-<!--- <cfdump var="#stTrips#" abort="true" /> --->
 				<!--- Add group node --->
 				<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
@@ -173,7 +170,7 @@
 				</cfif>
 				<cfset thread.sMessage = attributes.sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
-				<cfset session.searches[arguments.searchID].stPricing[arguments.sCabin&arguments.bRefundable] = 1>
+				<cfset session.searches[arguments.Filter.getSearchID()].stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
 
