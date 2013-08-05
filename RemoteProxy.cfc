@@ -310,7 +310,50 @@
 		<cfreturn cy />
 
 	</cffunction>
+	
+	<cffunction name="getUAPILogEntries" access="remote" output="false" returntype="any" returnformat="plain" hint="I retrieve entries from the uAPI log based on the specified criteria">
+		<cfargument name="searchID" type="numeric" required="false" />
+		<cfargument name="acctId" type="numeric" required="false" />
+		<cfargument name="userId" type="numeric" required="false" />
+		<cfargument name="startDate" type="date" required="false" />
+		<cfargument name="endDate" type="date" required="false" />
+		<cfargument name="services" type="string" required="false" />
 
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+
+		<cfif structKeyExists( arguments, "searchID" ) OR ( structKeyExists( arguments, "acctId" ) AND structKeyExists( arguments, "userId" ) )>
+			<cfset var data = structNew() />
+
+			<cftry>
+
+				<cfset data[ 'entries' ] = getBean( "uAPI" ).getLogEntries( argumentCollection=arguments ) />
+
+				<cfif structKeyExists( arguments, "searchId" )>
+					<cfset data[ 'search' ] = getBean( "SearchService" ).load( arguments.searchId ) />
+				</cfif>
+
+				<cfset result.setData( data ) />
+
+				<cfcatch type="any">
+					<cfset result.addError( "An error occurred while retrieving log entries for the specified criteria." ) />
+					<cfset result.setSuccess( false ) />
+				</cfcatch>
+			</cftry>
+
+		</cfif>
+
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
+				<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn serializeJSON( result ) />
+		</cfif>
+
+	</cffunction>
+	
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
 

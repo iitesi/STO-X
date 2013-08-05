@@ -465,7 +465,7 @@
 			<cfset carArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
 			<cfset carArgs.sCarChain = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVendorCode() />
 			<cfset carArgs.sCarType = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVehicleClass() />
-			<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getDepartDateTime() ) />
+			<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getCarPickupDateTime() ) />
 
 			<cfset var cars = this.doAvailability( argumentCollection = carArgs ) />
 
