@@ -58,6 +58,8 @@
 			<cfset onApplicationStart() />
 		</cfif>
 
+<cfthrow message="TESTING LOCALLY">
+
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
 			<cfset var action = ListFirst(rc.action, ':')>
 			<cfreturn view( "main/notfound" )>
@@ -80,13 +82,11 @@
 		<cfargument name="Exception" required=true/>
 		<cfargument name="EventName" type="String" required=true/>
 
-		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS TRUE>
-
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS false>
 			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal' ) />
-
-			<!---TODO: Now that we've reported the error, what do we show the client?--->
+			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
-			 <cfthrow object="#arguments.exception#" />
+			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
 	</cffunction>
 </cfcomponent>
