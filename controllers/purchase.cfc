@@ -212,6 +212,7 @@
 					<!--- Parse sell results --->
 					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																							, response = hotelResponse )>
+					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Parse error --->
 					<cfif Hotel.getUniversalLocatorCode() EQ ''>
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( hotelResponse )>
@@ -285,6 +286,7 @@
 					<!--- Parse the vehicle --->
 					<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
 																									, response = vehicleResponse )>
+					<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
 					<!--- Parse error --->
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( vehicleResponse )>

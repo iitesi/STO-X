@@ -85,7 +85,7 @@
 									<td colspan="2"></td>						
 							</cfif>
 							<td width="12%"><span class="blue"><strong>Hotel Confirmation</strong></span></td>
-							<td width="28%"><span class="blue"><strong>#rc.Hotel.getConfirmation()#</strong></span></td>
+							<td width="28%"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getHotelConfirmation()#</strong></span></td>
 							<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelFF())>
 								<td width="8%"><strong>Loyalty ##</strong></td>
 								<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelFF()#</td>
