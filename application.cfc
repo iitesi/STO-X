@@ -76,4 +76,17 @@
 		<cfreturn view( "main/notfound" )>
 	</cffunction>
 
+	<cffunction name="onError" returnType="void">
+		<cfargument name="Exception" required=true/>
+		<cfargument name="EventName" type="String" required=true/>
+
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS TRUE>
+
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal' ) />
+
+			<!---TODO: Now that we've reported the error, what do we show the client?--->
+		<cfelse>
+			 <cfthrow object="#arguments.exception#" />
+		 </cfif>
+	</cffunction>
 </cfcomponent>
