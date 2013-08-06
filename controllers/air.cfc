@@ -111,7 +111,7 @@
 		<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&filter=all')>
-		
+
 		<cfreturn />
 	</cffunction>
 
@@ -251,18 +251,7 @@
 
 	<cffunction name="getTotalFlights" access="private" hint="I pull the total number of flights out of the session scope.">
 		<cfargument name="rc" required="true">
-		<cfset var totalFlights = 0>
-		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails.stResults, "1")>
-			<cfset totalFlights = totalFlights + session.searches[arguments.rc.SearchID].stLowFareDetails.stResults.1>
-		</cfif>
-		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails.stResults, "0")>
-			<cfset totalFlights = totalFlights + session.searches[arguments.rc.SearchID].stLowFareDetails.stResults.0>
-		</cfif>
-
-		<cfreturn totalFlights />
+		<cfreturn arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare) />
 	</cffunction>
-
-
-
 
 </cfcomponent>
