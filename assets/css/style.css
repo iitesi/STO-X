@@ -896,12 +896,24 @@ tr.hotel-room td{
 	background: url(../img/ribbon/ribbon-r-cont.png) no-repeat;
 	right: 0;
 }
+.ribbon-r-cont-small {
+	height: 35px;
+	width: 35px;
+	background: url(../img/ribbon/ribbon-r-cont-small.png) no-repeat;
+	right: 0;
+}
 .ribbon-l-pref {
 	background: url(../img/ribbon/ribbon-l-pref.png) no-repeat;
 	left: 0;
 }
 .ribbon-r-pref {
 	background: url(../img/ribbon/ribbon-r-pref.png) no-repeat;
+	right: 0;
+}
+.ribbon-r-pref-small {
+	height: 35px;
+	width: 35px;
+	background: url(../img/ribbon/ribbon-r-pref-small.png) no-repeat;
 	right: 0;
 }
 .ribbon-l-pref-cont {
