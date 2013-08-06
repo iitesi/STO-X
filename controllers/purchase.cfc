@@ -434,10 +434,6 @@
 					<!--- <cfif Traveler.getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif> --->
-					<cfoutput>
-						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
-					</cfoutput>
-					<cfabort />
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset local.errorList = errorType>
