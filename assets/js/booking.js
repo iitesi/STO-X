@@ -101,6 +101,9 @@ function getUnusedTickets(userid, acctid) {
 	7	Stops							0/1/2
 ----------------------------------------------------------------------*/
 function filterAir(reset) {
+
+ console.clear();
+
 	var carriercount = 0;
 	var hideCount = 0;
 	var loopcnt = 0;
@@ -114,20 +117,26 @@ function filterAir(reset) {
 	var singlecarrier = $("#SingleCarrier").val();
 	var showCount = 0;
 	var showFlight = false;
+	// reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
 
 	// see if any airlines are checked in filter
 	var airfields = $('#airlines').find('input[name="carrier"]:checked');
 
+	// see if ANY checkboxes are checked - if not show everything
+	var filterSelected = $('#filterbar').find('input:checkbox:checked').length;
 
+// console.log(filterSelected);
+// console.log(filterSelected !== 0);
+// console.log(reset !== 'true');
 
-	// reset is passed from air/filter.js  resetAirDelay() and is used to clear filters
-	if(reset != 'true'){
+	if(reset !== 'true' && filterSelected !== 0){
+		console.log('filter stuff');
 		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 			var flight = flightresults[loopcnt];
 
 		// console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
 		// console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
-		// console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
+		 console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
 		// console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
 		// console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
 		// console.log('-------------------------------')
@@ -136,13 +145,22 @@ function filterAir(reset) {
 						 (flight[1] == 0 && inpolicy == 1 )
 					|| (flight[2] == 1 && singlecarrier == 1 )
 					|| (flight[7] == 1 && nonstops == 1)
-					|| (flight[4] == 0 && fare0 == undefined)
-					|| (flight[4] == 1 && fare1 == undefined)
-					|| (flight[6] == 'Y' && classy == undefined)
-					|| (flight[6] == 'C' && classc == undefined)
-					|| (flight[6] == 'F' && classf == undefined)
-				) {
+ 					|| (flight[4] == 0 && flight[4] != fare0 )
+ 					|| (flight[4] == 1 && flight[4] != fare1 )
+/*
+flight[4] = 0 = non-refundable
+flight[4] = 1 = refundable
+fare0 = 0 means it's checked
+fare1 = 1 means it's checked
 
+
+*/
+
+ 					// || (flight[4] == 1 && fare1 == 1)
+// 					|| (flight[6] == 'Y' && classy == undefined)
+// 					|| (flight[6] == 'C' && classc == undefined)
+// 					|| (flight[6] == 'F' && classf == undefined)
+				) {
 				// if the flight matches any of the criteria above - we'll hide it
 				$( '#flight' + flight[0] ).hide( 'fade' );
 			}	else {
@@ -183,6 +201,9 @@ function filterAir(reset) {
 			} // if/else - check of all filter switches
 		} // for loop
 	} else {
+
+console.log('show everything');
+
 			// reset showcount to total # of flights
 		showCount = flightresults.length;
 		// show all badges

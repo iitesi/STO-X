@@ -56,13 +56,11 @@ $(document).ready(function(){
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+		$('.spinner').show();
 
 		// reset sorting and filters
 		sortAir( sortbyprice );
 		resetAirDelay.run();
-
-		// TODO: hack to show all flights by default
-		// $('[id^="flight"]').show();
 	});
 
 	$('.filterby').on('click', function() {
