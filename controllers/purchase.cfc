@@ -116,6 +116,7 @@
 											AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
 										<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
 										<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
+										<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
 									</cfif>
 								</cfloop>
 							<cfelse>
