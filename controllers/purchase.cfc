@@ -175,10 +175,10 @@
 																											 )>
 									<cfset Air.ProviderLocatorCode = ''>
 									<cfset Air.UniversalLocatorCode = ''>
-									<cfset Air.Confirmation = ''>
 									<!--- Parse sell results --->
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
+									<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 									<!--- Parse error --->
 									<cfif Air.UniversalLocatorCode EQ ''>
 										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
@@ -308,6 +308,7 @@
 					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
 				</cfif>
+				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Pull up the PNR for the terminal entry commands --->
 					<cfset local.responseMessage = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch

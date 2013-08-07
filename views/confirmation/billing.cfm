@@ -9,7 +9,7 @@
 				<tr>
 					<td>
 						<div class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
-						<div class="blue"><strong>Reservation Code: ABVDE4 <!--- TO DO: Reservation Code ---></strong></div>
+						<div class="blue"><strong>Reservation Code: #rc.Traveler[travelerIndex].getBookingDetail().getReservationCode()#</strong></div>
 						<div style="height:24px;"></div>
 
 						<cfloop array="#rc.Traveler[travelerIndex].getOrgUnit()#" index="orgUnitIndex" item="orgUnit">
