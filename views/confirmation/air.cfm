@@ -59,6 +59,9 @@
 																<cfset seats = listAppend(seats, 'NA') />
 																<cfset showIcon = true />
 															</cfif>
+														<cfelse>
+															<cfset seats = listAppend(seats, 'NA') />
+															<cfset showIcon = true />
 														</cfif>
 													</cfloop>
 												</cfloop>
@@ -76,6 +79,12 @@
 												</cfif>
 											</td>
 										</tr>
+										<cfif arrayLen(segment.SegmentRemark)>
+											<tr>
+												<td></td>
+												<td colspan="7">#segment.SegmentRemark[1]#</td>
+											</tr>											
+										</cfif>
 									</cfloop>
 									<cfif groupIndex NEQ (structCount(rc.Air.Groups) - 1)>
 										<tr>
@@ -152,7 +161,7 @@
 								<td valign="top" width="120">#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
 							</tr>
 						</cfif>
-						<cfif travelerIndex NEQ arrayLen(rc.vehicleTravelers)>
+						<cfif travelerIndex NEQ arrayLen(rc.airTravelers)>
 							<tr>
 								<td colspan="2"></td>
 								<td colspan="6"><hr class="dashed" /></td>
