@@ -178,6 +178,7 @@
 									<!--- Parse sell results --->
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
+									<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 									<!--- Parse error --->
 									<cfif Air.UniversalLocatorCode EQ ''>
 										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
@@ -307,6 +308,7 @@
 					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
 				</cfif>
+				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Pull up the PNR for the terminal entry commands --->
 					<cfset local.responseMessage = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
@@ -443,14 +445,14 @@
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
-					<cfoutput>
+					<!--- <cfoutput>
 						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
 					</cfoutput>
-					<cfabort />
-					<cfoutput>
+					<cfabort /> --->
+					<!--- <cfoutput>
 						<a href="index.cfm?action=confirmation&searchID=#rc.searchID#">Confirmation Page</a>
 					</cfoutput>
-					<cfabort />
+					<cfabort /> --->
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset local.errorList = errorType>
@@ -480,10 +482,10 @@
 			<cfif Traveler.getBookingDetail().getSaveProfile()>
 				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 			</cfif>
-			<cfoutput>
+			<!--- <cfoutput>
 				<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
 			</cfoutput>
-			<cfabort />
+			<cfabort /> --->
 			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 		</cfif>
 

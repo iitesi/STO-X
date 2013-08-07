@@ -59,9 +59,6 @@
 																<cfset seats = listAppend(seats, 'NA') />
 																<cfset showIcon = true />
 															</cfif>
-														<cfelse>
-															<cfset seats = listAppend(seats, 'NA') />
-															<cfset showIcon = true />
 														</cfif>
 													</cfloop>
 												</cfloop>
@@ -114,15 +111,19 @@
 							<cfif structKeyExists(rc.Air, "aPolicies") AND arrayLen(rc.Air.aPolicies)>
 									<td width="110"><strong>OUT OF POLICY</strong></td>
 									<td colspan="3">#ArrayToList(rc.Air.aPolicies)#</td>
-									<td width="80"><strong>Reason</strong></td>
-									<td>#rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription#</td>
+									<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail(), "airReasonDescription")>
+										<td width="80"><strong>Reason</strong></td>
+										<td>#rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription#</td>
+									<cfelse>
+										<td colspan="2"></td>
+									</cfif>
 								</tr>
 								<tr>
 									<td colspan="2"></td>						
 							</cfif>
 							<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
 								<td width="110"><span class="blue"><strong>#carrier# Confirmation</strong></span></td>
-								<td width="80"><span class="blue"><strong>xxx<!--- TO DO: #rc.Air.getConfirmation()# ---></strong></span></td>
+								<td width="80"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span></td>
 								<cfloop collection="#rc.Traveler[travelerIndex].getLoyaltyProgram()#" item="program" index="programIndex">
 									<cfif program.getShortCode() EQ carrier>
 										<cfif len(program.getAcctNum())>
