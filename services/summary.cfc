@@ -288,7 +288,10 @@
 			<!--- To Do: Pass variables in --->
 			
 			<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
-
+			<!--- <cfif structKeyExists(arguments, 'hotelNotBooked')
+				AND arguments.hotelNotBooked EQ ''>
+				<cfset error.hotelNotBooked = ''>
+			</cfif> --->
 			<cfif NOT inPolicy
 				AND arguments.Policy.Policy_AirReasonCode EQ 1>
 				<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>

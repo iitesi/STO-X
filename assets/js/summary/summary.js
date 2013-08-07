@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	
 	var searchID = $("#searchID").val();
 	var acctID = $( "#acctID" ).val();
 	var valueID = $( "#valueID" ).val();

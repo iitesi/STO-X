@@ -170,7 +170,6 @@
 			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel</label>
 			<div class="controls">
 				<select name="hotelNotBooked" id="hotelNotBooked">
-				<option value=""></option>
 				<option value="A">I will book my hotel later</option>
 				<option value="B">I am attending a conference with pre-arranged hotel</option>
 				<option value="C">I have a negotiated rate that is not available online</option>
