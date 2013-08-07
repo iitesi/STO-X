@@ -80,8 +80,11 @@
 					<soapenv:Body>
 						<air:SeatMapReq
 							TargetBranch="#arguments.stAccount.sBranch#"
-							xmlns:air="#getUAPISchemas().air#"
-							xmlns:com="#getUAPISchemas().common#">
+							xmlns:air="http://www.travelport.com/schema/air_v22_0"
+							xmlns:com="http://www.travelport.com/schema/common_v19_0">
+							<!--- Don't understand why the below wasn't working. --->
+							<!--- xmlns:air="#getUAPISchemas().air#"
+							xmlns:com="#getUAPISchemas().common#"> --->
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 							<air:AirSegment
 								Key="#nSegment#T"

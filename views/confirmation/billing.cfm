@@ -118,7 +118,7 @@
 									<td align="right">
 										#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : vehicleBase&' '&vehicleCurrency)#
 										<cfset vehicleTotal = vehicleBase />
-										<cfif NOT vehicleDropOffChargesIncluded>
+										<cfif NOT vehicleDropOffChargesIncluded AND vehicleDropOffCharge NEQ 0>
 											&nbsp;(+ #(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleDropOffCharge) : vehicleDropOffCharge&' '&vehicleCurrency)# drop-off charge)
 											<cfset vehicleTotal = vehicleTotal + vehicleDropOffCharge />
 										</cfif>
