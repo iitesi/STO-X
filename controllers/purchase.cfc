@@ -443,6 +443,10 @@
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
 					<cfoutput>
+						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
+					</cfoutput>
+					<cfabort />
+					<cfoutput>
 						<a href="index.cfm?action=confirmation&searchID=#rc.searchID#">Confirmation Page</a>
 					</cfoutput>
 					<cfabort />

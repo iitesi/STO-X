@@ -68,10 +68,10 @@
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
 										</cfif>
-										<cfif structKeyExists(rc, "account") AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\logos\#rc.account.logo#"))>
-											<img src="assets/img/logos/#rc.account.logo#" alt="#rc.account.account_name#" />
+										<cfif structKeyExists(rc, "account") AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\clients\#rc.account.logo#"))>
+											<img src="assets/img/clients/#rc.account.logo#" alt="#rc.account.account_name#" />
 										<cfelse>
-											<img src="assets/img/logos/stm.gif" alt="Short's Travel Management" />
+											<img src="assets/img/clients/stm.gif" alt="Short's Travel Management" />
 										</cfif>
 										</a>
 									</cfoutput>

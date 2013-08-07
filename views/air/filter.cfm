@@ -64,7 +64,7 @@ F = first
 				</div>
 				<div>
 					<cfoutput>
-						<h4><span id="flightCount">#rc.totalflights# of #rc.totalflights#</span> flights displayed  <a href="##" class="removefilters pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+						<h4><span id="flightCount">#rc.totalflights# of #rc.totalflights#</span> flights displayed  <a href="##" class="removefilters pull-right"><span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span> <i class="icon-refresh"></i> Clear Filters</a></h4>
 					</cfoutput>
 				</div>
 
@@ -154,7 +154,6 @@ F = first
 					</div> <!--- row --->
 					<br><br>
 					<span class="pull-right">
-						<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
 						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
 					</span>
 				</div> <!--- well filterselection --->
