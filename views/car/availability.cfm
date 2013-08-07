@@ -71,7 +71,7 @@ OR NOT rc.Filter.getAir()>
 							<td>
 								<div style="width:150px;height:72px;position:relative;float:left;">
 									<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-										<span class="ribbon ribbon-r-pref"></span>
+										<span class="ribbon ribbon-r-pref-small"></span>
 									</cfif>
 									<span class="carType">#vehicleClass#</span><br />
 
@@ -106,7 +106,7 @@ OR NOT rc.Filter.getAir()>
 											</cfif>
 											<!--- If corporate/contracted rate --->
 											<cfif stRate.Corporate>
-												<span class="ribbon ribbon-r-cont"></span>
+												<span class="ribbon ribbon-r-cont-small"></span>
 												<!--- CONTRACTED --->
 											</cfif><br />
 											<cfif stRate.Currency IS 'USD'>

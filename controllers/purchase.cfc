@@ -87,13 +87,21 @@
 						<cfif Air.total LT trip[Air.nTrip].total>
 							<cfset arrayAppend(errorMessage, 'Price increase from #dollarFormat(Air.total)# to #dollarFormat(trip[Air.nTrip].total)#')>
 							<cfset errorType = 'Air.airPrice'>
-							<cfset trip.nTrip = Air.nTrip>
+							<cfset local.nTrip = Air.nTrip>
+							<cfset local.aPolicies = Air.aPolicies>
+							<cfset local.policy = Air.policy>
 							<cfset session.searches[rc.SearchID].stItinerary.Air = trip>
 							<cfset session.searches[rc.SearchID].stItinerary.Air.nTrip = nTrip>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.aPolicies = aPolicies>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.policy = policy>
 						<cfelse>
 							<cfset local.nTrip = Air.nTrip>
+							<cfset local.aPolicies = Air.aPolicies>
+							<cfset local.policy = Air.policy>
 							<cfset Air = trip[Air.nTrip]>
 							<cfset Air.nTrip = nTrip>
+							<cfset Air.aPolicies = aPolicies>
+							<cfset Air.policy = policy>
 							<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[structKeyList(trip)].sXML )>
 							<!--- Parse credit card information --->
 							<cfset local.cardNumber = ''>
@@ -431,11 +439,15 @@
 				</cfif>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
-					<!--- <cfif Traveler.getSaveProfile()>
+					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
-					</cfif> --->
+					</cfif>
 					<cfoutput>
 						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
+					</cfoutput>
+					<cfabort />
+					<cfoutput>
+						<a href="index.cfm?action=confirmation&searchID=#rc.searchID#">Confirmation Page</a>
 					</cfoutput>
 					<cfabort />
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
