@@ -6,6 +6,7 @@
 
 	<bean id="UAPI" class="com.travelport.uapi">
 		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 	</bean>
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
