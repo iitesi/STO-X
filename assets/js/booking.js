@@ -137,6 +137,9 @@ function filterAir(reset) {
 			var flight = flightresults[loopcnt];
 			showFlight = true;
 
+			// loop through and only check each subsequent filter if the previous
+			// filter didn't already hide it (showflight=true)
+
 			// check in-policy, single carrier and non-stops
 			if(showFlight == true){  // && filterSelected == 0
 				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] == 1 && nonstops == 1) ){
@@ -147,10 +150,35 @@ function filterAir(reset) {
 			// check refundable / non-refundable and not both checked at once which would imply you want to see everything
 			if(showFlight == true){
 				if(
-					((fare0 == 0 && flight[4] == 1) || (fare1 == 1 && flight[4] == 0)) && !( fare0 == 0 && fare1 == 1)    ){
+						(
+							(fare0 == 0 && flight[4] == 1)
+							|| (fare1 == 1 && flight[4] == 0)
+						)
+					// if all are selected show all
+					&& !( fare0 == 0 && fare1 == 1)
+				){
 					showFlight = false;
 				}
 			}
+
+			// check class Y = Economy, C = Business, F = First
+			if(showFlight == true){
+				if(
+						(
+							(classy == 'Y' && (flight[6] == 'C' || flight[6] == 'F'))
+							|| (classc == 'C' && (flight[6] == 'Y' || flight[6] == 'F'))
+							|| (classf == 'F' && (flight[6] == 'Y' || flight[6] == 'C'))
+						)
+						// if all are selected show all
+						&& !( classf == 'F' && classc == 'C' && classf == 'F')
+					){
+					showFlight = false;
+				}
+			}
+
+
+
+
 
 		// show or hide flight
 			if(showFlight == true){
@@ -186,13 +214,7 @@ function filterAir(reset) {
 
 			if (
 
-						(
-							(flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] == 1 && nonstops == 1)
-						)
-	 				||
-	 					(
-							(flight[4] == 0 && flight[4] != fare0 ) || (flight[4] == 1 && flight[4] != fare1 )
-	 					)
+
 
 			//  || (flight[6] == 'Y' && classy == undefined)
 			//  || (flight[6] == 'C' && classc == undefined)
