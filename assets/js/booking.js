@@ -163,21 +163,38 @@ function filterAir(reset) {
 
 			// check class Y = Economy, C = Business, F = First
 			if(showFlight == true){
-				if(
-						(
-							(classy == 'Y' && (flight[6] == 'C' || flight[6] == 'F'))
-							|| (classc == 'C' && (flight[6] == 'Y' || flight[6] == 'F'))
-							|| (classf == 'F' && (flight[6] == 'Y' || flight[6] == 'C'))
-						)
-						// if all are selected show all
-						&& !( classf == 'F' && classc == 'C' && classf == 'F')
-					){
-					showFlight = false;
-				}
-			}
 
+				if ( // single selection made
+					( classy == 'Y' && classc != 'C' && classf != 'F' )
+					|| ( classc == 'C' && classy != 'Y' && classf != 'F' )
+					|| ( classf == 'F' && classy != 'Y' && classc != 'C' )
+				){
+					 if (
+						 		( classy == 'Y' && flight[6] == 'C' || classy == 'Y' && flight[6] == 'F')
+						 || ( classc == 'C' && flight[6] == 'Y' || classc == 'C' && flight[6] == 'F' )
+						 || ( classf == 'F' && flight[6] == 'Y' || classf == 'F' && flight[6] == 'C' )
+				 			// if all are selected show all
+					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
+					 	) {
+					 		showFlight = false;
+					 	} // inside if
+				} else if ( // two selections made
 
-
+						 ( classy == 'Y' && classc == 'C' && classf != 'F' )
+					|| ( classy == 'Y' && classf == 'F' && classc != 'C' )
+					|| ( classc == 'C' && classf == 'F' && classy != 'Y' )
+				){
+					 if (
+									( classy == 'Y' && classc == 'C' && classf != 'F' && flight[6] == 'F' )
+							|| 	( classf == 'F' && classc == 'C' && classy != 'Y' && flight[6] == 'Y' )
+							|| 	( classy == 'Y' && classf == 'F' && classc != 'C' && flight[6] == 'C' )
+				 			// if all are selected show all
+					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
+					 	) {
+					 		showFlight = false;
+					 	} // inside if
+				} // two selections made
+			} // showflight = true
 
 
 		// show or hide flight
