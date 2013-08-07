@@ -175,6 +175,7 @@
 																											 )>
 									<cfset Air.ProviderLocatorCode = ''>
 									<cfset Air.UniversalLocatorCode = ''>
+									<cfset Air.Confirmation = ''>
 									<!--- Parse sell results --->
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
@@ -443,14 +444,14 @@
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
-					<cfoutput>
+					<!--- <cfoutput>
 						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
 					</cfoutput>
-					<cfabort />
-					<cfoutput>
+					<cfabort /> --->
+					<!--- <cfoutput>
 						<a href="index.cfm?action=confirmation&searchID=#rc.searchID#">Confirmation Page</a>
 					</cfoutput>
-					<cfabort />
+					<cfabort /> --->
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset local.errorList = errorType>
@@ -480,10 +481,10 @@
 			<cfif Traveler.getBookingDetail().getSaveProfile()>
 				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 			</cfif>
-			<cfoutput>
+			<!--- <cfoutput>
 				<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
 			</cfoutput>
-			<cfabort />
+			<cfabort /> --->
 			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 		</cfif>
 
