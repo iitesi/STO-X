@@ -56,6 +56,7 @@
 
 		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
 			<cfset onApplicationStart() />
+			<cfreturn view( "main/reload" )>
 		</cfif>
 
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
