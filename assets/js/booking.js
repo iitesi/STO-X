@@ -89,6 +89,8 @@ function getUnusedTickets(userid, acctid) {
 /* ----------------------------------------------------------------------
  FILTER AIR
 
+	******** Tread carefully - the code below is fragile! *************
+
 	FlightResults = ["-721584238", 1, 0, ["AA"], "0", 1, "Y", 0]
 
 	0	Token							23445611128 (appended with 'flight' in code as CSS id's shouldn't start with number)
@@ -99,12 +101,18 @@ function getUnusedTickets(userid, acctid) {
 	5	Preferred					1/0
 	6	Cabin Class				Y, C, F
 	7	Stops							0/1/2
+
+	console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
+	console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
+	console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
+	console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
+	console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
+	console.log('-------------------------------')
 ----------------------------------------------------------------------*/
 function filterAir(reset) {
 
  console.clear();
 
-	var carriercount = 0;
 	var loopcnt = 0;
 	var classy = $("#ClassY:checked").val();
 	var classc = $("#ClassC:checked").val();
@@ -120,13 +128,9 @@ function filterAir(reset) {
 	// see if any airlines are checked in filter
 	var airfields = $('#airlines').find('input[name="carrier"]:checked');
 
-	// see if ANY checkboxes are checked - if not show everything
-	var filterSelected = $('#filterbar').find('input:checkbox:checked').length;
-
 	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
 	if(reset == 'true'){
 
-		console.log('reset!');
 		// set count to all, and show all badges
 		showCount = flightresults.length;
 		$('[id^="flight"]').show();
@@ -141,7 +145,7 @@ function filterAir(reset) {
 			// filter didn't already hide it (showflight=true)
 
 			// check in-policy, single carrier and non-stops
-			if(showFlight == true){  // && filterSelected == 0
+			if(showFlight == true){
 				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] == 1 && nonstops == 1) ){
 					showFlight = false;
 				}
@@ -178,6 +182,7 @@ function filterAir(reset) {
 					 	) {
 					 		showFlight = false;
 					 	} // inside if
+
 				} else if ( // two selections made
 
 						 ( classy == 'Y' && classc == 'C' && classf != 'F' )
@@ -196,6 +201,17 @@ function filterAir(reset) {
 				} // two selections made
 			} // showflight = true
 
+			// check carriers
+			if(showFlight == true){
+					// check first to see if ANY airlines are checked
+					if (airfields.length) {
+							for (var i = 0; i < flight[3].length; i++) {
+								if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
+									showFlight = false;
+								} // if carrier is checked
+							} // for flight loop
+					} // airfields.length
+			} // showflight = true
 
 		// show or hide flight
 			if(showFlight == true){
@@ -208,104 +224,18 @@ function filterAir(reset) {
 		} // end of for loop
 	} // of if if reset
 
-
-
-
-
-
-
-/*
-	if(reset !== 'true' ){   // && filterSelected !== 0
-
-		console.log('filter stuff');
-
-		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
-			var flight = flightresults[loopcnt];
-
-		// console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
-		// console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
-		// console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
-		// console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
-		// console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
-		// console.log('-------------------------------')
-
-			if (
-
-
-
-			//  || (flight[6] == 'Y' && classy == undefined)
-			//  || (flight[6] == 'C' && classc == undefined)
-			//  || (flight[6] == 'F' && classf == undefined)
-				) {
-				// if the flight matches any of the criteria above - we'll hide it
-				$( '#flight' + flight[0] ).hide( 'fade' );
-			}	else {
-				// otherwise check which airlines are checked
-
-				// set some defaults
-				carriercount = 0;
-				showFlight = false;
-
-		// check first to see if ANY airlines are checked
-		// if not - don't loop through this carriers
-		if (airfields.length) {
-				showFlight = false;
-				for (var i = 0; i < flight[3].length; i++) {
-					if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
-						carriercount++;
-					} // if carrier is checked
-				} // for flight loop
-
-				if (carriercount != 0) {
-					showCount++;
-					showFlight = true;
-				} // if (carriercount == 0)
-		} else {
-			showCount++;
-			showFlight = true;
-			// $( '#flight' + flight[0] ).show( 'fade' );
-		} // if airfields.length
-
-
-		if(showFlight == true){
-			$( '#flight' + flight[0] ).show( 'fade' );
-		} else {
-			$( '#flight' + flight[0] ).hide( 'fade' );
-		}
-
-
-			} // if/else - check of all filter switches
-		} // for loop
-
-	} else {
-
-console.log('show everything');
-
-			// reset showcount to total # of flights
-		showCount = flightresults.length;
-		// show all badges
-		$('[id^="flight"]').show();
-	} // if reset
-*/
-
-
-// show/hide no flights found message
+	// show/hide no flights found message
 	if(showCount == 0){
 		$('.noFlightsFound').show();
 	} else {
 		$('.noFlightsFound').hide();
 	}
 
-// show flight count
+	// show flight count
  	$('#flightCount').text(showCount + ' of ' + flightresults.length);
 	$('.spinner').hide();
 	return false;
 } // ----------- end of function filterAir()------------------------------------
-
-
-
-
-
 
 
 function sortAir(sort) {
