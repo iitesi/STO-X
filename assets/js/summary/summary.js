@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+
 	var searchID = $("#searchID").val();
 	var acctID = $( "#acctID" ).val();
 	var valueID = $( "#valueID" ).val();
@@ -86,7 +86,7 @@ $(document).ready(function(){
 	});
 
 	function loadTraveler(traveler, loadMethod) {
-		console.log(traveler);
+		// console.log(traveler);
 		$( "#userID" ).val( traveler.userId );
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );

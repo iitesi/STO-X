@@ -79,7 +79,7 @@ function getUnusedTickets(userid, acctid) {
 					$("#unusedtickets").html(data);
 			},
 			error:function(test, tes, te) {
-					console.log('error');
+					// console.log('error');
 			}
 	});
 	return false;
@@ -256,12 +256,12 @@ function AirPrice(searchid, trip_id, cabin, refundable) {
 		timeOut: 5000,
 		success:function(data) {
 			$( "#" + trip_id + cabin + refundable ).html(data);
-			console.log(data);
+			// console.log(data);
 		},
 		error:function(test, tes, te) {
-			console.log(test);
-			console.log(tes);
-			console.log(te);
+			// console.log(test);
+			// console.log(tes);
+			// console.log(te);
 		}
 	});
 	return false;
@@ -769,13 +769,13 @@ function getTotal(data,startdate) {
 }
 
 function logError(test,tes,te) {
-	console.log(test);
-	console.log(tes);
-	console.log(te);
+	// console.log(test);
+	// console.log(tes);
+	// console.log(te);
 }
 
 function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
-		console.log('air')
+		// console.log('air')
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
 		data:"SearchID="+searchid+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
@@ -868,7 +868,7 @@ function setOtherFields(nTraveler, overrideEverything) {
 						}
 						//logic to update form fields
 						for (var i = 0; i < stFOPs.length; i++) {
-								console.log(stFOPs[i]);
+								// console.log(stFOPs[i]);
 
 						}
 						if (($( "#Air_FF" + sCarriers[i] ).val() == '')
@@ -972,7 +972,7 @@ function setTravelerForm(nTraveler, bCollapse, nDefaultUser) {
 		},
 		dataType: 'json',
 		success: function(data) {
-			console.log(data);
+			// console.log(data);
 			writeTravelerForm(data);
 			$( "#travelerForm" ).html(data);
 			//setPaymentForm(nTraveler);
