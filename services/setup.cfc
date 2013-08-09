@@ -233,7 +233,7 @@
 			<cfset stTemp.sBranch = Branches[qAccount.PCC_Booking]>
 			<cfset stTemp.Air_PF = ListToArray(stTemp.Air_PF, '~')>
 
-			<cfquery name="local.qOutOfPolicy" datasource="book">
+			<cfquery name="local.qOutOfPolicy" datasource="#getCorporateProductionDSN()#">
 				SELECT Vendor_ID, Type
 				FROM OutofPolicy_Vendors
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
@@ -248,7 +248,7 @@
 				<cfset ArrayAppend(stTemp[sType], qOutOfPolicy.Vendor_ID)>
 			</cfloop>
 
-			<cfquery name="local.qPreferred" datasource="book">
+			<cfquery name="local.qPreferred" datasource="#getCorporateProductionDSN()#">
 				SELECT Acct_ID, Vendor_ID, Type
 				FROM Preferred_Vendors
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
