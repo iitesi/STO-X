@@ -3,15 +3,18 @@
 	<cfproperty name="SearchService" />
 	<cfproperty name="useLinkedDatabases" />
 	<cfproperty name="portalURL"/>
+	<cfproperty name="bookingDSN"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="SearchService" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
+		<cfargument name="bookingDSN" type="string" requred="true" />
 
 		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setPortalURL( arguments.portalURL ) />
+		<cfset setBookingDSN( arguments.bookingDSN ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -342,7 +345,7 @@
 
 	<cffunction name="setAirVendors" output="false" returntype="void">
 
-		<cfquery name="local.qAirVendors" datasource="booking">
+		<cfquery name="local.qAirVendors" datasource="#getBookingDSN()#">
 			SELECT VendorCode, ShortName
 			FROM RAIR
 			WHERE VendorCode NOT LIKE '%/%'
@@ -376,7 +379,7 @@
 
 	<cffunction name="setCarVendors" output="false" returntype="void">
 
-		<cfquery name="local.qCarVendors" datasource="booking">
+		<cfquery name="local.qCarVendors" datasource="#getBookingDSN()#">
 		SELECT VendorCode, VendorName
 		FROM RCAR
 		GROUP BY VendorCode, VendorName
@@ -393,7 +396,7 @@
 
 	<cffunction name="setHotelVendors" output="false" returntype="void">
 
-		<cfquery name="local.qHotelChains" datasource="booking">
+		<cfquery name="local.qHotelChains" datasource="#getBookingDSN()#">
 		SELECT VendorCode, VendorName
 		FROM rhtl
 		GROUP BY VendorCode, VendorName
@@ -411,7 +414,7 @@
 
 	<cffunction name="setEquipment" output="false" returntype="void">
 
-		<cfquery name="local.qEquipment" datasource="booking">
+		<cfquery name="local.qEquipment" datasource="#getBookingDSN()#">
 		SELECT EquipmentCode, ShortName
 		FROM RAEQ
 		</cfquery>
@@ -427,7 +430,7 @@
 
 	<cffunction name="setAirports" output="false" returntype="void">
 
-		<cfquery name="local.qAirports" datasource="book">
+		<cfquery name="local.qAirports" datasource="#getBookingDSN()#">
 			SELECT location_code AS AirportCode
 			, Location_Name AS AirportName
 			FROM lu_Geography
@@ -448,7 +451,7 @@
 
 	<cffunction name="setAmenities" output="false" returntype="void">
 
-		<cfquery name="local.qAmenities" datasource="booking">
+		<cfquery name="local.qAmenities" datasource="#getBookingDSN()#">
 		SELECT code, Amenity
 		FROM RAMENITIES
 		</cfquery>
@@ -463,7 +466,7 @@
 
 	<cffunction name="setStates" output="false" returntype="void">
 
-		<cfquery name="local.qStates" datasource="booking">
+		<cfquery name="local.qStates" datasource="#getBookingDSN()#">
 		SELECT code, State
 		FROM RSTATES
 		</cfquery>

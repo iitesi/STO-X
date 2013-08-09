@@ -1,5 +1,5 @@
 <!--- domestic only --->
-<!--- <cfquery name="getAllAirports" datasource="book">
+<!--- <cfquery name="getAllAirports" datasource="booking">
 	SELECT Location_Display
 	FROM lu_Geography
 	WHERE Location_Type = 125
@@ -14,7 +14,7 @@
 
 <!--- for the search/assets/localdata/airports-us.js file, we need both international and domestic airports, but no commercial ones. --->
 <!--- international & domestic --->
-<cfquery name="getAllAirports" datasource="book">
+<cfquery name="getAllAirports" datasource="booking">
 	SELECT Location_Code, Location_Display
 	FROM lu_Geography
 	WHERE Location_Type = 125
