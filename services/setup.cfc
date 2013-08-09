@@ -4,17 +4,20 @@
 	<cfproperty name="useLinkedDatabases" />
 	<cfproperty name="portalURL"/>
 	<cfproperty name="bookingDSN"/>
+	<cfproperty name="CorporateProductionDSN"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="SearchService" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
+		<cfargument name="CorporateProductionDSN" type="string" requred="true" />
 
 		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
+		<cfset setBookingDSN( arguments.CorporateProductionDSN ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -260,7 +263,7 @@
 				<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
 			</cfloop>
 
-			<cfquery name="local.locations" datasource="book" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
+			<cfquery name="local.locations" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
 				SELECT Office_ID, Office_Name
 				FROM Account_Offices
 				WHERE Acct_ID = <cfqueryparam value="#arguments.acctId#" cfsqltype="cf_sql_integer">
