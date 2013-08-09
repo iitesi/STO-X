@@ -46,8 +46,10 @@
 
 	<bean id="General" class="booking.services.general" />
 
-	<bean id="Summary" class="booking.services.summary" />
-	
+	<bean id="Summary" class="booking.services.summary">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
 	<bean id="confirmation" class="booking.services.confirmation" />
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
@@ -56,6 +58,7 @@
 
 	<bean id="LocationManager" class="com.shortstravel.location.LocationManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
@@ -103,6 +106,7 @@
 
 	<bean id="SearchManager" class="com.shortstravel.search.SearchManager">
 		<constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
+		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /> </constructor-arg>
 		<constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
 	</bean>
 

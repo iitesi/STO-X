@@ -1,6 +1,11 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true">
 
-	<cffunction name="init" returntype="any" access="public" output="false" hint="I initialize this component">
+	<cfproperty name="BookingDSN" />
+
+	<cffunction name="init" returntype="any" access="public" output="false">
+		<cfargument name="BookingDSN" type="any" required="true"/>
+
+		<cfset setBookingDSN( arguments.BookingDSN ) />
 
 		<cfreturn this />
 	</cffunction>
@@ -92,7 +97,7 @@
 				</cfloop>
 			</cfloop>
 
-			<cfquery name="local.qSearch">
+			<cfquery name="local.qSearch" datasource="#getBookingDSN()#">
 				SELECT Country_Code
 				FROM lu_Geography
 				WHERE Location_Code IN (<cfqueryparam value="#structKeyList(cities)#" cfsqltype="cf_sql_varchar" list="true">)
