@@ -295,7 +295,7 @@
 		<cfset local.stTemp = {}>
 		<cfif arguments.PolicyID NEQ 0>
 			<!---Lazy loading, adds policies to the application scope as needed.--->
-			<cfquery name="local.qPolicy" datasource="book">
+			<cfquery name="local.qPolicy" datasource="#getCorporateProductionDSN()#">
 			SELECT Policy_ID, Acct_ID, Policy_Include, Policy_Approval, Policy_Window, Policy_AirReasonCode, Policy_AirLostSavings,
 			Policy_AirFirstClass, Policy_AirBusinessClass, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad,
 			Policy_AirMaxRule, Policy_AirMaxDisp, Policy_AirMaxTotal, Policy_AirPrefRule, Policy_AirPrefDisp, Policy_AirAdvRule,
