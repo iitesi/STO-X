@@ -40,6 +40,7 @@
 
 	<bean id="setup" class="booking.services.setup" >
 		<constructor-arg name="SearchService"><ref bean="SearchService" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
 		<constructor-arg name="PortalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
 		<constructor-arg name="CorporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
