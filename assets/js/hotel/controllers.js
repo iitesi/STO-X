@@ -108,7 +108,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 				//Build the amenities array for filter
 				$scope.buildAmenitiesArrayFromSearchResults( $scope.filterItems.amenities, result.hotels );
-
+				$scope.updateVisibleHotels();
 				$('#searchWindow').modal('hide');
 			});
 	}
@@ -158,7 +158,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 	}, true)
 
-	$scope.$watch( "filteredHotels", function( newValue ){
+	$scope.updateVisibleHotels = function(){
 		try{
 			$scope.clearMapPins();
 		} catch(e){
@@ -176,30 +176,37 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		for( var i=startIndex; i<endIndex; i++ ){
-			var Hotel = $scope.filteredHotels[i]
-			visibleHotels.push( { propertyNumber: i+1, hotel: Hotel } );
+			var Hotel = $scope.filteredHotels[i];
+
 			var displayedAddress = Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State;
 			$scope.addPin( i+1, Hotel.Lat, Hotel.Long, Hotel.PropertyName, displayedAddress );
-			if( !Hotel.roomsReturned ){
+			if( !Hotel.roomsRequested && !Hotel.roomsReturned ){
 				$scope.getHotelRates( Hotel, false );
 			}
 
-			var datapoints = [];
-			if( Hotel.StarRating == 0 ){
-				datapoints.push( 'rating' );
-			}
-			if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
-				datapoints.push( 'signatureImage' );
+			if( !Hotel.extendedDataRequested ){
+				var datapoints = [];
+				if( Hotel.StarRating == 0 ){
+					datapoints.push( 'rating' );
+				}
+				if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
+					datapoints.push( 'signatureImage' );
+				}
+
+				HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );
 			}
 
-			HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );
+			visibleHotels.push( { propertyNumber: i+1, hotel: Hotel } );
+
 		}
 
-		$scope.visibleHotels = visibleHotels;
 		if( $scope.filterItems.currentPage > $scope.calculatePages() ){
 			$scope.filterItems.currentPage = 1;
 		};
-	})
+
+		$scope.visibleHotels = visibleHotels;
+
+	}
 
 	$scope.buildVendorArrayFromSearchResults = function( vendors, hotels ){
 
@@ -326,6 +333,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			}
 		}
 		$scope.filteredHotels = filteredHotels;
+		$scope.updateVisibleHotels();
 	}
 
 	$scope.hotelFilter = function( hotel ){

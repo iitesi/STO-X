@@ -20,10 +20,12 @@ function Hotel(){
     this.policy = false;
     this.preferredVendor = false;
     this.rooms = [];
+    this.roomsRequested = false;
     this.roomsReturned = false;
     this.images = [];
     this.isGovernmentRate = false;
     this.isCorporateRate = false;
+    this.extendedDataRequested = false;
 
     this.PropertyId = 0 ;
     this.ChainCode = "";
