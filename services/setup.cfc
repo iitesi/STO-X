@@ -49,19 +49,19 @@
 		<cfset local.searchfilter = SearchService.load( arguments.searchId ) />
 
 		<cfif arguments.SearchID NEQ 0>
-			<cfquery name="local.getsearch">
-			SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_Airport, CarDropoff_DateTime,
-			Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
-			Airlines, International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date,
-			Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID,
-			Hotel_Radius, air_heading, car_heading, hotel_heading
-			FROM Searches
-			WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
-			ORDER BY Search_ID DESC
+			<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
+				SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_Airport, CarDropoff_DateTime,
+				Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
+				Airlines, International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date,
+				Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID,
+				Hotel_Radius, air_heading, car_heading, hotel_heading
+				FROM Searches
+				WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
+				ORDER BY Search_ID DESC
 			</cfquery>
 
 			<cfif getsearch.Air_Type EQ 'MD'>
-				<cfquery name="local.getsearchlegs">
+				<cfquery name="local.getsearchlegs" datasource="#getBookingDSN()#" >
 					SELECT Depart_City
 						, Arrival_City
 						, Depart_DateTime
@@ -72,20 +72,25 @@
 				</cfquery>
 			</cfif>
 
-			<cfquery name="local.getCarPickupAirportData" datasource="book">
-				SELECT Airport_Name, Airport_City, Airport_State
+			<cfquery name="local.getCarPickupAirportData" datasource="#getBookingDSN()#">
+				SELECT Airport_Name
+				, Airport_City
+				, Airport_State
 				FROM lu_FullAirports
 				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
-			<cfquery name="local.getCarDropoffAirportData" datasource="book">
-				SELECT Airport_Name, Airport_City, Airport_State
+			<cfquery name="local.getCarDropoffAirportData" datasource="#getBookingDSN()#">
+				SELECT Airport_Name
+				, Airport_City
+				, Airport_State
 				FROM lu_FullAirports
 				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarDropoff_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
-			<cfif getsearch.Air>
-				<cfswitch expression="#getsearch.Air_Type#">
+
+			<cfif local.getsearch.Air>
+				<cfswitch expression="#local.getsearch.Air_Type#">
 					<!---
 					airHeading - page header
 					heading - used in breadcrumb
