@@ -89,8 +89,8 @@
 			</cfquery>
 
 
-			<cfif local.getsearch.Air>
-				<cfswitch expression="#local.getsearch.Air_Type#">
+			<cfif getsearch.Air>
+				<cfswitch expression="#getsearch.Air_Type#">
 					<!---
 					airHeading - page header
 					heading - used in breadcrumb
