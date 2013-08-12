@@ -107,7 +107,6 @@
 	</bean>
 
 	<bean id="SearchManager" class="com.shortstravel.search.SearchManager">
-		<constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
 		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /> </constructor-arg>
 		<constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
 	</bean>
