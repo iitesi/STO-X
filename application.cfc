@@ -28,7 +28,7 @@
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
 		suppressImplicitService = true,
-		trace = true,
+		trace = false,
 		unhandledExtensions = 'cfc',
 		unhandledPaths = '/external',
 		usingSubsystems = false
@@ -53,6 +53,7 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
+
 
 		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
 			<cfset onApplicationStart() />
