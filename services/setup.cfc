@@ -49,7 +49,7 @@
 		<cfset local.searchfilter = SearchService.load( arguments.searchId ) />
 
 		<cfif arguments.SearchID NEQ 0>
-			<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
+			<cfquery name="local.getsearch">
 				SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_Airport, CarDropoff_DateTime,
 				Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
 				Airlines, International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date,
@@ -61,7 +61,7 @@
 			</cfquery>
 
 			<cfif getsearch.Air_Type EQ 'MD'>
-				<cfquery name="local.getsearchlegs" datasource="#getBookingDSN()#" >
+				<cfquery name="local.getsearchlegs">
 					SELECT Depart_City
 						, Arrival_City
 						, Depart_DateTime
@@ -72,7 +72,7 @@
 				</cfquery>
 			</cfif>
 
-			<cfquery name="local.getCarPickupAirportData" datasource="#getBookingDSN()#">
+			<cfquery name="local.getCarPickupAirportData">
 				SELECT Airport_Name
 				, Airport_City
 				, Airport_State
@@ -80,7 +80,7 @@
 				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarPickup_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
-			<cfquery name="local.getCarDropoffAirportData" datasource="#getBookingDSN()#">
+			<cfquery name="local.getCarDropoffAirportData">
 				SELECT Airport_Name
 				, Airport_City
 				, Airport_State
