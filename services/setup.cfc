@@ -17,7 +17,7 @@
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
-		<cfset setBookingDSN( arguments.CorporateProductionDSN ) />
+		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
 
 		<cfreturn this>
 	</cffunction>
