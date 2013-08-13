@@ -178,6 +178,7 @@
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
+			<cfset session.searches[arguments.SearchID].stItinerary = {}>
 			<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
 			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
@@ -187,6 +188,7 @@
 			<cfif NOT arguments.requery>
 				<cfset session.searches[arguments.SearchID].stItinerary = {}>
 			</cfif>
+			<cfset session.searches[arguments.SearchID].couldYou = {}>
 		</cfif>
 
 		<cfreturn searchfilter/>
