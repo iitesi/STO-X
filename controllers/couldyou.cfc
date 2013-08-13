@@ -70,7 +70,7 @@
 		<cfset var Search = session.filters[ rc.searchId ] />
 		<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
 
-		<cfif rc.selectedDate NEQ rc.originalDate>
+		<cfif NOT structIsEmpty( couldYou ) AND rc.selectedDate NEQ rc.originalDate>
 
 			<cfif Search.getAir()>
 				<!---Update search object in session--->
