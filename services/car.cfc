@@ -67,7 +67,7 @@
 
 		<cfset session.Filters[ searchID ] = arguments.Filter>
 
-		<cfset structDelete(session.searches[SearchID], 'stCars')>
+		<!--- <cfset structDelete(session.searches[SearchID], 'stCars')> --->
 
 		<cfif NOT structKeyExists(session.searches[SearchID], 'stCars')
 			OR StructIsEmpty(session.searches[SearchID].stCars)
