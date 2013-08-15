@@ -44,6 +44,11 @@
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
 							<a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
 						</li>
+					<cfelse>
+						<!---Air--->
+						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
+							<a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Air</a>
+						</li>
 					</cfif>
 					<cfif showHotelTab>
 						<!---Hotel--->

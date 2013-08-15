@@ -70,7 +70,7 @@
 		<cfset var Search = session.filters[ rc.searchId ] />
 		<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
 
-		<cfif rc.selectedDate NEQ rc.originalDate>
+		<cfif NOT structIsEmpty( couldYou ) AND rc.selectedDate NEQ rc.originalDate>
 
 			<cfif Search.getAir()>
 				<!---Update search object in session--->
@@ -159,14 +159,14 @@
 																	minute( Search.getCarDropoffDateTime() ),
 																	second( Search.getCarDropoffDateTime() ) ) />
 
-				<cfset Search.setCarPickupDateTime( newVals.carPickupDateTime ) />
-				<cfset Search.setCarDropoffDateTime( newVals.carDropoffDateTime ) />
+				<cfset Search.setCarPickupDateTime( newVals.carPickupDate ) />
+				<cfset Search.setCarDropoffDateTime( newVals.carDropoffDate ) />
 
 				<cfif NOT Search.getAir() AND NOT Search.getHotel()>
 					<cfset newVals.checkInDate = rc.selectedDate />
 					<cfset newVals.checkOutDate = dateAdd( 'd', tripLength, rc.selectedDate ) />
-					<cfset Search.setCheckInDate( newVals.carPickupDateTime ) />
-					<cfset Search.setCheckOutDate( newVals.carDropoffDateTime ) />
+					<cfset Search.setCheckInDate( newVals.checkInDate ) />
+					<cfset Search.setCheckOutDate( newVals.checkOutDate ) />
 				</cfif>
 
 				<!---Update the stItinerary--->

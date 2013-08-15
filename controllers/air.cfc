@@ -192,6 +192,12 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="addAir" output="false" hint="I give users the chance to search for air even if air wasn't selected in the original search.">
+		<cfargument name="rc">
+
+		<cfreturn />
+	</cffunction>
+
 <!--- PRIVATE METHODS --->
 	<cffunction name="removeOtherFlights" access="private" output="false" hint="I take a searchID and remove all other flights from the session.">
 		<cfargument name="rc">

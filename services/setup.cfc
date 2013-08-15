@@ -44,7 +44,8 @@
 
 	<cffunction name="setFilter" output="false">
 		<cfargument name="SearchID" required="true">
-		<cfargument name="Append" 	required="false" default="0" >
+		<cfargument name="Append" 	required="false" default="0">
+		<cfargument name="requery" required="false" default="false">
 
 		<cfset local.searchfilter = SearchService.load( arguments.searchId ) />
 
@@ -165,6 +166,7 @@
 			<cfset session.AcctID = getSearch.Acct_ID>
 			<cfset session.PolicyID = getSearch.Policy_ID>
 			<!---Default the search session struct--->
+
 			<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>
 			<cfset session.searches[arguments.SearchID].stAvailTrips[1] = {}>
 			<cfset session.searches[arguments.SearchID].stAvailTrips[2] = {}>
@@ -182,6 +184,11 @@
 			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
+			<!--- If coming from the air change search form, don't wipe out any hotel and/or car data --->
+			<cfif NOT arguments.requery>
+				<cfset session.searches[arguments.SearchID].stItinerary = {}>
+			</cfif>
+			<cfset session.searches[arguments.SearchID].couldYou = {}>
 		</cfif>
 
 		<cfreturn searchfilter/>
