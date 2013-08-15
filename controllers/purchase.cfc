@@ -145,7 +145,7 @@
 								<cfset errorType = 'TerminalEntry.getCCAuth'>
 							<cfelse>
 								<cfif NOT authResponse.error>
-									<cfset cardAuth = authResponse.message>
+									<!--- <cfset cardAuth = authResponse.message> --->
 									<cfset cardAuth = ''>
 								</cfif>
 								<!--- Start new session due to credit card/emulation --->
@@ -182,7 +182,13 @@
 																										, response = airResponse )>
 									<!--- Parse error --->
 									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode") OR Air.UniversalLocatorCode EQ ''>
-										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
+										<cfset var response = xmlParse(airResponse)>
+										<cfset var faultArray = xmlSearch( response, "//*[local-name()='Fault' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']" ) />
+										<cfif arrayLen(faultArray)>
+											<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
+										<cfelse>
+											<cfset arrayAppend(errorMessage, 'Air price change')>
+										</cfif>
 										<cfset errorType = 'Air'>
 									<cfelse>
 										<cfset providerLocatorCode = Air.ProviderLocatorCode>
