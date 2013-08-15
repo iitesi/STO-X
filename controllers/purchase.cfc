@@ -111,7 +111,7 @@
 							<cfif Traveler.getBookingDetail().getAirFOPID() NEQ 0>
 								<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 									<cfif (Payment.getBTAID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getFOPID())
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
 										OR (Payment.getFOPID() NEQ ''
 											AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
 										<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
@@ -132,26 +132,28 @@
 								<cfset cardType = 'AX'>
 							</cfif>
 							<!--- Get credit card authorization --->
-							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
+							<!--- <cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, Air = Air
 																												, cardNumber = cardNumber
 																												, cardType = cardType
 																												, cardExpiration = cardExpiration
-																												, searchID = rc.searchID)>
+																												, searchID = rc.searchID)> --->
+							<cfset authResponse.error = 0>
 							<cfif authResponse.error>
 								<cfset arrayAppend( errorMessage, 'Credit card authorization error' )>
 								<cfset errorType = 'TerminalEntry.getCCAuth'>
 							<cfelse>
 								<cfif NOT authResponse.error>
-									<cfset cardAuth = authResponse.message>
+									<!--- <cfset cardAuth = authResponse.message> --->
+									<cfset cardAuth = ''>
 								</cfif>
 								<!--- Start new session due to credit card/emulation --->
-								<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+								<!--- <cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken
-																								, searchID = rc.searchID )>
-								<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																												, searchID = rc.searchID )>
+																								, searchID = rc.searchID )> --->
+								<!--- <cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																												, searchID = rc.searchID )> --->
 								
 								<cfif hostToken EQ ''>
 									<cfset listAppend(errorMessage, 'Terminal - open session failed')>
@@ -180,7 +182,13 @@
 																										, response = airResponse )>
 									<!--- Parse error --->
 									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode") OR Air.UniversalLocatorCode EQ ''>
-										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
+										<cfset var response = xmlParse(airResponse)>
+										<cfset var faultArray = xmlSearch( response, "//*[local-name()='Fault' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']" ) />
+										<cfif arrayLen(faultArray)>
+											<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
+										<cfelse>
+											<cfset arrayAppend(errorMessage, 'Air price change')>
+										</cfif>
 										<cfset errorType = 'Air'>
 									<cfelse>
 										<cfset providerLocatorCode = Air.ProviderLocatorCode>
