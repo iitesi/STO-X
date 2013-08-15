@@ -123,7 +123,7 @@
 							</cfif>
 							<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
 								<td width="110"><span class="blue"><strong>#carrier# Confirmation</strong></span></td>
-								<td width="80"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span></td>
+								<td width="80"><span class="blue"><strong>#(structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) ? rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier] : '')#</strong></span></td>
 								<cfloop collection="#rc.Traveler[travelerIndex].getLoyaltyProgram()#" item="program" index="programIndex">
 									<cfif program.getShortCode() EQ carrier>
 										<cfif len(program.getAcctNum())>
