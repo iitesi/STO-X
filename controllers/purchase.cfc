@@ -178,14 +178,14 @@
 									<!--- Parse sell results --->
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
-									<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 									<!--- Parse error --->
-									<cfif Air.UniversalLocatorCode EQ ''>
+									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode") OR Air.UniversalLocatorCode EQ ''>
 										<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
 										<cfset errorType = 'Air'>
 									<cfelse>
 										<cfset providerLocatorCode = Air.ProviderLocatorCode>
 										<cfset universalLocatorCode = Air.UniversalLocatorCode>
+										<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 									</cfif>
 									<!--- Update session with new Air record --->
 									<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
