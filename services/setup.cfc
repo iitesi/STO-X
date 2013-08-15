@@ -328,7 +328,7 @@
 				<cfset stTemp[sCol] = qPolicy[sCol]>
 			</cfloop>
 
-			<cfquery name="local.qPreferredCarSizes">
+			<cfquery name="local.qPreferredCarSizes" datasource="#getCorporateProductionDSN()#">
 				SELECT Car_Size
 					, Policy_ID
 				FROM Policy_CarSizes
