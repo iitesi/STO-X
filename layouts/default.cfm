@@ -18,16 +18,16 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<cfoutput>
-			<link href="#application.baseURL#assets/css/bootstrap.min.css" rel="stylesheet">
-			<link href="#application.baseURL#assets/css/skeleton.css" rel="stylesheet">
-			<link href="#application.baseURL#assets/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
-			<link href="#application.baseURL#assets/css/font-awesome.min.css" rel="stylesheet" >
+			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" >
 			<!--[if IE 7]>
-				<link rel="stylesheet" href="#application.baseURL#assets/css/font-awesome-ie7.min.css">
+				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css">
 			<![endif]-->
 
-			<link href="#application.baseURL#assets/css/layout.css" rel="stylesheet">
-			<link href="#application.baseURL#assets/css/style.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/layout.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/style.css" rel="stylesheet">
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
@@ -45,9 +45,9 @@
 
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-			<script src="#application.baseURL#assets/js/jquery.plugins.min.js"></script>
-			<script src="#application.baseURL#assets/js/bootstrap.min.js"></script>
-			<script src="#application.baseURL#assets/js/booking.js"></script><!---Custom--->
+			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
+			<script src="#application.assetURL#/js/bootstrap.min.js"></script>
+			<script src="#application.assetURL#/js/booking.js"></script><!---Custom--->
 		</cfoutput>
 	</head>
 

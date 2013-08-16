@@ -16,7 +16,7 @@ F = first
 	<cfparam name="rc.bRefundable" default="0">
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
-			<script type='text/javascript' src='#application.baseURL#assets/js/air/filter.js'></script>
+			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
 		</cfoutput>
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />

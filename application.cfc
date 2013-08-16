@@ -44,7 +44,6 @@
 		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.developerEmail = "jpriest@shortstravel.com">
-		<cfset application.baseURL = "">
 	</cffunction>
 
 	<cffunction name="setupSession">
@@ -53,8 +52,6 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
-
-
 		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
 			<cfset onApplicationStart() />
 			<cfreturn view( "main/reload" )>
@@ -72,6 +69,7 @@
 			<cfset controller( 'setup.setPolicy' )>
 			<cfset controller( 'setup.setGroup' )>
 		</cfif>
+
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
@@ -90,3 +88,5 @@
 		 </cfif>
 	</cffunction>
 </cfcomponent>
+
+

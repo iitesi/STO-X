@@ -1,32 +1,33 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="SearchService" />
-	<cfproperty name="useLinkedDatabases" />
-	<cfproperty name="portalURL"/>
+	<cfproperty name="AssetURL"/>
 	<cfproperty name="bookingDSN"/>
-	<cfproperty name="CorporateProductionDSN"/>
+	<cfproperty name="corporateProductionDSN"/>
+	<cfproperty name="portalURL"/>
+	<cfproperty name="searchService" />
+	<cfproperty name="useLinkedDatabases" />
 
 	<cffunction name="init" output="false">
-		<cfargument name="SearchService" />
-		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
-		<cfargument name="portalURL" type="string" requred="true" />
+		<cfargument name="AssetURL" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
-		<cfargument name="CorporateProductionDSN" type="string" requred="true" />
+		<cfargument name="corporateProductionDSN" type="string" requred="true" />
+		<cfargument name="portalURL" type="string" requred="true" />
+		<cfargument name="searchService" />
+		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
 
-		<cfset setSearchService( arguments.SearchService ) />
-		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
-		<cfset setPortalURL( arguments.portalURL ) />
+		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
+		<cfset setPortalURL( arguments.portalURL ) />
+		<cfset setSearchService( arguments.SearchService ) />
+		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 
 		<cfreturn this>
 	</cffunction>
 
 	<cffunction name="setServerURL" output="false" returntype="void">
-
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
 		<cfreturn />
-
 	</cffunction>
 
 	<!--- Named different to prevent overriding the default setPortalURL from environment service --->
@@ -36,10 +37,8 @@
 	</cffunction>
 
 	<cffunction name="setAPIAuth" output="false" returntype="void">
-
 		<cfset application.sAPIAuth = ToBase64('Universal API/UAPI6148916507-02cbc4d4:Qq7?b6*X5B')>
 		<cfreturn />
-
 	</cffunction>
 
 	<cffunction name="setFilter" output="false">
