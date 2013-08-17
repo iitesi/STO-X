@@ -86,21 +86,19 @@
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
 							<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
-								<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() & "2" />
+								<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()/>
 							<cfelse>
-								<cfset frameSrc = application.sPortalURL & "1" />
+								<cfset frameSrc = application.sPortalURL & "?acctid=#session.acctID#&userID=#session.userID#"/>
 							</cfif>
 
-							<!--- button to open search in modal window --->
+						<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
-								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true" title="Start a new search"><i class="icon-search"></i> #frameSrc#</a>
+								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
 								</cfoutput>
 							</div>
-
 							<cfoutput>#View('modal/search')#</cfoutput>
-
-							<!--- // end modal window --->
+						<!--- // end modal window --->
 
 							<div class="fifteen columns">
 								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
