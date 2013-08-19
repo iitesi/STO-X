@@ -52,7 +52,7 @@
 			<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 
 		<cfelseif arguments.rc.Filter.getCar()
-			AND StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')
+			AND StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')
 			AND application.accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
 
 			<cfset variables.fw.redirect('couldyou?SearchID=#arguments.rc.Filter.getSearchID()#')>
