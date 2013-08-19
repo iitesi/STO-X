@@ -146,7 +146,7 @@ function filterAir(reset) {
 
 			// check in-policy, single carrier and non-stops
 			if(showFlight == true){
-				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] == 1 && nonstops == 1) ){
+				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] != 0 && nonstops == 1) ){
 					showFlight = false;
 				}
 			}
