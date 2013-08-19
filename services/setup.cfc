@@ -177,14 +177,13 @@
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
-			<cfset session.searches[arguments.SearchID].stItinerary = {}>
 			<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
 			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
 			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
-			<!--- If coming from the air change search form, don't wipe out any hotel and/or car data --->
-			<cfif NOT arguments.requery>
+			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
+			<cfif NOT arguments.requery OR NOT structKeyExists(session.searches[arguments.SearchID], "stItinerary")>
 				<cfset session.searches[arguments.SearchID].stItinerary = {}>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
