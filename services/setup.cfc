@@ -6,6 +6,7 @@
 	<cfproperty name="portalURL"/>
 	<cfproperty name="searchService" />
 	<cfproperty name="useLinkedDatabases" />
+	<cfproperty name="serverEnvironment" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="AssetURL" type="string" requred="true" />
@@ -14,6 +15,7 @@
 		<cfargument name="portalURL" type="string" requred="true" />
 		<cfargument name="searchService" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
+		<cfargument name="serverEnvironment" type="string" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -21,6 +23,7 @@
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
+		<cfset setServerEnvironment( arguments.serverEnvironment ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -196,27 +199,49 @@
 
 		<cfset local.stTemp = {}>
 		<cfif arguments.AcctID NEQ 0>
-			<!---Lazy loading, adds account to the application scope as needed.--->
-			<cfset local.Branches = {
-				"149I" = "P7003154",
-				"176T" = "P7003151",
-				"17D8" = "P7003159",
-				"1AM2" = "P7003153",
-				"1CO2" = "P7003175",
-				"1H7M" = "P7003150",
-				"1H7N" = "P7003185",
-				"1M98" = "P7003155",
-				"1N32" = "P7003173",
-				"1N47" = "P7003172",
-				"1N51" = "P7003156",
-				"1N52" = "P7003157",
-				"1N63" = "P7003158",
-				"1P6O" = "P7003160",
-				"1WN9" = "P7003174",
-				"1WO0" = "P7003182",
-				"2B2C" = "P7003152",
-				"2N0D" = "P7003176"
-			}>
+			<cfif ListFindNoCase('production,qa', getServerEnvironment())>
+				<cfset local.Branches = {
+					"1P6O" = "P1601409",
+					"1N47" = "P1601410",
+					"1CO2" = "P1601412",
+					"1WO0" = "P1601408",
+					"1N32" = "P1601407",
+					"17D8" = "P1601485",
+					"1WN9" = "P1601411",
+					"1N52" = "P1601402",
+					"1N63" = "P1601403",
+					"1H7M" = "P1601400",
+					"1M98" = "P1601405",
+					"1N51" = "P1601404",
+					"149I" = "P1601401",
+					"2N0D" = "P1601413",
+					"1H7N" = "P1601399",
+					"2B2C" = "P1601396",
+					"176T" = "P1601397",
+					"1AM2" = "P1601398"
+				}>
+			<cfelse>
+				<cfset local.Branches = {
+					"149I" = "P7003154",
+					"176T" = "P7003151",
+					"17D8" = "P7003159",
+					"1AM2" = "P7003153",
+					"1CO2" = "P7003175",
+					"1H7M" = "P7003150",
+					"1H7N" = "P7003185",
+					"1M98" = "P7003155",
+					"1N32" = "P7003173",
+					"1N47" = "P7003172",
+					"1N51" = "P7003156",
+					"1N52" = "P7003157",
+					"1N63" = "P7003158",
+					"1P6O" = "P7003160",
+					"1WN9" = "P7003174",
+					"1WO0" = "P7003182",
+					"2B2C" = "P7003152",
+					"2N0D" = "P7003176"
+				}>
+			</cfif>
 
 			<cfquery name="local.qAccount">
 				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
