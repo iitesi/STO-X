@@ -432,7 +432,9 @@
 					</cfquery>						
 				</cfif>
 			</cfif>
-			<cfset approval.approvers = replace(valueList(qTravelApprovers.Email), ',', ', ', 'ALL')>
+			<cfif isQuery("qTravelApprovers")>
+				<cfset approval.approvers = replace(valueList(qTravelApprovers.Email), ',', ', ', 'ALL')>
+			</cfif>
 		</cfif>
 		
 		<cfreturn approval>
