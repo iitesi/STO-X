@@ -167,28 +167,26 @@
 			<cfset session.UserID = getSearch.User_ID>
 			<cfset session.AcctID = getSearch.Acct_ID>
 			<cfset session.PolicyID = getSearch.Policy_ID>
-			<!---Default the search session struct--->
-
-			<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>
-			<cfset session.searches[arguments.SearchID].stAvailTrips[1] = {}>
-			<cfset session.searches[arguments.SearchID].stAvailTrips[2] = {}>
-			<cfset session.searches[arguments.SearchID].stAvailTrips[3] = {}>
-			<cfset session.searches[arguments.SearchID].stAvailDetails = {}>
-			<cfset session.searches[arguments.SearchID].stAvailDetails.stGroups = {}>
-			<cfset session.searches[arguments.SearchID].stTrips = {}>
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPricing = {}>
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
-			<cfset session.searches[arguments.SearchID].stItinerary = {}>
-			<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
-			<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
-			<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
-			<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
-			<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
-			<!--- If coming from the air change search form, don't wipe out any hotel and/or car data --->
-			<cfif NOT arguments.requery>
+			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
+			<cfif NOT arguments.requery OR NOT structKeyExists(session.searches[arguments.SearchID], "stItinerary")>
+				<!--- Otherwise, default the search session struct --->
 				<cfset session.searches[arguments.SearchID].stItinerary = {}>
+				<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>
+				<cfset session.searches[arguments.SearchID].stAvailTrips[1] = {}>
+				<cfset session.searches[arguments.SearchID].stAvailTrips[2] = {}>
+				<cfset session.searches[arguments.SearchID].stAvailTrips[3] = {}>
+				<cfset session.searches[arguments.SearchID].stAvailDetails = {}>
+				<cfset session.searches[arguments.SearchID].stAvailDetails.stGroups = {}>
+				<cfset session.searches[arguments.SearchID].stTrips = {}>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPricing = {}>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = {}>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
+				<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
+				<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
+				<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
+				<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
+				<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
 		</cfif>

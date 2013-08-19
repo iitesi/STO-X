@@ -55,11 +55,11 @@
 			<cfset removeOtherFlights(arguments.rc)>
 
 			<cfif arguments.rc.Filter.getHotel()
-				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
+				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
 				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfif arguments.rc.Filter.getCar()
-				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Car')>
+				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfif application.Accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
