@@ -42,7 +42,7 @@
 	</cffunction>
 
 	<cffunction name="parseSegments" output="false" hint="I take XML from uAPI and parse segments from it.">
-		<cfargument name="stResponse"	required="true">
+		<cfargument name="stResponse"	required="true" hint="Truncated XML object">
 
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
@@ -50,27 +50,42 @@
 			'air:AirSegmentList' - found in low fare and availability search
 			'air:AirItinerary' - found in air pricing
 			--->
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'
-			OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.dArrivalGMT = stAirSegment.XMLAttributes.ArrivalTime>
+			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
+
+				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
 					<cfset local.dArrivalTime = GetToken(dArrivalGMT, 1, '.')>
 					<cfset local.dArrivalOffset = GetToken(GetToken(dArrivalGMT, 2, '-'), 1, ':')>
 
-					<cfset stSegments[stAirSegment.XMLAttributes.Key] = {
-						ArrivalTime			: ParseDateTime(dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', dArrivalOffset, dArrivalTime)),
-						Carrier 			: stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(GetToken(stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
-						DepartureGMT		: dateConvert('local2Utc', stAirSegment.XMLAttributes.DepartureTime),
-						Destination			: stAirSegment.XMLAttributes.Destination,
-						Equipment			: (StructKeyExists(stAirSegment.XMLAttributes, 'Equipment') ? stAirSegment.XMLAttributes.Equipment : ''),
-						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
-						Group				: stAirSegment.XMLAttributes.Group,
-						Origin				: stAirSegment.XMLAttributes.Origin,
-						TravelTime			: (StructKeyExists(stAirSegment.XMLAttributes, 'TravelTime') ? stAirSegment.XMLAttributes.TravelTime : '0')
+					<!--- this is some ugly nested looping to get flightDetailsRef key so we can pull travelTime from flightDetails --->
+					<cfloop array="#local.stAirSegment.xmlChildren#" index="local.jim">
+						<cfif StructKeyExists(local.jim.xmlAttributes, "Key")>
+							<cfset local.detailKey = local.jim.xmlAttributes.key>
+						</cfif>
+					</cfloop>
+					<cfset local.travelTime = 0>
+					<cfloop array="#arguments.stResponse[1].xmlChildren#" index="local.dan">
+						<cfif StructKeyExists(local.dan.xmlAttributes, "Key") AND local.dan.xmlAttributes.key EQ local.detailKey>
+							<cfset local.travelTime = local.dan.xmlAttributes.travelTime>
+						</cfif>
+					</cfloop>
+
+					<!--- <cfset local.TravelTime = '#int(local.TravelTime/60)#h #local.TravelTime%60#m'> --->
+
+					<cfset stSegments[local.stAirSegment.XMLAttributes.Key] = {
+						ArrivalTime			: ParseDateTime(local.dArrivalTime),
+						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
+						Carrier 				: local.stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane		: local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						DepartureTime		: ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
+						DepartureGMT		: dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
+						Destination			: local.stAirSegment.XMLAttributes.Destination,
+						Equipment				: (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
+						FlightNumber		: local.stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime			: local.stAirSegment.XMLAttributes.FlightTime,
+						Group						: local.stAirSegment.XMLAttributes.Group,
+						Origin					: local.stAirSegment.XMLAttributes.Origin,
+						TravelTime			: local.travelTime
 					}>
 				</cfloop>
 			</cfif>
@@ -482,6 +497,10 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn aCarriers/>
 	</cffunction>
 
+	<!---
+	11:05 AM Monday, August 19, 2013 - Jim Priest - jpriest@shortstravel.com
+	This function doesn't appear to be called from anywhere?
+
 	<cffunction name="mergeTripsToAvail" output="false" hint="mergeTripsToAvail">
 		<cfargument name="stTrips"		required="true">
 		<cfargument name="stAvailTrips"	required="true">
@@ -517,7 +536,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfloop>
 
 		<cfreturn arguments.stAvailTrips/>
-	</cffunction>
+	</cffunction> --->
 
 	<cffunction name="checkPolicy" output="false" hint="I check the policy.">
 		<cfargument name="stTrips" required="true">
