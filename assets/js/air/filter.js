@@ -44,7 +44,7 @@ $(document).ready(function(){
 	// hide the filter bar with a loading message until the page has fully rendered
 	// RailoQA takes forever to render the page - this may not be an issue in prod
 	$('#filterbarloading').hide();
-	$('#filterbar').show();
+	$('.airfilterbar').show();
 
 	$('#usermessage').on('click', function() {
 		$(this).slideUp();

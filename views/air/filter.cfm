@@ -31,7 +31,7 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
 </div>
 
-<div id="filterbar" class="filter">
+<div id="filterbar" class="filter airfilterbar">
 	<div class="sixteen columns">
 		<div class="sortby pull-left">
 			<h4>Sort</h4>

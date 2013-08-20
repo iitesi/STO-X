@@ -224,7 +224,7 @@ ul.tabs li a.active {
 */
 
 #filterbarloading {margin-left: 1em;}
-#filterbar {display: none;}
+.airfilterbar {display: none;}
 
 #filter .filterheader {
 	position:relative;
