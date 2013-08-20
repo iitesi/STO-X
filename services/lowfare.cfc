@@ -170,7 +170,7 @@
 				</cfif>
 				<cfset thread.sMessage = attributes.sMessage>
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
-				<cfset session.searches[arguments.Filter.getSearchID()].stPricing[arguments.sCabin&arguments.bRefundable] = 1>
+				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
 
