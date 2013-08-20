@@ -22,28 +22,37 @@ F = first
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
+<!---
+9:29 AM Tuesday, August 20, 2013 - Jim Priest - jpriest@shortstravel.com
+hide the filter bar with a loading message until the page has fully rendered
+RailoQA takes forever to render the page - this may not be an issue in prod
+ --->
+<div id="filterbarloading" class="alert alert-block">
+	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
+</div>
+
 <div id="filterbar" class="filter">
 	<div class="sixteen columns">
 		<div class="sortby pull-left">
 			<h4>Sort</h4>
 				<div class="navbar">
 					<div class="navbar-inner">
-						<ul class="nav">
-							<cfif rc.action NEQ 'air.availability'>
-								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
-										<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
-										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
-									</ul>
-								<cfelse>
-									<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
-								</cfif>
-							<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
-							<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
-							<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
-						</ul>
+											<ul class="nav">
+												<cfif rc.action NEQ 'air.availability'>
+													<li class="dropdown">
+														<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
+														<ul class="dropdown-menu">
+															<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
+															<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
+															<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
+														</ul>
+													<cfelse>
+														<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
+													</cfif>
+												<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
+												<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
+												<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
+											</ul>
 					</div>
 				</div>
 			</div>
