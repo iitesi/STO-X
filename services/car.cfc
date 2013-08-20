@@ -1,10 +1,13 @@
 <cfcomponent output="false" accessors="true">
 
+	<cfproperty name="BookingDSN">
 	<cfproperty name="VehicleAdapter">
 
 	<cffunction name="init" output="false">
-		<cfargument name="VehicleAdapter">
+		<cfargument name="BookingDSN" type="string" required="true" />
+		<cfargument name="VehicleAdapter" type="any" required="true" />
 
+		<cfset setBookingDSN( arguments.BookingDSN ) />
 		<cfset setVehicleAdapter(arguments.VehicleAdapter)>
 
 		<cfreturn this>
@@ -260,7 +263,7 @@
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyCar) GT 0 ? 1 : 0)>
 		<cfset local.preferred = ''>
 		
-		<cfquery name="local.getsearch">
+		<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
 			SELECT 	CarPickup_DateTime, CarDropoff_DateTime
 			FROM 	Searches
 			WHERE 	Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_numeric" />
