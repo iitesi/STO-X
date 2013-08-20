@@ -39,7 +39,7 @@
 
 	<cffunction name="getStates" output="false">
 		
-		<cfquery name="local.qStates" datasource="book" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
+		<cfquery name="local.qStates" datasource="#getBookingDSN()#" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
 			SELECT State_Code
 				, State_Name
 			FROM LU_States
