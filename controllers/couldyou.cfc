@@ -78,6 +78,8 @@
 				<cfset var newArrivalDate = dateAdd( "d", tripLength, rc.selectedDate ) />
 				<cfset var tripIDs = structKeyList( couldYou.air[ rc.selectedDate ] ) />
 				<cfset var newFlight = couldYou.air[ rc.selectedDate ][ listGetAt( tripIDs, 1 ) ] />
+				<cfset newFlight.nTrip = listGetAt( tripIDs, 1 ) />
+
 				<!---This may need to be populated differently--->
 				<cfset var newFlight.aPolicies = arrayNew(1) />
 				<cfset var newFlight.policy = Search.getPolicyID() />
