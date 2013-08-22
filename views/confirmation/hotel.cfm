@@ -75,7 +75,14 @@
 									<td width="28%">Over maximum daily rate</td>
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
 										<td width="8%"><strong>Reason</strong></td>
-										<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#</td>
+										<td>
+											<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#">
+												<cfcase value="P">Required property sold out</cfcase>
+												<cfcase value="R">Required room rate sold out</cfcase>
+												<cfcase value="C">Required property was higher than another property</cfcase>
+												<cfcase value="L">Leisure Rental (paying for it themselves)</cfcase>
+											</cfswitch>
+										</td>
 									<cfelse>
 										<td width="8%"></td>
 										<td></td>
