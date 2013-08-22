@@ -60,4 +60,8 @@ $(document).ready(function() {
 		$("#numFiltered").text(filterCar('clearAll'));
 		return false;
 	});
+
+	$(".closewell").on("click", function() {
+		$(this).parent().parent().slideUp();
+	});
 });

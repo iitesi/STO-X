@@ -123,6 +123,10 @@
 					</div>
 				</div>
 			</cfoutput>
+			<br /><br /><br />
+			<span class="pull-right">
+				<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+			</span>
 		</div>
 	</div>
 </div>
