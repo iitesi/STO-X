@@ -1,19 +1,29 @@
 <cfcomponent name="STORemoteProxy" output="false">
 
-
 	<cffunction name="getAuthorizedTravelers" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userID" type="numeric" required="true"/>
 		<cfargument name="acctID" type="numeric" required="true"/>
 		<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
-		<cfreturn getBean( "UserService" ).getAuthorizedTravelers( argumentCollection=arguments ) />
+		<cftry>
+			<cfreturn getBean( "UserService" ).getAuthorizedTravelers( argumentCollection=arguments ) />
+			<cfcatch type="any">
+				<cfset logError( cfcatch, arguments ) />
+			</cfcatch>
+		</cftry>
+
 	</cffunction>
-	
 
 	<cffunction name="getUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
 
-		<cfreturn getBean( "UserService" ).load( arguments.userId ) />
+		<cftry>
+			<cfreturn getBean( "UserService" ).load( arguments.userId ) />
+			<cfcatch type="any">
+				<cfset logError( cfcatch, arguments ) />
+			</cfcatch>
+		</cftry>
+
 	</cffunction>
 
 	<cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
@@ -23,26 +33,38 @@
 	    <cfargument name="arrangerID" type="numeric" required="true"/>
 	    <cfargument name="vendor" type="string" required="false" default=""/>
 
-		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
-																	, acctID = arguments.acctID 
-																	, valueID = arguments.valueID
-																	, arrangerID = arguments.arrangerID
-																	, vendor = arguments.vendor)>
-		<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
-		<cfset Traveler.setBookingDetail( BookingDetail )>
+		<cftry>
+			<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
+																		, acctID = arguments.acctID
+																		, valueID = arguments.valueID
+																		, arrangerID = arguments.arrangerID
+																		, vendor = arguments.vendor)>
+			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+			<cfset Traveler.setBookingDetail( BookingDetail )>
 
-		<cfreturn Traveler />
+			<cfreturn Traveler />
+
+			<cfcatch type="any">
+				<cfset logError( cfcatch, arguments ) />
+			</cfcatch>
+		</cftry>
+
 	</cffunction>
-	
 
 	<cffunction name="loadOrgUnit" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="acctID" type="numeric" required="true">
 		<cfargument name="valueID" type="numeric" required="true">
 		<cfargument name="userID" type="numeric" required="true">
 
-		<cfreturn getBean( "OrgUnitService" ).loadOrgUnit( acctID = arguments.acctID, valueID = arguments.valueID, userID = arguments.userID ) />
-	</cffunction>
+		<cftry>
+			<cfreturn getBean( "OrgUnitService" ).loadOrgUnit( acctID = arguments.acctID, valueID = arguments.valueID, userID = arguments.userID ) />
 
+			<cfcatch type="any">
+				<cfset logError( cfcatch, arguments ) />
+			</cfcatch>
+		</cftry>
+
+	</cffunction>
 
 	<cffunction name="getOrgUnitValues" returntype="any" access="remote" output="false" returnformat="JSON">
 		<cfargument name="ouID" required="true">
@@ -54,18 +76,24 @@
 		<cfargument name="conditionalSort5" required="false" default="">
 		<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
-		<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
-																			, valueID = arguments.valueID
-																			, conditionalSort1 = arguments.conditionalSort1
-																			, conditionalSort2 = arguments.conditionalSort2
-																			, conditionalSort3 = arguments.conditionalSort3
-																			, conditionalSort4 = arguments.conditionalSort4
-																			, conditionalSort5 = arguments.conditionalSort5
-																			, returnFormat = arguments.returnFormat ) />
+		<cftry>
+			<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
+																				, valueID = arguments.valueID
+																				, conditionalSort1 = arguments.conditionalSort1
+																				, conditionalSort2 = arguments.conditionalSort2
+																				, conditionalSort3 = arguments.conditionalSort3
+																				, conditionalSort4 = arguments.conditionalSort4
+																				, conditionalSort5 = arguments.conditionalSort5
+																				, returnFormat = arguments.returnFormat ) />
 
-		<cfreturn serializeJSON( qOrgUnitValues ) />
+			<cfreturn serializeJSON( qOrgUnitValues ) />
+
+			<cfcatch type="any">
+				<cfset logError( cfcatch, arguments ) />
+			</cfcatch>
+		</cftry>
+
 	</cffunction>
-
 
 	<cffunction name="getUserCCEmails" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
@@ -73,7 +101,6 @@
 
 		<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
 	</cffunction>
-	
 
 	<cffunction name="getCarPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="acctID" type="numeric" required="true"/>
@@ -84,7 +111,6 @@
 		<cfreturn getBean( "PaymentService" ).getCarPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID, vendor = arguments.vendor ) />
 	</cffunction>
 
-
 	<cffunction name="getUserPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
 		<cfargument name="arrangerID" required="false" default=""/>
@@ -93,7 +119,6 @@
 
 		<cfreturn getBean( "PaymentService" ).getUserPayments( acctID = arguments.acctID, userID = arguments.userID, arrangerID = arguments.arrangerID, valueID = arguments.valueID ) />
 	</cffunction>
-
 
 	<cffunction name="getUserFOPs" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="acctID" 		type="numeric" 	required="false" default="0" />
@@ -105,14 +130,12 @@
 		<cfreturn getBean( "UserService" ).getUserFOPs( arguments.acctID, arguments.userID, arguments.valueID, arguments.paymentTypes, arguments.returnType ) />
 	</cffunction>
 
-	
 	<cffunction name="getUserDepartment" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userID" type="numeric" required="true"/>
 		<cfargument name="acctID" type="numeric" required="true"/>
 
 		<cfreturn getBean( "UserService" ).getUserDepartment( arguments.userId, arguments.acctId ) />
 	</cffunction>
-
 
 	<cffunction name="getUserFFAccounts" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
@@ -121,7 +144,6 @@
 
 		<cfreturn getBean( "UserService" ).getUserFFAccounts( arguments.userId, arguments.custType, arguments.returnType ) />
 	</cffunction>
-
 
 	<cffunction name="getUserBARs" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
@@ -132,13 +154,11 @@
 		<cfreturn getBean( "UserService" ).getUserBARs( arguments.userId, arguments.acctId, arguments.returnCount, arguments.returnType ) />
 	</cffunction>
 
-
 	<cffunction name="getUserPAR" returntype="any" access="remote" output="false" hint="" returnformat="json">
 		<cfargument name="userId" type="numeric" required="true"/>
 
 		<cfreturn getBean( "UserService" ).getUserPAR( arguments.userId ) />
 	</cffunction>
-
 
     <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
@@ -158,6 +178,7 @@
 			<cfcatch type="any">
 				<cfset result.addError( "An error occurred while retrieving the specified search." ) />
 				<cfset result.setSuccess( false ) />
+				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
 
 		</cftry>
@@ -195,6 +216,7 @@
 			<cfcatch type="any">
 				<cfset result.addError( "An error occurred while updating the specified search.<br>#cfcatch.message#" ) />
 				<cfset result.setSuccess( false ) />
+				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
 
 		</cftry>
@@ -243,6 +265,7 @@
 			<cfcatch type="any">
 				<cfset result.addError( "An error occurred while retrieving extended data for the requested hotel." ) />
 				<cfset result.setSuccess( false ) />
+				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
 		</cftry>
 
@@ -337,6 +360,7 @@
 				<cfcatch type="any">
 					<cfset result.addError( "An error occurred while retrieving log entries for the specified criteria." ) />
 					<cfset result.setSuccess( false ) />
+					<cfset logError( cfcatch, arguments ) />
 				</cfcatch>
 			</cftry>
 
@@ -360,5 +384,13 @@
 		<cfreturn application.fw.factory.getBean( arguments.beanName ) />
 	</cffunction>
 
+	<cffunction name="logError" returntype="any" access="private" output="false" hint="I send an error report to BugLogHQ">
+		<cfargument name="Exception" required=true/>
+		<cfargument name="ExtraInfo" type="any" required="false" default="" />
 
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal', extraInfo="arguments.ExtraInfo" ) />
+		 </cfif>
+
+	</cffunction>
 </cfcomponent>
