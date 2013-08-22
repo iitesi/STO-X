@@ -60,6 +60,10 @@
                 <div class="span3" ng-repeat="vendor in filterItems.vendors">
                     <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</label>
                  </div>
+
+                <span class="pull-right">
+                    <button type="button" class="closewell close" ng-click="filterItems.showVendorFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                </span>
              </div>
         </div>
 
@@ -68,6 +72,10 @@
                 <div class="span3" ng-repeat="amenity in filterItems.amenities">
                     <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
                 </div>
+
+                <span class="pull-right">
+                    <button type="button" class="closewell close" ng-click="filterItems.showAmenitiesFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                </span>
             </div>
         </div>
         
@@ -85,6 +93,9 @@
                     </label>
                 </div>
 
+                <span class="pull-right">
+                    <button type="button" class="closewell close" ng-click="filterItems.showRatingsFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                </span>
             </div>
         </div>
 
