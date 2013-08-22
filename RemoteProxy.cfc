@@ -389,7 +389,7 @@
 		<cfargument name="ExtraInfo" type="any" required="false" default="" />
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal', extraInfo="arguments.ExtraInfo" ) />
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal', extraInfo=arguments.ExtraInfo ) />
 		 </cfif>
 
 	</cffunction>
