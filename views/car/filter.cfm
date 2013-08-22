@@ -122,11 +122,18 @@
 						<input id="fltrCarCategorySelectAll" name="fltrCarCategorySelectAll" type="hidden" value="true" />
 					</div>
 				</div>
+					<br /><br />
+					<cfif structCount(session.searches[rc.SearchID].stCarVendors) GT 8>
+						<cfset whileVar = structCount(session.searches[rc.SearchID].stCarVendors) - 8 />
+						<cfloop condition="whileVar GREATER THAN OR EQUAL TO 1">
+							&nbsp;<br />
+							<cfset whileVar = whileVar - 1 />
+						</cfloop>
+					</cfif>
+					<span class="pull-right">
+						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+					</span>
 			</cfoutput>
-			<br /><br /><br />
-			<span class="pull-right">
-				<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
-			</span>
 		</div>
 	</div>
 </div>
