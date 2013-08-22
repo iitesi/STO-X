@@ -259,15 +259,15 @@
 
 		<cfset var result = new com.shortstravel.RemoteResponse() />
 
-		<cftry>
+		<!---<cftry>--->
 			<cfset result.setData( getBean( "HotelService" ).getExtendedHotelData( argumentCollection=arguments ) ) />
 
-			<cfcatch type="any">
+			<!---<cfcatch type="any">
 				<cfset result.addError( "An error occurred while retrieving extended data for the requested hotel." ) />
 				<cfset result.setSuccess( false ) />
 				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
-		</cftry>
+		</cftry>--->
 
 		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
 			<cfcontent type="application/javascript" />
