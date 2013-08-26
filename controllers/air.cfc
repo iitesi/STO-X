@@ -129,10 +129,17 @@
 				<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
 
 				<!--- email --->
-				<cfset local.UserID = session.UserID>
+				<cfset local.userID = session.userID>
 				<cfset rc.qUser = variables.general.getUser( local.userID )>
-				<cfset local.userId = session.filters[arguments.rc.searchID].getProfileID()>
+				<cfset local.userID = session.filters[arguments.rc.searchID].getProfileID()>
 				<cfset rc.qProfile = variables.general.getUser( local.userID )>
+
+				<!--- TO DO: Update this logic once a flag is built into the system.  Also update the 
+				code above to pull from the com object verses the general service. --->
+				<cfif rc.qUser.First_Name EQ 'STODefaultUser'>
+					<cfset rc.qUser = variables.general.getUser( 0 )>
+					<cfset rc.qProfile = variables.general.getUser( 0 )>
+				</cfif>
 
 				<cfset variables.fw.setLayout("popup")>
 		<cfreturn />

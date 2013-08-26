@@ -64,8 +64,10 @@ $(document).ready(function(){
 		<div class="control-group">
 			<label class="control-label" for="Email_Address">Your email</label>
 			<div class="controls">
-				<input type="text" id="Email_Address" name="Email_Address" placeholder="Your email" value="#rc.qUser.Email#" class="uneditable-input">
-				<span class="help-inline"><small>Your email is pulled from our system and cannot be changed.</small></span>
+				<input type="text" id="Email_Address" name="Email_Address" placeholder="Your email" value="#rc.qUser.Email#" <cfif isValid('email', rc.qUser.Email)>class="uneditable-input"</cfif>>
+				<cfif isValid('email', rc.qUser.Email)>
+					<span class="help-inline"><small>Your email is pulled from our system and cannot be changed.</small></span>
+				</cfif>
 			</div>
 		</div>
 		<div class="control-group">
@@ -83,7 +85,7 @@ $(document).ready(function(){
 		<div class="control-group">
 			<label class="control-label" for="Email_Subject">Subject</label>
 			<div class="controls">
-				<input type="text" id="Email_Subject" placeholder="Email subject" value="Tentative itinerary for #rc.qProfile.First_Name# #rc.qProfile.Last_Name# departing TBD" class="input-xxlarge">
+				<input type="text" id="Email_Subject" placeholder="Email subject" value="Tentative itinerary <cfif rc.qProfile.First_Name NEQ ''>for #rc.qProfile.First_Name# #rc.qProfile.Last_Name#</cfif>" class="input-xxlarge">
 			</div>
 		</div>
 		<div class="control-group">
