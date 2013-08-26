@@ -215,6 +215,8 @@
 				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				</cfif>
+			<cfelse>
+				<cfset rc.message.addError('Please correct the fields in red below.')>
 			</cfif>
 		</cfif>
 		<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" abort="true" /> --->
