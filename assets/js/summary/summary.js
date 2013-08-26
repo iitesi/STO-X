@@ -108,15 +108,22 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() != 0) {
 			if (traveler.middleName.length >= 2) {
 				$( "#fullNameDiv" ).hide();
+				$( "#firstName" ).prop('disabled', false);
+				$( "#lastName" ).prop('disabled', false);
 			}
 			else {
 				$( "#fullNameDiv" ).show();
+				$( "#firstName" ).prop('disabled', true);
+				$( "#lastName" ).prop('disabled', true);
 			}
-			$( "#firstName" ).prop('disabled', true);
-			$( "#lastName" ).prop('disabled', true);
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
 			$( "#saveProfileDiv" ).show();
+			if (traveler.stoDefaultUser == 1) {
+				$( "#userIDDiv" ).hide();
+				$( "#firstName" ).prop('disabled', false);
+				$( "#lastName" ).prop('disabled', false);
+			}
 		}
 		else {
 			$( "#fullNameDiv" ).show();

@@ -2,7 +2,7 @@
 
 	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
 
-	<div class="control-group">
+	<div class="control-group" id="userIDDiv">
 		<label class="control-label" for="userID">Change Traveler</label>		
 		<div class="controls">
 			<select name="userID" id="userID" class="input-xlarge">
