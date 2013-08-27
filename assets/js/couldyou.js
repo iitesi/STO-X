@@ -155,7 +155,14 @@ shortstravel.couldyou = {
 
 		//Get hotel total
 		if( shortstravel.search.hotel == 1 && shortstravel.couldyou.data[ selectedDate ].hotel != "" ){
-			var hotelTotal = shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay;
+			var hotelTotal = 0;
+			if( shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay != 0 ){
+				hotelTotal = shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay;
+			} else {
+				var timeDiff = Math.abs(shortstravel.couldyou.data[ selectedDate ].departureDate.getTime() - shortstravel.couldyou.data[ selectedDate ].arrivalDate.getTime());
+				var nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+				hotelTotal = shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[0].dailyRate * nights;
+			}
 			total = total + hotelTotal;
 		}
 
@@ -305,7 +312,15 @@ shortstravel.couldyou = {
 					row += '>'
 				}
 				row += '<td>' + shortstravel.couldyou.data[ prop ].message +'</td>';
-				row += '<td>' + shortstravel.couldyou.formatCurrency( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) + '</td>';
+				row += '<td>';
+				row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) );
+				if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) > 0 ){
+					row += ' savings';
+				} else if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) < 0 ){
+					row += ' more'
+				}
+
+				row += '</td>';
 			}
 
 			row += '<td>' + dateFormat( shortstravel.couldyou.data[prop].departureDate, "ddd, mmm dd" ) + '</td>';
@@ -359,12 +374,36 @@ shortstravel.couldyou = {
 			}
 
 			if( shortstravel.search.hotel == 1 ){
+
+				var hotelTotal = 0;
+				if( shortstravel.couldyou.data[ prop ].hotel.Rooms[ 0 ].totalForStay != 0 ){
+					hotelTotal = shortstravel.couldyou.data[ prop ].hotel.Rooms[ 0 ].totalForStay;
+					$('#hotelBaseRate' ).html('');
+				} else {
+					var timeDiff = Math.abs(shortstravel.couldyou.data[ prop ].departureDate.getTime() - shortstravel.couldyou.data[ prop ].arrivalDate.getTime());
+					var nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+					hotelTotal = shortstravel.couldyou.data[ prop ].hotel.Rooms[0].dailyRate * nights;
+					$('#hotelBaseRate' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[ prop ].hotel.Rooms[0].dailyRate, 2 ) );
+				}
+
+				$('#hotelTotal' ).html( shortstravel.couldyou.formatCurrency( hotelTotal, 2 ) );
 				if( shortstravel.couldyou.data[prop].hotel.Rooms[0].totalForStay > 0 ){
 					$('#hotelTaxes' ).html( 'Including taxes' );
-					$('#hotelTotal' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[prop].hotel.Rooms[0].totalForStay, 2 ) );
 				} else {
 					$('#hotelTaxes' ).html( 'Quoted at checkin' );
-					$('#hotelTotal' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[prop].hotel.Rooms[0].baseRate, 2 ) );
+				}
+
+				if( shortstravel.couldyou.data[prop].hotel.Rooms[0].ratePlanType != shortstravel.itinerary.HOTEL.Rooms[0].ratePlanType ){
+					$( '#alert-text' ).html(
+						'<b>WARNING!</b> The room type for this date is different than your original.<br>Original: '
+						+ shortstravel.itinerary.HOTEL.Rooms[0].description.toUpperCase()
+						+ '<br>Selected: '
+						+ shortstravel.couldyou.data[prop].hotel.Rooms[0].description.toUpperCase()
+					);
+					$( '#alert-wrapper' ).removeClass( 'hide' );
+				} else {
+					$( '#alert-wrapper' ).addClass( 'hide' );
+					$( '#alert-text' ).html( '' );
 				}
 			}
 

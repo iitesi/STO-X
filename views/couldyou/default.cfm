@@ -34,6 +34,17 @@
 </style>
 
 <cfoutput>
+	<!--Errors and Messages Row-->
+	<div class="container">
+		<div class="row-fluid">
+			<!--Messages row-->
+			<div class="alert hide" id="alert-wrapper">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<span id="alert-text"></span>
+			</div>
+		</div>
+	</div>
+
 	<!--Page title row-->
 	<div class="container">
 		<div class="row-fluid">
