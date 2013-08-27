@@ -208,7 +208,7 @@
 						<cfset includeDate = false />
 					</cfif>
 					<cfif Search.getCar() AND structKeyExists( session.searches[ rc.searchid ].couldYou, "VEHICLE" ) AND isObject( session.searches[ rc.searchId ].couldYou.Vehicle[ loopDate ] ) >
-						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.vehicle.getEstimatedTotalAmount() />
+						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.vehicle[ loopDate ].getEstimatedTotalAmount() />
 					<cfelse>
 						<cfset includeDate = false />
 					</cfif>
