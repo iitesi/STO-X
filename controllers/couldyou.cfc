@@ -115,6 +115,9 @@
 
 				<!---Update the stItinerary--->
 				<cfset session.searches[ rc.searchId ].stItinerary.air = newFlight />
+
+				<!---Update the stTrips--->
+				<cfset session.searches[ rc.searchId ].stTrips[ newFlight.nTrip ] = newFlight />
 			</cfif>
 
 			<cfif Search.getHotel()>
