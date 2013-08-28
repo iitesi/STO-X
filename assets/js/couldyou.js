@@ -224,7 +224,10 @@ shortstravel.couldyou = {
 					textColor: "#000"
 
 				}
-				$('#calendar1').fullCalendar( 'renderEvent', ev, true );
+				$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+				if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+					$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+				}
 				dateCell.removeClass('ui-widget-content' ).addClass('fc-notAvailable');
 			} else {
 				var selectedDayTotal = shortstravel.itinerary.total;
@@ -239,7 +242,10 @@ shortstravel.couldyou = {
 						textColor: "#000"
 
 					}
-					$('#calendar1').fullCalendar( 'renderEvent', ev, true );
+					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					}
 					dateCell.removeClass('ui-widget-content' ).addClass('fc-higherPrice');
 				} else if( Math.round( dailyTotal ) < Math.round( selectedDayTotal ) && d.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
 					if( $.inArray( prop, shortstravel.couldyou.dates.maxSavings ) != -1 ){
@@ -259,7 +265,11 @@ shortstravel.couldyou = {
 						textColor: "#000"
 
 					}
-					$('#calendar1').fullCalendar( 'renderEvent', ev, true );
+					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+
+					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					}
 					dateCell.removeClass('ui-widget-content' ).addClass( cellClass);
 
 				} else {
@@ -271,7 +281,10 @@ shortstravel.couldyou = {
 						textColor: "#000"
 
 					}
-					$('#calendar1').fullCalendar( 'renderEvent', ev, true );
+					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					}
 				}
 
 				if( d.getTime() == shortstravel.couldyou.dates.originalDepart.getTime() ){
