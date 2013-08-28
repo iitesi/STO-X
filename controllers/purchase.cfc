@@ -42,7 +42,7 @@
 																								, Traveler = Traveler )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
-				
+
 				<!--- Open terminal session --->
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
@@ -102,7 +102,7 @@
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
-							<cfset local.airPricing = fw.getBeanFactory().getBean('AirCreate').parseTripForPurchase( sXML = trip[structKeyList(trip)].sXML )>
+
 							<!--- Parse credit card information --->
 							<cfset local.cardNumber = ''>
 							<cfset local.cardCVV = ''>
@@ -165,7 +165,6 @@
 																												, Traveler = Traveler
 																												, Profile = Profile
 																												, Air = Air
-																												, airPricing = airPricing
 																												, Filter = rc.Filter
 																												, statmentInformation = statmentInformation
 																												, cardNumber = cardNumber
@@ -175,6 +174,7 @@
 																												, cardAuth = cardAuth
 																												, profileFound = profileFound
 																											 )>
+
 									<cfset Air.ProviderLocatorCode = ''>
 									<cfset Air.UniversalLocatorCode = ''>
 									<!--- Parse sell results --->
@@ -208,7 +208,7 @@
 				</cfif>
 
 				<!--- Sell Hotel --->
-				<cfif hotelSelected
+				 <cfif hotelSelected
 					AND Traveler.getBookingDetail().getHotelNeeded()
 					AND arrayIsEmpty(errorMessage)>
 					<!--- Sell hotel --->

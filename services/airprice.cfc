@@ -3,15 +3,18 @@
 	<cfproperty name="uAPI" />
 	<cfproperty name="uAPISchemas" />
 	<cfproperty name="AirParse" />
+	<cfproperty name="AirAdapter" />
 
     <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
     	<cfargument name="uAPI" type="any" required="true" />
     	<cfargument name="uAPISchemas" type="any" required="true" />
     	<cfargument name="AirParse" type="any" required="false" default="" />
+    	<cfargument name="AirAdapter" type="any" required="false" default="" />
 
     	<cfset setUAPI( arguments.uAPI ) />
     	<cfset setUAPISchemas( arguments.uAPISchemas ) />
     	<cfset setAirParse( arguments.AirParse ) />
+    	<cfset setAirAdapter( arguments.AirAdapter ) />
 
         <cfreturn this />
          
@@ -76,6 +79,7 @@
 			<!--- Save XML if needed - AirCreate --->
 			<cfif arguments.bSaveAirPrice>
 				<cfset stTrips[nTripKey].sXML = sResponse>
+				<cfset stTrips[nTripKey].PricingSolution = AirAdapter.parsePricingSolution( response = sResponse )>
 			</cfif>
 			<cfif arguments.nCouldYou EQ 0>
 				<!--- Add trip id to the list of priced items --->
