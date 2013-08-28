@@ -225,8 +225,10 @@ shortstravel.couldyou = {
 
 				}
 				$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
-				if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
-					$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+				if( $("#calendar1").fullCalendar('getView').visEnd < shortstravel.couldyou.dates.postEnd ){
+					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					}
 				}
 				dateCell.removeClass('ui-widget-content' ).addClass('fc-notAvailable');
 			} else {
@@ -243,8 +245,10 @@ shortstravel.couldyou = {
 
 					}
 					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
-					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
-						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					if( $("#calendar1").fullCalendar('getView').visEnd < shortstravel.couldyou.dates.postEnd ){
+						if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+							$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+						}
 					}
 					dateCell.removeClass('ui-widget-content' ).addClass('fc-higherPrice');
 				} else if( Math.round( dailyTotal ) < Math.round( selectedDayTotal ) && d.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
@@ -267,8 +271,10 @@ shortstravel.couldyou = {
 					}
 					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
 
-					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
-						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					if( $("#calendar1").fullCalendar('getView').visEnd < shortstravel.couldyou.dates.postEnd ){
+						if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+							$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+						}
 					}
 					dateCell.removeClass('ui-widget-content' ).addClass( cellClass);
 
@@ -282,8 +288,10 @@ shortstravel.couldyou = {
 
 					}
 					$('#calendar1').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
-					if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
-						$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+					if( $("#calendar1").fullCalendar('getView').visEnd < shortstravel.couldyou.dates.postEnd ){
+						if( d.getTime() >= $("#calendar2").fullCalendar('getView').visStart.getTime() ){
+							$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
+						}
 					}
 				}
 
