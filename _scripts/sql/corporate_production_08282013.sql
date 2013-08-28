@@ -1,7 +1,4 @@
-USE [Corporate_Production]
-GO
-
-ALTER TABLE [Corporate_Production].[dbo].[Users]
+ALTER TABLE Users
 ADD token [varchar](500) NULL;
 
 UPDATE Users
