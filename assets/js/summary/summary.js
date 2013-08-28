@@ -33,6 +33,12 @@ $(document).ready(function(){
 				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
 					createForm(traveler.orgUnit[i]);
 				}
+				if (acctID == 348) {
+					$( "#custom" ).trigger('change');
+					for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+						$( "#" + traveler.orgUnit[i].OUType + traveler.orgUnit[i].OUPosition ).val( traveler.orgUnit[i].valueID );
+					}
+				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
 					$( "#airSpinner" ).hide();
@@ -68,6 +74,12 @@ $(document).ready(function(){
 				$( "#orgUnits" ).html('');
 				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
 					createForm(traveler.orgUnit[i]);
+				}
+				if (acctID == 348) {
+					$( "#custom" ).trigger('change');
+					for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+						$( "#" + traveler.orgUnit[i].OUType + traveler.orgUnit[i].OUPosition ).val( traveler.orgUnit[i].valueID );
+					}
 				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
@@ -106,15 +118,13 @@ $(document).ready(function(){
 		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
+			$( "#firstName" ).prop('disabled', true);
+			$( "#lastName" ).prop('disabled', true);
 			if (traveler.middleName.length >= 2) {
 				$( "#fullNameDiv" ).hide();
-				$( "#firstName" ).prop('disabled', false);
-				$( "#lastName" ).prop('disabled', false);
 			}
 			else {
 				$( "#fullNameDiv" ).show();
-				$( "#firstName" ).prop('disabled', true);
-				$( "#lastName" ).prop('disabled', true);
 			}
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
@@ -123,6 +133,8 @@ $(document).ready(function(){
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
+				$( "#firstName2" ).val( '' );
+				$( "#lastName2" ).val( '' );
 			}
 		}
 		else {
@@ -474,11 +486,13 @@ $(document).ready(function(){
 				dataType: 'json',
 				success:function(values) {
 					var values = $.parseJSON(values)
+					var originalValue = $("#sort1").val();
 					$( "#sort1" ).html('')
 					$( "#sort1" ).append('<option value="0"></option>')
 					for( var i=0, l=values.length; i<l; i++ ) {
 						$( "#sort1" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
 					}
+					$( "#sort1" ).val( originalValue );
 					$( "#sort1" ).trigger( "change" );
 				}
 			});
@@ -497,11 +511,13 @@ $(document).ready(function(){
 				dataType: 'json',
 				success:function(values) {
 					var values = $.parseJSON(values)
+					var originalValue = $("#sort2").val();
 					$( "#sort2" ).html('')
 					$( "#sort2" ).append('<option value="0"></option>')
 					for( var i=0, l=values.length; i<l; i++ ) {
 						$( "#sort2" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
 					}
+					$( "#sort2" ).val( originalValue );
 					$( "#sort2" ).trigger("change");
 				}
 			});
@@ -557,6 +573,7 @@ $(document).ready(function(){
 				}
 			});
 		});
+
 	}
 }); // end of jQuery document ready
 
