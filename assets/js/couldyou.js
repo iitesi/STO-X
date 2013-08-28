@@ -156,7 +156,7 @@ shortstravel.couldyou = {
 		//Get hotel total
 		if( shortstravel.search.hotel == 1 && shortstravel.couldyou.data[ selectedDate ].hotel != "" ){
 			var hotelTotal = 0;
-			if( shortstravel.couldyou.data[ selectedDate ].HOTEL.Rooms[ 0 ].totalForStay != 0 ){
+			if( shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay != 0 ){
 				hotelTotal = shortstravel.couldyou.data[ selectedDate ].hotel.Rooms[ 0 ].totalForStay;
 			} else {
 				var timeDiff = Math.abs(shortstravel.couldyou.data[ selectedDate ].departureDate.getTime() - shortstravel.couldyou.data[ selectedDate ].arrivalDate.getTime());
