@@ -49,7 +49,7 @@
 		<constructor-arg name="portalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
 		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
 		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
-		<constructor-arg name="serverEnvironment"><bean factory-bean="EnvironmentService" factory-method="getServerEnvironment" /></constructor-arg>
+		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
 	</bean>
 
 	<bean id="General" class="booking.services.general" />

@@ -6,7 +6,7 @@
 	<cfproperty name="portalURL"/>
 	<cfproperty name="searchService" />
 	<cfproperty name="useLinkedDatabases" />
-	<cfproperty name="serverEnvironment" />
+	<cfproperty name="currentEnvironment" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="AssetURL" type="string" requred="true" />
@@ -15,7 +15,7 @@
 		<cfargument name="portalURL" type="string" requred="true" />
 		<cfargument name="searchService" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
-		<cfargument name="serverEnvironment" type="string" requred="true" />
+		<cfargument name="currentEnvironment" type="string" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -23,7 +23,7 @@
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
-		<cfset setServerEnvironment( arguments.serverEnvironment ) />
+		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -199,7 +199,7 @@
 
 		<cfset local.stTemp = {}>
 		<cfif arguments.AcctID NEQ 0>
-			<cfif ListFindNoCase('production,qa', getServerEnvironment())>
+			<cfif ListFindNoCase('qa,prod', getCurrentEnvironment())>
 				<cfset local.Branches = {
 					"1P6O" = "P1601409",
 					"1N47" = "P1601410",
