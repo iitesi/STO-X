@@ -333,6 +333,20 @@
 		<cfreturn cy />
 
 	</cffunction>
+
+	<cffunction name="loadFindItGuest" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="searchID" type="numeric" required="true" />
+
+		<cftry>
+			<cfset local.findItGuest = getBean("findit").getFindItRequest(searchID = arguments.searchID) />
+
+			<cfreturn findItGuest />
+
+			<cfcatch type="any">
+				<cfset logError(cfcatch, arguments) />
+			</cfcatch>
+		</cftry>
+	</cffunction>
 	
 	<cffunction name="getUAPILogEntries" access="remote" output="false" returntype="any" returnformat="plain" hint="I retrieve entries from the uAPI log based on the specified criteria">
 		<cfargument name="searchID" type="numeric" required="false" />

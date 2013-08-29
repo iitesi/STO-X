@@ -11,7 +11,7 @@
 				<option value="#rc.allTravelers.User_ID#">#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#</option>
 			</cfloop>
 			</select>
-			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##" /></a>
+			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
 		</div>
 	</div>
 
@@ -159,6 +159,41 @@
 				<input type="checkbox" name="saveProfile" id="saveProfile" value="1">
 				Save changes to profile
 			</label>
+		</div>
+	</div>
+
+	<div class="control-group" id="createProfileDiv">
+		<label class="control-label" for="createProfile"></label>
+		<div class="controls">
+			<label class="createProfile">
+				<input type="checkbox" name="createProfile" id="createProfile" value="1" />
+				Create a profile and save this information for my next reservation
+			</label>
+		</div>
+	</div>
+
+	<div class="control-group" id="usernameDiv">
+		<div class="control-group">
+			<label class="control-label" for="username">Username</label>
+			<div class="controls">
+				<input type="text" name="username_disabled" id="username_disabled" disabled />
+				<input type="hidden" name="username" id="username" />
+			</div>
+		</div>
+
+		<div class="control-group #(structKeyExists(rc.errors, 'password') ? 'error' : '')#">
+			<label class="control-label" for="password">Password</label>
+			<div class="controls">
+				<input type="password" name="password" id="password" />
+				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
+			</div>
+		</div>
+
+		<div class="control-group #(structKeyExists(rc.errors, 'passwordConfirm') ? 'error' : '')#">
+			<label class="control-label" for="passwordConfirm">Verify Password</label>
+			<div class="controls">
+				<input type="password" name="passwordConfirm" id="passwordConfirm" />
+			</div>
 		</div>
 	</div>
 

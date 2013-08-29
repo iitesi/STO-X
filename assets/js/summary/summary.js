@@ -97,8 +97,20 @@ $(document).ready(function(){
 		});
 	});
 
+	$("#createProfileDiv").on("click", function () { 
+		var $checkbox = $(this).find(':checkbox');
+		if ($checkbox.prop('checked')) {
+			$("#usernameDiv").show();
+		}
+		else {
+			$("#usernameDiv").hide();
+		}
+	});
+
 	function loadTraveler(traveler, loadMethod) {
 		// console.log(traveler);
+		$( "#createProfileDiv" ).hide();
+		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
@@ -109,22 +121,23 @@ $(document).ready(function(){
 			$( "#noMiddleName" ).attr( 'checked', false );
 
 		}
-		if (traveler.bookingDetail.saveProfile == 'true') {
+		if (traveler.bookingDetail.saveProfile == 1) {
 			$( "#saveProfile" ).attr( 'checked', true );
 		}
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
-
 		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
-			$( "#firstName" ).prop('disabled', true);
-			$( "#lastName" ).prop('disabled', true);
 			if (traveler.middleName.length >= 2) {
 				$( "#fullNameDiv" ).hide();
+				$( "#firstName" ).prop('disabled', false);
+				$( "#lastName" ).prop('disabled', false);
 			}
 			else {
 				$( "#fullNameDiv" ).show();
+				$( "#firstName" ).prop('disabled', true);
+				$( "#lastName" ).prop('disabled', true);
 			}
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
@@ -133,6 +146,7 @@ $(document).ready(function(){
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
+				$( "#createProfileDiv" ).hide();
 				$( "#firstName2" ).val( '' );
 				$( "#lastName2" ).val( '' );
 			}
@@ -154,6 +168,35 @@ $(document).ready(function(){
 		$( "#day" ).val( birthdate.getDate() );
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
+
+		// If a FindIt guest
+		if (traveler.accountID == "" && traveler.stoDefaultUser == 0) {
+			$( "#userID" ).val( 0 );
+			$( "#userIDDiv" ).hide();
+			$( "#saveProfileDiv" ).hide();
+			$( "#createProfileDiv" ).show();
+			if (traveler.bookingDetail.createProfile == 1) {
+				$( "#createProfile" ).attr( 'checked', true );
+				$( "#usernameDiv" ).show();
+				$( "#password" ).val( traveler.bookingDetail.password );
+				$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
+			}
+			else {
+				$( "#createProfile" ).attr( 'checked', false );
+			}
+
+			$.ajax({type: "POST",
+				url: "RemoteProxy.cfc?method=loadFindItGuest",
+				data: "searchID="+searchID,
+				dataType: "json",
+				success:function(data) {
+					guestEmail = data['DATA'][0][4];
+					$("#email").val(guestEmail);
+					$("#username").val(guestEmail);
+					$("#username_disabled").val(guestEmail);
+				}
+			});
+		}
 
 		if (airSelected == 'true') {
 			if (traveler.bookingDetail.airNeeded == '' || traveler.bookingDetail.airNeeded == 1)  {
@@ -255,7 +298,6 @@ $(document).ready(function(){
 	}
 
 	function createForm(orgunit) {
-
 		var inputName = orgunit.OUType + orgunit.OUPosition;
 		var div = '<div class="control-group">';
 		div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName + '</label>';
@@ -573,7 +615,6 @@ $(document).ready(function(){
 				}
 			});
 		});
-
 	}
 }); // end of jQuery document ready
 

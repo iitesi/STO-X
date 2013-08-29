@@ -183,6 +183,8 @@
 		<cfargument name="Policy" required="false" default="">
 		<cfargument name="acctID" required="false" default="">
 		<cfargument name="searchID" required="false" default="">
+		<cfargument name="password" required="false" default="">
+		<cfargument name="passwordConfirm" required="false" default="">
 
 		<cfset local.error = {}>
 
@@ -215,6 +217,43 @@
 		</cfif>
 		<cfif arguments.Traveler.getGender() EQ ''>
 			<cfset error.gender = ''>
+		</cfif>
+		<!--- If a guest traveler has checked the checkbox to create a new profile --->
+		<cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>
+			<!--- Perform a password check --->
+			<cfif arguments.password EQ ''>
+				<cfset error.password = '' />
+			<cfelse>
+				<cfset passedTest = true />
+				<!--- If less than 8 characters --->
+				<cfif len(trim(arguments.password)) LT 8>
+					<cfset passedTest = false />
+				<cfelse>
+					<cfset counter = 0 />
+					<!--- If contains at least one uppercase letter --->
+					<cfif REFind("[[:upper:]]", trim(arguments.password))>
+						<cfset counter++ />
+					</cfif>
+					<!--- If contains at least one lowercase letter --->
+					<cfif REFind("[[:lower:]]", trim(arguments.password))>
+						<cfset counter++ />
+					</cfif>
+					<!--- If contains at least one number --->
+					<cfif REFind("[[:digit:]]", trim(arguments.password))>
+						<cfset counter++ />
+					</cfif>
+					<!--- If contains at least one special character --->
+					<cfif REFind("[[:punct:]]", trim(arguments.password))>
+						<cfset counter++ />
+					</cfif>
+				</cfif>
+				<cfif NOT passedTest OR counter LT 3>
+					<cfset error.password = '' />					
+				</cfif>
+			</cfif>
+			<cfif (arguments.passwordConfirm EQ '') OR (arguments.passwordConfirm NEQ arguments.password)>
+				<cfset error.passwordConfirm = '' />
+			</cfif>
 		</cfif>
 		<cfif NOT arguments.Traveler.getBookingDetail().getAirNeeded()
 			AND NOT arguments.Traveler.getBookingDetail().getHotelNeeded()
