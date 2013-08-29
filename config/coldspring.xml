@@ -4,6 +4,10 @@
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
 
+    <bean id="AuthorizationService" class="com.shortstravel.security.AuthorizationService">
+        <constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+    </bean>
+
 	<bean id="UAPI" class="com.travelport.uapi">
 		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
