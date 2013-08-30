@@ -12,9 +12,9 @@
 		<cfparam name="rc.travelerNumber" default="1">
 		<cfparam name="rc.remove" default="">
 		<cfparam name="rc.add" default="">
-		<cfparam name="rc.createProfile" default="0" />
+		<!--- <cfparam name="rc.createProfile" default="0" />
 		<cfparam name="rc.password" default="" />
-		<cfparam name="rc.passwordConfirm" default="" />
+		<cfparam name="rc.passwordConfirm" default="" /> --->
 
 		<cfset rc.errors = {}>
 
@@ -205,9 +205,9 @@
 																			, Vehicle = rc.Vehicle
 																			, Policy = rc.Policy
 																			, acctID = rc.Filter.getAcctID()
-																			, searchID = rc.searchID
-																			, password = rc.password
-																			, passwordConfirm = rc.passwordConfirm )>
+																			, searchID = rc.searchID )>
+																			<!--- , password = rc.password
+																			, passwordConfirm = rc.passwordConfirm )> --->
 			<cfif structIsEmpty(rc.errors)>
 				<cfif rc.trigger EQ 'ADD A TRAVELER'>
 					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
@@ -217,7 +217,7 @@
 						<cfset rc.travelerNumber = 1>
 					</cfif>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
-				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'> --->
+				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				</cfif>
 			<cfelse>

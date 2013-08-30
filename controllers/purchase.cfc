@@ -454,9 +454,9 @@
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
 					<!--- Create profile in database --->
-					<cfif Traveler.getBookingDetail().getCreateProfile()>
+					<!--- <cfif Traveler.getBookingDetail().getCreateProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler )>
-					</cfif>
+					</cfif> --->
 					<!--- <cfoutput>
 						<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
 					</cfoutput>

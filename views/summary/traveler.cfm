@@ -162,7 +162,7 @@
 		</div>
 	</div>
 
-	<div class="control-group" id="createProfileDiv">
+	<!--- <div class="control-group" id="createProfileDiv">
 		<label class="control-label" for="createProfile"></label>
 		<div class="controls">
 			<label class="createProfile">
@@ -195,7 +195,7 @@
 				<input type="password" name="passwordConfirm" id="passwordConfirm" />
 			</div>
 		</div>
-	</div>
+	</div> --->
 
 	<cfif rc.airSelected
 		AND rc.Filter.getAirType() EQ 'RT'
