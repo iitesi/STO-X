@@ -52,14 +52,13 @@
 		<form method="post" class="form-horizontal" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 			<cfparam name="rc.showAll" default="0">
-
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
 			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
 			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
-			<input type="hidden" name="carriers" id="carriers" value="#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#">
+			<input type="text" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getChainCode() : '')#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
