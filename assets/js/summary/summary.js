@@ -6,7 +6,7 @@ $(document).ready(function(){
 	var travelerNumber = $("#travelerNumber").val();
 	var airSelected = $( "#airSelected" ).val();
 	var carriers = $( "#carriers" ).val();
-		carriers = $.parseJSON(carriers)
+		carriers = $.parseJSON(carriers);
 	var hotelSelected = $( "#hotelSelected" ).val();
 	var chainCode = $( "#chainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
