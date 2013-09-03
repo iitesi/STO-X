@@ -2,12 +2,12 @@
 	<cfset variables.bDisplayFare = false>
 	<cfset variables.bSelected = false>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
-	<cfset variables.minheight = 250>
+	<cfset variables.minheight = 100>
 	<cfset variables.nDisplayGroup = rc.Group>
 	<cfif nLegs EQ 2>
-		<cfset variables.minheight = 325>
+		<cfset variables.minheight = 200>
 	<cfelseif nLegs GT 2>
-		<cfset variables.minheight = 375>
+		<cfset variables.minheight = 250>
 	</cfif>
 </cfsilent>
 
