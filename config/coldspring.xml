@@ -4,6 +4,10 @@
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
 
+    <bean id="AuthorizationService" class="com.shortstravel.security.AuthorizationService">
+        <constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+    </bean>
+
 	<bean id="UAPI" class="com.travelport.uapi">
 		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
@@ -181,6 +185,11 @@
 	<bean id="car" class="booking.services.car" >
 		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /> </constructor-arg>
 		<constructor-arg name="VehicleAdapter"><ref bean="VehicleAdapter" /></constructor-arg>
+	</bean>
+
+	<bean id="findit" class="findit.services.findit" >
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getbookDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />

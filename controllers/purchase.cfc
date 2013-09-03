@@ -181,19 +181,13 @@
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
 									<!--- Parse error --->
-									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode")
-										OR Air.UniversalLocatorCode EQ ''
-										OR (structKeyExists(Air, 'error') AND Air.error NEQ '')>
-										<cfif NOT structKeyExists(Air, 'error') AND Air.error NEQ ''>
-											<cfset var response = xmlParse(airResponse)>
-											<cfset var faultArray = xmlSearch( response, "//*[local-name()='Fault' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']" ) />
-											<cfif arrayLen(faultArray)>
-												<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
-											<cfelse>
-												<cfset arrayAppend(errorMessage, 'Air price change')>
-											</cfif>
+									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode") OR Air.UniversalLocatorCode EQ ''>
+										<cfset var response = xmlParse(airResponse)>
+										<cfset var faultArray = xmlSearch( response, "//*[local-name()='Fault' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']" ) />
+										<cfif arrayLen(faultArray)>
+											<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
 										<cfelse>
-											<cfset arrayAppend(errorMessage, Air.error)>
+											<cfset arrayAppend(errorMessage, 'Air price change')>
 										</cfif>
 										<cfset errorType = 'Air'>
 									<cfelse>
@@ -459,6 +453,11 @@
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
+					<!--- Create profile in database --->
+					<!--- <cfif Traveler.getBookingDetail().getCreateProfile()>
+						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler )>
+					</cfif> --->
+					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset local.errorList = errorType>
 					<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>

@@ -69,7 +69,7 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 	</div>
 
 	<div id="aircontent">
-		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
+		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare") AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.asortFare)>
 
 			#View('air/filter')#
 
@@ -120,10 +120,11 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 			</div>
 		</div>
 	<cfelse>
+		<cfset changeSearchURL = application.sPortalURL & "?acctid=#session.acctID#&userID=#session.userID#">
 		<div class="container">
 			<h3>No Flights Returned</h2>
 			<p>There were no flights found based on your search criteria.</p>
-			<p>Please <a href="#application.sPortalURL#">change your search</a> and try again.</p>
+			<p>Please <a href="#changeSearchURL#">change your search</a> and try again.</p>
 			<br /><br /><br /><br /><br /><br />
 		</div>
 	</cfif>

@@ -456,40 +456,37 @@
 			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle, dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) )
 			AND arguments.requery IS false>
 
-			<cfreturn session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] />
-
-		<cfelse>
-
-			<cfset var PreviouslySelectedCar = session.searches[ arguments.Search.getSearchID() ].stItinerary.Vehicle />
-			<cfset var Car = "" />
-			<cfset var carArgs = structNew() />
-			<cfset carArgs.Filter = arguments.Search />
-			<cfset carArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
-			<cfset carArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
-			<cfset carArgs.sCarChain = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVendorCode() />
-			<cfset carArgs.sCarType = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVehicleClass()&session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getCategory() />
-			<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getCarPickupDateTime() ) />
-
-			<cfset var cars = this.doAvailability( argumentCollection = carArgs ) />
-
-			<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
-				<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
-			</cfif>
-
-			<cfif isStruct( Cars )
-				AND structKeyExists( Cars, "#PreviouslySelectedCar.getVehicleClass()#Car")
-				AND structKeyExists( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ], PreviouslySelectedCar.getVendorCode() )>
-
-				<cfset Car = new com.shortstravel.vehicle.Vehicle() />
-				<cfset Car.setVendorCode( PreviouslySelectedCar.getVendorCode() ) />
-				<cfset Car.populateFromStruct( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ][ PreviouslySelectedCar.getVendorCode() ] ) />
-
-			</cfif>
-
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = Car />
-
-			<cfreturn car />
+			<cfset structClear( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle ) />
 
 		</cfif>
+
+		<cfset var PreviouslySelectedCar = session.searches[ arguments.Search.getSearchID() ].stItinerary.Vehicle />
+		<cfset var Car = "" />
+		<cfset var carArgs = structNew() />
+		<cfset carArgs.Filter = arguments.Search />
+		<cfset carArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
+		<cfset carArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
+		<cfset carArgs.sCarChain = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVendorCode() />
+		<cfset carArgs.sCarType = session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getVehicleClass()&session.searches[ arguments.Search.getSearchId() ].stItinerary.Vehicle.getCategory() />
+		<cfset carArgs.nCouldYou = dateDiff( 'd', arguments.requestedDate, arguments.Search.getCarPickupDateTime() ) />
+
+		<cfset var cars = this.doAvailability( argumentCollection = carArgs ) />
+
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		</cfif>
+
+		<cfif isStruct( Cars )
+			AND structKeyExists( Cars, "#PreviouslySelectedCar.getVehicleClass()#Car")
+			AND structKeyExists( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ], PreviouslySelectedCar.getVendorCode() )>
+
+			<cfset Car = new com.shortstravel.vehicle.Vehicle() />
+			<cfset Car.setVendorCode( PreviouslySelectedCar.getVendorCode() ) />
+			<cfset Car.populateFromStruct( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ][ PreviouslySelectedCar.getVendorCode() ] ) />
+		</cfif>
+
+		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = Car />
+
+		<cfreturn car />
 	</cffunction>
 </cfcomponent>

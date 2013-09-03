@@ -52,7 +52,6 @@
 		<form method="post" class="form-horizontal" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 			<cfparam name="rc.showAll" default="0">
-
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
 			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
@@ -108,4 +107,3 @@
 	</div>
 
 </cfoutput>
-<!--- <cfdump var="#rc.vehicle#" /> --->
