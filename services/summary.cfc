@@ -218,6 +218,7 @@
 		<cfif arguments.Traveler.getGender() EQ ''>
 			<cfset error.gender = ''>
 		</cfif>
+
 		<!--- If a guest traveler has checked the checkbox to create a new profile --->
 		<!--- <cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>
 			<!--- Perform a password check --->
@@ -260,36 +261,37 @@
 			AND NOT arguments.Traveler.getBookingDetail().getCarNeeded()>
 			<cfset error.travelServices = ''>
 		</cfif>
-		<!--- <cfloop query="qAllOUs" group="OU_ID">
-			<cfset local.field = qAllOUs.OU_Type&qAllOUs.OU_Position>
-			<cfset local.value = local[field]>
-			<cfif (qAllOUs.OU_Capture EQ 'R'
-				OR (qAllOUs.OU_Capture EQ 'P' AND stTraveler.User_ID EQ 0))>
-				<cfif qAllOUs.OU_Required EQ 1 AND Len(Trim(value)) LTE 0>
-					<cfset stTraveler.Errors[field] = ''>
-				<cfelseif qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) GT 0 AND qAllOUs.OU_Pattern NEQ ''>
-					<cfloop from="1" to="#Len(qAllOUs.OU_Pattern)#" index="local.character">
-						<cfset local.patternCharacter = Mid(qAllOUs.OU_Pattern, character, 1)>
-						<cfset local.stringCharacter = Mid(value, character, 1)>
-						<cfif (IsNumeric(patternCharacter) AND NOT IsNumeric(stringCharacter))
+
+		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU">
+			<cfset local.field = OU.getOUType() & OU.getOUPosition()>
+			<cfif OU.getOURequired() EQ 1
+				AND len(trim( OU.getValueReport() )) EQ 0>
+				<cfset error[field] = '' />	
+			</cfif>
+			<cfif OU.getOUFreeform() EQ 1
+				AND OU.getOUPattern() NEQ ''
+				AND len(trim( OU.getValueReport() )) GT 0>
+				<cfset local.patternCharacter = ''>
+				<cfset local.stringCharacter = ''>
+				<cfloop from="1" to="#len(OU.getOUPattern())#" index="local.character">
+					<cfset patternCharacter = mid(OU.getOUPattern(), character, 1)>
+					<cfset stringCharacter = mid(OU.getValueReport(), character, 1)>
+					<cfif (isNumeric(patternCharacter) AND NOT isNumeric(stringCharacter))
 						OR (patternCharacter EQ 'A' AND REFind("[A-Za-z]", stringCharacter, 1) NEQ 1)
 						OR (patternCharacter EQ 'x' AND REFind("[^A-Za-z|^0-9]", stringCharacter, 1) EQ 1)
 						OR (REFind("[^A-Za-z|^0-9]", patternCharacter, 1) EQ 1 AND patternCharacter NEQ stringCharacter)>
-							<cfset stTraveler.Errors[field] = ''>
-							<cfbreak>
-						</cfif>
-					</cfloop>
-				<cfelseif (qAllOUs.OU_Required EQ 1 AND qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) GT qAllOUs.OU_Max)
-				OR (qAllOUs.OU_Required EQ 1 AND qAllOUs.OU_Freeform EQ 1 AND Len(Trim(value)) LT qAllOUs.OU_Min)>
-					<cfset stTraveler.Errors[field] = ''>
+						<cfset error[field] = '' />	
+						<cfbreak>
+					</cfif>
+				</cfloop>
+				<cfif len(trim( OU.getValueReport() )) GT 0
+					AND (len(trim( OU.getValueReport() )) GT OU.getOUMax()
+					OR len(trim( OU.getValueReport() )) LT OU.getOUMin())>
+					<cfset error[field] = '' />
 				</cfif>
 			</cfif>
-			<cfif NOT structKeyExists(stTraveler.Errors, field)>
-				<cfset stTraveler.OUs[field].Value_ID = ''>
-				<cfset stTraveler.OUs[field].Value_Display = ''>
-				<cfset stTraveler.OUs[field].Value_Report = value>
-			</cfif>
-		</cfloop> --->
+		</cfloop>
+
 		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
 
 			<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0>

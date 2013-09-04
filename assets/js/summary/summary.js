@@ -12,6 +12,7 @@ $(document).ready(function(){
 	var vehicleSelected = $( "#vehicleSelected" ).val();
 	var vendor = $( "#vendor" ).val();
 	var arrangerID = $( "#arrangerID" ).val();
+	var errors = $( "#errors" ).val();
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
@@ -297,8 +298,19 @@ $(document).ready(function(){
 
 	function createForm(orgunit) {
 		var inputName = orgunit.OUType + orgunit.OUPosition;
-		var div = '<div class="control-group">';
-		div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName + '</label>';
+		var div = '<div class="control-group'
+		if ($.inArray(inputName, errors.split(",")) >= 0) {
+			div += ' error';
+		}
+		div += '">';
+		div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
+		if (orgunit.OURequired == 1) {
+			div += ' *</label>';
+		} 
+		else {
+			div += '&nbsp;&nbsp;</label>';
+		}
+		div += '</label>';
 		div += '<div class="controls">';
 		if (orgunit.OUFreeform == 1) {
 			div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';

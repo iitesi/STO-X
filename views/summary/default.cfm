@@ -66,7 +66,8 @@
 			<input type="hidden" name="auxFee" id="auxFee" value="#rc.fees.auxFee#">
 			<input type="hidden" name="airFee" id="airFee" value="#rc.fees.airFee#">
 			<input type="hidden" name="requestFee" id="requestFee" value="#rc.fees.requestFee#">
-			
+			<input type="hidden" name="errors" id="errors" value="#structKeyList(rc.errors)#">
+
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
