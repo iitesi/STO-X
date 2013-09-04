@@ -497,47 +497,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn aCarriers/>
 	</cffunction>
 
-	<!---
-	11:05 AM Monday, August 19, 2013 - Jim Priest - jpriest@shortstravel.com
-	This function doesn't appear to be called from anywhere?
-
-	<cffunction name="mergeTripsToAvail" output="false" hint="mergeTripsToAvail">
-		<cfargument name="stTrips"		required="true">
-		<cfargument name="stAvailTrips"	required="true">
-
-		<cfset local.stTempTrips = {}>
-		<cfset local.Group = ''>
-		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
-			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
-				<cfset Group = arguments.stTrips[sTripKey].Segments[nSegment].Group>
-				<cfif NOT structKeyExists(stTempTrips, Group)
-				OR NOT structKeyExists(stTempTrips[Group], sTripKey)>
-					<cfset stTempTrips[Group][sTripKey] = StructNew('linked')>
-				</cfif>
-				<cfset stTempTrips[Group][sTripKey][nSegment] = arguments.stTrips[sTripKey].Segments[nSegment]>
-			</cfloop>
-		</cfloop>
-		<cfset local.sIndex = ''>
-		<cfset local.nHashNumeric = ''>
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#stTempTrips#" item="local.Group">
-			<cfloop collection="#stTempTrips[Group]#" item="local.sTripKey">
-				<cfset sIndex = ''>
-				<cfloop collection="#stTempTrips[Group][sTripKey]#" item="local.sSegment">
-					<cfloop array="#aSegmentKeys#" index="local.stSegment">
-						<cfset sIndex &= stTempTrips[Group][sTripKey][sSegment][stSegment]>
-					</cfloop>
-				</cfloop>
-				<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
-				<cfif NOT structKeyExists(arguments.stAvailTrips[Group], nHashNumeric)>
-					<cfset arguments.stAvailTrips[Group][nHashNumeric].Segments = stTempTrips[Group][sTripKey]>
-				</cfif>
-			</cfloop>
-		</cfloop>
-
-		<cfreturn arguments.stAvailTrips/>
-	</cffunction> --->
-
 	<cffunction name="checkPolicy" output="false" hint="I check the policy.">
 		<cfargument name="stTrips" required="true">
 		<cfargument name="SearchID" required="true">
