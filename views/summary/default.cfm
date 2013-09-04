@@ -70,6 +70,7 @@
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+						<span style="float:right;">* denotes required fields</span>
 						<table width="1000">
 							<tr>
 								<td valign="top">

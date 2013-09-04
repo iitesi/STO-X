@@ -5,7 +5,7 @@
 	<cfif rc.airSelected>
 		
 		<div class="control-group">
-			<label class="control-label" for="airFOPID"><strong>Flight Payment</strong></label>
+			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
 				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="airFOPID" id="airFOPID">
@@ -16,14 +16,14 @@
 		<div id="airManual" class="hide">
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
-				<label class="control-label" for="airCCNumber">Card Number</label>
+				<label class="control-label" for="airCCNumber">Card Number *</label>
 				<div class="controls">
 					<input type="text" name="airCCNumber" id="airCCNumber" size="20" maxlength="16" autocomplete="off">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
-				<label class="control-label" for="airCCMonth">Expiration</label>
+				<label class="control-label" for="airCCMonth">Expiration *</label>
 				<div class="controls">
 					<select name="airCCMonth" id="airCCMonth" class="input-medium">
 						<option value=""></option>
@@ -41,35 +41,35 @@
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
-				<label class="control-label" for="airCCCVV">CVV Security Code</label>
+				<label class="control-label" for="airCCCVV">CVV Security Code *</label>
 				<div class="controls">
 					<input type="text" name="airCCCVV" id="airCCCVV" maxlength="4" autocomplete="off" class="input-small">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
-				<label class="control-label" for="airBillingName">Name on Card</label>
+				<label class="control-label" for="airBillingName">Name on Card *</label>
 				<div class="controls">
 					<input type="text" name="airBillingName" id="airBillingName" maxlength="50">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
-				<label class="control-label" for="airBillingAddress">Billing Address</label>
+				<label class="control-label" for="airBillingAddress">Billing Address *</label>
 				<div class="controls">
 					<input type="text" name="airBillingAddress" id="airBillingAddress" maxlength="50">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
-				<label class="control-label" for="airBillingCity">City</label>
+				<label class="control-label" for="airBillingCity">City *</label>
 				<div class="controls">
 					<input type="text" name="airBillingCity" id="airBillingCity" maxlength="50" class="input-medium">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
-				<label class="control-label" for="airBillingState">State, Zip</label>
+				<label class="control-label" for="airBillingState">State, Zip *</label>
 				<div class="controls">
 					<select name="airBillingState" id="airBillingState" class="input-small">
 						<option value=""></option>
@@ -94,7 +94,7 @@
 	<cfif rc.hotelSelected>
 			
 		<div class="control-group">
-			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment</strong></label>
+			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
 			<div class="controls">
 				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="hotelFOPID" id="hotelFOPID">
@@ -115,14 +115,14 @@
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
-				<label class="control-label" for="hotelCCNumber">Card Number</label>
+				<label class="control-label" for="hotelCCNumber">Card Number *</label>
 				<div class="controls">
 					<input type="text" name="hotelCCNumber" id="hotelCCNumber" size="20" maxlength="16" autocomplete="off">
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
-				<label class="control-label" for="hotelCCMonth">Expiration</label>
+				<label class="control-label" for="hotelCCMonth">Expiration *</label>
 				<div class="controls">
 					<select name="hotelCCMonth" id="hotelCCMonth" class="input-medium">
 						<option value=""></option>
@@ -140,7 +140,7 @@
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
-				<label class="control-label" for="hotelBillingName">Name on Card</label>
+				<label class="control-label" for="hotelBillingName">Name on Card *</label>
 				<div class="controls">
 					<input type="text" name="hotelBillingName" id="hotelBillingName" size="20" maxlength="50">
 				</div>
@@ -175,7 +175,7 @@
 	<cfif rc.vehicleSelected>
 		
 		<div class="control-group">
-			<label class="control-label" for="carFOPID"><strong>Car Payment</strong></label>
+			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls">
 				<i id="carSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="carFOPID" id="carFOPID">

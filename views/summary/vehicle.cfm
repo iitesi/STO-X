@@ -36,7 +36,7 @@
 					<cfif rc.showAll 
 						OR (NOT rc.Vehicle.getPolicy()
 						AND rc.Policy.Policy_CarReasonCode EQ 1)>
-
+						*&nbsp;&nbsp;
 						<select name="carReasonCode" id="carReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'carReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Outside Policy</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
@@ -45,20 +45,20 @@
 						<option value="M">Required a larger car size due to ## of travelers/equipment</option>
 						<option value="C">Required rental rate was higher than another company</option>
 						<option value="L">Leisure Rental (paying for it themselves)</option>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						</select> <br><br>
 
 					</cfif>
 
 					<!--- STATE OF TEXAS --->
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
-
+						*&nbsp;&nbsp;
 						<select name="udid111" id="udid111" class="input-xlarge #(structKeyExists(rc.errors, 'udid111') ? 'error' : '')#">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						</select> <br><br>
 						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
 
 					</cfif>

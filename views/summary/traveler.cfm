@@ -3,7 +3,7 @@
 	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
 
 	<div class="control-group" id="userIDDiv">
-		<label class="control-label" for="userID">Change Traveler</label>		
+		<label class="control-label" for="userID">Change Traveler&nbsp;&nbsp;</label>		
 		<div class="controls">
 			<select name="userID" id="userID" class="input-xlarge">
 			<option value="0">GUEST TRAVELER</option>
@@ -16,7 +16,7 @@
 	</div>
 
 	<div id="fullNameDiv" class="control-group #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
-		<label class="control-label" for="firstName">Full Name</label>
+		<label class="control-label" for="firstName">Full Name *</label>
 		<div class="controls">
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">
 			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
@@ -32,35 +32,35 @@
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
-		<label class="control-label" for="phoneNumber">Business Phone</label>
+		<label class="control-label" for="phoneNumber">Business Phone *</label>
 		<div class="controls">
 			<input type="text" name="phoneNumber" id="phoneNumber" class="input-medium">
 		</div>
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'wirelessPhone') ? 'error' : '')#">
-		<label class="control-label" for="wirelessPhone">Mobile Phone</label>
+		<label class="control-label" for="wirelessPhone">Mobile Phone *</label>
 		<div class="controls">
 			<input type="text" name="wirelessPhone" id="wirelessPhone" class="input-medium">
 		</div>
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
-		<label class="control-label" for="email">Email</label>
+		<label class="control-label" for="email">Email *</label>
 		<div class="controls">
 			<input type="text" name="email" id="email">
 		</div>
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
-		<label class="control-label" for="ccEmails">CC Email</label>
+		<label class="control-label" for="ccEmails">CC Email&nbsp;&nbsp;</label>
 		<div class="controls">
 			<input type="text" name="ccEmails" id="ccEmails">
 		</div>
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
-		<label class="control-label" for="month">Birth Date</label>
+		<label class="control-label" for="month">Birth Date *</label>
 		<div class="controls">
 			<select name="month" id="month" class="input-small">
 			<option value=""></option>
@@ -84,7 +84,7 @@
 	</div>
 
 	<div class="control-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
-		<label class="control-label" for="gender">Gender</label>
+		<label class="control-label" for="gender">Gender *</label>
 		<div class="controls">
 			<select name="gender" id="gender">
 			<option value=""></option>
@@ -116,7 +116,7 @@
 		</cfif>
 		<cfif travelServices GT 1>
 			<div class="control-group #(structKeyExists(rc.errors, 'travelServices') ? 'error' : '')#">
-				<label class="control-label" for="airNeeded">Travel Services For Traveler ###rc.travelerNumber#?</label>
+				<label class="control-label" for="airNeeded">Travel Services For Traveler ###rc.travelerNumber#? *</label>
 				<div class="controls">
 				<cfif rc.airSelected>
 					<label class="airNeeded">

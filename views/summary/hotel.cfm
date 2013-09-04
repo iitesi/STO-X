@@ -40,27 +40,27 @@
 					<cfif rc.showAll 
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
-
+						*&nbsp;&nbsp;
 						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Out of Policy</option>
 						<option value="P">Required property sold out</option>
 						<option value="R">Required room rate sold out</option>
 						<option value="C">Required property was higher than another property</option>
 						<option value="L">Leisure Rental (paying for it themselves)</option>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i><br><br>
+						</select> <br><br>
 
 					</cfif>
 
 					<!--- State of Texas --->
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
-
+						*&nbsp;&nbsp;
 						<select name="udid112" id="udid112" class="input-xlarge #(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
 							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
 						</cfloop>
-						</select> &nbsp;&nbsp;&nbsp; <i>(required)</i>
+						</select>
 						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
 
 					</cfif>
