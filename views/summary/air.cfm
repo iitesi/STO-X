@@ -207,6 +207,14 @@ ADDITIONAL REQUESTS
 				<option value="UMNR">UNACCOMPANIED MINOR</option>
 				<option value="WCHR">WHEELCHAIR</option>
 				</select>
+<!---
+GENERAL SEATS
+--->
+				<select name="windowAisle" id="windowAisle">
+				<option value="">SEATS</option>
+				<option value="WINDOW">WINDOW</option>
+				<option value="AISLE">AISLE</option>
+				</select>
 				<br>
 <!---
 SPECIAL REQUEST
