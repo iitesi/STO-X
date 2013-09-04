@@ -10,6 +10,6 @@
 		<h3><i class="icon-search"></i> New Search</h3>
 	</div>
 	<div class="modal-body">
-      <iframe src="" frameborder="0" height="550" width="99.6%"></iframe>
+      <iframe src="" frameborder="0" height="425" width="99.6%"></iframe>
 	</div>
 </div>
