@@ -52,9 +52,28 @@
 												<cfset seats = '' />
 												<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">
 													<cfloop collection="#rc.Traveler[travelerIndex].getBookingDetail().getSeats()#" item="seat" index="seatIndex">
-														<cfif listLast(seatIndex, '_') EQ segmentIndex>
-															<cfif len(seat)>
-																<cfset seats = listAppend(seats, seat) />
+														<cfif seat.segmentRef EQ segment.key>
+															<cfif seat.seat NEQ 'Unknown'>
+																<cfset thisStatus = "unconfirmed" />
+																<cfswitch expression="#seat.status#">
+																	<cfcase value="PN">
+																		<cfset thisStatus = "pending" />
+																	</cfcase>
+																	<cfcase value="HK">
+																		<cfset thisStatus = "confirmed" />
+																	</cfcase>
+																	<cfcase value="NO">
+																		<cfset thisStatus = "denied" />
+																	</cfcase>
+																	<cfcase value="KK">
+																		<cfset thisStatus = "will be assigned" />
+																	</cfcase>
+																	<cfcase value="NN">
+																		<cfset thisStatus = "to be requested" />
+																	</cfcase>
+																</cfswitch>
+																<cfset thisSeat = seat.seat & " (" & thisStatus & ")" />
+																<cfset seats = listAppend(seats, thisSeat) />
 															<cfelse>
 																<cfset seats = listAppend(seats, 'NA') />
 																<cfset showIcon = true />
