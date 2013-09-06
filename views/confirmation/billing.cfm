@@ -138,7 +138,13 @@
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getBookingFee() NEQ 0>
 								<tr>
 									<td>Booking Fee</td>
-									<td>VI... 1111 <!--- TO DO: CC Type and Last Four ---></td>
+									<td>
+										<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
+											#airCardType#... #right(airCardNumber, 4)#
+										<cfelseif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
+											#hotelCardType#... #right(hotelCardNumber, 4)#
+										</cfif>
+									</td>
 									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
 									<td align="right">#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</td>
 									<td align="right">&nbsp;</td>
