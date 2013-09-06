@@ -210,12 +210,20 @@ ADDITIONAL REQUESTS
 <!---
 GENERAL SEATS
 --->
-				<select name="windowAisle" id="windowAisle">
-				<option value="">SEATS</option>
-				<option value="WINDOW">WINDOW</option>
-				<option value="AISLE">AISLE</option>
-				</select>
-				<br>
+				<cfset showWindowAisle = false />
+				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
+					<cfif NOT listFind('WN,F9', sCarrier)>
+						<cfset showWindowAisle = true />
+					</cfif>
+				</cfloop>
+				<cfif showWindowAisle>
+					<select name="windowAisle" id="windowAisle">
+						<option value="">SEATS</option>
+						<option value="Window">WINDOW</option>
+						<option value="Aisle">AISLE</option>
+					</select>
+					<br />
+				</cfif>
 <!---
 SPECIAL REQUEST
 --->

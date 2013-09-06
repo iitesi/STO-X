@@ -19,31 +19,7 @@
 		<cfelse>
 			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 			<cfset session.searches[rc.searchID].stCars = {}>
-			<!--- <cfset local.fareRules = ''>
-			<cfset session.searches[rc.searchID].stItinerary.Air.fareRules = []>
-			<cfset session.searches[rc.searchID].stItinerary.Air.cancellationPolicy = []>
-			<cfset session.searches[rc.searchID].stItinerary.Air.changeFee = []>
-			<cfloop array="#session.searches[rc.searchID].stItinerary.Air.fareRuleKey#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
-				<cfset fareRules = fw.getBeanFactory().getBean('AirAdapter').airFareRulesReq( fareRuleKey = fareRuleKey
-																							, Filter = rc.Filter )>
-				<cfif fareRules NEQ ''
-					AND NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.fareRules, fareRules)>
-					<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.fareRules, fareRules)>
-					<cfset local.nonref = find('TICKET IS NON-REFUNDABLE', fareRules)>
-					<cfset local.cancellationPolicy = 'Cancellations: Ticket is #(nonref GT 0 ? 'non-' : '')#refundable.'>
-					<cfif NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.cancellationPolicy, cancellationPolicy)>
-						<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.cancellationPolicy, cancellationPolicy)>
-					</cfif>
-					<cfset local.start = find('CHARGE USD ', fareRules)+11>
-					<cfset local.end = find(' FOR REISSUE', fareRules)>
-					<cfset local.changeFee = trim(mid(fareRules, start, end-start))>
-					<cfif NOT arrayFind(session.searches[rc.searchID].stItinerary.Air.changeFee, changeFee)>
-						<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Air.changeFee, changeFee)>
-					</cfif>
-				</cfif>
-			</cfloop> --->
 		</cfif>
-		<!--- <cfdump var="#session.searches[rc.searchID].stItinerary.Air#" abort="true" /> --->
 
 		<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
 		<cfset checkFilterStatus(arguments.rc)>
@@ -134,7 +110,7 @@
 				<cfset local.userID = session.filters[arguments.rc.searchID].getProfileID()>
 				<cfset rc.qProfile = variables.general.getUser( local.userID )>
 
-				<!--- TO DO: Update this logic once a flag is built into the system.  Also update the 
+				<!--- TO DO: Update this logic once a flag is built into the system.  Also update the
 				code above to pull from the com object verses the general service. --->
 				<cfif rc.qUser.First_Name EQ 'STODefaultUser'>
 					<cfset rc.qUser = variables.general.getUser( 0 )>

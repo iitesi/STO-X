@@ -194,6 +194,7 @@
 										<cfset providerLocatorCode = Air.ProviderLocatorCode>
 										<cfset universalLocatorCode = Air.UniversalLocatorCode>
 										<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
+										<cfset Traveler.getBookingDetail().setSeats(Air.BookingTravelerSeats) />
 									</cfif>
 									<!--- Update session with new Air record --->
 									<cfset session.searches[rc.SearchID].stItinerary.Air = Air>

@@ -61,6 +61,23 @@
 			<cfset var action = ListFirst(rc.action, ':')>
 			<cfreturn view( "main/notfound" )>
 		<cfelse>
+
+			<cfif NOT findNoCase( "RemoteProxy.cfc", cgi.script_name )>
+				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
+
+					<cfset session.isAuthorized = false />
+
+					<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
+						<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+					</cfif>
+
+				</cfif>
+
+				<cfif NOT session.isAuthorized>
+					<cflocation url="#application.bf.getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
+				</cfif>
+			</cfif>
+
 			<cfset controller( 'setup.setSearchID' )>
 			<cfset controller( 'setup.setFilter' )>
 			<cfset controller( 'setup.setAcctID' )>
@@ -88,5 +105,3 @@
 		 </cfif>
 	</cffunction>
 </cfcomponent>
-
-

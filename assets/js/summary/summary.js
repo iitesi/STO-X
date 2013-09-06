@@ -213,6 +213,7 @@ $(document).ready(function(){
 			$( "#udid113" ).val( traveler.bookingDetail.udid113 );
 			$( "#specialNeeds" ).val( traveler.specialNeeds );
 			$( "#specialRequests" ).val( traveler.bookingDetail.specialRequests );
+			$( "#windowAisle" ).val( traveler.windowAisle );
 			$( "#hotelNotBooked" ).val( traveler.bookingDetail.hotelNotBooked );
 
 			for( var c=0, cl=carriers.length; c<cl; c++ ) {
