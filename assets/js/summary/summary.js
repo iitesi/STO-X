@@ -98,7 +98,7 @@ $(document).ready(function(){
 		});
 	});
 
-	/* $("#createProfileDiv").on("click", function () { 
+	$("#createProfileDiv").on("click", function () { 
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {
 			$("#usernameDiv").show();
@@ -106,12 +106,12 @@ $(document).ready(function(){
 		else {
 			$("#usernameDiv").hide();
 		}
-	}); */
+	});
 
 	function loadTraveler(traveler, loadMethod) {
 		// console.log(traveler);
-		// $( "#createProfileDiv" ).hide();
-		// $( "#usernameDiv" ).hide();
+		$( "#createProfileDiv" ).hide();
+		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
@@ -145,7 +145,7 @@ $(document).ready(function(){
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
-				// $( "#createProfileDiv" ).hide();
+				$( "#createProfileDiv" ).hide();
 				$( "#firstName2" ).val( '' );
 				$( "#lastName2" ).val( '' );
 			}
@@ -169,7 +169,7 @@ $(document).ready(function(){
 		$( "#gender" ).val( traveler.gender );
 
 		// If a FindIt guest
-		/* if (traveler.accountID == "" && traveler.stoDefaultUser == 0) {
+		if (traveler.accountID == "" && traveler.stoDefaultUser == 0) {
 			$( "#userID" ).val( 0 );
 			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
@@ -195,7 +195,7 @@ $(document).ready(function(){
 					$("#username_disabled").val(guestEmail);
 				}
 			});
-		} */
+		}
 
 		if (airSelected == 'true') {
 			if (traveler.bookingDetail.airNeeded == '' || traveler.bookingDetail.airNeeded == 1)  {
