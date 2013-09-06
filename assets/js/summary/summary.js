@@ -318,7 +318,7 @@ $(document).ready(function(){
 		else {
 			div += '<select name="' + inputName + '" id="' + inputName + '"';
 			div += '>';
-			div += '<option value="0"></option>';
+			div += '<option value="-1"></option>';
 				for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
 					div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
 				}
