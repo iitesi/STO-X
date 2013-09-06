@@ -1,138 +1,135 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="shorts-test" basedir="." default="info">
+<project name="sto" basedir="." default="info">
 
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
-
 
 	<target name="info">
 		<echo message="Here's how you use this build file (coming soon)" />
 	</target>
 
-
 	<target name="init">
-		<property name="application.name" value="shorts-test" />
+		<property name="application.name" value="sto" />
 	</target>
 
-  
-  <target name="deploy" description="Create a release of the application" depends="init,update-local-repo,build-tag-name" >
-  	
-	<!-- Check that we're on the master branch so we don't accidentally deploy develop to production -->
-	<exec executable="git" outputproperty="git.branch">
-		<arg value="symbolic-ref" />
-		<arg value="--short" />
-		<arg value="-q" />
-		<arg value="HEAD" />  
-	</exec>
+     <target name="deploy" description="Create a release of the application" depends="init,update-local-repo,build-tag-name" >
 
-	<fail message="Please switch to the master branch before pushing a build.">
-		<condition>
-			<not>
-				<equals arg1="${git.branch}" arg2="master"/>
-			</not>
-		</condition>
-	</fail>
+        <!-- Check that we're on the master branch so we don't accidentally deploy develop to production -->
+        <exec executable="git" outputproperty="git.branch">
+            <arg value="symbolic-ref" />
+            <arg value="--short" />
+            <arg value="-q" />
+            <arg value="HEAD" />
+        </exec>
 
-	<echo message="Current Branch: ${git.branch}" />
+        <fail message="Please switch to the master branch before pushing a build.">
+            <condition>
+                <not>
+                    <equals arg1="${git.branch}" arg2="master"/>
+                </not>
+            </condition>
+        </fail>
 
-	<!-- Create the tag in git -->
-	<exec executable="git">
-		<arg value="tag" />
-		<arg value="-a" />
-		<arg value="${build.tagname}" />
-		<arg value="-m" />
-		<arg value='"Create tag for release"' />  
-	</exec>
+        <echo message="Current Branch: ${git.branch}" />
 
-	<echo message="Tag created successfully: ${build.tagname}" />
+        <!-- Create the tag in git -->
+        <exec executable="git">
+            <arg value="tag" />
+            <arg value="-a" />
+            <arg value="${build.tagname}" />
+            <arg value="-m" />
+            <arg value='"Create tag for release"' />
+        </exec>
 
-	<!-- Push master to origin -->
-	<exec executable="git">
-		<arg value="push" />
-		<arg value="origin" />
-		<arg value="master" />
-	</exec>
+        <echo message="Tag created successfully: ${build.tagname}" />
 
-	<echo message="Pushed master to origin successfully" />
+        <!-- Push master to origin -->
+        <exec executable="git">
+            <arg value="push" />
+            <arg value="origin" />
+            <arg value="master" />
+        </exec>
 
-	<!-- Push tag to origin -->
-	<exec executable="git">
-		<arg value="push" />
-		<arg value="origin" />
-		<arg value="${build.tagname}" />
-	</exec>
+        <echo message="Pushed master to origin successfully" />
 
-	<echo message="Pushed tag to origin successfully: ${build.tagname}" />
+        <!-- Push tag to origin -->
+        <exec executable="git">
+            <arg value="push" />
+            <arg value="origin" />
+            <arg value="${build.tagname}" />
+        </exec>
 
-	<!-- Push master to prod -->
-	<exec executable="git">
-		<arg value="push" />
-		<arg value="prod" />
-		<arg value="master" />
-	</exec>
+        <echo message="Pushed tag to origin successfully: ${build.tagname}" />
 
-	<echo message="Pushed master to production successfully." />
-	
-	<antcall target="reinit-apps" />
- </target>
+        <!-- Push master to prod -->
+        <exec executable="git">
+            <arg value="push" />
+            <arg value="prod" />
+            <arg value="master" />
+        </exec>
 
- <target name="update-local-repo" description="Performs a git fetch on the local repo to get changes from origin">
- 	<!-- Fetch from origin before we begin -->
-  	<echo message="Fetching latest from origin" />
-  	<exec executable="git">
-		<arg value="fetch" />
-	</exec>
- </target>
+        <echo message="Pushed master to production successfully." />
 
- <target name="build-tag-name" description="Builds the name for the tag we're going to create and deploy">
+        <antcall target="reinit-apps" />
+     </target>
 
- 	<input message="Please enter the release this build is for (yyyy.mm.dd)" addproperty="build.version" />
+     <target name="update-local-repo" description="Performs a git fetch on the local repo to get changes from origin">
+        <!-- Fetch from origin before we begin -->
+        <echo message="Fetching latest from origin" />
+        <exec executable="git">
+            <arg value="fetch" />
+        </exec>
+     </target>
 
-	<propertyfile file="build.properties">
-		<entry key="release" value="${build.version}"/>
-    </propertyfile>
+     <target name="build-tag-name" description="Builds the name for the tag we're going to create and deploy">
 
-	<!-- Check to see if there are any other tags created with the entered release date -->
-	<exec executable="git" outputproperty="build.tagsearchresults">
-		<arg value="tag" />
-		<arg value="-l" />
-		<arg value='"release-${build.version}*"' />
-	</exec>
+        <input message="Please enter the release this build is for (yyyy.mm.dd)" addproperty="build.version" />
 
-	<condition property="build.isNewVersion">
-		<length string="${build.tagsearchresults}" when="eq" length="0" />
-	</condition>
+        <propertyfile file="build.properties">
+            <entry key="release" value="${build.version}"/>
+        </propertyfile>
 
-	<property name="build.isNewVersion" value="false" />
+        <!-- Check to see if there are any other tags created with the entered release date -->
+        <exec executable="git" outputproperty="build.tagsearchresults">
+            <arg value="tag" />
+            <arg value="-l" />
+            <arg value='"release-${build.version}*"' />
+        </exec>
 
-	<if>
-		<equals arg1="${build.isNewVersion}" arg2="true"/>
-		<then>
-			<propertyfile file="build.properties">
-	            <entry key="revision" type="int" value="1" pattern="000"/>
-		    </propertyfile>
-		</then>
-		<else>
-			<propertyfile  file="build.properties">
-	            <entry key="revision" type="int" operation="+" value="1" pattern="000"/>
-		    </propertyfile>
-		</else>
-	</if>
+        <condition property="build.isNewVersion">
+            <length string="${build.tagsearchresults}" when="eq" length="0" />
+        </condition>
 
-	<property file="build.properties" prefix="buildprops" />
+        <property name="build.isNewVersion" value="false" />
 
-	<property name="build.tagname" value="release-${buildprops.release}.${buildprops.revision}" />
+        <if>
+            <equals arg1="${build.isNewVersion}" arg2="true"/>
+            <then>
+                <propertyfile file="build.properties">
+                    <entry key="revision" type="int" value="1" pattern="000"/>
+                </propertyfile>
+            </then>
+            <else>
+                <propertyfile  file="build.properties">
+                    <entry key="revision" type="int" operation="+" value="1" pattern="000"/>
+                </propertyfile>
+            </else>
+        </if>
 
-	<!-- Commit the changes to the version file -->
-	<exec executable="git">
-		<arg value="commit" />
-		<arg value="-a" />
-		<arg value="-m" />
-		<arg value='"Updating revision file"' />  
-		
-	</exec>
- </target>
+        <property file="build.properties" prefix="buildprops" />
 
- <target name="reinit-apps" description="Hits each customer's application an runs the initialization routine after a code push">
+        <property name="build.tagname" value="release-${buildprops.release}.${buildprops.revision}" />
+
+        <!-- Commit the changes to the version file -->
+        <exec executable="git">
+            <arg value="commit" />
+            <arg value="-a" />
+            <arg value="-m" />
+            <arg value='"Updating revision file"' />
+
+        </exec>
+     </target>
+
+     <target name="reinit-apps" description="Hits each customer's application an runs the initialization routine after a code push">
 
  	<echo>TODO: Reinitializing application(s)</echo>
   	<!--<get src="<APPLICATION URL HERE>" dest="<FILE SYSTEM PATH TO FILE TO USE FOR RESULT>" />-->
