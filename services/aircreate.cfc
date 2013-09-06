@@ -86,7 +86,7 @@ doAirPrice
 
 		<!--- <cfset locator = 'V6GVR2'> --->
 
-		
+
 		<!---TE : Display PNR--->
 		<cfset local.Response	= getTerminalEntry().displayPNR(arguments.Account, hostToken, locator, arguments.SearchID, true)>
 		<cfdump var="#Response#">
@@ -175,6 +175,8 @@ parseTripForPurchase
 			</cfif>
 		</cfloop>
 
+		<cfset stPriceSolution = replace(stPriceSolution, '<?xml version="1.0" encoding="UTF-8"?>', '')>
+
 		<cfreturn stPriceSolution />
 	</cffunction>
 
@@ -198,9 +200,9 @@ prepareSoapHeader
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-                        <air:AirCreateReservationReq xmlns:air="http://www.travelport.com/schema/air_v18_0" TargetBranch="#arguments.Account.sBranch#">
-	                        <com:BillingPointOfSaleInfo xmlns:com="http://www.travelport.com/schema/common_v15_0" OriginApplication="UAPI" />
-                            <com:BookingTraveler xmlns:com="http://www.travelport.com/schema/common_v15_0" Key="0T" TravelerType="ADT" Gender="#Traveler.Gender#" DOB="#DateFormat(Traveler.Birthdate, 'yyyy-mm-dd')#">
+                        <air:AirCreateReservationReq xmlns:air="#getUAPISchemas().air#" TargetBranch="#arguments.Account.sBranch#">
+	                        <com:BillingPointOfSaleInfo xmlns:com="#getUAPISchemas().common#" OriginApplication="UAPI" />
+                            <com:BookingTraveler xmlns:com="#getUAPISchemas().common#" Key="0T" TravelerType="ADT" Gender="#Traveler.Gender#" DOB="#DateFormat(Traveler.Birthdate, 'yyyy-mm-dd')#">
                                 <com:BookingTravelerName First="#Traveler.First_Name#" Middle="#Traveler.Middle_Name#" Last="#Traveler.Last_Name#" />
 								<cfif profileFound AND OrigTraveler.Wireless_Phone NEQ Traveler.Wireless_Phone>
 									<com:PhoneNumber Location="#Filter.getDepartCity()#" Number="#Traveler.Wireless_Phone#" Type="Mobile" />
@@ -227,41 +229,41 @@ prepareSoapHeader
 									<com:RemarkData>#(structKeyExists(Traveler.OUs, 'Sort1') ? Traveler.OUs.Sort1.Value_Report : '')# #(structKeyExists(Traveler.OUs, 'Sort2') ? Traveler.OUs.Sort2.Value_Report : '')# #(structKeyExists(Traveler.OUs, 'Sort3') ? Traveler.OUs.Sort3.Value_Report : '')# #(structKeyExists(Traveler.OUs, 'Sort4') ? Traveler.OUs.Sort4.Value_Report : '')#</com:RemarkData>
 								</com:NameRemark>
 							</com:BookingTraveler>
-							<OSI xmlns="http://www.travelport.com/schema/common_v15_0" Carrier="YY" Code="#Filter.getDepartCity()#" Text=" CTCM #Filter.getDepartCity()# #Traveler.Wireless_Phone#" ProviderCode="1V" />
-							<OSI xmlns="http://www.travelport.com/schema/common_v15_0" Carrier="YY" Code="#Filter.getDepartCity()#" Text=" CTCE #Filter.getDepartCity()# #Replace(Traveler.Email, '@', '//')#" ProviderCode="1V" />
-							<AccountingRemark xmlns="http://www.travelport.com/schema/common_v15_0" Category="CA" TypeInGds="Other" ProviderCode="1V" UseProviderNativeMode="true">
+							<OSI xmlns="#getUAPISchemas().common#" Carrier="YY" Code="#Filter.getDepartCity()#" Text=" CTCM #Filter.getDepartCity()# #Traveler.Wireless_Phone#" ProviderCode="1V" />
+							<OSI xmlns="#getUAPISchemas().common#" Carrier="YY" Code="#Filter.getDepartCity()#" Text=" CTCE #Filter.getDepartCity()# #Replace(Traveler.Email, '@', '//')#" ProviderCode="1V" />
+							<AccountingRemark xmlns="#getUAPISchemas().common#" Category="CA" TypeInGds="Other" ProviderCode="1V" UseProviderNativeMode="true">
 		                        <RemarkData>15@066231</RemarkData>
 		                    </AccountingRemark>
-		                    <AccountingRemark xmlns="http://www.travelport.com/schema/common_v15_0" TypeInGds="Ticket" ProviderCode="1V" UseProviderNativeMode="true">
+		                    <AccountingRemark xmlns="#getUAPISchemas().common#" TypeInGds="Ticket" ProviderCode="1V" UseProviderNativeMode="true">
 		                        <RemarkData>T-U25-STANFORD</RemarkData>
 		                    </AccountingRemark>
 		                    <!--- Each line cannot exceed 85 characters, so you will need to do 1 remark for each 75 characters of the freeform text (because SPCLREQST- is 10 char). Also, strip out special characters from the freeform text.  --->
-		                    <GeneralRemark xmlns="http://www.travelport.com/schema/common_v15_0" Category="R" TypeInGds="Alpha" ProviderCode="1V" UseProviderNativeMode="true">
+		                    <GeneralRemark xmlns="#getUAPISchemas().common#" Category="R" TypeInGds="Alpha" ProviderCode="1V" UseProviderNativeMode="true">
 		                        <RemarkData>SPCLREQST-Please use my unused ticket</RemarkData>
 		                    </GeneralRemark>
 <!--- Would I need to remove the original email?? --->
 							<cfif profileFound AND OrigTraveler.Email NEQ Traveler.Email>
-								<UnassociatedRemark xmlns="http://www.travelport.com/schema/common_v15_0">
+								<UnassociatedRemark xmlns="#getUAPISchemas().common#">
 									<RemarkData>EMAIL #Traveler.Email#</RemarkData>
 								</UnassociatedRemark>
 							</cfif>
 							<cfloop list="#Traveler.CCEmail#" delimiters=";" index="local.i">
 								<cfif profileFound AND NOT listFindNoCase(OrigTraveler.CCEmail, i, ';')>
-									<UnassociatedRemark xmlns="http://www.travelport.com/schema/common_v15_0">
+									<UnassociatedRemark xmlns="#getUAPISchemas().common#">
 										<RemarkData>EMAIL/CC #i#</RemarkData>
 									</UnassociatedRemark>
 								</cfif>
 							</cfloop>
-		                    <!--- <GeneralRemark xmlns="http://www.travelport.com/schema/common_v15_0" Category="S" TypeInGds="Alpha" ProviderCode="1V" UseProviderNativeMode="true">
+		                    <!--- <GeneralRemark xmlns="#getUAPISchemas().common#" Category="S" TypeInGds="Alpha" ProviderCode="1V" UseProviderNativeMode="true">
 		                        <RemarkData>Director of Information Technology</RemarkData>
 		                    </GeneralRemark> --->
 
 							#arguments.AirPricing#
 
-	                        <com:ActionStatus xmlns:com="http://www.travelport.com/schema/common_v15_0" Type="TAU" TicketDate="#DateFormat(DateAdd('d', 1, Now()), 'yyyy-mm-dd')#T#TimeFormat(Now(), 'HH:mm:ss')#">
+	                        <com:ActionStatus xmlns:com="#getUAPISchemas().common#" Type="TAU" TicketDate="#DateFormat(DateAdd('d', 1, Now()), 'yyyy-mm-dd')#T#TimeFormat(Now(), 'HH:mm:ss')#">
 	                            <com:Remark><!---HOLD.FOR.APPROVAL--->OK.TO.TKT</com:Remark>
 	                        </com:ActionStatus>
-	                        <com:FormOfPayment xmlns:com="http://www.travelport.com/schema/common_v15_0" Type="Credit">
+	                        <com:FormOfPayment xmlns:com="#getUAPISchemas().common#" Type="Credit">
 	                            <com:CreditCard Type="#Traveler.AirFOP.CC_Code#" Number="#Traveler.AirFOP.CC_Number#" CVV="#Traveler.AirFOP.Billing_CVV#" ExpDate="#DateFormat(Traveler.AirFOP.CC_Expiration, 'yyyy-mm')#" />
 	                        </com:FormOfPayment>
 	                        <!--- <air:AutoSeatAssignment SeatType="Window" /> Send in either this or SpecificSeatAssignment --->
@@ -276,11 +278,11 @@ prepareSoapHeader
 
 		<cfreturn Message/>
 	</cffunction>
-	
+
 </cfcomponent>
 
 <!---
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:univ="http://www.travelport.com/schema/universal_v16_0" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:univ="#getUAPISchemas().universal#" xmlns:air="#getUAPISchemas().air#" xmlns:com="#getUAPISchemas().common#">
    <soapenv:Header>
       <univ:SupportedVersions urVersion="?" airVersion="?" hotelVersion="?" vehicleVersion="?" passiveVersion="?" railVersion="?"/>
    </soapenv:Header>

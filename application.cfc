@@ -1,88 +1,107 @@
+
 <cfcomponent extends="org.corfield.framework">
-	
-	<cfset this.name = 'booking'>
+
+	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
-	<!--- <cfset this.sessionStorage = 'Sessions'>
-	<cfset this.sessionCluster = true> --->
 	<cfset this.applicationManagement = true>
 	<cfset this.defaultdatasource = "book">
 
 	<cfset variables.framework = {
 		action = 'action',
-		usingSubsystems = false,
-		defaultSubsystem = 'home',
-		defaultSection = 'main',
-		defaultItem = 'default',
-		subsystemDelimiter = ':',
-		siteWideLayoutSubsystem = 'common',
-		home = 'main.default', 
-		error = 'main.error', 
-		reload = 'reload',
-		password = 'true',
-		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'localhost' ? true : false),
-		generateSES = false,
-		SESOmitIndex = false,
+		applicationKey = 'fw',
 		baseURL = 'useCgiScriptName',
+		cacheFileExists = false,
+		defaultItem = 'default',
+		defaultSection = 'main',
+		defaultSubsystem = 'home',
+		error = 'main.error',
+		generateSES = false,
+		home = 'main.default',
+		maxNumContextsPreserved = 10,
+		password = 'true',
+		preserveKeyURLKey = 'fw1pk',
+		reload = 'reload',
+		reloadApplicationOnEveryRequest = IsLocalHost(cgi.local_addr),
+		SESOmitIndex = false,
+		siteWideLayoutSubsystem = 'common',
+		subsystemDelimiter = ':',
 		suppressImplicitService = true,
+		trace = false,
 		unhandledExtensions = 'cfc',
 		unhandledPaths = '/external',
-		preserveKeyURLKey = 'fw1pk',
-		maxNumContextsPreserved = 10,
-		cacheFileExists = false,
-		applicationKey = 'fw'
+		usingSubsystems = false
 	}>
 
-<!---
-setupApplication
---->
 	<cffunction name="setupApplication">
-
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
 				.init( defaultProperties = { currentServerName=cgi.http_host }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 
 		<cfset controller( 'setup.setApplication' )>
-		<cfset application.bDebug = 1>
-
+		<cfset application.bDebug = 0>
+		<cfset application.gmtOffset = '6:00'>
+		<cfset application.developerEmail = "jpriest@shortstravel.com">
 	</cffunction>
 
-<!---
-setupSession
---->
 	<cffunction name="setupSession">
-
 		<cfset session.searches = {}>
 		<cfset session.aMessages = []>
-
 	</cffunction>
 
-<!---
-setupRequest
---->
 	<cffunction name="setupRequest" output="true">
-
-		<cfset controller( 'setup.setSearchID' )>
-		<cfset controller( 'setup.setFilter' )>
-		<cfset controller( 'setup.setAcctID' )>
-		<cfset controller( 'setup.setAccount' )>
-		<cfset controller( 'setup.setPolicyID' )>
-		<cfset controller( 'setup.setPolicy' )>
-		<cfset controller( 'setup.setGroup' )>
+		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
+			<cfset onApplicationStart() />
+			<cfreturn view( "main/reload" )>
+		</cfif>
 
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
-			Not A Valid Search<cfabort>
+			<cfset var action = ListFirst(rc.action, ':')>
+			<cfreturn view( "main/notfound" )>
+		<cfelse>
+
+			<cfif NOT findNoCase( "RemoteProxy.cfc", cgi.script_name )>
+				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
+
+					<cfset session.isAuthorized = false />
+
+					<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
+						<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+					</cfif>
+
+				</cfif>
+
+				<cfif NOT session.isAuthorized>
+					<cflocation url="#application.bf.getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
+				</cfif>
+			</cfif>
+
+			<cfset controller( 'setup.setSearchID' )>
+			<cfset controller( 'setup.setFilter' )>
+			<cfset controller( 'setup.setAcctID' )>
+			<cfset controller( 'setup.setAccount' )>
+			<cfset controller( 'setup.setPolicyID' )>
+			<cfset controller( 'setup.setPolicy' )>
+			<cfset controller( 'setup.setGroup' )>
 		</cfif>
 
 	</cffunction>
 
-<!---
-onRequestEnd
---->
-	<cffunction name="onRequestEnd">
-
+	<cffunction name="onMissingView" hint="I handle missing views.">
+		<cfreturn view( "main/notfound" )>
 	</cffunction>
-	
+
+	<cffunction name="onError" returnType="void">
+		<cfargument name="Exception" required=true/>
+		<cfargument name="EventName" type="String" required=true/>
+
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal' ) />
+			 <cfset super.onError( arguments.exception, arguments.eventName )>
+		<cfelse>
+			 <cfset super.onError( arguments.exception, arguments.eventName )>
+		 </cfif>
+	</cffunction>
 </cfcomponent>

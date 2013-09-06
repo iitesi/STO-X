@@ -1,204 +1,247 @@
 <cfoutput>
-	<cfif Air>
-		<br><br clear="both">
-		<div class="summarydiv" style="background-color: ##FFF">
-			<cfset AirPolicy = (ArrayLen(stItinerary.Air.aPolicies) GT 0 ? false : true)>
-			<table width="1000">
-			<tr>
-<!--- 
-HEADING
---->
-				<td colspan="5">
-                    <div class="underline-heading">
-                        <h2>Flights</h2>
-						#(NOT AirPolicy ? 'Your flight is outside of policy.' : '')#
-				        <span style="float:right;"><a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#" style="color:##666">Edit Flights</a>
-                    </div>
-				</td>
-			</tr>
-			<tr>
-<!--- 
-DETAILS
---->
-				<cfloop collection="#stItinerary.Air.Groups#" item="Group" >
-					<td>
-						
-						<table width="300">
-						<cfset stGroup = stItinerary.Air.Groups[Group]>
-						<tr>
-							<td class="medium" colspan="4">
-								<strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d')#</strong>
-							</td>
-						</tr>
-						<cfloop collection="#stGroup.Segments#" item="nSegment" >
-							<cfset stSegment = stGroup.Segments[nSegment]>
-							<tr>
-								<td>#stSegment.Carrier#</td>
-								<td>#stSegment.FlightNumber#</td>
-								<td>#stSegment.Origin# to #stSegment.Destination#</td>
-								<td>#TimeFormat(stSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')#</td>
-							</tr>
+
+	<cfif rc.airSelected>
+		<cfset lowestFareTripID = session.searches[rc.searchid].stLowFareDetails.aSortFare[1] />
+		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total />
+		<cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)>
+
+		<input type="hidden" name="airLowestFare" value="#lowestFare#">
+
+		<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
+
+		<table width="1000">
+		<tr>
+
+			<td></td>
+
+			<td valign="top">
+
+				<cfif rc.Air.privateFare AND rc.Air.preferred>
+					<span class="ribbon ribbon-l-pref-cont"></span>
+				<cfelseif rc.Air.preferred>
+					<span class="ribbon ribbon-l-pref"></span>
+				<cfelseif rc.Air.privateFare>
+					<span class="ribbon ribbon-l-cont"></span>
+				</cfif>
+
+				<h2>FLIGHT</h2>
+
+			</td>
+
+			<td colspan="2">
+
+				#(rc.Air.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
+
+				<!---
+				If they are out of policy
+				AND they want to capture reason codes
+				--->
+				<cfif rc.showAll
+					OR (NOT inPolicy
+					AND rc.Policy.Policy_AirReasonCode EQ 1)>
+					*&nbsp;&nbsp;
+					<select name="airReasonCode" id="airReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
+					<option value="">Select Reason for Booking Out of Policy</option>
+					<cfloop query="rc.qOutOfPolicy">
+						<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+					</cfloop>
+					</select> <br><br>
+
+				</cfif>
+
+				<!---
+				If the fare is higher than the lowest
+				AND they are in policy OR the above drop down isn't showing
+				AND they want to capture lost savings
+				--->
+				<cfif rc.showAll
+					OR (rc.Air.Total GT lowestFare
+					AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
+					AND rc.Policy.Policy_AirLostSavings EQ 1)>
+					*&nbsp;&nbsp;
+					<div class="#(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
+						<select name="lostSavings" id="lostSavings" class="input-xlarge">
+						<option value="">Select Reason for Not Booking the Lowest Fare</option>
+						<cfloop query="rc.qOutOfPolicy">
+							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
 						</cfloop>
-						</table>
-					</td>
-				</cfloop>
-<!--- 
-COST
---->			
-				<td width="100">
-					<cfset bTotalTrip = bTotalTrip + stItinerary.Air.Total>
-					<span class="blue bold large">#DollarFormat(stItinerary.Air.Total)#</span><br>
-					<span class="blue">
-						#(stItinerary.Air.Class EQ 'Y' ? 'Economy' : (stItinerary.Air.Class EQ 'C' ? 'Business' : 'First'))#<br>
-						#(stItinerary.Air.Ref ? 'Refundable' : 'Nonrefundable')#
-					</span>
+						</select> <br><br>
+					</div>
 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="#Group+1#">
-					<table width="100%">
+				<!---
+				If the fare is the same
+				--->
+				<cfelseif rc.Air.Total EQ lowestFare>
 
-<!---
-OUT OF POLICY
---->
-					<cfset nTD = 0>
+					<input type="hidden" name="lostSavings" value="C">
+
+				</cfif>
+
+				<!--- State of Texas --->
+				<cfif rc.showAll
+					OR rc.Filter.getAcctID() EQ 235>
+					*&nbsp;&nbsp;
+					<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
+						<select name="udid113" id="udid113" class="input-xlarge">
+						<option value="">Select an Exception Code</option>
+						<cfloop query="rc.qTXExceptionCodes">
+							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
+						</cfloop>
+						</select>
+						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
+					</div>
+
+				</cfif>
+
+			</td>
+
+		<tr>
+		<tr>
+
+			<td width="50"></td>
+
+			<td valign="top" width="120">
+
+				<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
+
+				#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
+
+			</td>
+
+			<td width="630">
+				<cfset seatFieldNames = ''>
+				<table width="600" padding="0" align="center">
+				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
+					<cfset count = 0>
+					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
+						<cfset count++>
+						<tr>
+							<td>
+								<cfif count EQ 1>
+									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
+								</cfif>
+							</td>
+
+							<td title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
+								#segment.Carrier# #segment.FlightNumber#
+							</td>
+
+							<td title="#application.stAirports[segment.Origin]# - #application.stAirports[segment.Destination]#">
+								#segment.Origin# - #segment.Destination#
+							</td>
+
+							<td>
+								#timeFormat(segment.DepartureTime, 'h:mmt')# - #timeFormat(segment.ArrivalTime, 'h:mmt')#
+							</td>
+
+							<td>
+								#uCase(segment.Cabin)#
+							</td>
+
+<!--- seats --->
+							<td id="#segmentIndex#">
+								<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
+									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
+									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
+									&nbsp; <span class="label label-success" id="segment_#segmentIndex#_display"></span>
+									<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
+									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')>
+								</cfif>
+							</td>
+
+						</tr>
+					</cfloop>
 					<tr>
-					<!---
-					If they are out of policy
-					AND they want to capture reason codes
-					--->
-					<cfif NOT AirPolicy
-					AND rc.Policy.Policy_AirReasonCode EQ 1>
-							<td>
-								<label for="Air_ReasonCode" class="#(structKeyExists(stTraveler.Errors, 'Air_ReasonCode') ? 'error' : '')#">Reason for booking outside of policy</label>
-							</td>
-							<td>
-								<select name="Air_ReasonCode" id="Air_ReasonCode">
-								<option value=""></option>
-								<cfloop query="rc.qOutOfPolicy">
-									<option value="#rc.qOutOfPolicy.FareSavingsCode#" <cfif structKeyExists(stTraveler, 'Air_ReasonCode') AND stTraveler.Air_ReasonCode EQ rc.qOutOfPolicy.FareSavingsCode>selected</cfif>>#rc.qOutOfPolicy.Description#</option>
-								</cfloop>
-								</select>
-							</td>
-							<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-					</cfif>
+						<td colspan="6">
+						<hr>
+						</td>
+					</tr>
+				</cfloop>
+				</table>
+			</td>
+			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
 
-<!---
-NOT LOWEST FARE
---->
-					<!---
-					If the fare is higher than the lowest
-					AND they are in policy OR the above drop down isn't showing
-					AND they want to capture lost savings
-					--->
-					<cfif stItinerary.Air.Total GT nLowestFare
-					AND (AirPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
-					AND rc.Policy.Policy_AirLostSavings EQ 1>
-							<td>
-								<label for="LostSavings" class="#(structKeyExists(stTraveler.Errors, 'LostSavings') ? 'error' : '')#">Reason for not booking the lowest fare</label>
-							</td>
-							<td>
-								<select name="LostSavings" id="LostSavings">
-								<option value=""></option>
-								<cfloop query="rc.qOutOfPolicy">
-									<option value="#rc.qOutOfPolicy.FareSavingsCode#" <cfif structKeyExists(stTraveler, 'LostSavings') AND stTraveler.LostSavings EQ rc.qOutOfPolicy.FareSavingsCode>selected</cfif>>#rc.qOutOfPolicy.Description#</option>
-								</cfloop>
-								</select>
-							</td>
-						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-					<!---
-					If the fare is the same
-					--->
-					<cfelseif stItinerary.Air.Total EQ nLowestFare>
-						<input type="hidden" name="LostSavings" value="C">
-					</cfif>
-<!---
-GENERAL SEAT ASSIGNMENTS
---->
-					<cfif NOT ArrayFind(stItinerary.Air.Carriers, 'WN')
-					AND NOT ArrayFind(stItinerary.Air.Carriers, 'FL')><!--- NOT (rc.segmentsair.Carrier EQ 'DL' AND Left(rc.segmentsair.Fare_Basis, 1) EQ 'E') --->
-							<td>
-								General Seat Selection
-							</td>
-							<td>
-								<select name="Seats" id="Seats">
-								<option value="">GENERAL SEAT SELECTION</option>
-								<option value="A" <cfif structKeyExists(stTraveler, 'Window_Aisle') AND stTraveler.Window_Aisle EQ 'A'>selected</cfif>>AISLE SEATS</option>
-								<option value="W" <cfif structKeyExists(stTraveler, 'Window_Aisle') AND stTraveler.Window_Aisle EQ 'W'>selected</cfif>>WINDOW SEATS</option>
-								</select>
-							</td>
-						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-							<td>
-								Specific Seat Seletion
-							</td>
-							<td>
-								<a href="?action=air.popup&sDetails=seatmap&SearchID=#rc.SearchID#&nTripID=#stItinerary.Air.nTrip#&Group=&bSelection=1" class="overlayTrigger" target="_blank">
-									Seat Maps
-									<cfloop collection="#stItinerary.Air.Groups#" index="GroupKey" item="stGroup">
-										<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
-											<cfset sFieldName = '#stSegment.Carrier##stSegment.FlightNumber##stSegment.Origin##stSegment.Destination#'>
-											<cfparam name="session.searches[#rc.SearchID#].stTravelers[nTraveler].stSeats.#sFieldName#" default="">
-											<input type="text" name="Seat#sFieldName#_view" id="Seat#sFieldName#_view" size="3" maxlength="4" value="#session.searches[rc.SearchID].stTravelers[nTraveler].stSeats[sFieldName]#" disabled>
-											<input type="hidden" name="Seat#sFieldName#" id="Seat#sFieldName#" value="#session.searches[rc.SearchID].stTravelers[nTraveler].stSeats[sFieldName]#">
-										</cfloop>
-									</cfloop>
-								</a>
-							</td>
-						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-					<cfelse>
-						<input type="hidden" name="Seat#i#" value="">
-					</cfif>
+			<td width="200" valign="top">
+				<span class="blue bold large">
+					#dollarFormat(rc.Air.Total)#<br>
+				</span>
+
+				Total including taxes and refunds<br>
+				#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
+				<span class="blue bold">
+					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
+						Flight change/cancellation policy
+					</a>
+				</span>
+
+			</td>
+		<tr>
+
+		<tr>
+			<td colspan="4"><br></td>
+		</tr>
+
+		<tr>
+
+			<td></td>
+
+			<td colspan="3">
+
 <!---
 FREQUENT PROGRAM NUMBER
 --->
-					<cfloop array="#stItinerary.Air.Carriers#" item="sCarrier">
-							<td>
-								#sCarrier# Frequent Flyer Number
-							</td>
-							<td>
-								<input type="text" name="Air_FF#sCarrier#" id="Air_FF#sCarrier#" size="18" maxlength="20" <cfif structKeyExists(stTraveler, 'Air_FF#sCarrier#')>value="#stTraveler['Air_FF#sCarrier#']#"</cfif>>
-							</td>
-						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-					</cfloop>
-<!---
-SPECIAL REQUEST
---->
-					<cfif rc.Policy.Policy_AllowRequests EQ 1>
-							<td>
-								Notes for our travel consultants #(rc.stFees.nRequestFee NEQ 0 ? 'for a #DollarFormat(rc.stFees.nRequestFee)# fee' : '')#
-							</td>
-							<td>
-								<textarea name="Special_Requests" id="Special_Requests" cols="40" rows="1" placeholder="">
-									<cfif structKeyExists(stTraveler, 'Special_Requests')>
-										#stTraveler.Special_Requests#
-									</cfif>
-								</textarea>
-							</td>
-						<cfset nTD++><cfif nTD EQ 2></tr><tr><cfset nTD = 0></cfif>
-					</cfif>
+				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
+
+					#sCarrier# Frequent Flyer ##
+					<input type="text" name="airFF#sCarrier#" id="airFF#sCarrier#" maxlength="20" class="input-medium">
+					&nbsp;&nbsp;&nbsp;
+
+				</cfloop>
 <!---
 ADDITIONAL REQUESTS
 --->
-						<td>
-							Special Requests
-						</td>
-						<td>
-							<select name="Service_Requests" id="Service_Requests">
-							<option value="">SPECIAL REQUESTS</option>
-							<option value="BLND" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'BLND'>selected</cfif>>BLIND</option>
-							<option value="DEAF" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'DEAF'>selected</cfif>>DEAF</option>
-							<option value="UMNR" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'UMNR'>selected</cfif>>UNACCOMPANIED MINOR</option>
-							<option value="WCHR" <cfif structKeyExists(stTraveler, 'Service_Requests') AND stTraveler.Service_Requests EQ 'WCHR'>selected</cfif>>WHEELCHAIR</option>
-							</select>
-						</td>
-					</tr>
-					</table>
-				</td>
-				<td>
-				</td>
-			</tr>
-			</table>
-		</div>
+				<select name="specialNeeds" id="specialNeeds">
+				<option value="">SPECIAL REQUESTS</option>
+				<option value="BLND">BLIND</option>
+				<option value="DEAF">DEAF</option>
+				<option value="UMNR">UNACCOMPANIED MINOR</option>
+				<option value="WCHR">WHEELCHAIR</option>
+				</select>
+<!---
+GENERAL SEATS
+--->
+				<cfset showWindowAisle = false />
+				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
+					<cfif NOT listFind('WN,F9', sCarrier)>
+						<cfset showWindowAisle = true />
+					</cfif>
+				</cfloop>
+				<cfif showWindowAisle>
+					<select name="windowAisle" id="windowAisle">
+						<option value="">SEATS</option>
+						<option value="Window">WINDOW</option>
+						<option value="Aisle">AISLE</option>
+					</select>
+					<br />
+				</cfif>
+<!---
+SPECIAL REQUEST
+--->
+				<cfif rc.showAll
+					OR rc.Policy.Policy_AllowRequests>
+					<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
+				</cfif>
+
+			</td>
+
+		</tr>
+		</table>
+
 	</cfif>
+
+
+#View('modal/popup')#
+
+
 </cfoutput>
+

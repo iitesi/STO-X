@@ -40,129 +40,209 @@ function showManualCreditCard(type) {
 */
 function selectSeats(sCarrier, nFlightNumber, sSeat, sOrigin, Destination) {
 
-    var SearchID = $( "#SearchID" ).val();
-    var nTraveler = $( "#nTraveler" ).val();
-    var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
+		var SearchID = $( "#SearchID" ).val();
+		var nTraveler = $( "#nTraveler" ).val();
+		var oldSeat = $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination).val();
 
-    $( "#" + oldSeat ).removeClass('currentseat');
-    $( "#" + sSeat ).addClass('currentseat');
+		$( "#" + oldSeat ).removeClass('currentseat');
+		$( "#" + sSeat ).addClass('currentseat');
 
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
-    $( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_view").val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination + "_popup").val(sSeat);
+		$( "#Seat" + sCarrier + nFlightNumber + sOrigin + Destination ).val(sSeat);
 
-    $.ajax({
-        type: 'POST',
-        url: 'services/traveler.cfc',
-        data: {
-            method: 'setSeat',
-            SearchID: SearchID,
-            nTraveler: nTraveler,
-            sCarrier: sCarrier,
-            nFlightNumber: nFlightNumber,
-            sOrigin: sOrigin,
-            Destination: Destination,
-            sSeat: sSeat
-        },
-        dataType: 'json'
-    });
+		$.ajax({
+				type: 'POST',
+				url: 'services/traveler.cfc',
+				data: {
+						method: 'setSeat',
+						SearchID: SearchID,
+						nTraveler: nTraveler,
+						sCarrier: sCarrier,
+						nFlightNumber: nFlightNumber,
+						sOrigin: sOrigin,
+						Destination: Destination,
+						sSeat: sSeat
+				},
+				dataType: 'json'
+		});
 
-    return false;
+		return false;
 }
+
 function getUnusedTickets(userid, acctid) {
-
-    $.ajax({type:"POST",
-        url: 'services/reports.cfc?method=showUnusedTickets',
-        data:"UserID="+userid+"&AcctID="+acctid,
-        dataType: 'json',
-        success:function(data) {
-            $("#unusedtickets").html(data);
-        },
-        error:function(test, tes, te) {
-            console.log('error');
-        }
-    });
-
-    return false;
-}
-function filterAir() {
-																			//console.log('start');
-	var classy = $( "#ClassY:checked" ).val();
-	var classc = $( "#ClassC:checked" ).val();
-	var classf = $( "#ClassF:checked" ).val();
-	var fare0 = $( "#Fare0:checked" ).val();
-	var fare1 = $( "#Fare1:checked" ).val();
-	var nonstops = $( "input:checkbox[name=NonStops]:checked" ).val();
-	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
-	var singlecarrier = $( "input:checkbox[name=SingleCarrier]:checked" ).val();
-	/*
-	 * 	0	Token				-23445611128
-	 * 	1	Policy				1/0
-	 * 	2 	Multiple Carriers	1/0
-	 * 	3 	Carriers			"DL","AA","UA"
-	 * 	4	Refundable			1/0
-	 * 	5	Preferred			1/0
-	 * 	6	Cabin Class			Y, C, F
-	 * 	7	Stops				0/1/2
-	 */
-	 																		//console.log('---------------------------------------------------------------------');
-	 																		//console.log('nonstops - '+nonstops);
-	 																		//console.log('policy - '+policy);
-	 																		//console.log('singlecarrier - '+singlecarrier);
-	 																		//console.log('ran');
-	 																		//console.log(flightresults);
-	for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
-		var flight = flightresults[loopcnt];
-																			//console.log(flight)
-																			//console.log(classy)
-		if ((flight[6] == 'Y' && classy == undefined)
-		|| (flight[6] == 'C' && classc == undefined)
-		|| (flight[6] == 'F' && classf == undefined)
-		|| (flight[4] == 0 && fare0 == undefined)
-		|| (flight[4] == 1 && fare1 == undefined)
-		|| (nonstops == 'on' && flight[7] != 0)
-		|| (policy == 'on' && flight[1] != 1)
-		|| (singlecarrier == 'on' && flight[2] != 0)) {
-			$( '#' + flight[0] ).hide( 'fade' );
-	 																		//console.log('---------------------------------------------------------------------');
-																			//console.log('hide - '+flight[0]);
-																			//console.log('hide - classofservice Y - '+(flight[6] == 'Y' && classy == undefined));
-																			//console.log('hide - fares - '+(fares != flight[4]));
-																			//console.log('hide - nonstops - '+(nonstops == 'on' && flight[7] != 0));
-																			//console.log('hide - policy - '+(policy == 'on' && flight[1] != 1));
-																			//console.log('hide - classofservice - '+(classofservice != flight[6]));
-																			//console.log('hide - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
-		}
-		else {
-			carriercount = 0;
-			for (var i = 0; i < flight[3].length; i++) {
-				if ($( "#Carrier" + flight[3][i] ).is(':checked') == true) {
-					carriercount++;
-				}
+	$.ajax({type:"POST",
+			url: 'services/reports.cfc?method=showUnusedTickets',
+			data:"UserID="+userid+"&AcctID="+acctid,
+			dataType: 'json',
+			success:function(data) {
+					$("#unusedtickets").html(data);
+			},
+			error:function(test, tes, te) {
+					// console.log('error');
 			}
-			if (carriercount == 0) {
-				$( '#' + flight[0] ).hide( 'fade' );
-			}
-			else {
-				$( '#' + flight[0] ).show( 'fade' );
-	 																		//console.log('---------------------------------------------------------------------');
-																			//console.log('show - '+flight[0]);
-																			//console.log('show - classofservice - '+(classofservice != flight[6]));
-																			//console.log('show - fares - '+(fares != flight[4]));
-																			//console.log('show - nonstops - '+(nonstops == 'on' && flight[7] != 0));
-																			//console.log('show - policy - '+(policy == 'on' && flight[1] != 1));
-																			//console.log('show - classofservice - '+(classofservice != flight[6]));
-																			//console.log('show - singlecarrier - '+(singlecarrier == 'on' && flight[2] != 0));
-			}
-		}
-	}
+	});
 	return false;
 }
 
-function sortAir (sort) {
-	var sortlist = eval( 'sort' + sort );
+
+/* ----------------------------------------------------------------------
+ FILTER AIR
+
+	******** Tread carefully - the code below is fragile! *************
+
+	FlightResults = ["-721584238", 1, 0, ["AA"], "0", 1, "Y", 0]
+
+	0	Token							23445611128 (appended with 'flight' in code as CSS id's shouldn't start with number)
+	1	Policy						1/0
+	2 Multiple Carriers	1/0
+	3 Carriers					"DL","AA","UA"
+	4	Refundable				1/0
+	5	Preferred					1/0
+	6	Cabin Class				Y, C, F
+	7	Stops							0/1/2
+
+	console.log('flight[1] = ' + flight[1] + ' | inpolicy = ' + inpolicy);
+	console.log('flight[2] = ' + flight[2] + ' | singlecarrier = ' + singlecarrier);
+	console.log('flight[4] = ' + flight[4] + ' | fare0 = ' + fare0 + ' | fare1 = ' + fare1);
+	console.log('flight[6] = ' + flight[6] + ' | classy = ' + classy + ' | classc = ' + classc + ' | classf = ' + classf );
+	console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
+	console.log('-------------------------------')
+----------------------------------------------------------------------*/
+function filterAir(reset) {
+
+ console.clear();
+
+	var loopcnt = 0;
+	var classy = $("#ClassY:checked").val();
+	var classc = $("#ClassC:checked").val();
+	var classf = $("#ClassF:checked").val();
+	var fare0 = $("#Fare0:checked").val();
+	var fare1 = $("#Fare1:checked").val();
+	var nonstops = $("#NonStops").val();
+	var inpolicy = $("#InPolicy").val();
+	var singlecarrier = $("#SingleCarrier").val();
+	var showCount = 0;
+	var showFlight = false;
+
+	// see if any airlines are checked in filter
+	var airfields = $('#airlines').find('input[name="carrier"]:checked');
+
+	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
+	if(reset == 'true'){
+
+		// set count to all, and show all badges
+		showCount = flightresults.length;
+		$('[id^="flight"]').show();
+
+	} else {
+
+		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
+			var flight = flightresults[loopcnt];
+			showFlight = true;
+
+			// loop through and only check each subsequent filter if the previous
+			// filter didn't already hide it (showflight=true)
+
+			// check in-policy, single carrier and non-stops
+			if(showFlight == true){
+				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] != 0 && nonstops == 1) ){
+					showFlight = false;
+				}
+			}
+
+			// check refundable / non-refundable and not both checked at once which would imply you want to see everything
+			if(showFlight == true){
+				if(
+						(
+							(fare0 == 0 && flight[4] == 1)
+							|| (fare1 == 1 && flight[4] == 0)
+						)
+					// if all are selected show all
+					&& !( fare0 == 0 && fare1 == 1)
+				){
+					showFlight = false;
+				}
+			}
+
+			// check class Y = Economy, C = Business, F = First
+			if(showFlight == true){
+
+				if ( // single selection made
+					( classy == 'Y' && classc != 'C' && classf != 'F' )
+					|| ( classc == 'C' && classy != 'Y' && classf != 'F' )
+					|| ( classf == 'F' && classy != 'Y' && classc != 'C' )
+				){
+					 if (
+						 		( classy == 'Y' && flight[6] == 'C' || classy == 'Y' && flight[6] == 'F')
+						 || ( classc == 'C' && flight[6] == 'Y' || classc == 'C' && flight[6] == 'F' )
+						 || ( classf == 'F' && flight[6] == 'Y' || classf == 'F' && flight[6] == 'C' )
+				 			// if all are selected show all
+					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
+					 	) {
+					 		showFlight = false;
+					 	} // inside if
+
+				} else if ( // two selections made
+
+						 ( classy == 'Y' && classc == 'C' && classf != 'F' )
+					|| ( classy == 'Y' && classf == 'F' && classc != 'C' )
+					|| ( classc == 'C' && classf == 'F' && classy != 'Y' )
+				){
+					 if (
+									( classy == 'Y' && classc == 'C' && classf != 'F' && flight[6] == 'F' )
+							|| 	( classf == 'F' && classc == 'C' && classy != 'Y' && flight[6] == 'Y' )
+							|| 	( classy == 'Y' && classf == 'F' && classc != 'C' && flight[6] == 'C' )
+				 			// if all are selected show all
+					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
+					 	) {
+					 		showFlight = false;
+					 	} // inside if
+				} // two selections made
+			} // showflight = true
+
+			// check carriers
+			if(showFlight == true){
+					// check first to see if ANY airlines are checked
+					if (airfields.length) {
+							for (var i = 0; i < flight[3].length; i++) {
+								if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
+									showFlight = false;
+								} // if carrier is checked
+							} // for flight loop
+					} // airfields.length
+			} // showflight = true
+
+		// show or hide flight
+			if(showFlight == true){
+				showCount++;
+				$( '#flight' + flight[0] ).show();
+			} else {
+				$( '#flight' + flight[0] ).hide();
+			}
+
+		} // end of for loop
+	} // of if if reset
+
+	// show/hide no flights found message
+	if(showCount == 0){
+		$('.noFlightsFound').show();
+	} else {
+		$('.noFlightsFound').hide();
+	}
+
+	// show flight count
+ 	$('#flightCount').text(showCount + ' of ' + flightresults.length);
+	$('.spinner').hide();
+	return false;
+} // ----------- end of function filterAir()------------------------------------
+
+
+function sortAir(sort) {
+	var sortlist = eval( sort );
+	// console.log(sortlist);
 	for (var t = 0; t < sortlist.length; t++) {
-		$( "#aircontent" ).append( $( "#" + sortlist[t] ) );
+		$( "#aircontent" ).append( $( "#flight" + sortlist[t] ) );
 	}
 	return false;
 }
@@ -174,14 +254,14 @@ function AirPrice(searchid, trip_id, cabin, refundable) {
 		async: true,
 		dataType: 'json',
 		timeOut: 5000,
-		success:function(data) {	
+		success:function(data) {
 			$( "#" + trip_id + cabin + refundable ).html(data);
-			console.log(data);
+			// console.log(data);
 		},
 		error:function(test, tes, te) {
-			console.log(test);
-			console.log(tes);
-			console.log(te);
+			// console.log(test);
+			// console.log(tes);
+			// console.log(te);
 		}
 	});
 	return false;
@@ -314,7 +394,7 @@ function showDetails(searchid,property_id,hotel_chain,rate_type) {
 				if (DetailsShown == false) {
 					table+='<tr><td><em>There are no details for this hotel.</em></td></tr>';
 				}
-	
+
 			});
 			table+='</table>';
 			$("#checkrates"+property_id).html(table).show();
@@ -405,45 +485,62 @@ function showPhotos(searchid,property_id,hotel_chain) {
 
 $(document).ready(function() {
 
-  $("#SoldOut")
-  .button()
-  .change(function() {
-  	filterhotel();
-  });
+ // bootstrap tooltips
+ //  add  " rel='tooltip' " to element and it will use that elements title text as toolip
+	$(function () {
+		$("[rel='tooltip']").tooltip({container: 'body'});
+	});
 
-  $("#Policy")
-  .button()
-  .change(function() {
-  	filterhotel();
-  });
+	$("[rel='popover']").popover({container: 'body', trigger:"hover", html: true, placement:"bottom"});
+	$("[rel='poptop']").popover({container: 'body', trigger:"hover", html: true, placement:"top"});
 
-  $(".radiobuttons").buttonset();
-  $("#HotelChains").button();
+	$("#SoldOut")
+	.button()
+	.change(function() {
+		filterhotel();
+	});
+
+	$("#Policy")
+	.button()
+	.change(function() {
+		filterhotel();
+	});
+
+	$(".radiobuttons").buttonset();
+	$("#HotelChains").button();
 	$("#HotelAmenities").button();
 
-});
+	// -------------------------------
+	// MODALS
+	// -------------------------------
+	$('.summarySeatMapModal').on('click', function() {
+	 	$('#popupModalHeader').text( 'Select Seat' );
+		$('#popupModalBody').html( '<i class="icon-spinner icon-spin"></i> One moment, we are retrieving your seat map details...' );
+	});
+
+}); // end of jquery document ready
 
 function loadImage(image, property_id) {
-  $( "#hotelimage" + property_id ).html('');
-  var img = new Image();
-  $(img).load(function () {
-    $(img).hide();
-    $( "#hotelimage" + property_id ).html(img);
-    $(img).fadeIn('slow');
-  }).attr('src', image)
-  .attr('style','max-width: 125px;');
-  return false;
+	$( "#hotelimage" + property_id ).html('');
+	var img = new Image();
+	$(img).load(function () {
+		$(img).hide();
+		$( "#hotelimage" + property_id ).html(img);
+		$(img).fadeIn('slow');
+	}).attr('src', image)
+	.attr('style','max-width: 125px;');
+	return false;
 }
 
 function sortHotel(sort) {
-  $( "#current_page" ).val(0);
-  $( "#sorttype" ).val(sort);
-  var order = $( "#hotellist" + sort + "sort" ).val();
-  order = order.split(',');
-  for (var t = 0; t < order.length; t++) {
-    $( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
-  }
-  filterhotel();
+	$( "#current_page" ).val(0);
+	$( "#sorttype" ).val(sort);
+	var order = $( "#hotellist" + sort + "sort" ).val();
+	order = order.split(',');
+	for (var t = 0; t < order.length; t++) {
+		$( "#hotelresults" ).append( $( "#hotellist" + order[t] ) );
+	}
+	filterhotel();
 }
 
 function setImage(count, property_id) {
@@ -503,7 +600,7 @@ function submitHotel (sHotel,sRoomDescription) {
 
 //PAGES
 function writePages(number_of_items) {
-	
+
 	//calculate the number of pages that are needed
 	var number_of_pages = Math.ceil(number_of_items/20);
 	//set current page
@@ -529,14 +626,14 @@ function writePages(number_of_items) {
 	}
 	//create html for the next link
 	if (($('#current_page').val() != number_of_pages-1) && (number_of_pages > 0)) {
- 	   navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';   
+		 navigation_html+='<a class=next_page href="javascript:next();">Next Page >></a>';
 	}
 	//write the html to the navigation div
-  $('#page_navigation').html(navigation_html);   
-  $('#page_navigation2').html(navigation_html);   
-  //add active_page class to the active page link   
-  $('#page_navigation .page_link').eq(current_page).addClass('active_page');   
-  $('#page_navigation2 .page_link').eq(current_page).addClass('active_page');   
+	$('#page_navigation').html(navigation_html);
+	$('#page_navigation2').html(navigation_html);
+	//add active_page class to the active page link
+	$('#page_navigation .page_link').eq(current_page).addClass('active_page');
+	$('#page_navigation2 .page_link').eq(current_page).addClass('active_page');
 	return false;
 }
 
@@ -562,49 +659,89 @@ function go_to_page(new_page) {
 CAR SECTION
 --------------------------------------------------------------------------------------------------------------------
 */
-function filterCar() {
-	var policy = $( "input:checkbox[name=Policy]:checked" ).val();
+function filterCar(howFilter) {
+	if (howFilter == 'clearAll') {
+		$(":checkbox").prop('checked', false);
+		$("#btnPolicy").parent().removeClass('active');
+		$("#fltrVendorSelectAll").val(true);
+		$("#fltrCarCategorySelectAll").val(true);
+	}
+
+	var policy = $("#btnPolicy").parent().hasClass('active');
 	var nCount = 0;
+
+	// Logic for displaying or not displaying a particular result
+	// If (fltrVendorSelectAll is true and fltrCarCategorySelectAll is true)
+	// OR (fltrVendorSelectAll is false and that vendor is checked)
+	// OR (fltrCarCategorySelectAll is false and that category is checked)
+	// AND in policy, show
+	// Else, hide
 
 	for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 		var car = carresults[loopcnt];
-																							//console.log(car)
-		if (($( "#btnCategory" + car[1] ).is(':checked') == false)
-		|| ($( "#btnVendor" + car[2] ).is(':checked') == false)
-		|| (policy == 'on' && car[3] != 1)) {
-			$( "#" + car[0] ).hide();
-		}
-		else {
+
+		var inpolicy = ((policy == false) || (policy == true && car[3] == 1)) ? true : false;
+
+		if (((($("#fltrVendorSelectAll").val() == 'true') && ($("#fltrCarCategorySelectAll").val() == 'true'))
+			|| ((($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))
+				&& (($("#fltrCarCategorySelectAll").val() == 'true')
+					|| ($("#fltrCarCategorySelectAll").val() == 'false') && ($( "#fltrCategory" + car[1] ).is(':checked') == true)))
+			|| ((($("#fltrCarCategorySelectAll").val() == 'false') && ($( "#fltrCategory" + car[1] ).is(':checked') == true))
+				&& (($("#fltrVendorSelectAll").val() == 'true')
+					|| ($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))))
+			&& inpolicy) {
 			$( "#" + car[0] ).show();
 			nCount++;
+		}
+		else {
+			$( "#" + car[0] ).hide();
 		}
 	}
 	for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
 		var category = carcategories[loopcnt];
-																							//console.log(category);
-		if (($( "#btnCategory" + category[0] ).is(':checked') == false)
-		|| (policy == 'on' && category[1] != 1)) {
-			$( '#row' + category ).hide();
+
+		var inpolicy = ((policy == false) || (policy == true && category[1] == 1)) ? true : false;
+
+		if ((($("#fltrCarCategorySelectAll").val() == 'true') || ($( "#fltrCategory" + category[0] ).is(':checked') == true)) && inpolicy) {
+			$( '#row' + category ).show();
 		}
 		else {
-			$( '#row' + category ).show();
+			$( '#row' + category ).hide();
 		}
 	}
 	for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 		var vendor = carvendors[loopcnt];
-																							//console.log(category);
-		if (($( "#btnVendor" + vendor[0] ).is(':checked') == false)
-		|| (policy == 'on' && vendor[1] != 1)) {
-			$( '#vendor' + vendor[0] ).hide();
-		}
-		else {
+
+		var inpolicy = ((policy == false) || (policy == true && vendor[1] == 1)) ? true : false;
+
+		if ((($("#fltrVendorSelectAll").val() == 'true') || ($( "#fltrVendor" + vendor[0] ).is(':checked') == true)) && inpolicy) {
 			$( '#vendor' + vendor[0] ).show();
 		}
+		else {
+			$( '#vendor' + vendor[0] ).hide();
+		}
+	}
+
+	if(nCount == 0) {
+		if(carresults.length == 0) {
+			$("#noSearchResults").show();
+		}
+		else {
+			$("#noFilteredResults").show();
+		}
+		$("#vendorRow").hide();
+		$("#categoryRow").hide();
+	}
+	else {
+		$("#noSearchResults").hide();
+		$("#noFilteredResults").hide();
+		$("#vendorRow").show();
+		$("#categoryRow").show();
 	}
 
 	return nCount;
 }
-$(document).ready(function() {
+/* $(document).ready(function() {
 	$("#overlay").jqm({
 		modal: true,
 		ajax: "@href",
@@ -614,8 +751,8 @@ $(document).ready(function() {
 		target: "#overlayContent",
 		overlay:75
 	});
-	
-});
+
+}); */
 
 /* CouldYou */
 
@@ -632,13 +769,13 @@ function getTotal(data,startdate) {
 }
 
 function logError(test,tes,te) {
-	console.log(test);
-	console.log(tes);
-	console.log(te);	
+	// console.log(test);
+	// console.log(tes);
+	// console.log(te);
 }
 
 function couldYouAir(searchid,trip,cabin,refundable,adddays,startdate,viewDay,currenttotal) {
-    console.log('air')
+		// console.log('air')
 	$.ajax({type:"POST",
 		url:"services/couldyou.cfc?method=doAirPriceCouldYou",
 		data:"SearchID="+searchid+"&nTrip="+trip+"&sCabin="+cabin+"&bRefundable="+refundable+"&nTripDay="+adddays+"&nStartDate="+startdate+"&nTotal="+currenttotal,
@@ -691,69 +828,69 @@ function couldYouCar(searchid,carchain,cartype,viewDay,startdate,currenttotal) {
 
 
 function setOtherFields(nTraveler, overrideEverything) {
-    var SearchID = $( "#SearchID" ).val();
-    $.ajax({
-        type: 'POST',
-        url: 'services/traveler.cfc',
-        data: {
-            method: 'getTraveler',
-            nTraveler: nTraveler,
-            SearchID: SearchID
-        },
-        dataType: 'json',
-        success: function(traveler) {
-            //set global variables
-            var sCarriers = $( "#sCarriers" ).val().split(',');
-            var sCarVendor = $( "#sCarVendor" ).val();
-            //set variables if defined
-            var stAirFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['A'] != 'undefined') {
-                stAirFFs = traveler['STFFACCOUNTS']['A'];
-            }
-            var stCarFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['C'] != 'undefined') {
-                stCarFFs = traveler['STFFACCOUNTS']['C'];
-            }
-            var stHotelFFs = new Object();
-            if (typeof traveler['STFFACCOUNTS'] != 'undefined'
-                && typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
-                stHotelFFs = traveler['STFFACCOUNTS']['H'];
-            }
-            var stFOPs = new Object();
-            if (typeof traveler['STFOPS'] != 'undefined') {
-                stFOPs = traveler['STFOPS'];
-            }
-            var sSeat = '';
-            if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
-                sSeat = traveler['WINDOW_AISLE'];
-            }
-            //logic to update form fields
-            for (var i = 0; i < stFOPs.length; i++) {
-                console.log(stFOPs[i]);
+		var SearchID = $( "#SearchID" ).val();
+		$.ajax({
+				type: 'POST',
+				url: 'services/traveler.cfc',
+				data: {
+						method: 'getTraveler',
+						nTraveler: nTraveler,
+						SearchID: SearchID
+				},
+				dataType: 'json',
+				success: function(traveler) {
+						//set global variables
+						var sCarriers = $( "#sCarriers" ).val().split(',');
+						var sCarVendor = $( "#sCarVendor" ).val();
+						//set variables if defined
+						var stAirFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['A'] != 'undefined') {
+								stAirFFs = traveler['STFFACCOUNTS']['A'];
+						}
+						var stCarFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['C'] != 'undefined') {
+								stCarFFs = traveler['STFFACCOUNTS']['C'];
+						}
+						var stHotelFFs = new Object();
+						if (typeof traveler['STFFACCOUNTS'] != 'undefined'
+								&& typeof traveler['STFFACCOUNTS']['H'] != 'undefined') {
+								stHotelFFs = traveler['STFFACCOUNTS']['H'];
+						}
+						var stFOPs = new Object();
+						if (typeof traveler['STFOPS'] != 'undefined') {
+								stFOPs = traveler['STFOPS'];
+						}
+						var sSeat = '';
+						if (typeof traveler['WINDOW_AISLE'] != 'undefined') {
+								sSeat = traveler['WINDOW_AISLE'];
+						}
+						//logic to update form fields
+						for (var i = 0; i < stFOPs.length; i++) {
+								// console.log(stFOPs[i]);
 
-            }
-            if (($( "#Air_FF" + sCarriers[i] ).val() == '')
-            || overrideEverything == true) {
-	            for (var i = 0; i < sCarriers.length; i++) {
-	                if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
-	                    $( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
-	                }
-	                else {
-	                    $( "#Air_FF" + sCarriers[i] ).val('');
-	                }
-	            }
-            }
-            if (typeof stCarFFs[sCarVendor] != 'undefined') {
-                $( "#Car_FF" ).val(stCarFFs[sCarVendor]);
-            }
-            else {
-                $( "#Car_FF" ).val('');
-            }
-            $( "#Seats" ).val(sSeat);
-        }
-    });
+						}
+						if (($( "#Air_FF" + sCarriers[i] ).val() == '')
+						|| overrideEverything == true) {
+							for (var i = 0; i < sCarriers.length; i++) {
+									if (typeof stAirFFs[sCarriers[i]] != 'undefined') {
+											$( "#Air_FF" + sCarriers[i] ).val(stAirFFs[sCarriers[i]]);
+									}
+									else {
+											$( "#Air_FF" + sCarriers[i] ).val('');
+									}
+							}
+						}
+						if (typeof stCarFFs[sCarVendor] != 'undefined') {
+								$( "#Car_FF" ).val(stCarFFs[sCarVendor]);
+						}
+						else {
+								$( "#Car_FF" ).val('');
+						}
+						$( "#Seats" ).val(sSeat);
+				}
+		});
 }
 
 function getAuthorizedTravelers(userID, acctID) {
@@ -763,7 +900,7 @@ function getAuthorizedTravelers(userID, acctID) {
 		data: {	method: 'getAuthorizedTravelers',
 				userID: userID,
 				acctID: acctID
-			  },
+				},
 		dataType: 'json',
 		success: function(Travelers) {
 			$.each(Travelers, function(index,Traveler) {
@@ -780,7 +917,7 @@ function getUser(userID) {
 		url: 'RemoteProxy.cfc',
 		data: {	method: 'getUser',
 				userID: userID
-			  },
+				},
 		dataType: 'json',
 		success: function(User) {
 			$( "#firstName" ).val( User.firstName );
@@ -806,7 +943,7 @@ function getUserCCEmails(userID) {
 		data: {	method: 'getUserCCEmails',
 				userID: userID,
 				returnType: 'string'
-			  },
+				},
 		dataType: 'json',
 		success: function(ccEmails) {
 			$( "#ccEmails" ).val( ccEmails );
@@ -835,7 +972,7 @@ function setTravelerForm(nTraveler, bCollapse, nDefaultUser) {
 		},
 		dataType: 'json',
 		success: function(data) {
-			console.log(data);
+			// console.log(data);
 			writeTravelerForm(data);
 			$( "#travelerForm" ).html(data);
 			//setPaymentForm(nTraveler);

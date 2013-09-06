@@ -1,125 +1,144 @@
-<!---<cfset nOverallStart = getTickCount('nano')>
-<cfoutput>
-	<cfset sCacheFileName = '/cache/'&rc.SearchID&'/'&Hash(stTrip.toString())&'.html'>
-	<cfset nOverallStart = getTickCount('nano') - nOverallStart>
-	<cfif NOT directoryExists('/cache/'&rc.SearchID)>
-		<cfdirectory action="create" directory="/cache/#rc.SearchID#">
-	</cfif>
-</cfoutput>
+<cfparam name="variables.minheight" default="250"/>
+<cfset ribbonClass = "">
+<cfset carrierList = "">
 
-<cfif NOT fileExists(sCacheFileName)>--->
-	<cfsavecontent variable="sBadge" trim="#true#">
-		<cfoutput>
-			<div class="badge">
-				<table height="#variables.minheight#" width="100%">
-				<tr>
-					<td colspan="2" align="center">
-						#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br>')#
+<cfsavecontent variable="sBadge" trim="#true#">
 
-						#(NOT bDisplayFare OR NOT stTrip.PrivateFare ? '' : '<span class="medium blue bold">CONTRACTED</span><br>')#
-						<!---  <cfset sImg = (ListLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers : 'Mult')><cfif sImg NEQ 'Mult'>title="#application.stAirVendors[sImg].Name#"<cfelse>title="Multiple Carriers"</cfif> --->
-						<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
-						#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br>'&application.stAirVendors[stTrip.Carriers[1]].Name : '')#
-						#(NOT stTrip.Preferred ? '' : '<span class="medium blue bold">PREFERRED</span><br>')#
-					</td>
-					<td colspan="2" class="fares" align="right">
-						<cfif bDisplayFare>
-							#(stTrip.Policy ? '' : '<span class="red bold" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span><br>')#
-							#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
-							<input type="submit" class="button#stTrip.Policy#policy" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
-							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
-						<cfelse>
-							<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
+			<!--- create ribbon --->
+			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
+				<cfset ribbonClass = "ribbon-l-pref-cont">
+			<cfelseif stTrip.preferred EQ 1>
+				<cfset ribbonClass = "ribbon-l-pref">
+			<cfelseif bDisplayFare AND stTrip.PrivateFare>
+				<cfset ribbonClass = "ribbon-l-cont">
+			</cfif>
+
+			<!--- finally add default 'ribbon' class --->
+			<cfif Len(ribbonClass)>
+				<cfset ribbonClass = "ribbon " & ribbonClass>
+			</cfif>
+
+
+
+	<cfoutput>
+		<div class="badge">
+			<!--- display ribbon --->
+			<span class="#ribbonclass#"></span>
+
+			<!--- TODO: uncomment for debugging
+			<cfif IsLocalHost(cgi.local_addr)>
+						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
+			</cfif>
+			--->
+
+			<table height="#variables.minheight#" width="100%" border="0">
+			<tr align="center">
+				<td width="50%" colspan="2">
+					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
+					<strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong><br>
+				</td>
+				<td colspan="2">
+					<cfif bDisplayFare>
+						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#
+						<br>
+						<cfset btnClass = "">
+						<cfif stTrip.policy EQ 1>
+							<cfset btnClass = "btn-primary">
 						</cfif>
+						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
+						<br>
+						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
+							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
+					<cfelse>
+						<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
+					</cfif>
+				</td>
+			</tr>
+			<cfif !bSelected AND !stTrip.Policy>
+			<tr align="center">
+				<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
+				<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#ArrayToList(stTrip.aPolicies)#">OUT OF POLICY</span>')#</td>
+			</tr>
+			</cfif>
+			<tr>
+				<td colspan="4">&nbsp;</td>
+			</tr>
+			<cfloop collection="#stTrip.Groups#" item="Group" >
+				<cfset stGroup = stTrip.Groups[Group]>
+				<tr>
+					<td>&nbsp;</td>
+					<td title="#application.stAirports[stGroup.Origin]#">
+						<strong>#stGroup.Origin#</strong>
+					</td>
+					<td>&nbsp;</td>
+					<td title="#application.stAirports[stGroup.Destination]#">
+						<strong>#stGroup.Destination#</strong>
 					</td>
 				</tr>
-				<cfloop collection="#stTrip.Groups#" item="Group" >
-					<cfset stGroup = stTrip.Groups[Group]>
+				<tr>
+					<td>
+						<strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong>
+					</td>
+					<td>
+						<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
+					</td>
+					<td>
+						-
+					</td>
+					<td>
+						<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong>
+					</td>
+				</tr>
+				<cfset nCnt = 0>
+				<cfloop collection="#stGroup.Segments#" item="nSegment" >
+					<cfset nCnt++>
+					<cfset stSegment = stGroup.Segments[nSegment]>
+					<cfif NOT listFind(carrierList, stSegment.Carrier)>
+						<cfset carrierList = ListAppend(carrierList, stSegment.Carrier)>
+					</cfif>
+
 					<tr>
-						<td> </td>
-						<td title="#application.stAirports[stGroup.Origin]#">
-							<strong>#stGroup.Origin#</strong>
-						</td>
-						<td> </td>
-						<td title="#application.stAirports[stGroup.Destination]#">
-                            <strong>#stGroup.Destination#</strong>
+						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
+						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination]#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+						<td valign="top">
+							<cfif nCnt EQ 1>
+								#stGroup.TravelTime#
+								<cfset nFirstSeg = nSegment>
+							</cfif>
 						</td>
 					</tr>
-					<tr>
-						<td>
-							<strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong>
-						</td>
-						<td>
-							<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
-						</td>
-						<td>
-							-
-						</td>
-						<td>
-							<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong>
-						</td>
-					</tr>
-					<cfset nCnt = 0>
-					<cfloop collection="#stGroup.Segments#" item="nSegment" >
-						<cfset nCnt++>
-						<cfset stSegment = stGroup.Segments[nSegment]>
-						<tr>
-							<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
-							<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-							<td valign="top" title="#application.stAirports[stSegment.Destination]#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#' : '')#</span><!---  ---></td>
-							<td valign="top">
-								<cfif nCnt EQ 1>
-									#stGroup.TravelTime#
-									<cfset nFirstSeg = nSegment>
-								</cfif>
-							</td>
-						</tr>
-					</cfloop>
 				</cfloop>
 				<tr>
-					<td height="100%" valign="bottom" colspan="4">
-						<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-						<a href="?action=air.popup&sDetails=details&#sURL#" class="overlayTrigger">Details <span class="divider">/</span></a>
-						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-							<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="overlayTrigger" target="_blank">Seats <span class="divider">/</span></a>
-						</cfif>
-						<a href="?action=air.popup&sDetails=baggage&#sURL#" class="overlayTrigger">Bags <span class="divider">/</span></a>
-						<a href="?action=air.popup&sDetails=email&#sURL#" class="overlayTrigger">Email</a>
-						<cfif bDisplayFare>
-							<ul class="smallnav">
-								<li class="main">+
-									<ul>
-										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=0">Economy Class - Non Refundable</a></li>
-										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=Y&bRefundable=1">Economy Class - Refundable</a></li>
-										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=0">Business Class - Non Refundable</a></li>
-										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=C&bRefundable=1">Business Class - Refundable</a></li>
-										<li><a href="?action=air.price&SearchID=#rc.SearchID#&nTrip=#nTripKey#&sCabin=F&bRefundable=0">First Class - Non Refundable</a></li>
-									</ul>
-								</li>
-							</ul>
-						</cfif>
-					</td>
-                </tr>
-                </table>
-			</div>
-		</cfoutput>
-	</cfsavecontent>
-	<!---<cfset fileWrite(sCacheFileName, sBadge)>
-<cfelseif nCount LTE 5>
-	<cfset sBadge = fileRead(sCacheFileName)>
-</cfif>
-<cfoutput>
-	<cfif nCount GT 5>
-		<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
-		</div>
-		<script type="text/javascript">
-		$("###nTripKey#").load("#sCacheFileName#");
-		</script>
-	<cfelse>--->
-	<cfoutput>
-		<div id="#nTripKey#" style="min-height:#variables.minheight#px;float:left;">
-			#sBadge#
+					<td colspan="4">&nbsp;</td>
+				</tr>
+			</cfloop>
+
+			<!--- set bag fee into var so we can display in a tooltip below --->
+			<cfsavecontent variable="tooltip">
+				<cfloop list="#carrierList#" index="carrier">
+					#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
+				</cfloop>
+			</cfsavecontent>
+
+			<tr>
+				<td height="100%" valign="bottom" align="center" colspan="4">
+					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+					<a href="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Details <span class="divider">/</span></a>
+					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+						<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Seats <span class="divider">/</span></a>
+					</cfif>
+					<a href="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">Bags <span class="divider">/</span></a>
+					<a href="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">Email</a>
+				</td>
+			</tr>
+
+		</table>
 		</div>
 	</cfoutput>
-	<!---</cfif>
---->
+</cfsavecontent>
+
+<!--- display badge --->
+<cfoutput>
+	<div id="flight#nTripKey#" style="min-height:#variables.minheight#px;float:left;">#sBadge#</div>
+</cfoutput>

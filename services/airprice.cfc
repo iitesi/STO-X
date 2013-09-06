@@ -1,24 +1,25 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
-	<cfproperty name="AirParse">
+	<cfproperty name="uAPI" />
+	<cfproperty name="uAPISchemas" />
+	<cfproperty name="AirParse" />
+	<cfproperty name="AirAdapter" />
 
-<!---
-init
---->
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
-		<cfargument name="AirParse">
+    <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+    	<cfargument name="uAPI" type="any" required="true" />
+    	<cfargument name="uAPISchemas" type="any" required="true" />
+    	<cfargument name="AirParse" type="any" required="false" default="" />
+    	<cfargument name="AirAdapter" type="any" required="false" default="" />
 
-		<cfset setUAPI(arguments.UAPI)>
-		<cfset setAirParse(arguments.AirParse)>
+    	<cfset setUAPI( arguments.uAPI ) />
+    	<cfset setUAPISchemas( arguments.uAPISchemas ) />
+    	<cfset setAirParse( arguments.AirParse ) />
+    	<cfset setAirAdapter( arguments.AirAdapter ) />
 
-		<cfreturn this>
-	</cffunction>
-	
-<!---
-doAirPrice
---->
+        <cfreturn this />
+         
+     </cffunction>
+
 	<cffunction name="doAirPrice" output="false">
 		<cfargument name="SearchID" 	required="true">
 		<cfargument name="Account"      required="true">
@@ -54,36 +55,37 @@ doAirPrice
 
 		<!--- Put together the SOAP message. --->
 		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
-		<!---<cfdump var="#sMessage#" abort>--->
+		<!--- <cfdump var="#sMessage#" abort> --->
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
 		<!--- Format the UAPI response. --->
 		<cfset aResponse 	= UAPI.formatUAPIRsp(sResponse)>
-		<!---<cfdump var="#aResponse#" abort>--->
+		<!--- <cfdump var="#aResponse#" abort> --->
 		<!--- Parse the segments. --->
 		<cfset stSegments	= AirParse.parseSegments(aResponse)>
 		<cfif NOT StructIsEmpty(stSegments)>
 			<!--- Parse the trips. --->
-			<cfset stTrips		= AirParse.parseTrips(aResponse, stSegments)>
+			<cfset stTrips = AirParse.parseTrips(aResponse, stSegments)>
 			<!--- Add group node --->
-			<cfset stTrips		= AirParse.addGroups(stTrips)>
+			<cfset stTrips = AirParse.addGroups(stTrips)>
 			<!--- Check low fare. --->
-			<cfset stTrips 		= AirParse.addTotalBagFare(stTrips)>
+			<cfset stTrips = AirParse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
-			<cfset stTrips		= AirParse.addPreferred(stTrips, arguments.Account)>
+			<cfset stTrips = AirParse.addPreferred(stTrips, arguments.Account)>
 			<!---<cfdump var="#stTrips#" abort>--->
 			<!--- Add trip id to the list of priced items --->
-			<cfset nTripKey		= getTripKey(stTrips)>
+			<cfset nTripKey = getTripKey(stTrips)>
 			<!--- Save XML if needed - AirCreate --->
 			<cfif arguments.bSaveAirPrice>
 				<cfset stTrips[nTripKey].sXML = sResponse>
+				<cfset stTrips[nTripKey].PricingSolution = AirAdapter.parsePricingSolution( response = sResponse )>
 			</cfif>
 			<cfif arguments.nCouldYou EQ 0>
 				<!--- Add trip id to the list of priced items --->
-				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced 		= addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
+				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, nTripKey)>
 				<!--- Merge all data into the current session structures. --->
-				<cfset session.searches[arguments.SearchID].stTrips 						= AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
+				<cfset session.searches[arguments.SearchID].stTrips = AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, stTrips)>
 				<!--- Finish up the results --->
 				<cfset void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
 				<!--- <cfdump var="#session.searches[arguments.SearchID].stTrips#" abort> --->
@@ -98,34 +100,28 @@ doAirPrice
 			<cfset session.searches[arguments.SearchID].sUserMessage = 'Fare type selected is unavailable for pricing.'>
 		</cfif>
 
-		<cfset session.searches[arguments.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
-		<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
-
 		<cfreturn stTrips>
 	</cffunction>
 
-<!---
-prepareSOAPHeader
---->
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
 		<cfargument name="stSelected" 	required="true">
 		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nCouldYou"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="stAccount" 	required="true"		default="#application.Accounts[session.AcctID]#">
-		
+
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
-		
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AirPriceReq TargetBranch="#arguments.stAccount.sBranch#" xmlns:air="http://www.travelport.com/schema/air_v18_0" xmlns:com="http://www.travelport.com/schema/common_v15_0">
+						<air:AirPriceReq
+							xmlns:air="#getUAPISchemas().air#"
+							xmlns:com="#getUAPISchemas().common#"
+							TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
@@ -183,10 +179,7 @@ prepareSOAPHeader
 
 		<cfreturn sMessage/>
 	</cffunction>
-	
-<!---
-getTripKey
---->
+
 	<cffunction name="getTripKey" output="false">
 		<cfargument name="stTrips" 	required="true">
 
@@ -197,10 +190,7 @@ getTripKey
 
 		<cfreturn nTripKey>
 	</cffunction>
-	
-<!---
-addstPriced
---->
+
 	<cffunction name="addstPriced" output="false">
 		<cfargument name="stPriced" 	required="true">
 		<cfargument name="nTripKey" 	required="true">
@@ -210,5 +200,47 @@ addstPriced
 
 		<cfreturn local.stPriced>
 	</cffunction>
-	
+
+	<cffunction name="doCouldYouSearch" access="public" output="false" returntype="any" hint="">
+		<cfargument name="Search" type="any" required="true" />
+		<cfargument name="requestedDate" type="date" required="true" />
+		<cfargument name="requery" type="boolean" required="false" default="false" />
+
+		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
+			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "air" )
+			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.air )
+			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.air, dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) )
+			AND arguments.requery IS false>
+
+			<cfset structClear( session.searches[ arguments.Search.getSearchID() ].couldYou.air ) />
+
+		</cfif>
+
+		<cfset var originalDepartDate = createDate( year( arguments.Search.getDepartDateTime() ), month( arguments.Search.getDepartDateTime() ), day( arguments.Search.getDepartDateTime() ) ) />
+		<cfset var newDepartDate = createDate( year( arguments.requestedDate ), month( arguments.requestedDate ), day( arguments.requestedDate ) ) />
+		<cfset var airArgs = structNew() />
+
+		<cfset airArgs.searchId = arguments.Search.getSearchId() />
+		<cfset airArgs.Account = application.accounts[ arguments.Search.getAcctID() ] />
+		<cfset airArgs.Policy = application.policies[ arguments.Search.getPolicyId() ] />
+		<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
+		<cfset airArgs.nCouldYou = dateDiff( 'd', originalDepartDate, newDepartDate ) />
+
+		<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
+
+		<cfif NOT isStruct( flight ) OR structIsEmpty( flight )>
+			<cfset flight = "" />
+		</cfif>
+
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		</cfif>
+
+		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />
+
+		<cfreturn flight />
+
+	</cffunction>
+
 </cfcomponent>

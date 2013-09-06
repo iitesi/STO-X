@@ -1,164 +1,177 @@
-<cfparam name="rc.filter" default="">
-<ul id="filter">
-	<table>
-	<tr>
-		<td>
-			<div>
-				<div id="radiosort">
-					<div class="filterheader">Sort By</div>
-					<cfif rc.action NEQ 'air.availability'>
 <!---
-PRICE
---->
-						<input type="radio" id="fare" name="sort" <cfif rc.action NEQ 'air.lowfare'>checked="checked"</cfif> /><label for="fare">Price</label>
+AIR CODES
+-----------------------
+1 = refundable
+0 = non refundable
+-----------------------
+Y = economy
+C = business
+F = first
+-----------------------
+(X) = not selected
+ --->
+
+<cfsilent>
+	<cfparam name="rc.filter" default="">
+	<cfparam name="rc.bRefundable" default="0">
+	<cfsavecontent variable="filterHeader">
+		<cfoutput>
+			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+		</cfoutput>
+	</cfsavecontent>
+	<cfhtmlhead text="#filterHeader#" />
+</cfsilent>
+
 <!---
-PRICE + BAGS
---->
-						<input type="radio" id="bag" name="sort" /><label for="bag">Price + Bag Fees</label>
-					</cfif>
-<!---
-DURATION
---->
-					<input type="radio" id="duration" name="sort" <cfif rc.action NEQ 'air.availability'>checked="checked"</cfif> /><label for="duration">Duration</label>
-<!---
-DEPARTURE
---->
-					<input type="radio" id="depart" name="sort" /><label for="depart">Departure</label>
-<!---
-ARRIVAL
---->
-					<input type="radio" id="arrival" name="sort" /><label for="arrival">Arrival</label>
+9:29 AM Tuesday, August 20, 2013 - Jim Priest - jpriest@shortstravel.com
+hide the filter bar with a loading message until the page has fully rendered
+RailoQA takes forever to render the page - this may not be an issue in prod
+ --->
+<div id="filterbarloading" class="alert alert-block">
+	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
+</div>
+
+<div id="filterbar" class="filter airfilterbar">
+	<div class="sixteen columns">
+		<div class="sortby pull-left">
+			<h4>Sort</h4>
+				<div class="navbar">
+					<div class="navbar-inner">
+											<ul class="nav">
+												<cfif rc.action NEQ 'air.availability'>
+													<li class="dropdown">
+														<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
+														<ul class="dropdown-menu">
+															<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
+															<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
+															<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
+														</ul>
+													<cfelse>
+														<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
+													</cfif>
+												<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
+												<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
+												<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
+											</ul>
+					</div>
 				</div>
 			</div>
-		</td>
-		<td>
-			<div class="filterheader">Filter By</h2>
-		</td>
-		<td>
-<!---
-AIRLINES
---->
-			<li>
-				<input type="checkbox" id="Airlines" name="Airlines"> <label for="Airlines">Airlines</label>
-				<ul>
-					<cfoutput>
-						<cfif rc.action NEQ 'air.availability'>
-							<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
-						<cfelse>
-							<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.Group]>
-						</cfif>
-						<cfloop array="#aCarriers#" index="Carrier" >
-							<li><span><input id="Carrier#Carrier#" type="checkbox" value="#Carrier#" checked> <label for="Carrier#Carrier#">#application.stAirVendors[Carrier].Name#</label></span></li>
-						</cfloop>
-					</cfoutput>
-				</ul>
-			</li>
 
-			<cfif rc.action NEQ 'air.availability'>
-<!---
-CLASSES
---->
-				<li>
-					<input type="checkbox" id="Classes" name="Classes"> <label for="Classes">Class</label>
-					<cfoutput>
-						<ul>
-							<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y")
-							OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
-                                <li><input type="checkbox" id="ClassY" name="ClassY" value="Y" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'Y'>checked</cfif>><label for="ClassY">Economy (#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</label></li>
-							</cfif>
-							<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")>
-                                <li><input type="checkbox" id="ClassC" name="ClassC" value="C" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'C'>checked</cfif>><label for="ClassC">Business (#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</label></li>
-							<cfelseif StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
-                                <li><input type="checkbox" id="ClassC" name="ClassC" value="C" disabled><label for="ClassC">Business (no results)</label></li>
-							</cfif>
-							<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'CX')>
-								<cfoutput>
-                                    <li><a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C">Find Business Class Fares</a></li>
-								</cfoutput>
-							</cfif>
-							<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")>
-                                <li><input type="checkbox" id="ClassF" name="ClassF" value="F" <cfif NOT structKeyExists(rc, 'sCabins') OR rc.sCabins EQ 'F'>checked</cfif>><label for="ClassF">First (#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</label></li>
-							<cfelseif StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'FX')>
-                                <li><input type="checkbox" id="ClassF" name="ClassF" value="F" disabled><label for="ClassF">First (no results)</label></li>
-							</cfif>
-							<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'FX')>
-								<cfoutput>
-                                    <li><a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F">Find First Class Fares</a></li>
-								</cfoutput>
-							</cfif>
+			<div class="filterbar">
+				<h4>Filter</h4>
+				<div class="navbar">
+					<div class="navbar-inner">
+						<ul class="nav">
+							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
+							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
+							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
 						</ul>
-					</cfoutput>
-				</li>
-<!---
-FARES
---->
-				<li>
-					<input type="checkbox" id="Fares" name="Fares"> <label for="Fares">Fares</label>
+					</div>
+				</div>
+				<div>
 					<cfoutput>
-						<ul>
-							<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
-							OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
-                                <li><input type="checkbox" id="Fare0" name="Fare0" value="0" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>><label for="Fare0">Non Refundable (#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</label></li>
-							</cfif>
-							<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
-							OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
-                                <li><input type="checkbox" id="Fare1" name="Fare1" value="1" <cfif NOT structKeyExists(rc, 'bRef') OR rc.bRef EQ 0>checked</cfif>><label for="Fare1">Refundable (#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</label></li>
-							</cfif>
-							<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1')>
-								<cfoutput>
-                                    <li><a href="?action=air.lowfare&SearchID=#rc.SearchID#&bRefundable=1">Find Refundable Fares</a></li>
-								</cfoutput>
-							</cfif>
-						</ul>
+						<h4><span id="flightCount">#rc.totalflights# of #rc.totalflights#</span> flights displayed
+						 <span class="pull-right">
+						 	<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
+						 	<a href="##" class="removefilters"> <i class="icon-refresh"></i> Clear Filters</a>
+						 </span>
+						</h4>
 					</cfoutput>
-				</li>
+				</div>
 
-			</cfif>
-<!---
-NON STOPS
---->
-			<input type="checkbox" id="NonStops" name="NonStops"> <label for="NonStops">Non Stops</label>
-<!---
-POLICY
---->
-			<input type="checkbox" id="Policy" name="Policy"> <label for="Policy">In Policy</label>
-<!---
-SINGLE CARRIERS
---->
-			<input type="checkbox" id="SingleCarrier" name="SingleCarrier" checked> <label for="SingleCarrier">Single Carrier</label>
-		</td>
-	</tr>
-	</table>
-</ul>
-<script type="application/javascript">
-$(document).ready(function() {
-	$( "#radiosort" )
-		.buttonset()
-		.change(function(event) {
-			sortAir($( "input:radio[name=sort]:checked" ).attr('id'));
-		});
-	$( ".radiobuttons" ).buttonset();
-	$( "#NonStops" ).button()
-		.click(function() {
-			filterAir();
-		});
-	$( ":checkbox" ).click(function() {
-		filterAir();
-	});
-	$( ":radio" ).click(function() {
-		filterAir();
-	});
-	$( "#Policy" ).button()
-		.change(function() {
-			filterAir();
-		});
-	$( "#Classes" ).button();
-	$( "#Fares" ).button();
-	$( "#Airlines" ).button();
-	$( "#SingleCarrier" ).button()
-		.change(function() {
-			filterAir();
-		});
-	
-});
-</script>
+				<!--- new filter well --->
+				<div class="well filterselection">
+					<div class="row">
+						<div class="span7">
+							<div class="row">
+
+							<cfoutput>
+								<div id="airlines" class="span2">
+									<b>Airlines</b>
+									<cfif rc.action NEQ 'air.availability'>
+										<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
+									<cfelse>
+										<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.Group]>
+									</cfif>
+
+									<cfloop array="#aCarriers#" index="Carrier" >
+										<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
+									</cfloop>
+
+									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="icon-plus-sign"></i> More Airlines</a>
+									</cfif>
+								</div>
+
+								<div id="class" class="span3">
+									<b>Class</b>
+									<!--- Y = economy/coach --->
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
+										<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y">Economy<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
+									</cfif>
+
+									<!--- C = business --->
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.C NEQ 0
+										OR session.filterStatus.cabinSearch.C NEQ 0)>
+										<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C"> Business
+										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
+									</cfif>
+
+									<!--- F = first class --->
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.F NEQ 0
+										OR session.filterStatus.cabinSearch.C NEQ 0)>
+										<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F">First
+										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
+									</cfif>
+
+									<cfif session.filterStatus.cabinSearch.C EQ 0>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="icon-plus-sign"></i> More Business Class</a><br />
+									</cfif>
+									<cfif session.filterStatus.cabinSearch.F EQ 0>
+										<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="icon-plus-sign"></i> More First Class</a><br />
+									</cfif>
+								</div>
+
+								<div id="fares" class="span2">
+									<b>Fares</b>
+									<!--- 1 = nonrefundable --->
+									<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
+										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
+										<label for="Fare0" class="checkbox" title="Filter by non-refundable fares"><input type="checkbox" id="Fare0" name="Fare0" value="0"> Non Refundable
+										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[0]# results)</small></label>
+									</cfif>
+
+									<!--- 0 = refundable --->
+									<cfif (structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "1")
+										OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1'))
+										AND (session.searches[rc.SearchID].stLowFareDetails.stResults.1 NEQ 0
+										AND session.filterStatus.refundableSearch NEQ 0)>
+										<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1"> Refundable
+										<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
+									</cfif>
+
+									<cfif session.filterStatus.refundableSearch EQ 0>
+										<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="icon-plus-sign"></i> More Refundable</a>
+									</cfif>
+								</div>
+							</cfoutput>
+							<input type="hidden" id="NonStops" name="NonStops" value="0">
+							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
+							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
+							</div>
+						</div>
+					</div> <!--- row --->
+					<br><br>
+					<span class="pull-right">
+						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+					</span>
+				</div> <!--- well filterselection --->
+			</div>
+		</div><!--- // class=sixteen columns --->
+</div><!--- // class=filter --->
+<div class="clearfix"></div>

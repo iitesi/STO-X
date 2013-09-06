@@ -4,14 +4,32 @@ function Hotel(){
     this.policies = {};
     this.featuredProperty = false;
     this.hotelChain = "";
-    this.hotelInformation = {};
+    this.details = {
+    	loaded: false,
+    	cancellation: "",
+    	creditCard: "",
+    	directions: "",
+    	facility: "",
+    	guarantee: "",
+    	description: "",
+    	location: "",
+    	recreation: "",
+    	services: "",
+    	transportation: ""
+    };
     this.policy = false;
     this.preferredVendor = false;
     this.rooms = [];
+    this.roomsRequested = false;
     this.roomsReturned = false;
+    this.images = [];
+    this.isGovernmentRate = false;
+    this.isCorporateRate = false;
+    this.extendedDataRequested = false;
 
     this.PropertyId = 0 ;
     this.ChainCode = "";
+    this.VendorName = "";
     this.PropertyName = "";
     this.Address = "";
     this.City = "";
@@ -40,6 +58,7 @@ function Hotel(){
     this.CheckIn = "";
     this.CheckOut = "";
     this.DetailsDateTime = "";
+    this.ImagesDateTime = "";
     this.ServiceDetail = "";
     this.FacilityDetail = "";
     this.RoomDetail = "";
@@ -54,6 +73,9 @@ function Hotel(){
     this.HotelLocationDetail = "";
     this.DirectionDetail = "";
     this.AreaTransportationDetail = "";
+    this.StarRating = 0;
+    this.RatingService="";
+    this.isInPolicy = true;
     this.distance = 0;
 
 }
@@ -65,11 +87,12 @@ Hotel.prototype.populate = function( obj ){
 
     //Populate the Ameneities array from the list in the database
     if( this.AmenitiesList.length ){
-
         if( this.AmenitiesList.charAt(0) == "|"){
             this.AmenitiesList = this.AmenitiesList.slice( 1 );
         }
-        this.Amenities = this.AmenitiesList.split("|")
+
+        var unsortedAmenities =
+        this.Amenities = this.AmenitiesList.split("|" ).sort();
 
     }
 }
@@ -88,4 +111,67 @@ Hotel.prototype.findLowestRoomRate = function(){
     }
 
     return lowestRate;
+}
+
+Hotel.prototype.isSoldOut = function(){
+
+	if( this.findLowestRoomRate() == 0 && this.roomsReturned ){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+Hotel.prototype.hasRoomsAvailable = function(){
+
+	if( !this.isSoldOut() && this.roomsReturned ){
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+Hotel.prototype.setInPolicy = function( policy ){
+
+	if( this.roomsReturned && this.rooms.length ){
+		this.isInPolicy = false;
+		/* Check all rooms to see if each of them are in policy
+		 if any of them are, then the entire property is based
+		 on the room rate policy check. There might be other reasons
+		 why the hotel would be out of policy however.
+		 */
+		for( var i = 0; i < this.rooms.length; i++ ){
+			if( this.rooms[i].isInPolicy == true ){
+				this.isInPolicy = true;
+				break;
+			}
+		}
+	}
+}
+
+Hotel.prototype.hasCorporateRate = function(){
+	var hasRate = false;
+
+	for( var i = 0; i < this.rooms.length; i++ ){
+		if( this.rooms[i].isCorporateRate ){
+			hasRate = true;
+			break;
+		}
+	}
+
+	return hasRate;
+}
+
+Hotel.prototype.hasGovernmentRate = function(){
+	var hasRate = false;
+
+	for( var i = 0; i < this.rooms.length; i++ ){
+		if( this.rooms[i].isGovernmentRate ){
+			hasRate = true;
+			break;
+		}
+	}
+
+	return hasRate;
 }

@@ -1,81 +1,91 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
+	<cfproperty name="uAPI" />
 
-<!---
-init
---->
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
-
-		<cfset setUAPI(arguments.UAPI)>
-		
-		<cfreturn this>
+	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
+		<cfargument name="uAPI" type="any" required="true" />
+		<cfset setUAPI( arguments.uAPI ) />
+		<cfreturn this />
 	</cffunction>
-	
-<!---
-doLowFare
---->
-	<cffunction name="finishLowFare" output="false">
+
+	<cffunction name="finishLowFare" output="false" hint="Do low fare.">
 		<cfargument name="SearchID"	required="true">
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"	required="true">
 
 		<!--- Check low fare. --->
 		<cfset session.searches[SearchID].stTrips						= addTotalBagFare(session.searches[SearchID].stTrips)>
+
 		<!--- Update the results that are available. --->
 		<cfset session.searches[SearchID].stLowFareDetails.stResults 	= findResults(session.searches[arguments.SearchID].stTrips)>
+
 		<!--- Get list of all carriers returned. --->
 		<cfset session.searches[SearchID].stLowFareDetails.aCarriers 	= getCarriers(session.searches[arguments.SearchID].stTrips)>
+
 		<!--- Run policy on all the results --->
 		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[SearchID].stTrips 						= checkPolicy(session.searches[arguments.SearchID].stTrips, arguments.SearchID, session.searches[SearchID].stLowFareDetails.aSortFare[1], 'Fare', arguments.Account, arguments.Policy)>
+
 		<!--- Create javascript structure per trip. --->
 		<cfset session.searches[SearchID].stTrips 						= addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
-		<!--- Sort the results in different mannors. --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
+
+		<!--- Sort the results --->
 		<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
 		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
+
+		<!--- price, price + 1 bag, price + 2 bags --->
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-		
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
 		<cfreturn >
 	</cffunction>
 
-<!---
-parseSegments
---->
-	<cffunction name="parseSegments" output="false">
-		<cfargument name="stResponse"	required="true">
-		
+	<cffunction name="parseSegments" output="false" hint="I take XML from uAPI and parse segments from it.">
+		<cfargument name="stResponse"	required="true" hint="Truncated XML object">
+
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<!---
 			'air:AirSegmentList' - found in low fare and availability search
 			'air:AirItinerary' - found in air pricing
 			--->
+			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
 
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'
-			OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.dArrivalGMT = stAirSegment.XMLAttributes.ArrivalTime>
+				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
 					<cfset local.dArrivalTime = GetToken(dArrivalGMT, 1, '.')>
 					<cfset local.dArrivalOffset = GetToken(GetToken(dArrivalGMT, 2, '-'), 1, ':')>
 
-					<cfset stSegments[stAirSegment.XMLAttributes.Key] = {
-						ArrivalTime			: ParseDateTime(dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', dArrivalOffset, dArrivalTime)),
-						Carrier 			: stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(GetToken(stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
-						DepartureGMT		: dateConvert('local2Utc', stAirSegment.XMLAttributes.DepartureTime),
-						Destination			: stAirSegment.XMLAttributes.Destination,
-						Equipment			: (StructKeyExists(stAirSegment.XMLAttributes, 'Equipment') ? stAirSegment.XMLAttributes.Equipment : ''),
-						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
-						Group				: stAirSegment.XMLAttributes.Group,
-						Origin				: stAirSegment.XMLAttributes.Origin,
-						TravelTime			: stAirSegment.XMLAttributes.TravelTime
+					<!--- this is some ugly nested looping to get flightDetailsRef key so we can pull travelTime from flightDetails --->
+					<cfloop array="#local.stAirSegment.xmlChildren#" index="local.jim">
+						<cfif StructKeyExists(local.jim.xmlAttributes, "Key")>
+							<cfset local.detailKey = local.jim.xmlAttributes.key>
+						</cfif>
+					</cfloop>
+					<cfset local.travelTime = 0>
+					<cfloop array="#arguments.stResponse[1].xmlChildren#" index="local.dan">
+						<cfif StructKeyExists(local.dan.xmlAttributes, "Key") AND local.dan.xmlAttributes.key EQ local.detailKey>
+							<cfset local.travelTime = local.dan.xmlAttributes.travelTime>
+						</cfif>
+					</cfloop>
+
+					<!--- <cfset local.TravelTime = '#int(local.TravelTime/60)#h #local.TravelTime%60#m'> --->
+
+					<cfset stSegments[local.stAirSegment.XMLAttributes.Key] = {
+						ArrivalTime			: ParseDateTime(local.dArrivalTime),
+						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
+						Carrier 				: local.stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane		: local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						DepartureTime		: ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
+						DepartureGMT		: dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
+						Destination			: local.stAirSegment.XMLAttributes.Destination,
+						Equipment				: (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
+						FlightNumber		: local.stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime			: local.stAirSegment.XMLAttributes.FlightTime,
+						Group						: local.stAirSegment.XMLAttributes.Group,
+						Origin					: local.stAirSegment.XMLAttributes.Origin,
+						TravelTime			: local.travelTime
 					}>
 				</cfloop>
 			</cfif>
@@ -84,12 +94,9 @@ parseSegments
 		<cfreturn stSegments />
 	</cffunction>
 
-<!---
-parseSearchID
---->
-	<cffunction name="parseSearchID" output="false">
+	<cffunction name="parseSearchID" output="false" hint="I get the search ID from uAPI response.">
 		<cfargument name="sResponse"	required="true">
-		
+
 		<cfset local.stResponse = XMLParse(arguments.sResponse)>
 		<cfset local.sLowFareSearchID = ''>
 
@@ -101,15 +108,21 @@ parseSearchID
 		<cfreturn sLowFareSearchID />
 	</cffunction>
 
-<!---
-parseNextReference
---->
-	<cffunction name="parseNextReference" output="false">
+	<cffunction name="parseNextReference" output="false" hint="I get NextResultReference from uAPI XML response.">
 		<cfargument name="stResponse"	required="true">
-		
+
 		<cfset local.sNextRef = ''>
 		<cfloop array="#arguments.stResponse#" index="local.aNextResultReference">
-			<cfif aNextResultReference.XMLName EQ 'common_v15_0:NextResultReference'>
+
+		<!--- TODO: need to replace these schema references with something from
+			coldspring environment service
+
+			8:28 AM Thursday, August 01, 2013 - Jim Priest - jpriest@shortstravel.com
+
+			Was: common_v15_0:NextResultReference
+			Should be: common_v19_0:NextResultReference --->
+
+			<cfif aNextResultReference.XMLName EQ 'common_v19_0:NextResultReference'>
 				<cfset sNextRef = aNextResultReference.XMLText>
 			</cfif>
 		</cfloop>
@@ -117,28 +130,25 @@ parseNextReference
 		<cfreturn sNextRef />
 	</cffunction>
 
-<!---
-parseTrips
---->
-	<cffunction name="parseTrips" output="false">
-		<cfargument name="stResponse"		required="true">
-		<cfargument name="stSegments"		required="true">
-		
+	<cffunction name="parseTrips" output="false" hint="I take response and segments and parse trip data.">
+		<cfargument name="response" required="true">
+		<cfargument name="stSegments" required="true">
+
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
 		<cfset local.sTripKey = ''>
 		<cfset local.nCount = 0>
 		<cfset local.sSegmentKey = 0>
 		<cfset local.sIndex = ''>
-		<cfset local.aIndexKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-
+		<cfset local.distinctFields = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
+		<cfset local.changePenalty = 0>
 		<!---
 		Custom code for air pricing to move the 'air:AirPriceResult' up a node to work with the current parsing code.
         --->
-		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
+		<cfloop array="#arguments.response#" index="local.stAirPricingSolution">
 			<cfif stAirPricingSolution.XMLName EQ 'air:AirPriceResult'>
 				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.test">
-					<cfset ArrayAppend(arguments.stResponse, test)>
+					<cfset ArrayAppend(arguments.response, test)>
 				</cfloop>
 			</cfif>
 		</cfloop>
@@ -146,18 +156,23 @@ parseTrips
 		<!---
 		Create a quick struct containing the private fare information
 		--->
-		<cfset local.stFares = {}>
-		<cfloop array="#arguments.stResponse#" index="local.stFareInfoList">
-			<cfif stFareInfoList.XMLName EQ 'air:FareInfoList'>
-				<cfloop array="#stFareInfoList.XMLChildren#" index="local.stFareInfo">
-					<cfset stFares[stFareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(stFareInfo.XMLAttributes, 'PrivateFare') ? stFareInfo.XMLAttributes.PrivateFare EQ 'true' : false)>
+		<cfset local.fare = {}>
+		<cfloop array="#arguments.response#" index="local.fareInfoListIndex" item="local.fareInfoList">
+			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
+				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
+					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') ? fareInfo.XMLAttributes.PrivateFare EQ 'true' : false)>
+					<!--- <cfloop array="#fareInfo.XMLChildren#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
+						<cfif fareRuleKey.XMLName EQ 'air:FareRuleKey'>
+							<cfset fare[fareInfo.XMLAttributes.Key].fareRuleKey = fareRuleKey.XMLText>
+						</cfif>
+					</cfloop> --->
 				</cfloop>
 			</cfif>
 		</cfloop>
 
-		<cfloop array="#arguments.stResponse#" index="local.stAirPricingSolution">
-			
-			<cfif stAirPricingSolution.XMLName EQ 'air:AirPricingSolution'>
+		<cfloop array="#arguments.response#" index="local.stAirPricingSolution" item="local.responseNode">
+
+			<cfif responseNode.XMLName EQ 'air:AirPricingSolution'>
 
 				<cfset local.stTrip = {}>
 				<cfset stTrip.Segments = StructNew('linked')>
@@ -165,38 +180,58 @@ parseTrips
 				<cfset nCount = 0>
 				<cfset nDuration = 0>
 				<cfset local.bPrivateFare = false>
-				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.stAirPricingNode">
-					
-					<cfset sSegmentKey = (StructKeyExists(stAirPricingNode.XMLAttributes, 'Key') ? stAirPricingNode.XMLAttributes.Key : 0)>
-				
-					<cfif stAirPricingNode.XMLName EQ 'air:AirSegmentRef'>
+				<cfset local.tripKey = ''>
 
-						<cfset stTrip.Segments[sSegmentKey] = structKeyExists(arguments.stSegments,sSegmentKey) ? arguments.stSegments[sSegmentKey] : {}>
+				<cfloop array="#responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
-					<cfelseif stAirPricingNode.XMLName EQ 'air:AirPricingInfo'>
+					<cfif airPricingSolution.XMLName EQ 'air:Journey'>
+
+						<cfloop array="#airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
+							<cfif journey.XMLName EQ 'air:AirSegmentRef'>
+								<cfset stTrip.Segments[journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, journey.XMLAttributes.Key) ? arguments.stSegments[journey.XMLAttributes.Key] : {}>
+
+								<cfloop array="#distinctFields#" index="local.field">
+									<cfset tripKey &= stTrip.Segments[journey.XMLAttributes.Key][field]>
+								</cfloop>
+
+							</cfif>
+						</cfloop>
+
+					<cfelseif airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
+
+						<cfset stTrip.Segments[airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, airPricingSolution.XMLAttributes.Key) ? arguments.stSegments[airPricingSolution.XMLAttributes.Key] : {}>
+
+						<cfloop array="#distinctFields#" index="local.field">
+							<cfset tripKey &= stTrip.Segments[airPricingSolution.XMLAttributes.Key][field]>
+						</cfloop>
+
+					<cfelseif airPricingSolution.XMLName EQ 'air:AirPricingInfo'>
 
 						<cfset local.sOverallClass = 'E'>
 						<cfset local.sPTC = ''>
 						<cfset local.nCount = 0>
+						<cfset fareRuleKey = []>
+						<cfset local.bRefundable = 1>
 <!---
 MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 --->
-						<cfloop array="#stAirPricingNode.XMLChildren#" index="local.stAirPricingNode2">
-							<cfset local.bRefundable = 1>
-							<cfif stAirPricingNode2.XMLName EQ 'air:PassengerType'>
+						<cfloop array="#airPricingSolution.XMLChildren#" index="local.airPricingSolution2">
+							<cfdump var="#airPricingSolution2.XMLName#" />
+							<cfif airPricingSolution2.XMLName EQ 'air:PassengerType'>
 								<!--- Passenger type codes --->
-								<cfset sPTC = stAirPricingNode2.XMLAttributes.Code>
-							<cfelseif stAirPricingNode2.XMLName EQ 'air:FareInfoRef'>
+								<cfset sPTC = airPricingSolution2.XMLAttributes.Code>
+							<cfelseif airPricingSolution2.XMLName EQ 'air:FareInfoRef'>
 								<!--- Private fares 1/0 --->
-								<cfif stFares[stAirPricingNode2.XMLAttributes.Key].PrivateFare>
+								<cfif fare[airPricingSolution2.XMLAttributes.Key].PrivateFare>
 									<cfset bPrivateFare = true>
 								</cfif>
-							<cfelseif stAirPricingNode2.XMLName EQ 'air:BookingInfo'>
+								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
+							<cfelseif airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
-								<cfset local.sClass = (StructKeyExists(stAirPricingNode2.XMLAttributes, 'CabinClass') ? stAirPricingNode2.XMLAttributes.CabinClass : 'Economy')>
-								<cfset stTrip.Segments[stAirPricingNode2.XMLAttributes.SegmentRef].Class = stAirPricingNode2.XMLAttributes.BookingCode>
-								<cfset stTrip.Segments[stAirPricingNode2.XMLAttributes.SegmentRef].Cabin = local.sClass>
+								<cfset local.sClass = (StructKeyExists(airPricingSolution2.XMLAttributes, 'CabinClass') ? airPricingSolution2.XMLAttributes.CabinClass : 'Economy')>
+								<cfset stTrip.Segments[airPricingSolution2.XMLAttributes.SegmentRef].Class = airPricingSolution2.XMLAttributes.BookingCode>
+								<cfset stTrip.Segments[airPricingSolution2.XMLAttributes.SegmentRef].Cabin = local.sClass>
 								<cfif sClass EQ 'First'>
 									<cfset sOverallClass = 'F'>
 								<cfelseif sOverallClass NEQ 'F' AND sClass EQ 'Business'>
@@ -204,55 +239,46 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								<cfelseif sOverallClass NEQ 'F' AND sOverallClass NEQ 'C'>
 									<cfset sOverallClass = 'Y'>
 								</cfif>
-							<cfelseif stAirPricingNode2.XMLName EQ 'air:ChangePenalty'>
+							<cfelseif airPricingSolution2.XMLName EQ 'air:ChangePenalty'>
 								<!--- Refundable or non refundable --->
-								<cfloop array="#stAirPricingNode2.XMLChildren#" index="local.stFare">
-									<cfset bRefundable = (bRefundable EQ 1 AND stFare.XMLText GT 0 ? 0 : 1)>
+								<cfset changePenalty = 0>
+								<cfloop array="#airPricingSolution2.XMLChildren#" index="local.stFare">
+									<cfif changePenalty LTE replace(stFare.XMLText, 'USD', '')>
+										<cfset changePenalty = replace(stFare.XMLText, 'USD', '')>
+									</cfif>
+									<cfset bRefundable = (bRefundable EQ 1 AND replace(stFare.XMLText, 'USD', '') GT 0 ? 0 : 1)>
 								</cfloop>
 							</cfif>
 						</cfloop>
-						<cfset stTrip.Base = Mid(stAirPricingNode.XMLAttributes.BasePrice, 4)>
-						<cfset stTrip.Total = Mid(stAirPricingNode.XMLAttributes.TotalPrice, 4)>
-						<cfset stTrip.Taxes = Mid(stAirPricingNode.XMLAttributes.Taxes, 4)>
+						<cfset stTrip.Base = Mid(airPricingSolution.XMLAttributes.BasePrice, 4)>
+						<cfset stTrip.Total = Mid(airPricingSolution.XMLAttributes.TotalPrice, 4)>
+						<cfset stTrip.Taxes = Mid(airPricingSolution.XMLAttributes.Taxes, 4)>
 						<cfset stTrip.PrivateFare = bPrivateFare>
 						<cfset stTrip.PTC = sPTC>
 						<cfset stTrip.Class = sOverallClass>
 						<cfset stTrip.Ref = bRefundable>
+						<!--- <cfset stTrip.fareRuleKey = fareRuleKey> --->
+						<cfset stTrip.changePenalty = changePenalty>
+						<!--- <cfdump var="#stTrip#" abort="true" /> --->
 					</cfif>
 				</cfloop>
-
-				<!---
-				TRIP KEY
-				--->
-				<cfset sIndex = ''>
-				<cfloop array="#stAirPricingSolution.XMLChildren#" index="local.stAirSegmentRef">
-					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
-						<cfloop array="#aIndexKeys#" index="local.stSegment">
-							<cfset sIndex &= structKeyExists(arguments.stSegments,stAirSegmentRef.XMLAttributes.Key) AND structKeyExists(arguments.stSegments[stAirSegmentRef.XMLAttributes.Key],stSegment) ? arguments.stSegments[stAirSegmentRef.XMLAttributes.Key][stSegment] : ''>
-						</cfloop>
-					</cfif>
-				</cfloop>
-				<cfset sTripKey = getUAPI().hashNumeric(sIndex&sOverallClass&bRefundable)>
+				<cfset sTripKey = getUAPI().hashNumeric( tripKey&sOverallClass&bRefundable )>
 				<cfset stTrips[sTripKey] = stTrip>
-
 			</cfif>
 		</cfloop>
 
 		<cfreturn  stTrips/>
 	</cffunction>
 
-<!---
-mergeSegments
---->
-	<cffunction name="mergeSegments" output="false">
+	<cffunction name="mergeSegments" output="false" hint="I merge passed in segments.">
 		<cfargument name="stSegments1" 	required="true">
 		<cfargument name="stSegments2" 	required="true">
-		
+
 		<cfset local.stSegments = arguments.stSegments1>
 		<cfif IsStruct(stSegments) AND IsStruct(arguments.stSegments2)>
 			<cfloop collection="#arguments.stSegments2#" item="local.sSegmentKey">
 				<cfif NOT StructKeyExists(stSegments, sSegmentKey)>
-					<cfset stSegments[sSegmentKey] = arguments.stSegments2[sSegmentKey]>	
+					<cfset stSegments[sSegmentKey] = arguments.stSegments2[sSegmentKey]>
 				</cfif>
 			</cfloop>
 		<cfelse>
@@ -261,17 +287,14 @@ mergeSegments
 		<cfif NOT IsStruct(stSegments)>
 			<cfset stSegments = {}>
 		</cfif>
-		
+
 		<cfreturn stSegments/>
 	</cffunction>
 
-<!---
-mergeTrips
---->
-	<cffunction name="mergeTrips" output="false">
+	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
 		<cfargument name="stTrips1" 	required="true">
 		<cfargument name="stTrips2" 	required="true">
-		
+
 		<cfset local.stCombinedTrips = arguments.stTrips1>
 		<cfif IsStruct(stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
@@ -293,13 +316,10 @@ mergeTrips
 		<cfreturn stCombinedTrips/>
 	</cffunction>
 
-<!--- 
-addPreferred
---->
-	<cffunction name="addPreferred" output="false">
+	<cffunction name="addPreferred" output="false" hint="I set preferred flag.">
 		<cfargument name="stTrips"  required="true">
 		<cfargument name="Account"	required="false">
-		
+
 		<cfset local.stTrips = arguments.stTrips>
 		<cfloop collection="#stTrips#" item="local.sTripKey">
 			<cfset stTrips[sTripKey].Preferred = 0>
@@ -313,10 +333,7 @@ addPreferred
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-addGroups
---->
-	<cffunction name="addGroups" output="false">
+	<cffunction name="addGroups" output="false" hint="I add groups.">
 		<cfargument name="stTrips" 	required="true">
 		<cfargument name="sType" 	required="false"	default="Fare">
 
@@ -329,97 +346,99 @@ addGroups
 		<cfset local.nDuration = ''>
 		<cfset local.nOverrideGroup = 0>
 		<!--- Loop through all the trips --->
-		<cfloop collection="#stTrips#" item="local.sTrip">
+		<cfloop collection="#stTrips#" index="local.tripIndex" item="local.trip">
 			<cfset stGroups = StructNew('linked')>
 			<cfset aCarriers = {}>
 			<cfset nDuration = 0>
 			<cfset nTotalStops = 0>
-			<cfloop collection="#stTrips[sTrip].Segments#" item="local.nSegment">
-				<cfset stSegment = stTrips[sTrip].Segments[nSegment]>
-				<cfset nOverrideGroup = stSegment.Group>
-				<cfset stSegment.Group = nOverrideGroup>
+			<cfloop collection="#trip.Segments#" index="local.segmentIndex" item="local.segment">
+				<cfset nOverrideGroup = segment.Group>
+				<cfset segment.Group = nOverrideGroup>
 				<cfif NOT structKeyExists(stGroups, nOverrideGroup)>
-					<cfset stGroups[nOverrideGroup].Segments 		= StructNew('linked')>
-					<cfset stGroups[nOverrideGroup].DepartureTime 	= stSegment.DepartureTime>
-					<cfset stGroups[nOverrideGroup].Origin			= stSegment.Origin>
-					<cfset stGroups[nOverrideGroup].TravelTime		= '#int(stSegment.TravelTime/60)#h #stSegment.TravelTime%60#m'>
-					<cfset nDuration = stSegment.TravelTime + nDuration>
+					<cfset stGroups[nOverrideGroup].Segments = StructNew('linked')>
+					<cfset stGroups[nOverrideGroup].DepartureTime = segment.DepartureTime>
+					<cfset stGroups[nOverrideGroup].Origin = segment.Origin>
+					<cfset stGroups[nOverrideGroup].TravelTime = '#int(segment.TravelTime/60)#h #segment.TravelTime%60#m'>
+					<cfset nDuration = segment.TravelTime + nDuration>
 					<cfset nStops = -1>
 				</cfif>
-				<cfset stGroups[nOverrideGroup].Segments[nSegment]= stSegment>
-				<cfset stGroups[nOverrideGroup].ArrivalTime	 	= stSegment.ArrivalTime>
-				<cfset stGroups[nOverrideGroup].Destination		= stSegment.Destination>
-				<cfset local.aCarriers[stSegment.Carrier] = ''>
+				<cfset stGroups[nOverrideGroup].Segments[segmentIndex] = segment>
+				<cfset stGroups[nOverrideGroup].ArrivalTime = segment.ArrivalTime>
+				<cfset stGroups[nOverrideGroup].Destination = segment.Destination>
+				<cfset local.aCarriers[segment.Carrier] = ''>
 				<cfset nStops++>
-				<cfset stGroups[nOverrideGroup].Stops				= nStops>
+				<cfset stGroups[nOverrideGroup].Stops = nStops>
 				<cfif nStops GT nTotalStops>
 					<cfset nTotalStops = nStops>
 				</cfif>
 			</cfloop>
-			<cfset stTrips[sTrip].Groups 	= stGroups>
-			<cfset stTrips[sTrip].Duration 	= nDuration>
-			<cfset stTrips[sTrip].Stops 	= nTotalStops>
+			<cfset stTrips[tripIndex].Groups = stGroups>
+			<cfset stTrips[tripIndex].Duration = nDuration>
+			<cfset stTrips[tripIndex].Stops = nTotalStops>
 			<cfif arguments.sType EQ 'Avail'>
-				<cfset stTrips[sTrip].Depart= stGroups[nOverrideGroup].DepartureTime>
+				<cfset stTrips[tripIndex].Depart = stGroups[nOverrideGroup].DepartureTime>
 			<cfelse>
-				<cfset stTrips[sTrip].Depart= stGroups[0].DepartureTime>
+				<cfset stTrips[tripIndex].Depart = stGroups[0].DepartureTime>
 			</cfif>
-			<cfset stTrips[sTrip].Arrival 	= stGroups[nOverrideGroup].ArrivalTime>
-			<cfset stTrips[sTrip].Carriers 	= structKeyArray(aCarriers)>
-			<cfset StructDelete(stTrips[sTrip], 'Segments')>
+			<cfset stTrips[tripIndex].Arrival = stGroups[nOverrideGroup].ArrivalTime>
+			<cfset stTrips[tripIndex].Carriers = structKeyArray(aCarriers)>
+			<cfset StructDelete(stTrips[tripIndex], 'Segments')>
 		</cfloop>
-		
+
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-addTotalBagFare
---->
-	<cffunction name="addTotalBagFare" output="false">
+
+	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
 		<cfargument name="stTrips" 	required="true">
-		
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
 			<cfif NOT StructKeyExists(stTrips[sTrip], 'TotalBag')>
 				<cfset stTrips[sTrip].TotalBag = stTrips[sTrip].Total + application.stAirVendors[stTrips[sTrip].Carriers[1]].Bag1>
 			</cfif>
+			<cfif NOT StructKeyExists(stTrips[sTrip], 'TotalBag2')>
+				<cfset stTrips[sTrip].TotalBag2 = stTrips[sTrip].Total + application.stAirVendors[stTrips[sTrip].Carriers[1]].Bag2>
+			</cfif>
 		</cfloop>
-		
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-findResults
---->
-	<cffunction name="findResults" output="false">
+	<cffunction name="findResults" output="false" hint="I populate the stResults struct with flight numbers for fares and classes (0,1,Y,C,F).">
 		<cfargument name="stTrips" 	required="true">
-		
+
 		<cfset local.stResults = {}>
+
+		<!--- set default values for fares and class --->
+		<cfset local.stResults.Y = 0>
+		<cfset local.stResults.C = 0>
+		<cfset local.stResults.F = 0>
+		<cfset local.stResults.0 = 0>
+		<cfset local.stResults.1 = 0>
+
 		<cfset local.sClass = ''>
 		<cfset local.bRef = ''>
+
 		<cfloop collection="#arguments.stTrips#" item="local.nTripKey">
-			<cfset sClass = arguments.stTrips[nTripKey].Class>
-			<cfset bRef = arguments.stTrips[nTripKey].Ref>
-			<cfif NOT structKeyExists(stResults, sClass)>
-				<cfset stResults[sClass] = 0>
+			<cfset local.sClass = arguments.stTrips[nTripKey].Class>
+			<cfset local.bRef = arguments.stTrips[nTripKey].Ref>
+
+			<cfif NOT structKeyExists(stResults, local.sClass)>
+				<cfset stResults[local.sClass] = 0>
 			</cfif>
-			<cfif NOT structKeyExists(stResults, bRef)>
-				<cfset stResults[bRef] = 0>
+			<cfif NOT structKeyExists(stResults, local.bRef)>
+				<cfset stResults[local.bRef] = 0>
 			</cfif>
-			<cfset stResults[sClass] = stResults[sClass] + 1>
-			<cfset stResults[bRef] = stResults[bRef] + 1>
-		
+
+			<cfset stResults[local.sClass] = stResults[local.sClass] + 1>
+			<cfset stResults[local.bRef] = stResults[local.bRef] + 1>
 		</cfloop>
-		
-		<cfreturn stResults/>
+
+		<cfreturn local.stResults/>
 	</cffunction>
 
-<!---
-addJavascript
---->
-	<cffunction name="addJavascript" output="false">
+	<cffunction name="addJavascript" output="false" hint="I build javascript for trip info to be used in views">
 		<cfargument name="stTrips" 	required="true">
 		<cfargument name="sType" 	required="false"	default="Fare">
-		
+
 		<cfif arguments.sType EQ 'Fare'>
 			<cfset local.aAllCabins = ['Y','C','F']>
 			<cfset local.aRefundable = [0,1]>
@@ -429,20 +448,17 @@ addJavascript
 			<cfset sCarriers = '"#Replace(ArrayToList(arguments.stTrips[sTrip].Carriers), ',', '","', 'ALL')#"'>
 			<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], arguments.stTrips[sTrip].Class, arguments.stTrips[sTrip].Ref, sCarriers)>
 		</cfloop>
-		
+
 		<cfreturn stTrips/>
 	</cffunction>
 
-<!---
-addJavascriptPerTrip - used only in the above function
---->
-	<cffunction name="addJavascriptPerTrip" output="false">
+	<cffunction name="addJavascriptPerTrip" output="false" access="private" hint="addJavascriptPerTrip - used only in the above function">
 		<cfargument name="sTrip" 	required="true">
 		<cfargument name="stTrip" 	required="true">
 		<cfargument name="sCabin" 	required="true">
 		<cfargument name="bRef" 	required="true">
 		<cfargument name="sCarriers"required="true">
-		
+
 		<cfset local.sJavascript = "">
 		<!---
 			 * 	0	Token				DL0211DL1123UA221
@@ -454,24 +470,21 @@ addJavascriptPerTrip - used only in the above function
 			 * 	6	Cabin Class			Y, C, F
 			 * 	7	Stops				0/1/2
 		--->
-		<cfset sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
-		<cfset sJavascript = ListAppend(sJavascript, (ArrayIsEmpty(arguments.stTrip.aPolicies) ? 1 : 0))><!--- Policy --->
-		<cfset sJavascript = ListAppend(sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
-		<cfset sJavascript = ListAppend(sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
-		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
-		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Preferred)><!--- Preferred --->
-		<cfset sJavascript = ListAppend(sJavascript, '"#arguments.sCabin#"')><!--- Cabin Class --->
-		<cfset sJavascript = ListAppend(sJavascript, arguments.stTrip.Stops)><!--- Stops --->
-		
-		<cfreturn sJavascript/>
+		<cfset local.sJavascript = '"#arguments.sTrip#"'><!--- Token  --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, (ArrayIsEmpty(arguments.stTrip.aPolicies) ? 1 : 0))><!--- Policy --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, (ListLen(arguments.sCarriers) EQ 1 ? 0 : 1))><!--- Multi Carriers --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '[#arguments.sCarriers#]')><!--- All Carriers --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '"#arguments.bRef#"')><!--- Refundable --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, arguments.stTrip.Preferred)><!--- Preferred --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, '"#arguments.sCabin#"')><!--- Cabin Class --->
+		<cfset local.sJavascript = ListAppend(local.sJavascript, arguments.stTrip.Stops)><!--- Stops --->
+
+		<cfreturn local.sJavascript/>
 	</cffunction>
 
-<!---
-getCarriers
---->
-	<cffunction name="getCarriers" output="false">
+	<cffunction name="getCarriers" output="false" hint="Give a trip I pull out the carriers.">
 		<cfargument name="stTrips">
-		
+
 		<cfset local.aCarriers = []>
 		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
 			<cfloop array="#arguments.stTrips[sTripKey].Carriers#" index="local.sCarrier">
@@ -480,75 +493,32 @@ getCarriers
 				</cfif>
 			</cfloop>
 		</cfloop>
-		
+
 		<cfreturn aCarriers/>
 	</cffunction>
 
-<!---
-mergeTripsToAvail
---->
-	<cffunction name="mergeTripsToAvail" output="false">
-		<cfargument name="stTrips"		required="true">
-		<cfargument name="stAvailTrips"	required="true">
-		
-		<cfset local.stTempTrips = {}>
-		<cfset local.Group = ''>
-		<cfloop collection="#arguments.stTrips#" item="local.sTripKey">
-			<cfloop collection="#arguments.stTrips[sTripKey].Segments#" item="local.nSegment">
-				<cfset Group = arguments.stTrips[sTripKey].Segments[nSegment].Group>
-				<cfif NOT structKeyExists(stTempTrips, Group)
-				OR NOT structKeyExists(stTempTrips[Group], sTripKey)>
-					<cfset stTempTrips[Group][sTripKey] = StructNew('linked')>
-				</cfif>
-				<cfset stTempTrips[Group][sTripKey][nSegment] = arguments.stTrips[sTripKey].Segments[nSegment]>
-			</cfloop>
-		</cfloop>
-		<cfset local.sIndex = ''>
-		<cfset local.nHashNumeric = ''>
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#stTempTrips#" item="local.Group">
-			<cfloop collection="#stTempTrips[Group]#" item="local.sTripKey">
-				<cfset sIndex = ''>
-				<cfloop collection="#stTempTrips[Group][sTripKey]#" item="local.sSegment">
-					<cfloop array="#aSegmentKeys#" index="local.stSegment">
-						<cfset sIndex &= stTempTrips[Group][sTripKey][sSegment][stSegment]>
-					</cfloop>
-				</cfloop>
-				<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
-				<cfif NOT structKeyExists(arguments.stAvailTrips[Group], nHashNumeric)>
-					<cfset arguments.stAvailTrips[Group][nHashNumeric].Segments = stTempTrips[Group][sTripKey]>
-				</cfif>
-			</cfloop>
-		</cfloop>
-
-		<cfreturn arguments.stAvailTrips/>
-	</cffunction>
-
-<!---
-checkPolicy
---->
-	<cffunction name="checkPolicy" output="false">
-		<cfargument name="stTrips"			required="true">
-		<cfargument name="SearchID"		    required="true">
-		<cfargument name="nLowFareTripKey"	required="true">
-		<cfargument name="sType" 			required="false">
-		<cfargument name="Account"      	required="true">
-		<cfargument name="Policy"       	required="true">
+	<cffunction name="checkPolicy" output="false" hint="I check the policy.">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="SearchID" required="true">
+		<cfargument name="nLowFareTripKey" required="true">
+		<cfargument name="sType" required="false">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
 
 		<cfset local.stTrips = arguments.stTrips>
 		<cfset local.stTrip = {}>
 		<cfset local.aPolicy = []>
 		<cfset local.bActive = 1>
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyAir) GT 0 ? 1 : 0)>
-		<cfif arguments.sType EQ 'Fare'>			
+		<cfif arguments.sType EQ 'Fare'>
 			<cfset local.nLowFare = stTrips[arguments.nLowFareTripKey].Total+arguments.Policy.Policy_AirLowPad>
 		</cfif>
-		
+
 		<cfloop collection="#stTrips#" item="local.nTripKey">
 			<cfset stTrip = stTrips[nTripKey]>
 			<cfset aPolicy = []>
 			<cfset bActive = 1>
-			
+
 			<cfif arguments.sType EQ 'Fare'>
 				<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
 				<cfif arguments.Policy.Policy_AirLowRule EQ 1
@@ -617,7 +587,7 @@ checkPolicy
 				<cfset temp = StructDelete(stTrips, nTripKey)>
 			</cfif>
 		</cfloop>
-		
+
 		<cfset local.bAllInactive = 0>
 		<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
 		<cfif arguments.Policy.Policy_AirAdvRule EQ 1
@@ -627,8 +597,8 @@ checkPolicy
 				<cfset stTrips = {}>
 			</cfif>
 		</cfif>
-		
+
 		<cfreturn stTrips/>
 	</cffunction>
-	
+
 </cfcomponent>

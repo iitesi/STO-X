@@ -1,9 +1,5 @@
 <cfcomponent>
-
-<!---
-email
---->
-	<cffunction name="email" output="false">
+	<cffunction name="email" output="false" hint="Send email">
 		<cfargument name="SearchID">
 		<cfargument name="nTripID">
 		<cfargument name="Group">
@@ -14,10 +10,17 @@ email
 		<cfargument name="Email_Subject">
 		<cfargument name="Email_Message">
 
+		<cfset local.toAddress = arguments.To_Address>
+		<cfset local.ccAddress = arguments.CC_Address>
+		<cfif IsLocalHost(cgi.local_addr)>
+			<cfset local.toAddress = "jpriest@shortstravel.com">
+			<cfset local.ccAddress = "jpriest@shortstravel.com">
+		</cfif>
+
 		<cfmail
 			from="#arguments.Email_Address#"
-			to="#arguments.To_Address#"
-			cc="#arguments.CC_Address#"
+			to="#local.toAddress#"
+			cc="#local.ccAddress#"
 			subject="#arguments.Email_Subject#"
 			type="HTML">
 				<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -29,7 +32,6 @@ email
 					<link rel="stylesheet" href="assets/css/style.css" media="screen" />
 				</head>
 				<body>
-					<!--- <cfoutput> --->
 					<cfif arguments.Group EQ ''>
 						<cfset local.stTrip = session.searches[arguments.SearchID].stTrips[arguments.nTripID]>
 					<cfelse>
@@ -70,18 +72,13 @@ email
 					</cfloop>
 					<tr>
 						<td colspan="6"><br><br>
-						Thanks,
-						<br>
+						Thanks,<br>
 						Short's Travel Management</td>
 					</tr>
 					</table>
-					<!--- </cfoutput> --->
 				</body>
 				</html>
 			</cfmail>
-			<cfset session.searches[arguments.SearchID].sUserMessage = 'Your email has been sent.'>
-
 		<cfreturn />
 	</cffunction>
-	
 </cfcomponent>

@@ -1,331 +1,331 @@
-<cfcomponent output="false" accessors="true">
+// <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="UAPI">
-	<cfproperty name="General">
+// 	<cfproperty name="UAPI">
+// 	<cfproperty name="General">
 
-<!---
-init
---->
-	<cffunction name="init" output="false">
-		<cfargument name="UAPI">
-		<cfargument name="General">
+// <!---
+// init
+// --->
+// 	<cffunction name="init" output="false">
+// 		<cfargument name="UAPI">
+// 		<cfargument name="General">
 
-		<cfset setUAPI(arguments.UAPI)>
-		<cfset setGeneral(arguments.General)>
+// 		<cfset setUAPI(arguments.UAPI)>
+// 		<cfset setGeneral(arguments.General)>
 
-		<cfreturn this>
-	</cffunction>
-	
-<!---
-openSession
---->
-	<cffunction name="openSession" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="SearchID"	required="true">
+// 		<cfreturn this>
+// 	</cffunction>
 
-		<!--- Create the SOAP message to sign in. --->
-		<cfsavecontent variable="local.message">
-			<cfoutput>
-                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-                    <soapenv:Header/>
-                    <soapenv:Body>
-                        <ns3:CreateTerminalSessionReq Host="1V" TargetBranch="#arguments.Account.sBranch#" xmlns:ns2="http://www.travelport.com/schema/common_v12_0" xmlns:ns3="http://www.travelport.com/schema/terminal_v8_0">
-                            <ns2:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
-                        </ns3:CreateTerminalSessionReq>
-                    </soapenv:Body>
-                </soapenv:Envelope>
-			</cfoutput>
-		</cfsavecontent>
+// <!---
+// openSession
+// --->
+// 	<cffunction name="openSession" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="SearchID"	required="true">
 
-		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', message, arguments.SearchID)>
-		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
-		<cfset local.hostToken  = stResponse[1].XMLText>
+// 		<!--- Create the SOAP message to sign in. --->
+// 		<cfsavecontent variable="local.message">
+// 			<cfoutput>
+//                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+//                     <soapenv:Header/>
+//                     <soapenv:Body>
+//                         <ns3:CreateTerminalSessionReq Host="1V" TargetBranch="#arguments.Account.sBranch#" xmlns:ns2="#getUAPISchemas().common#" xmlns:ns3="#getUAPISchemas().terminal#">
+//                             <ns2:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+//                         </ns3:CreateTerminalSessionReq>
+//                     </soapenv:Body>
+//                 </soapenv:Envelope>
+// 			</cfoutput>
+// 		</cfsavecontent>
 
-		<cfreturn hostToken />
-	</cffunction>
+// 		<cfset local.sResponse 	= getUAPI().callUAPI('TerminalService', message, arguments.SearchID)>
+// 		<cfset local.stResponse = getUAPI().formatUAPIRsp(sResponse)>
+// 		<cfset local.hostToken  = stResponse[1].XMLText>
 
-<!---
-closeSession
---->
-	<cffunction name="closeSession" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn hostToken />
+// 	</cffunction>
 
-		<cfsavecontent variable="local.message">
-			<cfoutput>
-                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-                    <soapenv:Header/>
-					<soapenv:Body>
-						<ter:EndTerminalSessionReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
-							<com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
-							<com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
-						</ter:EndTerminalSessionReq>
-					</soapenv:Body>
-				</soapenv:Envelope>
-			</cfoutput>
-		</cfsavecontent>
-		<cfset local.response 	= getUAPI().callUAPI('TerminalService', message, arguments.searchID)>
+// <!---
+// closeSession
+// --->
+// 	<cffunction name="closeSession" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Not error checking. --->
-		<!---<cfset local.response 	= getUAPI().formatUAPIRsp(response)>
-		<cfset local.successText  = response[1].XMLText>
-		successText would equal 'Terminal End Session Successful'--->
+// 		<cfsavecontent variable="local.message">
+// 			<cfoutput>
+//                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+//                     <soapenv:Header/>
+// 					<soapenv:Body>
+// 						<ter:EndTerminalSessionReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="#getUAPISchemas().terminal#" xmlns:com="#getUAPISchemas().common#">
+// 							<com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+// 							<com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
+// 						</ter:EndTerminalSessionReq>
+// 					</soapenv:Body>
+// 				</soapenv:Envelope>
+// 			</cfoutput>
+// 		</cfsavecontent>
+// 		<cfset local.response 	= getUAPI().callUAPI('TerminalService', message, arguments.searchID)>
 
-	</cffunction>
+// 		<!--- Not error checking. --->
+// 		<!---<cfset local.response 	= getUAPI().formatUAPIRsp(response)>
+// 		<cfset local.successText  = response[1].XMLText>
+// 		successText would equal 'Terminal End Session Successful'--->
 
-<!---
-terminalEntrySOAP
---->
-	<cffunction name="terminalEntrySOAP" output="false">
-		<cfargument name="Account"  required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="command"required="true">
+// 	</cffunction>
 
-		<cfsavecontent variable="local.Message">
-			<cfoutput>
-                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-                    <soapenv:Header/>
-                <soapenv:Body>
-                        <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="http://www.travelport.com/schema/terminal_v8_0" xmlns:com="http://www.travelport.com/schema/common_v12_0">
-                <com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
-            <com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
-            <ter:TerminalCommand>#arguments.command#</ter:TerminalCommand>
-            </ter:TerminalReq>
-            </soapenv:Body>
-            </soapenv:Envelope>
-			</cfoutput>
-		</cfsavecontent>
+// <!---
+// terminalEntrySOAP
+// --->
+// 	<cffunction name="terminalEntrySOAP" output="false">
+// 		<cfargument name="Account"  required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="command"required="true">
 
-		<cfreturn Message />
-	</cffunction>
+// 		<cfsavecontent variable="local.Message">
+// 			<cfoutput>
+//                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+//                     <soapenv:Header/>
+//                 <soapenv:Body>
+//                         <ter:TerminalReq TargetBranch="#arguments.Account.sBranch#" xmlns:ter="#getUAPISchemas().teminal#" xmlns:com="#getUAPISchemas().common#">
+//                 <com:BillingPointOfSaleInfo OriginApplication="uAPI-3.0"/>
+//             <com:HostToken Host="1V">#arguments.hostToken#</com:HostToken>
+//             <ter:TerminalCommand>#arguments.command#</ter:TerminalCommand>
+//             </ter:TerminalReq>
+//             </soapenv:Body>
+//             </soapenv:Envelope>
+// 			</cfoutput>
+// 		</cfsavecontent>
 
-<!---
-doTerminalEntry
---->
-	<cffunction name="doTerminalEntry" output="false">
-		<cfargument name="Account" 			required="true">
-		<cfargument name="hostToken"		required="true">
-		<cfargument name="terminalEntry"	required="true">
-		<cfargument name="searchID" 		required="true">
+// 		<cfreturn Message />
+// 	</cffunction>
 
-		<cfset local.message	= terminalEntrySOAP(arguments.Account, arguments.hostToken, arguments.terminalEntry)>
-		<cfset local.response 	= getUAPI().callUAPI('TerminalService', message, arguments.searchID)>
-		<cfset local.response 	= getUAPI().formatUAPIRsp(response)>
+// <!---
+// doTerminalEntry
+// --->
+// 	<cffunction name="doTerminalEntry" output="false">
+// 		<cfargument name="Account" 			required="true">
+// 		<cfargument name="hostToken"		required="true">
+// 		<cfargument name="terminalEntry"	required="true">
+// 		<cfargument name="searchID" 		required="true">
 
-		<cfreturn response>
-	</cffunction>
+// 		<cfset local.message	= terminalEntrySOAP(arguments.Account, arguments.hostToken, arguments.terminalEntry)>
+// 		<cfset local.response 	= getUAPI().callUAPI('TerminalService', message, arguments.searchID)>
+// 		<cfset local.response 	= getUAPI().formatUAPIRsp(response)>
 
-<!---
-doTerminalEntry
---->
-	<cffunction name="blankResponse" output="false">
+// 		<cfreturn response>
+// 	</cffunction>
 
-		<cfset local.Response = {}>
-		<cfset Response.Error = false>
-		<cfset Response.Message = []>
+// <!---
+// doTerminalEntry
+// --->
+// 	<cffunction name="blankResponse" output="false">
 
-		<cfreturn Response>
-	</cffunction>
+// 		<cfset local.Response = {}>
+// 		<cfset Response.Error = false>
+// 		<cfset Response.Message = []>
 
-<!---
-displayPNR
---->
-	<cffunction name="displayPNR" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="pnr"		required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response	= blankResponse()>
+// <!---
+// displayPNR
+// --->
+// 	<cffunction name="displayPNR" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="pnr"		required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, '*#arguments.pnr#', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response	= blankResponse()>
 
-		<!--- Loop through the response and check for errors. --->
-		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
-			<cfif stResponse.XMLText CONTAINS 'INVLD'>
-				<cfset Response.Error = true>
-				<cfset arrayAppend(Response.Message, stResponse.XMLText)>
-			</cfif>
-			<!--- For debugging purposes. --->
-			<!---<cfdump var="#stResponse.XMLText#">--->
-		</cfloop>
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, '*#arguments.pnr#', arguments.searchID)>
 
-		<cfreturn Response>
-	</cffunction>
+// 		<!--- Loop through the response and check for errors. --->
+// 		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+// 			<cfif stResponse.XMLText CONTAINS 'INVLD'>
+// 				<cfset Response.Error = true>
+// 				<cfset arrayAppend(Response.Message, stResponse.XMLText)>
+// 			</cfif>
+// 			<!--- For debugging purposes. --->
+// 			<!---<cfdump var="#stResponse.XMLText#">--->
+// 		</cfloop>
 
-<!---
-readPAR
---->
-	<cffunction name="readPAR" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="pcc"		required="true">
-		<cfargument name="bar"		required="true">
-		<cfargument name="par"		required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.profileFound = true>
+// <!---
+// readPAR
+// --->
+// 	<cffunction name="readPAR" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="pcc"		required="true">
+// 		<cfargument name="bar"		required="true">
+// 		<cfargument name="par"		required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'S*#arguments.pcc#/#arguments.bar#-#arguments.par#1', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.profileFound = true>
 
-		<!--- Loop through the response and check for errors. --->
-		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
-			<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
-			OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
-				<cfset profileFound = false>
-			</cfif>
-		</cfloop>
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'S*#arguments.pcc#/#arguments.bar#-#arguments.par#1', arguments.searchID)>
 
-		<cfreturn profileFound>
-	</cffunction>
+// 		<!--- Loop through the response and check for errors. --->
+// 		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+// 			<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
+// 			OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
+// 				<cfset profileFound = false>
+// 			</cfif>
+// 		</cfloop>
 
-<!---
-moveBARPAR
---->
-	<cffunction name="moveBARPAR" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="pcc"		required="true">
-		<cfargument name="bar"		required="true">
-		<cfargument name="par"		required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn profileFound>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response	= blankResponse()>
+// <!---
+// moveBARPAR
+// --->
+// 	<cffunction name="moveBARPAR" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="pcc"		required="true">
+// 		<cfargument name="bar"		required="true">
+// 		<cfargument name="par"		required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'MVPT/#arguments.pcc#//#arguments.bar#-#arguments.par#', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response	= blankResponse()>
 
-		<!--- Loop through the response and check for errors. --->
-		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
-			<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
-			OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
-				<cfset Response.Error = true>
-			</cfif>
-			<!--- For debugging purposes. --->
-			<!---<cfdump var="#stResponse.XMLText#">--->
-		</cfloop>
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'MVPT/#arguments.pcc#//#arguments.bar#-#arguments.par#', arguments.searchID)>
 
-		<cfif Response.Error>
-			<!--- Create a blank response structure. --->
-			<cfset local.Response	= blankResponse()>
+// 		<!--- Loop through the response and check for errors. --->
+// 		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+// 			<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
+// 			OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
+// 				<cfset Response.Error = true>
+// 			</cfif>
+// 			<!--- For debugging purposes. --->
+// 			<!---<cfdump var="#stResponse.XMLText#">--->
+// 		</cfloop>
 
-			<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-			<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'MVBT/#arguments.pcc#//#arguments.bar#', arguments.searchID)>
+// 		<cfif Response.Error>
+// 			<!--- Create a blank response structure. --->
+// 			<cfset local.Response	= blankResponse()>
 
-			<!--- Loop through the response and check for errors. --->
-			<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
-				<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
-				OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
-					<cfset Response.Error = true>
-					<cfset arrayAppend(Response.Message, stResponse.XMLText)>
-				</cfif>
-				<!--- For debugging purposes. --->
-				<!---<cfdump var="#stResponse.XMLText#">--->
-			</cfloop>
-		</cfif>
+// 			<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 			<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'MVBT/#arguments.pcc#//#arguments.bar#', arguments.searchID)>
 
-		<cfreturn Response>
-	</cffunction>
+// 			<!--- Loop through the response and check for errors. --->
+// 			<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+// 				<cfif stResponse.XMLText CONTAINS 'SIMILAR TITLES LIST'
+// 				OR stResponse.XMLText CONTAINS 'UNABLE TO LOCATE TITLE'>
+// 					<cfset Response.Error = true>
+// 					<cfset arrayAppend(Response.Message, stResponse.XMLText)>
+// 				</cfif>
+// 				<!--- For debugging purposes. --->
+// 				<!---<cfdump var="#stResponse.XMLText#">--->
+// 			</cfloop>
+// 		</cfif>
 
-<!---
-addReceivedBy
---->
-	<cffunction name="addReceivedBy" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="userID"	required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response = blankResponse()>
+// <!---
+// addReceivedBy
+// --->
+// 	<cffunction name="addReceivedBy" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="userID"	required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Get the user logged in. --->
-		<cfset local.qUser = getGeneral().getUser(arguments.userID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response = blankResponse()>
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'R:#qUser.First_Name# #qUser.Last_Name# #qUser.Phone_Number#', arguments.searchID)>
+// 		<!--- Get the user logged in. --->
+// 		<cfset local.qUser = getGeneral().getUser(arguments.userID)>
 
-		<!--- No error checking. Unknown possible errors. --->
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'R:#qUser.First_Name# #qUser.Last_Name# #qUser.Phone_Number#', arguments.searchID)>
 
-		<cfreturn Response>
-	</cffunction>
+// 		<!--- No error checking. Unknown possible errors. --->
 
-<!---
-removeSecondName
---->
-	<cffunction name="removeSecondName" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response = blankResponse()>
+// <!---
+// removeSecondName
+// --->
+// 	<cffunction name="removeSecondName" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'C:2N:', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response = blankResponse()>
 
-		<!--- No error checking. Only error would be if only the BAR moved over.  Response would be 'NO SUCH ITEM/NOT ENT/N:'. --->
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'C:2N:', arguments.searchID)>
 
-		<cfreturn Response>
-	</cffunction>
+// 		<!--- No error checking. Only error would be if only the BAR moved over.  Response would be 'NO SUCH ITEM/NOT ENT/N:'. --->
 
-<!---
-verifyStoredFare
---->
-	<cffunction name="verifyStoredFare" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response = blankResponse()>
+// <!---
+// verifyStoredFare
+// --->
+// 	<cffunction name="verifyStoredFare" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'T:V', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response = blankResponse()>
 
-		<!--- Loop through the response and check for errors. --->
-		<cfset Response.Error = true>
-		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
-			<cfif stResponse.XMLText CONTAINS 'FARE GUARANTEED AT TICKET ISSUANCE'>
-				<cfset Response.Error = false>
-			</cfif>
-			<cfset arrayAppend(Response.Message, stResponse.XMLText)>
-		</cfloop>
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'T:V', arguments.searchID)>
 
-		<!--- Clear out the message if there is no error. --->
-		<cfif NOT Response.Error>
-			<cfset Response.Message = []>
-		<!--- If error dump the messages.  I want to see it if it ever comes up. --->
-		<cfelse>
-			<cfdump var="#Response#" abort>
-		</cfif>
+// 		<!--- Loop through the response and check for errors. --->
+// 		<cfset Response.Error = true>
+// 		<cfloop array="#apiResponse[1].XMLChildren#" index="local.void" item="local.stResponse">
+// 			<cfif stResponse.XMLText CONTAINS 'FARE GUARANTEED AT TICKET ISSUANCE'>
+// 				<cfset Response.Error = false>
+// 			</cfif>
+// 			<cfset arrayAppend(Response.Message, stResponse.XMLText)>
+// 		</cfloop>
 
-		<cfreturn Response>
-	</cffunction>
+// 		<!--- Clear out the message if there is no error. --->
+// 		<cfif NOT Response.Error>
+// 			<cfset Response.Message = []>
+// 		<!--- If error dump the messages.  I want to see it if it ever comes up. --->
+// 		<cfelse>
+// 			<cfdump var="#Response#" abort>
+// 		</cfif>
 
-<!---
-queueRecord
---->
-	<cffunction name="queueRecord" output="false">
-		<cfargument name="Account" 	required="true">
-		<cfargument name="hostToken"required="true">
-		<cfargument name="searchID" required="true">
+// 		<cfreturn Response>
+// 	</cffunction>
 
-		<!--- Create a blank response structure. --->
-		<cfset local.Response = blankResponse()>
+// <!---
+// queueRecord
+// --->
+// 	<cffunction name="queueRecord" output="false">
+// 		<cfargument name="Account" 	required="true">
+// 		<cfargument name="hostToken"required="true">
+// 		<cfargument name="searchID" required="true">
 
-		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
-		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'QEP/161C/90', arguments.searchID)>
+// 		<!--- Create a blank response structure. --->
+// 		<cfset local.Response = blankResponse()>
 
-		<!--- No error checking. Unknown possible errors. --->
+// 		<!--- Do the terminal entry.  Create SOAP header, call the UAPI and format the response. --->
+// 		<cfset local.apiResponse	= doTerminalEntry(arguments.Account, arguments.hostToken, 'QEP/161C/90', arguments.searchID)>
 
-		<cfreturn Response>
-	</cffunction>
+// 		<!--- No error checking. Unknown possible errors. --->
 
-</cfcomponent>
+// 		<cfreturn Response>
+// 	</cffunction>
+
+// </cfcomponent>

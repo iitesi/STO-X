@@ -1,61 +1,100 @@
 <cfoutput>
-	<table width="100%">
-	<tr style="border-bottom:1px solid ##000">
-		<td colspan="4"><h3>Trip Summary</h3></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>Base Rate</td>
-		<td>Taxes</td>
-		<td>Total</td>
-	</tr>
-	<cfset nTotalTrip = 0>
-	<cfif structKeyExists(stItinerary, 'Air')>
-		<cfset Air = true>
-		<tr>
-			<td>Flight</td>
-			<td>#DollarFormat(stItinerary.Air.Base)#</td>
-			<td>#DollarFormat(stItinerary.Air.Taxes)#</td>
-			<td class="right">#DollarFormat(stItinerary.Air.Total)#</td>
-		</tr>
-		<cfset nTotalTrip = nTotalTrip + stItinerary.Air.Total>
-	</cfif>
-	<cfif structKeyExists(stItinerary, 'Hotel')>
-		<cfset Hotel = true>
-		<tr>
-			<td>Hotel</td>
-			<td></td>
-			<td></td>
-			<td class="right"></td>
-		</tr>
-		<cfset nTotalTrip = nTotalTrip + hoteltotalhere>
-	</cfif>
-	<cfif structKeyExists(stItinerary, 'Car')>
-		<cfset Car = true>
-		<cfset sCarCurr = Left(stItinerary.Car.EstimatedTotalAmount, 3)>
-		<cfset sCarTotal = Mid(stItinerary.Car.EstimatedTotalAmount, 4)>
-		<tr>
-			<td>Car</td>
-			<td>#(sCarCurr EQ 'USD' ? DollarFormat(sCarTotal) : sCarTotal)#</td>
-			<td>At pick up</td>
-			<td class="right">#(sCarCurr EQ 'USD' ? DollarFormat(sCarTotal) : sCarTotal)#</td>
-		</tr>
-		<cfset nTotalTrip = (sCarCurr EQ 'USD' AND IsNumeric(nTotalTrip) ? nTotalTrip + sCarTotal : 'Unknown')>
-	</cfif>
-	<tr>
-		<td>Booking Fee</td>
-		<td></td>
-		<td></td>
-		<td class="right">#DollarFormat(rc.stFees.nSpecificFee)#</td>
-	</tr>
-	<cfif IsNumeric(nTotalTrip)>
-		<cfset nTotalTrip = nTotalTrip + rc.stFees.nSpecificFee>
-		<tr style="border-top:1px solid ##000">
-			<td>Trip Cost</td>
-			<td></td>
-			<td></td>
-			<td class="right">#DollarFormat(nTotalTrip)#</td>
-		</tr>
-	</cfif>
-	</table>
+	<style>
+	.minlineheight {
+		line-height:10px;
+	}
+	</style>
+	<div class="carrow" style="padding:15px; float:right;">
+
+		<div class="row minlineheight">
+			<div class="span1"></div>
+			<div class="span1"><strong>Base Rate</strong></div>
+			<div class="span2"><strong>Taxes</strong></div>
+			<div class="span1"><strong>Total</strong></div>
+		</div>
+
+		<cfset tripTotal = 0>
+		<cfset tripCurrency = 'USD'>
+
+		<cfif rc.airSelected>
+
+			<div class="row minlineheight" id="airTotalRow">
+				<div class="span1">Flight</div>
+				<div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div>
+				<div class="span2">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
+				<div class="span1" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+			</div>
+			<input type="hidden" id="airTotal" value="#rc.Air.Total#">
+
+			<cfset tripTotal = tripTotal + rc.Air.Total>
+			<cfset tripCurrency = 'USD'>
+
+		</cfif>
+		<cfif rc.hotelSelected>
+
+			<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
+				<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+				<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
+				<cfset hotelText = 'Including taxes'>
+			<cfelse>
+				<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+				<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+				<cfset hotelText = 'Quoted at check-in'>
+			</cfif>
+
+			<div class="row minlineheight" id="hotelTotalRow">
+				<div class="span1">Hotel</div>
+				<div class="span1"></div>
+				<div class="span2">#hotelText#</div>
+				<div class="span1" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : hotelTotal&' '&currency)#</div>
+			</div>
+			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
+
+			<cfset tripTotal = (currency EQ 'USD' ? tripTotal + hotelTotal : 0)>
+			<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
+
+		</cfif>
+		
+		<cfif rc.vehicleSelected>
+
+			<cfset currency = rc.Vehicle.getCurrency()>
+			<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
+
+			<div class="row minlineheight" id="carTotalRow">
+				<div class="span1">Car</div>
+				<div class="span1"></div>
+				<div class="span2">Quoted at pick-up</div>
+				<div class="span1" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : vehicleTotal&' '&currency)#</div>
+			</div>
+			<input type="hidden" id="carTotal" value="#vehicleTotal#">
+
+			<cfset tripTotal = (currency EQ 'USD' ? tripTotal + vehicleTotal : 0)>
+			<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
+
+		</cfif>
+
+		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow">
+			<div class="span1">Booking Fee</div>
+			<div class="span1"></div>
+			<div class="span2"></div>
+			<div class="span1" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+		</div>
+		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
+		<input type="hidden" name="agent" value="#rc.fees.agent#">
+		<input type="hidden" name="airFeeType" value="#rc.fees.airFeeType#">
+		<input type="hidden" name="auxFeeType" value="#rc.fees.auxFeeType#">
+
+		<cfif tripCurrency EQ 'USD'>
+
+			<cfset tripTotal = tripTotal + rc.fees.fee>
+
+			<div class="row minlineheight" id="bookingTotalRow">
+				<div class="span4 blue"><strong>Trip cost for current traveler</strong></div>
+				<div class="span1 blue" id="totalCol"><strong>#numberFormat(tripTotal, '$____.__')#</strong></div>
+			</div>
+
+		</cfif>
+
+	</div>
 </cfoutput>
+<!--- <cfdump var="#rc.fees#" /> --->

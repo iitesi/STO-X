@@ -97,7 +97,7 @@ getUser
 		<cfif Traveler.NoMiddleName EQ ''>
 			<cfset Traveler.NoMiddleName = 0>
 		</cfif>
-		<cfset Traveler.BithdateYear = (isDate(Traveler.Birthdate) ? Year(Traveler.Birthdate) : '')>
+		<cfset Traveler.BirthdateYear = (isDate(Traveler.Birthdate) ? Year(Traveler.Birthdate) : '')>
 		<cfset Traveler.Errors = {}>
 		<cfset Traveler.Seats = {}>
 		<cfset Traveler.AirFOP.AirFOP_ID = ''>
@@ -378,7 +378,7 @@ getOUs
 
 <!---
 setTravelerForm
---->
+<!--- --->
 	<cffunction name="setTravelerForm" output="false" access="remote" returnformat="plain">
 		<cfargument name="Traveler">
 		<cfargument name="qAllOUs">
@@ -627,5 +627,5 @@ setTravelerForm
 
 		<cfreturn serializeJSON(sForm)>
 	</cffunction>
-
+ --->
 </cfcomponent>

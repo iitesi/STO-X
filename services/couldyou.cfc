@@ -27,8 +27,8 @@ doCouldYou
 		<cfargument name="Account">
 		<cfargument name="Policy">
 
-		<cfset local.OriginDate = arguments.Filter.getDepartDate()>
-		<cfset local.calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDate())>
+		<cfset local.OriginDate = arguments.Filter.getDepartDateTime()>
+		<cfset local.calendarStartDate = dateAdd('d', -7, arguments.Filter.getDepartDateTime())>
 		<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
 		<cfset local.threadnames = {}>
 		<cfset local.CouldYou = structKeyExists(session.searches[SearchID],'CouldYou') ? session.searches[SearchID].CouldYou : {}>
@@ -45,7 +45,7 @@ doCouldYou
 			<cfset local.SelectedTotal+= stItinerary.Air.Total />
 		</cfif>
 		<cfif Car>
-			<cfset local.SelectedTotal+= Mid(stItinerary.Car.EstimatedTotalAmount,4) />
+			<cfset local.SelectedTotal+= Mid(stItinerary.Vehicle.EstimatedTotalAmount,4) />
 		</cfif>
 		<cfif Hotel>
 			<cfset local.SelectedTotal+= stItinerary.Hotel.TotalRate />
@@ -123,8 +123,8 @@ doCouldYou
 
 									<!---Car--->
 									<cfif arguments.Filter.getCar()>
-										<cfset local.sCarType 		= session.searches[arguments.SearchID].stItinerary.Car.VehicleClass&session.searches[arguments.SearchID].stItinerary.Car.Category>
-										<cfset local.sCarChain 		= session.searches[arguments.SearchID].stItinerary.Car.VendorCode>
+										<cfset local.sCarType 		= session.searches[arguments.SearchID].stItinerary.Vehicle.VehicleClass&session.searches[arguments.SearchID].stItinerary.Vehicle.Category>
+										<cfset local.sCarChain 		= session.searches[arguments.SearchID].stItinerary.Vehicle.VendorCode>
 										<cfif NOT structIsEmpty(CDNumbers)>
 											<cfset local.sMessage		= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference, CDNumbers)>
 											<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>

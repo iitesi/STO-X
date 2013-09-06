@@ -12,3 +12,4 @@
 </cfoutput>
 <cfset structDelete(request.exception.cause, 'StackTrace')>
 <cfdump var="#request.exception#"/>
+<cfset request.layout = false>

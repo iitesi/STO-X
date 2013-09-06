@@ -1,83 +1,144 @@
+<cfsilent>
+	<cfparam name="rc.filter" default="" />
+	<cfparam name="rc.locationKey" default="">
+	<cfsavecontent variable="filterHeader">
+		<script type='text/javascript' src='assets/js/bootstrap-datepicker.js'></script>
+		<script type='text/javascript' src='assets/js/date.format.js'></script>
+		<script type='text/javascript' src='assets/js/select2.min.js'></script>
+		<script type='text/javascript' src='assets/localdata/airports-us.js'></script>
+		<script type='text/javascript' src='assets/js/car/search.js'></script>
+		<script type='text/javascript' src='assets/js/car/filter.js'></script>
+		<link rel='stylesheet' type='text/css' href='assets/css/datepicker.css' />
+		<link rel='stylesheet' type='text/css' href='assets/css/select2.css' />
+		<link rel='stylesheet' type='text/css' href='assets/css/search.css' />
+		<style type='text/css'>
+			.searchContainer {
+				max-width: 680px;
+				width: 680px;			
+			}
+			.modal.searchForm {
+				position: absolute;
+				width: 680px;
+				height: 600px;
+				margin: -80px 0px 0 -360px;
+			}
+			.modal-body {
+				overflow-y: auto;
+			}
+			.dropdown-menu {
+				max-height: 260px;
+				overflow-y: auto;
+				overflow-x: hidden;
+			}
+		</style>
+	</cfsavecontent>
+	<cfhtmlhead text="#filterHeader#" />
+</cfsilent>
+
+<!---First row--->
 <div id="filterbar">
-	<div>
-		<div class="filterheader">Filter By</div>
+	<div class="filter">
+		<div>
+			<h4>Filter <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
+		</div>
+		<cfoutput>
+			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
+				<div class="navbar">
+					<div class="navbar-inner">
+						<ul class="nav">
+							<li><a href="##" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
+							<li><a href="##" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
+							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
+							<li>
+								Pick-up Location
+								<select name="pickUpLocationKey" class="filterby" onChange="submit();">
+									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
+									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
+										<cfif rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city>
+											<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+											</option>
+										</cfif>
+									</cfloop>
+								</select>
+								<cfif rc.Filter.getCarPickUpAirport() NEQ rc.Filter.getCarDropoffAirport()>
+									Drop-off Location
+									<select name="dropOffLocationKey" class="filterby" onChange="submit();">
+										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
+										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
+											<cfif rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city>
+												<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+												</option>
+											</cfif>
+										</cfloop>
+									</select>
+								</cfif>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</form>
+		</cfoutput>
+		<div class="filter">
+			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfoutput>
+		</div>
+		<div class="row well filterselection">
+			<cfoutput>
+				<div class="span4">
+					<div class="row" style="text-align:center;"><b>VENDORS</b></div>
+					<div class="row">
+						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
+							<label class="checkbox" for="fltrVendor#LCase(vendorCode)#"><input id="fltrVendor#LCase(vendorCode)#" type="checkbox" name="fltrVendor" value="#vendorCode#"> #StructKeyExists(application.stCarVendors, vendorCode) ? application.stCarVendors[vendorCode] : 'No Car Vendor found'#</label>
+						</cfloop>
+						<input id="fltrVendorSelectAll" name="fltrVendorSelectAll" type="hidden" value="true" />
+					</div>
+				</div>
+				<div class="span7">
+					<div class="row" style="text-align:center;"><b>CAR TYPES</b></div>
+					<div class="row">
+						<div class="span2">
+							<b>Car</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "car">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<div class="span2">
+							<b>Van</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "van">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<div class="span2">
+							<b>SUV</b>
+							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
+								<cfif Right(carCategory, 3) IS "suv">
+									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
+								</cfif>
+							</cfloop>
+						</div>
+						<input id="fltrCarCategorySelectAll" name="fltrCarCategorySelectAll" type="hidden" value="true" />
+					</div>
+				</div>
+					<br /><br />
+					<cfif structCount(session.searches[rc.SearchID].stCarVendors) GT 8>
+						<cfset whileVar = structCount(session.searches[rc.SearchID].stCarVendors) - 8 />
+						<cfloop condition="whileVar GREATER THAN OR EQUAL TO 1">
+							&nbsp;<br />
+							<cfset whileVar = whileVar - 1 />
+						</cfloop>
+					</cfif>
+					<span class="pull-right">
+						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+					</span>
+			</cfoutput>
+		</div>
 	</div>
 </div>
-<ul id="filter">
-	<table>
-	<tr>
-<!---
-VENDORS
---->		<td>
-			<li>
-				<input type="checkbox" id="btnCarVendor" name="btnCarVendor"> <label for="btnCarVendor">Vendors</label>
-				<ul>
-					<cfoutput>
-						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="VendorCode">
-							<li><input id="btnVendor#LCase(VendorCode)#" type="checkbox" name="Vendor#VendorCode#" value="#VendorCode#" checked="checked" onClick="filterCar()"> <label for="btnVendor#LCase(VendorCode)#">#StructKeyExists(application.stCarVendors, VendorCode) ? application.stCarVendors[VendorCode] : 'No Car Vendor found'#</label></li>
-						</cfloop>
-					</cfoutput>
-				</ul>
-			</li>
-		</td>
-
-<!---
-CATEGORIES
---->		<td>
-			<li>
-				<input type="checkbox" id="btnCarCategory" name="btnCarCategory"> <label for="btnCarCategory">Categories</label>
-				<ul>
-					<li>
-					<table width="400px">
-					<tr>
-						<td width="33%"><strong>Car</strong></td>
-						<td width="33%"><strong>Van</strong></td>
-						<td width="33%"><strong>SUV</strong></td>
-					</tr>
-					<tr>
-					<cfoutput>
-						<cfset temp = ''>
-						<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
-							<cfif temp NEQ Right(sCategory, 3)>
-								<cfif temp NEQ ''>
-									</td>
-								</cfif>
-								<td valign="top">
-								<cfset temp = Right(sCategory, 3)>
-							</cfif>
-							<input id="btnCategory#LCase(sCategory)#" type="checkbox" checked="checked" name="sCategory" value="#sCategory#" onClick="filterCar()"> <label for="btnCategory#LCase(sCategory)#">#Left(sCategory, Len(sCategory)-3)#</label><br>
-						</cfloop>
-						</td>
-					</cfoutput>
-					</tr>
-					</table>
-					</li>
-				</ul>
-			</li>
-		</td>
-<!---
-POLICY
---->
-		<td>
-			<input type="checkbox" id="Policy" name="Policy" checked> <label for="Policy">In Policy</label>
-		</td>
-	</tr> 
-	</table>
-</ul>
 
 <script type="application/javascript">
-
-$(document).ready(function() {
-	$( "#btnCarVendor" ).button().click(function() { filterCar(); });
-	$( "#btnCarCategory" ).button().click(function() { filterCar(); });
-	$( "#Policy" ).button().change(function() { filterCar(); });
-	var nCount = filterCar();
-	if (nCount == 0) {
-		$( "#Policy" ).prop('checked', false);
-		$( "#Policy" ).button( "refresh" );
-		filterCar();
-	}
-});
 <cfoutput>
 	var carresults = [
 		<cfset nCount = 0>
@@ -108,6 +169,5 @@ $(document).ready(function() {
 			<cfset nCount++>
 			['#LCase(sVendor)#',#(rc.Policy.Policy_CarPrefRule EQ 1 AND NOT ArrayFindNoCase(rc.Account.aPreferredCar, sVendor) ? 0 : 1)#]
 		</cfloop>];
-
 </cfoutput>
 </script>
