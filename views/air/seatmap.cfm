@@ -49,7 +49,7 @@
 				<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 					<cfset breadCount++>
 						<li class="<cfif rc.nSegment EQ sSegKey>active</cfif>">
-							<span title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');" >
+							<span class="pointer" title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&bSelection=1');" >
 								#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
 							</span>
 							<cfif segmentCount NEQ breadCount>
