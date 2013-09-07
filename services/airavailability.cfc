@@ -322,7 +322,6 @@
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="NK"/>
-											<com:Carrier Code="VX"/>
 											<com:Carrier Code="ZK"/>
 										</air:ProhibitedCarriers>
 									</cfif>
