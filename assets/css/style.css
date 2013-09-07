@@ -635,6 +635,10 @@ div.checkbox {
 	background-image:url(../img/seats/currentseat.png);
 }
 
+.pointer {
+	cursor: pointer;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	HOTEL

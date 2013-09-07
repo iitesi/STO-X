@@ -38,10 +38,10 @@
 					<strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong><br>
 				</td>
 				<td colspan="2">
+					<cfset btnClass = "">
 					<cfif bDisplayFare>
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#
 						<br>
-						<cfset btnClass = "">
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
 						</cfif>
@@ -50,7 +50,7 @@
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
 							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
 					<cfelse>
-						<input type="submit" class="button#stTrip.Policy#policy" value="Select" onClick="submitAvailability(#nTripKey#);">
+						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);">
 					</cfif>
 				</td>
 			</tr>
