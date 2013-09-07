@@ -183,8 +183,8 @@
 		<cfargument name="Policy" required="false" default="">
 		<cfargument name="acctID" required="false" default="">
 		<cfargument name="searchID" required="false" default="">
-		<!--- <cfargument name="password" required="false" default="">
-		<cfargument name="passwordConfirm" required="false" default=""> --->
+		<cfargument name="password" required="false" default="">
+		<cfargument name="passwordConfirm" required="false" default="">
 
 		<cfset local.error = {}>
 
@@ -220,7 +220,7 @@
 		</cfif>
 
 		<!--- If a guest traveler has checked the checkbox to create a new profile --->
-		<!--- <cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>
+		<cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>
 			<!--- Perform a password check --->
 			<cfif arguments.password EQ ''>
 				<cfset error.password = '' />
@@ -255,7 +255,7 @@
 			<cfif (arguments.passwordConfirm EQ '') OR (arguments.passwordConfirm NEQ arguments.password)>
 				<cfset error.passwordConfirm = '' />
 			</cfif>
-		</cfif> --->
+		</cfif>
 		<cfif NOT arguments.Traveler.getBookingDetail().getAirNeeded()
 			AND NOT arguments.Traveler.getBookingDetail().getHotelNeeded()
 			AND NOT arguments.Traveler.getBookingDetail().getCarNeeded()>
