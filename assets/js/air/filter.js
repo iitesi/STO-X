@@ -67,6 +67,7 @@ $(document).ready(function(){
 		// reset sorting and filters
 		sortAir( sortbyprice );
 		resetAirDelay.run();
+		return false;
 	});
 
 	$('.filterby').on('click', function() {
@@ -85,6 +86,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// In Policy (on/off)
@@ -98,6 +100,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// NonStops (on/off)
@@ -111,6 +114,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// Airlines (set of checkboxEs - default = all checked)
@@ -123,6 +127,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// check for active state when page loads
@@ -141,6 +146,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// check for active state when page loads
@@ -159,6 +165,7 @@ $(document).ready(function(){
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
+		return false;
 	});
 
 	// check for active state when page loads
@@ -172,10 +179,8 @@ $(document).ready(function(){
 //------------------------------------------------------------------------------
 	$('[id^=sortby]').on('click', function() {
 			$('.spinner').show();
-
 			// sort flights
 			sortAir( $(this).attr("id") );
-
 			// remove all active states
 			$('[id^=sortby]').parents().removeClass('active');
 
@@ -186,6 +191,7 @@ $(document).ready(function(){
 			} else {
 				$(this).parent().addClass('active');
 			}
+			return false;
 	});
 
 }); // end of $(document).ready(function()
@@ -223,4 +229,9 @@ FunctionGuard.prototype.mergeArgs = function(dynamicArgs) {
 
 FunctionGuard.prototype.cancel = function(){
     this.timer && clearTimeout(this.timer);
+}
+
+	// This is a functions that scrolls to #id
+function scrollToId(id) {
+  $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
 }
