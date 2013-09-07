@@ -177,8 +177,7 @@ $(document).ready(function(){
 //------------------------------------------------------------------------------
 // SORTING
 //------------------------------------------------------------------------------
-	$('[id^=sortby]').on('click', function() {
-			$('.spinner').show();
+	$('[id^=sortby]').on('click', function(e) {
 			// sort flights
 			sortAir( $(this).attr("id") );
 			// remove all active states
@@ -191,7 +190,7 @@ $(document).ready(function(){
 			} else {
 				$(this).parent().addClass('active');
 			}
-			return false;
+			e.preventDefault();
 	});
 
 }); // end of $(document).ready(function()
