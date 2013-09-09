@@ -19,6 +19,24 @@
 	}
 </style>
 
+<cfsilent>
+<cfset showPreTripText = false />
+<cfset showNoPreTripText = false />
+<cfset preTripApprovalList = "" />
+<cfset noPreTripApprovalList = "" />
+
+<cfloop from="1" to="#arrayLen(rc.Travelers)#" index="travelerIndex">
+	<cfset thisTraveler = uCase(rc.Traveler[travelerIndex].getFirstName()) & " " & uCase(rc.Traveler[travelerIndex].getLastName()) />
+	<cfif rc.Traveler[travelerIndex].getBookingDetail().getApprovalNeeded()>
+		<cfset preTripApprovalList = listAppend(preTripApprovalList, thisTraveler) />
+		<cfset showPreTripText = true />
+	<cfelse>
+		<cfset noPreTripApprovalList = listAppend(noPreTripApprovalList, thisTraveler) />
+		<cfset showNoPreTripText = true />
+	</cfif>
+</cfloop>
+</cfsilent>
+
 <div style="width:960px;">
 	<div class="container">
 		<div class="page-header">
@@ -27,13 +45,31 @@
 			</cfoutput>
 		</div>
 	</div>
-	<div>
-		<div id="reservationMessage" class="alert alert-success" style="width:920px;">
-			<!--- TO DO: Put in cfif logic when not a pre-trip. --->
-			WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
-			YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
+	<cfoutput>
+		<div>
+			<div id="reservationMessage" class="alert alert-success" style="width:920px;">
+				<!--- If at least one pre-trip traveler. --->
+				<cfif showPreTripText>
+					<cfif listLen(preTripApprovalList) GT 1 OR showNoPreTripText>
+						#replace(preTripApprovalList, ",", ", ", "all")#:<br />
+					</cfif>
+					WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
+					YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
+					<cfif showNoPreTripText>
+						<br /><br />
+					</cfif>
+				</cfif>
+				<!--- If at least one no pre-trip traveler. --->
+				<cfif showNoPreTripText>
+					<cfif listLen(noPreTripApprovalList) GT 1 OR showPreTripText>
+						#replace(noPreTripApprovalList, ",", ", ", "all")#:<br />
+					</cfif>
+					WE HAVE CREATED YOUR RESERVATION.<br />
+					YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
+				</cfif>
+			</div>
 		</div>
-	</div>
+	</cfoutput>
 	<div style="height:14px;"></div>
 	<div>
 		<span class="blue confirm-header">BILLING DETAILS</span>
