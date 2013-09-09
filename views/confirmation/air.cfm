@@ -141,8 +141,13 @@
 									<td colspan="2"></td>						
 							</cfif>
 							<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
-								<td width="110"><span class="blue"><strong>#carrier# Confirmation</strong></span></td>
-								<td width="80"><span class="blue"><strong>#(structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) ? rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier] : '')#</strong></span></td>
+								<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) && len(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier])>
+									<td width="110"><span class="blue"><strong>#carrier# Confirmation</strong></span></td>
+									<td width="80"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span></td>
+								<cfelse>
+									<td width="110"></td>
+									<td width="80"></td>
+								</cfif>
 								<cfloop collection="#rc.Traveler[travelerIndex].getLoyaltyProgram()#" item="program" index="programIndex">
 									<cfif program.getShortCode() EQ carrier>
 										<cfif len(program.getAcctNum())>
