@@ -20,8 +20,8 @@ $(document).ready(function(){
 	});
 
 	$('.airModal').on('click', function() {
-		$('#myModal').modal();
 		$('#myModalBody').text( $(this).attr('data-modal') );
+		$('#myModal').modal('show');
 	});
 
 	$('.breadcrumbModal').on('click', function() {

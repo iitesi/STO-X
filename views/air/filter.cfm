@@ -174,4 +174,11 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 			</div>
 		</div><!--- // class=sixteen columns --->
 </div><!--- // class=filter --->
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+	</div>
+	<div id="myModalBody" class="modal-body"></div>
+</div>
 <div class="clearfix"></div>

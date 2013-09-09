@@ -91,11 +91,3 @@
 		<input type="hidden" name="Group" value="#rc.Group#">
 	</form>
 </cfoutput>
-
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
-	</div>
-	<div id="myModalBody" class="modal-body"></div>
-</div>
