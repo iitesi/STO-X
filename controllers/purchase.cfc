@@ -462,9 +462,9 @@
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
 					</cfif>
 					<!--- Create profile in database --->
-					<!--- <cfif Traveler.getBookingDetail().getCreateProfile()>
+					<cfif Traveler.getBookingDetail().getCreateProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler )>
-					</cfif> --->
+					</cfif>
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset local.errorList = errorType>
