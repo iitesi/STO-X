@@ -1,5 +1,5 @@
 <cfcomponent>
-	<cffunction name="email" output="false" hint="Send email">
+	<cffunction name="doEmail" output="false" hint="Send email">
 		<cfargument name="SearchID">
 		<cfargument name="nTripID">
 		<cfargument name="Group">
