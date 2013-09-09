@@ -137,9 +137,10 @@
 
  <!--- JIM CODE --->
 <td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
-	<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+	<!--- Per STM-2013: Removed the clickable action. --->
+	<!--- <cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
 		<a href="##" style="display: block;" class="availableSeat" id="#rc.nSegment#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
-	</cfif>
+	</cfif> --->
 </td>
 
 
