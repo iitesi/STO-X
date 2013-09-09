@@ -40,10 +40,10 @@
 								<cfelseif left(airCardNumber, 1) EQ 3>
 									<cfset airCardType = "AX" />
 								</cfif>
-								<cfset airCurrency = "USD" />
-								<cfset airBase = rc.Air.Base />
-								<cfset airTaxes = rc.Air.Taxes />
-								<cfset airTotal = rc.Air.Total />
+								<cfset airCurrency = left(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 3) />
+								<cfset airBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), airCurrency, '') />
+								<cfset airTaxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), airCurrency, '') />
+								<cfset airTotal = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), airCurrency, '') />
 								<tr>
 									<td>Flight</td>
 									<td>#airCardType#... #right(airCardNumber, 4)#</td>
@@ -51,7 +51,7 @@
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : airTaxes&' '&airCurrency)#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : airTotal&' '&airCurrency)#</td>
-									<cfset totalAmount = totalAmount + rc.Air.Total />
+									<cfset totalAmount = totalAmount + airTotal />
 								</tr>
 								<cfset whichCurrency = airCurrency />
 							</cfif>

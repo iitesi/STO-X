@@ -163,7 +163,13 @@
 
 			<td width="200" valign="top">
 				<span class="blue bold large">
-					#dollarFormat(rc.Air.Total)#<br>
+					<cfif NOT structKeyExists(rc.Air, 'PricingSolution')
+						OR NOT isObject(rc.Air.PricingSolution)>
+						#dollarFormat(rc.Air.Total)#
+					<cfelse>
+						#replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 'USD', '$')#
+					</cfif>
+					<br>
 				</span>
 
 				Total including taxes and refunds<br>

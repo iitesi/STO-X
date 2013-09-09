@@ -71,7 +71,10 @@
 				<!--- Sell Air --->
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
-					<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+
+					<cfif NOT structKeyExists(Air, 'PricingSolution')
+						OR NOT isObject(Air.PricingSolution)>
+						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
@@ -80,20 +83,9 @@
 																							, nCouldYou = 0
 																							, bSaveAirPrice = 1
 																						)>
-					<cfif structIsEmpty(trip)>
-						<cfset arrayAppend( errorMessage, 'Could not price record.' )>
-						<cfset errorType = 'Air.airPrice'>
-					<cfelse>
-						<cfif Air.total LT trip[Air.nTrip].total>
-							<cfset arrayAppend(errorMessage, 'Price increase from #dollarFormat(Air.total)# to #dollarFormat(trip[Air.nTrip].total)#')>
+						<cfif structIsEmpty(trip)>
+							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
 							<cfset errorType = 'Air.airPrice'>
-							<cfset local.nTrip = Air.nTrip>
-							<cfset local.aPolicies = Air.aPolicies>
-							<cfset local.policy = Air.policy>
-							<cfset session.searches[rc.SearchID].stItinerary.Air = trip>
-							<cfset session.searches[rc.SearchID].stItinerary.Air.nTrip = nTrip>
-							<cfset session.searches[rc.SearchID].stItinerary.Air.aPolicies = aPolicies>
-							<cfset session.searches[rc.SearchID].stItinerary.Air.policy = policy>
 						<cfelse>
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
@@ -102,6 +94,21 @@
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
+						</cfif>
+					</cfif>
+
+					<cfif arrayIsEmpty(errorMessage)>
+						<cfif true><!--- Air.total LT trip[Air.nTrip].total --->
+							<!--- <cfset arrayAppend(errorMessage, 'Price increase from #dollarFormat(Air.total)# to #dollarFormat(trip[Air.nTrip].total)#')>
+							<cfset errorType = 'Air.airPrice'>
+							<cfset local.nTrip = Air.nTrip>
+							<cfset local.aPolicies = Air.aPolicies>
+							<cfset local.policy = Air.policy>
+							<cfset session.searches[rc.SearchID].stItinerary.Air = trip>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.nTrip = nTrip>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.aPolicies = aPolicies>
+							<cfset session.searches[rc.SearchID].stItinerary.Air.policy = policy>
+						<cfelse> --->
 
 							<!--- Parse credit card information --->
 							<cfset local.cardNumber = ''>
