@@ -38,7 +38,7 @@
 											<td width="80" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 												#segment.Carrier# #segment.FlightNumber#
 											</td>
-											<td width="110" title="#application.stAirports[segment.Origin]# - #application.stAirports[segment.Destination]#">
+											<td width="110" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 												#segment.Origin# - #segment.Destination#
 											</td>
 											<td width="100">

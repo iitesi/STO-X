@@ -65,7 +65,7 @@
 			<!--- show seatmap heading --->
 			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#.png">
 			<div class="media-heading pull-left">
-				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin]# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination]# (#currentSegment.Destination#)
+				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin].airport# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination].airport# (#currentSegment.Destination#)
 				<cfif structKeyExists(rc, "seat") AND Len(rc.seat)>
 				:: Selected Seat - #rc.seat#
 				</cfif>

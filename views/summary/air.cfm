@@ -126,7 +126,7 @@
 								#segment.Carrier# #segment.FlightNumber#
 							</td>
 
-							<td title="#application.stAirports[segment.Origin]# - #application.stAirports[segment.Destination]#">
+							<td title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 								#segment.Origin# - #segment.Destination#
 							</td>
 

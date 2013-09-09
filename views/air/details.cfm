@@ -16,7 +16,7 @@
 
 	<div class="media">
 		<div class="media-body">
-			<span class="media-heading"><h3>#application.stAirports[stGroup.Origin]# (#stGroup.Origin#) to #application.stAirports[stGroup.Destination]# (#stGroup.Destination#) <small>:: #DateFormat(stGroup.DepartureTime, 'dddd, mmm d')#</small></h3></span>
+			<span class="media-heading"><h3>#application.stAirports[stGroup.Origin].airport# (#stGroup.Origin#) to #application.stAirports[stGroup.Destination].airport# (#stGroup.Destination#) <small>:: #DateFormat(stGroup.DepartureTime, 'dddd, mmm d')#</small></h3></span>
 			<span class="muted">Trip duration: #stGroup.TravelTime#</span>
 		</div>
 	</div>
@@ -55,7 +55,7 @@
 				<img class="carrierimg" src="assets/img/airlines/blank.gif">
 			</span>
 			<div class="media-body">
-				<span class="media-heading"><i class="icon-time"></i> #int(minites/60)#h #minites%60#m layover in #application.stAirports[stSegment.Destination]# (#stSegment.Destination#)</span>
+				<span class="media-heading"><i class="icon-time"></i> #int(minites/60)#h #minites%60#m layover in #application.stAirports[stSegment.Destination].airport# (#stSegment.Destination#)</span>
 			</div>
 		</div>
 		</cfif>

@@ -67,11 +67,11 @@
 				<cfset stGroup = stTrip.Groups[Group]>
 				<tr>
 					<td>&nbsp;</td>
-					<td title="#application.stAirports[stGroup.Origin]#">
+					<td title="#application.stAirports[stGroup.Origin].airport#">
 						<strong>#stGroup.Origin#</strong>
 					</td>
 					<td>&nbsp;</td>
-					<td title="#application.stAirports[stGroup.Destination]#">
+					<td title="#application.stAirports[stGroup.Destination].airport#">
 						<strong>#stGroup.Destination#</strong>
 					</td>
 				</tr>
@@ -100,7 +100,7 @@
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination]#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#

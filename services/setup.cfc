@@ -103,10 +103,10 @@
 					<!--- Round trip tab --->
 					<cfcase value="RT">
 						<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')# - #DateFormat(getsearch.Arrival_DateTime, 'ddd mmm d')#")>
+							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')# - #DateFormat(getsearch.Arrival_DateTime, 'ddd mmm d')#")>
 							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')# - #DateFormat(getsearch.Arrival_DateTime, 'm/d')#")>
 						<cfelse>
-							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
+							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
 						</cfif>
 						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
@@ -115,7 +115,7 @@
 
 					<!--- One way --->
 					<cfcase value="OW">
-						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City]# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City]# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
+						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 						<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
 						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 					</cfcase>
@@ -138,7 +138,7 @@
 								<cfset local.breadCrumb = "#depart_city#-#arrival_city#">
 							</cfif>
 							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
-							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City]# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City]# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
+							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City].city# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City].city# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
 						<!--- populate headings for display --->
 						<cfset searchfilter.setAirHeading("Multi-city Destinations")>
@@ -147,7 +147,7 @@
 				</cfswitch>
 
 			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
-				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City])>
+				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City].city)>
 			</cfif>
 
 			<!--- Set carHeading. --->
@@ -468,17 +468,19 @@
 	<cffunction name="setAirports" output="false" returntype="void">
 
 		<cfquery name="local.qAirports" datasource="#getBookingDSN()#">
-			SELECT location_code AS AirportCode
-			, Location_Name AS AirportName
+			SELECT Location_Code AS code
+				, Location_Name AS city
+				, Airport_Name AS airport
 			FROM lu_Geography
 			WHERE Location_Type = 125
-			ORDER BY AIRPORTCODE
+			ORDER BY code
 		</cfquery>
 
 		<cfset local.stTemp = {}>
 
 		<cfloop query="qAirports">
-			<cfset stTemp[AirportCode] = AirportName>
+			<cfset stTemp[code].city = city>
+			<cfset stTemp[code].airport = airport>
 		</cfloop>
 
 		<cfset application.stAirports = stTemp>
