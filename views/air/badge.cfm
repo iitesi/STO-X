@@ -18,7 +18,13 @@
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
 
-
+	<cfset bSelected = false />
+	<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "sJavaScript")>
+		<cfset thisSelectedLeg = replace(listFirst(session.searches[rc.SearchID].stSelected[rc.Group].sJavaScript), """", "", "all") />
+		<cfif nTripKey EQ thisSelectedLeg>
+			<cfset bSelected = true />
+		</cfif>
+	</cfif>
 
 	<cfoutput>
 		<div class="badge">
@@ -54,11 +60,11 @@
 					</cfif>
 				</td>
 			</tr>
-			<cfif !bSelected AND !stTrip.Policy>
-			<tr align="center">
-				<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
-				<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>')#</td>
-			</tr>
+			<cfif bSelected OR !stTrip.Policy>
+				<tr align="center">
+					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
+					<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>')#</td>
+				</tr>
 			</cfif>
 			<tr>
 				<td colspan="4">&nbsp;</td>
