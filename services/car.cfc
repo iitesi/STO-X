@@ -80,14 +80,18 @@
 				<cfset session.searches[ searchId ].vehicleLocations[arguments.Filter.getCarPickupAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
 																																							, date = arguments.Filter.getCarPickupDateTime()
 																																							, airport = arguments.Filter.getCarPickupAirport()
-																																							, Filter = arguments.Filter )>
+																																							, Filter = arguments.Filter
+																																							, carPrefDisp = arguments.Policy.Policy_CarPrefDisp
+																																							, preferredCars = arguments.Account.aPreferredCar )>
 			</cfif>
 
 			<cfif NOT structKeyExists(session.searches[ searchId ].vehicleLocations, arguments.Filter.getCarDropoffAirport())>
 				<cfset session.searches[ searchId ].vehicleLocations[arguments.Filter.getCarDropoffAirport()] = VehicleAdapter.getVehicleLocations( targetBranch = arguments.Account.sBranch
 																																							, date = arguments.Filter.getCarPickupDateTime()
 																																							, airport = arguments.Filter.getCarDropoffAirport()
-																																							, Filter = arguments.Filter )>
+																																							, Filter = arguments.Filter
+																																							, carPrefDisp = arguments.Policy.Policy_CarPrefDisp
+																																							, preferredCars = arguments.Account.aPreferredCar )>
 			</cfif>
 
 <!--- <cfdump var="#session.searches[ searchId ].vehicleLocations#" /><cfabort /> --->
