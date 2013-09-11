@@ -333,6 +333,9 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#" + inputName ).val( orgunit.valueID );
+			if( inputName == 'custom' && acctID != 1 ){
+				$( "#" + inputName ).attr( "disabled", true );
+			}
 		}
 
 		return false;
@@ -525,7 +528,7 @@ $(document).ready(function(){
 		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
 	})
 
-	//NASCAR custom code for conitional logic for sort1/second org unit displayed/department number
+	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number
 	if (acctID == 348) {
 
 		$( "#orgUnits" ).on('change', '#custom', function() {
