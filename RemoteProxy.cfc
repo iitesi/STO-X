@@ -76,7 +76,7 @@
 		<cfargument name="conditionalSort5" required="false" default="">
 		<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
-		<cftry>
+		<!---<cftry>--->
 			<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
 																				, valueID = arguments.valueID
 																				, conditionalSort1 = arguments.conditionalSort1
@@ -88,10 +88,10 @@
 
 			<cfreturn serializeJSON( qOrgUnitValues ) />
 
-			<cfcatch type="any">
+			<!---<cfcatch type="any">
 				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
-		</cftry>
+		</cftry>--->
 
 	</cffunction>
 
@@ -331,6 +331,14 @@
 		</cfif>
 
 		<cfreturn cy />
+
+	</cffunction>
+
+	<cffunction name="getSearchTraveler" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular traveler that has been associated with a trip/search">
+		<cfargument name="searchID" required="true" type="numeric">
+		<cfargument name="travelerNumber" required="true" type="numeric">
+
+		<cfreturn getBean("Summary").getTraveler( argumentCollection=arguments ) />
 
 	</cffunction>
 

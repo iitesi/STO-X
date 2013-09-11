@@ -22,7 +22,7 @@ $(document).ready(function(){
 	// Get traveler from session and populate the form
 	function getTraveler() {
 		$.ajax({type:"POST",
-			url: 'services/summary.cfc?method=travelerJSON',
+			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{
 						  travelerNumber : travelerNumber
 						, searchID : searchID
