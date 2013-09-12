@@ -17,7 +17,6 @@
 		<cfparam name="rc.passwordConfirm" default="" />
 
 		<cfset rc.errors = {}>
-
 		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>
 			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=1')>
@@ -50,11 +49,6 @@
 				</cfif>
 			</cfloop>
 		</cfif>
-
-		<!--- <cfset local.count = 0>
-		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travIndex" index="local.trav">
-			<cfset count++>
-		</cfloop> --->
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 
@@ -203,12 +197,14 @@
 					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueReport( rc[inputName] )>
 					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueDisplay( rc[inputName] )>
 				<cfelse>
-					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueID( rc[inputName] )>
-					<cfset local.qOUValue = fw.getBeanFactory().getBean('OrgUnitService').getOrgUnitValues( ouID = orgUnit.getOUID()
-																											, valueID = rc[inputname]
-																											, returnFormat = 'query' )>
-					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueReport( qOUValue.Value_Report )>
-					<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueDisplay( qOUValue.Value_Display )>
+					<cfif structKeyExists(rc, inputName)>
+						<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueID( rc[inputName] )>
+						<cfset local.qOUValue = fw.getBeanFactory().getBean('OrgUnitService').getOrgUnitValues( ouID = orgUnit.getOUID()
+																												, valueID = rc[inputname]
+																												, returnFormat = 'query' )>
+						<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueReport( qOUValue.Value_Report )>
+						<cfset rc.Traveler.getOrgUnit()[orgUnitIndex].setValueDisplay( qOUValue.Value_Display )>
+					</cfif>
 				</cfif>
 			</cfloop>
 			<cfset rc.Traveler.setBirthdate( birthdate )>

@@ -46,6 +46,7 @@
 				<!--- Open terminal session --->
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
+
 				<cfif hostToken EQ ''>
 					<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 					<cfset errorType = 'TerminalEntry.openSession'>
@@ -463,7 +464,8 @@
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler )>
+						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
+																						, acctID = rc.Filter.getAcctID() )>
 					</cfif>
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
@@ -489,17 +491,6 @@
 				</cfif>
 			</cfif>
 		</cfloop>
-		<cfif arrayIsEmpty(errorMessage)>
-			<!--- Save profile to database --->
-			<cfif Traveler.getBookingDetail().getSaveProfile()>
-				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
-			</cfif>
-			<!--- <cfoutput>
-				<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
-			</cfoutput>
-			<cfabort /> --->
-			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
-		</cfif>
 
 		<cfreturn />
 	</cffunction>

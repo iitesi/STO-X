@@ -10,11 +10,11 @@
 		<cfreturn this />
 	</cffunction>
 
-	<cffunction name="travelerJSON" returntype="any" returnformat="plain" access="remote" output="false">
+	<cffunction name="getTraveler" returntype="any" access="public" output="false">
 		<cfargument name="searchID" required="true" type="numeric">
 		<cfargument name="travelerNumber" required="true" type="numeric">
 
-		<cfreturn  serializeJSON(session.searches[arguments.searchID].travelers[arguments.travelerNumber])/>
+		<cfreturn session.searches[arguments.searchID].travelers[arguments.travelerNumber] />
 	</cffunction>
 
 	<cffunction name="getOutOfPolicy" output="false">
@@ -64,7 +64,7 @@
 		<cfreturn qTXExceptionCodes>
 	</cffunction>
 
-	<cffunction name="determineFees" access="remote" output="false">
+	<cffunction name="determineFees" access="public" output="false">
 		<cfargument name="acctID" type="numeric" required="true">
 		<cfargument name="userID" type="numeric" required="true">
 		<cfargument name="Filter" type="any" required="true">

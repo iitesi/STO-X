@@ -200,18 +200,36 @@
 				<cfset var includeDate = true />
 
 				<cfif structKeyExists( session.searches[ rc.searchId ], "couldYou" )>
-					<cfif  Search.getAir() AND structKeyExists( session.searches[ rc.searchId ].couldYou, "AIR" ) AND isStruct( session.searches[ rc.searchId ].couldYou.Air[ loopDate ] ) >
+					<cfif  Search.getAir()
+						AND structKeyExists( session.searches[ rc.searchId ].couldYou, "AIR" )
+						AND structKeyExists( session.searches[ rc.searchId ].couldYou, loopDate )
+						AND isStruct( session.searches[ rc.searchId ].couldYou.Air[ loopDate ] ) >
+
 						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.air[ loopDate ][ listGetAt( structKeyList(session.searches[ rc.searchId ].couldYou.air[ loopDate ] ), 1  ) ].TOTAL />
+
 					<cfelse>
 						<cfset includeDate = false />
 					</cfif>
-					<cfif Search.getHotel() AND structKeyExists( session.searches[ rc.searchid ].couldYou, "HOTEL" ) AND isObject( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ] ) AND isArray( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ].getRooms() )>
+
+					<cfif Search.getHotel()
+						AND structKeyExists( session.searches[ rc.searchid ].couldYou, "HOTEL" )
+						AND structKeyExists( session.searches[ rc.searchId ].couldYou.Hotel, loopDate )
+						AND isObject( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ] )
+						AND isArray( session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ].getRooms() )>
+
 						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.Hotel[ loopDate ].getRooms()[ 1 ].getTotalForStay() />
+
 					<cfelse>
 						<cfset includeDate = false />
 					</cfif>
-					<cfif Search.getCar() AND structKeyExists( session.searches[ rc.searchid ].couldYou, "VEHICLE" ) AND isObject( session.searches[ rc.searchId ].couldYou.Vehicle[ loopDate ] ) >
+
+					<cfif Search.getCar()
+						AND structKeyExists( session.searches[ rc.searchid ].couldYou, "VEHICLE" )
+						AND structKeyExists( session.searches[ rc.searchid ].couldYou.Vehicle, loopDate )
+						AND isObject( session.searches[ rc.searchId ].couldYou.Vehicle[ loopDate ] ) >
+
 						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.vehicle[ loopDate ].getEstimatedTotalAmount() />
+
 					<cfelse>
 						<cfset includeDate = false />
 					</cfif>

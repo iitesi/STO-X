@@ -199,7 +199,7 @@
 
 		<cfset local.stTemp = {}>
 		<cfif arguments.AcctID NEQ 0>
-			<cfif ListFindNoCase('qa,prod', getCurrentEnvironment())>
+			<cfif ListFindNoCase('qa,beta,prod', getCurrentEnvironment())>
 				<cfset local.Branches = {
 					"1P6O" = "P1601409",
 					"1N47" = "P1601410",

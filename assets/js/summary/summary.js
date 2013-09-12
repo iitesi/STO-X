@@ -22,7 +22,7 @@ $(document).ready(function(){
 	// Get traveler from session and populate the form
 	function getTraveler() {
 		$.ajax({type:"POST",
-			url: 'services/summary.cfc?method=travelerJSON',
+			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{
 						  travelerNumber : travelerNumber
 						, searchID : searchID
@@ -109,7 +109,6 @@ $(document).ready(function(){
 	});
 
 	function loadTraveler(traveler, loadMethod) {
-		// console.log(traveler);
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
@@ -173,26 +172,29 @@ $(document).ready(function(){
 			$( "#userID" ).val( 0 );
 			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
-			$( "#createProfileDiv" ).show();
-			if (traveler.bookingDetail.createProfile == 1) {
-				$( "#createProfile" ).attr( 'checked', true );
-				$( "#usernameDiv" ).show();
-				$( "#password" ).val( traveler.bookingDetail.password );
-				$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
-			}
-			else {
-				$( "#createProfile" ).attr( 'checked', false );
-			}
 
 			$.ajax({type: "POST",
 				url: "RemoteProxy.cfc?method=loadFindItGuest",
 				data: "searchID="+searchID,
 				dataType: "json",
 				success:function(data) {
-					guestEmail = data['DATA'][0][4];
-					$("#email").val(guestEmail);
-					$("#username").val(guestEmail);
-					$("#username_disabled").val(guestEmail);
+					if (data['DATA'].length) {
+						$( "#createProfileDiv" ).show();
+						if (traveler.bookingDetail.createProfile == 1) {
+							$( "#createProfile" ).attr( 'checked', true );
+							$( "#usernameDiv" ).show();
+							$( "#password" ).val( traveler.bookingDetail.password );
+							$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
+						}
+						else {
+							$( "#createProfile" ).attr( 'checked', false );
+						}
+
+						guestEmail = data['DATA'][0][4];
+						$("#email").val(guestEmail);
+						$("#username").val(guestEmail);
+						$("#username_disabled").val(guestEmail);
+					}
 				}
 			});
 		}
@@ -333,6 +335,9 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#" + inputName ).val( orgunit.valueID );
+			if( inputName == 'custom' && acctID != 1 ){
+				$( "#" + inputName ).attr( "disabled", true );
+			}
 		}
 
 		return false;
@@ -525,7 +530,7 @@ $(document).ready(function(){
 		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
 	})
 
-	//NASCAR custom code for conitional logic for sort1/second org unit displayed/department number
+	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number
 	if (acctID == 348) {
 
 		$( "#orgUnits" ).on('change', '#custom', function() {
