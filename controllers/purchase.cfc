@@ -489,17 +489,6 @@
 				</cfif>
 			</cfif>
 		</cfloop>
-		<cfif arrayIsEmpty(errorMessage)>
-			<!--- Save profile to database --->
-			<cfif Traveler.getBookingDetail().getSaveProfile()>
-				<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
-			</cfif>
-			<!--- <cfoutput>
-				<a href="#buildURL('confirmation?searchID=#rc.searchID#')#">Confirmation Page</a>
-			</cfoutput>
-			<cfabort /> --->
-			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
-		</cfif>
 
 		<cfreturn />
 	</cffunction>
