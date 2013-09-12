@@ -108,6 +108,7 @@
 	<bean id="UserManager" class="com.shortstravel.security.UserManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
 	<bean id="PolicyManager" class="com.shortstravel.account.PolicyManager">
