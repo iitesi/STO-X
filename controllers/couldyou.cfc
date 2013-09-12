@@ -202,7 +202,7 @@
 				<cfif structKeyExists( session.searches[ rc.searchId ], "couldYou" )>
 					<cfif  Search.getAir()
 						AND structKeyExists( session.searches[ rc.searchId ].couldYou, "AIR" )
-						AND structKeyExists( sessions.searches[ rc.searchId ].couldYou, loopDate )
+						AND structKeyExists( session.searches[ rc.searchId ].couldYou, loopDate )
 						AND isStruct( session.searches[ rc.searchId ].couldYou.Air[ loopDate ] ) >
 
 						<cfset loopDateTotal = loopDateTotal + session.searches[ rc.searchId ].couldYou.air[ loopDate ][ listGetAt( structKeyList(session.searches[ rc.searchId ].couldYou.air[ loopDate ] ), 1  ) ].TOTAL />
