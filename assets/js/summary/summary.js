@@ -109,7 +109,6 @@ $(document).ready(function(){
 	});
 
 	function loadTraveler(traveler, loadMethod) {
-		// console.log(traveler);
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
@@ -173,26 +172,29 @@ $(document).ready(function(){
 			$( "#userID" ).val( 0 );
 			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
-			$( "#createProfileDiv" ).show();
-			if (traveler.bookingDetail.createProfile == 1) {
-				$( "#createProfile" ).attr( 'checked', true );
-				$( "#usernameDiv" ).show();
-				$( "#password" ).val( traveler.bookingDetail.password );
-				$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
-			}
-			else {
-				$( "#createProfile" ).attr( 'checked', false );
-			}
 
 			$.ajax({type: "POST",
 				url: "RemoteProxy.cfc?method=loadFindItGuest",
 				data: "searchID="+searchID,
 				dataType: "json",
 				success:function(data) {
-					guestEmail = data['DATA'][0][4];
-					$("#email").val(guestEmail);
-					$("#username").val(guestEmail);
-					$("#username_disabled").val(guestEmail);
+					if (data['DATA'].length) {
+						$( "#createProfileDiv" ).show();
+						if (traveler.bookingDetail.createProfile == 1) {
+							$( "#createProfile" ).attr( 'checked', true );
+							$( "#usernameDiv" ).show();
+							$( "#password" ).val( traveler.bookingDetail.password );
+							$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
+						}
+						else {
+							$( "#createProfile" ).attr( 'checked', false );
+						}
+
+						guestEmail = data['DATA'][0][4];
+						$("#email").val(guestEmail);
+						$("#username").val(guestEmail);
+						$("#username_disabled").val(guestEmail);
+					}
 				}
 			});
 		}
