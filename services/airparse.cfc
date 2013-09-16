@@ -447,6 +447,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
 			<cfset sCarriers = '"#Replace(ArrayToList(arguments.stTrips[sTrip].Carriers), ',', '","', 'ALL')#"'>
 			<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], arguments.stTrips[sTrip].Class, arguments.stTrips[sTrip].Ref, sCarriers)>
+			<cfset stTrips[sTrip].nTripKey = sTrip>
 		</cfloop>
 
 		<cfreturn stTrips/>

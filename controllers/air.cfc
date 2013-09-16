@@ -11,11 +11,16 @@
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    	<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
     	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+
+			<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
+			<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
+				<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+			</cfif>
 		<cfelse>
 			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 			<cfset session.searches[rc.searchID].stCars = {}>
@@ -25,9 +30,11 @@
 		<cfset checkFilterStatus(arguments.rc)>
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-
-			<!--- if they click the buy button - remove other flights from the session --->
+		<!--- if this is a selected flight OR if the request is coming from FindIt
+						* if they click the buy button - remove other flights from the session
+						* redirect them accordingly
+		--->
+		<cfif structKeyExists(arguments.rc, 'bSelect') OR (structKeyExists(arguments.rc, 'findIt') AND arguments.rc.findIt EQ 1)>
 			<cfset removeOtherFlights(arguments.rc)>
 
 			<cfif arguments.rc.Filter.getHotel()
