@@ -18,17 +18,17 @@
 		<!---Check to see if currency values are all the same...if not, redirect to summary--->
 		<cfset var currencies = arrayNew(1) />
 
-		<cfif rc.Filter.getAir()>
+		<cfif val(rc.Filter.getAir())>
 			<cfset arrayAppend( currencies, "USD" ) />
 		</cfif>
-		<cfif rc.Filter.getHotel()>
+		<cfif val(rc.Filter.getHotel())>
 			<cfif rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() !=  "" >
 				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() ) />
 			<cfelse>
 				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getBaseRateCurrency() ) />
 			</cfif>
 		</cfif>
-		<cfif rc.Filter.getCar()>
+		<cfif val(rc.Filter.getCar())>
 			<cfset arrayAppend( currencies, rc.itinerary.vehicle.getCurrency() ) />
 		</cfif>
 
