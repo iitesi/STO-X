@@ -248,8 +248,7 @@
 					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
 					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
 				FROM Accounts
-				WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-					AND Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
 			<cfquery name="local.qCouldYou" datasource="#getCorporateProductionDSN()#">
