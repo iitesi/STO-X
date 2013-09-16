@@ -243,7 +243,7 @@
 				}>
 			</cfif>
 
-			<cfquery name="local.qAccount">
+			<cfquery name="local.qAccount" datasource="#getCorporateProductionDSN()#">
 				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
 					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
 					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
@@ -252,7 +252,7 @@
 					AND Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfquery name="local.qCouldYou" datasource="Corporate_Production">
+			<cfquery name="local.qCouldYou" datasource="#getCorporateProductionDSN()#">
 				SELECT CouldYou
 				FROM Accounts
 				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
