@@ -90,4 +90,6 @@
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 		<input type="hidden" name="Group" value="#rc.Group#">
 	</form>
+
+	#View('modal/popup')#
 </cfoutput>
