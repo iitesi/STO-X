@@ -18,6 +18,7 @@
 	SELECT Location_Code, Location_Display
 	FROM lu_Geography
 	WHERE Location_Type = 125
+	ORDER BY Location_Code
 </cfquery>
 <!--- need to put the query results in the following format: {"id":"ABR","text":"Aberdeen Arpt (ABR), Aberdeen, SD, US"} --->
 <cfprocessingdirective suppresswhitespace="yes">
@@ -26,7 +27,7 @@
 	</cfsavecontent>
 </cfprocessingdirective>
 <cffile action="write"
-	file="c:/inetpub/wwwroot/railo/search/assets/localdata/airports-us2.js"
+	file="c:/inetpub/wwwroot/railo/search/assets/localdata/airports-us.js"
 	nameconflict="overwrite"
 	charset="UTF-8"
 	output="#intlairports#"/>
