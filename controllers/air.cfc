@@ -155,8 +155,7 @@
 		<cfargument name="rc">
 
 		<cfset rc.bSuppress = 1>
-
-		<cfset variables.fw.service('email.doEmail', '')> <!--- , 'void' --->
+		<cfset fw.getBeanFactory().getBean('email').doEmail( argumentcollection = arguments.rc )>
 
 		<cfset rc.message.AddInfo("Your email has been sent.")>
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>

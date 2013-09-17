@@ -12,7 +12,7 @@
 
 		<cfset local.toAddress = arguments.To_Address>
 		<cfset local.ccAddress = arguments.CC_Address>
-		<cfif IsLocalHost(cgi.local_addr)>
+		<cfif IsLocalHost(cgi.remote_addr)>
 			<cfset local.toAddress = "jpriest@shortstravel.com">
 			<cfset local.ccAddress = "jpriest@shortstravel.com">
 		</cfif>
