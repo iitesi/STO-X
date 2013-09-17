@@ -79,19 +79,19 @@ $(document).ready(function(){
 		<div class="control-group">
 			<label class="control-label" for="CC_Address">CC email</label>
 			<div class="controls">
-				<input type="text" id="CC_Address" placeholder="CC email" value="#rc.qProfile.Email#">
+				<input type="text" id="CC_Address" name="CC_Address" placeholder="CC email" value="#rc.qProfile.Email#">
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="Email_Subject">Subject</label>
 			<div class="controls">
-				<input type="text" id="Email_Subject" placeholder="Email subject" value="Tentative itinerary <cfif rc.qProfile.First_Name NEQ ''>for #rc.qProfile.First_Name# #rc.qProfile.Last_Name#</cfif>" class="input-xxlarge">
+				<input type="text" id="Email_Subject" name="Email_Subject" placeholder="Email subject" value="Tentative itinerary <cfif rc.qProfile.First_Name NEQ ''>for #rc.qProfile.First_Name# #rc.qProfile.Last_Name#</cfif>" class="input-xxlarge">
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="Email_Message">Message</label>
 			<div class="controls">
-				<textarea rows="2" id="Email_Message" placeholder="Your message" class="input-xxlarge"></textarea>
+				<textarea rows="2" id="Email_Message" name="Email_Message" placeholder="Your message" class="input-xxlarge"></textarea>
 			</div>
 		</div>
 		<div class="control-group">
