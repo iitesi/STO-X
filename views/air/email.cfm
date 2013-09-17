@@ -79,7 +79,7 @@ $(document).ready(function(){
 		<div class="control-group">
 			<label class="control-label" for="CC_Address">CC email</label>
 			<div class="controls">
-				<input type="text" id="CC_Address" placeholder="CC email" value="#rc.qProfile.Email#">
+				<input type="text" id="CC_Address" name="CC_Address" placeholder="CC email" value="#rc.qProfile.Email#">
 			</div>
 		</div>
 		<div class="control-group">
