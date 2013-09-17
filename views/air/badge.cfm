@@ -18,8 +18,8 @@
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
 
-	<cfset bSelected = false />
 	<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "sJavaScript")>
+		<cfset bSelected = false />
 		<cfset thisSelectedLeg = replace(listFirst(session.searches[rc.SearchID].stSelected[rc.Group].sJavaScript), """", "", "all") />
 		<cfif nTripKey EQ thisSelectedLeg>
 			<cfset bSelected = true />
