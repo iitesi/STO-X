@@ -37,7 +37,7 @@
 </div>
 
 <div id="aircontent">
-	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
+	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails, "aSortDuration") AND structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
 
 		#View('air/filter')#
 
@@ -49,12 +49,12 @@
 
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
-			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortArrival)#;
-			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDepart)#;
-			var sortbyduration = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDuration)#;
-			var sortbyprice = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFare)#;
-			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag)#;
-			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2)#;
+			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
+			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group])#;
+			var sortbyduration = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group])#;
+			var sortbyprice = '';
+			var sortbyprice1bag = '';
+			var sortbyprice2bag = '';
 
 			// flightresults is used in booking.js to filter flights
 			// here we loop over session searches and stuff all the flights avail in flightresults
@@ -90,4 +90,6 @@
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 		<input type="hidden" name="Group" value="#rc.Group#">
 	</form>
+
+	#View('modal/popup')#
 </cfoutput>

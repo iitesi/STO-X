@@ -1,4 +1,9 @@
 <cfset airlines = ValueList(rc.qBaggage.shortCode)>
+<script>
+	$(document).ready(function(){
+		$('.collapse').on('hidden', function(e){ e.stopPropagation(); });
+	});
+</script>
 
 <cfoutput>
 <div id="baggage">
@@ -10,7 +15,8 @@
 				<img src="assets/img/airlines/#rc.qBaggage.ShortCode#_sm.png"> #rc.qBaggage.Name# Baggage Fees <small>(one way)</small>
 			</a>
 		</div>
-		<div id="collapse#shortCode#" class="accordion-body collapse <cfif currentRow EQ 1>in</cfif>">
+		<div id="collapse#shortCode#" class="accordion-body collapse in">
+		<!--- <div id="collapse#shortCode#" class="accordion-body collapse <cfif currentRow EQ 1>in</cfif>"> --->
 			<div class="accordion-inner">
 				<cfif rc.qBaggage.CreateUpdate_Datetime NEQ "">
 					<table class="table table-hover table-condensed">
