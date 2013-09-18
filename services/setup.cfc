@@ -25,7 +25,6 @@
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 
-		<cfdump var="#arguments#" abort>
 		<cfreturn this>
 	</cffunction>
 
