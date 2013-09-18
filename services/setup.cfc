@@ -57,7 +57,7 @@
 				Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
 				Airlines, International, Depart_TimeType, Arrival_TimeType, ClassOfService, CheckIn_Date, Arrival_City, CheckOut_Date,
 				Hotel_Search, Hotel_Airport, Hotel_Landmark, Hotel_Address, Hotel_City, Hotel_State, Hotel_Zip, Hotel_Country, Office_ID,
-				Hotel_Radius, air_heading, car_heading, hotel_heading
+				Hotel_Radius, air_heading, car_heading, hotel_heading, findit
 				FROM Searches
 				WHERE Search_ID = <cfqueryparam value="#arguments.SearchID#" cfsqltype="cf_sql_integer">
 				ORDER BY Search_ID DESC
