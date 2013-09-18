@@ -25,6 +25,7 @@
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 
+		<cfdump var="#arguments#" abort>
 		<cfreturn this>
 	</cffunction>
 
@@ -36,7 +37,6 @@
 	<!--- Named different to prevent overriding the default setPortalURL from environment service --->
 	<cffunction name="setPortalURLLink" output="false" returntype="void">
 		<cfset application.sPortalURL = getPortalURL()>
-		<cfdump var="#application#" abort>
 		<cfreturn />
 	</cffunction>
 
