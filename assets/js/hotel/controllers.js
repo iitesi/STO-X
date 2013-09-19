@@ -10,6 +10,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.hotels = [];
 	$scope.filteredHotels = [];
 	$scope.visibleHotels = [];
+	$scope.markers = [];
+	$scope.infoWindows = [];
 	$scope.errors = [];
 	$scope.messages = [];
 
@@ -47,15 +49,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					.then( function( result ){
 						$scope.account = result;
 					});
-				$scope.initializeMap();
+				$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
+				$scope.loadPolicy( $scope.search.policyID );
 			});
 	}
-
-	$scope.$watch( "map", function( map ){
-		if( typeof map != 'undefined' ){
-			$scope.loadPolicy( $scope.search.policyID );
-		}
-	})
 
 	$scope.loadPolicy = function( policyId ){
 		SearchService.loadPolicy( policyId )
@@ -69,8 +66,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.updateSearch = function(){
-		$scope.search.checkInDate = new Date( $('#hotel-in-date' ).val() );
-		$scope.search.checkOutDate = new Date( $('#hotel-out-date' ).val() );
+		if( $('#hotel-in-date' ).val() != "" ){
+			$scope.search.checkInDate = new Date( $('#hotel-in-date' ).val() );
+		}
+		if( $('#hotel-out-date' ).val() != '' ){
+			$scope.search.checkOutDate = new Date( $('#hotel-out-date' ).val() );
+		}
 		$('#changeSearchWindow').modal('hide');
 		$('#searchWindow').modal('show');
 
@@ -81,9 +82,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.search = result.data;
 					$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 					$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
-					$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
-					$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
 					$scope.getSearchResults( true );
+					$scope.map.setZoom( $scope.calculateMapZoom())
 				}
 
 				$scope.errors = result.errors;
@@ -160,7 +160,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.updateVisibleHotels = function(){
 		try{
-			$scope.clearMapPins();
+			$scope.clearMarkers();
 		} catch(e){
 
 		}
@@ -178,8 +178,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		for( var i=startIndex; i<endIndex; i++ ){
 			var Hotel = $scope.filteredHotels[i];
 
-			var displayedAddress = Hotel.Address + ', ' + Hotel.City + ', ' + Hotel.State;
-			$scope.addPin( i+1, Hotel.Lat, Hotel.Long, Hotel.PropertyName, displayedAddress );
+			$scope.addMarker( i+1, Hotel );
 			if( !Hotel.roomsRequested && !Hotel.roomsReturned ){
 				$scope.getHotelRates( Hotel, false );
 			}
@@ -452,80 +451,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
-	/*
-	$scope.initializeMap = function(){
-
-		Microsoft.Maps.loadModule('Microsoft.Maps.Themes.BingTheme', {
-			callback: function(){
-				$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
-				$scope.mapOptions = {
-					height: 500,
-					width: 600,
-					credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
-					enableSearchLogo: false,
-					theme: new Microsoft.Maps.Themes.BingTheme()
-				}
-				$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"), $scope.mapOptions);
-				$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
-				$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
-
-				Microsoft.Maps.Events.addHandler( $scope.map, "dblclick", function(e){
-					var center = $scope.map.getCenter();
-					$scope.search.hotelLat = center.latitude;
-					$scope.search.hotelLong = center.longitude;
-
-					$scope.updateSearch();
-				})
-			}
-		})
-
-	}
-	*/
-
-	$scope.initializeMap = function(){
-		$scope.map = new Microsoft.Maps.Map( document.getElementById("mapDiv"),
-			{
-				height: 500,
-				width: $( '#mapDiv' ).width(),
-				credentials: "AkxLdyqDdWIqkOGtLKxCG-I_Z5xEdOAEaOfy9A9wnzgXtvtPnncYjFQe6pjmpCJA",
-				enableSearchLogo: false
-			});
-		$scope.mapCenter = new Microsoft.Maps.Location( $scope.search.hotelLat, $scope.search.hotelLong);
-		$scope.map.setView({center: $scope.mapCenter, mapTypeId: Microsoft.Maps.MapTypeId.road, zoom: 12});
-		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', zIndex:-51}));
-
-		Microsoft.Maps.Events.addHandler( $scope.map, "dblclick", function(e){
-			var center = $scope.map.getCenter();
-			$scope.search.hotelLat = center.latitude;
-			$scope.search.hotelLong = center.longitude;
-			$scope.search.hotelSearch = 'latlong';
-			$scope.updateSearch();
-		})
-	}
-
-	$scope.clearMapPins = function(){
-		$scope.map.entities.clear();
-		$scope.map.entities.push(new Microsoft.Maps.Pushpin( $scope.mapCenter, {icon: '/booking/assets/img/center.png', height: 23, width: 25, visible: true}));
-	}
-
-	$scope.addPin = function( propertyNumber, lat, long, propertyName, propertyAddress ){
-    	var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location( lat, long ), {text:propertyNumber.toString(), visible:true});
-    	pin.title = propertyName;
-    	pin.description = propertyAddress;
-    	/*
-    	Microsoft.Maps.Events.addHandler(pin, 'click', function(){
-			var infoboxTitle = $('#infoboxTitle')[0];
-			infoboxTitle.innerHTML = pin.title;
-			var infoboxDescription = $('#infoboxDescription')[0];
-			infoboxDescription.innerHTML = pin.description;
-			var infobox2 = $('#infoBox')[0];
-			infobox2.style.visibility = "visible";
-			$('#mapDiv').append(infobox2);
-		});
-		*/
-    	$scope.map.entities.push( pin );
-	}
-
 	$scope.setCurrentPage = function( pageNumber ){
 		var totalPages = $scope.calculatePages();
 
@@ -618,6 +543,121 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 							+ '&totalForStay=' + Room.totalForStay
 							+ '&isInPolicy=' + Room.isInPolicy;
 	}
+
+
+	$scope.initializeMap = function( lat, lon ){
+
+		google.maps.visualRefresh = true;
+		var mapCenter =  new google.maps.LatLng( lat, lon );
+		var mapOptions = {
+          center: mapCenter,
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          disableDoubleClickZoom: true,
+          panControl: false,
+          zoom: $scope.calculateMapZoom(),
+          zoomControlOptions: {
+			style: google.maps.ZoomControlStyle.LARGE,
+			position: google.maps.ControlPosition.LEFT_CENTER
+		  }
+        };
+        $scope.map = new google.maps.Map( document.getElementById("mapDiv"), mapOptions);
+
+		var marker = new google.maps.Marker({
+			position: mapCenter,
+			map: $scope.map,
+			icon: '/booking/assets/img/center.png'
+		});
+
+		$scope.markers.push( marker );
+
+		google.maps.event.addListener($scope.map, 'dblclick', function(e) {
+			$scope.map.setCenter( e.latLng );
+			$scope.search.hotelLat = e.latLng.ob;
+			$scope.search.hotelLong = e.latLng.pb;
+			$scope.search.hotelSearch = 'latlong';
+			$scope.updateSearch();
+		  });
+
+		google.maps.event.addListener($scope.map, 'click', function(e) {
+			$scope.clearInfoWindows()
+		  })
+	}
+
+	$scope.calculateMapZoom = function(){
+		if( $scope.search.hotelRadius == 1 ){
+			return 14;
+		}
+		if( $scope.search.hotelRadius == 2 ){
+			return 13;
+		}
+		if( $scope.search.hotelRadius == 5 ){
+			return 11;
+		}
+		if( $scope.search.hotelRadius == 10 ){
+			return 10;
+		}
+		if( $scope.search.hotelRadius == 15 ){
+			return 10;
+		}
+		if( $scope.search.hotelRadius == 20 ){
+			return 9;
+		}
+
+		return 9;
+	}
+
+	$scope.addMarker = function( propertyNumber, Hotel ){
+
+    	var infoWindowContent = '<h4 class="infoWindowTitle">' + Hotel.PropertyName + '</h4>'+
+			'<div class="infoWindowContent">' + Hotel.Address +
+			'<br>' + Hotel.City + ', ' + Hotel.State + ' ' + Hotel.Zip;
+			if( Hotel.Phone != '' ){
+				infoWindowContent += 'Phone: ' + Hotel.Phone;
+			}
+			infoWindowContent += '</div>';
+
+		var infoWindow = new google.maps.InfoWindow({
+			content: infoWindowContent
+		});
+		$scope.infoWindows.push( infoWindow);
+
+    	var latlng = new google.maps.LatLng( Hotel.Lat, Hotel.Long );
+
+    	var styleIcon = new StyledIcon(StyledIconTypes.MARKER,{color:"#0044CC",text: propertyNumber.toString(),fore: "#fff"});
+    	var marker = new StyledMarker({styleIcon:styleIcon,position:latlng,map:$scope.map});
+
+		google.maps.event.addListener(marker, 'click', function() {
+			$scope.clearInfoWindows();
+			infoWindow.open( $scope.map, marker);
+		});
+
+		$scope.markers.push( marker );
+
+	}
+
+	$scope.clearInfoWindows = function(){
+		for( var i=0; i<$scope.infoWindows.length; i++ ){
+			$scope.infoWindows[i].close();
+		}
+	}
+
+	$scope.clearMarkers = function(){
+		for( var i=0; i<$scope.markers.length; i++ ){
+			$scope.markers[i].setMap(null);
+		}
+		$scope.markers = [];
+
+		var mapCenter =  new google.maps.LatLng( $scope.search.hotelLat, $scope.search.hotelLong );
+		var marker = new google.maps.Marker({
+			position: mapCenter,
+			map: $scope.map,
+			icon: '/booking/assets/img/center.png'
+		});
+
+		$scope.markers.push( marker );
+	}
+
 
 	/* Items executed when controller is loaded */
 
