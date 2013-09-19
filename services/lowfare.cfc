@@ -53,7 +53,6 @@
 
 	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
 		<cfargument name="SearchID">
-		<cfargument name="Group">
 		<cfargument name="nTrip">
 
 		<!--- Initialize or overwrite the CouldYou air section --->

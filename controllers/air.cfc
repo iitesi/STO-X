@@ -7,11 +7,12 @@
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
-		<cfif structKeyExists(arguments.rc, "airlines") AND arguments.rc.airlines EQ 1>
+		<cfif structKeyExists(arguments.rc, "airlines")
+			AND arguments.rc.airlines EQ 1>
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+    	<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
     	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
@@ -23,7 +24,8 @@
 				<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
 			</cfif>
 		<cfelse>
-			<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('lowfare').selectAir( searchID = rc.searchID
+																	, nTrip = rc.nTrip )>
 			<cfset session.searches[rc.searchID].stCars = {}>
 		</cfif>
 
@@ -31,11 +33,7 @@
 		<cfset checkFilterStatus(arguments.rc)>
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
-		<!--- if this is a selected flight OR if the request is coming from FindIt
-						* if they click the buy button - remove other flights from the session
-						* redirect them accordingly
-		--->
-		<cfif structKeyExists(arguments.rc, 'bSelect') OR (structKeyExists(arguments.rc, 'findIt') AND arguments.rc.findIt EQ 1)>
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
 			<cfset removeOtherFlights(arguments.rc)>
 
 			<cfif arguments.rc.Filter.getHotel()
@@ -46,7 +44,7 @@
 				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
 				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
-			<cfif application.Accounts[ arguments.rc.Filter.getAcctID() ].couldYou EQ 1>
+			<cfif rc.Account.couldYou EQ 1>
 				<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>

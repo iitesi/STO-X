@@ -21,14 +21,15 @@
      </cffunction>
 
 	<cffunction name="doAirPrice" output="false">
-		<cfargument name="SearchID" 	required="true">
-		<cfargument name="Account"      required="true">
-		<cfargument name="Policy"       required="true">
-		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
-		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="nTrip"		required="false"	default="">
-		<cfargument name="nCouldYou"	required="false"	default="0">
-		<cfargument name="bSaveAirPrice"required="false"	default="0">
+		<cfargument name="SearchID" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
+		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="nTrip" required="false" default="">
+		<cfargument name="nCouldYou" required="false" default="0">
+		<cfargument name="bSaveAirPrice" required="false" default="0">
+		<cfargument name="stSelected" required="false" default="">
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -44,18 +45,23 @@
 		<cfset local.nTripKey = ''>
 		<cfset local.TotalFare = 0>
 
-		<cfif arguments.nTrip EQ ''>
+		<cfif arguments.nTrip EQ ''
+			AND NOT isStruct(arguments.stSelected)>
 			<!--- Selected outbound and return then wanting a price --->
 			<cfset stSelected = session.searches[arguments.SearchID].stSelected>
-		<cfelse>
+		<cfelseif NOT isStruct(arguments.stSelected)>
 			<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups#" item="local.Group">
 				<cfset stSelected[Group].Groups[0] = session.searches[arguments.SearchID].stTrips[arguments.nTrip].Groups[Group]>
 			</cfloop>
+		<cfelseif isStruct(arguments.stSelected)>
+			<cfset stSelected = arguments.stSelected>
 		</cfif>
 
 		<!--- Put together the SOAP message. --->
-		<cfset sMessage 	= prepareSoapHeader(stSelected, arguments.sCabin, arguments.bRefundable, arguments.nCouldYou)>
-		<!--- <cfdump var="#sMessage#" abort> --->
+		<cfset sMessage = prepareSoapHeader( stSelected = stSelected
+											, sCabin = arguments.sCabin
+											, bRefundable = arguments.bRefundable
+											, nCouldYou = arguments.nCouldYou )>
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
