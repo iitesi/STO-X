@@ -631,7 +631,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfquery name="local.preferredSort" dbtype="query">
 			SELECT nTripKey
 			FROM sortQuery
-			ORDER BY total, preferred
+			ORDER BY total ASC, preferred DESC
 		</cfquery>
 
 		<cfif preferredSort.recordCount>
