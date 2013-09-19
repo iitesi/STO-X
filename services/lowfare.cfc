@@ -145,9 +145,13 @@
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
-				<!--- Dump any error returned
-				<cfdump var="#xmlSearch(sResponse, '//faultstring')#"  label="Dump ( sResponse )" abort="true" format="html">
-				--->
+				<!--- use to spoof a bad request with faultcode--->
+				<!---
+				<cfsavecontent variable="attributes.sResponse">
+					<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/"><SOAP:Body><SOAP:Fault><faultcode>Server.Business</faultcode><faultstring>UNABLE TO FARE QUOTE</faultstring><detail><common_v19_0:ErrorInfo xmlns:common_v19_0="http://www.travelport.com/schema/common_v19_0"><common_v19_0:Code>3037</common_v19_0:Code><common_v19_0:Service>AIRSVC</common_v19_0:Service><common_v19_0:Type>Business</common_v19_0:Type><common_v19_0:Description>No availability on chosen flights.</common_v19_0:Description><common_v19_0:TransactionId>36A045550A07611150AD782E48FF4450</common_v19_0:TransactionId></common_v19_0:ErrorInfo></detail></SOAP:Fault></SOAP:Body></SOAP:Envelope>
+				</cfsavecontent>
+ 				--->
+
 				<!--- Format the UAPI response. --->
 				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 				<!--- Parse the segments. --->
@@ -158,22 +162,27 @@
 				<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 				<!--- Add group node --->
 				<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
+
 				<!--- If the UAPI gives an error then add these to the thread so it is visible to the developer. --->
-				<cfif NOT StructIsEmpty(attributes.stTrips)>
+				<cfif NOT StructIsEmpty(attributes.stTrips) OR NOT ArrayLen(xmlSearch(attributes.sResponse, '//faultstring'))>
 					<!--- Merge all data into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
 					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
-					<cfset thread.aResponse = attributes.aResponse>
-					<cfset thread.sMessage = attributes.sMessage>
+					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
+						<cfset errorMessage = "uAPI Faultcode Error - SearchID: #arguments.Filter.getSearchID()#">
+						<cfset errorException = {request=xmlFormat(attributes.sMessage), response=xmlFormat(attributes.sResponse)}>
+						<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
+					</cfif>
 				</cfif>
-				<cfset thread.sMessage = attributes.sMessage>
+
 				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
+
+				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
-
 		<cfreturn sThreadName>
 	</cffunction>
 
