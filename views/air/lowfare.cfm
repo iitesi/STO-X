@@ -82,9 +82,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 				#View('air/badge')#
 			</cfloop>
 
-			<!--- Display standard fare based search --->
 			<cfset variables.bSelected = false>
-			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="variables.nTripKey">
+			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
@@ -97,15 +96,15 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 	 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortArrival)#;
 	 			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDepart)#;
 	 			var sortbyduration = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortDuration)#;
-	 			var sortbyprice = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFare)#;
-	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag)#;
-	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2)#;
+	 			var sortbyprice = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred)#;
+	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBagPreferred)#;
+	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2Preferred)#;
 
 				// flightresults is used in booking.js to filter flights
 				// here we loop over session searches and stuff all the flights avail in flightresults
 				var flightresults = [
 					<cfset nCount = 0>
-					<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFare#" index="sTrip">
+					<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="sTrip">
 						<cfif nCount NEQ 0>,</cfif>[#session.searches[rc.SearchID].stTrips[sTrip].sJavascript#]
 						<cfset nCount++>
 					</cfloop>];
