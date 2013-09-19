@@ -36,7 +36,7 @@ setApplication
 			<cfset variables.bf.getBean("setup").setStates(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfif NOT StructKeyExists(application, 'assetURL')>
-			<cfset application.assetURL = variables.bf.getBean("setup").getAssetURL()>
+			<cfset application.assetURL = variables.bf.getBean("EnvironmentService").getAssetURL()>
 		</cfif>
 
 		<cfreturn />
