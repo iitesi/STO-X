@@ -4,7 +4,7 @@
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">
 		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.min.css">
-		<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 		<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="assets/js/date.format.js"></script>
 		<script type="text/javascript" src="assets/js/select2.min.js"></script>
@@ -24,7 +24,6 @@
 	</cfsavecontent>
 	<cfhtmlhead text="#localAssets#" />
 </cfsilent>
-
 
 <cfsetting showdebugoutput="false" />
 <div id="hotel-search-wrapper" ng-app="hotelSearch">
