@@ -160,7 +160,7 @@
 		<cfloop array="#arguments.response#" index="local.fareInfoListIndex" item="local.fareInfoList">
 			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
 				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
-					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') ? fareInfo.XMLAttributes.PrivateFare EQ 'true' : false)>
+					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') AND fareInfo.XMLAttributes.PrivateFare NEQ '' ? true : false)>
 					<!--- <cfloop array="#fareInfo.XMLChildren#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
 						<cfif fareRuleKey.XMLName EQ 'air:FareRuleKey'>
 							<cfset fare[fareInfo.XMLAttributes.Key].fareRuleKey = fareRuleKey.XMLText>
