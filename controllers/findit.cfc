@@ -3,11 +3,14 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<cfsavecontent variable="trip">
-			{'TOTAL':'225.80','NTRIPKEY':'1494427677','DEPART':createDateTime(2013,9,26,6,30,0,0,"America/Chicago"),'CLASS':'Y','PRIVATEFARE':false,'PREFERRED':0,'PTC':'ADT','REF':1,'STOPS':0,'TOTALBAG':225.8,'CARRIERS':['WN'],'DURATION':130,'APOLICIES':[],'BASE':'189.77','ARRIVAL':createDateTime(2013,9,27,10,55,0,0,"America/Chicago"),'CHANGEPENALTY':0,'POLICY':1,'TOTALBAG2':225.8,'TAXES':'36.03','GROUPS':{'0':{'STOPS':0,'DEPARTURETIME':createDateTime(2013,9,26,6,30,0,0,"America/Chicago"),'SEGMENTS':{'21T':{'CABIN':'Economy','ChangeOfPlane':false,'DepartureTime':createDateTime(2013,9,26,6,30,0,0,"America/Chicago"),'Origin':'LAS','CLASS':'M','Equipment':'737','ArrivalGMT':createDateTime(2013,9,26,16,35,0,0,"America/Chicago"),'Destination':'LAX','FlightTime':'65','DepartureGMT':createDateTime(2013,9,26,13,30,0,0,"America/Chicago"),'TravelTime':'65','Carrier':'WN','Group':'0','ArrivalTime':createDateTime(2013,9,26,7,35,0,0,"America/Chicago"),'FlightNumber':'4554'}},'TRAVELTIME':'1h 5m','ORIGIN':'LAS','DESTINATION':'LAX','ARRIVALTIME':createDateTime(2013,9,26,7,35,0,0,"America/Chicago")},'1':{'STOPS':0,'DEPARTURETIME':createDateTime(2013,9,27,9,50,0,0,"America/Chicago"),'SEGMENTS':{'48T':{'CABIN':'Economy','ChangeOfPlane':false,'DepartureTime':createDateTime(2013,9,27,9,50,0,0,"America/Chicago"),'Origin':'LAX','CLASS':'O','Equipment':'733','ArrivalGMT':createDateTime(2013,9,27,19,55,0,0,"America/Chicago"),'Destination':'LAS','FlightTime':'65','DepartureGMT':createDateTime(2013,9,27,16,50,0,0,"America/Chicago"),'TravelTime':'65','Carrier':'WN','Group':'1','ArrivalTime':createDateTime(2013,9,27,10,55,0,0,"America/Chicago"),'FlightNumber':'598'}},'TRAVELTIME':'1h 5m','ORIGIN':'LAX','DESTINATION':'LAS','ARRIVALTIME':createDateTime(2013,9,27,10,55,0,0,"America/Chicago")}},'SJAVASCRIPT':'"1494427677",1,0,["WN"],"1",0,"Y",0'}
-		</cfsavecontent>
+		<cfquery name="getTrip" datasource="booking">
+			SELECT tripData
+			FROM FindItOptions
+			WHERE SearchID = <cfqueryparam value="#rc.searchID#" cfsqltype="cf_sql_numeric">
+				AND TripKey = <cfqueryparam value="#rc.tripKey#" cfsqltype="cf_sql_numeric">
+		</cfquery>
 
-		<cfset trip = deserializeJSON(trip)>
+		<cfset trip = deserializeJSON(getTrip.tripData)>
 
 		<cfset local.stSelected = StructNew("linked")>
 		<cfset stSelected[0].Groups = StructNew("linked")>
@@ -21,15 +24,16 @@
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
 																					, Account = rc.Account
 																					, Policy = rc.Policy
-																					, sCabin = trip.Class
+																					, sCabin = 'Y'
 																					, bRefundable = trip.Ref
 																					, nTrip = ''
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0 
 																					, stSelected = stSelected)>
+		<cfset pricedTrip[structKeyList(pricedTrip)].aPolicies = trip.aPolicies>
+		<cfset pricedTrip[structKeyList(pricedTrip)].policy = trip.policy>
 
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
-		
 		<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(pricedTrip)#&bSelect=1')>
 	
 	</cffunction>
