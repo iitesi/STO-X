@@ -38,6 +38,12 @@
 		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
 		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
 		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
+
+		<!--- Prices with preferred carriers taken into account --->
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred 	= sortByPreferred("aSortFare", arguments.SearchID) />
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred 	= sortByPreferred("aSortBag", arguments.SearchID) />
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred 	= sortByPreferred("aSortBag2", arguments.SearchID) />
+
 		<cfreturn >
 	</cffunction>
 
@@ -600,6 +606,39 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfif>
 
 		<cfreturn stTrips/>
+	</cffunction>
+
+	<cffunction name="sortByPreferred" output="false" hint="I take the price sorts and weight the preferred carriers.">
+		<cfargument name="StructToSort" required="true" />
+		<cfargument name="SearchID" required="true" />
+
+		<cfset local.aSortArray = "session.searches[" & arguments.SearchID & "].stLowFareDetails." & arguments.StructToSort />
+		<cfset local.aPreferredSort = [] />
+		<cfset local.sortQuery = QueryNew("nTripKey, total, preferred", "varchar, numeric, bit") />
+		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(aSortArray))) />
+		<cfset local.queryCounter = 1 />
+
+		<cfloop array="#evaluate(aSortArray)#" index="local.nTripKey">
+			<cfif NOT structKeyExists(session.searches[SearchID].stLowFareDetails.stPriced, nTripKey)>
+				<cfset local.stTrip = session.searches[SearchID].stTrips[nTripKey] />
+
+				<cfset temp = querySetCell(sortQuery, "nTripKey", nTripKey, queryCounter) />
+				<cfset temp = querySetCell(sortQuery, "total", stTrip.total, queryCounter) />
+				<cfset temp = querySetCell(sortQuery, "preferred", stTrip.preferred, queryCounter) />
+				<cfset queryCounter++ />
+			</cfif>
+		</cfloop>
+		<cfquery name="local.preferredSort" dbtype="query">
+			SELECT nTripKey
+			FROM sortQuery
+			ORDER BY total ASC, preferred DESC
+		</cfquery>
+
+		<cfif preferredSort.recordCount>
+			<cfset aPreferredSort = listToArray(valueList(preferredSort.nTripKey)) />
+		</cfif>
+
+		<cfreturn aPreferredSort />
 	</cffunction>
 
 </cfcomponent>
