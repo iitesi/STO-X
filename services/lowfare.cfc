@@ -271,7 +271,7 @@
 										</air:SearchDestination>
 
 										<cfif arguments.filter.getArrivalDateTimeActual() EQ "Anytime">
-											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+											<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
 										<cfelse>
 											<cfif arguments.filter.getDepartTimeType() EQ "A">
 												<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
