@@ -554,7 +554,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
           zoom: 8,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           disableDoubleClickZoom: true,
-          zoom: $scope.calculateMapZoom()
+          panControl: false,
+          zoom: $scope.calculateMapZoom(),
+          zoomControlOptions: {
+			style: google.maps.ZoomControlStyle.LARGE,
+			position: google.maps.ControlPosition.LEFT_CENTER
+		  }
         };
         $scope.map = new google.maps.Map( document.getElementById("mapDiv"), mapOptions);
 
@@ -618,12 +623,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$scope.infoWindows.push( infoWindow);
 
     	var latlng = new google.maps.LatLng( Hotel.Lat, Hotel.Long );
-    	var marker = new google.maps.Marker({
-			position: latlng,
-			map: $scope.map,
-			icon: '/booking/assets/img/mapIcons/number_' + propertyNumber + '.png',
-			title: Hotel.PropertyName
-		});
+
+    	var styleIcon = new StyledIcon(StyledIconTypes.MARKER,{color:"#0044CC",text: propertyNumber.toString(),fore: "#fff"});
+    	var marker = new StyledMarker({styleIcon:styleIcon,position:latlng,map:$scope.map});
 
 		google.maps.event.addListener(marker, 'click', function() {
 			$scope.clearInfoWindows();
