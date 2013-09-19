@@ -78,6 +78,8 @@
 		<cfargument name="bRefundable" required="false" default="X">
 		<cfargument name="Filter" required="false" default="X">
 		<cfargument name="stPricing" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
 
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
@@ -370,6 +372,13 @@
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
 									ForceSegmentSelect="false">
+									<cfif NOT ArrayIsEmpty(arguments.Account.Air_PF)>
+										<air:AccountCodes>
+											<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
+												<com:AccountCode Code="#GetToken(sPF, 3, ',')#" ProviderCode="1V" SupplierCode="#GetToken(sPF, 2, ',')#" />
+											</cfloop>
+										</air:AccountCodes>
+									</cfif>
 								</air:AirPricingModifiers>
 								<com:PointOfSale
 									ProviderCode="1V"
