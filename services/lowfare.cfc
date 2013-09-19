@@ -169,7 +169,7 @@
 					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
-					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS false>
+					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
 						<cfset errorMessage = "uAPI Faultcode Error">
 						<cfset errorException = {searchID=arguments.Filter.getSearchID(), request=xmlFormat(attributes.sMessage), response=xmlFormat(attributes.sResponse)}>
 						<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
