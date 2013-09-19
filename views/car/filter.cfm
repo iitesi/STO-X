@@ -51,7 +51,7 @@
 							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
 							<li>
 								Pick-up Location
-								<select name="pickUpLocationKey" class="filterby" onChange="submit();">
+								<select name="pickUpLocationKey" class="filterby input-large" onChange="submit();">
 									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 										<cfif rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city>
@@ -62,7 +62,7 @@
 								</select>
 								<cfif rc.Filter.getCarPickUpAirport() NEQ rc.Filter.getCarDropoffAirport()>
 									Drop-off Location
-									<select name="dropOffLocationKey" class="filterby" onChange="submit();">
+									<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
 										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 											<cfif rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city>
