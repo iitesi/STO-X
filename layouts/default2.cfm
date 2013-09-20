@@ -51,7 +51,25 @@
 	<cfelse>
 		<p><cfoutput>#body#</cfoutput></p>
 	</cfif>
-	
+
+	<cfif rc.currentEnvironment = "prod">
+		<cfoutput>
+			<script type="text/javascript">
+				var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+				document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+			</script>
+			<script type="text/javascript">
+				try {
+				var pageTracker = _gat._getTracker("UA-11345476-1");
+				pageTracker._setDetectFlash(0);
+				pageTracker._setAllowLinker(true);
+				pageTracker._setVar("#UCase(session.account.Account_Name)#");
+				pageTracker._trackPageview("#rc.action#");
+				} catch(err) {}
+			</script>
+		</cfoutput>
+	</cfif>
+
 </body>
 
 </html>

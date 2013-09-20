@@ -68,7 +68,7 @@
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
 										</cfif>
-										<cfif structKeyExists(rc, "account") AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\clients\#rc.account.logo#"))>
+										<cfif structKeyExists(rc, "account") AND isStruct( rc.account ) AND NOT structIsEmpty( rc.account) AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\clients\#rc.account.logo#"))>
 											<img src="assets/img/clients/#rc.account.logo#" alt="#rc.account.account_name#" />
 										<cfelse>
 											<img src="assets/img/clients/stm.gif" alt="Short's Travel Management" />
@@ -152,7 +152,7 @@
 			</footer>
 		</div>
 
- <div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+ 		<div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
@@ -160,6 +160,24 @@
 	<div class="modal-body">
 	</div>
 </div>
+
+		<cfif rc.currentEnvironment EQ "prod">
+			<cfoutput>
+				<script type="text/javascript">
+					var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+					document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+				</script>
+				<script type="text/javascript">
+					try {
+					var pageTracker = _gat._getTracker("UA-11345476-1");
+					pageTracker._setDetectFlash(0);
+					pageTracker._setAllowLinker(true);
+					pageTracker._setVar("#UCase(session.account.Account_Name)#");
+					pageTracker._trackPageview("#rc.action#");
+					} catch(err) {}
+				</script>
+			</cfoutput>
+		</cfif>
 
 	</body>
 	</html>

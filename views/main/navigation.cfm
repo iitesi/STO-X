@@ -20,9 +20,9 @@
 	</cfif>
 	<cfset showCarTab = yesNoFormat(carValue) />
 <cfelse>
-	<cfset showAirTab = (rc.Filter.getAir() ? 1 : 0) />
-	<cfset showHotelTab = ((NOT rc.Filter.getAir() OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
-	<cfset showCarTab = ((NOT rc.Filter.getAir() OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
+	<cfset showAirTab = (rc.Filter.getAir() IS TRUE ? 1 : 0) />
+	<cfset showHotelTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
+	<cfset showCarTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
 </cfif>
 </cfsilent>
 <cfoutput>
