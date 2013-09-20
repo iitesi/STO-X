@@ -49,7 +49,11 @@
 		<cfargument name="Append" 	required="false" default="0">
 		<cfargument name="requery" required="false" default="false">
 
-		<cfset local.searchfilter = SearchService.load( arguments.searchId ) />
+		<!---
+			TODO: The manual query below is redundant and should be removed and this method refactored to use the local.searchFilter object
+			Further, the local.searchFilter object should be renamed to just local.Search
+		--->
+		<cfset local.searchfilter = getSearchService().load( arguments.searchId ) />
 
 		<cfif arguments.SearchID NEQ 0>
 			<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
@@ -189,6 +193,8 @@
 				<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
+		<cfelse>
+			<cfset local.searchfilter = getSearchService().new() />
 		</cfif>
 
 		<cfreturn searchfilter/>
