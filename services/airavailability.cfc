@@ -472,7 +472,9 @@
 
 		<cfset local.aSortArray = "session.searches[" & arguments.SearchID & "].stAvailDetails." & arguments.StructToSort & "[" & arguments.Group & "]" />
 		<cfset local.preferredDepartTime = arguments.Filter.getDepartDateTime() />
+		<cfset local.preferredDepartTimeType = arguments.Filter.getDepartTimeType() />
 		<cfset local.preferredArrivalTime = arguments.Filter.getArrivalDateTime() />
+		<cfset local.preferredArrivalTimeType = arguments.Filter.getArrivalDateTimeType() />
 		<cfset local.aPreferredSort = [] />
 		<cfset local.sortQuery = QueryNew("nTripKey, departDiff, arrivalDiff", "varchar, numeric, numeric") />
 		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(aSortArray))) />
@@ -480,8 +482,16 @@
 
 		<cfloop array="#evaluate(aSortArray)#" index="local.nTripKey">
 			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][nTripKey] />
-			<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
-			<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+			<cfif arguments.Filter.getDepartTimeType() IS 'A'>
+				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.arrival)) />
+			<cfelse>
+				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
+			</cfif>
+			<cfif arguments.Filter.getArrivalDateTimeType() IS 'A'>
+				<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+			<cfelse>
+				<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.depart)) />
+			</cfif>
 
 			<cfset temp = querySetCell(sortQuery, "nTripKey", nTripKey, queryCounter) />
 			<cfset temp = querySetCell(sortQuery, "departDiff", departDateDiff, queryCounter) />
@@ -492,11 +502,16 @@
 		<cfquery name="local.preferredSort" dbtype="query">
 			SELECT nTripKey, departDiff, arrivalDiff
 			FROM sortQuery
-			<cfif arguments.StructToSort IS "aSortArrival">
+			<cfif arguments.Filter.getDepartTimeType() IS 'A'>
 				ORDER BY arrivalDiff
 			<cfelse>
 				ORDER BY departDiff
 			</cfif>
+			<!--- <cfif arguments.StructToSort IS "aSortArrival">
+				ORDER BY arrivalDiff
+			<cfelse>
+				ORDER BY departDiff
+			</cfif> --->
 		</cfquery>
 
 		<cfif preferredSort.recordCount>
