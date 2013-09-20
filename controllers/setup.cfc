@@ -110,4 +110,9 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="setBlackListedCarrierPairing" output="false" hint="I return a list of carriers that cannot be booked on the same ticket together.">
+		<cfset rc.BlackListedCarrierPairing = variables.bf.getBean("setup").setBlackListedCarrierPairing()>
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

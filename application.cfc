@@ -85,6 +85,7 @@
 			<cfset controller( 'setup.setPolicyID' )>
 			<cfset controller( 'setup.setPolicy' )>
 			<cfset controller( 'setup.setGroup' )>
+			<cfset controller( 'setup.setBlackListedCarrierPairing' )>
 		</cfif>
 
 	</cffunction>
