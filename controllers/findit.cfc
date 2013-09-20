@@ -23,6 +23,7 @@
 				<cfset stSelected[index].Groups[0].segments[segment] = trip.Groups[index].segments[segment]>
 			</cfloop>
 		</cfloop>
+<!--- <cfdump var="#stSelected#" /><cfabort /> --->
 
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
 																					, Account = rc.Account
@@ -39,8 +40,13 @@
 
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 
-		<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(pricedTrip)#&bSelect=1')>
-	
+		<cfif structKeyList(pricedTrip) NEQ ''>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(pricedTrip)#&bSelect=1')>
+		<cfelse>
+			<cfset rc.message.addError('The flight from FindIt is no longer available.')>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
+		</cfif>
+
 	</cffunction>
 
 	<cffunction name="send" output="false">
