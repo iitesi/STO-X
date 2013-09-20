@@ -39,7 +39,6 @@
 				.init( defaultProperties = { currentServerName=cgi.http_host }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
-
 		<cfset controller( 'setup.setApplication' )>
 		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
@@ -52,14 +51,24 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
-		<cfif structKeyExists( URL, "reload" ) AND URL.reload IS true>
-			<cfset onApplicationStart() />
-			<cfreturn view( "main/reload" )>
+
+		<cfset controller( 'setup.setSearchID' )>
+		<cfset controller( 'setup.setFilter' )>
+		<cfset controller( 'setup.setAcctID' )>
+		<cfset controller( 'setup.setAccount' )>
+		<cfset controller( 'setup.setPolicyID' )>
+		<cfset controller( 'setup.setPolicy' )>
+		<cfset controller( 'setup.setGroup' )>
+		<cfset request.context.currentEnvironment = getBeanFactory().getBean( 'EnvironmentService' ).getCurrentEnvironment() />
+
+		<cfif structKeyExists( request.context, "reload" ) AND request.context.reload IS true>
+			<cfset request.layout = false>
+			<cfset setupApplication() />
 		</cfif>
 
 		<cfif NOT structKeyExists(request.context, 'SearchID')>
-			<cfset var action = ListFirst(rc.action, ':')>
-			<cfreturn view( "main/notfound" )>
+			<cfset var action = ListFirst(request.context.action, '.')>
+			<cfset view( "main/notfound" )>
 		<cfelse>
 
 			<cfif NOT findNoCase( "RemoteProxy.cfc", cgi.script_name )>
@@ -74,17 +83,12 @@
 				</cfif>
 
 				<cfif NOT session.isAuthorized>
-					<cflocation url="#application.bf.getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
+					<cflocation url="#getBeanFactory().getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
 				</cfif>
 			</cfif>
 
-			<cfset controller( 'setup.setSearchID' )>
-			<cfset controller( 'setup.setFilter' )>
-			<cfset controller( 'setup.setAcctID' )>
-			<cfset controller( 'setup.setAccount' )>
-			<cfset controller( 'setup.setPolicyID' )>
-			<cfset controller( 'setup.setPolicy' )>
-			<cfset controller( 'setup.setGroup' )>
+
+
 		</cfif>
 
 	</cffunction>
