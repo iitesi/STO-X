@@ -131,6 +131,11 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
+
+				<!--- Sorting with preferred departure or arrival time taken into account --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
 			</cfthread>
@@ -457,6 +462,48 @@
 		</cfloop>
 
 		<cfreturn stTrips />
+	</cffunction>
+
+	<cffunction name="sortByPreferredTime" output="false" hint="I take the depart/arrival sorts and weight the legs closest to requested departure or arrival time.">
+		<cfargument name="StructToSort" required="true" />
+		<cfargument name="SearchID" required="true" />
+		<cfargument name="Group" required="true" />
+		<cfargument name="Filter" required="true" />
+
+		<cfset local.aSortArray = "session.searches[" & arguments.SearchID & "].stAvailDetails." & arguments.StructToSort & "[" & arguments.Group & "]" />
+		<cfset local.preferredDepartTime = arguments.Filter.getDepartDateTime() />
+		<cfset local.preferredArrivalTime = arguments.Filter.getArrivalDateTime() />
+		<cfset local.aPreferredSort = [] />
+		<cfset local.sortQuery = QueryNew("nTripKey, departDiff, arrivalDiff", "varchar, numeric, numeric") />
+		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(aSortArray))) />
+		<cfset local.queryCounter = 1 />
+
+		<cfloop array="#evaluate(aSortArray)#" index="local.nTripKey">
+			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][nTripKey] />
+			<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
+			<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+
+			<cfset temp = querySetCell(sortQuery, "nTripKey", nTripKey, queryCounter) />
+			<cfset temp = querySetCell(sortQuery, "departDiff", departDateDiff, queryCounter) />
+			<cfset temp = querySetCell(sortQuery, "arrivalDiff", arrivalDateDiff, queryCounter) />
+			<cfset queryCounter++ />
+		</cfloop>
+
+		<cfquery name="local.preferredSort" dbtype="query">
+			SELECT nTripKey, departDiff, arrivalDiff
+			FROM sortQuery
+			<cfif arguments.StructToSort IS "aSortArrival">
+				ORDER BY arrivalDiff
+			<cfelse>
+				ORDER BY departDiff
+			</cfif>
+		</cfquery>
+
+		<cfif preferredSort.recordCount>
+			<cfset aPreferredSort = listToArray(valueList(preferredSort.nTripKey)) />
+		</cfif>
+
+		<cfreturn aPreferredSort />
 	</cffunction>
 
 </cfcomponent>
