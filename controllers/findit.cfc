@@ -12,13 +12,16 @@
 
 		<cfset trip = deserializeJSON(getTrip.tripData)>
 
-		<cfset local.stSelected = StructNew("linked")>
-		<cfset stSelected[0].Groups = StructNew("linked")>
-		<cfset stSelected[1].Groups = StructNew("linked")>
-		<cfset stSelected[2].Groups = StructNew("linked")>
-		<cfset stSelected[3].Groups = StructNew("linked")>
-		<cfloop collection="#trip.Groups#" item="local.Group">
-			<cfset stSelected[Group].Groups[0] = trip.Groups[Group]>
+		<cfset local.stSelected = structNew("linked")>
+		<cfset stSelected[0].Groups = structNew("linked")>
+		<cfset stSelected[1].Groups = structNew("linked")>
+		<cfset stSelected[2].Groups = structNew("linked")>
+		<cfset stSelected[3].Groups = structNew("linked")>
+		<cfloop from="0" to="#arrayLen(structKeyArray(trip.Groups))-1#" index="local.index">
+			<cfset stSelected[index].Groups[0].segments = structNew("linked")>
+			<cfloop array="#structSort(trip.Groups[index].segments, 'text', 'asc', 'departureTime')#" index="local.segmentIndex" item="local.segment">
+				<cfset stSelected[index].Groups[0].segments[segment] = trip.Groups[index].segments[segment]>
+			</cfloop>
 		</cfloop>
 
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
@@ -30,10 +33,12 @@
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0 
 																					, stSelected = stSelected)>
+<!--- <cfdump var="#pricedTrip#" /><cfabort /> --->
 		<cfset pricedTrip[structKeyList(pricedTrip)].aPolicies = trip.aPolicies>
 		<cfset pricedTrip[structKeyList(pricedTrip)].policy = trip.policy>
 
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+
 		<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(pricedTrip)#&bSelect=1')>
 	
 	</cffunction>
