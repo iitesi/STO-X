@@ -82,6 +82,7 @@
 			<!---<cfdump var="#stTrips#" abort>--->
 			<!--- Add trip id to the list of priced items --->
 			<cfset nTripKey = getTripKey(stTrips)>
+			<cfset stTrips[nTripKey].nTrip = nTripKey>
 			<!--- Save XML if needed - AirCreate --->
 			<cfif arguments.bSaveAirPrice>
 				<cfset stTrips[nTripKey].sXML = sResponse>
@@ -137,41 +138,45 @@
 											<cfloop collection="#stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
 												<cfset nCount++>
 												<air:AirSegment
-												Key="#nCount#T"
-												Origin="#stSegment.Origin#"
-												Destination="#stSegment.Destination#"
-												DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
-												<!--- ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#" --->
-												Group="#nGroup#"
-												FlightNumber="#stSegment.FlightNumber#"
-												Carrier="#stSegment.Carrier#"
-												ProviderCode="1V" />
+													Key="#nCount#T"
+													Origin="#stSegment.Origin#"
+													Destination="#stSegment.Destination#"
+													DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
+													ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
+													Group="#nGroup#"
+													FlightNumber="#stSegment.FlightNumber#"
+													Carrier="#stSegment.Carrier#"
+													ProviderCode="1V" />
 											</cfloop>
 										</cfloop>
 									</cfif>
 								</cfloop>
 							</air:AirItinerary>
 							<air:AirPricingModifiers
-							ProhibitNonRefundableFares="#ProhibitNonRefundableFares#"
-							FaresIndicator="PublicAndPrivateFares"
-							ProhibitMinStayFares="false"
-							ProhibitMaxStayFares="false"
-							CurrencyType="USD"
-							ProhibitAdvancePurchaseFares="false"
-							ProhibitRestrictedFares="false"
-							ETicketability="Required"
-							ProhibitNonExchangeableFares="false"
-							ForceSegmentSelect="false">
+								ProhibitNonRefundableFares="#ProhibitNonRefundableFares#"
+								FaresIndicator="PublicAndPrivateFares"
+								ProhibitMinStayFares="false"
+								ProhibitMaxStayFares="false"
+								CurrencyType="USD"
+								ProhibitAdvancePurchaseFares="false"
+								ProhibitRestrictedFares="false"
+								ETicketability="Required"
+								ProhibitNonExchangeableFares="false"
+								ForceSegmentSelect="false">
 								<cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
-											<com:AccountCode Code="#GetToken(sPF, 3, ',')#" ProviderCode="1V" SupplierCode="#GetToken(sPF, 2, ',')#" />
+											<com:AccountCode 
+												Code="#GetToken(sPF, 3, ',')#" 
+												ProviderCode="1V" 
+												SupplierCode="#GetToken(sPF, 2, ',')#" />
 										</cfloop>
 									</air:AccountCodes>
 								</cfif>
 								<air:PermittedCabins>
 									<cfloop array="#aCabins#" index="local.sCabin">
-										<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+										<air:CabinClass 
+											Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 									</cfloop>
 								</air:PermittedCabins>
 							</air:AirPricingModifiers>

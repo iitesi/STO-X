@@ -91,7 +91,7 @@
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
 							<cfset local.policy = Air.policy>
-							<cfset Air = trip[Air.nTrip]>
+							<cfset Air = trip[structKeyList(trip)]>
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
@@ -369,6 +369,10 @@
 					<cfif NOT responseMessage.error>
 						<!--- Add ticketing date : no error response --->
 						<cfset fw.getBeanFactory().getBean('TerminalEntry').addTicketDate( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, searchID = rc.searchID )>
+						<!--- Add okay to ticket : no error response --->
+						<cfset fw.getBeanFactory().getBean('TerminalEntry').addOKToTicket( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, searchID = rc.searchID )>
 					</cfif>

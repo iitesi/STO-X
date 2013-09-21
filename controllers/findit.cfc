@@ -23,11 +23,6 @@
 				<cfset stSelected[index].Groups[0].segments[segment] = trip.Groups[index].segments[segment]>
 			</cfloop>
 		</cfloop>
-<<<<<<< HEAD
-<!--- <cfdump var="#stSelected#" /><cfabort /> --->
-=======
-<!--- <cfdump var="#stSelected#" /><cfabort /> ---> 
->>>>>>> develop
 
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
 																					, Account = rc.Account
