@@ -141,7 +141,7 @@
 												Origin="#stSegment.Origin#"
 												Destination="#stSegment.Destination#"
 												DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
-												ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
+												<!--- ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#" --->
 												Group="#nGroup#"
 												FlightNumber="#stSegment.FlightNumber#"
 												Carrier="#stSegment.Carrier#"
