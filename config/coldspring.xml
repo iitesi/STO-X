@@ -41,6 +41,11 @@
 		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
 	</bean>
 
+	<bean id="UniversalAdapter" class="com.travelport.UniversalAdapter">
+		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+	</bean>
+
 	<bean id="seatmap" class="booking.services.seatmap">
 		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
