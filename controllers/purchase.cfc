@@ -190,27 +190,38 @@
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																										, response = airResponse )>
 									<!--- Parse error --->
-									<cfif NOT StructKeyExists(Air, "SupplierLocatorCode") OR Air.UniversalLocatorCode EQ ''>
-										<cfset var response = xmlParse(airResponse)>
-										<cfset var faultArray = xmlSearch( response, "//*[local-name()='Fault' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']" ) />
-										<cfif arrayLen(faultArray)>
-											<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( airResponse )>
-										<cfelse>
-											<cfset arrayAppend(errorMessage, 'Air price change')>
+									<cfif Air.UniversalLocatorCode EQ ''
+										OR Air.error>
+
+										<cfif Air.UniversalLocatorCode NEQ ''>
+											<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																											, universalRecordLocatorCode = Air.UniversalLocatorCode 
+																											, Filter = rc.Filter )>
 										</cfif>
+
+										<cfset errorMessage = Air.messages>
 										<cfset errorType = 'Air'>
+										<cfset Air.ProviderLocatorCode = ''>
+										<cfset Air.UniversalLocatorCode = ''>
+										<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
+										<cfset Traveler.getBookingDetail().setSeats( '' )>
+
 									<cfelse>
+
 										<cfset providerLocatorCode = Air.ProviderLocatorCode>
 										<cfset universalLocatorCode = Air.UniversalLocatorCode>
 										<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 										<cfset Traveler.getBookingDetail().setSeats(Air.BookingTravelerSeats) />
+										<!--- Update universal version --->
+										<cfif providerLocatorCode NEQ ''>
+											<cfset version++>
+										</cfif>
+
 									</cfif>
+
 									<!--- Update session with new Air record --->
 									<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
-									<!--- Update universal version --->
-									<cfif providerLocatorCode NEQ ''>
-										<cfset version++>
-									</cfif>
+
 								</cfif>
 							</cfif>
 						</cfif>
@@ -470,6 +481,9 @@
 					</cfif>
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
+					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
+																				, searchID = rc.searchID
+																				, errorType = errorType )>
 					<cfset local.errorList = errorType>
 					<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
 					<!--- Error : hotel advance purchase --->
