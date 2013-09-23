@@ -80,7 +80,6 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="BlackListedCarrierPairing" required="true">
 
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
@@ -97,7 +96,7 @@
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy, arguments.BlackListedCarrierPairing)>
+				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy)>
 				<cfset local.stThreads[local.sThreadName] = ''>
 			</cfloop>
 		</cfloop>
@@ -120,7 +119,6 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="BlackListedCarrierPairing" required="true">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 
 		<cfset local.sThreadName = "">
