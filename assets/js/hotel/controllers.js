@@ -83,6 +83,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 					$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
 					$scope.getSearchResults( true );
+					$scope.map.setCenter( new google.maps.LatLng( $scope.search.hotelLat, $scope.search.hotelLong ) );
 					$scope.map.setZoom( $scope.calculateMapZoom())
 				}
 
