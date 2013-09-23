@@ -133,8 +133,13 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
 
 				<!--- Sorting with preferred departure or arrival time taken into account --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+				<cfif arguments.Filter.getAirType() IS "MD">
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] />
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] />
+				<cfelse>
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+					<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+				</cfif>
 
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
@@ -471,27 +476,51 @@
 		<cfargument name="Filter" required="true" />
 
 		<cfset local.aSortArray = "session.searches[" & arguments.SearchID & "].stAvailDetails." & arguments.StructToSort & "[" & arguments.Group & "]" />
-		<cfset local.preferredDepartTime = arguments.Filter.getDepartDateTime() />
-		<cfset local.preferredDepartTimeType = arguments.Filter.getDepartTimeType() />
-		<cfset local.preferredArrivalTime = arguments.Filter.getArrivalDateTime() />
-		<cfset local.preferredArrivalTimeType = arguments.Filter.getArrivalTimeType() />
+
+		<!--- TODO: Get MD working. --->
+		<!--- <cfif arguments.Filter.getAirType() IS "MD">
+			<cfset local.nGroup = arguments.Group + 1 />
+			<cfloop collection="#arguments.Filter.getLegs()[1]#" item="local.nLeg">
+				<cfif nLeg EQ nGroup>
+					<cfset local.preferredDepartTime = nLeg.Depart_DateTime />
+					<cfset local.preferredDepartTimeType = nLeg.Depart_TimeType />
+				</cfif>
+			</cfloop>
+		<cfelse> --->
+			<cfset local.nGroup = arguments.Group />
+			<cfset local.preferredDepartTime = arguments.Filter.getDepartDateTime() />
+			<cfset local.preferredDepartTimeType = arguments.Filter.getDepartTimeType() />
+		<!--- </cfif> --->
+
+		<cfif arguments.Filter.getAirType() IS "RT">
+			<cfset local.preferredArrivalTime = arguments.Filter.getArrivalDateTime() />
+			<cfset local.preferredArrivalTimeType = arguments.Filter.getArrivalTimeType() />
+		<cfelse>
+			<cfset local.preferredArrivalTime = "" />
+			<cfset local.preferredArrivalTimeType = "" />
+		</cfif>
+
 		<cfset local.aPreferredSort = [] />
 		<cfset local.sortQuery = QueryNew("nTripKey, departDiff, arrivalDiff", "varchar, numeric, numeric") />
 		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(aSortArray))) />
 		<cfset local.queryCounter = 1 />
 
 		<cfloop array="#evaluate(aSortArray)#" index="local.nTripKey">
-			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][nTripKey] />
+			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[nGroup][nTripKey] />
 
 			<cfif arguments.Filter.getDepartTimeType() IS 'A'>
 				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.arrival)) />
 			<cfelse>
 				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
 			</cfif>
-			<cfif arguments.Filter.getArrivalTimeType() IS 'A'>
-				<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+			<cfif arguments.Filter.getAirType() IS "RT">
+				<cfif arguments.Filter.getArrivalTimeType() IS 'A'>
+					<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+				<cfelse>
+					<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.depart)) />
+				</cfif>
 			<cfelse>
-				<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.depart)) />
+				<cfset arrivalDateDiff = 0 />
 			</cfif>
 
 			<cfset temp = querySetCell(sortQuery, "nTripKey", nTripKey, queryCounter) />
@@ -503,10 +532,10 @@
 		<cfquery name="local.preferredSort" dbtype="query">
 			SELECT nTripKey, departDiff, arrivalDiff
 			FROM sortQuery
-			<cfif arguments.Group EQ 0>
-				ORDER BY departDiff
-			<cfelse>
+			<cfif (arguments.Filter.getAirType() IS "RT") AND (nGroup EQ 1)>
 				ORDER BY arrivalDiff
+			<cfelse>
+				ORDER BY departDiff
 			</cfif>
 		</cfquery>
 
