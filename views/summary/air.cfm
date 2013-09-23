@@ -211,7 +211,8 @@ ADDITIONAL REQUESTS
 				<option value="BLND">BLIND</option>
 				<option value="DEAF">DEAF</option>
 				<option value="UMNR">UNACCOMPANIED MINOR</option>
-				<option value="WCHR">WHEELCHAIR</option>
+				<option value="WCHR">WHEELCHAIR - CAN CLIMB STAIRS</option>
+				<option value="WCHC">WHEELCHAIR - IMMOBILE</option>
 				</select>
 <!---
 GENERAL SEATS
