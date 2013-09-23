@@ -80,6 +80,7 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
+		<cfargument name="BlackListedCarrierPairing" required="true">
 
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
@@ -96,15 +97,15 @@
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy)>
+				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy, arguments.BlackListedCarrierPairing)>
 				<cfset local.stThreads[local.sThreadName] = ''>
 			</cfloop>
 		</cfloop>
 
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
+	<!--- 	<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-		</cfif>
+		</cfif> --->
 
 		<cfreturn />
 	</cffunction>
@@ -119,6 +120,7 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
+		<cfargument name="BlackListedCarrierPairing" required="true">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 
 		<cfset local.sThreadName = "">
@@ -131,7 +133,7 @@
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<cfthread
+<!--- 			<cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
@@ -139,7 +141,7 @@
 				sCabin="#arguments.sCabin#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
-				bRefundable="#arguments.bRefundable#">
+				bRefundable="#arguments.bRefundable#"> --->
 
 				<!--- Put together the SOAP message. --->
 				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
@@ -162,6 +164,14 @@
 					<cfset attributes.stTrips = getAirParse().parseTrips(response = attributes.aResponse, stSegments = attributes.stSegments)>
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
+
+
+
+					<!--- Remove BlackListed Carriers --->
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, arguments.blackListedCarrierPairing)>
+
+
+
 					<!--- Add preferred node from account --->
 					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
 
@@ -185,7 +195,7 @@
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
-			</cfthread>
+			<!--- </cfthread> --->
 		</cfif>
 		<cfreturn sThreadName>
 	</cffunction>

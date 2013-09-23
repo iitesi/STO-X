@@ -17,7 +17,7 @@
     	<cfset setAirAdapter( arguments.AirAdapter ) />
 
         <cfreturn this />
-         
+
      </cffunction>
 
 	<cffunction name="doAirPrice" output="false">
@@ -166,16 +166,16 @@
 								<cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
-											<com:AccountCode 
-												Code="#GetToken(sPF, 3, ',')#" 
-												ProviderCode="1V" 
+											<com:AccountCode
+												Code="#GetToken(sPF, 3, ',')#"
+												ProviderCode="1V"
 												SupplierCode="#GetToken(sPF, 2, ',')#" />
 										</cfloop>
 									</air:AccountCodes>
 								</cfif>
 								<air:PermittedCabins>
 									<cfloop array="#aCabins#" index="local.sCabin">
-										<air:CabinClass 
+										<air:CabinClass
 											Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 									</cfloop>
 								</air:PermittedCabins>
@@ -203,8 +203,8 @@
 	</cffunction>
 
 	<cffunction name="addstPriced" output="false">
-		<cfargument name="stPriced" 	required="true">
-		<cfargument name="nTripKey" 	required="true">
+		<cfargument name="stPriced" required="true">
+		<cfargument name="nTripKey" name=""required="true">
 
 		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})>
 		<cfset local.stPriced[arguments.nTripKey] = ''>

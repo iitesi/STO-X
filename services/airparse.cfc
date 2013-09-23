@@ -394,6 +394,40 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn stTrips/>
 	</cffunction>
 
+<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="blackListedCarriers" required="true">
+
+
+		<!--- Loop through all the trips --->
+		<cfset counter = 0>
+		<cfloop collection="#stTrips#" index="local.tripIndex" item="local.trip">
+			<cfset counter++>
+			<!--- if carriers array only has one carrier - we don't need to check it --->
+			<cfif arrayLen(local.trip.carriers) GT 1>
+				<cfset local.carrierList = ArrayToList(local.trip.carriers)>
+
+				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
+					<cfoutput>#local.carrierList#</cfoutput>
+				</cfloop>
+
+			</cfif>
+
+			<!--- Debug only - break out of loop so FF doesn't crash displaying dumps --->
+			<cfif counter EQ 3>
+				<cfbreak>
+			</cfif>
+
+			<!--- <cfset StructDelete(stTrips[tripIndex], 'Segments')> --->
+		</cfloop>
+
+
+		<cfdump var="#now()#" abort="true" />
+
+		<cfreturn stTrips/>
+	</cffunction>
+
+
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
 		<cfargument name="stTrips" 	required="true">
