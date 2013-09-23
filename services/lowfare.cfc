@@ -141,7 +141,8 @@
 				sCabin="#arguments.sCabin#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
-				bRefundable="#arguments.bRefundable#">
+				bRefundable="#arguments.bRefundable#"
+				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#">
 
 				<!--- Put together the SOAP message. --->
 				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
@@ -166,7 +167,7 @@
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 
 					<!--- Remove BlackListed Carriers --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, arguments.blackListedCarrierPairing)>
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
 
 					<!--- Add preferred node from account --->
 					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
