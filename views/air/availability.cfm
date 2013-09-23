@@ -55,8 +55,8 @@
 
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
-			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrivalPreferred[rc.Group])#;
-			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepartPreferred[rc.Group])#;
+			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
+			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group])#;
 			var sortbyduration = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group])#;
 			var sortbyprice = '';
 			var sortbyprice1bag = '';
