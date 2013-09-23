@@ -43,6 +43,7 @@
 		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.developerEmail = "jpriest@shortstravel.com">
+		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
 	</cffunction>
 
 	<cffunction name="setupSession">
@@ -59,7 +60,6 @@
 		<cfset controller( 'setup.setPolicyID' )>
 		<cfset controller( 'setup.setPolicy' )>
 		<cfset controller( 'setup.setGroup' )>
-		<cfset request.context.currentEnvironment = getBeanFactory().getBean( 'EnvironmentService' ).getCurrentEnvironment() />
 
 		<cfif structKeyExists( request.context, "reload" ) AND request.context.reload IS true>
 			<cfset request.layout = false>
@@ -86,8 +86,6 @@
 					<cflocation url="#getBeanFactory().getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
 				</cfif>
 			</cfif>
-
-
 
 		</cfif>
 
