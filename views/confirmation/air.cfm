@@ -95,12 +95,6 @@
 												</cfif>
 											</td>
 										</tr>
-										<cfif arrayLen(segment.SegmentRemark)>
-											<tr>
-												<td></td>
-												<td colspan="7">#segment.SegmentRemark[1]#</td>
-											</tr>											
-										</cfif>
 									</cfloop>
 									<cfif groupIndex NEQ (structCount(rc.Air.Groups) - 1)>
 										<tr>

@@ -41,16 +41,22 @@
 
 		#View('air/filter')#
 
+		<cfif (rc.Group EQ 0 AND rc.Filter.getDepartTimeType() IS 'A') OR (rc.Group EQ 1 AND rc.Filter.getArrivalTimeType() IS 'A')>
+			<cfset arrayToLoop = session.searches[rc.SearchID].stAvailDetails.aSortArrivalPreferred[rc.Group] />
+		<cfelse>
+			<cfset arrayToLoop = session.searches[rc.SearchID].stAvailDetails.aSortDepartPreferred[rc.Group] />
+		</cfif>
+
 		<cfset variables.nCount = 0>
-		<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group]#" index="variables.nTripKey">
+		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
 			#View('air/badge')#
 		</cfloop>
 
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
-			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
-			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group])#;
+			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrivalPreferred[rc.Group])#;
+			var sortbydeparture = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDepartPreferred[rc.Group])#;
 			var sortbyduration = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortDuration[rc.Group])#;
 			var sortbyprice = '';
 			var sortbyprice1bag = '';
@@ -60,7 +66,7 @@
 			// here we loop over session searches and stuff all the flights avail in flightresults
 			var flightresults = [
 				<cfset nCount = 0>
-				<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDepart[rc.Group]#" index="sTrip">
+				<cfloop array="#session.searches[rc.SearchID].stAvailDetails.aSortDepartPreferred[rc.Group]#" index="sTrip">
 					<cfif nCount NEQ 0>,</cfif>[#session.searches[rc.SearchID].stAvailTrips[rc.Group][sTrip].sJavascript#]
 					<cfset nCount++>
 				</cfloop>];

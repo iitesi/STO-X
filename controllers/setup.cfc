@@ -53,7 +53,7 @@ setApplication
 		<cfif StructKeyExists(session, 'Filters') AND StructKeyExists(session.Filters, arguments.rc.SearchID) AND NOT StructKeyExists(arguments.rc, "requery")>
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
 		<cfelse>
-			<cfset rc.Filter = variables.bf.getBean("setup").setFilter(argumentcollection=arguments.rc)>
+			<cfset rc.Filter = variables.fw.getBeanFactory().getBean("setup").setFilter(argumentcollection=arguments.rc)>
 		</cfif>
 		<cfreturn />
 	</cffunction>
