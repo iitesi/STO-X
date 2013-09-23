@@ -398,37 +398,42 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="stTrips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
+		<cfset local.stTrips = arguments.stTrips>
+		<cfset local.deleteTripIndex = "">
 
 		<!--- Loop through all the trips --->
-		<cfset counter = 0>
-		<cfloop collection="#stTrips#" index="local.tripIndex" item="local.trip">
-			<cfset counter++>
+		<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.trip">
+			<cfset local.deleteFlight = 'No'>
+
 			<!--- if carriers array only has one carrier - we don't need to check it --->
 			<cfif arrayLen(local.trip.carriers) GT 1>
 				<cfset local.carrierList = ArrayToList(local.trip.carriers)>
 
 				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
 					<cfset local.blackList = ArrayToList(local.blackListedCarrier)>
-					<cfoutput>#local.blackList# | #local.carrierList#<br></cfoutput>
+
+					<cfif listFindNoCase( local.carrierList, listGetAt( local.blackList, 1) ) AND listFindNoCase( local.carrierList, listGetAt( local.blackList, 2) )>
+
+						<!--- <cfoutput>#local.tripIndex#)  #local.blackList# | #local.carrierList#<br></cfoutput> --->
+
+						<!--- if any match is found we can stop checking and go to next flight --->
+						<cfset local.deleteTripIndex = ListAppend(local.deleteTripIndex, local.tripIndex)>
+						<cfbreak>
+					</cfif>
 				</cfloop>
-
 			</cfif>
-
-			<!--- Debug only - break out of loop so FF doesn't crash displaying dumps --->
-			<cfif counter EQ 3>
-				<cfbreak>
-			</cfif>
-
-			<!--- <cfset StructDelete(stTrips[tripIndex], 'Segments')> --->
+			<!---
+			<cfoutput>#local.tripIndex# - #local.deleteFlight#<hr></cfoutput><br>
+			--->
 		</cfloop>
 
+		<!--- delete the blacklisted flights from stTrips --->
+		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(local.stTrips, local.tripIndex)>
+		</cfloop>
 
-		<cfdump var="#now()#" abort="true" />
-
-		<cfreturn stTrips/>
+		<cfreturn local.stTrips/>
 	</cffunction>
-
-
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
 		<cfargument name="stTrips" 	required="true">
