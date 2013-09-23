@@ -204,7 +204,7 @@
 
 	<cffunction name="addstPriced" output="false">
 		<cfargument name="stPriced" required="true">
-		<cfargument name="nTripKey" name=""required="true">
+		<cfargument name="nTripKey" required="true">
 
 		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})>
 		<cfset local.stPriced[arguments.nTripKey] = ''>
