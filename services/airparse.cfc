@@ -408,7 +408,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.carrierList = ArrayToList(local.trip.carriers)>
 
 				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
-					<cfoutput>#local.carrierList#</cfoutput>
+					<cfset local.blackList = ArrayToList(local.blackListedCarrier)>
+					<cfoutput>#local.blackList# | #local.carrierList#<br></cfoutput>
 				</cfloop>
 
 			</cfif>
