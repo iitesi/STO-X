@@ -548,7 +548,6 @@
 
 	<cffunction name="setBlackListedCarrier" output="false">
 
-		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
 		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
 			SELECT Carrier1
 				, Carrier2
@@ -561,9 +560,10 @@
 		</cfquery>
 
 		<cfset local.temp = {}>
-		<!--- Populate the array row by row --->
 		<cfoutput query="blackListedCarrierPairing" group="carrier1">
-			<cfset temp[carrier1] = carrier2>
+			<cfoutput>
+				<cfset temp[carrier1][carrier2] = ''>
+			</cfoutput>
 		</cfoutput>
 
 		<cfset application.blacklistedCarriers = temp>
