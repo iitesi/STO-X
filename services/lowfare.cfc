@@ -80,7 +80,7 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="BlackListedCarrierPairing" required="true">
+		<cfargument name="BlackListedCarrierPairing" required="false">
 
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
@@ -93,11 +93,13 @@
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
+		<cfset local.BlackListedCarrierPairing = arguments.BlackListedCarrierPairing>
+
 
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy, arguments.BlackListedCarrierPairing)>
+				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy, local.BlackListedCarrierPairing)>
 				<cfset local.stThreads[local.sThreadName] = ''>
 			</cfloop>
 		</cfloop>
@@ -120,7 +122,7 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="BlackListedCarrierPairing" required="true">
+		<cfargument name="BlackListedCarrierPairing" required="false">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 
 		<cfset local.sThreadName = "">
@@ -166,8 +168,11 @@
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 
-					<!--- Remove BlackListed Carriers --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
+
+					<cfif ArrayLen(attributes.blackListedCarrierPairing)>
+						<!--- Remove BlackListed Carriers --->
+						<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
+					</cfif>
 
 					<!--- Add preferred node from account --->
 					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
