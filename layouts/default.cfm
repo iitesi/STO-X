@@ -161,7 +161,7 @@
 	</div>
 </div>
 
-		<cfif rc.currentEnvironment EQ "prod">
+		<cfif application.es.getCurrentEnvironment() EQ "prod">
 			<cfoutput>
 				<script type="text/javascript">
 					var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

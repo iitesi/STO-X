@@ -8,21 +8,27 @@
 <cfoutput>
 	<div style="width:1000px;" id="summaryForm">
 		
-		<span style="float:right">
-			<cfif NOT rc.hotelSelected
-				AND rc.Filter.getAirType() NEQ 'MD'>
-				<a href="#buildURL('hotel.search?searchID=#rc.searchID#')#">
-					<span class="icon-large icon-plus"></span> Add Hotel
-				</a>&nbsp;&nbsp;&nbsp;&nbsp;
-			</cfif>
+		<!--- to do : remove cfif afer 10/7 --->
+		<cfif NOT (application.es.getCurrentEnvironment() EQ 'beta'
+			AND rc.Filter.getAcctID() EQ 441)>
 
-			<cfif NOT rc.vehicleSelected
-				AND rc.Filter.getAirType() NEQ 'MD'>
-				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
-					<span class="icon-large icon-plus"></span> Add Car
-				</a>
-			</cfif>
-		</span>
+			<span style="float:right">
+				<cfif NOT rc.hotelSelected
+					AND rc.Filter.getAirType() NEQ 'MD'>
+					<a href="#buildURL('hotel.search?searchID=#rc.searchID#')#">
+						<span class="icon-large icon-plus"></span> Add Hotel
+					</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				</cfif>
+
+				<cfif NOT rc.vehicleSelected
+					AND rc.Filter.getAirType() NEQ 'MD'>
+					<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
+						<span class="icon-large icon-plus"></span> Add Car
+					</a>
+				</cfif>
+			</span>
+
+		</cfif>
 
 		<h1>Purchase Reservation</h1>
 

@@ -23,6 +23,9 @@
 	<cfset showAirTab = (rc.Filter.getAir() IS TRUE ? 1 : 0) />
 	<cfset showHotelTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
 	<cfset showCarTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
+	<!--- to do : remove these after 10/7 --->
+	<cfset showHotelTab = ((application.es.getCurrentEnvironment() EQ 'beta' AND rc.Filter.getAcctID() EQ 441) ? 0 : showHotelTab)>
+	<cfset showCarTab = ((application.es.getCurrentEnvironment() EQ 'beta' AND rc.Filter.getAcctID() EQ 441) ? 0 : showCarTab)>
 </cfif>
 </cfsilent>
 <cfoutput>
