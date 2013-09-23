@@ -546,4 +546,29 @@
 		<cfreturn local.temp />
 	</cffunction>
 
+	<cffunction name="setBlackListedCarrier" output="false">
+
+		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
+		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
+			SELECT Carrier1
+				, Carrier2
+			FROM lu_CarrierInterline
+			UNION
+			SELECT Carrier2 AS Carrier1
+				, Carrier1 AS Carrier2
+			FROM lu_CarrierInterline
+			ORDER BY Carrier1
+		</cfquery>
+
+		<cfset local.temp = {}>
+		<!--- Populate the array row by row --->
+		<cfoutput query="blackListedCarrierPairing" group="carrier1">
+			<cfset temp[carrier1] = carrier2>
+		</cfoutput>
+
+		<cfset application.blacklistedCarriers = temp>
+
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

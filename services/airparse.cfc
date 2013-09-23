@@ -394,7 +394,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn stTrips/>
 	</cffunction>
 
-<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
 		<cfargument name="stTrips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
@@ -412,7 +412,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
 					<cfset local.blackList = ArrayToList(local.blackListedCarrier)>
 
-					<cfif listFindNoCase( local.carrierList, listGetAt( local.blackList, 1) ) AND listFindNoCase( local.carrierList, listGetAt( local.blackList, 2) )>
+					<cfif listFindNoCase( local.carrierList, listGetAt( local.blackList, 1) )
+						AND listFindNoCase( local.carrierList, listGetAt( local.blackList, 2) )>
 
 						<!--- <cfoutput>#local.tripIndex#)  #local.blackList# | #local.carrierList#<br></cfoutput> --->
 
@@ -433,6 +434,29 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfloop>
 
 		<cfreturn local.stTrips/>
+	</cffunction>
+
+	<cffunction name="removeBlackListed" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="carriers" required="true">
+		<cfargument name="blackListedCarriers" required="true">
+
+		<cfset local.validFlight = true>
+		<cfif arrayLen(arguments.carrier) GT 1>
+			<cfset validFlight = true>
+			<cfloop array="#argument.carriers#" index="local.carrierIndex" item="local.carrier">
+				<cfif structKeyExists(application.blacklistCarriers, carrier)>
+					<cfloop array="#argument.carriers#" index="local.carrier2Index" item="local.carrier2">
+						<cfif carrier NEQ carrier2>
+							<cfif structKeyExists(application.blacklistCarriers[carrier], carrier2)>
+								<cfset validFlight = false>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfloop>
+		</cfif>
+				
+		<cfreturn validFlight/>
 	</cffunction>
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
