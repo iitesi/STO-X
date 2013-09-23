@@ -38,6 +38,25 @@
 </cfsilent>
 
 <div style="width:960px;">
+
+	<cfif application.es.getCurrentEnvironment() NEQ 'prod'
+		AND NOT (application.es.getCurrentEnvironment() NEQ 'beta'
+			AND rc.Filter.getAcctID() EQ 441)>
+		<span style="float:right">
+			<cfoutput>
+				<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
+					<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+						<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+							<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
+								<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
+							</a>
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfoutput>
+		</span>
+	</cfif>
+
 	<div class="container">
 		<div class="page-header">
 			<cfoutput>
@@ -46,6 +65,7 @@
 		</div>
 	</div>
 	<cfoutput>
+
 		<div>
 			<div id="reservationMessage" class="alert alert-success" style="width:920px;">
 				<!--- If at least one pre-trip traveler. --->
