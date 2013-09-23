@@ -58,6 +58,7 @@
 
 	<bean id="setup" class="booking.services.setup" >
 		<constructor-arg name="assetURL"><bean factory-bean="EnvironmentService" factory-method="getAssetURL" /></constructor-arg>
+		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 		<constructor-arg name="portalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
