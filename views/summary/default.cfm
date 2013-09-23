@@ -4,7 +4,6 @@
 	padding: 0px;
 }
 </style>
-
 <cfoutput>
 	<div style="width:1000px;" id="summaryForm">
 		

@@ -54,6 +54,7 @@
 	<cfproperty name="udid111" />
 	<cfproperty name="udid112" />
 	<cfproperty name="udid113" />
+	<cfproperty name="universalLocatorCode" />
 	<cfproperty name="username" />
 
 	<cffunction name="init" returntype="any" access="remote" output="false">
@@ -114,6 +115,7 @@
 		<cfset setUDID111( '' )>
 		<cfset setUDID112( '' )>
 		<cfset setUDID113( '' )>
+		<cfset setUniversalLocatorCode( '' )>
 		<cfset setUsername( '' )>
 
 		<cfreturn this />

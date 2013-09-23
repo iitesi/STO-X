@@ -36,22 +36,18 @@
 			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=1')>
 		</cfif>
 
-		<!--- <cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
+		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-				<cfif Traveler.getBookingDetail().getReservationCode() NEQ ''>
-					<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').cancelPNR( travelerName = Traveler.getFirstName()&' '&Traveler.getLastName()
-																									, targetBranch = rc.Account.sBranch
-																									, providerLocatorCode = Traveler.getBookingDetail().getReservationCode()
-																									, searchID = rc.searchID
-																									, pcc = rc.Account.PCC_Booking )>
-					<cfset local.hostToken = fw.getBeanFactory().getBean('Air').cancelPNR( targetBranch = rc.Account.sBranch
-																						, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode() )>
+				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode() 
+																					, Filter = rc.Filter )>
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
 					<cfset Traveler.getBookingDetail().setReservationCode( '' )>
 					<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 				</cfif>
 			</cfloop>
-		</cfif> --->
+		</cfif>
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 
