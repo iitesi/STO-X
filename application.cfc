@@ -52,15 +52,6 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
-
-		<cfset controller( 'setup.setSearchID' )>
-		<cfset controller( 'setup.setFilter' )>
-		<cfset controller( 'setup.setAcctID' )>
-		<cfset controller( 'setup.setAccount' )>
-		<cfset controller( 'setup.setPolicyID' )>
-		<cfset controller( 'setup.setPolicy' )>
-		<cfset controller( 'setup.setGroup' )>
-
 		<cfif structKeyExists( request.context, "reload" ) AND request.context.reload IS true>
 			<cfset request.layout = false>
 			<cfset setupApplication() />
