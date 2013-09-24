@@ -168,7 +168,7 @@ $(document).ready(function(){
 		$( "#gender" ).val( traveler.gender );
 
 		// If a FindIt guest
-		if (traveler.accountID == "" && traveler.stoDefaultUser == 0) {
+		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
 			$( "#userID" ).val( 0 );
 			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
