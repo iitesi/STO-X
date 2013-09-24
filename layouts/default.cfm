@@ -79,6 +79,17 @@
 							</div>
 							<cfoutput>#View('main/navigation')#</cfoutput>
 						</div>
+						<cfif structKeyExists(rc, 'filter')
+							AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
+							<div style="color:#999;float:right;font-weight:bold">
+								Booking on behalf of 
+								<cfif rc.Filter.getProfileID() NEQ 0>
+									<cfoutput>#rc.Filter.getProfileUsername()#</cfoutput>
+								<cfelse>
+									Guest Traveler
+								</cfif>
+							</div>
+						</cfif>
 					</div>
 				</div>
 
