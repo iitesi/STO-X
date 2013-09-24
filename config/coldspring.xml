@@ -82,6 +82,8 @@
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="CorporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="googleMapsClientId"><bean factory-bean="EnvironmentService" factory-method="getGoogleMapsClientId" /></constructor-arg>
+		<constructor-arg name="googleMapsAPIKey"><bean factory-bean="EnvironmentService" factory-method="getGoogleMapsAPIKey" /></constructor-arg>
 	</bean>
 
 	<bean id="UserService" class="com.shortstravel.security.UserService">
