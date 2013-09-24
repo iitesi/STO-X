@@ -162,8 +162,9 @@
 		<!---
 		Create a quick struct containing the private fare information
 		--->
-		<cfset local.fare = {}>
+		<!--- <cfset local.fare = {}>
 		<cfloop array="#arguments.response#" index="local.fareInfoListIndex" item="local.fareInfoList">
+			<cfdump var="#fareInfoList#" />
 			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
 				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
 					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') AND fareInfo.XMLAttributes.PrivateFare NEQ '' ? true : false)>
@@ -175,6 +176,19 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+		<cfloop array="#arguments.response#" index="local.fareInfoListIndex" item="local.fareInfoList">
+			<cfdump var="#fareInfoList#" />
+			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
+				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
+					<cfset bPrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') AND fareInfo.XMLAttributes.PrivateFare NEQ '' ? true : false)>
+					<!--- <cfloop array="#fareInfo.XMLChildren#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
+						<cfif fareRuleKey.XMLName EQ 'air:FareRuleKey'>
+							<cfset fare[fareInfo.XMLAttributes.Key].fareRuleKey = fareRuleKey.XMLText>
+						</cfif>
+					</cfloop> --->
+				</cfloop>
+			</cfif>
+		</cfloop> --->
 
 		<cfloop array="#arguments.response#" index="local.stAirPricingSolution" item="local.responseNode">
 
@@ -230,6 +244,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 							<cfelseif airPricingSolution2.XMLName EQ 'air:FareInfoRef'>
 								<!--- Private fares 1/0 --->
 								<cfif fare[airPricingSolution2.XMLAttributes.Key].PrivateFare>
+									<cfset bPrivateFare = true>
+								</cfif>
+								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
+							<cfelseif airPricingSolution2.XMLName EQ 'air:FareInfo'>
+								<!--- Private fares 1/0 --->
+								<cfif airPricingSolution2.XMLAttributes.PrivateFare NEQ ''>
 									<cfset bPrivateFare = true>
 								</cfif>
 								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
