@@ -404,10 +404,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<!--- Loop through all the trips --->
 		<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.trip">
-			<cfset local.deleteFlight = 'No'>
 
+			<cfif arrayLen(local.trip.carriers) GT 1
+				AND arrayFind(local.trip.carriers, 'WN')>
+				<cfset deleteTripIndex = ListAppend(local.deleteTripIndex, local.tripIndex)>
 			<!--- if carriers array only has one carrier - we don't need to check it --->
-			<cfif arrayLen(local.trip.carriers) GT 1>
+			<cfelseif arrayLen(local.trip.carriers) GT 1>
 				<cfset local.carrierList = ArrayToList(local.trip.carriers)>
 
 				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
@@ -441,7 +443,10 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="carriers" required="true">
 
 		<cfset local.validFlight = true>
-		<cfif arrayLen(arguments.carriers) GT 1>
+		<cfif arrayLen(arguments.carriers) GT 1
+			AND arrayFind(arguments.carriers, 'WN')>
+			<cfset validFlight = false>
+		<cfelseif arrayLen(arguments.carriers) GT 1>
 			<cfset validFlight = true>
 			<cfloop array="#arguments.carriers#" index="local.carrierIndex" item="local.carrier">
 				<cfif structKeyExists(application.blacklistedCarriers, local.carrier)>
