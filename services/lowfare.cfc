@@ -95,6 +95,10 @@
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = arguments.BlackListedCarrierPairing>
 
+		<!--- if we're coming from FindIt this may not be set to an array --->
+		<cfif NOT IsArray(local.BlackListedCarrierPairing)>
+			<cfset local.BlackListedCarrierPairing = []>
+		</cfif>
 
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
