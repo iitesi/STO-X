@@ -235,7 +235,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
 							<cfelseif airPricingSolution2.XMLName EQ 'air:FareInfo'>
 								<!--- Private fares 1/0 --->
-								<cfif airPricingSolution2.XMLAttributes.PrivateFare NEQ ''>
+								<cfif structKeyExists(airPricingSolution2.XMLAttributes, 'PrivateFare')
+									AND airPricingSolution2.XMLAttributes.PrivateFare NEQ ''>
 									<cfset bPrivateFare = true>
 								</cfif>
 								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
