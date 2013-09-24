@@ -449,7 +449,7 @@ $(document).ready(function(){
 			total += parseFloat( $( "#airTotal" ).val() )
 			fee = airFee;
 		}
-		if ( $( "#specialRequests" ).val() != '') {
+		if ( $( "#specialRequests" ).val() != '' && $( "#specialRequests" ).val() != undefined) {
 			fee = requestFee;
 		}
 		if (fee == 0) {
