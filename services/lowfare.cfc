@@ -80,7 +80,6 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="BlackListedCarrierPairing" required="false">
 
 		<!--- grab class from widget form --->
 		<cfset local.sCabins = arguments.filter.getClassOfService()>
@@ -93,12 +92,7 @@
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
-		<cfset local.BlackListedCarrierPairing = arguments.BlackListedCarrierPairing>
-
-		<!--- if we're coming from FindIt this may not be set to an array --->
-		<cfif NOT IsArray(local.BlackListedCarrierPairing)>
-			<cfset local.BlackListedCarrierPairing = []>
-		</cfif>
+		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
 
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
@@ -172,11 +166,8 @@
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 
-
-					<cfif ArrayLen(attributes.blackListedCarrierPairing)>
-						<!--- Remove BlackListed Carriers --->
-						<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
-					</cfif>
+					<!--- Remove BlackListed Carriers --->
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
 
 					<!--- Add preferred node from account --->
 					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>

@@ -38,6 +38,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'assetURL')>
 			<cfset application.assetURL = variables.bf.getBean("EnvironmentService").getAssetURL()>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'blackListedCarrierPairing')>
+			<cfset variables.bf.getBean("setup").setBlackListedCarrierPairing(argumentcollection=arguments.rc)>
+		</cfif>
 		<cfif NOT StructKeyExists(application, 'blacklistedCarriers')>
 			<cfset variables.bf.getBean("setup").setBlackListedCarrier(argumentcollection=arguments.rc)>
 		</cfif>
@@ -112,12 +115,4 @@ setApplication
 
 		<cfreturn />
 	</cffunction>
-
-	<cffunction name="setBlackListedCarrierPairing" output="false" hint="I return a list of carriers that cannot be booked on the same ticket together.">
-
-		<cfset rc.BlackListedCarrierPairing = variables.bf.getBean("setup").setBlackListedCarrierPairing()>
-
-		<cfreturn />
-	</cffunction>
-
 </cfcomponent>

@@ -524,7 +524,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="setBlackListedCarrierPairing" output="false" returntype="Array" hint="I query the lu_CarrierInterline table and return a list of blacklisted carriers. These carriers cannot be booked together on the same ticket.">
+	<cffunction name="setBlackListedCarrierPairing" output="false" hint="I query the lu_CarrierInterline table and return a list of blacklisted carriers. These carriers cannot be booked together on the same ticket.">
 
 		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
 		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
@@ -543,7 +543,9 @@
 			<cfset local.temp[CurrentRow][2]=carrier2>
 		</cfloop>
 
-		<cfreturn local.temp />
+		<cfset application.blacklistedCarrierPairing = local.temp>
+
+		<cfreturn />
 	</cffunction>
 
 	<cffunction name="setBlackListedCarrier" output="false">
