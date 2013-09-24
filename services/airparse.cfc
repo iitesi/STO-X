@@ -388,6 +388,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfif>
 			<cfset stTrips[tripIndex].Arrival = stGroups[nOverrideGroup].ArrivalTime>
 			<cfset stTrips[tripIndex].Carriers = structKeyArray(aCarriers)>
+			<cfset stTrips[tripIndex].validCarriers = flagBlackListedCarriers(stTrips[tripIndex].Carriers)>
 			<cfset StructDelete(stTrips[tripIndex], 'Segments')>
 		</cfloop>
 
@@ -436,18 +437,17 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.stTrips/>
 	</cffunction>
 
-	<cffunction name="removeBlackListed" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="flagBlackListedCarriers" output="false" hint="I check a trips carriers to see if it is blacklisted.">
 		<cfargument name="carriers" required="true">
-		<cfargument name="blackListedCarriers" required="true">
 
 		<cfset local.validFlight = true>
-		<cfif arrayLen(arguments.carrier) GT 1>
+		<cfif arrayLen(arguments.carriers) GT 1>
 			<cfset validFlight = true>
-			<cfloop array="#argument.carriers#" index="local.carrierIndex" item="local.carrier">
-				<cfif structKeyExists(application.blacklistCarriers, carrier)>
-					<cfloop array="#argument.carriers#" index="local.carrier2Index" item="local.carrier2">
+			<cfloop array="#arguments.carriers#" index="local.carrierIndex" item="local.carrier">
+				<cfif structKeyExists(application.blacklistedCarriers, local.carrier)>
+					<cfloop array="#arguments.carriers#" index="local.carrier2Index" item="local.carrier2">
 						<cfif carrier NEQ carrier2>
-							<cfif structKeyExists(application.blacklistCarriers[carrier], carrier2)>
+							<cfif structKeyExists(application.blacklistedCarriers[carrier], carrier2)>
 								<cfset validFlight = false>
 							</cfif>
 						</cfif>
@@ -455,8 +455,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				</cfif>
 			</cfloop>
 		</cfif>
-				
-		<cfreturn validFlight/>
+
+		<cfreturn local.validFlight/>
 	</cffunction>
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
