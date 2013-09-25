@@ -233,6 +233,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 									<cfset bPrivateFare = true>
 								</cfif>
 								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
+							<cfelseif airPricingSolution2.XMLName EQ 'air:FareInfo'>
+								<!--- Private fares 1/0 --->
+								<cfif structKeyExists(airPricingSolution2.XMLAttributes, 'PrivateFare')
+									AND airPricingSolution2.XMLAttributes.PrivateFare NEQ ''>
+									<cfset bPrivateFare = true>
+								</cfif>
+								<!--- <cfset arrayAppend(fareRuleKey, fare[airPricingSolution2.XMLAttributes.Key].fareRuleKey)> --->
 							<cfelseif airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
 								<cfset local.sClass = (StructKeyExists(airPricingSolution2.XMLAttributes, 'CabinClass') ? airPricingSolution2.XMLAttributes.CabinClass : 'Economy')>
@@ -388,12 +395,102 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfif>
 			<cfset stTrips[tripIndex].Arrival = stGroups[nOverrideGroup].ArrivalTime>
 			<cfset stTrips[tripIndex].Carriers = structKeyArray(aCarriers)>
+			<cfset stTrips[tripIndex].validCarriers = flagBlackListedCarriers(stTrips[tripIndex].Carriers)>
 			<cfset StructDelete(stTrips[tripIndex], 'Segments')>
 		</cfloop>
 
 		<cfreturn stTrips/>
 	</cffunction>
 
+	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="blackListedCarriers" required="true">
+
+		<cfset local.stTrips = arguments.stTrips>
+		<cfset local.deleteTripIndex = "">
+
+		<!--- Loop through all the trips --->
+		<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.trip">
+
+			<cfif arrayLen(local.trip.carriers) GT 1
+				AND arrayFind(local.trip.carriers, 'WN')>
+				<cfset deleteTripIndex = ListAppend(local.deleteTripIndex, local.tripIndex)>
+			<!--- if carriers array only has one carrier - we don't need to check it --->
+			<cfelseif arrayLen(local.trip.carriers) GT 1>
+				<cfset local.carrierList = ArrayToList(local.trip.carriers)>
+
+				<cfloop array="#arguments.blackListedCarriers#" index="local.blackListedIndex" item="local.blackListedCarrier">
+					<cfset local.blackList = ArrayToList(local.blackListedCarrier)>
+
+					<cfif listFindNoCase( local.carrierList, listGetAt( local.blackList, 1) )
+						AND listFindNoCase( local.carrierList, listGetAt( local.blackList, 2) )>
+
+						<!--- <cfoutput>#local.tripIndex#)  #local.blackList# | #local.carrierList#<br></cfoutput> --->
+
+						<!--- if any match is found we can stop checking and go to next flight --->
+						<cfset local.deleteTripIndex = ListAppend(local.deleteTripIndex, local.tripIndex)>
+						<cfbreak>
+					</cfif>
+				</cfloop>
+			</cfif>
+			<!---
+			<cfoutput>#local.tripIndex# - #local.deleteFlight#<hr></cfoutput><br>
+			--->
+		</cfloop>
+
+		<!--- delete the blacklisted flights from stTrips --->
+		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(local.stTrips, local.tripIndex)>
+		</cfloop>
+
+		<cfreturn local.stTrips/>
+	</cffunction>
+
+	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="trips" required="true">
+
+		<cfset local.deleteTripIndex = ''>
+
+		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+
+			<cfif arrayLen(trip.carriers) GT 1
+				AND trip.privateFare>
+				<cfset deleteTripIndex = ListAppend(deleteTripIndex, local.tripIndex)>
+			</cfif>
+
+		</cfloop>
+
+		<cfloop list="#deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(arguments.trips, tripIndex)>
+		</cfloop>
+
+		<cfreturn arguments.trips/>
+	</cffunction>
+
+	<cffunction name="flagBlackListedCarriers" output="false" hint="I check a trips carriers to see if it is blacklisted.">
+		<cfargument name="carriers" required="true">
+
+		<cfset local.validFlight = true>
+		<cfif arrayLen(arguments.carriers) GT 1
+			AND arrayFind(arguments.carriers, 'WN')>
+			<cfset validFlight = false>
+		<cfelseif arrayLen(arguments.carriers) GT 1>
+			<cfset validFlight = true>
+			<cfloop array="#arguments.carriers#" index="local.carrierIndex" item="local.carrier">
+				<cfif structKeyExists(application.blacklistedCarriers, local.carrier)>
+					<cfloop array="#arguments.carriers#" index="local.carrier2Index" item="local.carrier2">
+						<cfif carrier NEQ carrier2>
+							<cfif structKeyExists(application.blacklistedCarriers[carrier], carrier2)>
+								<cfset validFlight = false>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfreturn local.validFlight/>
+	</cffunction>
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
 		<cfargument name="stTrips" 	required="true">

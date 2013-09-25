@@ -90,7 +90,8 @@
 												</cfif>
 											</td>
 											<td>
-												<cfif count EQ structCount(group.Segments)>
+												<cfif count EQ structCount(group.Segments)
+													AND group.TravelTime NEQ '0h 0m'>
 													#group.TravelTime#
 												</cfif>
 											</td>

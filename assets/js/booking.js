@@ -205,10 +205,17 @@ function filterAir(reset) {
 			if(showFlight == true){
 					// check first to see if ANY airlines are checked
 					if (airfields.length) {
+
+// STM-2018
+// set to false by default - hide it
+// then if ANY flight in the array is true - we'll show it
+
 							for (var i = 0; i < flight[3].length; i++) {
 								if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
 									showFlight = false;
 								} // if carrier is checked
+
+
 							} // for flight loop
 					} // airfields.length
 			} // showflight = true

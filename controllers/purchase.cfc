@@ -172,6 +172,7 @@
 																												, bookingPCC = rc.Account.PCC_Booking
 																												, Traveler = Traveler
 																												, Profile = Profile
+																												, Account = rc.Account
 																												, Air = Air
 																												, Filter = rc.Filter
 																												, statmentInformation = statmentInformation
@@ -359,10 +360,6 @@
 						<cfset fw.getBeanFactory().getBean('TerminalEntry').addTicketDate( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, searchID = rc.searchID )>
-						<!--- Add okay to ticket : no error response --->
-						<cfset fw.getBeanFactory().getBean('TerminalEntry').addOKToTicket( targetBranch = rc.Account.sBranch
-																												, hostToken = hostToken
-																												, searchID = rc.searchID )>
 					</cfif>
 					<cfif NOT responseMessage.error
 						AND hotelSelected>
@@ -461,6 +458,7 @@
 																									, hostToken = hostToken
 																									, searchID = rc.searchID )>
 				</cfif>
+				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
@@ -494,13 +492,38 @@
 					<cfelse>
 						<cfset rc.message.addError(errorList)>
 					</cfif>
-					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
 		</cfloop>
 
 		<cfreturn />
+	</cffunction>
+
+	<cffunction name="cancel" output="false">
+		<cfargument name="rc">
+
+		<cfset local.cancelResponse.status = false>
+		<cfset cancelResponse.message = ''>
+		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
+			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+					<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																									, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode() 
+																									, Filter = rc.Filter
+																									, Version = Traveler.getBookingDetail().getVersion() )>
+					<cfif cancelResponse.status>
+						<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
+						<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
+					</cfif>
+					<cfif cancelResponse.message NEQ ''>
+						<cfset rc.message.addError(cancelResponse.message)>
+					</cfif>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')>
+
 	</cffunction>
 
 </cfcomponent>

@@ -17,7 +17,7 @@
     	<cfset setAirAdapter( arguments.AirAdapter ) />
 
         <cfreturn this />
-         
+
      </cffunction>
 
 	<cffunction name="doAirPrice" output="false">
@@ -132,10 +132,15 @@
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
+								<cfset local.carriers = []>
 								<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">
 									<cfif structKeyExists(stGroup, "Groups")>
 										<cfloop collection="#stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
 											<cfloop collection="#stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
+												<cfif arrayFind(carriers, stSegment.Carrier)>
+													<cfset arrayAppend(carriers, stSegment.Carrier)>
+												</cfif>
+												<cfset local.carriers = []>
 												<cfset nCount++>
 												<air:AirSegment
 													Key="#nCount#T"
@@ -163,19 +168,20 @@
 								ETicketability="Required"
 								ProhibitNonExchangeableFares="false"
 								ForceSegmentSelect="false">
-								<cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
+								<cfif arrayLen(arguments.stAccount.Air_PF)
+									AND arrayLen(carriers) EQ 1>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
-											<com:AccountCode 
-												Code="#GetToken(sPF, 3, ',')#" 
-												ProviderCode="1V" 
+											<com:AccountCode
+												Code="#GetToken(sPF, 3, ',')#"
+												ProviderCode="1V"
 												SupplierCode="#GetToken(sPF, 2, ',')#" />
 										</cfloop>
 									</air:AccountCodes>
 								</cfif>
 								<air:PermittedCabins>
 									<cfloop array="#aCabins#" index="local.sCabin">
-										<air:CabinClass 
+										<air:CabinClass
 											Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 									</cfloop>
 								</air:PermittedCabins>
@@ -203,8 +209,8 @@
 	</cffunction>
 
 	<cffunction name="addstPriced" output="false">
-		<cfargument name="stPriced" 	required="true">
-		<cfargument name="nTripKey" 	required="true">
+		<cfargument name="stPriced" required="true">
+		<cfargument name="nTripKey" required="true">
 
 		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})>
 		<cfset local.stPriced[arguments.nTripKey] = ''>

@@ -131,7 +131,7 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() != 0) {
 			$( "#firstName" ).prop('disabled', true);
 			$( "#lastName" ).prop('disabled', true);
-			if (traveler.middleName.length >= 2) {
+			if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
 				$( "#fullNameDiv" ).hide();
 			}
 			else {
@@ -168,7 +168,7 @@ $(document).ready(function(){
 		$( "#gender" ).val( traveler.gender );
 
 		// If a FindIt guest
-		if (traveler.accountID == "" && traveler.stoDefaultUser == 0) {
+		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
 			$( "#userID" ).val( 0 );
 			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
@@ -449,7 +449,7 @@ $(document).ready(function(){
 			total += parseFloat( $( "#airTotal" ).val() )
 			fee = airFee;
 		}
-		if ( $( "#specialRequests" ).val() != '') {
+		if ( $( "#specialRequests" ).val() != '' && $( "#specialRequests" ).val() != undefined) {
 			fee = requestFee;
 		}
 		if (fee == 0) {

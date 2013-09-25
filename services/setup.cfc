@@ -1,6 +1,7 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="AssetURL"/>
+	<cfproperty name="bookDSN"/>
 	<cfproperty name="bookingDSN"/>
 	<cfproperty name="corporateProductionDSN"/>
 	<cfproperty name="portalURL"/>
@@ -10,6 +11,7 @@
 
 	<cffunction name="init" output="false">
 		<cfargument name="AssetURL" type="string" requred="true" />
+		<cfargument name="bookDSN" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
 		<cfargument name="corporateProductionDSN" type="string" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
@@ -18,6 +20,7 @@
 		<cfargument name="currentEnvironment" type="string" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
+		<cfset setBookDSN( arguments.bookDSN ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
 		<cfset setPortalURL( arguments.portalURL ) />
@@ -509,10 +512,9 @@
 	</cffunction>
 
 	<cffunction name="setStates" output="false" returntype="void">
-
 		<cfquery name="local.qStates" datasource="#getBookingDSN()#">
-		SELECT code, State
-		FROM RSTATES
+			SELECT code, State
+			FROM RSTATES
 		</cfquery>
 		<cfset local.stTemp = {}>
 		<cfloop query="qStates">
@@ -520,7 +522,55 @@
 		</cfloop>
 		<cfset application.stStates = stTemp>
 		<cfreturn />
+	</cffunction>
 
+	<cffunction name="setBlackListedCarrierPairing" output="false" hint="I query the lu_CarrierInterline table and return a list of blacklisted carriers. These carriers cannot be booked together on the same ticket.">
+
+		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
+		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
+			SELECT Carrier1
+			, Carrier2
+			FROM lu_CarrierInterline
+			UNION
+			SELECT Carrier2 AS Carrier1
+			, Carrier1 AS Carrier2
+			FROM lu_CarrierInterline
+		</cfquery>
+
+		<!--- Populate the array row by row --->
+		<cfloop query="local.blackListedCarrierPairing">
+			<cfset local.temp[CurrentRow][1]=carrier1>
+			<cfset local.temp[CurrentRow][2]=carrier2>
+		</cfloop>
+
+		<cfset application.blacklistedCarrierPairing = local.temp>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setBlackListedCarrier" output="false">
+
+		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
+			SELECT Carrier1
+				, Carrier2
+			FROM lu_CarrierInterline
+			UNION
+			SELECT Carrier2 AS Carrier1
+				, Carrier1 AS Carrier2
+			FROM lu_CarrierInterline
+			ORDER BY Carrier1
+		</cfquery>
+
+		<cfset local.temp = {}>
+		<cfoutput query="blackListedCarrierPairing" group="carrier1">
+			<cfoutput>
+				<cfset temp[carrier1][carrier2] = ''>
+			</cfoutput>
+		</cfoutput>
+
+		<cfset application.blacklistedCarriers = temp>
+
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>

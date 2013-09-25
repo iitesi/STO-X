@@ -38,6 +38,12 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'assetURL')>
 			<cfset application.assetURL = variables.bf.getBean("EnvironmentService").getAssetURL()>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'blackListedCarrierPairing')>
+			<cfset variables.bf.getBean("setup").setBlackListedCarrierPairing(argumentcollection=arguments.rc)>
+		</cfif>
+		<cfif NOT StructKeyExists(application, 'blacklistedCarriers')>
+			<cfset variables.bf.getBean("setup").setBlackListedCarrier(argumentcollection=arguments.rc)>
+		</cfif>
 
 		<cfreturn />
 	</cffunction>
@@ -109,5 +115,4 @@ setApplication
 
 		<cfreturn />
 	</cffunction>
-
 </cfcomponent>

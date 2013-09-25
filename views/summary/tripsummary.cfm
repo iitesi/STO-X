@@ -4,6 +4,12 @@
 		line-height:10px;
 	}
 	</style>
+	<cfif structKeyExists(rc.Air, 'PricingSolution')
+		AND isObject(rc.Air.PricingSolution)>
+		<cfset rc.Air.Total = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 'USD', '')>
+		<cfset rc.Air.Base = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), 'USD', '')>
+		<cfset rc.Air.Taxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), 'USD', '')>
+	</cfif>
 	<div class="carrow" style="padding:15px; float:right;">
 
 		<div class="row minlineheight">

@@ -46,8 +46,9 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 										<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
 										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
 									</ul>
-								<cfelse>
-									<li class="disabled"><a title="Sorting by price disabled.">Price</a></li>
+								</li>
+								<!--- <cfelse>
+									<li class="disabled"><a title="Sorting by price disabled.">Price</a></li> --->
 								</cfif>
 							<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
 							<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
@@ -63,8 +64,10 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 					<div class="navbar-inner">
 						<ul class="nav">
 							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="icon-caret-down"></i></a></li>
-							<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
-							<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
+							<cfif rc.action NEQ 'air.availability'>
+								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
+								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
+							</cfif>
 							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
