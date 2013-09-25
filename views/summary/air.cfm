@@ -80,8 +80,8 @@
 				<!--- State of Texas --->
 				<cfif rc.showAll
 					OR rc.Filter.getAcctID() EQ 235>
-					*&nbsp;&nbsp;
 					<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
+						*&nbsp;&nbsp;
 						<select name="udid113" id="udid113" class="input-xlarge">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
