@@ -132,10 +132,15 @@
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
+								<cfset local.carriers = []>
 								<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">
 									<cfif structKeyExists(stGroup, "Groups")>
 										<cfloop collection="#stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
 											<cfloop collection="#stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
+												<cfif arrayFind(carriers, stSegment.Carrier)>
+													<cfset arrayAppend(carriers, stSegment.Carrier)>
+												</cfif>
+												<cfset local.carriers = []>
 												<cfset nCount++>
 												<air:AirSegment
 													Key="#nCount#T"
@@ -163,7 +168,8 @@
 								ETicketability="Required"
 								ProhibitNonExchangeableFares="false"
 								ForceSegmentSelect="false">
-								<cfif NOT ArrayIsEmpty(arguments.stAccount.Air_PF)>
+								<cfif arrayLen(arguments.stAccount.Air_PF)
+									AND arrayLen(carriers) EQ 1>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
 											<com:AccountCode
