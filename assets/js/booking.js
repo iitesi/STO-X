@@ -225,42 +225,6 @@ function filterAir(reset) {
 							showFlight == false;
 						}
 
-						// if( (airfields.length == 1 && flight[3].length == 1)){
-						// 		// if airfields =1 and flight = 1 - then do match
-						// 		if (airfields[0] != flight[3][0]){
-						// 			showFlight == false;
-						// 			// console.warn('1) Hide this flight' );
-						// 		} // else {console.info('3) Show this flight')}
-						// } else if (airfields.length > 1 && flight[3].length == 1) {
-						// 		// if airfields = many and flight = 1 then do arrayIN(flight, airfields)
-						// 		if (jQuery.inArray(flight[3][0],airfields) < 0) {
-						// 			showFlight == false;
-						// 			// console.warn('2) Hide this flight' );
-						// 		} // else {console.info('3) Show this flight')}
-						// } else if (flight[3].length > 1 && airfields.length == 1) {
-						// 		// if flight = many and airfields = 1 then do arrayIN(airfields, flight)
-						// 		if (jQuery.inArray(airfields[0],flight[3]) < 0) {
-						// 			showFlight == false;
-						// 			// console.warn('3) Hide this flight', airfields[0], flight[3], jQuery.inArray(airfields[0],flight[3][0])  );
-						// 		} // else {console.info('3) Show this flight')}
-						// } else {
-						// 		var show = 0;
-						// 		// loop over airfields and see if they exist in the trip
-						// 		$.each( airfields, function( intValue, currentElement ) {
-						// 			if( jQuery.inArray( currentElement , flight[3]) >= 0 ) {
-						// 				show = 1;
-						// 				// as soon as we've found 1 match we can dump out of the loop
-						// 				return false;
-						// 			}
-						// 		});
-
-						// 		if (show == 1){
-						// 			console.info('4) Show this flight', airfields[0], flight[3], show );
-						// 		} else {
-						// 			console.warn('4) Hide this flight', airfields[0], flight[3], show );
-						// 		}
-						// }
-
 console.log('----------------------------');
 
 					} // airfields.length
