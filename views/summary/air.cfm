@@ -80,8 +80,8 @@
 				<!--- State of Texas --->
 				<cfif rc.showAll
 					OR rc.Filter.getAcctID() EQ 235>
-					*&nbsp;&nbsp;
 					<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
+						*&nbsp;&nbsp;
 						<select name="udid113" id="udid113" class="input-xlarge">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
@@ -110,11 +110,13 @@
 
 			<td width="630">
 				<cfset seatFieldNames = ''>
+				<cfset totalCount = 0>
 				<table width="600" padding="0" align="center">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
+						<cfset totalCount++>
 						<tr>
 							<td>
 								<cfif count EQ 1>
@@ -139,13 +141,18 @@
 							</td>
 
 <!--- seats --->
-							<td id="#segmentIndex#">
+							<td id="#totalCount#">
 								<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
-									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
+									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#&amp;nTotalCount=#totalCount#'>
+									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
+									&nbsp; <span class="label label-success" id="segment_#totalCount#_display"></span>
+									<input type="hidden" name="segment_#totalCount#" id="segment_#totalCount#" value="">
+									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#totalCount#')>
+									<!--- <cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#'>
 									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
 									&nbsp; <span class="label label-success" id="segment_#segmentIndex#_display"></span>
 									<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
-									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')>
+									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')> --->
 								</cfif>
 							</td>
 

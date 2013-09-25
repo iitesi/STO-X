@@ -126,7 +126,7 @@ function filterAir(reset) {
 	var showFlight = false;
 
 	// see if any airlines are checked in filter
-	var airfields = $('#airlines').find('input[name="carrier"]:checked');
+	var airfields = $('input[name=carrier]:checked').map(function () { return this.value; }).toArray();
 
 	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
 	if(reset == 'true'){
@@ -141,8 +141,9 @@ function filterAir(reset) {
 			var flight = flightresults[loopcnt];
 			showFlight = true;
 
+
 			// loop through and only check each subsequent filter if the previous
-			// filter didn't already hide it (showflight=true)
+			// filter didn't already hide it ( showflight=true )
 
 			// check in-policy, single carrier and non-stops
 			if(showFlight == true){
@@ -201,24 +202,31 @@ function filterAir(reset) {
 				} // two selections made
 			} // showflight = true
 
+
 			// check carriers
 			if(showFlight == true){
 					// check first to see if ANY airlines are checked
 					if (airfields.length) {
 
-// STM-2018
-// set to false by default - hide it
-// then if ANY flight in the array is true - we'll show it
+						var show = 0;
+						$.each( airfields, function( intValue, currentElement ) {
 
-							for (var i = 0; i < flight[3].length; i++) {
-								if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
-									showFlight = false;
-								} // if carrier is checked
+							// loop over and see if airline is in trip
+							if( jQuery.inArray( currentElement , flight[3]) >= 0 ) {
+								show = 1;
+								// as soon as we've found 1 match we can dump out of the loop and we'll show this trip
+								return false;
+							}
 
+						}); // end each()
 
-							} // for flight loop
+						// if nothing matches - we'll hide the trip
+						if (show == 0){
+							showFlight = false;
+						}
 					} // airfields.length
 			} // showflight = true
+
 
 		// show or hide flight
 			if(showFlight == true){
@@ -228,8 +236,8 @@ function filterAir(reset) {
 				$( '#flight' + flight[0] ).hide();
 			}
 
-		} // end of for loop
-	} // of if if reset
+		} // end of for loop flightresults
+	} // reset == 'true'
 
 	// show/hide no flights found message
 	if(showCount == 0){

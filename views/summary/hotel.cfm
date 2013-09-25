@@ -54,15 +54,16 @@
 					<!--- State of Texas --->
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
-						*&nbsp;&nbsp;
-						<select name="udid112" id="udid112" class="input-xlarge #(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
-						<option value="">Select an Exception Code</option>
-						<cfloop query="rc.qTXExceptionCodes">
-							<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
-						</cfloop>
-						</select>
-						<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
-
+						<div class="#(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
+							*&nbsp;&nbsp;
+							<select name="udid112" id="udid112" class="input-xlarge">
+							<option value="">Select an Exception Code</option>
+							<cfloop query="rc.qTXExceptionCodes">
+								<option value="#rc.qTXExceptionCodes.FareSavingsCode#">#rc.qTXExceptionCodes.Description#</option>
+							</cfloop>
+							</select>
+							<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a><br><br>
+						</div>
 					</cfif>
 
 				</td>
