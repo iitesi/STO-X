@@ -168,6 +168,9 @@
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 
 					<!--- Remove BlackListed Carriers --->
+					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
+
+					<!--- Remove BlackListed Carriers --->
 					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
 
 					<!--- Remove BlackListed Carriers --->
@@ -198,6 +201,7 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
+
 		<cfreturn sThreadName>
 	</cffunction>
 
