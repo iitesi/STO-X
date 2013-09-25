@@ -68,9 +68,11 @@
 		<cfargument name="stGroups" required="false" default="#structNew()#">
 
 		<cfset local.sThreadName = "">
-
 		<!--- Don't go back to the getUAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stGroups, arguments.Group)>
+		<cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()], 'stAvailDetails')
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails, 'stGroups')
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)>
 			<cfset local.sThreadName = 'Group'&arguments.Group>
 			<cfset local[local.sThreadName] = {}>
 

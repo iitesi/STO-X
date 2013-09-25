@@ -83,6 +83,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.search.checkInDate = new Date( $scope.search.checkInDate );
 					$scope.search.checkOutDate = new Date( $scope.search.checkOutDate );
 					$scope.getSearchResults( true );
+					$scope.map.setCenter( new google.maps.LatLng( $scope.search.hotelLat, $scope.search.hotelLong ) );
 					$scope.map.setZoom( $scope.calculateMapZoom())
 				}
 
@@ -554,11 +555,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
           zoom: 8,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           disableDoubleClickZoom: true,
-          panControl: false,
+          panControl: true,
           zoom: $scope.calculateMapZoom(),
           zoomControlOptions: {
 			style: google.maps.ZoomControlStyle.LARGE,
-			position: google.maps.ControlPosition.LEFT_CENTER
+			position: google.maps.ControlPosition.LEFT_TOP
 		  }
         };
         $scope.map = new google.maps.Map( document.getElementById("mapDiv"), mapOptions);

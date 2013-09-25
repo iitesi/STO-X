@@ -1,9 +1,11 @@
 <cfset es = application.fw.factory.getBean('EnvironmentService') />
+<cfset lm = application.fw.factory.getBean('LocationManager') />
+<!---
+<cfoutput>
+	#es.getGoogleMapsAPIKey()#
+	<br>
+	#binaryDecode( es.getGoogleMapsAPIKey(), "Base64" )#
+</cfoutput>
 
-<cfdump var="#es.getCurrentServerName()#"/>
-<cfdump var="#es.getLocalServerNames()#"/>
-<cfdump var="#es.getQAServerNames()#"/>
-<cfdump var="#es.getbetaServerNames()#"/>
-<cfdump var="#es.getCurrentEnvironment()#"/>
-<cfdump var="#es.getAssetURL()#"/>
-<cfdump var="#es.getSettings()#"/>
+<cfabort>--->
+<cfoutput>#lm.geoCodeAddress( '1309 Castalia Dr', "Cary", "NC")#</cfoutput>

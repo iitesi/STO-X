@@ -184,11 +184,18 @@
 					<cfset attributes.stSegments = getAirParse().parseSegments(attributes.aResponse)>
 					<!--- Parse the trips. --->
 					<cfset attributes.stTrips = getAirParse().parseTrips(response = attributes.aResponse, stSegments = attributes.stSegments)>
+
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
 
 					<!--- Remove BlackListed Carriers --->
+					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
+
+					<!--- Remove BlackListed Carriers --->
 					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
+
+					<!--- Remove BlackListed Carriers --->
+					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
 					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
@@ -215,6 +222,7 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
 			</cfthread>
 		</cfif>
+
 		<cfreturn sThreadName>
 	</cffunction>
 

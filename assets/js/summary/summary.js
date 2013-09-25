@@ -131,7 +131,7 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() != 0) {
 			$( "#firstName" ).prop('disabled', true);
 			$( "#lastName" ).prop('disabled', true);
-			if (traveler.middleName.length >= 2) {
+			if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
 				$( "#fullNameDiv" ).hide();
 			}
 			else {

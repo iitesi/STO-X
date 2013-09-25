@@ -167,11 +167,6 @@
 			<cfif fareInfoList.XMLName EQ 'air:FareInfoList'>
 				<cfloop array="#fareInfoList.XMLChildren#" index="local.fareInfoIndex" item="local.fareInfo">
 					<cfset fare[fareInfo.XMLAttributes.Key].PrivateFare = (StructKeyExists(fareInfo.XMLAttributes, 'PrivateFare') AND fareInfo.XMLAttributes.PrivateFare NEQ '' ? true : false)>
-					<!--- <cfloop array="#fareInfo.XMLChildren#" index="local.fareRuleKeyIndex" item="local.fareRuleKey">
-						<cfif fareRuleKey.XMLName EQ 'air:FareRuleKey'>
-							<cfset fare[fareInfo.XMLAttributes.Key].fareRuleKey = fareRuleKey.XMLText>
-						</cfif>
-					</cfloop> --->
 				</cfloop>
 			</cfif>
 		</cfloop>
@@ -444,6 +439,71 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfloop>
 
 		<cfreturn local.stTrips/>
+	</cffunction>
+
+	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="trips" required="true">
+
+		<cfset local.deleteTripIndex = ''>
+
+		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+
+			<cfif arrayLen(trip.carriers) GT 1
+				AND trip.privateFare>
+				<cfset deleteTripIndex = ListAppend(deleteTripIndex, tripIndex)>
+			</cfif>
+
+		</cfloop>
+
+		<cfloop list="#deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(arguments.trips, tripIndex)>
+		</cfloop>
+
+		<cfreturn arguments.trips/>
+	</cffunction>
+
+	<cffunction name="removeMultiConnections" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="trips" required="true">
+
+		<cfset local.trashSegmentCount = 0>
+		<cfset local.twoSegments = false>
+		<cfset local.threeSegments = false>
+		<cfset local.fourSegments = false>
+		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+			<cfloop collection="#trip.Groups#" index="local.groupIndex" item="local.group">
+				<cfset segmentCount = arrayLen(structKeyArray(group.segments))>
+				<cfset twoSegments = (segmentCount EQ 2 ? true : twoSegments)>
+				<cfset threeSegments = (segmentCount EQ 3 ? true : threeSegments)>
+				<cfset fourSegments = (segmentCount EQ 4 ? true : fourSegments)>
+			</cfloop>
+		</cfloop>
+		<cfif threeSegments
+			AND twoSegments>
+			<cfset trashSegmentCount = 3>
+		<cfelseif fourSegments
+			AND threeSegments>
+			<cfset trashSegmentCount = 4>
+		</cfif>
+
+		<cfif trashSegmentCount NEQ 0>
+			<cfset local.deleteTripIndex = ''>
+			<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+				<cfloop collection="#trip.Groups#" index="local.groupIndex" item="local.group">
+					<cfset segmentCount = arrayLen(structKeyArray(group.segments))>
+					<cfif segmentCount GTE trashSegmentCount
+						AND NOT listFind(deleteTripIndex, tripIndex)>
+						<cfset deleteTripIndex = listAppend(deleteTripIndex, tripIndex)>
+					</cfif>
+				</cfloop>
+			</cfloop>
+			<cfif deleteTripIndex NEQ ''>
+				<cfloop list="#deleteTripIndex#" item="local.tripIndex">
+					<cfset structDelete(arguments.trips, tripIndex)>
+				</cfloop>
+			</cfif>
+		</cfif>
+
+		<cfreturn arguments.trips/>
 	</cffunction>
 
 	<cffunction name="flagBlackListedCarriers" output="false" hint="I check a trips carriers to see if it is blacklisted.">

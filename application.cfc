@@ -48,6 +48,7 @@
 
 	<cffunction name="setupSession">
 		<cfset session.searches = {}>
+		<cfset session.filters = {}>
 		<cfset session.aMessages = []>
 	</cffunction>
 
