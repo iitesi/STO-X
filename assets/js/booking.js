@@ -228,11 +228,21 @@ if( (airfields.length == 1 && flight[3].length == 1)){
 			//console.warn('3) Hide this flight', airfields[0], flight[3], jQuery.inArray(airfields[0],flight[3][0])  );
 		} //else {console.info('3) Show this flight')}
 } else {
-	// if flight = many and airfields = many - then loop from hell
+		var hide = 0;
+		// if flight = many and airfields = many - then loop from hell
+		console.info('4)' + 'airfields=' + airfields.length + ' flight=' + flight[3].length);
+		$.each( airfields, function( intValue, currentElement ) {
+			if( jQuery.inArray( currentElement , flight[3]) < 0 ) {
+				hide = 1;
+			}
+		});
 
+		if (hide == 1){
+			console.warn('4) Hide this flight', airfields[0], flight[3], hide );
+		} else {
+			console.warn('4) Show this flight', airfields[0], flight[3], hide );
+		}
 
-
-		console.warn('4)' + 'airfields=' + airfields.length + ' flight=' + flight[3].length);
 }
 
 
