@@ -39,7 +39,7 @@
 					</li>
 					<!---Logout--->
 					<li>
-						<a href="##">Logout</a>
+						<a href="#buildURL('logout')#">Logout</a>
 					</li>
 		    	<cfelse>
 					<cfif showAirTab>
@@ -68,6 +68,9 @@
 					<!---Purchase--->
 				    <li <cfif rc.action CONTAINS 'summary.'>class="active"</cfif>>
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
+					</li>
+					<li>
+						<a href="#buildURL('logout')#">Logout</a>
 					</li>
 				</cfif>
 			</ul>
