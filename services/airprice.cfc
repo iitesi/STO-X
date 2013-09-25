@@ -125,10 +125,7 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AirPriceReq
-							xmlns:air="#getUAPISchemas().air#"
-							xmlns:com="#getUAPISchemas().common#"
-							TargetBranch="#arguments.stAccount.sBranch#">
+						<air:AirPriceReq xmlns:air="#getUAPISchemas().air#" xmlns:com="#getUAPISchemas().common#" TargetBranch="#arguments.stAccount.sBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
@@ -137,52 +134,30 @@
 									<cfif structKeyExists(stGroup, "Groups")>
 										<cfloop collection="#stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
 											<cfloop collection="#stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
-												<cfif arrayFind(carriers, stSegment.Carrier)>
+												<cfif NOT arrayFind(carriers, stSegment.Carrier)>
 													<cfset arrayAppend(carriers, stSegment.Carrier)>
 												</cfif>
-												<cfset local.carriers = []>
 												<cfset nCount++>
-												<air:AirSegment
-													Key="#nCount#T"
-													Origin="#stSegment.Origin#"
-													Destination="#stSegment.Destination#"
-													DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#"
-													ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#"
-													Group="#nGroup#"
-													FlightNumber="#stSegment.FlightNumber#"
-													Carrier="#stSegment.Carrier#"
-													ProviderCode="1V" />
+												<air:AirSegment Key="#nCount#T" Origin="#stSegment.Origin#" Destination="#stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#nGroup#" FlightNumber="#stSegment.FlightNumber#" Carrier="#stSegment.Carrier#" ProviderCode="1V" />
 											</cfloop>
 										</cfloop>
 									</cfif>
 								</cfloop>
 							</air:AirItinerary>
-							<air:AirPricingModifiers
-								ProhibitNonRefundableFares="#ProhibitNonRefundableFares#"
-								FaresIndicator="PublicAndPrivateFares"
-								ProhibitMinStayFares="false"
-								ProhibitMaxStayFares="false"
-								CurrencyType="USD"
-								ProhibitAdvancePurchaseFares="false"
-								ProhibitRestrictedFares="false"
-								ETicketability="Required"
-								ProhibitNonExchangeableFares="false"
-								ForceSegmentSelect="false">
+							<air:AirPricingModifiers ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								<cfif arrayLen(arguments.stAccount.Air_PF)
 									AND arrayLen(carriers) EQ 1>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
-											<com:AccountCode
-												Code="#GetToken(sPF, 3, ',')#"
-												ProviderCode="1V"
-												SupplierCode="#GetToken(sPF, 2, ',')#" />
+											<cfif getToken(sPF, 2, ',') EQ carriers[1]>
+												<com:AccountCode Code="#getToken(sPF, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(sPF, 2, ',')#" />
+											</cfif>
 										</cfloop>
 									</air:AccountCodes>
 								</cfif>
 								<air:PermittedCabins>
 									<cfloop array="#aCabins#" index="local.sCabin">
-										<air:CabinClass
-											Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+										<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 									</cfloop>
 								</air:PermittedCabins>
 							</air:AirPricingModifiers>

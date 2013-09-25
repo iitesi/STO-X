@@ -1,10 +1,18 @@
 <cfsilent>
+	<cfif cgi.https EQ "ON">
+		<cfset googleMapsURL = "https://" />
+	<cfelse>
+		<cfset googleMapsURL = "http://" />
+	</cfif>
 
+	<cfset googleMapsURL = googleMapsURL & "maps.googleapis.com/maps/api/js?client="
+						   & application.es.getGoogleMapsClientId()
+						   & "&sensor=false&v=3.12" />
 	<cfsavecontent variable="localAssets">
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">
 		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.min.css">
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+		<script src="<cfoutput>#googleMapsURL#</cfoutput>"></script>
 		<script type="text/javascript" src="assets/js/StyledMarker.js"></script>
 		<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>
 		<script type="text/javascript" src="assets/js/date.format.js"></script>
