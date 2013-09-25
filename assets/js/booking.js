@@ -126,7 +126,7 @@ function filterAir(reset) {
 	var showFlight = false;
 
 	// see if any airlines are checked in filter
-	var airfields = $('#airlines').find('input[name="carrier"]:checked');
+	var airfields = $('input[name=carrier]:checked').map(function () { return this.value; }).toArray();
 
 	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
 	if(reset == 'true'){
@@ -140,6 +140,9 @@ function filterAir(reset) {
 		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
 			var flight = flightresults[loopcnt];
 			showFlight = true;
+
+
+
 
 			// loop through and only check each subsequent filter if the previous
 			// filter didn't already hide it (showflight=true)
@@ -207,16 +210,56 @@ function filterAir(reset) {
 					if (airfields.length) {
 
 // STM-2018
-// set to false by default - hide it
-// then if ANY flight in the array is true - we'll show it
+console.log( 'Air: ' + airfields + ' | Flight: ' + flight[3] );
 
-							for (var i = 0; i < flight[3].length; i++) {
-								if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
-									showFlight = false;
-								} // if carrier is checked
+if( (airfields.length == 1 && flight[3].length == 1)){
+		// if airfields =1 and flight = 1 - then do match
+		if (airfields[0] != flight[3][0]){
+			//console.warn('1) Hide this flight' );
+		} // else {console.info('3) Show this flight')}
+} else if (airfields.length > 1 && flight[3].length == 1) {
+		// if airfields = many and flight = 1 then do arrayIN(flight, airfields)
+		if (jQuery.inArray(flight[3][0],airfields) < 0) {
+			//console.warn('2) Hide this flight' );
+		} // else {console.info('3) Show this flight')}
+} else if (flight[3].length > 1 && airfields.length == 1) {
+		// if flight = many and airfields = 1 then do arrayIN(airfields, flight)
+		if (jQuery.inArray(airfields[0],flight[3]) < 0) {
+			//console.warn('3) Hide this flight', airfields[0], flight[3], jQuery.inArray(airfields[0],flight[3][0])  );
+		} //else {console.info('3) Show this flight')}
+} else {
+	// if flight = many and airfields = many - then loop from hell
 
 
-							} // for flight loop
+
+		console.warn('4)' + 'airfields=' + airfields.length + ' flight=' + flight[3].length);
+}
+
+
+
+							// for (var i = 0; i < airfields.length; i++) {
+							// 	// if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
+							// 	if ( jQuery.inArray(airfields[i],flight[3]) < 0 ) {
+							// 		console.log( airfields[i] + ' not found in ' + flight[3]);
+							// 		// showFlight = false;
+							// 	} else {
+							// 		console.log( airfields[i] + ' found in ' + flight[3]);
+							// 	}// if carrier is checked
+							// } // for flight loop
+
+
+
+							// for (var i = 0; i < flight[3].length; i++) {
+							// 	// if ($( "#Carrier" + flight[3][i] ).is(':checked') == false) {
+							// 	if ( jQuery.inArray(flight[3][i],airfields) < 0 ) {
+							// 		console.log( flight[3][i] + ' Flight found!' );
+							// 		// showFlight = false;
+							// 	} else {
+							// 		console.log( flight[3][i] +  ' Flight not found!' );
+							// 	}// if carrier is checked
+							// } // for flight loop
+console.log('----------------------------');
+
 					} // airfields.length
 			} // showflight = true
 
