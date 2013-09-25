@@ -446,6 +446,27 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.stTrips/>
 	</cffunction>
 
+	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+		<cfargument name="trips" required="true">
+
+		<cfset local.deleteTripIndex = ''>
+
+		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+
+			<cfif arrayLen(trip.carriers) GT 1
+				AND trip.privateFare>
+				<cfset deleteTripIndex = ListAppend(deleteTripIndex, local.tripIndex)>
+			</cfif>
+
+		</cfloop>
+
+		<cfloop list="#deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(arguments.trips, tripIndex)>
+		</cfloop>
+
+		<cfreturn arguments.trips/>
+	</cffunction>
+
 	<cffunction name="flagBlackListedCarriers" output="false" hint="I check a trips carriers to see if it is blacklisted.">
 		<cfargument name="carriers" required="true">
 
