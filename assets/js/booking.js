@@ -142,10 +142,8 @@ function filterAir(reset) {
 			showFlight = true;
 
 
-
-
 			// loop through and only check each subsequent filter if the previous
-			// filter didn't already hide it (showflight=true)
+			// filter didn't already hide it ( showflight=true )
 
 			// check in-policy, single carrier and non-stops
 			if(showFlight == true){
@@ -204,31 +202,31 @@ function filterAir(reset) {
 				} // two selections made
 			} // showflight = true
 
+
 			// check carriers
 			if(showFlight == true){
 					// check first to see if ANY airlines are checked
 					if (airfields.length) {
 
-						// STM-2018
-						console.log( 'Air: ' + airfields + ' | Flight: ' + flight[3] );
 						var show = 0;
 						$.each( airfields, function( intValue, currentElement ) {
 
+							// loop over and see if airline is in trip
 							if( jQuery.inArray( currentElement , flight[3]) >= 0 ) {
 								show = 1;
-								// as soon as we've found 1 match we can dump out of the loop
+								// as soon as we've found 1 match we can dump out of the loop and we'll show this trip
 								return false;
 							}
-						});
 
+						}); // end each()
+
+						// if nothing matches - we'll hide the trip
 						if (show == 0){
-							showFlight == false;
+							showFlight = false;
 						}
-
-console.log('----------------------------');
-
 					} // airfields.length
 			} // showflight = true
+
 
 		// show or hide flight
 			if(showFlight == true){
@@ -238,8 +236,8 @@ console.log('----------------------------');
 				$( '#flight' + flight[0] ).hide();
 			}
 
-		} // end of for loop
-	} // of if if reset
+		} // end of for loop flightresults
+	} // reset == 'true'
 
 	// show/hide no flights found message
 	if(showCount == 0){
