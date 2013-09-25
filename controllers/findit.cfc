@@ -122,7 +122,7 @@
 				, <cfqueryparam value="" cfsqltype="cf_sql_varchar">
 				, <cfqueryparam value="#trip.total#" cfsqltype="cf_sql_numeric">
 				, <cfqueryparam value="#trip.total#" cfsqltype="cf_sql_numeric">
-				, <cfqueryparam value="#getUser.email#" cfsqltype="cf_sql_varchar">
+				, <cfqueryparam value="#(getUser.email EQ '' ? 'cdohmen@shortstravel.com' : getUser.email)#" cfsqltype="cf_sql_varchar">
 				, <cfqueryparam value="findit@shortstravel.com" cfsqltype="cf_sql_varchar">
 				, <cfqueryparam value="sto" cfsqltype="cf_sql_varchar">
 				, <cfqueryparam value="https://www.shortstravel.com/shorts" cfsqltype="cf_sql_varchar">
