@@ -481,6 +481,10 @@
 			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
 		</cfif>
 
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "vehicle" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle = structNew() />
+		</cfif>
+
 		<cfif isStruct( Cars )
 			AND structKeyExists( Cars, "#PreviouslySelectedCar.getVehicleClass()#Car")
 			AND structKeyExists( Cars[ "#PreviouslySelectedCar.getVehicleClass()#Car" ], PreviouslySelectedCar.getVendorCode() )>
