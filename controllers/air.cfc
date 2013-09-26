@@ -12,7 +12,7 @@
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    	<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
     	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
@@ -47,6 +47,7 @@
 			<cfif rc.Account.couldYou EQ 1>
 				<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
+
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 
@@ -75,10 +76,6 @@
 		--->
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
-
-
-
-
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
 
 		<!---
@@ -98,10 +95,26 @@
 				</cfif>
 			</cfif>
 
+			<!--- Think we need to check the number of legs in filter compared to number of structs in stSelected
+
+
+should redirect to
+
+* availability =air.availability&SearchID=2567&Group=1&fw1pk=8
+* which does airprice
+* It should then go to ?action=air.lowfare&SearchID=2567&filter=all
+* Which should bypass everything if complete and go to summary page
+
+		--->
+
+
+
+
+
 			<!--- continue looping over legs and populating stSelected --->
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
-					<cfset variables.fw.redirect(action='air.availability', queryString='SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#'
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[local.nLeg-1])>
+					<cfset variables.fw.redirect(action='air.availability', queryString='SearchID=#arguments.rc.SearchID#&Group=#local.nLeg-1#'
 						, preserve='firstSelectedGroup,southWestMatch')>
 				</cfif>
 			</cfloop>
