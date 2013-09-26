@@ -62,19 +62,50 @@
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+
+			<cfset sleep(10000)>
+
 		<cfelse>
 			<!--- Select --->
 			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
 
+		<!--- TODO: need to refactor this count as it doesn't accurately show leg/schedule counts
+			* might just need to count in badges?
+		--->
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
+
+
+
+
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
+
+		<!---
+		Check if all legs have been selected.
+			* If yes - go to AirPrice
+			* If no - go back to availability with the other group()
+			* If its the first group selected - check for NW flights --->
+
+
+			<!--- need to set a flag for the first group added and then check it for
+				NW flights, which can't be combined with other carriers --->
+			<cfif NOT structKeyExists(arguments.rc, "firstSelectedGroup")>
+				<cfset rc.southWestMatch = false>
+				<cfset rc.firstSelectedGroup = arguments.rc.group>
+				<cfif session.searches[arguments.rc.SearchID].stSelected[arguments.rc.group].carriers[1] EQ "WN">
+					<cfset rc.southWestMatch = true>
+				</cfif>
+			</cfif>
+
+			<!--- continue looping over legs and populating stSelected --->
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
 				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
-					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
+					<cfset variables.fw.redirect(action='air.availability', queryString='SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#'
+						, preserve='firstSelectedGroup,southWestMatch')>
 				</cfif>
 			</cfloop>
+
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
