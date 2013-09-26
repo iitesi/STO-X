@@ -454,7 +454,7 @@
 		<cfargument name="requestedDate" type="date" required="true" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
+		<!---<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
 			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
 			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "vehicle" )
 			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle )
@@ -463,7 +463,7 @@
 
 			<cfset structClear( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle ) />
 
-		</cfif>
+		</cfif>--->
 
 		<cfset var PreviouslySelectedCar = session.searches[ arguments.Search.getSearchID() ].stItinerary.Vehicle />
 		<cfset var Car = "" />
