@@ -128,7 +128,7 @@ $(document).ready(function(){
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
 		$( "#lastName" ).val( traveler.lastName );
-		if ($( "#userID" ).val() != 0) {
+		if ($( "#userID" ).val() != 0 && $( "#userID" ).val() != null) {
 			$( "#firstName" ).prop('disabled', true);
 			$( "#lastName" ).prop('disabled', true);
 			if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
