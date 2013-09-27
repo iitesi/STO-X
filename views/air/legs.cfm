@@ -1,20 +1,15 @@
 <cfoutput>
 	<div class="legs clearfix">
-		<cfloop array="#rc.Filter.getLegs()#" index="nLeg" item="sLeg">
-			<!--- array could contain query - we just want strings --->
-			<cfif isSimpleValue(sLeg)>
-
-				<cfif structKeyExists(rc,"group") AND rc.group EQ nLeg-1>
-					<span class="btn btn-primary legbtn">#sLeg#</span>
-				<cfelse>
-					<a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLeg-1#')#" class="btn legbtn airModal" data-modal="Flights for #sLeg#." title="#sLeg#">
-					<!--- Show icon indicating this is the leg they selected --->
-					<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLeg-1])><i class="icon-ok"></i></cfif>
-					#sLeg#</a>
-				</cfif>
+		<!--- legs start with 1, groups start with 0 --->
+		<cfloop array="#rc.Filter.getLegsForTrip()#" item="nLeg" index="nLegIndex">
+			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
+				<span class="btn btn-primary legbtn">#nLeg#</span>
+			<cfelse>
+				<a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="btn legbtn airModal" data-modal="Flights for #nLeg#." title="#nLeg#">
+				<!--- Show icon indicating this is the leg they selected --->
+				<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])><i class="icon-ok"></i></cfif>
+				#nLeg#</a>
 			</cfif>
 		</cfloop>
 	</div>
-
-
 </cfoutput>

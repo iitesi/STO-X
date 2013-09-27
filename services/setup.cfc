@@ -116,15 +116,15 @@
 							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
 						</cfif>
-						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-						<cfset searchfilter.addLeg(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- One way --->
 					<cfcase value="OW">
 						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 						<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
-						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- Multi-city --->
@@ -144,7 +144,7 @@
 							<cfelse>
 								<cfset local.breadCrumb = "#depart_city#-#arrival_city#">
 							</cfif>
-							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
+							<cfset searchfilter.addLegsForTrip(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City].city# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City].city# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
 						<!--- populate headings for display --->

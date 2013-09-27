@@ -1,12 +1,12 @@
 <cfsilent>
 	<cfset variables.bDisplayFare = false>
 	<cfset variables.bSelected = false>
-	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
+	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
 	<cfset variables.minheight = 110>
 	<cfset variables.nDisplayGroup = rc.Group>
-	<cfif nLegs EQ 2>
+	<cfif variables.nLegs EQ 2>
 		<cfset variables.minheight = 200>
-	<cfelseif nLegs GT 2>
+	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 250>
 	</cfif>
 </cfsilent>
@@ -16,8 +16,8 @@
 	<cfif rc.filter.getAirType() IS "MD">
 		<h1>#rc.Filter.getAirHeading()#</h1>
 		<ul class="unstyled">
-			<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-				<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
+			<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
+				<li><h2>#ListFirst(nLegItem, '::')# <small>:: #ListLast(nLegItem, "::")#</small></h2></li>
 			</cfloop>
 		</ul>
 	<cfelse>
