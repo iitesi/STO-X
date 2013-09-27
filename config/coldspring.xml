@@ -67,6 +67,10 @@
 		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
 	</bean>
 
+	<bean id="purchase" class="booking.services.purchase" >
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
 	<bean id="General" class="booking.services.general" />
 
 	<bean id="Summary" class="booking.services.summary">
