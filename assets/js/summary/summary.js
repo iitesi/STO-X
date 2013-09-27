@@ -112,6 +112,9 @@ $(document).ready(function(){
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
+		if ($( "#userID" ).val() == null) {
+			$( "#userID" ).val(0);
+		}
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
 		if (traveler.noMiddleName == 1) {
@@ -170,7 +173,7 @@ $(document).ready(function(){
 		// If a FindIt guest
 		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
 			$( "#userID" ).val( 0 );
-			$( "#userIDDiv" ).hide();
+			// $( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
 
 			$.ajax({type: "POST",

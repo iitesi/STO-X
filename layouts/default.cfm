@@ -71,7 +71,8 @@
 										<cfif structKeyExists(rc, "account") AND isStruct( rc.account ) AND NOT structIsEmpty( rc.account) AND len(trim(rc.account.logo)) AND FileExists(ExpandPath("assets\img\clients\#rc.account.logo#"))>
 											<img src="assets/img/clients/#rc.account.logo#" alt="#rc.account.account_name#" />
 										<cfelse>
-											<img src="assets/img/clients/stm.gif" alt="Short's Travel Management" />
+											<img src="assets/img/clients/STM-Logo.gif" alt="Short's Travel Management" />
+											<!--- <img src="assets/img/clients/stm.gif" alt="Short's Travel Management" /> --->
 										</cfif>
 										</a>
 									</cfoutput>

@@ -454,17 +454,6 @@
 		<cfargument name="requestedDate" type="date" required="true" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
-			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "vehicle" )
-			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle, dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) )
-			AND arguments.requery IS false>
-
-			<cfset structClear( session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle ) />
-
-		</cfif>
-
 		<cfset var PreviouslySelectedCar = session.searches[ arguments.Search.getSearchID() ].stItinerary.Vehicle />
 		<cfset var Car = "" />
 		<cfset var carArgs = structNew() />
@@ -479,6 +468,10 @@
 
 		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
 			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		</cfif>
+
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "vehicle" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.vehicle = structNew() />
 		</cfif>
 
 		<cfif isStruct( Cars )

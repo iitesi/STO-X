@@ -114,14 +114,14 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 										<b>Class</b>
 										<!--- Y = economy/coach --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
-											<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y">Economy<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
+											<label for="ClassY" class="checkbox" title="Filter by Economy Class"><input type="checkbox" id="ClassY" name="ClassY" value="Y" <cfif structKeyExists( URL, "sCabins" ) AND listFindNoCase( URL.sCabins, "Y" )>checked="checked"</cfif>>Economy<br /> <small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.Y# results)</small></label>
 										</cfif>
 
 										<!--- C = business --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "C")
 											AND (session.searches[rc.SearchID].stLowFareDetails.stResults.C NEQ 0
 											OR session.filterStatus.cabinSearch.C NEQ 0)>
-											<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C"> Business
+											<label for="ClassC" class="checkbox" title="Filter by Business Class"><input type="checkbox" id="ClassC" name="ClassC" value="C" <cfif structKeyExists( URL, "sCabins" ) AND listFindNoCase( URL.sCabins, "C" )>checked="checked"</cfif>> Business
 											<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.C# results)</small></label>
 										</cfif>
 
@@ -129,15 +129,23 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "F")
 											AND (session.searches[rc.SearchID].stLowFareDetails.stResults.F NEQ 0
 											OR session.filterStatus.cabinSearch.C NEQ 0)>
-											<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F">First
+											<label for="ClassF" class="checkbox" title="Filter by First Class"><input type="checkbox" id="ClassF" name="ClassF" value="F" <cfif structKeyExists( URL, "sCabins" ) AND listFindNoCase( URL.sCabins, "F" )>checked="checked"</cfif>>First
 											<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults.F# results)</small></label>
 										</cfif>
 
 										<cfif session.filterStatus.cabinSearch.C EQ 0>
-											<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=C" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="icon-plus-sign"></i> More Business Class</a><br />
+											<cfset cabinSearchURL = 'air.lowfare&SearchID=#rc.SearchID#&sCabins=C' />
+											<cfif structKeyExists( rc, "bRefundable" ) AND rc.bRefundable EQ 1>
+												<cfset cabinSearchURL = cabinSearchURL & "&bRefundable=" & rc.bRefundable />
+											</cfif>
+											<a href="#buildURL(cabinSearchURL)#" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="icon-plus-sign"></i> More Business Class</a><br />
 										</cfif>
 										<cfif session.filterStatus.cabinSearch.F EQ 0>
-											<a href="?action=air.lowfare&SearchID=#rc.SearchID#&sCabins=F" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="icon-plus-sign"></i> More First Class</a><br />
+											<cfset cabinSearchURL = 'air.lowfare&SearchID=#rc.SearchID#&sCabins=F' />
+											<cfif structKeyExists( rc, "bRefundable" ) AND rc.bRefundable EQ 1>
+												<cfset cabinSearchURL = cabinSearchURL & "&bRefundable=" & rc.bRefundable />
+											</cfif>
+											<a href="#buildURL(cabinSearchURL)#" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="icon-plus-sign"></i> More First Class</a><br />
 										</cfif>
 									</div>
 
@@ -155,12 +163,16 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 											OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X1'))
 											AND (session.searches[rc.SearchID].stLowFareDetails.stResults.1 NEQ 0
 											AND session.filterStatus.refundableSearch NEQ 0)>
-											<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1"> Refundable
+											<label for="Fare1" class="checkbox" title="Filter by refundable fares"><input type="checkbox" id="Fare1" name="Fare1" value="1" <cfif structKeyExists( URL, "bRefundable" ) AND URL.bRefundable EQ 1>checked="checked"</cfif>> Refundable
 											<br /><small>(#session.searches[rc.SearchID].stLowFareDetails.stResults[1]# results)</small></label>
 										</cfif>
 
 										<cfif session.filterStatus.refundableSearch EQ 0>
-											<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="icon-plus-sign"></i> More Refundable</a>
+											<cfset refundableURL = 'air.lowfare&SearchID=#rc.SearchID#&bRefundable=1' />
+											<cfif structKeyExists( rc, "sCabins" )>
+												<cfset refundableURL = refundableURL & '&sCabins=' & rc.sCabins />
+											</cfif>
+											<a href="#buildURL(refundableURL)#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="icon-plus-sign"></i> More Refundable</a>
 										</cfif>
 									</div>
 								</cfif>
