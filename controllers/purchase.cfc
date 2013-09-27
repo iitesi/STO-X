@@ -275,7 +275,7 @@
 								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
 								<cfset directBillType = payment.getDirectBillType()>
 							<cfelseif len(payment.getCorporateDiscountNumber()) GT 0
-								AND Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getDirectBillNumber()>
+								AND Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getCorporateDiscountNumber()>
 								<cfset directBillNumber = ''>
 								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
 								<cfset directBillType = payment.getDirectBillType()>
