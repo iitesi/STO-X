@@ -198,17 +198,6 @@
 		<cfargument name="requestedDate" type="date" required="true" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
-		<cfif structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" )
-			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "air" )
-			AND isStruct( session.searches[ arguments.Search.getSearchID() ].couldYou.air )
-			AND structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou.air, dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) )
-			AND arguments.requery IS false>
-
-			<cfset structClear( session.searches[ arguments.Search.getSearchID() ].couldYou.air ) />
-
-		</cfif>
-
 		<cfset var originalDepartDate = createDate( year( arguments.Search.getDepartDateTime() ), month( arguments.Search.getDepartDateTime() ), day( arguments.Search.getDepartDateTime() ) ) />
 		<cfset var newDepartDate = createDate( year( arguments.requestedDate ), month( arguments.requestedDate ), day( arguments.requestedDate ) ) />
 		<cfset var airArgs = structNew() />
@@ -228,6 +217,10 @@
 
 		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
 			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
+		</cfif>
+
+		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "air" ) >
+			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air = structNew() />
 		</cfif>
 
 		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />

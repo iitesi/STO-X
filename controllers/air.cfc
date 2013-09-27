@@ -245,7 +245,20 @@
 
 	<cffunction name="getTotalFlights" access="private" hint="I pull the total number of flights out of the session scope.">
 		<cfargument name="rc" required="true">
-		<cfreturn arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare) />
+
+		<cfset local.errorMessage = "">
+		<cfset local.totalFlights = 0>
+
+		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails, "aSortFare")>
+			<cfset local.totalFlights = arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare)>
+		<cfelse>
+			<cfif IsLocalHost(cgi.remote_addr)>
+				<cfset local.errorMessage = "stLowFareDetails.aSortFare is empty which usually indicates an issue with Travelport returning a faultcode in availability or lowfare. Check the uAPI logs with SearchID: #arguments.rc.SearchID#.">
+			</cfif>
+			<cfthrow message="There was a problem retrieving flights from Travelport. (#local.errorMessage#)"/>
+		</cfif>
+
+		<cfreturn local.totalFlights>
 	</cffunction>
 
 </cfcomponent>
