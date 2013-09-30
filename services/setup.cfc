@@ -527,7 +527,7 @@
 	<cffunction name="setBlackListedCarrierPairing" output="false" hint="I query the lu_CarrierInterline table and return a list of blacklisted carriers. These carriers cannot be booked together on the same ticket.">
 
 		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
-		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
+		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookingDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
 			SELECT Carrier1
 			, Carrier2
 			FROM lu_CarrierInterline
@@ -550,7 +550,7 @@
 
 	<cffunction name="setBlackListedCarrier" output="false">
 
-		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
+		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookingDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
 			SELECT Carrier1
 				, Carrier2
 			FROM lu_CarrierInterline
