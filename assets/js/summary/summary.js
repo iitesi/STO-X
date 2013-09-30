@@ -659,3 +659,12 @@ function GetValueFromChild(selectedSegmentSeat) {
 	// scroll to flight info
  	scrollTo('airDiv');
  }
+
+$( "#purchaseButton" ).on("click", function (e) {
+	$( "#travelerButton" ).attr('disabled', 'disabled');
+	$( "#purchaseButton" ).val("Purchasing Reservation...");
+	$( "#purchaseButton" ).attr('disabled', 'disabled');
+	$( "#triggerButton" ).val("CONFIRM PURCHASE");
+	$( "#triggerButton" ).removeAttr('disabled');
+	$( "#purchaseForm" ).submit();
+});

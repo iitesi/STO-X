@@ -54,7 +54,7 @@
 			</div>
 		</cfif>
 
-		<form method="post" class="form-horizontal" action="#buildURL('summary?searchID=#rc.searchID#')#">
+		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 			<cfparam name="rc.showAll" default="0">
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
