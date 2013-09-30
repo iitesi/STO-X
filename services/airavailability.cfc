@@ -442,16 +442,26 @@
 
 		<!--- Create a structure to hold FIRST connection points --->
 		<cfset local.stSegmentIndex = {}>
+		<cfset local.firstSegmentIndex = ''>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
 			<cfif stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
 				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stConnection">
 					<cfif stConnection.XMLName EQ 'air:Connection'>
+						<cfif firstSegmentIndex EQ ''>
+							<cfset firstSegmentIndex = stConnection.XMLAttributes.SegmentIndex>
+						</cfif>
 						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex] = StructNew('linked')>
 						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex][1] = stSegments[stSegmentKeys[stSegmentKeyLookUp[stConnection.XMLAttributes.SegmentIndex]].HashIndex]>
 					</cfif>
 				</cfloop>
 			</cfif>
 		</cfloop>
+		<!--- Backfill with nonstops --->
+		<cfloop from="0" to="#firstSegmentIndex-1#" index="local.segmentIndex">
+			<cfset stSegmentIndex[ segmentIndex ] = StructNew('linked')>
+			<cfset stSegmentIndex[ segmentIndex ][1] = stSegments[ stSegmentKeys[ stSegmentKeyLookUp[ segmentIndex ] ].HashIndex ]>
+		</cfloop>
+
 		<!--- Add to that structure the missing connection points --->
 		<cfset local.stTrips = {}>
 		<cfset local.nCount = 0>
@@ -466,6 +476,7 @@
 				<cfset nCount++>
 			</cfloop>
 		</cfloop>
+
 		<!--- Create an appropriate trip key --->
 		<cfset local.stTrips = {}>
 		<cfset local.sIndex = ''>

@@ -370,7 +370,7 @@
 				<cfset ArrayAppend(stTemp.aCarSizes, qPreferredCarSizes.Car_Size)>
 			</cfloop>
 
-			<cfquery name="local.qCDNumbers">
+			<cfquery name="local.qCDNumbers" datasource="#getCorporateProductionDSN()#">
 			SELECT IsNull(Value_ID, '0') AS Value_ID, Vendor_Code, CD_Number, DB_Number, DB_Type
 			FROM CD_Numbers
 			WHERE Acct_ID = <cfqueryparam value="#qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
