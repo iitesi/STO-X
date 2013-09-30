@@ -70,9 +70,18 @@
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
+
+			<cfset backCount = 1>
+			<!--- if multicity we need to go back one more because in the getLegs array the first item is a query, not a leg --->
+			<cfif rc.Filter.getAirType() IS "MD">
+				<cfset backCount = 2>
+			</cfif>
+
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
-					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
+				<cfif isSimpleValue(sLeg)>
+					<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-backCount])>
+						<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-backCount#')>
+					</cfif>
 				</cfif>
 			</cfloop>
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
