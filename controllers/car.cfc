@@ -8,9 +8,16 @@
 
 		<cfif rc.pickUpLocationKey NEQ ''>
 			<cfset rc.pickUpLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()][rc.pickUpLocationKey]>
+		<cfelse>
+			<cfset rc.pickUpLocation = ''>
 		</cfif>
-		<cfif rc.dropOffLocationKey NEQ ''>
+		<cfif rc.Filter.getCarDifferentLocations()
+			AND rc.dropOffLocationKey NEQ ''>
 			<cfset rc.dropOffLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropOffAirport()][rc.dropOffLocationKey]>
+		<cfelseif NOT rc.Filter.getCarDifferentLocations()>
+			<cfset rc.dropOffLocation = rc.pickUpLocation>
+		<cfelse>
+			<cfset rc.dropOffLocation = ''>
 		</cfif>
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
@@ -26,10 +33,16 @@
 			<cfif rc.pickUpLocationKey NEQ ''>
 				<cfset Vehicle.setPickUpLocationType( '#rc.pickUpLocation.locationType#' )>
 				<cfset Vehicle.setPickUpLocationID( '#rc.pickUpLocation.vendorLocationID#' )>
+			<cfelse>
+				<cfset Vehicle.setPickUpLocationType( 'Airport' )>
+				<cfset Vehicle.setPickUpLocationID( 1 )>
 			</cfif>
 			<cfif rc.dropOffLocationKey NEQ ''>
 				<cfset Vehicle.setDropOffLocationType( '#rc.dropOffLocation.locationType#' )>
 				<cfset Vehicle.setDropOffLocationID( '#rc.dropOffLocation.vendorLocationID#' )>
+			<cfelse>
+				<cfset Vehicle.setDropOffLocationType( 'Airport' )>
+				<cfset Vehicle.setDropOffLocationID( 1 )>
 			</cfif>
 			<cfset Vehicle.setVendorCode( rc.sVendor )>
 			<cfset Vehicle = Vehicle.setVendorCode( rc.sVendor )>
