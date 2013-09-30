@@ -469,6 +469,11 @@
 						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
 																						, acctID = rc.Filter.getAcctID() )>
 					</cfif>
+
+					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
+																					, itinerary = itinerary
+																					, Filter = rc.Filter )>
+
 					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
@@ -513,8 +518,14 @@
 																									, Filter = rc.Filter
 																									, Version = Traveler.getBookingDetail().getVersion() )>
 					<cfif cancelResponse.status>
-						<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
 						<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
+
+
+						<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
+																					, urRecloc = Traveler.getBookingDetail().getUniversalLocatorCode() )>
+
+						<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
+
 					</cfif>
 					<cfif cancelResponse.message NEQ ''>
 						<cfset rc.message.addError(cancelResponse.message)>
@@ -522,6 +533,7 @@
 				</cfif>
 			</cfloop>
 		</cfif>
+		
 		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')>
 
 	</cffunction>

@@ -42,6 +42,8 @@
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode() 
 																					, Filter = rc.Filter )>
+					<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.searchID
+																					, urRecloc = Traveler.getBookingDetail().getUniversalLocatorCode() )>
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
 					<cfset Traveler.getBookingDetail().setReservationCode( '' )>
 					<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
