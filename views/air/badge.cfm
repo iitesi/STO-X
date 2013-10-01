@@ -1,6 +1,7 @@
 <cfparam name="variables.minheight" default="250"/>
 <cfset ribbonClass = "">
 <cfset carrierList = "">
+<cfset thisSelectedLeg = "">
 
 <cfsavecontent variable="sBadge" trim="#true#">
 
@@ -18,13 +19,14 @@
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
 
-	<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "sJavaScript")>
-		<cfset bSelected = false />
-		<cfset thisSelectedLeg = replace(listFirst(session.searches[rc.SearchID].stSelected[rc.Group].sJavaScript), """", "", "all") />
-		<cfif nTripKey EQ thisSelectedLeg>
-			<cfset bSelected = true />
-		</cfif>
-	</cfif>
+
+			<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")>
+				<cfset bSelected = false />
+				<cfset thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey />
+				<cfif nTripKey EQ thisSelectedLeg>
+					<cfset bSelected = true />
+				</cfif>
+			</cfif>
 
 	<cfoutput>
 		<div class="badge">
@@ -131,17 +133,17 @@
 				<td height="100%" valign="bottom" align="center" colspan="4">
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
 					<a href="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-						Details 
+						Details
 						<span class="divider">/</span>
 					</a>
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 						<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-							Seats 
+							Seats
 							<span class="divider">/</span>
 						</a>
 					</cfif>
 					<a href="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
-						Bags 
+						Bags
 						<span class="divider">/</span>
 					</a>
 					<a href="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
