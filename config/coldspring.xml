@@ -149,7 +149,7 @@
 	</bean>
 
 	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="LoyaltyProgramManager" class="com.shortstravel.traveler.LoyaltyProgramManager">
