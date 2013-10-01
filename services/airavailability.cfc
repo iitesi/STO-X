@@ -44,7 +44,7 @@
 				<cfset local.sPriority = 'LOW'>
 			</cfif>
 
-			<cfset sThreadName = doAvailability(arguments.Filter, local.nLegIndex-2, arguments.Account, arguments.Policy, sPriority)>
+			<cfset sThreadName = doAvailability(arguments.Filter, local.nLegIndex-1, arguments.Account, arguments.Policy, sPriority)>
 
 			<cfif sPriority EQ 'HIGH' AND sThreadName NEQ ''>
 				<cfset stThreads[sThreadName] = ''>

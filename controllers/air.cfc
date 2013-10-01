@@ -72,7 +72,7 @@
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
+			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.sLeg" index="local.nLeg">
 				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
 					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
 				</cfif>
