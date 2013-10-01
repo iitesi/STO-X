@@ -69,14 +69,44 @@
 			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
 
+		<!--- TODO: need to refactor this count as it doesn't accurately show leg/schedule counts
+			* might just need to count in badges?
+		--->
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
+
+
+
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.sLeg" index="local.nLeg">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
-					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
+
+			<!--- need to set a flag for the first group added and then check it for
+				NW flights, which can't be combined with other carriers --->
+			<cfif NOT structKeyExists(arguments.rc, "firstSelectedGroup")>
+				<cfset rc.southWestMatch = false>
+				<cfset rc.firstSelectedGroup = arguments.rc.group>
+				<cfif session.searches[arguments.rc.SearchID].stSelected[arguments.rc.group].carriers[1] EQ "WN">
+					<cfset rc.southWestMatch = true>
+				</cfif>
+			</cfif>
+
+			<!--- TODO: Think we need to check the number of legs in filter compared to number of structs in stSelected
+				should redirect to
+				* availability =air.availability&SearchID=2567&Group=1&fw1pk=8
+				* which does airprice
+				* It should then go to ?action=air.lowfare&SearchID=2567&filter=all
+				* Which should bypass everything if complete and go to summary page
+
+						--->
+
+
+			<!--- continue looping over legs and populating stSelected --->
+			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.nLeg" index="local.nLegIndex">
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[local.nLegIndex-1])>
+					<cfset variables.fw.redirect(action='air.availability', queryString='SearchID=#arguments.rc.SearchID#&Group=#local.nLegIndex-1#'
+						, preserve='firstSelectedGroup,southWestMatch')>
 				</cfif>
 			</cfloop>
+
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
