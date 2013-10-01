@@ -83,6 +83,7 @@
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
 																							, bSaveAirPrice = 1
+																							, findIt = rc.Filter.getFindIt()
 																						)>
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
