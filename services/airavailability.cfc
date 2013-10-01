@@ -334,8 +334,6 @@
 			</cfoutput>
 		</cfsavecontent>
 
-<cflog file="soapreq" text="#arguments.group# #message#">
-
 		<cfreturn message/>
 	</cffunction>
 
