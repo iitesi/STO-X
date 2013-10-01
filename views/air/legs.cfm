@@ -21,6 +21,4 @@
 			</cfif>
 		</cfloop>
 	</div>
-
-
 </cfoutput>

@@ -12,11 +12,12 @@
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    	<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
     	<!--- throw out threads and get lowfare pricing --->
 			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+
 
 			<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
 			<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
@@ -47,6 +48,7 @@
 			<cfif rc.Account.couldYou EQ 1>
 				<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
 			</cfif>
+
 			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
 		</cfif>
 
@@ -70,18 +72,9 @@
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
-
-			<cfset backCount = 1>
-			<!--- if multicity we need to go back one more because in the getLegs array the first item is a query, not a leg --->
-			<cfif rc.Filter.getAirType() IS "MD">
-				<cfset backCount = 2>
-			</cfif>
-
 			<cfloop array="#arguments.rc.Filter.getLegs()#" item="local.sLeg" index="local.nLeg">
-				<cfif isSimpleValue(sLeg)>
-					<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-backCount])>
-						<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-backCount#')>
-					</cfif>
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[nLeg-1])>
+					<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&Group=#nLeg-1#')>
 				</cfif>
 			</cfloop>
 			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
