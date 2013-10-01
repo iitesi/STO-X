@@ -1,24 +1,23 @@
 <cfsilent>
 	<cfset variables.bDisplayFare = false>
 	<cfset variables.bSelected = false>
-	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
-	<cfset variables.minheight = 100>
+	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
+	<cfset variables.minheight = 110>
 	<cfset variables.nDisplayGroup = rc.Group>
-	<cfif nLegs EQ 2>
+	<cfif variables.nLegs EQ 2>
 		<cfset variables.minheight = 200>
-	<cfelseif nLegs GT 2>
+	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 250>
 	</cfif>
 </cfsilent>
 
 <cfoutput>
-
 <div class="page-header">
 	<cfif rc.filter.getAirType() IS "MD">
 		<h1>#rc.Filter.getAirHeading()#</h1>
 		<ul class="unstyled">
-			<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-				<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
+			<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
+				<li><h2>#ListFirst(nLegItem, '::')# <small>:: #ListLast(nLegItem, "::")#</small></h2></li>
 			</cfloop>
 		</ul>
 	<cfelse>
@@ -41,6 +40,7 @@
 
 		#View('air/filter')#
 
+		<!--- setup ArrayToLoop = array of leg nTripIDs --->
 		<cfif (rc.Group EQ 0 AND rc.Filter.getDepartTimeType() IS 'A') OR (rc.Group EQ 1 AND rc.Filter.getArrivalTimeType() IS 'A')>
 			<cfset arrayToLoop = session.searches[rc.SearchID].stAvailDetails.aSortArrivalPreferred[rc.Group] />
 		<cfelse>
@@ -48,9 +48,27 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
+
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
-			<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-			#View('air/badge')#
+
+			 <cfif StructKeyExists(rc, "southWestMatch") AND rc.southWestMatch EQ true>
+				<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
+				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
+					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+					#View('air/badge')#
+				</cfif>
+			<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
+				<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
+				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
+					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+					#View('air/badge')#
+				</cfif>
+			<cfelse>
+				<!--- this is first view so show everything --->
+				<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+				#View('air/badge')#
+			</cfif>
+
 		</cfloop>
 
 		<script type="application/javascript">
@@ -90,6 +108,7 @@
 	</cfif>
 </div>
 
+	<!--- submitted when badge button is pressed via JS --->
 	<form method="post" action="#buildURL('air.availability')#" id="availabilityForm">
 		<input type="hidden" name="bSelect" value="1">
 		<input type="hidden" name="SearchID" value="#rc.SearchID#">

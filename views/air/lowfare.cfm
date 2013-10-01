@@ -26,13 +26,13 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
-	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
+	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
 	<cfset variables.minheight = 250>
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
-	<cfif nLegs EQ 2>
+	<cfif variables.nLegs EQ 2>
 		<cfset variables.minheight = 325>
-	<cfelseif nLegs GT 2>
+	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 375>
 	</cfif>
 </cfsilent>
@@ -42,8 +42,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<cfif rc.filter.getAirType() IS "MD">
 			<h1>#rc.Filter.getAirHeading()#</h1>
 			<ul  class="unstyled">
-				<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
+				<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
+					<li><h2>#ListFirst(nLegItem, '::')# <small>:: #ListLast(nLegItem, "::")#</small></h2></li>
 				</cfloop>
 			</ul>
 		<cfelse>
