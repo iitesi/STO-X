@@ -491,11 +491,13 @@ $(document).ready(function(){
 		if ($( "#airNeeded" ).attr('checked')) {
 			$( "#airDiv" ).show()
 			$( "#airTotalRow" ).show();
+			$( "#airPayment" ).show()
 			recalculateTotal();
 		}
 		else {
 			$( "#airDiv" ).hide()
 			$( "#airTotalRow" ).hide();
+			$( "#airPayment" ).hide()
 			recalculateTotal();
 		}
 	})
@@ -504,11 +506,13 @@ $(document).ready(function(){
 		if ($( "#hotelNeeded" ).attr('checked')) {
 			$( "#hotelDiv" ).show()
 			$( "#hotelTotalRow" ).show();
+			$( "#hotelPayment" ).show()
 			recalculateTotal();
 		}
 		else {
 			$( "#hotelDiv" ).hide()
 			$( "#hotelTotalRow" ).hide();
+			$( "#hotelPayment" ).hide()
 			recalculateTotal();
 		}
 	})
@@ -517,11 +521,13 @@ $(document).ready(function(){
 		if ($( "#carNeeded" ).attr('checked')) {
 			$( "#carDiv" ).show()
 			$( "#carTotalRow" ).show();
+			$( "#carPayment" ).show()
 			recalculateTotal();
 		}
 		else {
 			$( "#carDiv" ).hide('slow')
 			$( "#carTotalRow" ).hide();
+			$( "#carPayment" ).hide()
 			recalculateTotal();
 		}
 	})
