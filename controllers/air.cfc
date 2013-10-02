@@ -193,18 +193,12 @@
 	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
 		<cfargument name="rc">
 
-		<cfset var result = fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
+		<cfset local.newSearchID = "">
+		<cfset fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
 
-		<cfif structKeyExists(session, "searches")>
-			<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
-		</cfif>
-
-		<cfif result IS true>
-			<cfset rc.message.AddInfo("Saved search deleted successfully!")>
-			<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
-		<cfelse>
-				<cfthrow message="Error removing a flight from the breadcrumb bar!"/>
-		</cfif>
+		<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
+		<cfset rc.message.AddInfo("Saved search deleted successfully!")>
+		<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
 
 		<cfreturn />
 	</cffunction>
