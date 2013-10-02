@@ -28,11 +28,12 @@
 																					, Account = rc.Account
 																					, Policy = rc.Policy
 																					, sCabin = 'Y'
-																					, bRefundable = trip.Ref
+																					, bRefundable = 0
 																					, nTrip = ''
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0 
-																					, stSelected = stSelected)>
+																					, stSelected = stSelected
+																					, findIt = 1)>
 <!--- <cfdump var="#pricedTrip#" /><cfabort /> --->
 		<cfset pricedTrip[structKeyList(pricedTrip)].aPolicies = trip.aPolicies>
 		<cfset pricedTrip[structKeyList(pricedTrip)].policy = trip.policy>
