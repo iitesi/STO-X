@@ -11,6 +11,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'sPortalURL') OR application.sPortalURL EQ ''>
 			<cfset variables.bf.getBean("setup").setPortalURLLink(argumentcollection=arguments.rc)>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'searchWidgetURL') OR application.searchWidgetURL EQ ''>
+			<cfset variables.bf.getBean("setup").setWidgetURL(argumentcollection=arguments.rc)>
+		</cfif>
 		<cfif NOT StructKeyExists(application, 'sAPIAuth') OR application.sAPIAuth EQ ''>
 			<cfset variables.bf.getBean("setup").setAPIAuth(argumentcollection=arguments.rc)>
 		</cfif>

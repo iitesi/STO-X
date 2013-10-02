@@ -1,32 +1,35 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="AssetURL"/>
+	<cfproperty name="assetURL"/>
 	<cfproperty name="bookDSN"/>
 	<cfproperty name="bookingDSN"/>
 	<cfproperty name="corporateProductionDSN"/>
+	<cfproperty name="currentEnvironment" />
 	<cfproperty name="portalURL"/>
 	<cfproperty name="searchService" />
+	<cfproperty name="searchWidgetURL" />
 	<cfproperty name="useLinkedDatabases" />
-	<cfproperty name="currentEnvironment" />
 
 	<cffunction name="init" output="false">
-		<cfargument name="AssetURL" type="string" requred="true" />
+		<cfargument name="assetURL" type="string" requred="true" />
 		<cfargument name="bookDSN" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
 		<cfargument name="corporateProductionDSN" type="string" requred="true" />
+		<cfargument name="currentEnvironment" type="string" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
 		<cfargument name="searchService" />
+		<cfargument name="searchWidgetURL" type="string" requred="true" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
-		<cfargument name="currentEnvironment" type="string" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookDSN( arguments.bookDSN ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
+		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setSearchService( arguments.SearchService ) />
+		<cfset setSearchWidgetURL( arguments.searchWidgetURL ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
-		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -39,6 +42,12 @@
 	<!--- Named different to prevent overriding the default setPortalURL from environment service --->
 	<cffunction name="setPortalURLLink" output="false" returntype="void">
 		<cfset application.sPortalURL = getPortalURL()>
+		<cfreturn />
+	</cffunction>
+
+
+	<cffunction name="setWidgetURL" output="false" returntype="void">
+		<cfset application.searchWidgetURL = getSearchWidgetURL()>
 		<cfreturn />
 	</cffunction>
 
