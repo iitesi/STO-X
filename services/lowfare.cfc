@@ -22,13 +22,11 @@
 
 		<cftransaction action="begin">
 			<cftry>
-				<cfquery>
+				<cfquery datasource="booking">
 					DELETE
 					FROM Searches
 					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
-				</cfquery>
 
-				<cfquery>
 					DELETE
 					FROM Searches_Legs
 					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />

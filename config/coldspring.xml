@@ -170,14 +170,6 @@
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
 
-	<bean id="AirCreate" class="booking.services.AirCreate">
-		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
-		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
-		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
-	</bean>
-
 	<bean id="AirParse" class="booking.services.AirParse">
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 	</bean>
