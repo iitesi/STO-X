@@ -212,6 +212,7 @@
 		<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
 		<cfset airArgs.nCouldYou = dateDiff( 'd', originalDepartDate, newDepartDate ) />
 		<cfset airArgs.bRefundable = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.ref />
+		<cfset airArgs.findIt = session.filters[ arguments.Search.getSearchId() ].getFindIt() />
 
 		<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
 
