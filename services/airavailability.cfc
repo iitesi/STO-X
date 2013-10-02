@@ -457,6 +457,9 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+		<cfif firstSegmentIndex EQ ''>
+			<cfset local.firstSegmentIndex = 1>
+		</cfif> 
 		<!--- Backfill with nonstops --->
 		<cfloop from="0" to="#firstSegmentIndex-1#" index="local.segmentIndex">
 			<cfset stSegmentIndex[ segmentIndex ] = StructNew('linked')>
