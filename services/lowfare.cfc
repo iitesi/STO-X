@@ -93,12 +93,28 @@
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
+		<cfset local.airlines = []>
+		<cfif arguments.Filter.getAirlines() EQ ''>
+			<cfset airlines = ['X']>
+		<cfelse>
+			<cfset airlines = ['X',arguments.Filter.getAirlines()]>
+		</cfif>
 
 		<!--- Create a thread for every combination of cabin, fares and PTC. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfset local.sThreadName = doLowFare(arguments.Filter, local.sCabin, local.bRefundable, arguments.sPriority, arguments.stPricing, arguments.Account, arguments.Policy, local.BlackListedCarrierPairing)>
-				<cfset local.stThreads[local.sThreadName] = ''>
+				<cfloop array="#airlines#" index="local.airlineIndex" item="local.airline">
+					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+														, sCabin = local.sCabin
+														, bRefundable = bRefundable
+														, sPriority = arguments.sPriority
+														, stPricing = arguments.stPricing
+														, Account = arguments.Account
+														, Policy = arguments.Policy
+														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+														, airline = airline )>
+					<cfset local.stThreads[local.sThreadName] = ''>
+				</cfloop>
 			</cfloop>
 		</cfloop>
 
@@ -122,12 +138,13 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="BlackListedCarrierPairing" required="false">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
+		<cfargument name="airline" required="true">
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable)>
-			<cfset sThreadName = arguments.sCabin&arguments.bRefundable>
+		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)>
+			<cfset sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline>
 			<cfset local[local.sThreadName] = {}>
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
@@ -142,10 +159,11 @@
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
 				bRefundable="#arguments.bRefundable#"
+				airline="#arguments.airline#"
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account)>
+				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
@@ -177,7 +195,6 @@
 
 				<!--- Format the UAPI response. --->
 				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
-
 				<!--- If the UAPI gives an error then don't continue and send an error to BugLog instead. --->
 				<cfif FindNoCase('faultstring', attributes.sResponse) EQ 0>
 					<!--- Parse the segments. --->
@@ -232,6 +249,7 @@
 		<cfargument name="bRefundable" required="true">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 		<cfargument name="Account" required="false"	default="">
+		<cfargument name="airline" required="true">
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<!--- grab leg query out of filter --->
@@ -394,9 +412,9 @@
 									ProhibitOvernightLayovers="true"
 									ProhibitMultiAirportConnection="true"
 									PreferNonStop="true">
-									<cfif Len(arguments.filter.getAirlines()) EQ 2>
+									<cfif arguments.airline NEQ 'X'>
 										<air:PermittedCarriers>
-											<com:Carrier Code="#arguments.filter.getAirlines()#"/>
+											<com:Carrier Code="#arguments.airline#"/>
 										</air:PermittedCarriers>
 									<cfelse>
 										<air:ProhibitedCarriers>

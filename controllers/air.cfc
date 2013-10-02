@@ -74,9 +74,6 @@
 		--->
 		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
 
-
-
-
 		<cfif structKeyExists(arguments.rc, 'bSelect')>
 
 			<!--- need to set a flag for the first group added and then check it for
@@ -284,10 +281,10 @@
 		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails, "aSortFare")>
 			<cfset local.totalFlights = arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare)>
 		<cfelse>
-			<cfif IsLocalHost(cgi.remote_addr)>
+			<!--- <cfif IsLocalHost(cgi.remote_addr)>
 				<cfset local.errorMessage = "stLowFareDetails.aSortFare is empty which usually indicates an issue with Travelport returning a faultcode in availability or lowfare. Check the uAPI logs with SearchID: #arguments.rc.SearchID#.">
 			</cfif>
-			<cfthrow message="There was a problem retrieving flights from Travelport. (#local.errorMessage#)"/>
+			<cfthrow message="There was a problem retrieving flights from Travelport. (#local.errorMessage#)"/> --->
 		</cfif>
 
 		<cfreturn local.totalFlights>
