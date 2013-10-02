@@ -674,7 +674,8 @@ function go_to_page(new_page) {
 CAR SECTION
 --------------------------------------------------------------------------------------------------------------------
 */
-function filterCar(howFilter) {
+// IE8 needs this in filter.cfm
+/* function filterCar(howFilter) {
 	if (howFilter == 'clearAll') {
 		$(":checkbox").prop('checked', false);
 		$("#btnPolicy").parent().removeClass('active');
@@ -755,7 +756,7 @@ function filterCar(howFilter) {
 	}
 
 	return nCount;
-}
+} */
 /* $(document).ready(function() {
 	$("#overlay").jqm({
 		modal: true,
