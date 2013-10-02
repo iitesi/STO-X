@@ -536,12 +536,7 @@
 			<cfif arguments.Filter.getDepartTimeType() IS 'A'>
 				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.arrival)) />
 			<cfelse>
-				<cfif isDefined("preferredDepartTime")>
-					<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
-				<cfelse>
-					<cfdump var="#local#" label="local">
-					<cfdump var="#arguments#" label="arguments" abort>
-				</cfif>
+				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
 			</cfif>
 			<cfif arguments.Filter.getAirType() IS "RT">
 				<cfif arguments.Filter.getArrivalTimeType() IS 'A'>
