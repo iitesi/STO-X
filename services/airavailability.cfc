@@ -71,10 +71,10 @@
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the getUAPI if we already got the data. --->
-		<cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
+		<!--- <cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()], 'stAvailDetails')
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails, 'stGroups')
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)>
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)> --->
 
 			<cfset local.sThreadName = 'Group'&arguments.Group>
 			<cfset local[local.sThreadName] = {}>
@@ -82,14 +82,14 @@
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<cfthread
+			<!--- <cfthread
 				action="run"
 				name="#local.sThreadName#"
 				priority="#arguments.sPriority#"
 				Filter="#arguments.Filter#"
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
-				Policy="#arguments.Policy#">
+				Policy="#arguments.Policy#"> --->
 
  				<cfset attributes.sNextRef = 'ROUNDONE'>
 				<cfset attributes.nCount = 0>
@@ -165,8 +165,8 @@
 
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-			</cfthread>
-		</cfif>
+			<!--- </cfthread> --->
+		<!--- </cfif> --->
 
 		<cfreturn local.sThreadName>
 	</cffunction>
@@ -458,8 +458,9 @@
 			</cfif>
 		</cfloop>
 		<cfif firstSegmentIndex EQ ''>
-			<cfset local.firstSegmentIndex = 1>
-		</cfif> 
+			<cfset firstSegmentIndex = arrayLen(structKeyArray(stSegmentKeyLookUp))-1>
+		</cfif>
+
 		<!--- Backfill with nonstops --->
 		<cfloop from="0" to="#firstSegmentIndex-1#" index="local.segmentIndex">
 			<cfset stSegmentIndex[ segmentIndex ] = StructNew('linked')>
