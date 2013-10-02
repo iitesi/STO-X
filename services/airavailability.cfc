@@ -27,10 +27,10 @@
 	</cffunction>
 
 	<cffunction name="threadAvailability" output="false">
-		<cfargument name="Filter"	required="true">
-		<cfargument name="Account"  required="true">
-		<cfargument name="Policy"   required="true">
-		<cfargument name="Group"	required="false">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Group" required="false">
 
 		<cfset local.stThreads = {}>
 		<cfset local.sThreadName = ''>
@@ -43,14 +43,16 @@
 			<cfelse>
 				<cfset local.sPriority = 'LOW'>
 			</cfif>
-
-			<cfset sThreadName = doAvailability(arguments.Filter, local.nLegIndex-1, arguments.Account, arguments.Policy, sPriority)>
+			<cfset sThreadName = doAvailability( Filter = arguments.Filter
+												, Group = local.nLegIndex-1
+												, Account = arguments.Account
+												, Policy = arguments.Policy
+												, sPriority = sPriority)>
 
 			<cfif sPriority EQ 'HIGH' AND sThreadName NEQ ''>
 				<cfset stThreads[sThreadName] = ''>
 			</cfif>
 		</cfloop>
-
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)
 			AND sPriority EQ 'HIGH'>
@@ -66,15 +68,14 @@
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
 		<cfargument name="sPriority" required="false"	default="HIGH">
-		<cfargument name="stGroups" required="false" default="#structNew()#">
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the getUAPI if we already got the data. --->
-		<!--- <cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
+		<cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()], 'stAvailDetails')
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails, 'stGroups')
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)> --->
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)>
 
 			<cfset local.sThreadName = 'Group'&arguments.Group>
 			<cfset local[local.sThreadName] = {}>
@@ -82,22 +83,20 @@
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<!--- <cfthread
+			<cfthread
 				action="run"
 				name="#local.sThreadName#"
 				priority="#arguments.sPriority#"
 				Filter="#arguments.Filter#"
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
-				Policy="#arguments.Policy#"> --->
-
+				Policy="#arguments.Policy#">
  				<cfset attributes.sNextRef = 'ROUNDONE'>
 				<cfset attributes.nCount = 0>
 				<cfloop condition="attributes.sNextRef NEQ ''">
 					<cfset attributes.nCount++>
 					<!--- Put together the SOAP message. --->
 					<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.Group, (attributes.sNextRef NEQ 'ROUNDONE' ? attributes.sNextRef : ''), arguments.Account)>
-
 					<!--- Call the getUAPI. --->
 					<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
@@ -121,7 +120,6 @@
 					<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 					<!--- Create unique segment keys. --->
 					<cfset attributes.sNextRef =	getAirParse().parseNextReference(attributes.aResponse)>
-
 					<cfif attributes.nCount GT 3>
 						<cfset attributes.sNextRef	= ''>
 					</cfif>
@@ -165,8 +163,8 @@
 
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-			<!--- </cfthread> --->
-		<!--- </cfif> --->
+			</cfthread>
+		</cfif>
 
 		<cfreturn local.sThreadName>
 	</cffunction>
@@ -251,7 +249,7 @@
 										</cfif>
 									</air:SearchDestination>
 									<cfif arguments.filter.getArrivalDateTimeActual() EQ "Anytime">
-										<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
+										<air:SearchDepTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd')#" />
 									<cfelse>
 										<cfif arguments.filter.getDepartTimeType() EQ "A">
 											<air:SearchArvTime PreferredTime="#DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTime(), 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
@@ -266,11 +264,12 @@
 								</air:SearchAirLeg>
 
 							<!--- for multi-city trips loop over SearchesLegs --->
-							<cfelseif arguments.Group NEQ 0 AND arguments.Filter.getAirType() EQ 'MD'>
+							<cfelseif arguments.Group NEQ 0
+								AND arguments.Filter.getAirType() EQ 'MD'>
 								<cfset local.cnt = 0>
 								<cfloop query="local.qSearchLegs">
 									<cfset cnt++>
-									<cfif arguments.Group EQ cnt>
+									<cfif arguments.Group+1 EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
 												<cfif arguments.filter.getAirFromCityCode() EQ 1>
