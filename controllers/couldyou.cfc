@@ -2,6 +2,20 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
+
+		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
+
+		<!---Redirect if not all specified services are selected--->
+		<cfif arguments.rc.Filter.getAir() AND NOT structKeyExists( rc.itinerary, "Air" ) >
+			<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.Filter.getSearchID()#')>
+		</cfif>
+		<cfif arguments.rc.Filter.getHotel() AND NOT structKeyExists( rc.itinerary, "Hotel" )>
+			<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
+		</cfif>
+		<cfif arguments.rc.Filter.getCar() AND NOT structKeyExists( rc.itinerary, "Vehicle" )>
+			<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
+		</cfif>
+
 		<cfif arguments.rc.Filter.getAir()>
 			<cfset rc.startDate = arguments.rc.Filter.getDepartDateTime() />
 			<cfset rc.endDate = arguments.rc.Filter.getArrivalDateTime() />
@@ -13,7 +27,7 @@
 			<cfset rc.endDate = arguments.rc.Filter.getCarDropOffDateTime() />
 		</cfif>
 
-		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
+
 
 		<!---Check to see if currency values are all the same...if not, redirect to summary--->
 		<cfset var currencies = arrayNew(1) />
@@ -24,8 +38,12 @@
 		<cfif val(rc.Filter.getHotel())>
 			<cfif rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() !=  "" >
 				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() ) />
-			<cfelse>
+			<cfelseif rc.itinerary.hotel.getRooms()[1].getBaseRateCurrency() !=  "">
 				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getBaseRateCurrency() ) />
+			<cfelseif rc.itinerary.hotel.getRooms()[1].getDailyRateCurrency() !=  "">
+				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getDailyRateCurrency() ) />
+			<cfelse>
+				<cfset arrayAppend( currencies, "" ) />
 			</cfif>
 		</cfif>
 		<cfif val(rc.Filter.getCar())>
