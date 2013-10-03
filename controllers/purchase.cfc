@@ -475,7 +475,7 @@
 																					, itinerary = itinerary
 																					, Filter = rc.Filter )>
 
-					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
+					<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')> --->
 				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
@@ -499,6 +499,10 @@
 				</cfif>
 			</cfif>
 		</cfloop>
+		<!--- Moved the redirect to outside the travelers loop. --->
+		<cfif arrayIsEmpty(errorMessage)>
+			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
+		</cfif>
 
 		<cfreturn />
 	</cffunction>
