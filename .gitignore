@@ -10,3 +10,13 @@ p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/.lock
 p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/1367950425227.profile.gz
 p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/1367950437208.profile.gz
 p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/state.properties
+.idea/.name
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/workspace.xml
+atlassian-ide-plugin.xml
+booking.iml
