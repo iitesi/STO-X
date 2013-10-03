@@ -212,6 +212,7 @@ $(document).ready(function(){
 				$( "#airNeeded" ).attr( 'checked', false );
 				$( "#airDiv" ).hide();
 				$( "#airTotalRow" ).hide();
+				$( "#airPayment" ).hide()
 			}
 			$( "#airReasonCode" ).val( traveler.bookingDetail.airReasonCode );
 			$( "#lostSavings" ).val( traveler.bookingDetail.lostSavings );
@@ -254,6 +255,7 @@ $(document).ready(function(){
 				$( "#hotelNeeded" ).attr( 'checked', false );
 				$( "#hotelDiv" ).hide();
 				$( "#hotelTotalRow" ).hide();
+				$( "#hotelPayment" ).hide()
 			}
 			$( "#hotelReasonCode" ).val( traveler.bookingDetail.hotelReasonCode );
 			$( "#udid112" ).val( traveler.bookingDetail.udid112 );
@@ -281,6 +283,7 @@ $(document).ready(function(){
 				$( "#carNeeded" ).attr( 'checked', false );
 				$( "#carDiv" ).hide();
 				$( "#carTotalRow" ).hide();
+				$( "#carPayment" ).hide()
 			}
 
 			$( "#carReasonCode" ).val( traveler.bookingDetail.carReasonCode );
