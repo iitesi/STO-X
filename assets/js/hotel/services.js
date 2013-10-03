@@ -5,16 +5,14 @@ services.factory( "SearchService", function( $http ){
 
 	SearchService.getSearch = function( searchId ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + searchId )
-			.then(
+			.success(
 				function(response) {
-					return response.data
-				},
-				function(response) {
-				   var result = {
-						success: false,
-						errors: ["An error occurred while attempting to retrieve your search."]
-					};
-					return result;
+					return response
+				}
+			)
+			.error(
+				function(exception, cause) {
+					return cause;
 				}
 			)
 	}
