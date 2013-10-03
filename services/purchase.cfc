@@ -69,4 +69,28 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="getErrorMessage" output="false">
+		<cfargument name="errorMessage">
+
+		<cfset local.message = 'WE ARE UNABLE TO CONFIRM YOUR RESERVATION. PLEASE CONTACT US TO COMPLETE YOUR PURCHASE.'>
+		<cfif isArray(arguments.errorMessage)
+			AND NOT arrayIsEmpty(arguments.errorMessage)>
+
+			<cfloop array="#arguments.errorMessage#" index="local.errorIndex" item="local.error">
+				<cfquery name="local.getMessage" datasource="#getBookingDSN()#">
+					SELECT message
+					FROM errorMessages
+					WHERE '#error#' LIKE '%' + error + '%'
+				</cfquery>
+				<cfif getMessage.recordCount>
+					<cfset message = getMessage.message>
+					<cfbreak>
+				</cfif>
+			</cfloop>
+
+		</cfif>
+
+		<cfreturn message/>
+	</cffunction>
+
 </cfcomponent>

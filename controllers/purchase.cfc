@@ -480,24 +480,21 @@
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
-					<cfset local.errorList = errorType>
-					<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
-					<!--- Error : hotel advance purchase --->
+					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage )>
+					<cfset local.errorList = message>
+					<cfif rc.Filter.getSTMEmployee()>
+						<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
+					</cfif>
 					<cfif errorType EQ 'Hotel'
 						AND (find('NEED GUEST CREDIT CARD IN CARD DEPOSIT FORMAT TO BOOK', errorList)
 						OR find('INVALID /G- TYPE OR FORMAT', errorList)
 						OR find('INVALID NEED DEPOSIT IN /G- FIELD', errorList)
-						OR find('ADVANCED DEPOSIT REQUIRED', errorList)
 						OR find('INVALID GUARANTEE INDICATOR', errorList)
 						OR find('DEPOSIT REQ', errorList)
-						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList)
-						OR find('DEPOSIT REQUIRED PLEASE CORRECT', errorList))>
+						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList))>
 						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
-						<cfset rc.message.addError('It appears the property you are trying to book requires a prepayment. Please review the hotel payment and cancellation policy and submit your booking again.')>
-					<!--- All other errors --->
-					<cfelse>
-						<cfset rc.message.addError(errorList)>
 					</cfif>
+					<cfset rc.message.addError(errorList)>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
