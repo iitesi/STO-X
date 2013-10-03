@@ -54,27 +54,30 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
+		<cfargument name="sCabins" default="">
 
-		<!--- grab class from widget form --->
-		<cfset local.sCabins = arguments.filter.getClassOfService()>
-		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
-		<cfif StructKeyExists(arguments, "sCabins")>
-			<cfset local.sCabins = arguments.sCabins>
-		</cfif>
-
-		<cfset local.aCabins = ListToArray(local.sCabins)>
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
+
 		<cfset local.airlines = []>
 		<cfif arguments.Filter.getAirlines() EQ ''>
-			<cfset airlines = ['X']>
+			<cfset local.airlines = ['X']>
 		<cfelse>
-			<cfset airlines = ['X',arguments.Filter.getAirlines()]>
+			<cfset local.airlines = ['X',arguments.Filter.getAirlines()]>
 		</cfif>
 
-		<!--- Create a thread for every combination of cabin, fares and PTC. --->
+		<cfif arguments.Filter.getClassOfService() EQ ''>
+			<cfset local.aCabins = ['X']>
+		<cfelseif Len(arguments.sCabins)> <!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
+			<cfset local.aCabins = ['X',arguments.sCabins]>
+		<cfelse> <!--- otherwise get the class/cabin passed from the widget --->
+			<cfset local.aCabins = ['X',arguments.Filter.getClassOfService()]>
+		</cfif>
+
+
+		<!--- Create a thread for every combination of cabin, fare and airline. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
 				<cfloop array="#airlines#" index="local.airlineIndex" item="local.airline">
