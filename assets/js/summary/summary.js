@@ -17,6 +17,8 @@ $(document).ready(function(){
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
 
+	$( "#createProfileDiv" ).hide();
+	$( "#usernameDiv" ).hide();
 	getTraveler();
 
 	// Get traveler from session and populate the form
