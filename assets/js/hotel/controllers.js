@@ -41,11 +41,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.loadSearch = function( searchId ){
 
 		SearchService.getSearch( $scope.searchId )
-			.then( function( result ){
-
+			.success( function( result ){
 				if( result.success ){
 					$scope.search = result.data;
-
+					console.log( $scope.search );
 					SearchService.loadAccount( $scope.search.acctID )
 						.then( function( result ){
 							$scope.account = result;
@@ -53,10 +52,13 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
 					$scope.loadPolicy( $scope.search.policyID );
 				} else {
-					$('#searchWindow').modal('hide');
 					$scope.errors = result.errors;
 				}
 
+			})
+			.error( function( exception, cause ){
+				$('#searchWindow').modal('hide');
+				$scope.errors=["An error occurred while attempting to retrieve your search."];
 			});
 	}
 
