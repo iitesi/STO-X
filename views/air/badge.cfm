@@ -90,7 +90,7 @@
 					<td>
 						<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
 					</td>
-					<td>
+					<td width="50">
 						-
 					</td>
 					<td>
