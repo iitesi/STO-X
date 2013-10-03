@@ -3,6 +3,7 @@
 	<h2>PAYMENT</h2>
 
 	<cfif rc.airSelected>
+		<div id="airPayment">
 		
 		<div class="control-group">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
@@ -89,9 +90,11 @@
 			</a>
 		</div>
 
+		</div>
 	</cfif>
 
 	<cfif rc.hotelSelected>
+		<div id="hotelPayment">
 			
 		<div class="control-group">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
@@ -170,9 +173,11 @@
 			</a>
 		</div>
 
+		</div>
 	</cfif>
 
 	<cfif rc.vehicleSelected>
+		<div id="carPayment">
 		
 		<div class="control-group">
 			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
@@ -189,6 +194,7 @@
 			</a>
 		</div>
 
+		</div>
 	</cfif>
 
 </cfoutput>

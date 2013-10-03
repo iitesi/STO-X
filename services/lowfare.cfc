@@ -16,37 +16,13 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="removeFlight" output="false" hint="I remove a flight from the database based on searchID.">
+	<cffunction name="removeFlight" output="false" hint="I remove a flight from the session based on searchID.">
 		<cfargument name="searchID">
-		<cfset var result = 'true'>
 
-		<cftransaction action="begin">
-			<cftry>
-				<cfquery datasource="booking">
-					DELETE
-					FROM Searches
-					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+		<cfset StructDelete(session.searches, arguments.searchID)>
+		<cfset StructDelete(session.filters, arguments.searchID)>
 
-					DELETE
-					FROM Searches_Legs
-					WHERE Search_ID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
-				</cfquery>
-
-				<!---
-				TODO: we should really NOT be touching session here!
-				4:04 PM Wednesday, June 26, 2013 - Jim Priest - jpriest@shortstravel.com
- 				--->
-				<cfset StructDelete(session.searches, arguments.searchID)>
-				<cfset StructDelete(session.filters, arguments.searchID)>
-
-				<cfcatch type="any">
-					<cftransaction action="rollback" />
-					<cfset result = false>
-				</cfcatch>
-			</cftry>
-		</cftransaction>
-
-		<cfreturn result />
+		<cfreturn  />
 	</cffunction>
 
 	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
