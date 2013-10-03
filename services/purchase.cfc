@@ -32,7 +32,9 @@
 				, valueID
 				, policyID
 				, profileID
-				, filter )
+				, filter
+				, traveler
+				, bookingDetail )
 			VALUES
 				( <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
@@ -49,7 +51,9 @@
 				, <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getProfileID()#" cfsqltype="cf_sql_integer" >
-				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" > )
+				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" > 
+				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" > )
 		</cfquery>
 
 		<cfreturn />
