@@ -80,6 +80,7 @@
 									<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate() />
 									<cfset totalText = "Estimated Total" />
 								<cfelse>
+									<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate()) />
 									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency() />
 									<cfset hotelBase = rc.Hotel.getRooms()[1].getDailyRate()*nights />
 									<cfset hotelTaxes = "QUOTED AT CHECK-IN" />
