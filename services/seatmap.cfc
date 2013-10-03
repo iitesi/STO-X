@@ -129,7 +129,11 @@
 							Protected, PartnerAirline, AdvSeatSelection, Blocked, Extra, RBDRestriction, Group,	NoSeat
 							--->
 							<cfset local.stSeats['Columns'][local.sColumn] = ''>
-							<cfset local.stSeats[local.nRow][local.sColumn].Avail = local.stFacility.XMLAttributes.Availability>
+							<cfif structKeyExists(local.stFacility.XMLAttributes, "Availability")>
+								<cfset local.stSeats[local.nRow][local.sColumn].Avail = local.stFacility.XMLAttributes.Availability>
+							<cfelse>
+								<cfset local.stSeats[local.nRow][local.sColumn].Avail = "NoSeat">
+							</cfif>
 							<cfloop array="#stFacility.XMLChildren#" index="local.stCharacteristic">
 								<!---
 								Seat Characteristics

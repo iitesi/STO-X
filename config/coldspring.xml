@@ -62,6 +62,7 @@
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 		<constructor-arg name="portalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
+		<constructor-arg name="searchWidgetURL"><bean factory-bean="EnvironmentService" factory-method="getSearchWidgetURL" /></constructor-arg>
 		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
 		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
 		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
@@ -149,7 +150,7 @@
 	</bean>
 
 	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="LoyaltyProgramManager" class="com.shortstravel.traveler.LoyaltyProgramManager">
@@ -162,19 +163,12 @@
 
 	<bean id="PaymentManager" class="com.shortstravel.traveler.PaymentManager">
 		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
 		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
-	</bean>
-
-	<bean id="AirCreate" class="booking.services.AirCreate">
-		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
-		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
-		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
 	</bean>
 
 	<bean id="AirParse" class="booking.services.AirParse">

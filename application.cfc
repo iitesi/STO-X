@@ -6,7 +6,6 @@
 	<cfset this.sessionManagement = true>
 	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
 	<cfset this.applicationManagement = true>
-	<cfset this.defaultdatasource = "book">
 
 	<cfset variables.framework = {
 		action = 'action',

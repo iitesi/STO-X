@@ -13,7 +13,7 @@
 	<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 		<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() />
 	<cfelse>
-		<cfset frameSrc = application.sPortalURL />
+		<cfset frameSrc = application.searchWidgetURL & "?acctid=#session.acctID#&userID=#session.userID#"/>
 	</cfif>
 </cfsilent>
 <div class="container">

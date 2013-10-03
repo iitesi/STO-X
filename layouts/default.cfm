@@ -83,7 +83,7 @@
 						<cfif structKeyExists(rc, 'filter')
 							AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
 							<div style="color:#999;float:right;font-weight:bold">
-								Booking on behalf of 
+								Booking on behalf of
 								<cfif rc.Filter.getProfileID() NEQ 0>
 									<cfoutput>#rc.Filter.getProfileUsername()#</cfoutput>
 								<cfelse>
@@ -100,7 +100,7 @@
 							<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 								<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()/>
 							<cfelse>
-								<cfset frameSrc = application.sPortalURL & "?acctid=#session.acctID#&userID=#session.userID#"/>
+								<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#' />
 							</cfif>
 
 						<!--- button to open search in modal window --->

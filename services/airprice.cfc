@@ -30,6 +30,7 @@
 		<cfargument name="nCouldYou" required="false" default="0">
 		<cfargument name="bSaveAirPrice" required="false" default="0">
 		<cfargument name="stSelected" required="false" default="">
+		<cfargument name="findIt" required="false" default="0">
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -61,7 +62,9 @@
 		<cfset sMessage = prepareSoapHeader( stSelected = stSelected
 											, sCabin = arguments.sCabin
 											, bRefundable = arguments.bRefundable
-											, nCouldYou = arguments.nCouldYou )>
+											, nCouldYou = arguments.nCouldYou
+											, stAccount = arguments.Account
+											, findIt = arguments.findIt )>
 		<!--- Call the UAPI. --->
 		<cfset sResponse 	= UAPI.callUAPI('AirService', sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
@@ -111,13 +114,14 @@
 	</cffunction>
 
 	<cffunction name="prepareSOAPHeader" returntype="string" output="false">
-		<cfargument name="stSelected" 	required="true">
-		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
-		<cfargument name="bRefundable"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="nCouldYou"	required="false"	default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="stAccount" 	required="true"		default="#application.Accounts[session.AcctID]#">
+		<cfargument name="stSelected" required="true">
+		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Y, C, F --->
+		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="nCouldYou" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="stAccount" required="true">
+		<cfargument name="findIt" required="true">
 
-		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
+		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
 		<cfsavecontent variable="local.sMessage">
@@ -208,6 +212,7 @@
 		<cfset airArgs.nTrip = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.nTrip />
 		<cfset airArgs.nCouldYou = dateDiff( 'd', originalDepartDate, newDepartDate ) />
 		<cfset airArgs.bRefundable = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.ref />
+		<cfset airArgs.findIt = session.filters[ arguments.Search.getSearchId() ].getFindIt() />
 
 		<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
 

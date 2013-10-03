@@ -1,38 +1,12 @@
-<!--- AIR CODES
------------------------
-1 = refundable
-0 = non refundable
------------------------
-Y = economy
-C = business
-F = first
------------------------
-(X) = not selected
-
-acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
-asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
-asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
-asortbag2 =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag2)#<br>
-asortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
-asortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
-asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)#<br>
-<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpriced)#" />
-<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
-<cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
-<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
-<cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
-<cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
---->
-
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
-	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegs())>
+	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
 	<cfset variables.minheight = 250>
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
-	<cfif nLegs EQ 2>
+	<cfif variables.nLegs EQ 2>
 		<cfset variables.minheight = 325>
-	<cfelseif nLegs GT 2>
+	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 375>
 	</cfif>
 </cfsilent>
@@ -42,8 +16,8 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<cfif rc.filter.getAirType() IS "MD">
 			<h1>#rc.Filter.getAirHeading()#</h1>
 			<ul  class="unstyled">
-				<cfloop array="#rc.filter.getLegsHeader()#" index="nLeg" item="sLeg">
-					<li><h2>#ListFirst(sLeg, '::')# <small>:: #ListLast(sLeg, "::")#</small></h2></li>
+				<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
+					<li><h2>#ListFirst(nLegItem, '::')# <small>:: #ListLast(nLegItem, "::")#</small></h2></li>
 				</cfloop>
 			</ul>
 		<cfelse>
@@ -58,10 +32,10 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() />
 		<cfelse>
-			<cfset frameSrc = application.sPortalURL />
+			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#' />
 		</cfif>
 
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;searchid=#rc.searchID#&amp;requery=true" title="Start a new search"><i class="icon-search"></i> Change Search</a></h2>
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;searchid=#rc.searchID#&amp;requery=true" title="Search again"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 				#View('air/legs')#
@@ -139,3 +113,35 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 #View('modal/popup')#
 
 </cfoutput>
+
+
+
+<!--- AIR CODES
+
+*****************************************
+PLEASE DON'T DELETE - Used for debugging
+*****************************************
+
+1 = refundable
+0 = non refundable
+-----------------------
+Y = economy
+C = business
+F = first
+-----------------------
+(X) = not selected
+
+acarriers =  #arraylen(session.searches[rc.searchid].stlowfaredetails.acarriers)#<br>
+asortarrival =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortarrival)#<br>
+asortbag =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag)#<br>
+asortbag2 =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortbag2)#<br>
+asortdepart =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortdepart)#<br>
+asortduration =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortduration)#<br>
+asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)#<br>
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpriced)#" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stpricing)#" />
+<cfdump var="#session.searches[rc.SearchID].stLowFareDetails.stResults#" keys="10" />
+<cfdump var="#structcount(session.searches[rc.searchid].stlowfaredetails.stresults)#" />
+<cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
+<cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
+--->

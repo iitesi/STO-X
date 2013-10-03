@@ -1,32 +1,35 @@
 <cfcomponent output="false" accessors="true">
 
-	<cfproperty name="AssetURL"/>
+	<cfproperty name="assetURL"/>
 	<cfproperty name="bookDSN"/>
 	<cfproperty name="bookingDSN"/>
 	<cfproperty name="corporateProductionDSN"/>
+	<cfproperty name="currentEnvironment" />
 	<cfproperty name="portalURL"/>
 	<cfproperty name="searchService" />
+	<cfproperty name="searchWidgetURL" />
 	<cfproperty name="useLinkedDatabases" />
-	<cfproperty name="currentEnvironment" />
 
 	<cffunction name="init" output="false">
-		<cfargument name="AssetURL" type="string" requred="true" />
+		<cfargument name="assetURL" type="string" requred="true" />
 		<cfargument name="bookDSN" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
 		<cfargument name="corporateProductionDSN" type="string" requred="true" />
+		<cfargument name="currentEnvironment" type="string" requred="true" />
 		<cfargument name="portalURL" type="string" requred="true" />
 		<cfargument name="searchService" />
+		<cfargument name="searchWidgetURL" type="string" requred="true" />
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
-		<cfargument name="currentEnvironment" type="string" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookDSN( arguments.bookDSN ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
+		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 		<cfset setPortalURL( arguments.portalURL ) />
 		<cfset setSearchService( arguments.SearchService ) />
+		<cfset setSearchWidgetURL( arguments.searchWidgetURL ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
-		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -39,6 +42,12 @@
 	<!--- Named different to prevent overriding the default setPortalURL from environment service --->
 	<cffunction name="setPortalURLLink" output="false" returntype="void">
 		<cfset application.sPortalURL = getPortalURL()>
+		<cfreturn />
+	</cffunction>
+
+
+	<cffunction name="setWidgetURL" output="false" returntype="void">
+		<cfset application.searchWidgetURL = getSearchWidgetURL()>
 		<cfreturn />
 	</cffunction>
 
@@ -116,15 +125,15 @@
 							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
 						</cfif>
-						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-						<cfset searchfilter.addLeg(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- One way --->
 					<cfcase value="OW">
 						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
 						<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
-						<cfset searchfilter.addLeg(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- Multi-city --->
@@ -144,7 +153,7 @@
 							<cfelse>
 								<cfset local.breadCrumb = "#depart_city#-#arrival_city#">
 							</cfif>
-							<cfset searchfilter.addLeg(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
+							<cfset searchfilter.addLegsForTrip(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City].city# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City].city# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
 						<!--- populate headings for display --->
@@ -370,7 +379,7 @@
 				<cfset ArrayAppend(stTemp.aCarSizes, qPreferredCarSizes.Car_Size)>
 			</cfloop>
 
-			<cfquery name="local.qCDNumbers">
+			<cfquery name="local.qCDNumbers" datasource="#getCorporateProductionDSN()#">
 			SELECT IsNull(Value_ID, '0') AS Value_ID, Vendor_Code, CD_Number, DB_Number, DB_Type
 			FROM CD_Numbers
 			WHERE Acct_ID = <cfqueryparam value="#qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
