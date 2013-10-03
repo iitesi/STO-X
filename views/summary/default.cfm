@@ -14,7 +14,7 @@
 			<span style="float:right">
 				<cfif NOT rc.hotelSelected
 					AND rc.Filter.getAirType() NEQ 'MD'>
-					<a href="#buildURL('hotel.search?searchID=#rc.searchID#')#">
+					<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#">
 						<span class="icon-large icon-plus"></span> Add Hotel
 					</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</cfif>

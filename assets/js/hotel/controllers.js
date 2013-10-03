@@ -43,14 +43,20 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		SearchService.getSearch( $scope.searchId )
 			.then( function( result ){
 
-				$scope.search = result.data;
+				if( result.success ){
+					$scope.search = result.data;
 
-				SearchService.loadAccount( $scope.search.acctID )
-					.then( function( result ){
-						$scope.account = result;
-					});
-				$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
-				$scope.loadPolicy( $scope.search.policyID );
+					SearchService.loadAccount( $scope.search.acctID )
+						.then( function( result ){
+							$scope.account = result;
+						});
+					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
+					$scope.loadPolicy( $scope.search.policyID );
+				} else {
+					$('#searchWindow').modal('hide');
+					$scope.errors = result.errors;
+				}
+
 			});
 	}
 
