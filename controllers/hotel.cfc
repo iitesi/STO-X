@@ -20,7 +20,7 @@
 		<cfargument name="rc" />
 
 		<cfset local.HotelService = variables.bf.getBean( "HotelService" ) />
-		<cfset success = HotelService.selectRoom( searchId=arguments.rc.searchId,
+		<cfset local.success = local.HotelService.selectRoom( searchId=arguments.rc.searchId,
 												 propertyId=arguments.rc.propertyId,
 												 ratePlanType=arguments.rc.ratePlanType,
 												 totalForStay=arguments.rc.totalForStay,
