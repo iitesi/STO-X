@@ -44,7 +44,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			.success( function( result ){
 				if( result.success ){
 					$scope.search = result.data;
-					console.log( $scope.search );
 					SearchService.loadAccount( $scope.search.acctID )
 						.then( function( result ){
 							$scope.account = result;
