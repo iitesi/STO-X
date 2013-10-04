@@ -105,7 +105,7 @@
 			</cfquery>
 
 			<cfloop query="local.qSearch">
-				<cfiflocal. qSearch.Country_Code NEQ 'US'>
+				<cfif local.qSearch.Country_Code NEQ 'US'>
 					<cfif local.qAgentSine.AccountID EQ ''>
 						<cfset local.feeType = 'OINTL'>
 					<cfelse>
