@@ -3,6 +3,7 @@ var controllers = angular.module('app.controllers',[]);
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
+	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
@@ -57,6 +58,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			})
 			.error( function( exception, cause ){
 				$('#searchWindow').modal('hide');
+				$scope.hidePage = true;
 				$scope.errors=["An error occurred while attempting to retrieve your search."];
 			});
 	}
@@ -555,8 +557,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.initializeMap = function( lat, lon ){
 
-		//google.maps.visualRefresh = true;
+		google.maps.visualRefresh = true;
 		var mapCenter =  new google.maps.LatLng( lat, lon );
+		console.log( mapCenter );
 		var mapOptions = {
           center: mapCenter,
           zoom: 8,
