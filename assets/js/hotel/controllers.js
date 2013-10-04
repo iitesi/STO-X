@@ -555,7 +555,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.initializeMap = function( lat, lon ){
 
-		google.maps.visualRefresh = true;
+		//google.maps.visualRefresh = true;
 		var mapCenter =  new google.maps.LatLng( lat, lon );
 		var mapOptions = {
           center: mapCenter,
