@@ -181,6 +181,7 @@
 		<cfargument name="Hotel" required="false" default="">
 		<cfargument name="Vehicle" required="false" default="">
 		<cfargument name="Policy" required="false" default="">
+		<cfargument name="Filter" required="false" default="">
 		<cfargument name="acctID" required="false" default="">
 		<cfargument name="searchID" required="false" default="">
 		<cfargument name="password" required="false" default="">
@@ -332,10 +333,12 @@
 			<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
 			<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total />
 			<!--- To Do: Pass variables in --->
-			
+	
 			<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
-			<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
-				AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
+			<cfif arguments.Policy.Policy_HotelNotBooking EQ 1
+				AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
+				AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
+				AND arguments.Filter.getAirType() EQ 'RT'>
 				<cfset error.hotelNotBooked = ''>
 			</cfif>
 			<cfif NOT inPolicy

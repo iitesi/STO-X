@@ -215,6 +215,7 @@
 																			, Hotel = rc.Hotel
 																			, Vehicle = rc.Vehicle
 																			, Policy = rc.Policy
+																			, Filter = rc.Filter
 																			, acctID = rc.Filter.getAcctID()
 																			, searchID = rc.searchID
 																			, password = rc.password
