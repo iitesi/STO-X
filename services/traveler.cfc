@@ -4,11 +4,10 @@
 init
 --->
 	<cffunction name="init" output="false">
-
 		<cfreturn this>
 	</cffunction>
 
-<!--- 
+<!---
 traveler
 --->
 	<cffunction name="traveler" output="false" access="remote" returnformat="plain">
@@ -20,30 +19,30 @@ traveler
 		<cfset local.Traveler = session.searches[arguments.searchID].stTravelers[arguments.nTraveler]>
 		<cfset local.acctID = session.AcctID>
 
-		<cfif NOT structKeyExists(Traveler, 'User_ID')
-		OR Traveler.User_ID NEQ arguments.userID>
-			<cfset Traveler = {}>
+		<cfif NOT structKeyExists(local.traveler, 'User_ID')
+		OR local.traveler.User_ID NEQ arguments.userID>
+			<cfset local.traveler = {}>
 			<!--- Preload general information --->
-			<cfset Traveler = getGeneralInfo(arguments.userID, acctID)>
+			<cfset local.Traveler = getGeneralInfo(arguments.userID, acctID)>
 			<!--- Setup all frequent account numbers --->
-			<cfset Traveler.listFFAccounts = getFFAccounts(arguments.userID)>
+			<cfset local.Traveler.listFFAccounts = getFFAccounts(arguments.userID)>
 			<!--- Add carbon copy email addresses --->
-			<cfset Traveler.CCEmail = getCCEmails(arguments.userID)>
+			<cfset local.Traveler.CCEmail = getCCEmails(arguments.userID)>
 			<!--- Get their Value_ID --->
-			<cfset Traveler.Value_ID = getValueID(arguments.userID, acctID)><!--- session.searches[SearchID].ValueID --->
+			<cfset local.Traveler.Value_ID = getValueID(arguments.userID, acctID)><!--- session.searches[SearchID].ValueID --->
 			<!--- Get FOPs --->
-			<cfset Traveler.listFOPs = getAllFOPs(arguments.userID, Traveler.Value_ID, acctID)>
+			<cfset local.Traveler.listFOPs = getAllFOPs(arguments.userID, local.Traveler.Value_ID, acctID)>
 			<!--- Populate all possible OUs --->
-			<cfset Traveler.OUs = getOUs(arguments.userID, Traveler.Value_ID, acctID)>
+			<cfset local.Traveler.OUs = getOUs(arguments.userID, local.Traveler.Value_ID, acctID)>
 			<!--- Mark appropriate type --->
-			<cfset Traveler.Type = (arguments.userID NEQ 0 ? 'Profiled' : 'Guest')>
+			<cfset local.Traveler.Type = (arguments.userID NEQ 0 ? 'Profiled' : 'Guest')>
 			<!---Add profile BAR--->
-			<cfset Traveler.BAR = getBAR(acctID, arguments.userID, Traveler.Value_ID, 0)><!---todo account.CBA_AllDepts--->
+			<cfset local.Traveler.BAR = getBAR(acctID, arguments.userID, local.Traveler.Value_ID, 0)><!---todo account.CBA_AllDepts--->
 			<!---Add profile PAR--->
-			<cfset Traveler.PAR = getPAR(arguments.userID)>
+			<cfset local.Traveler.PAR = getPAR(arguments.userID)>
 			<!--- Save the data in the profile --->
-			<cfset session.searches[SearchID].stTravelers[nTraveler] = Traveler>
-			<cfset session.OrigTraveler[nTraveler] = structCopy(session.searches[SearchID].stTravelers[nTraveler])>
+			<cfset session.searches[SearchID].stTravelers[arguments.nTraveler] = local.Traveler>
+			<cfset session.OrigTraveler[arguments.nTraveler] = structCopy(session.searches[SearchID].stTravelers[arguments.nTraveler])>
 		</cfif>
 
 		<cfset local.qAllOUs = getAllOUs(Traveler.Value_ID, acctID)>
@@ -62,13 +61,13 @@ getTraveler
 
 		<cfset local.stTraveler = {}>
 		<cfif StructKeyExists(session.searches[arguments.searchID].stTravelers, arguments.nTraveler)>
-			<cfset stTraveler = session.searches[arguments.searchID].stTravelers[arguments.nTraveler]>
+			<cfset local.stTraveler = session.searches[arguments.searchID].stTravelers[arguments.nTraveler]>
 		</cfif>
 
-		<cfreturn UCase(serializeJSON(stTraveler))>
+		<cfreturn UCase(serializeJSON(local.stTraveler))>
 	</cffunction>
 
-<!--- 
+<!---
 getUser
 --->
 	<cffunction name="getGeneralInfo" output="false">
@@ -91,27 +90,27 @@ getUser
 		AND Primary_Acct = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 		</cfquery>
 
-		<cfloop list="#qUser.columnList#" index="local.sColumn">
-			<cfset Traveler[sColumn] = qUser[sColumn]>
+		<cfloop list="#local.qUser.columnList#" index="local.sColumn">
+			<cfset local.traveler[local.sColumn] = local.qUser[local.sColumn]>
 		</cfloop>
-		<cfif Traveler.NoMiddleName EQ ''>
-			<cfset Traveler.NoMiddleName = 0>
+		<cfif local.traveler.NoMiddleName EQ ''>
+			<cfset local.traveler.NoMiddleName = 0>
 		</cfif>
-		<cfset Traveler.BirthdateYear = (isDate(Traveler.Birthdate) ? Year(Traveler.Birthdate) : '')>
-		<cfset Traveler.Errors = {}>
-		<cfset Traveler.Seats = {}>
-		<cfset Traveler.AirFOP.AirFOP_ID = ''>
-		<cfset Traveler.AirFOP.Errors = {}>
-		<cfset Traveler.Special_Requests = ''>
-		<cfset Traveler.Service_Requests = ''>
-		<cfset Traveler.Air_ReasonCode = ''>
-		<cfset Traveler.LostSavings = ''>
+		<cfset local.traveler.BirthdateYear = (isDate(local.traveler.Birthdate) ? Year(local.traveler.Birthdate) : '')>
+		<cfset local.traveler.Errors = {}>
+		<cfset local.traveler.Seats = {}>
+		<cfset local.traveler.AirFOP.AirFOP_ID = ''>
+		<cfset local.traveler.AirFOP.Errors = {}>
+		<cfset local.traveler.Special_Requests = ''>
+		<cfset local.traveler.Service_Requests = ''>
+		<cfset local.traveler.Air_ReasonCode = ''>
+		<cfset local.traveler.LostSavings = ''>
 
-		<cfreturn Traveler />
+		<cfreturn local.traveler />
 	</cffunction>
 
 
-<!--- 
+<!---
 getCCEmails
 --->
 	<cffunction name="getCCEmails" output="false">
@@ -126,7 +125,7 @@ getCCEmails
 		<cfreturn ValueList(qCCEmails.CCEmail_Address, ';') />
 	</cffunction>
 
-<!--- 
+<!---
 getValueID
 --->
 	<cffunction name="getValueID" output="false">
@@ -146,8 +145,8 @@ getValueID
 
 		<cfreturn qSTOOU.Value_ID />
 	</cffunction>
-	
-<!--- 
+
+<!---
 getOUs
 --->
 	<cffunction name="getOUs" output="false">
@@ -178,24 +177,24 @@ getOUs
 		</cfquery>
 
 		<cfset local.OUs = StructNew('linked')>
-		<cfloop query="qAllOUs">
-			<cfset OUs[qAllOUs.OU_Type&qAllOUs.OU_Position].OU_Name = OU_Name>
-			<cfset OUs[qAllOUs.OU_Type&qAllOUs.OU_Position].Value_ID = Value_ID>
-			<cfset OUs[qAllOUs.OU_Type&qAllOUs.OU_Position].Value_Display = Value_Display>
-			<cfset OUs[qAllOUs.OU_Type&qAllOUs.OU_Position].Value_Report = Value_Report>
+		<cfloop query="local.qAllOUs">
+			<cfset local.OUs[local.qAllOUs.OU_Type&local.qAllOUs.OU_Position].OU_Name = OU_Name>
+			<cfset local.OUs[local.qAllOUs.OU_Type&local.qAllOUs.OU_Position].Value_ID = Value_ID>
+			<cfset local.OUs[local.qAllOUs.OU_Type&local.qAllOUs.OU_Position].Value_Display = Value_Display>
+			<cfset local.OUs[local.qAllOUs.OU_Type&local.qAllOUs.OU_Position].Value_Report = Value_Report>
 		</cfloop>
 
-		<cfreturn OUs />
+		<cfreturn local.OUs />
 	</cffunction>
 
-<!--- 
+<!---
 getAllFOPs
 --->
 	<cffunction name="getAllFOPs" output="false">
 		<cfargument name="userID">
 		<cfargument name="valueID">
 		<cfargument name="acctID">
-		
+
 		<cfquery name="local.qFOPs" datasource="Corporate_Production">
 		<!--- Profile credit cards --->
 		SELECT FOP_ID, 0 AS BTA_ID, 'Profile' AS CC_UseType, FOP_Code, Acct_Num, Expire_Date, CASE WHEN Air_Use = 1 THEN 'O' ELSE 'N' END AS Air_Use, CASE WHEN Hotel_Use = 1 THEN 'O' ELSE 'N' END AS Hotel_Use, CASE WHEN BookIt_Use = 1 THEN 'O' ELSE 'N' END AS BookIt_Use,
@@ -239,7 +238,7 @@ getAllFOPs
 		<cfset local.hotelPerCard = 0>
 		<cfset local.bookitPerCard = 0>
 		<cfset local.count = 0>
-		<!--- 
+		<!---
 		Air/car/hotel status key:
 			N = Cannot be used
 			R = Travelers are REQUIRED to use this card
@@ -247,107 +246,107 @@ getAllFOPs
 			O = Travelers may use this card OR their personal card in their profile
 		--->
 		<!--- Set general strings as well as exclusive defaults --->
-		<cfloop query="qFOPs">
-			<cfset Uses = []>
-			<cfif qFOPs.Air_Use EQ 'R'>
-				<cfset arrayAppend(Uses, 'A')>
-				<cfset airCard = 1>
+		<cfloop query="local.qFOPs">
+			<cfset local.Uses = []>
+			<cfif local.qFOPs.Air_Use EQ 'R'>
+				<cfset arrayAppend(local.Uses, 'A')>
+				<cfset local.airCard = 1>
 			</cfif>
-			<cfif qFOPs.Hotel_Use EQ 'R'>
-				<cfset arrayAppend(Uses, 'H')>
-				<cfset hotelCard = 1>
+			<cfif local.qFOPs.Hotel_Use EQ 'R'>
+				<cfset arrayAppend(local.Uses, 'H')>
+				<cfset local.hotelCard = 1>
 			</cfif>
-			<cfif qFOPs.BookIt_Use EQ 'R'>
-				<cfset arrayAppend(Uses, 'B')>
-				<cfset bookitCard = 1>
+			<cfif local.qFOPs.BookIt_Use EQ 'R'>
+				<cfset arrayAppend(local.Uses, 'B')>
+				<cfset local.bookitCard = 1>
 			</cfif>
-			<cfif NOT arrayIsEmpty(Uses)>
-				<cfset count++ />
-				<cfset FOPs[count].FOP_ID = qFOPs.FOP_ID>
-				<cfset FOPs[count].BTA_ID = qFOPs.BTA_ID>
-				<cfset FOPs[count].CC_UseType = qFOPs.CC_UseType>
-				<cfset FOPs[count].Uses = qFOPs.Uses>
-				<cfset FOPs[count].CC_Number = 0>
-				<cfset FOPs[count].Billing_Name = qFOPs.Billing_Name>
-				<cfset FOPs[count].Billing_Address = qFOPs.Billing_Address>
-				<cfset FOPs[count].Billing_City = qFOPs.Billing_City>
-				<cfset FOPs[count].Billing_State = qFOPs.Billing_State>
-				<cfset FOPs[count].Billing_Zip = qFOPs.Billing_Zip>
-				<cfset FOPs[count].CC_Exclude = 1>
+			<cfif NOT arrayIsEmpty(local.Uses)>
+				<cfset local.count++ />
+				<cfset local.FOPs[local.count].FOP_ID = local.qFOPs.FOP_ID>
+				<cfset local.FOPs[local.count].BTA_ID = local.qFOPs.BTA_ID>
+				<cfset local.FOPs[local.count].CC_UseType = local.qFOPs.CC_UseType>
+				<cfset local.FOPs[local.count].Uses = local.qFOPs.Uses>
+				<cfset local.FOPs[local.count].CC_Number = 0>
+				<cfset local.FOPs[local.count].Billing_Name = local.qFOPs.Billing_Name>
+				<cfset local.FOPs[local.count].Billing_Address = local.qFOPs.Billing_Address>
+				<cfset local.FOPs[local.count].Billing_City = local.qFOPs.Billing_City>
+				<cfset local.FOPs[local.count].Billing_State = local.qFOPs.Billing_State>
+				<cfset local.FOPs[local.count].Billing_Zip = local.qFOPs.Billing_Zip>
+				<cfset local.FOPs[local.count].CC_Exclude = 1>
 			</cfif>
 		</cfloop>
 		<!--- If no exclusive defaults set, check for personal level uses --->
-		<cfif NOT airCard OR NOT hotelCard OR NOT bookitCard>
-			<cfloop query="qFOPs">
-				<cfif qFOPs.CC_UseType EQ 'Per'>
-					<cfset Uses = []>
-					<cfif qFOPs.Air_Use NEQ 'N' AND NOT airCard>
-						<cfset arrayAppend(Uses, 'A')>
-						<cfset airPerCard = 1>
+		<cfif NOT local.airCard OR NOT local.hotelCard OR NOT local.bookitCard>
+			<cfloop query="local.qFOPs">
+				<cfif local.qFOPs.CC_UseType EQ 'Per'>
+					<cfset local.Uses = []>
+					<cfif local.qFOPs.Air_Use NEQ 'N' AND NOT local.airCard>
+						<cfset arrayAppend(local.Uses, 'A')>
+						<cfset local.airPerCard = 1>
 					</cfif>
-					<cfif qFOPs.Hotel_Use NEQ 'N' AND NOT hotelCard>
-						<cfset arrayAppend(Uses, 'H')>
-						<cfset hotelPerCard = 1>
+					<cfif local.qFOPs.Hotel_Use NEQ 'N' AND NOT local.hotelCard>
+						<cfset arrayAppend(local.Uses, 'H')>
+						<cfset local.hotelPerCard = 1>
 					</cfif>
-					<cfif qFOPs.BookIt_Use NEQ 'N' AND NOT bookitCard>
-						<cfset arrayAppend(Uses, 'B')>
-						<cfset bookitPerCard = 1>
+					<cfif local.qFOPs.BookIt_Use NEQ 'N' AND NOT local.bookitCard>
+						<cfset arrayAppend(local.Uses, 'B')>
+						<cfset local.bookitPerCard = 1>
 					</cfif>
-					<cfif NOT arrayIsEmpty(Uses)>
-						<cfset Card_Name = CCName&' - Ending in '&Right(CCNum, 4)>
-						<cfset count++ />
-						<cfset FOPs[count].FOP_ID = qFOPs.FOP_ID>
-						<cfset FOPs[count].BTA_ID = qFOPs.BTA_ID>
-						<cfset FOPs[count].CC_UseType = qFOPs.CC_UseType>
-						<cfset FOPs[count].Uses = Uses>
-						<cfset FOPs[count].CC_Number = 0>
-						<cfset FOPs[count].Billing_Name = qFOPs.Billing_Name>
-						<cfset FOPs[count].Billing_Address = qFOPs.Billing_Address>
-						<cfset FOPs[count].Billing_City = qFOPs.Billing_City>
-						<cfset FOPs[count].Billing_State = qFOPs.Billing_State>
-						<cfset FOPs[count].Billing_Zip = qFOPs.Billing_Zip>
-						<cfset FOPs[count].CC_Exclude = 0>
+					<cfif NOT arrayIsEmpty(local.Uses)>
+						<cfset local.Card_Name = local.CCName&' - Ending in '&Right(local.CCNum, 4)>
+						<cfset local.count++ />
+						<cfset local.FOPs[count].FOP_ID = local.qFOPs.FOP_ID>
+						<cfset local.FOPs[count].BTA_ID = local.qFOPs.BTA_ID>
+						<cfset local.FOPs[count].CC_UseType = local.qFOPs.CC_UseType>
+						<cfset local.FOPs[count].Uses = local.Uses>
+						<cfset local.FOPs[count].CC_Number = 0>
+						<cfset local.FOPs[count].Billing_Name = local.qFOPs.Billing_Name>
+						<cfset local.FOPs[count].Billing_Address = local.qFOPs.Billing_Address>
+						<cfset local.FOPs[count].Billing_City = local.qFOPs.Billing_City>
+						<cfset local.FOPs[count].Billing_State = local.qFOPs.Billing_State>
+						<cfset local.FOPs[count].Billing_Zip = local.qFOPs.Billing_Zip>
+						<cfset local.FOPs[count].CC_Exclude = 0>
 					</cfif>
 				</cfif>
 			</cfloop>
 			<!--- If no personal defaults set, check for not exclusive cards --->
-			<cfloop query="qFOPs">
-				<cfif qFOPs.CC_UseType NEQ 'Per'>
-					<cfset Uses = []>
-					<cfif airCard EQ 0
-					AND ((qFOPs.Air_Use EQ 'E' AND airPerCard EQ 0)
-						OR (qFOPs.Air_Use NEQ 'E' AND qFOPs.Air_Use NEQ 'N'))>
-						<cfset ArrayAppend(Uses, 'A')>
+			<cfloop query="local.qFOPs">
+				<cfif local.qFOPs.CC_UseType NEQ 'Per'>
+					<cfset local.Uses = []>
+					<cfif local.airCard EQ 0
+					AND ((local.qFOPs.Air_Use EQ 'E' AND local.airPerCard EQ 0)
+						OR (local.qFOPs.Air_Use NEQ 'E' AND local.qFOPs.Air_Use NEQ 'N'))>
+						<cfset ArrayAppend(local.Uses, 'A')>
 					</cfif>
-					<cfif hotelCard EQ 0
-					AND ((qFOPs.Hotel_Use EQ 'E' AND hotelPerCard EQ 0)
-						OR (qFOPs.Hotel_Use NEQ 'E' AND qFOPs.Hotel_Use NEQ 'N'))>
-						<cfset ArrayAppend(Uses, 'H')>
+					<cfif local.hotelCard EQ 0
+					AND ((local.qFOPs.Hotel_Use EQ 'E' AND local.hotelPerCard EQ 0)
+						OR (local.qFOPs.Hotel_Use NEQ 'E' AND local.qFOPs.Hotel_Use NEQ 'N'))>
+						<cfset ArrayAppend(local.Uses, 'H')>
 					</cfif>
-					<cfif bookitCard EQ 0
-					AND ((qFOPs.BookIt_Use EQ 'E' AND bookitPerCard EQ 0)
-						OR (qFOPs.BookIt_Use NEQ 'E' AND qFOPs.BookIt_Use NEQ 'N'))>
-						<cfset ArrayAppend(Uses, 'B')>
+					<cfif local.bookitCard EQ 0
+					AND ((local.qFOPs.BookIt_Use EQ 'E' AND local.bookitPerCard EQ 0)
+						OR (local.qFOPs.BookIt_Use NEQ 'E' AND local.qFOPs.BookIt_Use NEQ 'N'))>
+						<cfset ArrayAppend(local.Uses, 'B')>
 					</cfif>
-					<cfif NOT ArrayIsEmpty(Uses)>
-						<cfset count++ />
-						<cfset FOPs[count].FOP_ID = qFOPs.FOP_ID>
-						<cfset FOPs[count].BTA_ID = qFOPs.BTA_ID>
-						<cfset FOPs[count].CC_UseType = qFOPs.CC_UseType>
-						<cfset FOPs[count].Uses = Uses>
-						<cfset FOPs[count].CC_Number = 0>
-						<cfset FOPs[count].Billing_Name = qFOPs.Billing_Name>
-						<cfset FOPs[count].Billing_Address = qFOPs.Billing_Address>
-						<cfset FOPs[count].Billing_City = qFOPs.Billing_City>
-						<cfset FOPs[count].Billing_State = qFOPs.Billing_State>
-						<cfset FOPs[count].Billing_Zip = qFOPs.Billing_Zip>
-						<cfset FOPs[count].CC_Exclude = 0>
+					<cfif NOT ArrayIsEmpty(local.Uses)>
+						<cfset local.count++ />
+						<cfset local.FOPs[local.count].FOP_ID = local.qFOPs.FOP_ID>
+						<cfset local.FOPs[local.count].BTA_ID = local.qFOPs.BTA_ID>
+						<cfset local.FOPs[local.count].CC_UseType = local.qFOPs.CC_UseType>
+						<cfset local.FOPs[local.count].Uses = local.Uses>
+						<cfset local.FOPs[local.count].CC_Number = 0>
+						<cfset local.FOPs[local.count].Billing_Name = local.qFOPs.Billing_Name>
+						<cfset local.FOPs[local.count].Billing_Address = local.qFOPs.Billing_Address>
+						<cfset local.FOPs[local.count].Billing_City = local.qFOPs.Billing_City>
+						<cfset local.FOPs[local.count].Billing_State = local.qFOPs.Billing_State>
+						<cfset local.FOPs[local.count].Billing_Zip = local.qFOPs.Billing_Zip>
+						<cfset local.FOPs[local.count].CC_Exclude = 0>
 					</cfif>
 				</cfif>
 			</cfloop>
 		</cfif>
-		
-		<cfreturn FOPs />
+
+		<cfreturn local.FOPs />
 	</cffunction>
 
 <!---
@@ -356,8 +355,8 @@ getOUs
 	<cffunction name="getAllOUs" output="false">
 		<cfargument name="valueID">
 		<cfargument name="acctID">
-		
-		<cfquery name="local.qAllOUs" datasource="Corporate_Production" cachedwithin="#createTime(24,0,0)#">
+
+		<cfquery name="local.qAllOUs" datasource="Corporate_Production" cachedwithin="#createTime(0,24,0,0)#">
 		SELECT OUs.OU_ID, OU_Name, OU_Capture, OU_Position, OU_Default, OU_Required, OU_Freeform, OU_Pattern, OU_Max, OU_Min, OU_Values.Value_ID, OU_Type, OU_STO, Value_Display, Value_Report
 		FROM OUs LEFT OUTER JOIN OU_Values ON OUs.OU_ID = OU_Values.OU_ID
 		WHERE Acct_ID = <cfqueryparam value="#arguments.acctID#" cfsqltype="cf_sql_integer">
@@ -372,8 +371,8 @@ getOUs
 		</cfif>
 		ORDER BY OU_Order, OUs.OU_ID, Value_Display
 		</cfquery>
-		
-		<cfreturn qAllOUs>
+
+		<cfreturn local.qAllOUs>
 	</cffunction>
 
 <!---
@@ -384,11 +383,11 @@ setTravelerForm
 		<cfargument name="qAllOUs">
 		<cfargument name="qAllTravelers">
 		<cfargument name="bCollapse">
-		
+
 		<cfset local.bFormShown = false>
 		<cfset local.bCollapse = arguments.bCollapse>
 		<cfif Traveler.User_ID EQ 0>
-			<cfset bCollapse = false>
+			<cfset local.bCollapse = false>
 		</cfif>
 		<cfsavecontent variable="local.sForm">
 			<cfoutput>
@@ -415,9 +414,9 @@ setTravelerForm
 				AND Traveler.First_Name NEQ ''
 				AND Traveler.Last_Name NEQ ''
 				AND (Traveler.Middle_Name NEQ '' OR Traveler.NoMiddleName)>
-					<cfset bNameFilledOutProperly = true>
+					<cfset local.bNameFilledOutProperly = true>
 				</cfif>
-				<cfif NOT bNameFilledOutProperly>
+				<cfif NOT local.bNameFilledOutProperly>
 					<tr height="23">
 						<td>
 							<label for="First_Name" class="#(structKeyExists(Traveler.Errors, 'First_Name') ? 'error' : '')#">First Name</label>
@@ -538,14 +537,14 @@ setTravelerForm
 						<cfelse>
 							<select name="Month" id="Month">
 							<option value=""></option>
-							<cfloop from="1" to="12" index="i">
-								<option value="#i#" <cfif IsDate(Traveler.Birthdate) AND Month(Traveler.Birthdate) EQ i>selected</cfif>>#MonthAsString(i)#</option>
+							<cfloop from="1" to="12" index="local.i">
+								<option value="#local.i#" <cfif IsDate(Traveler.Birthdate) AND Month(Traveler.Birthdate) EQ local.i>selected</cfif>>#MonthAsString(local.i)#</option>
 							</cfloop>
 							</select>
 							<select name="Day">
 							<option value=""></option>
-							<cfloop from="1" to="31" index="i">
-								<option value="#i#" <cfif IsDate(Traveler.Birthdate) AND Day(Traveler.Birthdate) EQ i>selected</cfif>>#i#</option>
+							<cfloop from="1" to="31" index="local.i">
+								<option value="#local.i#" <cfif IsDate(Traveler.Birthdate) AND Day(Traveler.Birthdate) EQ local.i>selected</cfif>>#local.i#</option>
 							</cfloop>
 							</select>
 							<select name="Year">
@@ -553,8 +552,8 @@ setTravelerForm
 							<cfif IsDate(Traveler.Birthdate) AND Traveler.User_ID NEQ 0>
 								<option value="****" selected>****</option>
 							</cfif>
-							<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
-								<option value="#i#" <cfif IsDate(Traveler.Birthdate) AND Traveler.User_ID EQ 0 AND Year(Traveler.Birthdate) EQ i>selected</cfif>>#i#</option>
+							<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="local.i">
+								<option value="#local.i#" <cfif IsDate(Traveler.Birthdate) AND Traveler.User_ID EQ 0 AND Year(Traveler.Birthdate) EQ i>selected</cfif>>#local.i#</option>
 							</cfloop>
 							</select>
 							<cfset local.bFormShown = true>
