@@ -571,4 +571,44 @@
 		<cfreturn aPreferredSort />
 	</cffunction>
 
+
+<!---
+Throw away code - STM-2254
+4:54 PM Friday, October 04, 2013 - Jim Priest - jpriest@shortstravel.com
+ --->
+
+
+
+
+	<cffunction name="isCityCode" output="false" hint="I take a code and check if it's a city code or a normal airport code.">
+		<cfargument name="CityCode" required="true" />
+		<cfset local.cityCodeList = "BER,BJS,BUE,BUH,CHI,DTT,LON,MIL,MOW,NYC,OSA,PAR,ROM,SAO,SEL,SPK,STO,TYO,WAS,YEA,YMQ,YTO">
+		<cfreturn listFindNoCase(local.cityCodeList, arguments.cityCode)>
+	</cffunction>
+
+	<cffunction name="getCityCodeCities" output="false" hint="This is throw away code to check bad flights for city codes and to return a list of associated airport codes that should not be filtered.">
+		<cfargument name="CityCode" required="true" />
+
+		<cfset local.cityCode = {}>
+		<cfset local.cityCodeList = "BER|TXL,SXF,THF;BJS|PEK,NAY;BUE|EZE,AEP;BUH|OTP,BBU;CHI|ORD,MDW;DTT|DTT,DTW,DET;LON|LGW,LHR;MIL|MXP,LIN;MOW|SVO,DME,VKO,PUW,BKA;NYC|JFK,EWR,LGA;OSA|KIX,ITM;PAR|CDG, ORY;ROM|FCO,CIA;SAO|GRU,CGH,VCP;SEL|ICN,GMP;SPK|CTS,OKD;STO|ARN,NYO,BMA,VST;TYO|NRT,HND;WAS|IAD,DCA,BWI;YEA|YEG,YXD;YMQ|YUL,YMY,YMX;YTO|YYZ,YTZ">
+
+		<cfloop list="#local.cityCodeList#" delimiters=";" index="local.cityCodeListIndex" item="local.cityCodeListItem">
+			<cfset local.cityCode[ListFirst(local.cityCodeListItem, '|')] = []>
+			<cfset local.TempCityList = ListLast(local.cityCodeListItem, '|')>
+			<cfloop list="#local.TempCityList#" index="local.tempCityListIndex" item="local.tempCityListItem">
+					<cfset local.cityCode[ListFirst(local.cityCodeListItem, '|')][local.tempCityListIndex] = local.tempCityListItem>
+			</cfloop>
+		</cfloop>
+
+			<!--- need to return airport code(s) --->
+
+	</cffunction>
+
+
+
+
+
+
+
+
 </cfcomponent>
