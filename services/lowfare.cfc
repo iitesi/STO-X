@@ -65,7 +65,8 @@
 		<cfif arguments.Filter.getAirlines() EQ ''>
 			<cfset local.airlines = ['X']>
 		<cfelse>
-			<cfset local.airlines = ['X',arguments.Filter.getAirlines()]>
+			<cfset local.airlines = [arguments.Filter.getAirlines()]>
+			<!--- <cfset local.airlines = ['X',arguments.Filter.getAirlines()]> --->
 		</cfif>
 
 		<cfif arguments.Filter.getClassOfService() EQ ''>
