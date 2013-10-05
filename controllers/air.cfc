@@ -231,7 +231,7 @@
 			4:24 PM Friday, June 28, 2013 - Jim Priest - jpriest@shortstravel.com --->
 
 		<!--- run on first search --->
-			<cfif NOT structKeyExists(session, "filterStatus")>
+			<cfif NOT structKeyExists(session, "filterStatus") OR NOT structKeyExists(session.filterStatus, "searchID")>
 				<cfset session.filterStatus = {}>
 				<cfset session.filterStatus.searchID = arguments.rc.searchID>
 				<cfset session.filterStatus.airlines = 0>
