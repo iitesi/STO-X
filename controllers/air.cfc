@@ -231,24 +231,16 @@
 			4:24 PM Friday, June 28, 2013 - Jim Priest - jpriest@shortstravel.com --->
 
 		<!--- run on first search --->
-			<cfif NOT structKeyExists(session, "filterStatus")>
-				<cfset session.filterStatus = {}>
-				<cfset session.filterStatus.searchID = arguments.rc.searchID>
-				<cfset session.filterStatus.airlines = 0>
-				<cfset session.filterStatus.refundableSearch = 0>
-				<cfset session.filterStatus.cabinSearch = {}>
-				<cfset session.filterStatus.cabinSearch.C = 0>
-				<cfset session.filterStatus.cabinSearch.F = 0>
-			</cfif>
-
-			<!--- reset filterStatus if new search is created --->
-			<cfif arguments.rc.searchID NEQ session.filterStatus.searchID>
-				<cfset session.filterStatus.searchId = arguments.rc.searchID>
-				<cfset session.filterStatus.airlines = 0>
-				<cfset session.filterStatus.refundableSearch = 0>
-				<cfset session.filterStatus.cabinSearch = {}>
-				<cfset session.filterStatus.cabinSearch.C = 0>
-				<cfset session.filterStatus.cabinSearch.F = 0>
+		<!--- reset filterStatus if new search is created --->
+		<cfif NOT structKeyExists(session, "filterStatus")
+			OR arguments.rc.searchID NEQ session.filterStatus.searchID>
+			<cfset session.filterStatus = {}>
+			<cfset session.filterStatus.searchID = arguments.rc.searchID>
+			<cfset session.filterStatus.airlines = 0>
+			<cfset session.filterStatus.refundableSearch = 0>
+			<cfset session.filterStatus.cabinSearch = {}>
+			<cfset session.filterStatus.cabinSearch.C = 0>
+			<cfset session.filterStatus.cabinSearch.F = 0>
 		</cfif>
 
 		<!--- update filterStatus if 'find more' fares/class/airlines is clicked in filter --->

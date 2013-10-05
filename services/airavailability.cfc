@@ -135,7 +135,6 @@
 					<cfset attributes.stSegmentKeyLookUp = parseKeyLookUp(attributes.stSegmentKeys)>
 					<!--- Parse the trips. --->
 					<cfset attributes.stAvailTrips = parseConnections(attributes.aResponse, attributes.stSegments, attributes.stSegmentKeys, attributes.stSegmentKeyLookUp, arguments.filter, arguments.group)>
-
 					<!--- Add group node --->
 					<cfset attributes.stAvailTrips	= getAirParse().addGroups(attributes.stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
@@ -470,7 +469,7 @@
 		<cfset local.stTrips = {}>
 		<cfset local.nCount = 0>
 		<cfset local.nSegNum = 1>
-		<cfset local.nMaxCount = ArrayLen(StructKeyArray(stSegmentKeys))>
+		<cfset local.nMaxCount = arrayLen(structKeyArray(stSegmentKeys))>
 		<cfloop collection="#stSegmentIndex#" item="local.nIndex">
 			<cfset nCount = nIndex>
 			<cfset nSegNum = 1>
@@ -511,7 +510,6 @@
 			<cfset local.original.departure = Left(arguments.filter.getLegsForTrip()[arguments.group+1], 3)>
 			<cfset local.original.arrival = Mid(arguments.filter.getLegsForTrip()[arguments.group+1], 7, 3)>
 
-
 			<!--- now check those first to see if they are a city code, if so get the related airport codes --->
 			<cfset local.toCheck.departure = listToArray(local.original.departure)>
 			<cfif IsCityCode(local.original.departure)>
@@ -527,8 +525,16 @@
 
 			<!--- loop over stTrips and compare chosen origin/destination against the airport codes returned from the uAPI --->
 			<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
-				<cfif NOT arrayFindNoCase(local.toCheck.arrival, local.tripItem.segments[1].destination)
-						OR NOT arrayFindNoCase(local.toCheck.departure, local.tripItem.segments[1].origin)>
+				<cfset local.origin = ''>
+				<cfset local.destination = ''>
+				<cfloop collection="#local.tripItem.segments#" index="local.segmentIndex" item="local.segment">
+					<cfif origin EQ ''>
+						<cfset origin = segment.origin>
+					</cfif>
+					<cfset destination = segment.destination>
+				</cfloop>
+				<cfif NOT arrayFindNoCase(local.toCheck.arrival, destination)
+						OR NOT arrayFindNoCase(local.toCheck.departure, origin)>
 					<cfset local.badList = listAppend(local.badList, local.tripIndex)>
 				</cfif>
 			</cfloop>

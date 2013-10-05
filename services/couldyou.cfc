@@ -129,18 +129,18 @@ doCouldYou
 											<cfset local.sMessage		= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference, CDNumbers)>
 											<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
 											<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
-											<cfset local.stCars     = car.parseCars(aResponse, 1)>
-											<cfif structKeyExists(stCars, sCarType) AND structKeyExists(stCars[sCarType], sCarChain)>
-												<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4)>
+											<cfset local.stCarsCouldYou     = car.parseCars(aResponse, 1)>
+											<cfif structKeyExists(stCarsCouldYou, sCarType) AND structKeyExists(stCarsCouldYou[sCarType], sCarChain)>
+												<cfset thread.CarTotal = Mid(stCarsCouldYou[sCarType][sCarChain].EstimatedTotalAmount,4)>
 											</cfif>
 										</cfif>
 										<cfif thread.CarTotal EQ 0>
 											<cfset local.sMessage		= car.prepareSoapHeader(arguments.Filter, arguments.Account, arguments.Policy, DateDifference)>
 											<cfset local.sResponse 	= car.getUAPI().callUAPI('VehicleService', sMessage, SearchID)>
 											<cfset local.aResponse 	= car.getUAPI().formatUAPIRsp(sResponse)>
-											<cfset local.stCars     = car.parseCars(aResponse, 0)>
-											<cfif structKeyExists(stCars, sCarType) AND structKeyExists(stCars[sCarType], sCarChain)>
-												<cfset thread.CarTotal = Mid(stCars[sCarType][sCarChain].EstimatedTotalAmount,4) />
+											<cfset local.stCarsCouldYou     = car.parseCars(aResponse, 0)>
+											<cfif structKeyExists(stCarsCouldYou, sCarType) AND structKeyExists(stCarsCouldYou[sCarType], sCarChain)>
+												<cfset thread.CarTotal = Mid(stCarsCouldYou[sCarType][sCarChain].EstimatedTotalAmount,4) />
 											</cfif>
 										</cfif>
 									</cfif>

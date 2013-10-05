@@ -169,9 +169,6 @@
 	<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/"><SOAP:Body><SOAP:Fault><faultcode>Server.Business</faultcode><faultstring>UNABLE TO FARE QUOTE</faultstring><detail><common_v19_0:ErrorInfo xmlns:common_v19_0="http://www.travelport.com/schema/common_v19_0"><common_v19_0:Code>3037</common_v19_0:Code><common_v19_0:Service>AIRSVC</common_v19_0:Service><common_v19_0:Type>Business</common_v19_0:Type><common_v19_0:Description>No availability on chosen flights.</common_v19_0:Description><common_v19_0:TransactionId>36A045550A07611150AD782E48FF4450</common_v19_0:TransactionId></common_v19_0:ErrorInfo></detail></SOAP:Fault></SOAP:Body></SOAP:Envelope>
 </cfsavecontent>
 --->
-
-
-
 				<!--- Format the UAPI response. --->
 				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
 				<!--- If the UAPI gives an error then don't continue and send an error to BugLog instead. --->
@@ -181,7 +178,6 @@
 					<!--- Parse the trips. --->
 					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
 																		, stSegments = attributes.stSegments )>
-
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
@@ -189,10 +185,10 @@
 					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
 
 					<!--- Remove BlackListed Carriers --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers( stTrips = attributes.stTrips
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers( trips = attributes.stTrips
 																						, blackListedCarriers = arguments.blackListedCarrierPairing )>
 
-					<!--- Remove BlackListed Carriers --->
+					<!--- Remove Private Fares --->
 					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
