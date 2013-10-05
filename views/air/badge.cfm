@@ -90,7 +90,7 @@
 					<td>
 						<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
 					</td>
-					<td>
+					<td width="50">
 						-
 					</td>
 					<td>
@@ -98,17 +98,17 @@
 					</td>
 				</tr>
 				<cfset nCnt = 0>
+				<cfset segmentCount = arrayLen(structKeyArray(stGroup.Segments))>
 				<cfloop collection="#stGroup.Segments#" item="nSegment" >
 					<cfset nCnt++>
 					<cfset stSegment = stGroup.Segments[nSegment]>
 					<cfif NOT listFind(carrierList, stSegment.Carrier)>
 						<cfset carrierList = ListAppend(carrierList, stSegment.Carrier)>
 					</cfif>
-
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#

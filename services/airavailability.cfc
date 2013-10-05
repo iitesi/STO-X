@@ -91,8 +91,10 @@
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#">
+
  				<cfset attributes.sNextRef = 'ROUNDONE'>
 				<cfset attributes.nCount = 0>
+
 				<cfloop condition="attributes.sNextRef NEQ ''">
 					<cfset attributes.nCount++>
 					<!--- Put together the SOAP message. --->
@@ -132,7 +134,8 @@
 					<!--- Create a look up list opposite of the stSegmentKeys --->
 					<cfset attributes.stSegmentKeyLookUp = parseKeyLookUp(attributes.stSegmentKeys)>
 					<!--- Parse the trips. --->
-					<cfset attributes.stAvailTrips = parseConnections(attributes.aResponse, attributes.stSegments, attributes.stSegmentKeys, attributes.stSegmentKeyLookUp)>
+					<cfset attributes.stAvailTrips = parseConnections(attributes.aResponse, attributes.stSegments, attributes.stSegmentKeys, attributes.stSegmentKeyLookUp, arguments.filter, arguments.group)>
+
 					<!--- Add group node --->
 					<cfset attributes.stAvailTrips	= getAirParse().addGroups(attributes.stAvailTrips, 'Avail')>
 					<!--- Mark preferred carriers. --->
@@ -434,6 +437,8 @@
 		<cfargument name="stSegments">
 		<cfargument name="stSegmentKeys">
 		<cfargument name="stSegmentKeyLookUp">
+		<cfargument name="filter">
+		<cfargument name="group">
 
 		<!--- Create a structure to hold FIRST connection points --->
 		<cfset local.stSegmentIndex = {}>
@@ -490,13 +495,54 @@
 				</cfloop>
 			</cfloop>
 			<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
-			<cfset stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
-			<cfset stTrips[nHashNumeric].Class = 'X'>
-			<cfset stTrips[nHashNumeric].Ref = 'X'>
+			<cfset local.stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
+			<cfset local.stTrips[nHashNumeric].Class = 'X'>
+			<cfset local.stTrips[nHashNumeric].Ref = 'X'>
 		</cfloop>
 
-		<cfreturn stTrips />
+		<!--- STM-2254 Hack
+		5:31 PM Friday, October 04, 2013 - Jim Priest - jpriest@shortstravel.com
+		junk code to remove flights not matching original arrival/departure
+
+		Also see below for methods relating to city codes included in this hack
+		--->
+
+			<!--- get selected origin/destination from the filter --->
+			<cfset local.original.departure = Left(arguments.filter.getLegsForTrip()[arguments.group+1], 3)>
+			<cfset local.original.arrival = Mid(arguments.filter.getLegsForTrip()[arguments.group+1], 7, 3)>
+
+
+			<!--- now check those first to see if they are a city code, if so get the related airport codes --->
+			<cfset local.toCheck.departure = listToArray(local.original.departure)>
+			<cfif IsCityCode(local.original.departure)>
+				<cfset local.toCheck.departure = getCityCodeAirportCodes(local.original.departure)>
+			</cfif>
+
+			<cfset local.toCheck.arrival = listToArray(local.original.arrival)>
+			<cfif IsCityCode(local.original.arrival)>
+				<cfset local.toCheck.arrival = getCityCodeAirportCodes(local.original.arrival)>
+			</cfif>
+
+			<cfset local.badList = "">
+
+			<!--- loop over stTrips and compare chosen origin/destination against the airport codes returned from the uAPI --->
+			<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
+				<cfif NOT arrayFindNoCase(local.toCheck.arrival, local.tripItem.segments[1].destination)
+						OR NOT arrayFindNoCase(local.toCheck.departure, local.tripItem.segments[1].origin)>
+					<cfset local.badList = listAppend(local.badList, local.tripIndex)>
+				</cfif>
+			</cfloop>
+
+			<!--- delete the trips containing bad origin/destination cities from stTrips --->
+			<cfloop list="#local.badList#" index="local.badListIndex" item="local.badListItem">
+				<cfset structDelete(local.stTrips, local.badListItem)>
+			</cfloop>
+
+		<!--- // end of STM-2254 hack --->
+
+		<cfreturn local.stTrips />
 	</cffunction>
+
 
 	<cffunction name="sortByPreferredTime" output="false" hint="I take the depart/arrival sorts and weight the legs closest to requested departure or arrival time.">
 		<cfargument name="StructToSort" required="true" />
@@ -570,5 +616,48 @@
 
 		<cfreturn aPreferredSort />
 	</cffunction>
+
+
+	<!---
+	Throw away code - STM-2254
+	4:54 PM Friday, October 04, 2013 - Jim Priest - jpriest@shortstravel.com
+	 --->
+
+	<cffunction name="isCityCode" output="false" hint="I take a code and check if it's a city code or a normal airport code.">
+		<cfargument name="CityCode" required="true" />
+		<cfset local.cityCodeList = "BER,BJS,BUE,BUH,CHI,DTT,LON,MIL,MOW,NYC,OSA,PAR,ROM,SAO,SEL,SPK,STO,TYO,WAS,YEA,YMQ,YTO">
+		<cfset local.isCityCode = false>
+		<cfif listFindNoCase(local.cityCodeList, arguments.cityCode)>
+			<cfset local.isCityCode = true>
+		</cfif>
+		<cfreturn local.isCityCode>
+	</cffunction>
+
+	<cffunction name="getCityCodeAirportCodes" output="false" hint="This is throw away code to check bad flights for city codes and to return a list of associated airport codes that should not be filtered.">
+		<cfargument name="CityCodeToCheck" required="true" />
+
+		<!--- build stuct of cityCodes --->
+		<cfset local.cityCode = {}>
+		<cfset local.cityCodeList = "BER|TXL,SXF,THF;BJS|PEK,NAY;BUE|EZE,AEP;BUH|OTP,BBU;CHI|ORD,MDW;DTT|DTT,DTW,DET;LON|LGW,LHR;MIL|MXP,LIN;MOW|SVO,DME,VKO,PUW,BKA;NYC|JFK,EWR,LGA;OSA|KIX,ITM;PAR|CDG, ORY;ROM|FCO,CIA;SAO|GRU,CGH,VCP;SEL|ICN,GMP;SPK|CTS,OKD;STO|ARN,NYO,BMA,VST;TYO|NRT,HND;WAS|IAD,DCA,BWI;YEA|YEG,YXD;YMQ|YUL,YMY,YMX;YTO|YYZ,YTZ">
+
+		<cfloop list="#local.cityCodeList#" delimiters=";" index="local.cityCodeListIndex" item="local.cityCodeListItem">
+			<cfset local.cityCode[ListFirst(local.cityCodeListItem, '|')] = []>
+			<cfset local.TempCityList = ListLast(local.cityCodeListItem, '|')>
+			<cfloop list="#local.TempCityList#" index="local.tempCityListIndex" item="local.tempCityListItem">
+					<cfset local.cityCode[ListFirst(local.cityCodeListItem, '|')][local.tempCityListIndex] = local.tempCityListItem>
+			</cfloop>
+		</cfloop>
+
+		<cfset local.airportCodes = StructFindKey(local.cityCode, arguments.cityCodeToCheck)>
+
+		<cfreturn local.airportCodes[1].value>
+	</cffunction>
+ <!--- // end of STM-2254 hack --->
+
+
+
+
+
+
 
 </cfcomponent>

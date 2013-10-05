@@ -94,6 +94,7 @@
 						TravelTime			: local.travelTime
 					}>
 				</cfloop>
+
 			</cfif>
 		</cfloop>
 
@@ -777,4 +778,51 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn aPreferredSort />
 	</cffunction>
 
+	<cffunction name="calculateTripTime" access="public" output="false" returntype="numeric" hint="I take a group of segments and calculate the total trip time including flight times and layovers">
+		<cfargument name="segments" type="struct" required="true" />
+
+		<cfset var keys = structKeyList( arguments.segments ) />
+		<cfset var totalTripTime = 0 />
+
+		<cfset var tmpArray = [] />
+		<cfloop collection="#arguments.segments#" item="local.segmentId">
+			<cfset arrayAppend( tmpArray, arguments.segments[ segmentID ] ) />
+		</cfloop>
+
+		<cfset tmpArray = ArrayOfStructSort( tmpArray, "textnocase", "ASC", "DepartureTime") />
+		<cfloop from="#arrayLen( tmpArray )#" to="1" step="-1" index="local.i" >
+			<cfset totalTripTime = totalTripTime + tmpArray[ i ].FlightTime />
+
+			<cfif i NEQ 1>
+				<cfset var layover = abs( dateDiff( "n", tmpArray[ i-1 ].ArrivalTime, tmpArray[ i ].DepartureTime ) ) />
+				<cfset totalTripTime = totalTripTime + layover />
+			</cfif>
+		</cfloop>
+
+		<cfreturn totalTripTime />
+	</cffunction>
+
+	<cffunction name="ArrayOfStructSort" returntype="array" access="private">
+		<cfargument name="base" type="array" required="yes" />
+		<cfargument name="sortType" type="string" required="no" default="text" />
+		<cfargument name="sortOrder" type="string" required="no" default="ASC" />
+		<cfargument name="pathToSubElement" type="string" required="no" default="" />
+
+		<cfset var tmpStruct = StructNew()>
+		<cfset var returnVal = ArrayNew(1)>
+		<cfset var i = 0>
+		<cfset var keys = "">
+
+		<cfloop from="1" to="#ArrayLen(base)#" index="i">
+			<cfset tmpStruct[i] = base[i]>
+		</cfloop>
+
+		<cfset keys = StructSort(tmpStruct, sortType, sortOrder, pathToSubElement)>
+
+		<cfloop from="1" to="#ArrayLen(keys)#" index="i">
+			<cfset returnVal[i] = tmpStruct[keys[i]]>
+		</cfloop>
+
+		<cfreturn returnVal>
+	</cffunction>
 </cfcomponent>

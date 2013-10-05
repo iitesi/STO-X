@@ -54,27 +54,31 @@
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
+		<cfargument name="sCabins" default="">
 
-		<!--- grab class from widget form --->
-		<cfset local.sCabins = arguments.filter.getClassOfService()>
-		<!--- if find more class is clicked from filter bar - rc.sCabins will exist --->
-		<cfif StructKeyExists(arguments, "sCabins")>
-			<cfset local.sCabins = arguments.sCabins>
-		</cfif>
-
-		<cfset local.aCabins = ListToArray(local.sCabins)>
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
+
 		<cfset local.airlines = []>
 		<cfif arguments.Filter.getAirlines() EQ ''>
-			<cfset airlines = ['X']>
+			<cfset local.airlines = ['X']>
 		<cfelse>
-			<cfset airlines = ['X',arguments.Filter.getAirlines()]>
+			<cfset local.airlines = [arguments.Filter.getAirlines()]>
+			<!--- <cfset local.airlines = ['X',arguments.Filter.getAirlines()]> --->
 		</cfif>
 
-		<!--- Create a thread for every combination of cabin, fares and PTC. --->
+		<cfif arguments.Filter.getClassOfService() EQ ''>
+			<cfset local.aCabins = ['X']>
+		<cfelseif Len(arguments.sCabins)> <!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
+			<cfset local.aCabins = ['X',arguments.sCabins]>
+		<cfelse> <!--- otherwise get the class/cabin passed from the widget --->
+			<cfset local.aCabins = ['X',arguments.Filter.getClassOfService()]>
+		</cfif>
+
+
+		<!--- Create a thread for every combination of cabin, fare and airline. --->
 		<cfloop array="#aCabins#" index="local.sCabin">
 			<cfloop array="#aRefundable#" index="local.bRefundable">
 				<cfloop array="#airlines#" index="local.airlineIndex" item="local.airline">
@@ -138,6 +142,7 @@
 
 				<!--- Put together the SOAP message. --->
 				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
+
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
@@ -172,24 +177,27 @@
 				<!--- If the UAPI gives an error then don't continue and send an error to BugLog instead. --->
 				<cfif FindNoCase('faultstring', attributes.sResponse) EQ 0>
 					<!--- Parse the segments. --->
-					<cfset attributes.stSegments = getAirParse().parseSegments(attributes.aResponse)>
+					<cfset attributes.stSegments = getAirParse().parseSegments( stResponse = attributes.aResponse )>
 					<!--- Parse the trips. --->
-					<cfset attributes.stTrips = getAirParse().parseTrips(response = attributes.aResponse, stSegments = attributes.stSegments)>
+					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
+																		, stSegments = attributes.stSegments )>
 
 					<!--- Add group node --->
-					<cfset attributes.stTrips = getAirParse().addGroups(attributes.stTrips)>
+					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
 					<!--- Remove BlackListed Carriers --->
 					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
 
 					<!--- Remove BlackListed Carriers --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers(attributes.stTrips, attributes.blackListedCarrierPairing)>
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers( stTrips = attributes.stTrips
+																						, blackListedCarriers = arguments.blackListedCarrierPairing )>
 
 					<!--- Remove BlackListed Carriers --->
 					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
-					<cfset attributes.stTrips = getAirParse().addPreferred(attributes.stTrips, arguments.Account)>
+					<cfset attributes.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
+																			, Account = arguments.Account)>
 
 					<!--- Merge all data into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
@@ -202,12 +210,6 @@
 						<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
 					</cfif>
 				</cfif>
-
-				<!--- 3:18 PM Thursday, September 19, 2013 - Jim Priest - jpriest@shortstravel.com
-				I don't think this is being used? Commenting it out to see if any issues arise.
-
-				<cfset thread.stTrips =	session.searches[arguments.Filter.getSearchID()].stTrips>
-				--->
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
@@ -251,7 +253,8 @@
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 
 								<!--- For one way and first leg of rounttrip we get depart info --->
-								<cfif arguments.Filter.getAirType() EQ 'RT'	OR arguments.Filter.getAirType() EQ 'OW'>
+								<cfif arguments.Filter.getAirType() EQ 'RT'
+									OR arguments.Filter.getAirType() EQ 'OW'>
 									<air:SearchAirLeg>
 										<air:SearchOrigin>
 											<cfif arguments.filter.getAirFromCityCode() EQ 1>

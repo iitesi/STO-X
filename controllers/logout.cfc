@@ -1,9 +1,9 @@
 <cfcomponent extends="abstract" output="false">
 
 	<cffunction name="default" output="false">
-		<cfloop list="#structKeyList(session)#" index="ii">
-			<cfif ii NEQ "ACCTID" AND ii NEQ "USERID">
-				<cfset "session.#ii#" = "" />
+		<cfloop list="#structKeyList(session)#" index="local.ii">
+			<cfif local.ii NEQ "ACCTID" AND local.ii NEQ "USERID">
+				<cfset "session.#local.ii#" = "" />
 			</cfif>
 		</cfloop>
 		<cfset session.isAuthorized = false />

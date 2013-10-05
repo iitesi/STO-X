@@ -399,7 +399,24 @@
 		</cfif>
 
 	</cffunction>
-	
+
+	<cffunction name="getUAPILogEntry" access="remote" output="false" returntype="any" returnformat="plain" hint="">
+		<cfargument name="entryId" type="numeric" required="false" />
+
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+		<cfset result.setData( getBean( "uAPI" ).getLogEntry( argumentCollection=arguments ) )/>
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
+				<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn serializeJSON( result ) />
+		</cfif>
+
+	</cffunction>
+
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
 		<cfargument name="beanName" type="string" required="true"/>
 

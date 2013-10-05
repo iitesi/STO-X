@@ -19,17 +19,17 @@
 				OR rc.Vehicle.getPickupLocationType() IS 'Airport'>
 				<cfset rc.pickupLocation = rc.Filter.getCarPickupAirport() />
 			<cfelse>
-				<cfset vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
+				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
 				<cfset local.locationKey = ''>
-				<cfloop array="#vehicleLocation#" index="local.locationIndex" item="local.location">
+				<cfloop array="#local.vehicleLocation#" index="local.locationIndex" item="local.location">
 					<cfif rc.Vehicle.getPickupLocationID() EQ location.vendorLocationID>
-						<cfset locationKey = locationIndex>
+						<cfset local.locationKey = local.locationIndex>
 						<cfbreak>
 					</cfif>
 				</cfloop>
-				<cfset rc.pickupLocation = application.stCarVendors[vehicleLocation[locationKey].vendorCode] & ' - '
-					& vehicleLocation[locationKey].street & ' ('
-					& vehicleLocation[locationKey].city & ')' />
+				<cfset rc.pickupLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
+					& local.vehicleLocation[local.locationKey].street & ' ('
+					& local.vehicleLocation[local.locationKey].city & ')' />
 			</cfif>
 
 			<cfif rc.Vehicle.getDropoffLocationType() IS ''
@@ -41,17 +41,17 @@
 					<cfset rc.dropoffLocation = rc.pickupLocation />
 				</cfif>
 			<cfelse>
-				<cfset vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
+				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
 				<cfset local.locationKey = ''>
 				<cfloop array="#vehicleLocation#" index="local.locationIndex" item="local.location">
 					<cfif rc.Vehicle.getDropoffLocationID() EQ location.vendorLocationID>
-						<cfset locationKey = locationIndex>
+						<cfset local.locationKey = local.locationIndex>
 						<cfbreak>
 					</cfif>
 				</cfloop>
-				<cfset rc.dropoffLocation = application.stCarVendors[vehicleLocation[locationKey].vendorCode] & ' - '
-					& vehicleLocation[locationKey].street & ' ('
-					& vehicleLocation[locationKey].city & ')' />
+				<cfset rc.dropoffLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
+					& local.vehicleLocation[local.locationKey].street & ' ('
+					& local.vehicleLocation[local.locationKey].city & ')' />
 			</cfif>
 		</cfif>
 
@@ -60,19 +60,19 @@
 		<cfset rc.hotelTravelers = arrayNew(1) />
 		<cfset rc.vehicleTravelers = arrayNew(1) />
 
-		<cfloop from="1" to="#arrayLen(rc.Travelers)#" index="travelerIndex">
-			<cfset rc.Traveler[travelerIndex] = session.searches[rc.SearchID].travelers[travelerIndex] />
-			<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
-				<cfset arrayAppend(rc.airTravelers, travelerIndex) />
-				<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getAirReasonCode())>
-					<cfset rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason(rc.Traveler[travelerIndex].getBookingDetail().getAirReasonCode()) />
+		<cfloop from="1" to="#arrayLen(rc.Travelers)#" index="local.travelerIndex">
+			<cfset rc.Traveler[local.travelerIndex] = session.searches[rc.SearchID].travelers[local.travelerIndex] />
+			<cfif rc.Traveler[local.travelerIndex].getBookingDetail().getAirNeeded()>
+				<cfset arrayAppend(rc.airTravelers, local.travelerIndex) />
+				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode())>
+					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason(rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode()) />
 				</cfif>
 			</cfif>
-			<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
-				<cfset arrayAppend(rc.hotelTravelers, travelerIndex) />
+			<cfif rc.Traveler[local.travelerIndex].getBookingDetail().getHotelNeeded()>
+				<cfset arrayAppend(rc.hotelTravelers, local.travelerIndex) />
 			</cfif>
-			<cfif rc.Traveler[travelerIndex].getBookingDetail().getCarNeeded()>
-				<cfset arrayAppend(rc.vehicleTravelers, travelerIndex) />
+			<cfif rc.Traveler[local.travelerIndex].getBookingDetail().getCarNeeded()>
+				<cfset arrayAppend(rc.vehicleTravelers, local.travelerIndex) />
 			</cfif>
 		</cfloop>
 

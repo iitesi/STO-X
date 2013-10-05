@@ -82,7 +82,18 @@
 			<cfset stTrips = AirParse.addTotalBagFare(stTrips)>
 			<!--- Mark preferred carriers. --->
 			<cfset stTrips = AirParse.addPreferred(stTrips, arguments.Account)>
-			<!---<cfdump var="#stTrips#" abort>--->
+			<!--- Calculate total trip time--->
+			<cfloop collection="#stTrips#" item="local.tripKey">
+				<cfset local.trip = stTrips[ tripKey ]/>
+				<cfloop collection="#trip.groups#" item="local.group">
+					<cfset local.group = trip.groups[ group ] />
+					<cfset tripDuration = AirParse.calculateTripTime( group.segments ) />
+					<cfloop collection="#group.segments#" item="segment">
+						<cfset group.segments[ segment ].traveltime = tripDuration />
+					</cfloop>
+					<cfset group.TravelTime = int( tripDuration / 60 ) & 'h' & ' ' & tripDuration MOD 60 & 'm' />
+				</cfloop>
+			</cfloop>
 			<!--- Add trip id to the list of priced items --->
 			<cfset nTripKey = getTripKey(stTrips)>
 			<cfset stTrips[nTripKey].nTrip = nTripKey>

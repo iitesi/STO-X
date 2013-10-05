@@ -3,6 +3,7 @@ var controllers = angular.module('app.controllers',[]);
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
+	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
@@ -41,16 +42,24 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.loadSearch = function( searchId ){
 
 		SearchService.getSearch( $scope.searchId )
-			.then( function( result ){
+			.success( function( result ){
+				if( result.success ){
+					$scope.search = result.data;
+					SearchService.loadAccount( $scope.search.acctID )
+						.then( function( result ){
+							$scope.account = result;
+						});
+					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
+					$scope.loadPolicy( $scope.search.policyID );
+				} else {
+					$scope.errors = result.errors;
+				}
 
-				$scope.search = result.data;
-
-				SearchService.loadAccount( $scope.search.acctID )
-					.then( function( result ){
-						$scope.account = result;
-					});
-				$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
-				$scope.loadPolicy( $scope.search.policyID );
+			})
+			.error( function( exception, cause ){
+				$('#searchWindow').modal('hide');
+				$scope.hidePage = true;
+				$scope.errors=["An error occurred while attempting to retrieve your search."];
 			});
 	}
 
@@ -550,6 +559,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 		google.maps.visualRefresh = true;
 		var mapCenter =  new google.maps.LatLng( lat, lon );
+		console.log( mapCenter );
 		var mapOptions = {
           center: mapCenter,
           zoom: 8,

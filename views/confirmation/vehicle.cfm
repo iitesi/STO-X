@@ -68,7 +68,8 @@
 						<tr>
 							<td width="6%"></td>
 							<td width="12%">
-								<cfif arrayLen(rc.vehicleTravelers) GT 1>
+								<cfif arrayLen(rc.Travelers) GT 1>
+								<!--- <cfif arrayLen(rc.vehicleTravelers) GT 1> --->
 									<span class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></span>
 								</cfif>
 							</td>
