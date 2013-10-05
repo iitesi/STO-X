@@ -62,20 +62,40 @@
 			<cfset view( "main/notfound" )>
 		<cfelse>
 
-			<cfif NOT findNoCase( "RemoteProxy.cfc", cgi.script_name )>
+			<cfif NOT findNoCase( ".cfc", cgi.script_name )>
 				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
 					<cfset session.isAuthorized = false />
 
 					<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
 						<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
-					</cfif>
 
+						<cfif session.isAuthorized>
+							<cfcookie domain="#cgi.http_host#" name="userId" value="#request.context.userId#" />
+							<cfcookie domain="#cgi.http_host#" name="acctId" value="#request.context.acctId#" />
+							<cfcookie domain="#cgi.http_host#" name="date" value="#request.context.date#" />
+							<cfcookie domain="#cgi.http_host#" name="token" value="#request.context.token#" />
+
+							<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+							<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
+							<cfdump var="#cgi.http_host# :: #apiURL#" output="console" />
+
+							<cfif apiURL NEQ cgi.http_host>
+								<cfcookie domain="#apiURL#" name="userId" value="#request.context.userId#" />
+								<cfcookie domain="#apiURL#" name="acctId" value="#request.context.acctId#" />
+								<cfcookie domain="#apiURL#" name="date" value="#request.context.date#" />
+								<cfcookie domain="#apiURL#" name="token" value="#request.context.token#" />
+							</cfif>
+
+						</cfif>
+
+					</cfif>
 				</cfif>
 
 				<cfif NOT session.isAuthorized>
 					<cflocation url="#getBeanFactory().getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
 				</cfif>
+
 			</cfif>
 
 			<cfset controller( 'setup.setSearchID' )>
@@ -105,4 +125,41 @@
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
 	</cffunction>
+
+	<cffunction name="onCFCRequest" access="public" returnType="string" returnformat="plain">
+        <cfargument name="cfcname" type="string" required="true">
+        <cfargument name="method" type="string" required="true">
+        <cfargument name="args" type="struct" required="true">
+
+		<cfif NOT structKeyExists( cookie, "userId" ) OR  NOT structKeyExists( cookie, "acctId" ) OR NOT structKeyExists( cookie, "date" ) OR NOT structKeyExists( cookie, "token" )>
+			<cfset local.isAuthorized = false />
+		<cfelse>
+			<cfset local.isAuthorized = application.fw.factory.getBean( "AuthorizationService" ).checkCredentials( cookie.userId, cookie.acctId, cookie.date, cookie.token )>
+		</cfif>
+
+		<cfif local.isAuthorized>
+			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
+
+			<cfif NOT isSimpleValue( local.result )>
+				<cfset local.result = serializeJSON( local.result ) />
+			</cfif>
+
+			<cfif isJSON( local.result )>
+				<cfset local.responseMimeType = "text/x-json" />
+			<cfelse>
+				<cfset local.responseMimeType = "text/javascript" />
+			</cfif>
+
+			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
+
+			<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />
+
+			<cfcontent type="#local.responseMimeType#" variable="#local.binaryResponse#" />
+
+		<cfelse>
+			<cfheader statusCode="403" statustext="Not Authorized" />
+		</cfif>
+
+	</cffunction>
+
 </cfcomponent>
