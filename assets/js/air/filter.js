@@ -209,7 +209,7 @@ filterAir();
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/
 
 var filterAirDelay = new FunctionGuard(filterAir);
-var resetAirDelay = new FunctionGuard(filterAir, 1000, null, 'true');
+var resetAirDelay = new FunctionGuard(filterAir, 500, null, 'true');
 
 function FunctionGuard(fn, quietTime, context /*,fixed args*/) {
     this.fn = fn;

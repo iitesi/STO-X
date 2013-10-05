@@ -196,7 +196,7 @@
 		<cfset local.newSearchID = "">
 		<cfset fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
 
-		<cfset newSearchID = ListLast( StructKeyList(session.searches) )>
+		<cfset local.newSearchID = ListLast( StructKeyList(session.searches) )>
 		<cfset rc.message.AddInfo("Saved search deleted successfully!")>
 		<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
 
@@ -216,7 +216,7 @@
 		<cfset local.flightsToDelete =  StructKeyArray(session.filters)>
 		<cfset  ArrayDeleteAt(local.flightsToDelete, ArrayFind(local.flightsToDelete, arguments.rc.searchID))>
 
-		<cfloop array="#local.flightsToDelete#" item="searchID">
+		<cfloop array="#local.flightsToDelete#" item="local.searchID">
 			<cfset StructDelete(session.filters, searchID)>
 			<cfset StructDelete(session.searches, searchID)>
 		</cfloop>
@@ -231,24 +231,16 @@
 			4:24 PM Friday, June 28, 2013 - Jim Priest - jpriest@shortstravel.com --->
 
 		<!--- run on first search --->
-			<cfif NOT structKeyExists(session, "filterStatus")>
-				<cfset session.filterStatus = {}>
-				<cfset session.filterStatus.searchID = arguments.rc.searchID>
-				<cfset session.filterStatus.airlines = 0>
-				<cfset session.filterStatus.refundableSearch = 0>
-				<cfset session.filterStatus.cabinSearch = {}>
-				<cfset session.filterStatus.cabinSearch.C = 0>
-				<cfset session.filterStatus.cabinSearch.F = 0>
-			</cfif>
-
-			<!--- reset filterStatus if new search is created --->
-			<cfif arguments.rc.searchID NEQ session.filterStatus.searchID>
-				<cfset session.filterStatus.searchId = arguments.rc.searchID>
-				<cfset session.filterStatus.airlines = 0>
-				<cfset session.filterStatus.refundableSearch = 0>
-				<cfset session.filterStatus.cabinSearch = {}>
-				<cfset session.filterStatus.cabinSearch.C = 0>
-				<cfset session.filterStatus.cabinSearch.F = 0>
+		<!--- reset filterStatus if new search is created --->
+		<cfif NOT structKeyExists(session, "filterStatus")
+			OR arguments.rc.searchID NEQ session.filterStatus.searchID>
+			<cfset session.filterStatus = {}>
+			<cfset session.filterStatus.searchID = arguments.rc.searchID>
+			<cfset session.filterStatus.airlines = 0>
+			<cfset session.filterStatus.refundableSearch = 0>
+			<cfset session.filterStatus.cabinSearch = {}>
+			<cfset session.filterStatus.cabinSearch.C = 0>
+			<cfset session.filterStatus.cabinSearch.F = 0>
 		</cfif>
 
 		<!--- update filterStatus if 'find more' fares/class/airlines is clicked in filter --->

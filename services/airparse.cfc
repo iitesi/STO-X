@@ -94,6 +94,7 @@
 						TravelTime			: local.travelTime
 					}>
 				</cfloop>
+
 			</cfif>
 		</cfloop>
 
@@ -398,14 +399,14 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
-		<cfargument name="stTrips" required="true">
+		<cfargument name="trips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
-		<cfset local.stTrips = arguments.stTrips>
+		<cfset local.trips = arguments.trips>
 		<cfset local.deleteTripIndex = "">
 
 		<!--- Loop through all the trips --->
-		<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.trip">
+		<cfloop collection="#local.trips#" index="local.tripIndex" item="local.trip">
 
 			<cfif arrayLen(local.trip.carriers) GT 1
 				AND arrayFind(local.trip.carriers, 'WN')>
@@ -435,10 +436,10 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<!--- delete the blacklisted flights from stTrips --->
 		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
-			<cfset StructDelete(local.stTrips, local.tripIndex)>
+			<cfset StructDelete(local.trips, local.tripIndex)>
 		</cfloop>
 
-		<cfreturn local.stTrips/>
+		<cfreturn local.trips/>
 	</cffunction>
 
 	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I add remove trips with blacklisted carrier combinations.">
@@ -465,42 +466,49 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="removeMultiConnections" output="false" hint="I add remove trips with blacklisted carrier combinations.">
 		<cfargument name="trips" required="true">
 
-		<cfset local.trashSegmentCount = 0>
+		<cfset local.trashSegmentCount = ''>
 		<cfset local.twoSegments = false>
 		<cfset local.threeSegments = false>
 		<cfset local.fourSegments = false>
+		<cfset local.tripsTwo = []>
+		<cfset local.tripsThree = []>
+		<cfset local.tripsFour = []>
+		<!--- Takes into account all groups within the itinerary.  If there are three on the outbound and two on the return it 
+		will mark that trip as a two segment trip. --->
 		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
+			<cfset local.tempTwoSegments = false>
+			<cfset local.tempThreeSegments = false>
+			<cfset local.tempFourSegments = false>
 			<cfloop collection="#trip.Groups#" index="local.groupIndex" item="local.group">
 				<cfset segmentCount = arrayLen(structKeyArray(group.segments))>
-				<cfset twoSegments = (segmentCount EQ 2 ? true : twoSegments)>
-				<cfset threeSegments = (segmentCount EQ 3 ? true : threeSegments)>
-				<cfset fourSegments = (segmentCount EQ 4 ? true : fourSegments)>
+				<cfset tempTwoSegments = (segmentCount EQ 2 ? true : tempTwoSegments)>
+				<cfset tempThreeSegments = (segmentCount EQ 3 ? true : tempThreeSegments)>
+				<cfset tempFourSegments = (segmentCount EQ 4 ? true : tempFourSegments)>
 			</cfloop>
+			<cfif tempTwoSegments>
+				<cfset arrayAppend(tripsTwo, tripIndex)>
+				<cfset twoSegments = true>
+			<cfelseif tempThreeSegments>
+				<cfset arrayAppend(tripsThree, tripIndex)>
+				<cfset threeSegments = true>
+			<cfelseif tempFourSegments>
+				<cfset arrayAppend(tripsFour, tripIndex)>
+				<cfset fourSegments = true>
+			</cfif>
 		</cfloop>
 		<cfif threeSegments
 			AND twoSegments>
-			<cfset trashSegmentCount = 3>
+			<cfset trashSegmentCount = 'tripsThree,tripsFour'>
 		<cfelseif fourSegments
 			AND threeSegments>
-			<cfset trashSegmentCount = 4>
+			<cfset trashSegmentCount = 'tripsFour'>
 		</cfif>
-
-		<cfif trashSegmentCount NEQ 0>
-			<cfset local.deleteTripIndex = ''>
-			<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
-				<cfloop collection="#trip.Groups#" index="local.groupIndex" item="local.group">
-					<cfset segmentCount = arrayLen(structKeyArray(group.segments))>
-					<cfif segmentCount GTE trashSegmentCount
-						AND NOT listFind(deleteTripIndex, tripIndex)>
-						<cfset deleteTripIndex = listAppend(deleteTripIndex, tripIndex)>
-					</cfif>
+		<cfif trashSegmentCount NEQ ''>
+			<cfloop list="#trashSegmentCount#" index="local.arrayIndex" item="local.arrayName">
+				<cfloop array="#local[arrayName]#" index="local.tripIndex" item="local.tripKey">
+					<cfset structDelete(arguments.trips, tripKey)>
 				</cfloop>
 			</cfloop>
-			<cfif deleteTripIndex NEQ ''>
-				<cfloop list="#deleteTripIndex#" item="local.tripIndex">
-					<cfset structDelete(arguments.trips, tripIndex)>
-				</cfloop>
-			</cfif>
 		</cfif>
 
 		<cfreturn arguments.trips/>
@@ -777,4 +785,51 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn aPreferredSort />
 	</cffunction>
 
+	<cffunction name="calculateTripTime" access="public" output="false" returntype="numeric" hint="I take a group of segments and calculate the total trip time including flight times and layovers">
+		<cfargument name="segments" type="struct" required="true" />
+
+		<cfset var keys = structKeyList( arguments.segments ) />
+		<cfset var totalTripTime = 0 />
+
+		<cfset var tmpArray = [] />
+		<cfloop collection="#arguments.segments#" item="local.segmentId">
+			<cfset arrayAppend( tmpArray, arguments.segments[ segmentID ] ) />
+		</cfloop>
+
+		<cfset tmpArray = ArrayOfStructSort( tmpArray, "textnocase", "ASC", "DepartureTime") />
+		<cfloop from="#arrayLen( tmpArray )#" to="1" step="-1" index="local.i" >
+			<cfset totalTripTime = totalTripTime + tmpArray[ i ].FlightTime />
+
+			<cfif i NEQ 1>
+				<cfset var layover = abs( dateDiff( "n", tmpArray[ i-1 ].ArrivalTime, tmpArray[ i ].DepartureTime ) ) />
+				<cfset totalTripTime = totalTripTime + layover />
+			</cfif>
+		</cfloop>
+
+		<cfreturn totalTripTime />
+	</cffunction>
+
+	<cffunction name="ArrayOfStructSort" returntype="array" access="private">
+		<cfargument name="base" type="array" required="yes" />
+		<cfargument name="sortType" type="string" required="no" default="text" />
+		<cfargument name="sortOrder" type="string" required="no" default="ASC" />
+		<cfargument name="pathToSubElement" type="string" required="no" default="" />
+
+		<cfset var tmpStruct = StructNew()>
+		<cfset var returnVal = ArrayNew(1)>
+		<cfset var i = 0>
+		<cfset var keys = "">
+
+		<cfloop from="1" to="#ArrayLen(base)#" index="i">
+			<cfset tmpStruct[i] = base[i]>
+		</cfloop>
+
+		<cfset keys = StructSort(tmpStruct, sortType, sortOrder, pathToSubElement)>
+
+		<cfloop from="1" to="#ArrayLen(keys)#" index="i">
+			<cfset returnVal[i] = tmpStruct[keys[i]]>
+		</cfloop>
+
+		<cfreturn returnVal>
+	</cffunction>
 </cfcomponent>

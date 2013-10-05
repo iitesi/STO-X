@@ -5,7 +5,16 @@ services.factory( "SearchService", function( $http ){
 
 	SearchService.getSearch = function( searchId ){
 		return $http.get( "/booking/RemoteProxy.cfc?method=getSearch&searchId=" + searchId )
-			.then( function(response) { return response.data });
+			.success(
+				function(response) {
+					return response
+				}
+			)
+			.error(
+				function(exception, cause) {
+					return cause;
+				}
+			)
 	}
 
 	SearchService.updateSearch = function( search ){

@@ -42,12 +42,7 @@
 			<cfif structKeyExists(session.searches[SearchID], "CouldYou") AND structKeyExists(session.searches[SearchID].CouldYou, "Car")>
 				<cfset structDelete(session.searches[SearchID].CouldYou, "Car") />
 			</cfif>
-
-			<!--- <cfset StructDelete(session.searches, SearchID) />
-			<cfset session.searches[SearchID] = {} /> --->
 		</cfif>
-
-		<!--- <cfset session.searches[SearchID].stCars = {}> --->
 
 		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
@@ -95,7 +90,6 @@
 																																				, preferredCars = arguments.Account.aPreferredCar )>
 			</cfif>
 
-<!--- <cfdump var="#session.searches[ searchId ].vehicleLocations#" /><cfabort /> --->
 			<cfset local.threadNames = ''>
 			<cfset local.stCars = ''>
 
@@ -201,9 +195,13 @@
 				</cfif>
 
 				<cfset stCars = mergeCars((structKeyExists(cfthread, 'corporateRates') AND structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
-				<cfset session.searches[SearchID].stCarVendors = getVendors(stCars, arguments.Account)>
-				<cfset session.searches[SearchID].stCarCategories = getCategories(stCars)>
-				<cfset session.searches[SearchID].stCars = stCars>
+				<cfif arguments.nCouldYou EQ 0>
+					<cfset session.searches[SearchID].stCarVendors = getVendors(stCars, arguments.Account)>
+					<cfset session.searches[SearchID].stCarCategories = getCategories(stCars)>
+					<cfset session.searches[SearchID].stCars = stCars>
+				<cfelse>
+					<cfset session.searches[SearchID].stCarsCouldYou = stCars>
+				</cfif>
 				
 				<cfif arguments.nCouldYou NEQ 0>
 					<cfif structKeyExists(cfthread.corporateRates.stCars, sCarType)

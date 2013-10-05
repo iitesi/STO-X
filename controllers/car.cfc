@@ -21,7 +21,7 @@
 		</cfif>
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			
+
 			<cfset rc.sPriority = 'HIGH'>
 			<cfset fw.getBeanFactory().getBean('car').doAvailability( argumentcollection = arguments.rc )>
 			<!--- Below two lines used for populating the change search form. --->
@@ -29,28 +29,29 @@
 			<cfset arguments.rc.formData = fw.getBeanFactory().getBean('car').getSearchCriteria( argumentcollection = arguments.rc ) />
 		<cfelse>
 			<!--- Move over the information into the stItinerary --->
-			<cfset local.Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>
+			<cfset local.vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>
 			<cfif rc.pickUpLocationKey NEQ ''>
-				<cfset Vehicle.setPickUpLocationType( '#rc.pickUpLocation.locationType#' )>
-				<cfset Vehicle.setPickUpLocationID( '#rc.pickUpLocation.vendorLocationID#' )>
+				<cfset local.vehicle.setPickUpLocationType( '#rc.pickUpLocation.locationType#' )>
+				<cfset local.vehicle.setPickUpLocationID( '#rc.pickUpLocation.vendorLocationID#' )>
 			<cfelse>
-				<cfset Vehicle.setPickUpLocationType( 'Airport' )>
-				<cfset Vehicle.setPickUpLocationID( 1 )>
+				<cfset local.vehicle.setPickUpLocationType( 'Airport' )>
+				<cfset local.vehicle.setPickUpLocationID( 1 )>
 			</cfif>
 			<cfif rc.dropOffLocationKey NEQ ''>
-				<cfset Vehicle.setDropOffLocationType( '#rc.dropOffLocation.locationType#' )>
-				<cfset Vehicle.setDropOffLocationID( '#rc.dropOffLocation.vendorLocationID#' )>
+				<cfset local.vehicle.setDropOffLocationType( '#rc.dropOffLocation.locationType#' )>
+				<cfset local.vehicle.setDropOffLocationID( '#rc.dropOffLocation.vendorLocationID#' )>
 			<cfelse>
-				<cfset Vehicle.setDropOffLocationType( 'Airport' )>
-				<cfset Vehicle.setDropOffLocationID( 1 )>
+				<cfset local.vehicle.setDropOffLocationType( 'Airport' )>
+				<cfset local.vehicle.setDropOffLocationID( 1 )>
 			</cfif>
-			<cfset Vehicle.setVendorCode( rc.sVendor )>
-			<cfset Vehicle = Vehicle.setVendorCode( rc.sVendor )>
-			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
+			<cfset local.vehicle.setVendorCode( rc.sVendor )>
+			<cfset local.vehicle = Vehicle.setVendorCode( rc.sVendor )>
+			<cfset session.searches[rc.SearchID].stItinerary.Vehicle = local.vehicle>
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="endavailability" output="false">
 		<cfargument name="rc">
 
