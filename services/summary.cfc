@@ -82,7 +82,7 @@
 
 		<cfif isStruct(arguments.Air)>
 			<cfif local.qAgentSine.AccountID EQ ''>
-				<cfset local.feeType = 'ODOM'>
+				<cfset local.feeType = 'ONLINE'>
 			<cfelse>
 				<cfset local.feeType = 'DOM'>
 			</cfif>
