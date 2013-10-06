@@ -125,7 +125,7 @@
 		 </cfif>
 	</cffunction>
 
-	<cffunction name="onCFCRequest" access="public" returnType="string" returnformat="plain">
+	<!---<cffunction name="onCFCRequest" access="public" returnType="string" returnformat="plain">
         <cfargument name="cfcname" type="string" required="true">
         <cfargument name="method" type="string" required="true">
         <cfargument name="args" type="struct" required="true">
@@ -172,7 +172,7 @@
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>
 		--->
-		<cfreturn />
+		<cfreturn />--->
 	</cffunction>
 
 </cfcomponent>
