@@ -157,9 +157,9 @@
 			</cfif>
 
 			<cfif isJSON( local.result )>
-				<cfset local.responseMimeType = "text/x-json" />
+				<cfset local.responseMimeType = "application/json" />
 			<cfelse>
-				<cfset local.responseMimeType = "text/javascript" />
+				<cfset local.responseMimeType = "application/javascript" />
 			</cfif>
 
 			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
