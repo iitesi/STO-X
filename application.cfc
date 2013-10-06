@@ -155,11 +155,11 @@
 				<cfset local.result = serializeJSON( local.result ) />
 			</cfif>
 
-			<cfif isJSON( local.result )>
+			<!---<cfif isJSON( local.result )>
 				<cfset local.responseMimeType = "application/json" />
 			<cfelse>
 				<cfset local.responseMimeType = "application/javascript" />
-			</cfif>
+			</cfif>--->
 
 			<cfreturn local.result />
 			<!---<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
