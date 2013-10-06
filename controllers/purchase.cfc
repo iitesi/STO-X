@@ -137,7 +137,8 @@
 						<cfelseif LEFT(cardNumber, 1) EQ 3>
 							<cfset cardType = 'AX'>
 						</cfif>
-						<cfif cardNumber NEQ ''>
+						<cfif cardNumber NEQ ''
+							AND application.es.getCurrentEnvironment() EQ 'prod'>
 							<!--- Get credit card authorization --->
 							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
@@ -158,13 +159,15 @@
 							<cfif authResponse.message NEQ ''>
 								<cfset cardAuth = authResponse.message>
 							</cfif>
-							<!--- Start new session due to credit card/emulation --->
-							<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
-																							, hostToken = hostToken
-																							, searchID = rc.searchID )>
-							<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																											, searchID = rc.searchID )>
-							
+							<cfif application.es.getCurrentEnvironment() EQ 'prod'>
+								<!--- Start new session due to credit card/emulation --->
+								<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																								, hostToken = hostToken
+																								, searchID = rc.searchID )>
+								<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																												, searchID = rc.searchID )>
+							</cfif>
+
 							<cfif hostToken EQ ''>
 								<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 								<cfset errorType = 'TerminalEntry.openSession'>
@@ -410,19 +413,19 @@
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 					</cfif>
-
-					<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, Air = Air
-																									, pcc = Traveler.getBAR()[1].PCC
-																									, cardNumber = cardNumber
-																									, cardType = cardType
-																									, cardExpiration = cardExpiration
-																									, cardAuth = cardAuth
-																									, searchID = rc.searchID )>
+					
+					<cfif application.es.getCurrentEnvironment() EQ 'prod'>
+						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, Air = Air
+																										, pcc = Traveler.getBAR()[1].PCC
+																										, cardNumber = cardNumber
+																										, cardType = cardType
+																										, cardExpiration = cardExpiration
+																										, cardAuth = cardAuth
+																										, searchID = rc.searchID )>
+					</cfif>
 				
-					removeSecondName<br>
-					<cfdump var="#responseMessage#" />
 					<cfif responseMessage.error>
 						<cfset errorMessage = responseMessage.message>
 						<cfset errorType = 'TerminalEntry.updateATFQ'>
