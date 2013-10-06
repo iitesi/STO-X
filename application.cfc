@@ -172,7 +172,7 @@
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>
 		--->
-		<cfreturn />--->
-	</cffunction>
+		<cfreturn />
+	</cffunction>--->
 
 </cfcomponent>
