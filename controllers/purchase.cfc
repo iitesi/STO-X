@@ -48,7 +48,7 @@
 																								, searchID = rc.searchID )>
 
 				<cfif hostToken EQ ''>
-					<cfset listAppend(errorMessage, 'Terminal - open session failed')>
+					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
 					<cfset errorType = 'TerminalEntry.openSession'>
 				</cfif>
 
@@ -418,7 +418,8 @@
 						<!--- Verify stored fare --->
 						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
-																										, searchID = rc.searchID )>
+																										, searchID = rc.searchID
+																										, Air = Air )>
 					</cfif>
 					<cfif responseMessage.error>
 						<cfset errorMessage = responseMessage.message>
