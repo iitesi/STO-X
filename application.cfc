@@ -166,12 +166,12 @@
 
 			<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />
 
-			<cfcontent type="#local.responseMimeType#" variable="#local.binaryResponse#" />--->
+			<cfcontent type="#local.responseMimeType#" variable="#local.binaryResponse#" />
 
 		<cfelse>
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>
-
+		--->
 		<cfreturn />
 	</cffunction>
 
