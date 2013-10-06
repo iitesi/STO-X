@@ -208,7 +208,7 @@
 				</cfif>
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable] = 1>
+				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>
 			</cfthread>
 		</cfif>
 
