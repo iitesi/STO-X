@@ -22,7 +22,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = true,
+		reloadApplicationOnEveryRequest = false,
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
@@ -78,7 +78,6 @@
 
 							<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
 							<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
-							<cfdump var="#cgi.http_host# :: #apiURL#" output="console" />
 
 							<cfif apiURL NEQ cgi.http_host>
 								<cfcookie domain="#apiURL#" name="userId" value="#request.context.userId#" />
@@ -131,6 +130,18 @@
         <cfargument name="method" type="string" required="true">
         <cfargument name="args" type="struct" required="true">
 
+		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD' AND NOT
+			(
+				findNoCase( "shortstravel.com", cgi.http_referrer ) OR
+				findNoCase( "shortstravelonline.com", cgi.http_referrer ) OR
+				findNoCase( "b-hive.com", cgi.http_referrer ) OR
+				findNoCase( "b-hives.com", cgi.http_referrer )
+			)>
+
+			<cfheader statusCode="403" statustext="Not Authorized" />
+			<cfreturn />
+		</cfif>
+
 		<cfif NOT structKeyExists( cookie, "userId" ) OR  NOT structKeyExists( cookie, "acctId" ) OR NOT structKeyExists( cookie, "date" ) OR NOT structKeyExists( cookie, "token" )>
 			<cfset local.isAuthorized = false />
 		<cfelse>
@@ -145,9 +156,9 @@
 			</cfif>
 
 			<cfif isJSON( local.result )>
-				<cfset local.responseMimeType = "text/x-json" />
+				<cfset local.responseMimeType = "application/json" />
 			<cfelse>
-				<cfset local.responseMimeType = "text/javascript" />
+				<cfset local.responseMimeType = "application/javascript" />
 			</cfif>
 
 			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
@@ -160,6 +171,7 @@
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>
 
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>

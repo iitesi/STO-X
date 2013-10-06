@@ -258,18 +258,33 @@
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
 		<cfset var cy = structNew() />
-		<cfset var cy.requestedDate = arguments.requestedDate />
+		<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
 		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
 
 		<cfif Search.getAir()>
-			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+			<cftry>
+				<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+				<cfcatch type="any">
+					<cfset cy.Air = "" />
+				</cfcatch>
+			</cftry>
 		</cfif>
 
 		<cfif Search.getHotel()>
-			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+			<cftry>
+				<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+				<cfcatch type="any">
+					<cfset cy.Hotel = "" />
+				</cfcatch>
+			</cftry>
 		</cfif>
 		<cfif Search.getCar()>
-			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+			<cftry>
+				<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
+				<cfcatch type="any">
+					<cfset cy.Car = "" />
+				</cfcatch>
+			</cftry>
 		</cfif>
 
 		<cfreturn cy />
