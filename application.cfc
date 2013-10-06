@@ -78,7 +78,6 @@
 
 							<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
 							<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
-							<cfdump var="#cgi.http_host# :: #apiURL#" output="console" />
 
 							<cfif apiURL NEQ cgi.http_host>
 								<cfcookie domain="#apiURL#" name="userId" value="#request.context.userId#" />
