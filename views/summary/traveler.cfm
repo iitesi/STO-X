@@ -202,7 +202,7 @@
 		AND rc.Policy.Policy_HotelNotBooking EQ 1
 		AND NOT rc.hotelSelected>
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
-			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel&nbsp;&nbsp;</label>
+			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
 			<div class="controls">
 				<select name="hotelNotBooked" id="hotelNotBooked">
 				<option value="">Please select a reason code</option>

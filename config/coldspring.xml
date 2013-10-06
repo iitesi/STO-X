@@ -77,6 +77,8 @@
 	</bean>
 
 	<bean id="confirmation" class="booking.services.confirmation" />
+	
+	<bean id="general" class="booking.services.general" />
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
 		<constructor-arg name="LocationManager"><ref bean="LocationManager" /></constructor-arg>
