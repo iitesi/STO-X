@@ -71,8 +71,8 @@
 										<cfif structKeyExists(rc, "account") AND isStruct( rc.account ) AND NOT structIsEmpty( rc.account) AND len(trim(rc.account.logo)) AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#")>
 											<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#" alt="#rc.account.account_name#" />
 										<cfelse>
-											<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STM-Logo.gif" alt="Short's Travel Management" />
-											<!--- <img src="assets/img/clients/STM-Logo.gif" alt="Short's Travel Management" /> --->
+											<!--- <img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STM-Logo.gif" alt="Short's Travel Management" /> --->
+											<img src="assets/img/clients/STM-Logo.gif" alt="Short's Travel Management" />
 										</cfif>
 										</a>
 									</cfoutput>
