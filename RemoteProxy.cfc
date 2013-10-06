@@ -258,7 +258,7 @@
 		<cfargument name="requery" type="boolean" required="false" default="false" />
 
 		<cfset var cy = structNew() />
-		<cfset var cy.requestedDate = arguments.requestedDate />
+		<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
 		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
 
 		<cfif Search.getAir()>
