@@ -125,12 +125,12 @@
 		 </cfif>
 	</cffunction>
 
-	<cffunction name="onCFCRequest" access="public" returnType="string" returnformat="plain">
+	<!---<cffunction name="onCFCRequest" access="public" returnType="string" returnformat="plain">
         <cfargument name="cfcname" type="string" required="true">
         <cfargument name="method" type="string" required="true">
         <cfargument name="args" type="struct" required="true">
 
-		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD' AND NOT
+		<!---<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD' AND NOT
 			(
 				findNoCase( "shortstravel.com", cgi.http_referrer ) OR
 				findNoCase( "shortstravelonline.com", cgi.http_referrer ) OR
@@ -148,20 +148,21 @@
 			<cfset local.isAuthorized = application.fw.factory.getBean( "AuthorizationService" ).checkCredentials( cookie.userId, cookie.acctId, cookie.date, cookie.token )>
 		</cfif>
 
-		<cfif local.isAuthorized>
+		<cfif local.isAuthorized>--->
 			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
 
 			<cfif NOT isSimpleValue( local.result )>
 				<cfset local.result = serializeJSON( local.result ) />
 			</cfif>
 
-			<cfif isJSON( local.result )>
+			<!---<cfif isJSON( local.result )>
 				<cfset local.responseMimeType = "application/json" />
 			<cfelse>
 				<cfset local.responseMimeType = "application/javascript" />
-			</cfif>
+			</cfif>--->
 
-			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
+			<cfreturn local.result />
+			<!---<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
 
 			<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />
 
@@ -170,8 +171,8 @@
 		<cfelse>
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>
-
+		--->
 		<cfreturn />
-	</cffunction>
+	</cffunction>--->
 
 </cfcomponent>
