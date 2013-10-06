@@ -72,8 +72,6 @@
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>
 
-	<bean id="General" class="booking.services.general" />
-
 	<bean id="Summary" class="booking.services.summary">
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>

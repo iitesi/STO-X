@@ -102,64 +102,6 @@
 		<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
 	</cffunction>
 
-	<cffunction name="getCarPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="acctID" type="numeric" required="true"/>
-		<cfargument name="userID" type="numeric" required="true"/>
-		<cfargument name="valueID" type="numeric" required="false" default="0"/>
-		<cfargument name="vendor" type="string" required="false" default=""/>
-
-		<cfreturn getBean( "PaymentService" ).getCarPayments( acctID = arguments.acctID, userID = arguments.userID, valueID = arguments.valueID, vendor = arguments.vendor ) />
-	</cffunction>
-
-	<cffunction name="getUserPayments" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
-		<cfargument name="arrangerID" required="false" default=""/>
-		<cfargument name="acctID" type="numeric" required="true"/>
-		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
-
-		<cfreturn getBean( "PaymentService" ).getUserPayments( acctID = arguments.acctID, userID = arguments.userID, arrangerID = arguments.arrangerID, valueID = arguments.valueID ) />
-	</cffunction>
-
-	<cffunction name="getUserFOPs" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="acctID" 		type="numeric" 	required="false" default="0" />
-		<cfargument name="userID" 		type="numeric" 	required="false" default="0" />
-		<cfargument name="valueID" 		type="numeric"	required="false" default="0" />
-		<cfargument name="paymentTypes" type="string" 	required="false" default="all" 		hint="all, user, account, department" />
-		<cfargument name="returnType"	type="string" 	required="false" default="array" 	hint="array, query" />
-
-		<cfreturn getBean( "UserService" ).getUserFOPs( arguments.acctID, arguments.userID, arguments.valueID, arguments.paymentTypes, arguments.returnType ) />
-	</cffunction>
-
-	<cffunction name="getUserDepartment" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userID" type="numeric" required="true"/>
-		<cfargument name="acctID" type="numeric" required="true"/>
-
-		<cfreturn getBean( "UserService" ).getUserDepartment( arguments.userId, arguments.acctId ) />
-	</cffunction>
-
-	<cffunction name="getUserFFAccounts" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
-		<cfargument name="custType" type="string" required="false" default=""/>
-		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|struct"/>
-
-		<cfreturn getBean( "UserService" ).getUserFFAccounts( arguments.userId, arguments.custType, arguments.returnType ) />
-	</cffunction>
-
-	<cffunction name="getUserBARs" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
-		<cfargument name="acctId" type="numeric" required="true"/>
-		<cfargument name="returnCount" type="string" required="false" default="main" hint="Valid values: main|all"/>
-		<cfargument name="returnType" type="string" required="false" default="query" hint="Valid values: query|array"/>
-
-		<cfreturn getBean( "UserService" ).getUserBARs( arguments.userId, arguments.acctId, arguments.returnCount, arguments.returnType ) />
-	</cffunction>
-
-	<cffunction name="getUserPAR" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
-
-		<cfreturn getBean( "UserService" ).getUserPAR( arguments.userId ) />
-	</cffunction>
-
     <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
 
