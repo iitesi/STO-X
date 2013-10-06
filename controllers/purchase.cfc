@@ -43,6 +43,14 @@
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 
+				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->
+				<cfif (rc.Filter.getAcctID() EQ 254
+					OR rc.Filter.getAcctID() EQ 255)
+					AND Air.Carriers[1] EQ 'WN'>
+					<cfset rc.Account.sBranch = 'P1601400'>
+					<cfset rc.Account.PCC_Booking = '1H7M'>
+				</cfif>
+
 				<!--- Open terminal session --->
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
@@ -129,29 +137,33 @@
 						<cfelseif LEFT(cardNumber, 1) EQ 3>
 							<cfset cardType = 'AX'>
 						</cfif>
-						<!--- Get credit card authorization --->
-						<!--- <cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
-																											, hostToken = hostToken
-																											, Air = Air
-																											, cardNumber = cardNumber
-																											, cardType = cardType
-																											, cardExpiration = cardExpiration
-																											, searchID = rc.searchID)> --->
-						<cfset authResponse.error = 0>
+						<cfif cardNumber NEQ ''>
+							<!--- Get credit card authorization --->
+							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, Air = Air
+																												, cardNumber = cardNumber
+																												, cardType = cardType
+																												, cardExpiration = cardExpiration
+																												, searchID = rc.searchID)>
+						<cfelse>
+							<cfset authResponse.error = 0>
+							<cfset authResponse.message = ''>
+						</cfif>
 						<cfif authResponse.error>
 							<cfset arrayAppend( errorMessage, 'Credit card authorization error' )>
 							<cfset errorType = 'TerminalEntry.getCCAuth'>
 						<cfelse>
-							<cfif NOT authResponse.error>
-								<!--- <cfset cardAuth = authResponse.message> --->
-								<cfset cardAuth = ''>
+							<cfset local.cardAuth = ''>
+							<cfif authResponse.message NEQ ''>
+								<cfset cardAuth = authResponse.message>
 							</cfif>
 							<!--- Start new session due to credit card/emulation --->
-							<!--- <cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+							<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																							, hostToken = hostToken
-																							, searchID = rc.searchID )> --->
-							<!--- <cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																											, searchID = rc.searchID )> --->
+																							, searchID = rc.searchID )>
+							<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																											, searchID = rc.searchID )>
 							
 							<cfif hostToken EQ ''>
 								<cfset listAppend(errorMessage, 'Terminal - open session failed')>
@@ -399,7 +411,7 @@
 																										, searchID = rc.searchID )>
 					</cfif>
 
-					<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
+					<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																									, hostToken = hostToken
 																									, Air = Air
 																									, pcc = Traveler.getBAR()[1].PCC
@@ -410,7 +422,7 @@
 																									, searchID = rc.searchID )>
 				
 					removeSecondName<br>
-					<cfdump var="#responseMessage#" /> --->
+					<cfdump var="#responseMessage#" />
 					<cfif responseMessage.error>
 						<cfset errorMessage = responseMessage.message>
 						<cfset errorType = 'TerminalEntry.updateATFQ'>
@@ -474,7 +486,6 @@
 																					, itinerary = itinerary
 																					, Filter = rc.Filter )>
 
-					<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')> --->
 				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID

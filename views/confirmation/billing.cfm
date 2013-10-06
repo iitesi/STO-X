@@ -46,7 +46,12 @@
 								<cfset airTotal = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), airCurrency, '') />
 								<tr>
 									<td>Flight</td>
-									<td>#airCardType#... #right(airCardNumber, 4)#</td>
+									<td>
+										<cfif airCardNumber NEQ ''>
+											#airCardType#... #right(airCardNumber, 4)#
+										<cfelse>
+											CBA
+										</cfif></td>
 									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : airTaxes&' '&airCurrency)#</td>
@@ -141,7 +146,11 @@
 									<td>Booking Fee</td>
 									<td>
 										<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
-											#airCardType#... #right(airCardNumber, 4)#
+											<cfif airCardNumber NEQ ''>
+												#airCardType#... #right(airCardNumber, 4)#
+											<cfelse>
+												CBA
+											</cfif>
 										<cfelseif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
 											#hotelCardType#... #right(hotelCardNumber, 4)#
 										</cfif>
