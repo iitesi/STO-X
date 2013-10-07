@@ -40,7 +40,7 @@
 <div style="width:960px;">
 
 	<cfif application.es.getCurrentEnvironment() NEQ 'prod'
-		AND NOT (application.es.getCurrentEnvironment() NEQ 'beta'
+		AND NOT (application.es.getCurrentEnvironment() EQ 'beta'
 			AND rc.Filter.getAcctID() EQ 441)>
 		<span style="float:right">
 			<cfoutput>
