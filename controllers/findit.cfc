@@ -78,7 +78,7 @@
 			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 
-		<cfquery result="local.dbFindIt" datasource="Book">
+		<cfquery result="local.dbFindIt" datasource="Booking">
 			INSERT INTO FindItRequests
 				(Worked
 				,WorkedBySTO
