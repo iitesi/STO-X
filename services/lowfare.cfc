@@ -97,15 +97,18 @@
 		</cfloop>
 
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
+		<cfif NOT StructIsEmpty(stThreads) 
+			AND structKeyList(stThreads) NEQ ''
+			AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<!--- <cfloop collection="#cfthread#" index="local.i" item="local.thread">
+			<cfloop collection="#cfthread#" index="local.i" item="local.thread">
 				<cfif thread.status NEQ 'COMPLETED'
+					AND thread.status NEQ 'RUNNING'
 					AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 					<cfset errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
 					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD error', exception=errorException, severityCode='Error' ) />
 				</cfif>
-			</cfloop> --->
+			</cfloop>
 		</cfif>
 
 		<cfreturn />
@@ -148,7 +151,7 @@
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSoapHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
+				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
 
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
