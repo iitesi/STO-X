@@ -39,9 +39,10 @@
 
 <div style="width:960px;">
 
-	<cfif application.es.getCurrentEnvironment() NEQ 'prod'
+	<cfif (application.es.getCurrentEnvironment() NEQ 'prod'
 		AND NOT (application.es.getCurrentEnvironment() EQ 'beta'
-			AND rc.Filter.getAcctID() EQ 441)>
+			AND rc.Filter.getAcctID() EQ 441))
+		OR rc.Filter.getUserID() EQ 3605>
 		<span style="float:right">
 			<cfoutput>
 				<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
