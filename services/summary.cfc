@@ -433,19 +433,22 @@
 
 		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()
 			AND arguments.Policy.Policy_AirApproval EQ 1
-			AND arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop_'>
+			AND (arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop_'
+			AND arguments.Traveler.getBookingDetail().getAirFOPID() NEQ 0)>
 			<cfset local.approval.approvalNeeded = true>
 		</cfif>
 
 		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded()
 			AND arguments.Policy.Policy_HotelApproval EQ 1
-			AND arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop_'>
+			AND (arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop_'
+			AND arguments.Traveler.getBookingDetail().getHotelFOPID() NEQ 0)>
 			<cfset local.approval.approvalNeeded = true>
 		</cfif>
 
 		<cfif arguments.Traveler.getBookingDetail().getCarNeeded()
 			AND arguments.Policy.Policy_CarApproval EQ 1
-			AND arguments.Traveler.getBookingDetail().getCarFOPID() DOES NOT CONTAIN 'fop_'>
+			AND (arguments.Traveler.getBookingDetail().getCarFOPID() DOES NOT CONTAIN 'fop_'
+			AND arguments.Traveler.getBookingDetail().getCarFOPID() NEQ 0)>
 			<cfset local.approval.approvalNeeded = true>
 			<!--- <cfif arguments.CarCC_Type EQ 1>Direct Bill car
 				<cfset local.approval = 'Y'>
