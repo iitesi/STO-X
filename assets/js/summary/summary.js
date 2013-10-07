@@ -561,7 +561,6 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					var values = $.parseJSON(values)
 					var originalValue = $("#sort1").val();
 					$( "#sort1" ).html('')
 					$( "#sort1" ).append('<option value="0"></option>')
@@ -586,7 +585,6 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					var values = $.parseJSON(values)
 					var originalValue = $("#sort2").val();
 					$( "#sort2" ).html('')
 					$( "#sort2" ).append('<option value="0"></option>')
@@ -613,7 +611,6 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					var values = $.parseJSON(values)
 					$( "#sort3" ).html('')
 					$( "#sort3" ).append('<option value="0"></option>')
 					for( var i=0, l=values.length; i<l; i++ ) {
@@ -640,7 +637,6 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					var values = $.parseJSON(values)
 					$( "#sort4" ).html('')
 					$( "#sort4" ).append('<option value="0"></option>')
 					for( var i=0, l=values.length; i<l; i++ ) {
