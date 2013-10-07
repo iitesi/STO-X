@@ -78,7 +78,7 @@
 			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 
-		<cfquery result="local.dbFindIt" datasource="Book">
+		<cfquery result="local.dbFindIt" datasource="Booking">
 			INSERT INTO BookItRequests
 				(Worked
 				,WorkedBySTO
@@ -137,9 +137,14 @@
 				, <cfqueryparam value="" cfsqltype="cf_sql_varchar">)
 		</cfquery>
 
-		<!--- <cfdump var="#dbFindIt.IDENTITYCOL#" /> --->
+		<cfquery name="local.getMax" datasource="booking">
+			SELECT MAX(ID) AS ID
+			FROM BookItRequests
+			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
+				Acct_ID = <cfqueryparam value="#rc.Filter.getAcctID()#" cfsqltype="cf_sql_numeric">
+		</cfquery>
 
-		<cfhttp method="post" url="https://beta.shortstravelonline.com/findit?id=#local.dbFindIt.IDENTITYCOL#"/>
+		<cfhttp method="post" url="https://www.shortstravelonline.com/findit?id=#getMax.ID#"/>
 
 		<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
 
