@@ -1,4 +1,5 @@
-<cfdump var="#session.searches['282635'].stTrips#"/>
+<cfdump var="#application.accounts#"/>
+<cfdump var="#session#"/>
 
 
 <cfabort>
