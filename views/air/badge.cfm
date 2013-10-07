@@ -149,8 +149,9 @@
 					<a href="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 						Email
 					</a>
-					<cfif application.es.getCurrentEnvironment() NEQ 'prod'
-						AND application.es.getCurrentEnvironment() NEQ 'beta'>
+					<cfif (application.es.getCurrentEnvironment() NEQ 'prod'
+						AND application.es.getCurrentEnvironment() NEQ 'beta')
+						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif>
