@@ -177,6 +177,13 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
+		<!--- Code needs to be reworked and put in a better location --->
+		<cfset local.targetBranch = arguments.Account.sBranch>
+		<cfif arguments.Filter.getAcctID() EQ 254
+			OR arguments.Filter.getAcctID() EQ 255>
+			<cfset targetBranch = 'P1601396'>
+		</cfif>
+
 <!---
 ****************************************************************************
 				ANY CHANGES MADE BELOW PROBABLY NEED TO ALSO BE MADE IN
@@ -189,7 +196,7 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AvailabilitySearchReq TargetBranch="#arguments.Account.sBranch#"
+						<air:AvailabilitySearchReq TargetBranch="#targetBranch#"
 								xmlns:air="#getUAPISchemas().air#"
 								xmlns:com="#getUAPISchemas().common#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
