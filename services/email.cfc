@@ -20,11 +20,17 @@
 		<cfargument name="Email_Message">
 
 		<cfset local.assetURL = getAssetURL()>
-		<cfset local.toAddress = arguments.To_Address>
-		<cfset local.ccAddress = arguments.CC_Address>
-		<cfif IsLocalHost(cgi.remote_addr)>
-			<cfset local.toAddress = "jpriest@shortstravel.com">
-			<cfset local.ccAddress = "jpriest@shortstravel.com">
+
+		<!--- cc address is optional --->
+		<cfset local.ccAddress = "">
+		<cfif len(arguments.cc_address)>
+			<cfset local.ccAddress = arguments.cc_address>
+		</cfif>
+
+		<!--- if somehow they submit form without a to address we'll use their acct from address --->
+		<cfset local.toAddress = arguments.to_address>
+		<cfif NOT Len(local.toAddress)>
+			<cfset local.toAddress = arguments.email_Address>
 		</cfif>
 
 		<cfmail
