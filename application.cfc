@@ -39,9 +39,7 @@
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 		<cfset controller( 'setup.setApplication' )>
-		<cfset application.bDebug = 0>
 		<cfset application.gmtOffset = '6:00'>
-		<cfset application.developerEmail = "jpriest@shortstravel.com">
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
 	</cffunction>
 
@@ -51,7 +49,7 @@
 		<cfset session.aMessages = []>
 	</cffunction>
 
-	<cffunction name="setupRequest" output="true">
+	<cffunction name="setupRequest">
 
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
@@ -105,7 +103,7 @@
 			<cfset controller( 'setup.setGroup' )>
 			<cfset controller( 'setup.setBlackListedCarrierPairing' )>
 		</cfif>
-		
+
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
@@ -136,7 +134,7 @@
 								, department = department
 								, searchID = searchID
 								, exception = arguments.exception
-								} > 
+								} >
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=errorException, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
