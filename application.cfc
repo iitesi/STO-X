@@ -162,7 +162,6 @@
 				<cfset local.responseMimeType = "application/javascript" />
 			</cfif>
 
-			<cfreturn local.result />
 			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
 
 			<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />
