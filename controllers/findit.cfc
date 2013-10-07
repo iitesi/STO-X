@@ -78,8 +78,8 @@
 			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 
-		<cfquery result="local.dbFindIt" datasource="Booking">
-			INSERT INTO BookItRequests
+		<cfquery result="local.dbFindIt" datasource="Book">
+			INSERT INTO FindItRequests
 				(Worked
 				,WorkedBySTO
 				,Error
@@ -139,7 +139,7 @@
 
 		<cfquery name="local.getMax" datasource="booking">
 			SELECT MAX(ID) AS ID
-			FROM BookItRequests
+			FROM FindItRequests
 			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
 				Acct_ID = <cfqueryparam value="#rc.Filter.getAcctID()#" cfsqltype="cf_sql_numeric">
 		</cfquery>
