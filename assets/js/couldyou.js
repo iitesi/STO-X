@@ -96,6 +96,7 @@ shortstravel.couldyou = {
 
 			$.ajax({
 				url: '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate,
+				dataType: 'json',
 				success: function( data ){
 					shortstravel.couldyou.data[ requestedDate ].air = data.AIR;
 					shortstravel.couldyou.data[ requestedDate ].hotel = data.HOTEL;
@@ -121,26 +122,17 @@ shortstravel.couldyou = {
 						shortstravel.couldyou.data[ requestedDate ].message = shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[requestedDate].total );
 					}
 
-					//check to see if all calls have completed
-					var completed = true;
-					for( var prop in shortstravel.couldyou.data ){
-						if( !shortstravel.couldyou.data[ prop ].dataLoaded ){
-							completed = false;
-							break;
-						}
-					}
-
-					if( completed ){
-						shortstravel.couldyou.calculateMaxSavingDates();
-						shortstravel.couldyou.updateCalendar();
-						shortstravel.couldyou.buildAlternativesTable();
-						$('#myModal').modal( 'hide' );
-					}
 				},
 				error: function(){
-					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary not available';
+					shortstravel.couldyou.data[ requestedDate ].air = '';
+					shortstravel.couldyou.data[ requestedDate ].hotel = '';
+					shortstravel.couldyou.data[ requestedDate ].vehicle = '';
 					shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
+					shortstravel.couldyou.data[ requestedDate ].total = 0;
+					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary not available';
 
+				},
+				complete: function(){
 					//check to see if all calls have completed
 					var completed = true;
 					for( var prop in shortstravel.couldyou.data ){
@@ -151,14 +143,13 @@ shortstravel.couldyou = {
 					}
 
 					if( completed ){
+						$('#myModal').modal( 'hide' );
 						shortstravel.couldyou.calculateMaxSavingDates();
 						shortstravel.couldyou.updateCalendar();
 						shortstravel.couldyou.buildAlternativesTable();
-						$('#myModal').modal( 'hide' );
-					}
 
-				},
-				dataType: 'json'
+					}
+				}
 			})
 		}
 	},
