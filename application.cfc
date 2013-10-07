@@ -117,12 +117,33 @@
 		<cfargument name="Exception" required=true/>
 		<cfargument name="EventName" type="String" required=true/>
 
-		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Fatal' ) />
+		<cfset local.acctID = ''>
+		<cfset local.userID = ''>
+		<cfset local.username = ''>
+		<cfset local.department = ''>
+		<cfset local.searchID = ''>
+		<cfif structKeyExists(rc, 'Filter')>
+			<cfset acctID = rc.Filter.getAcctID()>
+			<cfset userID = rc.Filter.getUserID()>
+			<cfset username = rc.Filter.getUsername()>
+			<cfset department = rc.Filter.getDepartment()>
+			<cfset searchID = rc.Filter.getSearchID()>
+		</cfif>
+		<cfset local.errorException = structNew('linked')>
+		<cfset errorException = { acctID = acctID
+								, userID = userID
+								, username = username
+								, department = department
+								, searchID = searchID
+								, exception = arguments.exception
+								} > 
+		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=errorException, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
+
 	</cffunction>
 
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">
