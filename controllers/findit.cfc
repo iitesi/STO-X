@@ -137,14 +137,7 @@
 				, <cfqueryparam value="" cfsqltype="cf_sql_varchar">)
 		</cfquery>
 
-		<cfquery name="local.getMax" datasource="booking">
-			SELECT MAX(ID) AS ID
-			FROM FindItRequests
-			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
-				Acct_ID = <cfqueryparam value="#rc.Filter.getAcctID()#" cfsqltype="cf_sql_numeric">
-		</cfquery>
-
-		<cfhttp method="post" url="https://www.shortstravelonline.com/findit?id=#getMax.ID#"/>
+		<cfhttp method="get" url="https://www.shortstravelonline.com/findit?id=#dbFindIt.IDENTITYCOL#"/>
 
 		<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
 
