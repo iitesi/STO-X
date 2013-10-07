@@ -52,6 +52,12 @@
 					AND Air.Carriers[1] EQ 'WN'>
 					<cfset rc.Account.sBranch = 'P1601400'>
 					<cfset rc.Account.PCC_Booking = '1H7M'>
+				<cfelseif airSelected 
+					AND (rc.Filter.getAcctID() EQ 254
+					OR rc.Filter.getAcctID() EQ 255)
+					AND Air.Carriers[1] NEQ 'WN'>
+					<cfset rc.Account.sBranch = 'P1601396'>
+					<cfset rc.Account.PCC_Booking = '2B2C'>
 				</cfif>
 
 				<!--- Open terminal session --->
