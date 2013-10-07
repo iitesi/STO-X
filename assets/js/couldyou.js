@@ -94,46 +94,54 @@ shortstravel.couldyou = {
 
 		} else {
 
-			$.getJSON( '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate, function( data ){
-				shortstravel.couldyou.data[ requestedDate ].air = data.AIR;
-				shortstravel.couldyou.data[ requestedDate ].hotel = data.HOTEL;
-				shortstravel.couldyou.data[ requestedDate ].vehicle = data.CAR;
-				shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
-				shortstravel.couldyou.data[ requestedDate ].total = shortstravel.couldyou.calculateDailyTotal( requestedDate );
+			$.ajax({
+				url: '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate,
+				success: function( data ){
+					shortstravel.couldyou.data[ requestedDate ].air = data.AIR;
+					shortstravel.couldyou.data[ requestedDate ].hotel = data.HOTEL;
+					shortstravel.couldyou.data[ requestedDate ].vehicle = data.CAR;
+					shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
+					shortstravel.couldyou.data[ requestedDate ].total = shortstravel.couldyou.calculateDailyTotal( requestedDate );
 
-				if( shortstravel.couldyou.data[ requestedDate ].air == "" || shortstravel.couldyou.data[ requestedDate ].hotel == "" || shortstravel.couldyou.data[ requestedDate ].vehicle == "" ){
-					var missingServices = [];
-					if( shortstravel.couldyou.data[ requestedDate ].air == "" ){
-						missingServices.push( 'flight' );
-					}
-					if( shortstravel.couldyou.data[ requestedDate ].hotel == "" ){
-						missingServices.push( 'hotel' );
-					}
-					if( shortstravel.couldyou.data[ requestedDate ].vehicle == "" ){
-						missingServices.push( 'car' );
-					}
-					shortstravel.couldyou.data[ requestedDate ].message = missingServices.toString() + ' not available';
-					shortstravel.couldyou.data[ requestedDate ].message = shortstravel.couldyou.data[ requestedDate ].message.replace( ",", ", ");
+					if( shortstravel.couldyou.data[ requestedDate ].air == "" || shortstravel.couldyou.data[ requestedDate ].hotel == "" || shortstravel.couldyou.data[ requestedDate ].vehicle == "" ){
+						var missingServices = [];
+						if( shortstravel.couldyou.data[ requestedDate ].air == "" ){
+							missingServices.push( 'flight' );
+						}
+						if( shortstravel.couldyou.data[ requestedDate ].hotel == "" ){
+							missingServices.push( 'hotel' );
+						}
+						if( shortstravel.couldyou.data[ requestedDate ].vehicle == "" ){
+							missingServices.push( 'car' );
+						}
+						shortstravel.couldyou.data[ requestedDate ].message = missingServices.toString() + ' not available';
+						shortstravel.couldyou.data[ requestedDate ].message = shortstravel.couldyou.data[ requestedDate ].message.replace( ",", ", ");
 
-				} else {
-					shortstravel.couldyou.data[ requestedDate ].message = shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[requestedDate].total );
-				}
-
-				//check to see if all calls have completed
-				var completed = true;
-				for( var prop in shortstravel.couldyou.data ){
-					if( !shortstravel.couldyou.data[ prop ].dataLoaded ){
-						completed = false;
-						break;
+					} else {
+						shortstravel.couldyou.data[ requestedDate ].message = shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[requestedDate].total );
 					}
-				}
 
-				if( completed ){
-					shortstravel.couldyou.calculateMaxSavingDates();
-					shortstravel.couldyou.updateCalendar();
-					shortstravel.couldyou.buildAlternativesTable();
-					$('#myModal').modal( 'hide' );
-				}
+					//check to see if all calls have completed
+					var completed = true;
+					for( var prop in shortstravel.couldyou.data ){
+						if( !shortstravel.couldyou.data[ prop ].dataLoaded ){
+							completed = false;
+							break;
+						}
+					}
+
+					if( completed ){
+						shortstravel.couldyou.calculateMaxSavingDates();
+						shortstravel.couldyou.updateCalendar();
+						shortstravel.couldyou.buildAlternativesTable();
+						$('#myModal').modal( 'hide' );
+					}
+				},
+				error: function(){
+					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary available';
+					shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
+				},
+				dataType: 'json'
 			})
 		}
 	},
@@ -334,11 +342,15 @@ shortstravel.couldyou = {
 				}
 				row += '<td>' + shortstravel.couldyou.data[ prop ].message +'</td>';
 				row += '<td>';
-				row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) );
+				if( shortstravel.couldyou.data[ prop ].message != 'Data not available'){
+					row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) );
+				}
 				if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) > 0 ){
 					row += ' savings';
 				} else if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) < 0 ){
 					row += ' more'
+				} else if( shortstravel.couldyou.data[ prop ].message == 'Data not available' ){
+					row += ' '
 				}
 
 				row += '</td>';
@@ -441,6 +453,7 @@ shortstravel.couldyou = {
 	},
 
 	formatCurrency: function( cost, places ){
+
 		if( typeof places != "number" ){
 			places = 0;
 		}
