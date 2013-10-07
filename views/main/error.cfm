@@ -1,3 +1,8 @@
+<p>It appears we've run into an error.  The developers have been notified.</p>
+<p>You may click your browsers 'back' button and try again or use the navigation menu at the top to return to the home page.</p>
+
+
+<!---
 <h1>An Error Occurred</h1>
 <p>I am the subsystem error view: home:main.error.</p>
 <p>Details of the exception:</p>
@@ -12,4 +17,4 @@
 </cfoutput>
 <cfset structDelete(request.exception.cause, 'StackTrace')>
 <cfdump var="#request.exception#"/>
-<cfset request.layout = false>
+<cfset request.layout = false> --->
