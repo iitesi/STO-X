@@ -1,7 +1,6 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="assetURL"/>
-	<cfproperty name="bookDSN"/>
 	<cfproperty name="bookingDSN"/>
 	<cfproperty name="corporateProductionDSN"/>
 	<cfproperty name="currentEnvironment" />
@@ -12,7 +11,6 @@
 
 	<cffunction name="init" output="false">
 		<cfargument name="assetURL" type="string" requred="true" />
-		<cfargument name="bookDSN" type="string" requred="true" />
 		<cfargument name="bookingDSN" type="string" requred="true" />
 		<cfargument name="corporateProductionDSN" type="string" requred="true" />
 		<cfargument name="currentEnvironment" type="string" requred="true" />
@@ -22,7 +20,6 @@
 		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
-		<cfset setBookDSN( arguments.bookDSN ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
 		<cfset setCurrentEnvironment( arguments.currentEnvironment ) />
