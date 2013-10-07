@@ -233,6 +233,7 @@
 		<!--- run on first search --->
 		<!--- reset filterStatus if new search is created --->
 		<cfif NOT structKeyExists(session, "filterStatus")
+			OR NOT structKeyExists(session.filterStatus, "searchID")
 			OR arguments.rc.searchID NEQ session.filterStatus.searchID>
 			<cfset session.filterStatus = {}>
 			<cfset session.filterStatus.searchID = arguments.rc.searchID>
