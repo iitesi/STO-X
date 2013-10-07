@@ -57,11 +57,14 @@
 			<cfset setupApplication() />
 		</cfif>
 
-		<cfif NOT structKeyExists(request.context, 'SearchID')>
+		<cfif (NOT structKeyExists(request.context, 'SearchID')
+			OR NOT isNumeric(request.context.searchID))
+			AND request.context.action NEQ 'main.notfound'>
 			<cfset var action = ListFirst(request.context.action, '.')>
-			<cfset view( "main/notfound" )>
-		<cfelse>
 
+			<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
+
+		<cfelse>
 			<cfif NOT findNoCase( ".cfc", cgi.script_name )>
 				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
@@ -122,12 +125,13 @@
 		<cfset local.username = ''>
 		<cfset local.department = ''>
 		<cfset local.searchID = ''>
-		<cfif structKeyExists(rc, 'Filter')>
-			<cfset acctID = rc.Filter.getAcctID()>
-			<cfset userID = rc.Filter.getUserID()>
-			<cfset username = rc.Filter.getUsername()>
-			<cfset department = rc.Filter.getDepartment()>
-			<cfset searchID = rc.Filter.getSearchID()>
+		<cfif structKeyExists(arguments, 'rc')
+			AND structKeyExists(arguments.rc, 'Filter')>
+			<cfset acctID = arguments.rc.Filter.getAcctID()>
+			<cfset userID = arguments.rc.Filter.getUserID()>
+			<cfset username = arguments.rc.Filter.getUsername()>
+			<cfset department = arguments.rc.Filter.getDepartment()>
+			<cfset searchID = arguments.rc.Filter.getSearchID()>
 		</cfif>
 		<cfset local.errorException = structNew('linked')>
 		<cfset errorException = { acctID = acctID
