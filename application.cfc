@@ -22,7 +22,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = true,
+		reloadApplicationOnEveryRequest = (NOT isLocalHost(cgi.remote_addr) ? false : true),
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
