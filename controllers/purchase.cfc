@@ -44,7 +44,8 @@
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 
 				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->
-				<cfif (rc.Filter.getAcctID() EQ 254
+				<cfif airSelected 
+					AND (rc.Filter.getAcctID() EQ 254
 					OR rc.Filter.getAcctID() EQ 255)
 					AND Air.Carriers[1] EQ 'WN'>
 					<cfset rc.Account.sBranch = 'P1601400'>
