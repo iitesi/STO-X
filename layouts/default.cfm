@@ -68,11 +68,10 @@
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
 										</cfif>
-										<cfif structKeyExists(rc, "account") AND isStruct( rc.account ) AND NOT structIsEmpty( rc.account) AND len(trim(rc.account.logo)) AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#")>
+										<cfif structKeyExists(rc, "account") AND isStruct(rc.account) AND NOT structIsEmpty(rc.account) AND rc.account.acct_ID NEQ 1 AND len(trim(rc.account.logo)) AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#")>
 											<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#" alt="#rc.account.account_name#" />
 										<cfelse>
-											<!--- <img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/STM-Logo.gif" alt="Short's Travel Management" /> --->
-											<img src="assets/img/clients/STM-Logo.gif" alt="Short's Travel Management" />
+											<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
 										</cfif>
 										</a>
 									</cfoutput>
