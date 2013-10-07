@@ -1,6 +1,6 @@
 <p>It appears we've run into an error.  The developers have been notified.</p>
 <p>You may click your browsers 'back' button and try again or use the navigation menu at the top to return to the home page.</p>
-
+<cfset request.layout = false>
 
 <!---
 <h1>An Error Occurred</h1>
