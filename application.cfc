@@ -164,7 +164,7 @@
 
 			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
 
-			<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />
+			<!---<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />--->
 
 			<cfcontent type="#local.responseMimeType#" variable="#local.binaryResponse#" />
 
