@@ -419,7 +419,7 @@
 					
 					<cfif application.es.getCurrentEnvironment() EQ 'prod'
 						AND airSelected
-						AND NOT (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
+						AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, Air = Air
