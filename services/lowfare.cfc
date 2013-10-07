@@ -99,13 +99,13 @@
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
-			<cfloop collection="#cfthread#" index="local.i" item="local.thread">
+			<!--- <cfloop collection="#cfthread#" index="local.i" item="local.thread">
 				<cfif thread.status NEQ 'COMPLETED'
 					AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 					<cfset errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
 					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD error', exception=errorException, severityCode='Error' ) />
 				</cfif>
-			</cfloop>
+			</cfloop> --->
 		</cfif>
 
 		<cfreturn />
