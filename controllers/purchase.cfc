@@ -414,7 +414,8 @@
 																										, searchID = rc.searchID )>
 					</cfif>
 					
-					<cfif application.es.getCurrentEnvironment() EQ 'prod'>
+					<cfif application.es.getCurrentEnvironment() EQ 'prod'
+						AND airSelected>
 						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, Air = Air
