@@ -52,10 +52,6 @@
 	</cffunction>
 
 	<cffunction name="setupRequest" output="true">
-		<cfif structKeyExists( request.context, "reload" ) AND request.context.reload IS true>
-			<cfset request.layout = false>
-			<cfset setupApplication() />
-		</cfif>
 
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
