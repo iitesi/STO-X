@@ -56,6 +56,11 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
 
+<!--- CFDUMP: Debugging --->
+<cfdump var="#application#" label="Dump ( application )" abort="true" format="html">
+
+
+
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
