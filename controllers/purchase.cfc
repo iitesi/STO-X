@@ -139,7 +139,8 @@
 							<cfset cardType = 'AX'>
 						</cfif>
 						<cfif cardNumber NEQ ''
-							AND application.es.getCurrentEnvironment() EQ 'prod'>
+							AND application.es.getCurrentEnvironment() EQ 'prod'
+							AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 							<!--- Get credit card authorization --->
 							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
@@ -160,7 +161,8 @@
 							<cfif authResponse.message NEQ ''>
 								<cfset cardAuth = authResponse.message>
 							</cfif>
-							<cfif application.es.getCurrentEnvironment() EQ 'prod'>
+							<cfif application.es.getCurrentEnvironment() EQ 'prod'
+								AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 								<!--- Start new session due to credit card/emulation --->
 								<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken
@@ -416,7 +418,8 @@
 					</cfif>
 					
 					<cfif application.es.getCurrentEnvironment() EQ 'prod'
-						AND airSelected>
+						AND airSelected
+						AND NOT (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, Air = Air
