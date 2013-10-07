@@ -148,9 +148,12 @@
 					</a>
 					<a href="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 						Email
-						<span class="divider">/</span>
 					</a>
-					 <a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#" >FindIt</a>
+					<cfif application.es.getCurrentEnvironment() NEQ 'prod'
+						AND application.es.getCurrentEnvironment() NEQ 'beta'>
+						<span class="divider">/</span>
+						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
+					</cfif>
 				</td>
 			</tr>
 
