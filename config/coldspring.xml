@@ -52,6 +52,7 @@
 	</bean>
 
 	<bean id="email" class="booking.services.email">
+		<constructor-arg name="assetURL"><bean factory-bean="EnvironmentService" factory-method="getAssetURL" /></constructor-arg>
 		<constructor-arg name="uAPI"><ref bean="uAPI" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 	</bean>
@@ -77,7 +78,7 @@
 	</bean>
 
 	<bean id="confirmation" class="booking.services.confirmation" />
-	
+
 	<bean id="general" class="booking.services.general" />
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
