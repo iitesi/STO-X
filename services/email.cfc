@@ -33,8 +33,7 @@
 			cc="#local.ccAddress#"
 			subject="#arguments.Email_Subject#"
 			type="HTML">
-
-<!DOCTYPE html>
+	<!DOCTYPE html>
 	<html lang="en">
 	<head>
 		<meta charset="utf-8">
