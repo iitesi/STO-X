@@ -138,7 +138,7 @@ shortstravel.couldyou = {
 					}
 				},
 				error: function(){
-					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary available';
+					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary not available';
 					shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
 				},
 				dataType: 'json'
@@ -342,14 +342,14 @@ shortstravel.couldyou = {
 				}
 				row += '<td>' + shortstravel.couldyou.data[ prop ].message +'</td>';
 				row += '<td>';
-				if( shortstravel.couldyou.data[ prop ].message != 'Itinerary available'){
+				if( shortstravel.couldyou.data[ prop ].message != 'Itinerary not available'){
 					row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) );
 				}
 				if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) > 0 ){
 					row += ' savings';
 				} else if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) < 0 ){
 					row += ' more'
-				} else if( shortstravel.couldyou.data[ prop ].message == 'Itinerary available' ){
+				} else if( shortstravel.couldyou.data[ prop ].message == 'Itinerary not available' ){
 					row += ' '
 				}
 
