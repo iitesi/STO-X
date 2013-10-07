@@ -238,6 +238,13 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
+		<!--- Code needs to be reworked and put in a better location --->
+		<cfset local.targetBranch = arguments.Account.sBranch>
+		<cfif arguments.Filter.getAcctID() EQ 254
+			OR arguments.Filter.getAcctID() EQ 255>
+			<cfset targetBranch = 'P1601396'>
+		</cfif>
+
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
 
@@ -253,7 +260,7 @@
 					<soapenv:Header/>
 					<soapenv:Body>
 						<cfif arguments.sLowFareSearchID EQ ''>
-							<air:LowFareSearchReq TargetBranch="#arguments.Account.sBranch#"
+							<air:LowFareSearchReq TargetBranch="#targetBranch#"
 								xmlns:air="#getUAPISchemas().air#"
 								xmlns:com="#getUAPISchemas().common#">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />

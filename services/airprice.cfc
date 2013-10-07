@@ -135,12 +135,19 @@
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
+		<!--- Code needs to be reworked and put in a better location --->
+		<cfset local.targetBranch = arguments.stAccount.sBranch>
+		<cfif arguments.stAccount.Acct_ID EQ 254
+			OR arguments.stAccount.Acct_ID EQ 255>
+			<cfset targetBranch = 'P1601396'>
+		</cfif>
+
 		<cfsavecontent variable="local.sMessage">
 			<cfoutput>
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AirPriceReq xmlns:air="#getUAPISchemas().air#" xmlns:com="#getUAPISchemas().common#" TargetBranch="#arguments.stAccount.sBranch#">
+						<air:AirPriceReq xmlns:air="#getUAPISchemas().air#" xmlns:com="#getUAPISchemas().common#" TargetBranch="#targetBranch#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset local.nCount = 0>
