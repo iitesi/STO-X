@@ -143,7 +143,9 @@
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
-
+		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
+			<cfdump var="#arguments.exception#" />
+		</cfif>
 	</cffunction>
 
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">

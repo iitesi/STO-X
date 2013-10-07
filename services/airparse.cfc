@@ -219,7 +219,6 @@ MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 --->
 						<cfloop array="#airPricingSolution.XMLChildren#" index="local.airPricingSolution2">
-							<cfdump var="#airPricingSolution2.XMLName#" />
 							<cfif airPricingSolution2.XMLName EQ 'air:PassengerType'>
 								<!--- Passenger type codes --->
 								<cfset sPTC = airPricingSolution2.XMLAttributes.Code>
