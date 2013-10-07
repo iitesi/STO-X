@@ -100,7 +100,7 @@
 		<cfif NOT StructIsEmpty(stThreads) AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
 		</cfif>
-		<cfloop collection="#cfthread#" index="local.i" item="local.thread">
+		<cfloop collection="#stThreads#" index="local.i" item="local.thread">
 			<cfif thread.status NEQ 'COMPLETED'
 				AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 				<cfset errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
