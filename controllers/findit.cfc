@@ -79,7 +79,7 @@
 		</cfquery>
 
 		<cfquery result="local.dbFindIt" datasource="Book">
-			INSERT INTO BookItRequests
+			INSERT INTO FindItRequests
 				(Worked
 				,WorkedBySTO
 				,Error
