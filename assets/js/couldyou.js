@@ -140,6 +140,23 @@ shortstravel.couldyou = {
 				error: function(){
 					shortstravel.couldyou.data[ requestedDate ].message = 'Itinerary not available';
 					shortstravel.couldyou.data[ requestedDate ].dataLoaded = true;
+
+					//check to see if all calls have completed
+					var completed = true;
+					for( var prop in shortstravel.couldyou.data ){
+						if( !shortstravel.couldyou.data[ prop ].dataLoaded ){
+							completed = false;
+							break;
+						}
+					}
+
+					if( completed ){
+						shortstravel.couldyou.calculateMaxSavingDates();
+						shortstravel.couldyou.updateCalendar();
+						shortstravel.couldyou.buildAlternativesTable();
+						$('#myModal').modal( 'hide' );
+					}
+
 				},
 				dataType: 'json'
 			})
