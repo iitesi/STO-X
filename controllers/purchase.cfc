@@ -497,7 +497,8 @@
 																				, errorType = errorType )>
 					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage )>
 					<cfset local.errorList = message>
-					<cfif rc.Filter.getSTMEmployee()>
+					<cfif rc.Filter.getSTMEmployee()
+						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
 					</cfif>
 					<cfif errorType EQ 'Hotel'
