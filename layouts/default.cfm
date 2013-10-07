@@ -201,7 +201,7 @@
 					var pageTracker = _gat._getTracker("UA-11345476-1");
 					pageTracker._setDetectFlash(0);
 					pageTracker._setAllowLinker(true);
-					pageTracker._setVar("#UCase(session.account.Account_Name)#");
+					pageTracker._setVar("#UCase(application.accounts[ session.acctId ].Account_Name)#");
 					pageTracker._trackPageview("#rc.action#");
 					} catch(err) {}
 				</script>
