@@ -22,7 +22,9 @@
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
-				
+				<cfif Traveler.getHomeAirport() EQ ''>
+					<cfset Traveler.setHomeAirport('STO')>
+				</cfif>
 				<!--- Populate sort fields --->
 				<cfset local.sort1 = ''>
 				<cfset local.sort2 = ''>
