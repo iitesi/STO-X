@@ -55,7 +55,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="availability" output="true" hint="I get info on legs when button is clicked on search results.">
+	<cffunction name="availability" output="false" hint="I get info on legs when button is clicked on search results.">
 		<cfargument name="rc">
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
@@ -85,16 +85,6 @@
 					<cfset rc.southWestMatch = true>
 				</cfif>
 			</cfif>
-
-			<!--- TODO: Think we need to check the number of legs in filter compared to number of structs in stSelected
-				should redirect to
-				* availability =air.availability&SearchID=2567&Group=1&fw1pk=8
-				* which does airprice
-				* It should then go to ?action=air.lowfare&SearchID=2567&filter=all
-				* Which should bypass everything if complete and go to summary page
-
-						--->
-
 
 			<!--- continue looping over legs and populating stSelected --->
 			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.nLeg" index="local.nLegIndex">
@@ -126,7 +116,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="popup" output="true" hint="I get details, seats, bags and for modal popup for each badge.">
+	<cffunction name="popup" output="false" hint="I get details, seats, bags and for modal popup for each badge.">
 		<cfargument name="rc">
 
 				<!--- seatmap --->
@@ -156,7 +146,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="summarypopup" output="true" hint="I get seat map for modal popup for summary page.">
+	<cffunction name="summarypopup" output="false" hint="I get seat map for modal popup for summary page.">
 		<cfargument name="rc">
 
 				<cfset rc.sCabin = 'Y'>
@@ -168,7 +158,7 @@
 	</cffunction>
 
 
-	<cffunction name="seatmap" output="true" hint="I get data to make a seat map.">
+	<cffunction name="seatmap" output="false" hint="I get data to make a seat map.">
 		<cfargument name="rc">
 		<cfset rc.sCabin = 'Y'>
 		<cfset rc.nTripID = arguments.rc.nTripID>
@@ -178,7 +168,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="email" output="true" hint="I send an email">
+	<cffunction name="email" output="false" hint="I send an email">
 		<cfargument name="rc">
 
 		<cfset rc.bSuppress = 1>

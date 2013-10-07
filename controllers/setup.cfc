@@ -89,7 +89,7 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="setPolicyID" output="true">
+	<cffunction name="setPolicyID" output="false">
 		<cfargument name="rc">
 
 		<cfset rc.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
@@ -97,7 +97,7 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="setPolicy" output="true">
+	<cffunction name="setPolicy" output="false">
 		<cfargument name="rc">
 
 		<!---Move the Policy into the rc scope so it is always available.--->
