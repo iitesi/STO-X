@@ -31,6 +31,12 @@
 
         <echo message="Current Branch: ${git.branch}" />
 
+        <!-- Fetch latest list of tags from origin -->
+         <exec executable="git">
+            <arg value="fetch" />
+            <arg value="--tags" />
+        </exec>
+
         <!-- Create the tag in git -->
         <exec executable="git">
             <arg value="tag" />
