@@ -342,14 +342,14 @@ shortstravel.couldyou = {
 				}
 				row += '<td>' + shortstravel.couldyou.data[ prop ].message +'</td>';
 				row += '<td>';
-				if( shortstravel.couldyou.data[ prop ].message != 'Data not available'){
+				if( shortstravel.couldyou.data[ prop ].message != 'Itinerary available'){
 					row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) ) );
 				}
 				if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) > 0 ){
 					row += ' savings';
 				} else if( Math.round( shortstravel.itinerary.total - shortstravel.couldyou.data[prop].total ) < 0 ){
 					row += ' more'
-				} else if( shortstravel.couldyou.data[ prop ].message == 'Data not available' ){
+				} else if( shortstravel.couldyou.data[ prop ].message == 'Itinerary available' ){
 					row += ' '
 				}
 
