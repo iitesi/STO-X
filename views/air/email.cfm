@@ -1,53 +1,3 @@
-<cfsavecontent variable="jsheader">
-	<script src="assets/js/jquery.validate.min.js"></script>
-</cfsavecontent>
-<cfhtmlhead text="#jsheader#" />
-
-<style>
-	label.error {
-		color: #CC3300;
-		font-size: small;
-	}
-
-	.form-horizontal .control-group {
-    margin-bottom: 5px;
-	}
-</style>
-
-<script type="text/javascript">
-// details popup email form validation
-$(document).ready(function(){
-	$('#emailitinerary').validate(
-	{
-	rules: {
-		Email_Name: {
-			minlength: 2,
-			required: true
-		},
-		To_Address: {
-			required: true,
-			email: true
-		},
-		subject: {
-			minlength: 2,
-			required: true
-		},
-		message: {
-			minlength: 2,
-			required: true
-		}
-	},
-	highlight: function(element) {
-		$(element).closest('.control-group').removeClass('success').addClass('error');
-	},
-	success: function(element) {
-		$(element).closest('.control-group').removeClass('error').addClass('success');
-		}
-	});
-});
-</script>
-
-
 <div id="emailcontent">
 	<cfoutput>
 	<strong>We will email this itinerary to you. Please note, this itinerary is not confirmed.</strong>
@@ -83,7 +33,7 @@ $(document).ready(function(){
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label" for="Email_Subject">Subject</label>
+			<label class="control-label" for="Email_Subject">Subject *</label>
 			<div class="controls">
 				<input type="text" id="Email_Subject" name="Email_Subject" placeholder="Email subject" value="Tentative itinerary <cfif rc.qProfile.First_Name NEQ ''>for #rc.qProfile.First_Name# #rc.qProfile.Last_Name#</cfif>" class="input-xxlarge">
 			</div>

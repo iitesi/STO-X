@@ -8,6 +8,51 @@ active tabs from link are not included with bootstrap :\
 alternatives are to check url and set active (as I did below)
 or use js which has issues - see: https://github.com/twitter/bootstrap/issues/2415 --->
 
+<cfsavecontent variable="jsheader">
+	<script src="assets/js/jquery.validate.min.js"></script>
+</cfsavecontent>
+<cfhtmlhead text="#jsheader#" />
+
+<style>
+	label.error {
+		color: #CC3300;
+		font-size: small;
+	}
+
+	.form-horizontal .control-group {
+    margin-bottom: 5px;
+	}
+</style>
+
+<script type="text/javascript">
+// details popup email form validation
+$(document).ready(function(){
+	$('#emailitinerary').validate(
+	{
+	rules: {
+		Email_Name: {
+			minlength: 2,
+			required: true
+		},
+		To_Address: {
+			required: true,
+			email: true
+		},
+		Email_Subject: {
+			minlength: 2,
+			required: true
+		},
+	},
+	highlight: function(element) {
+		$(element).closest('.control-group').removeClass('success').addClass('error');
+	},
+	success: function(element) {
+		$(element).closest('.control-group').removeClass('error').addClass('success');
+		}
+	});
+});
+</script>
+
 <cfoutput>
 	<cfif rc.bSelection EQ 0>
     <ul class="nav nav-tabs">

@@ -21,23 +21,26 @@
 
 		<cfset local.assetURL = getAssetURL()>
 
-		<!--- cc address is optional --->
 		<cfset local.ccAddress = "">
 		<cfif len(arguments.cc_address)>
 			<cfset local.ccAddress = arguments.cc_address>
 		</cfif>
 
-		<!--- if somehow they submit form without a to address we'll use their acct from address --->
 		<cfset local.toAddress = arguments.to_address>
 		<cfif NOT Len(local.toAddress)>
 			<cfset local.toAddress = arguments.email_Address>
+		</cfif>
+
+		<cfset local.subject = arguments.Email_Subject>
+		<cfif NOT Len(local.subject)>
+			<cfset local.subject = "Tentative itinerary">
 		</cfif>
 
 		<cfmail
 			from="#arguments.Email_Address#"
 			to="#local.toAddress#"
 			cc="#local.ccAddress#"
-			subject="#arguments.Email_Subject#"
+			subject="#local.subject#"
 			type="HTML">
 	<!DOCTYPE html>
 	<html lang="en">
