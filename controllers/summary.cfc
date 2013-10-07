@@ -127,7 +127,9 @@
 			<cfparam name="rc.carNeeded" default="0">
 			<cfset rc.Traveler.populateFromStruct( rc )>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
-			<cfif len(rc.year) GT 0 AND len(rc.month) AND len(rc.day)>
+			<cfif (structKeyExists(rc, "year") AND len(rc.year))
+				AND (structKeyExists(rc, "month") AND len(rc.month))
+				AND (structKeyExists(rc, "day") AND len(rc.day))>
 				<cfset local.birthDate = createDate(rc.year, rc.month, rc.day)>
 			<cfelse>
 				<cfset local.birthDate = ''>
