@@ -227,14 +227,13 @@
 	<cffunction name="checkFilterStatus" access="private" output="false" hint="Setup some session flags to save if the user has clicked on any of the 'find more' links in the filter">
 		<cfargument name="rc">
 
-		<!--- This could probably be handled better but this works given the time constraints
-			4:24 PM Friday, June 28, 2013 - Jim Priest - jpriest@shortstravel.com --->
-
 		<!--- run on first search --->
 		<!--- reset filterStatus if new search is created --->
 		<cfif NOT structKeyExists(session, "filterStatus")
-			OR NOT structKeyExists(session.filterStatus, "searchID")
-			OR arguments.rc.searchID NEQ session.filterStatus.searchID>
+				OR NOT IsStruct(session.filterStatus)
+				OR NOT structKeyExists(session.filterStatus, "searchID")
+				OR arguments.rc.searchID NEQ session.filterStatus.searchID>
+
 			<cfset session.filterStatus = {}>
 			<cfset session.filterStatus.searchID = arguments.rc.searchID>
 			<cfset session.filterStatus.airlines = 0>
@@ -242,6 +241,7 @@
 			<cfset session.filterStatus.cabinSearch = {}>
 			<cfset session.filterStatus.cabinSearch.C = 0>
 			<cfset session.filterStatus.cabinSearch.F = 0>
+
 		</cfif>
 
 		<!--- update filterStatus if 'find more' fares/class/airlines is clicked in filter --->
