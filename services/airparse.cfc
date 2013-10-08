@@ -741,7 +741,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.bAllInactive = 0>
 		<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
 		<cfif arguments.Policy.Policy_AirAdvRule EQ 1
-		AND DateDiff('d', stTrips[nTripKey].Depart_DateTime, Now()) GT arguments.Policy.Policy_AirAdv>
+		AND DateDiff('d', stTrips[nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
 			<cfset bAllInactive = 1>
 			<cfif arguments.Policy.Policy_AirAdvDisp EQ 1>
 				<cfset stTrips = {}>
