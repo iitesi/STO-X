@@ -211,10 +211,27 @@
 					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
-					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
-						<cfset errorMessage = "uAPI Faultcode Error">
-						<cfset errorException = {searchID=arguments.Filter.getSearchID(), request=xmlFormat(attributes.sMessage), response=xmlFormat(attributes.sResponse)}>
-						<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
+					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
+						<cfset local.faultstring = ''>
+						<cfloop array="#attributes.aResponse#" item="local.faultItem">
+							<cfif faultItem.XMLName EQ 'faultstring'>
+								<cfset faultstring = faultItem.xmlText>
+							</cfif>
+						</cfloop>
+						<cfset errorMessage = 'uAPI Faultcode Error: '&faultstring>
+						<cfif faultstring DOES NOT CONTAIN 'cannot retrieve TargetBranch information for'
+							AND faultstring NEQ 'NO AVAILABILITY FOR THIS REQUEST'>
+							<cfset local.errorException = structNew('linked')>
+							<cfset errorException = { searchID = arguments.Filter.getSearchID()
+													, userID = arguments.Filter.getUserID()
+													, acctID = arguments.Filter.getAcctID()
+													, username = arguments.Filter.getUsername()
+													, department = arguments.Filter.getDepartment()
+													, faultstring = faultstring
+													, request = xmlFormat(attributes.sMessage)
+													, response = xmlFormat(attributes.sResponse)  }>
+							<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
+						</cfif>
 					</cfif>
 				</cfif>
 
