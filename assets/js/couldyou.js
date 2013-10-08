@@ -5,26 +5,29 @@ shortstravel.couldyou = {
 
 	dates: {},
 
-	setupDates: function( searchDepartDate ){
-		shortstravel.couldyou.dates.maxSavings = [];
+	setupDates: function( Search ){
+		var dates = {};
+
+		dates.maxSavings = [];
 
 		if( shortstravel.search.air == 1 ){
-			var originalDepart = new Date( shortstravel.search.departDateTime );
-			var originalReturn = new Date( shortstravel.search.arrivalDateTime );
+			var originalDepart = new Date( Search.departDateTime );
+			var originalReturn = new Date( Search.arrivalDateTime );
 		} else if( shortstravel.search.hotel == 1 ){
-			var originalDepart = new Date( shortstravel.search.checkInDate );
-			var originalReturn = new Date( shortstravel.search.checkOutDate );
+			var originalDepart = new Date( Search.checkInDate );
+			var originalReturn = new Date( Search.checkOutDate );
 		} else if( shortstravel.search.car == 1 ){
-			var originalDepart = new Date( shortstravel.search.carPickupDateTime );
-			var originalReturn = new Date( shortstravel.search.carDropoffDateTime );
+			var originalDepart = new Date( Search.carPickupDateTime );
+			var originalReturn = new Date( Search.carDropoffDateTime );
 		}
 		originalDepart.setHours( 0,0,0,0 );
 		originalReturn.setHours( 0,0,0,0 );
 
 		var tripLength = Math.floor( (originalReturn.getTime() - originalDepart.getTime())/(1000*60*60*24) );
 
-		shortstravel.couldyou.dates.tripLength = tripLength;
-		shortstravel.couldyou.dates.originalDepart = originalDepart;
+		dates.tripLength = tripLength;
+		dates.originalDepart = originalDepart;
+		dates.originalReturn = originalReturn;
 
 		var preStart = new Date( shortstravel.couldyou.dates.originalDepart );
 		preStart.setDate( preStart.getDate() - 7);
@@ -34,39 +37,42 @@ shortstravel.couldyou = {
 			preStart.setHours( 0,0,0,0 );
 			preStart.setDate( preStart.getDate() + 1 );
 		}
-		shortstravel.couldyou.dates.preStart = preStart;
+		dates.preStart = preStart;
 
 		var preEnd = new Date( shortstravel.couldyou.dates.originalDepart );
 		preEnd.setDate( preEnd.getDate() - 1);
 		preStart.setHours( 0,0,0,0 );
-		shortstravel.couldyou.dates.preEnd = preEnd;
+		dates.preEnd = preEnd;
 
 		var postStart = new Date( shortstravel.couldyou.dates.originalDepart );
 		postStart.setDate( postStart.getDate() + 1);
 		postStart.setHours( 0,0,0,0 );
-		shortstravel.couldyou.dates.postStart = postStart;
+		dates.postStart = postStart;
 
 		var postEnd = new Date( shortstravel.couldyou.dates.originalDepart );
-		postEnd.setDate( postStart.getDate() + 6);
+		postEnd.setDate( postStart.getDate() + 7);
 		postEnd.setHours( 0,0,0,0 );
-		shortstravel.couldyou.dates.postEnd = postEnd;
+		dates.postEnd = postEnd;
 
 		var preTripOffsetDays = Math.floor( ( preStart.getTime() - originalDepart.getTime())/(1000*60*60*24) );
 
 		for( var i=preTripOffsetDays; i<=7; i++ ){
-			var d = new Date( shortstravel.couldyou.dates.originalDepart );
+			var d = new Date( dates.originalDepart );
 			d.setHours( 0,0,0,0 );
 			d.setDate( d.getDate() + i );
 			shortstravel.couldyou.data[ dateFormat( d, 'mm-dd-yyyy' ) ] = {};
 			shortstravel.couldyou.data[ dateFormat( d, 'mm-dd-yyyy' ) ].dataLoaded = false;
 		}
 
+		return dates;
+
 	},
 
 	getCouldYouForDate: function( searchId, requestedDate ){
-		shortstravel.couldyou.data[ requestedDate ].departureDate = new Date( requestedDate );
+		var dateParts = requestedDate.split( "-" );
+		shortstravel.couldyou.data[ requestedDate ].departureDate = new Date( dateParts[2] + '-' + dateParts[0] + '-' + dateParts[1] );
 		shortstravel.couldyou.data[ requestedDate ].departureDate.setHours( 0,0,0,0 );
-		shortstravel.couldyou.data[ requestedDate ].arrivalDate = new Date( requestedDate );
+		shortstravel.couldyou.data[ requestedDate ].arrivalDate = new Date( dateParts[2] + '-' + dateParts[0] + '-' + dateParts[1] );
 		shortstravel.couldyou.data[ requestedDate ].arrivalDate.setHours( 0,0,0,0 );
 		shortstravel.couldyou.data[ requestedDate ].arrivalDate.setDate( shortstravel.couldyou.data[ requestedDate ].arrivalDate.getDate() + shortstravel.couldyou.dates.tripLength);
 
@@ -219,13 +225,12 @@ shortstravel.couldyou = {
 	},
 
 	updateCalendar: function(){
-
 		for( var prop in shortstravel.couldyou.data ){
+			var dateParts = prop.split( "-" );
 			//convert our date string to the format used by the class system in fullcalendar
-			var d = new Date( prop );
-			d.setHours( 0,0,0,0 );
-
-			var className = dateFormat( d, 'yyyy-mm-dd' );
+			var d = new Date( dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1] + 'T00:00:00');
+			//d.setHours( 0,0,0,0 );
+			var className = dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1];
 			var dateCell = $('td[data-date="' + className + '"]' );
 
 
@@ -312,7 +317,7 @@ shortstravel.couldyou = {
 				}
 
 				if( d.getTime() == shortstravel.couldyou.dates.originalDepart.getTime() ){
-					$('td[data-date="' + dateFormat( d, 'yyyy-mm-dd' ) + '"]' ).addClass( 'selected' );
+					$('td[data-date="' + dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1] + '"]' ).addClass( 'selected' );
 				}
 
 			}
@@ -324,6 +329,13 @@ shortstravel.couldyou = {
 		var numCheaperDates = 0;
 
 		for( var prop in shortstravel.couldyou.data ){
+
+			var dateParts = prop.split( "-" );
+			//convert our date string to the format used by the class system in fullcalendar
+			var d = new Date( dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1]);
+			var d = new Date( d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0 );
+			console.log( prop + ' :: ' + d.toString());
+
 			if( ( shortstravel.search.air == 1 && shortstravel.couldyou.data[ prop ].air == "" ) ||
 				( shortstravel.search.hotel == 1 && shortstravel.couldyou.data[ prop ].hotel == "" ) ||
 				( shortstravel.search.car == 1 && shortstravel.couldyou.data[ prop ].vehicle == "" ) ){
@@ -364,10 +376,10 @@ shortstravel.couldyou = {
 				row += '</td>';
 			}
 
-			row += '<td>' + dateFormat( shortstravel.couldyou.data[prop].departureDate, "ddd, mmm dd" ) + '</td>';
+			row += '<td>' + dateFormat( d, "ddd, mmm dd" ) + '</td>';
 			row += '<td>';
 			if( shortstravel.search.airType != 'OW' ){
-				row += dateFormat( shortstravel.couldyou.data[prop].arrivalDate, "ddd, mmm dd" )
+				row += dateFormat( d, "ddd, mmm dd" )
 			}
 			row += '</td>';
 			row += '</tr>'
@@ -379,15 +391,16 @@ shortstravel.couldyou = {
 
 		$("#alternativesTable tr" ).on( "click", function(){
 			if( !$( this ).hasClass( 'fc-notAvailable' ) ){
-				var d = new Date( $( this ).attr( 'id' ) );
-				d.setHours( 0,0,0,0 );
+				var dateParts = $( this ).attr( 'id' ).split( "-" );
+				var d = new Date( dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1] + 'T00:00:00');
 				shortstravel.couldyou.changeDate( d );
 			};
 		})
 	},
 
 	changeDate: function( newDate ){
-		var prop = dateFormat( newDate, 'mm-dd-yyyy' );
+		var prop = dateFormat( newDate, 'UTC:mm-dd-yyyy' );
+		console.log( prop );
 		if( !( newDate.getTime() < shortstravel.couldyou.dates.preStart.getTime()  || newDate.getTime() > shortstravel.couldyou.dates.postEnd.getTime() )
 			&& shortstravel.couldyou.data[ prop ].message.indexOf( 'not available' ) == -1 )
 		{
@@ -501,7 +514,7 @@ shortstravel.couldyou = {
 
 $(document).ready(function(){
 	$('#myModal').modal();
-	shortstravel.couldyou.setupDates();
+	shortstravel.couldyou.dates = shortstravel.couldyou.setupDates( shortstravel.search );
 
 	$('#calendar1').fullCalendar({
         theme: true,
