@@ -106,7 +106,8 @@
 					AND thread.status NEQ 'RUNNING'
 					AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 					<cfset errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
-					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD error', exception=errorException, severityCode='Error' ) />
+					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD: #thread.error.message#', exception=errorException, severityCode='Error' ) />
+					<!--- <cfdump var="#thread#" /><cfabort /> --->
 				</cfif>
 			</cfloop>
 		</cfif>
