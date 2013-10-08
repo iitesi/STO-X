@@ -214,7 +214,7 @@
 
 		<cfset local.stTemp = {}>
 		<cfif arguments.AcctID NEQ 0>
-			<cfif ListFindNoCase('qa,beta,prod', getCurrentEnvironment())>
+			<!--- <cfif ListFindNoCase('qa,beta,prod,local', getCurrentEnvironment())> --->
 				<cfset local.Branches = {
 					"1P6O" = "P1601409",
 					"1N47" = "P1601410",
@@ -235,7 +235,7 @@
 					"176T" = "P1601397",
 					"1AM2" = "P1601398"
 				}>
-			<cfelse>
+			<!--- <cfelse>
 				<cfset local.Branches = {
 					"149I" = "P7003154",
 					"176T" = "P7003151",
@@ -256,7 +256,7 @@
 					"2B2C" = "P7003152",
 					"2N0D" = "P7003176"
 				}>
-			</cfif>
+			</cfif> --->
 
 			<cfquery name="local.qAccount" datasource="book">
 				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
