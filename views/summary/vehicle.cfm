@@ -15,12 +15,11 @@
 				<td valign="top">
 
 					
-					<cfif rc.Vehicle.getCorporate()
-						AND rc.Vehicle.getPreferred()>
+					<cfif rc.Vehicle.getCorporate() IS TRUE AND rc.Vehicle.getPreferred() IS TRUE>
 						<span class="ribbon ribbon-l-pref-cont"></span>
-					<cfelseif rc.Vehicle.getPreferred()>
+					<cfelseif rc.Vehicle.getPreferred() IS TRUE>
 						<span class="ribbon ribbon-l-pref"></span>
-					<cfelseif rc.Vehicle.getCorporate()>
+					<cfelseif rc.Vehicle.getCorporate() IS TRUE>
 						<span class="ribbon ribbon-l-cont"></span>
 					</cfif>
 

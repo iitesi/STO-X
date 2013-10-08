@@ -24,7 +24,7 @@
 
 		<cfif rc.add EQ 'hotel'>
 			<cfset session.Filters[rc.searchID].setHotel(true)>
-			<cfset variables.fw.redirect('hotel.search?searchID=#rc.searchID#')>
+			<cfset variables.fw.redirect('hotel.search?SearchID=#rc.searchID#')>
 		</cfif>
 
 		<cfif rc.add EQ 'car'>
