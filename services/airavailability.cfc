@@ -142,7 +142,7 @@
 					<!--- Run policy on all the results --->
 					<cfset attributes.stAvailTrips	= getAirParse().checkPolicy(attributes.stAvailTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
 					<!--- Create javascript structure per trip. --->
-					<cfset attributes.stAvailTrips	=	getAirParse().addJavascript(attributes.stAvailTrips)>
+					<cfset attributes.stAvailTrips	=	getAirParse().addJavascript(attributes.stAvailTrips, 'Avail')>
 					<!--- Merge information into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], attributes.stAvailTrips)>
 				</cfloop>
