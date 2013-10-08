@@ -32,11 +32,13 @@
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		<nav id="main-nav">
 		    <ul>
-		    	<cfif rc.action CONTAINS 'confirmation.'>
+				<cfif rc.filter.getPassthrough() EQ 0 AND rc.filter.getFindit() EQ 0>
 					<!---Home--->
 					<li>
 						<a href="#application.sPortalURL#">Home</a>
 					</li>
+				</cfif>
+		    	<cfif rc.action CONTAINS 'confirmation.'>
 					<!---Logout--->
 					<li>
 						<a href="#buildURL('logout')#">Logout</a>
