@@ -77,7 +77,7 @@
 			<br>
 
 		<!--- show seatmap rc.stSeats is returned from doSeatMap --->
-			<cfif NOT StructKeyExists(rc.stSeats, 'Error')>
+			<cfif isStruct(rc.stSeats) AND NOT structIsEmpty(rc.stSeats) AND NOT StructKeyExists(rc.stSeats, 'Error')>
 				<cfif StructKeyExists(rc.stSeats, 'ExitRow')>
 					<cfset stExitRows = rc.stSeats.ExitRow>
 					<cfset structDelete(rc.stSeats, "ExitRow")>
@@ -191,8 +191,10 @@
 					<td class="paddingright">No Seat</td>
 				</tr>
 				</table>
-			<cfelse>
+			<cfelseif isStruct(rc.stSeats) AND structKeyExists(rc.stSeats, "Error")>
 				<div id="seatcontent"><p>#rc.stSeats.Error#</p></div>
+			<cfelse>
+				<div id="seatcontent"><p>No seat map is available for this flight.</p></div>
 			</cfif>
 		</div>
 	</div>
