@@ -255,7 +255,8 @@
 		<cfset local.errorMessage = "">
 		<cfset local.totalFlights = 0>
 
-		<cfif structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails, "aSortFare")>
+		<cfif structKeyExists(session.searches[arguments.rc.SearchID], "stLowFareDetails")
+				AND structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails, "aSortFare")>
 			<cfset local.totalFlights = arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare)>
 		<cfelse>
 			<!--- <cfif IsLocalHost(cgi.remote_addr)>
