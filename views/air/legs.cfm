@@ -1,5 +1,23 @@
+<cfsilent>
+	<cfset popoverTitle = "Fly roundtrip for as low as $#NumberFormat(session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total)#">
+	<cfset popoverContent = "Select a flight below or select individual legs by selecting a button to the right.">
+	<cfset popoverLink = "">
+	<cfif structKeyExists(rc, "group")>
+		<cfset popoverTitle = "">
+		<cfset popoverContent = "">
+		<cfset popoverLink = ""> <!--- back to price page --->
+	</cfif>
+</cfsilent>
+
 <cfoutput>
 	<div class="legs clearfix">
+		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
+			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
+			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
+			<span class="btn btn-primary legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">Roundtrip From $#NumberFormat(session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total)#</span>
+		</cfif>
+
+
 		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 				<span class="btn btn-primary legbtn">#nLegItem#</span>
