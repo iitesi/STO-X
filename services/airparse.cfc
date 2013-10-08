@@ -14,35 +14,37 @@
 		<cfargument name="Policy"	required="true">
 
 		<!--- Check low fare. --->
-		<cfset session.searches[SearchID].stTrips						= addTotalBagFare(session.searches[SearchID].stTrips)>
+		<cfset session.searches[SearchID].stTrips	= addTotalBagFare(session.searches[SearchID].stTrips)>
 
 		<!--- Update the results that are available. --->
-		<cfset session.searches[SearchID].stLowFareDetails.stResults 	= findResults(session.searches[arguments.SearchID].stTrips)>
+		<cfset session.searches[SearchID].stLowFareDetails.stResults = findResults(session.searches[arguments.SearchID].stTrips)>
 
 		<!--- Get list of all carriers returned. --->
-		<cfset session.searches[SearchID].stLowFareDetails.aCarriers 	= getCarriers(session.searches[arguments.SearchID].stTrips)>
+		<cfset session.searches[SearchID].stLowFareDetails.aCarriers = getCarriers(session.searches[arguments.SearchID].stTrips)>
 
 		<!--- Run policy on all the results --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stTrips 						= checkPolicy(session.searches[arguments.SearchID].stTrips, arguments.SearchID, session.searches[SearchID].stLowFareDetails.aSortFare[1], 'Fare', arguments.Account, arguments.Policy)>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+
+		<!--- Policy needs to be checked prior --->
+		<cfset session.searches[SearchID].stTrips = checkPolicy(session.searches[arguments.SearchID].stTrips, arguments.SearchID, session.searches[SearchID].stLowFareDetails.aSortFare[1], 'Fare', arguments.Account, arguments.Policy)>
 
 		<!--- Create javascript structure per trip. --->
-		<cfset session.searches[SearchID].stTrips 						= addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
+		<cfset session.searches[SearchID].stTrips = addJavascript(session.searches[SearchID].stTrips)>
 
 		<!--- Sort the results --->
 		<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
 
 		<!--- price, price + 1 bag, price + 2 bags --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
 
 		<!--- Prices with preferred carriers taken into account --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred 	= sortByPreferred("aSortFare", arguments.SearchID) />
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred 	= sortByPreferred("aSortBag", arguments.SearchID) />
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred 	= sortByPreferred("aSortBag2", arguments.SearchID) />
+		<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred = sortByPreferred("aSortFare", arguments.SearchID) />
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred = sortByPreferred("aSortBag", arguments.SearchID) />
+		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred	= sortByPreferred("aSortBag2", arguments.SearchID) />
 
 		<cfreturn >
 	</cffunction>
@@ -472,7 +474,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.tripsTwo = []>
 		<cfset local.tripsThree = []>
 		<cfset local.tripsFour = []>
-		<!--- Takes into account all groups within the itinerary.  If there are three on the outbound and two on the return it 
+		<!--- Takes into account all groups within the itinerary.  If there are three on the outbound and two on the return it
 		will mark that trip as a two segment trip. --->
 		<cfloop collection="#arguments.trips#" index="local.tripIndex" item="local.trip">
 			<cfset local.tempTwoSegments = false>
@@ -586,20 +588,15 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 	<cffunction name="addJavascript" output="false" hint="I build javascript for trip info to be used in views">
 		<cfargument name="stTrips" 	required="true">
-		<cfargument name="sType" 	required="false"	default="Fare">
 
-		<cfif arguments.sType EQ 'Fare'>
-			<cfset local.aAllCabins = ['Y','C','F']>
-			<cfset local.aRefundable = [0,1]>
-		</cfif>
 		<!--- Loop through all the trips --->
 		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
-			<cfset sCarriers = '"#Replace(ArrayToList(arguments.stTrips[sTrip].Carriers), ',', '","', 'ALL')#"'>
-			<cfset stTrips[sTrip].sJavascript = addJavascriptPerTrip(sTrip, arguments.stTrips[sTrip], arguments.stTrips[sTrip].Class, arguments.stTrips[sTrip].Ref, sCarriers)>
-			<cfset stTrips[sTrip].nTripKey = sTrip>
+			<cfset local.sCarriers = '"#Replace(ArrayToList(arguments.stTrips[local.sTrip].Carriers), ',', '","', 'ALL')#"'>
+			<cfset local.stTrips[local.sTrip].sJavascript = addJavascriptPerTrip(local.sTrip, arguments.stTrips[local.sTrip], arguments.stTrips[local.sTrip].Class, arguments.stTrips[local.sTrip].Ref, local.sCarriers)>
+			<cfset local.stTrips[local.sTrip].nTripKey = local.sTrip>
 		</cfloop>
 
-		<cfreturn stTrips/>
+		<cfreturn local.stTrips/>
 	</cffunction>
 
 	<cffunction name="addJavascriptPerTrip" output="false" access="private" hint="addJavascriptPerTrip - used only in the above function">
