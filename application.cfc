@@ -96,7 +96,7 @@
 
 			<cfset controller( 'setup.setSearchID' )>
 			<cfset controller( 'setup.setFilter' )>
-			<cfset controller( 'setp.setAcctID' )>
+			<cfset controller( 'setup.setAcctID' )>
 			<cfset controller( 'setup.setAccount' )>
 			<cfset controller( 'setup.setPolicyID' )>
 			<cfset controller( 'setup.setPolicy' )>
