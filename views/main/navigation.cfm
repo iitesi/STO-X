@@ -3,11 +3,11 @@
 <cfif rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 	<cfloop list="#rc.filter.getWidgetUrl()#" delimiters="&" index="item">
 		<cfif ListGetAt(item, 1, "=") IS "air">
-			<cfset airValue = ListGetAt(item, 2, "=") />		
+			<cfset airValue = ListGetAt(item, 2, "=") />
 		<cfelseif ListGetAt(item,1,"=") IS "hotel">
-			<cfset hotelValue = ListGetAt(item, 2, "=") />		
+			<cfset hotelValue = ListGetAt(item, 2, "=") />
 		<cfelseif ListGetAt(item,1,"=") IS "car">
-			<cfset carValue = ListGetAt(item, 2, "=") />		
+			<cfset carValue = ListGetAt(item, 2, "=") />
 		</cfif>
 	</cfloop>
 
@@ -39,9 +39,9 @@
 					</li>
 				</cfif>
 		    	<cfif rc.action CONTAINS 'confirmation.'>
-					<!---Logout--->
+					<!---Logout - pass 0 in searchid to get past check in onRequest --->
 					<li>
-						<a href="#buildURL('logout')#">Logout</a>
+						<a href="#buildURL('logout&searchid=0')#">Logout</a>
 					</li>
 		    	<cfelse>
 					<cfif showAirTab>
@@ -72,7 +72,8 @@
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
 					<li>
-						<a href="#buildURL('logout')#">Logout</a>
+						<!---Logout - pass 0 in searchid to get past check in onRequest --->
+						<a href="#buildURL('logout&searchid=0')#">Logout</a>
 					</li>
 				</cfif>
 			</ul>
