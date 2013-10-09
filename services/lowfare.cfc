@@ -37,8 +37,8 @@
 		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
-			<cfif IsNumeric(nKey) AND nKey NEQ arguments.SearchID>
-				<cfset StructDelete(session.searches, nKey)>
+			<cfif IsNumeric(local.nKey) AND local.nKey NEQ arguments.SearchID>
+				<cfset StructDelete(session.searches, local.nKey)>
 			</cfif>
 		</cfloop>
 
@@ -97,7 +97,7 @@
 		</cfloop>
 
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads) 
+		<cfif NOT StructIsEmpty(stThreads)
 			AND structKeyList(stThreads) NEQ ''
 			AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
@@ -105,8 +105,8 @@
 				<cfif thread.status NEQ 'COMPLETED'
 					AND thread.status NEQ 'RUNNING'
 					AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
-					<cfset errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
-					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD: #thread.error.message#', exception=errorException, severityCode='Error' ) />
+					<cfset local.errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
+					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD: #thread.error.message#', exception=local.errorException, severityCode='Error' ) />
 					<!--- <cfdump var="#thread#" /><cfabort /> --->
 				</cfif>
 			</cfloop>
@@ -133,7 +133,7 @@
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)>
-			<cfset sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline>
+			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline>
 			<cfset local[local.sThreadName] = {}>
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
@@ -192,22 +192,23 @@
 						<cfset local.faultstring = ''>
 						<cfloop array="#attributes.aResponse#" item="local.faultItem">
 							<cfif faultItem.XMLName EQ 'faultstring'>
-								<cfset faultstring = faultItem.xmlText>
+								<cfset local.faultstring = faultItem.xmlText>
 							</cfif>
 						</cfloop>
-						<cfset errorMessage = 'uAPI Faultcode Error: '&faultstring>
-						<cfif faultstring DOES NOT CONTAIN 'cannot retrieve TargetBranch information for'
-							AND faultstring NEQ 'NO AVAILABILITY FOR THIS REQUEST'>
+						<cfset local.errorMessage = 'uAPI Faultcode Error: '&local.faultstring>
+						<cfif local.faultstring DOES NOT CONTAIN 'cannot retrieve TargetBranch information for'
+							AND local.faultstring NEQ 'NO AVAILABILITY FOR THIS REQUEST'>
 							<cfset local.errorException = structNew('linked')>
-							<cfset errorException = { searchID = arguments.Filter.getSearchID()
+							<cfset local.errorException = {
+														searchID = arguments.Filter.getSearchID()
 													, userID = arguments.Filter.getUserID()
 													, acctID = arguments.Filter.getAcctID()
 													, username = arguments.Filter.getUsername()
 													, department = arguments.Filter.getDepartment()
-													, faultstring = faultstring
+													, faultstring = local.faultstring
 													, request = xmlFormat(attributes.sMessage)
 													, response = xmlFormat(attributes.sResponse)  }>
-							<cfset application.fw.factory.getBean('BugLogService').notifyService( message=errorMessage, exception=errorException, severityCode='Error' ) />
+							<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode='Error' ) />
 						</cfif>
 					</cfif>
 				</cfif>
@@ -233,11 +234,11 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
-		<!--- Code needs to be reworked and put in a better location --->
+		<!--- TODO: Code needs to be reworked and put in a better location --->
 		<cfset local.targetBranch = arguments.Account.sBranch>
 		<cfif arguments.Filter.getAcctID() EQ 254
 			OR arguments.Filter.getAcctID() EQ 255>
-			<cfset targetBranch = 'P1601396'>
+			<cfset local.targetBranch = 'P1601396'>
 		</cfif>
 
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
