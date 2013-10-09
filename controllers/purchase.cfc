@@ -140,7 +140,7 @@
 							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
 						</cfif>
 						<cfif LEFT(cardNumber, 1) EQ 5>
-							<cfset cardType = 'MC'>
+							<cfset cardType = 'CA'>
 						<cfelseif LEFT(cardNumber, 1) EQ 6>
 							<cfset cardType = 'DS'>
 						<cfelseif LEFT(cardNumber, 1) EQ 3>
