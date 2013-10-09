@@ -216,7 +216,7 @@
 						<cfset local.sPTC = ''>
 						<cfset local.nCount = 0>
 						<cfset local.fareRuleKey = []>
-						<cfset local.bRefundable = 1>
+						<cfset local.refundable = false>
 <!---
 MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
@@ -255,7 +255,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 									<cfif local.changePenalty LTE replace(local.stFare.XMLText, 'USD', '')>
 										<cfset local.changePenalty = replace(local.stFare.XMLText, 'USD', '')>
 									</cfif>
-									<cfset local.bRefundable = (local.bRefundable EQ 1 AND replace(local.stFare.XMLText, 'USD', '') GT 0 ? 0 : 1)>
 								</cfloop>
 							</cfif>
 						</cfloop>
@@ -265,11 +264,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.PrivateFare = local.bPrivateFare>
 						<cfset local.stTrip.PTC = local.sPTC>
 						<cfset local.stTrip.Class = local.sOverallClass>
-						<cfset local.stTrip.Ref = local.bRefundable>
-						<cfset local.stTrip.changePenalty = local.changePenalty>
+						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? true : false)>
+						<cfset stTrip.Ref = refundable>
+						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>
-				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&local.bRefundable )>
+				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
 		</cfloop>
