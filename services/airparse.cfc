@@ -13,42 +13,43 @@
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"	required="true">
 
-		<!--- Check low fare. --->
-		<cfset session.searches[SearchID].stTrips						= addTotalBagFare(session.searches[SearchID].stTrips)>
+		<cfif NOT structIsEmpty(session.searches[SearchID].stTrips)>
+			<!--- Check low fare. --->
+			<cfset session.searches[SearchID].stTrips = addTotalBagFare(session.searches[SearchID].stTrips)>
 
-		<!--- Update the results that are available. --->
-		<cfset session.searches[SearchID].stLowFareDetails.stResults 	= findResults(session.searches[arguments.SearchID].stTrips)>
+			<!--- Update the results that are available. --->
+			<cfset session.searches[SearchID].stLowFareDetails.stResults = findResults(session.searches[arguments.SearchID].stTrips)>
 
-		<!--- Get list of all carriers returned. --->
-		<cfset session.searches[SearchID].stLowFareDetails.aCarriers 	= getCarriers(session.searches[arguments.SearchID].stTrips)>
+			<!--- Get list of all carriers returned. --->
+			<cfset session.searches[SearchID].stLowFareDetails.aCarriers = getCarriers(session.searches[arguments.SearchID].stTrips)>
 
-		<!--- Run policy on all the results --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stTrips = checkPolicy(
-																		session.searches[arguments.SearchID].stTrips
-																		, arguments.SearchID
-																		, session.searches[SearchID].stLowFareDetails.aSortFare[1]
-																		, 'Fare'
-																		, arguments.Account
-																		, arguments.Policy)>
+			<!--- Run policy on all the results --->
+			<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+			<cfset session.searches[SearchID].stTrips = checkPolicy( session.searches[arguments.SearchID].stTrips
+																	, arguments.SearchID
+																	, session.searches[SearchID].stLowFareDetails.aSortFare[1]
+																	, 'Fare'
+																	, arguments.Account
+																	, arguments.Policy)>
 
-		<!--- Create javascript structure per trip. --->
-		<cfset session.searches[SearchID].stTrips = addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
+			<!--- Create javascript structure per trip. --->
+			<cfset session.searches[SearchID].stTrips = addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
 
-		<!--- Sort the results --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDepart 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortDuration= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
+			<!--- Sort the results --->
+			<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
+			<cfset session.searches[SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
+			<cfset session.searches[SearchID].stLowFareDetails.aSortDuration = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
 
-		<!--- price, price + 1 bag, price + 2 bags --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFare 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 	= StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
+			<!--- price, price + 1 bag, price + 2 bags --->
+			<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+			<cfset session.searches[SearchID].stLowFareDetails.aSortBag = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
+			<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
 
-		<!--- Prices with preferred carriers taken into account --->
-		<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred 	= sortByPreferred("aSortFare", arguments.SearchID) />
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred 	= sortByPreferred("aSortBag", arguments.SearchID) />
-		<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred 	= sortByPreferred("aSortBag2", arguments.SearchID) />
+			<!--- Prices with preferred carriers taken into account --->
+			<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred = sortByPreferred("aSortFare", arguments.SearchID) />
+			<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred = sortByPreferred("aSortBag", arguments.SearchID) />
+			<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred = sortByPreferred("aSortBag2", arguments.SearchID) />
+		</cfif>
 
 		<cfreturn >
 	</cffunction>
@@ -83,19 +84,20 @@
 					</cfloop>
 
 					<cfset local.stSegments[local.stAirSegment.XMLAttributes.Key] = {
-						ArrivalTime			: ParseDateTime(local.dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
-						Carrier 				: local.stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
-						DepartureGMT		: dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
-						Destination			: local.stAirSegment.XMLAttributes.Destination,
-						Equipment				: (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
-						FlightNumber		: local.stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: local.stAirSegment.XMLAttributes.FlightTime,
-						Group						: local.stAirSegment.XMLAttributes.Group,
-						Origin					: local.stAirSegment.XMLAttributes.Origin,
-						TravelTime			: local.travelTime
+						ArrivalTime : ParseDateTime(local.dArrivalTime),
+						ArrivalGMT : ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
+						Carrier : local.stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane : local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						DepartureTime : ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
+						DepartureGMT : dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
+						Destination : local.stAirSegment.XMLAttributes.Destination,
+						Equipment : (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
+						FlightNumber : local.stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime : local.stAirSegment.XMLAttributes.FlightTime,
+						Group : local.stAirSegment.XMLAttributes.Group,
+						Origin : local.stAirSegment.XMLAttributes.Origin,
+						TravelTime : local.travelTime,
+						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
 					}>
 				</cfloop>
 
