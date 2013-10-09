@@ -278,14 +278,14 @@ shortstravel.couldyou = {
 							$('#calendar2').fullCalendar( 'renderEvent', $.extend(true, {}, ev), true );
 						}
 					}
-					dateCell.removeClass('ui-widget-content' ).addClass('fc-higherPrice');
+					dateCell.removeClass('ui-widget-content' ).addClass('fc-higherPrice fc-selectable');
 				} else if( Math.round( dailyTotal ) < Math.round( selectedDayTotal ) && selectedDate.departureDate.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
-					if( $.inArray( prop, shortstravel.couldyou.dates.maxSavings ) != -1 ){
+					if( selectedDate.maxSavings ){
 						var eventColor = '#e1efe1';
-						var cellClass = 'fc-maxSavings';
+						var cellClass = 'fc-maxSavings fc-selectable';
 					} else {
 						var eventColor = '#e2effc';
-						var cellClass = 'fc-lowerPrice';
+						var cellClass = 'fc-lowerPrice fc-selectable';
 					}
 
 
@@ -324,7 +324,7 @@ shortstravel.couldyou = {
 				}
 
 				if( selectedDate.departureDate.getTime() == shortstravel.couldyou.dates.originalDepart.getTime() ){
-					$('td[data-date="' + dateFormat( selectedDate.departureDate, "yyyy-mm-dd" ) + '"]' ).addClass( 'selected' );
+					$('td[data-date="' + dateFormat( selectedDate.departureDate, "yyyy-mm-dd" ) + '"]' ).addClass( 'selected  fc-selectable' );
 				}
 
 			}
@@ -349,15 +349,15 @@ shortstravel.couldyou = {
 			} else {
 				var row = '<tr id="' + dateFormat( selectedDate.departureDate, 'yyyy-mm-dd' ) + '" ';
 				if ( selectedDate.departureDate.getTime() == shortstravel.couldyou.dates.originalDepart.getTime() ){
-					row += ' class="fc-originalDate selected">'
+					row += ' class="fc-originalDate selected fc-selectable">'
 				} else if( Math.round( selectedDate.total ) >= Math.round( shortstravel.itinerary.total )){
-					row += ' class="fc-higherPrice">'
+					row += ' class="fc-higherPrice fc-selectable">'
 				} else if( Math.round( selectedDate.total ) < Math.round( shortstravel.itinerary.total ) ){
 					numCheaperDates++;
 					if( selectedDate.maxSavings ){
-						row += ' class="fc-maxSavings">';
+						row += ' class="fc-maxSavings fc-selectable">';
 					} else {
-						row += ' class="fc-lowerPrice">';
+						row += ' class="fc-lowerPrice fc-selectable">';
 					}
 				} else {
 					row += '>'
@@ -393,35 +393,43 @@ shortstravel.couldyou = {
 
 		$("#alternativesTable tr" ).on( "click", function(){
 			if( !$( this ).hasClass( 'fc-notAvailable' ) ){
-				var dateParts = $( this ).attr( 'id' ).split( "-" );
-				var d = new Date( dateParts[2] + '-' + dateParts[0]+ '-' + dateParts[1] + 'T00:00:00');
+				var dateParts = $( this ).attr( 'id' ).split('-');
+				console.dir( dateParts );
+				var d = new Date( dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0);
+				console.log( d );
 				shortstravel.couldyou.changeDate( d );
 			};
 		})
 	},
 
 	changeDate: function( newDate ){
-		var prop = dateFormat( newDate, 'UTC:mm-dd-yyyy' );
-		console.log( prop );
+
+		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
+			if( shortstravel.couldyou.data[i].departureDate.getTime() == newDate.getTime() ){
+				var selectedDate = shortstravel.couldyou.data[i];
+				break;
+			}
+		}
+
 		if( !( newDate.getTime() < shortstravel.couldyou.dates.preStart.getTime()  || newDate.getTime() > shortstravel.couldyou.dates.postEnd.getTime() )
-			&& shortstravel.couldyou.data[ prop ].message.indexOf( 'not available' ) == -1 )
+			&& selectedDate.message.indexOf( 'not available' ) == -1 )
 		{
-			$('.tripStartDate' ).html( dateFormat( shortstravel.couldyou.data[ prop ].departureDate, "ddd, mmm dd" ) );
+			$('.tripStartDate' ).html( dateFormat( selectedDate.departureDate, "ddd, mmm dd" ) );
 			if( shortstravel.search.airType != 'OW' ){
-				$('.tripEndDate' ).html( dateFormat( shortstravel.couldyou.data[ prop ].arrivalDate, "ddd, mmm dd" ) );
+				$('.tripEndDate' ).html( dateFormat( selectedDate.arrivalDate, "ddd, mmm dd" ) );
 			}
 
-			$('#tripTotal' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[ prop ].total, 2 ));
+			$('#tripTotal' ).html( shortstravel.couldyou.formatCurrency( selectedDate.total, 2 ));
 
 			if( shortstravel.search.air == 1 ){
 				var airTotal = 0;
 				var airTaxes = 0;
 				var airBaseRate = 0;
 
-				for( var tripId in shortstravel.couldyou.data[ prop ].air ){
-					airBaseRate += parseFloat( shortstravel.couldyou.data[ prop ].air[tripId].BASE );
-					airTaxes += parseFloat( shortstravel.couldyou.data[ prop ].air[tripId].TAXES );
-					airTotal += parseFloat( shortstravel.couldyou.data[ prop ].air[tripId].TOTAL );
+				for( var tripId in selectedDate.air ){
+					airBaseRate += parseFloat( selectedDate.air[tripId].BASE );
+					airTaxes += parseFloat( selectedDate.air[tripId].TAXES );
+					airTotal += parseFloat( selectedDate.air[tripId].TOTAL );
 				}
 
 				$('#airBaseRate' ).html( shortstravel.couldyou.formatCurrency( airBaseRate, 2 ) );
@@ -432,29 +440,29 @@ shortstravel.couldyou = {
 			if( shortstravel.search.hotel == 1 ){
 
 				var hotelTotal = 0;
-				if( shortstravel.couldyou.data[ prop ].hotel.Rooms[ 0 ].totalForStay != 0 ){
-					hotelTotal = shortstravel.couldyou.data[ prop ].hotel.Rooms[ 0 ].totalForStay;
+				if( selectedDate.hotel.Rooms[ 0 ].totalForStay != 0 ){
+					hotelTotal = selectedDate.hotel.Rooms[ 0 ].totalForStay;
 					$('#hotelBaseRate' ).html('');
 				} else {
-					var timeDiff = Math.abs(shortstravel.couldyou.data[ prop ].departureDate.getTime() - shortstravel.couldyou.data[ prop ].arrivalDate.getTime());
+					var timeDiff = Math.abs(selectedDate.departureDate.getTime() - selectedDate.arrivalDate.getTime());
 					var nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-					hotelTotal = shortstravel.couldyou.data[ prop ].hotel.Rooms[0].dailyRate * nights;
-					$('#hotelBaseRate' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[ prop ].hotel.Rooms[0].dailyRate, 2 ) );
+					hotelTotal = selectedDate.hotel.Rooms[0].dailyRate * nights;
+					$('#hotelBaseRate' ).html( shortstravel.couldyou.formatCurrency( selectedDate.hotel.Rooms[0].dailyRate, 2 ) );
 				}
 
 				$('#hotelTotal' ).html( shortstravel.couldyou.formatCurrency( hotelTotal, 2 ) );
-				if( shortstravel.couldyou.data[prop].hotel.Rooms[0].totalForStay > 0 ){
+				if( selectedDate.hotel.Rooms[0].totalForStay > 0 ){
 					$('#hotelTaxes' ).html( 'Including taxes' );
 				} else {
 					$('#hotelTaxes' ).html( 'Quoted at checkin' );
 				}
 
-				if( shortstravel.couldyou.data[prop].hotel.Rooms[0].ratePlanType != shortstravel.itinerary.HOTEL.Rooms[0].ratePlanType ){
+				if( selectedDate.hotel.Rooms[0].ratePlanType != shortstravel.itinerary.HOTEL.Rooms[0].ratePlanType ){
 					$( '#alert-text' ).html(
 						'<b>WARNING!</b> The room type for this date is different than your original.<br>Original: '
 						+ shortstravel.itinerary.HOTEL.Rooms[0].description.toUpperCase()
 						+ '<br>Selected: '
-						+ shortstravel.couldyou.data[prop].hotel.Rooms[0].description.toUpperCase()
+						+ selectedDate.hotel.Rooms[0].description.toUpperCase()
 					);
 					$( '#alert-wrapper' ).removeClass( 'hide' );
 				} else {
@@ -464,11 +472,11 @@ shortstravel.couldyou = {
 			}
 
 			if( shortstravel.search.car == 1 ){
-				$('#carTotal' ).html( shortstravel.couldyou.formatCurrency( shortstravel.couldyou.data[prop].vehicle.estimatedTotalAmount, 2 ) );
+				$('#carTotal' ).html( shortstravel.couldyou.formatCurrency( selectedDate.vehicle.estimatedTotalAmount, 2 ) );
 			}
 
 			$('.selected' ).removeClass('selected');
-			$('#' + dateFormat( newDate, 'mm-dd-yyyy' ) ).addClass( 'selected' );
+			$('#' + dateFormat( newDate, 'yyyy-mm-dd' ) ).addClass( 'selected' );
 			$('td[data-date="' + dateFormat( newDate, 'yyyy-mm-dd' ) + '"]' ).addClass( 'selected' );
 			$("#btnContinuePurchase" ).val( dateFormat( newDate, "mm-dd-yyyy" ) );
 
@@ -528,6 +536,7 @@ $(document).ready(function(){
         },
 
         dayClick: function( date, allDay, jsEvent, view ) {
+        	console.log( date );
 			shortstravel.couldyou.changeDate( date );
 		}
     })

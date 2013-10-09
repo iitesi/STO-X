@@ -1002,6 +1002,7 @@ tr.hotel-room td{
 .fc-maxSavings{ background-color: #e1efe1; border: 1px solid #b7cfdf; }
 .fc-lowerPrice{ background-color: #e2effc; border: 1px solid #b7cfdf; }
 .fc-higherPrice{ background-color: #fcefef; border: 1px solid #b7cfdf; }
+.fc-selectable{ cursor: pointer }
 
 #alternativesTable{
     width: 96%;
@@ -1014,12 +1015,8 @@ tr.hotel-room td{
     font-weight: bold;
 }
 
-#alternativesTable tbody tr{
-   cursor: hand;
-}
-
 .selected{
-   outline: 1px solid darkblue;
+   outline: 2px solid darkblue;
 }
 
 #alternativesTable td{
