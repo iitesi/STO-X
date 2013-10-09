@@ -119,14 +119,27 @@
 		<cfset local.username = ''>
 		<cfset local.department = ''>
 		<cfset local.searchID = ''>
-		<cfif structKeyExists(arguments, 'rc')
-			AND structKeyExists(arguments.rc, 'Filter')>
-			<cfset acctID = arguments.rc.Filter.getAcctID()>
-			<cfset userID = arguments.rc.Filter.getUserID()>
-			<cfset username = arguments.rc.Filter.getUsername()>
-			<cfset department = arguments.rc.Filter.getDepartment()>
-			<cfset searchID = arguments.rc.Filter.getSearchID()>
-		</cfif>
+		<cftry>
+			<cfif NOT structKeyExists(arguments, 'rc')
+				OR NOT structKeyExists(arguments.rc, 'Filter')>
+				<cfif structKeyExists(arguments, 'rc')
+					AND structKeyExists(arguments.rc, 'searchID')
+					AND structKeyExists(session, 'Filters')
+					AND structKeyExists(session.Filters, arguments.rc.searchID)>
+					<cfset arguments.rc.Filter = session.Filters[arguments.rc.searchID]>
+				</cfif>
+			</cfif>
+			<cfif structKeyExists(arguments, 'rc')
+				AND structKeyExists(arguments.rc, 'Filter')>
+				<cfset acctID = arguments.rc.Filter.getAcctID()>
+				<cfset userID = arguments.rc.Filter.getUserID()>
+				<cfset username = arguments.rc.Filter.getUsername()>
+				<cfset department = arguments.rc.Filter.getDepartment()>
+				<cfset searchID = arguments.rc.Filter.getSearchID()>
+			</cfif>
+		<cfcatch>
+		</cfcatch>
+		</cftry>
 		<cfset local.errorException = structNew('linked')>
 		<cfset errorException = { acctID = acctID
 								, userID = userID
