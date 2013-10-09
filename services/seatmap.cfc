@@ -43,14 +43,14 @@
 		<cfif arguments.Group EQ ''>
 			<cfif arguments.nSegment EQ ''>
 				<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
-					<cfset stSegment = session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[0].Segments[nSegment]>
+					<cfset local.stSegment = session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[0].Segments[local.nSegment]>
 					<cfbreak>
 				</cfloop>
 			<cfelse>
 				<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups#" index="local.Group">
 					<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[Group].Segments#" index="local.nSegment">
-						<cfif arguments.nSegment EQ nSegment>
-							<cfset stSegment = session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[Group].Segments[nSegment]>
+						<cfif arguments.nSegment EQ local.nSegment>
+							<cfset local.stSegment = session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[Group].Segments[local.nSegment]>
 							<cfbreak>
 						</cfif>
 					</cfloop>
@@ -59,14 +59,14 @@
 		<cfelse>
 			<cfif arguments.nSegment EQ ''>
 				<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
-					<cfset stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[0].Segments[nSegment]>
+					<cfset local.stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[0].Segments[local.nSegment]>
 					<cfbreak>
 				</cfloop>
 			<cfelse>
 				<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups#" index="local.Group">
 					<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[Group].Segments#" index="local.nSegment">
-						<cfif arguments.nSegment EQ nSegment>
-							<cfset stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[Group].Segments[nSegment]>
+						<cfif arguments.nSegment EQ local.nSegment>
+							<cfset local.stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[Group].Segments[local.nSegment]>
 							<cfbreak>
 						</cfif>
 					</cfloop>
@@ -74,7 +74,7 @@
 			</cfif>
 		</cfif>
 
-		<cfif isStruct(stSegment) AND structKeyExists(stSegment, "Carrier")>
+		<cfif isStruct(local.stSegment) AND structKeyExists(local.stSegment, "Carrier")>
 			<cfsavecontent variable="local.sMessage">
 				<cfoutput>
 					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -89,14 +89,14 @@
 								xmlns:com="#getUAPISchemas().common#"> --->
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 								<air:AirSegment
-									Key="#nSegment#T"
-									Carrier="#stSegment.Carrier#"
-									FlightNumber="#stSegment.FlightNumber#"
-									Origin="#stSegment.Origin#"
-									Destination="#stSegment.Destination#"
-									DepartureTime="#DateFormat(stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(stSegment.DepartureTime, 'HH:mm')#:00"
+									Key="#arguments.nSegment#T"
+									Carrier="#local.stSegment.Carrier#"
+									FlightNumber="#local.stSegment.FlightNumber#"
+									Origin="#local.stSegment.Origin#"
+									Destination="#local.stSegment.Destination#"
+									DepartureTime="#DateFormat(local.stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm')#:00"
 									ProviderCode="1V"
-									Group="#stSegment.Group#">
+									Group="#local.stSegment.Group#">
 								</air:AirSegment>
 								<air:BookingCode Code="Y" />
 							</air:SeatMapReq>
@@ -108,7 +108,7 @@
 			<cfset local.sMessage="" />
 		</cfif>
 
-		<cfreturn sMessage/>
+		<cfreturn local.sMessage />
 	</cffunction>
 
 	<cffunction name="parseSeats" access="private" output="false" hint="I parse seats from uAPI data.">
