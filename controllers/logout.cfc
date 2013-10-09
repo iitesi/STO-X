@@ -13,15 +13,15 @@
 
 		<cfset local.logoutURL = application.sPortalURL />
 
-		<cfif right(logoutURL, 10) IS NOT "/index.cfm">
-			<cfif right(logoutURL, 1) IS "/">
-				<cfset logoutURL = logoutURL & "index.cfm" />
+		<cfif right(local.logoutURL, 10) IS NOT "/index.cfm">
+			<cfif right(local.logoutURL, 1) IS "/">
+				<cfset local.logoutURL = local.logoutURL & "index.cfm" />
 			<cfelse>
-				<cfset logoutURL = logoutURL & "/index.cfm" />
+				<cfset local.logoutURL = local.logoutURL & "/index.cfm" />
 			</cfif>
 		</cfif>
 
-		<cflocation url="#logoutURL#?Display=Validate/LogOut/act_processLogOut.cfm" addtoken="false" />
+		<cflocation url="#local.logoutURL#?Display=Validate/LogOut/act_processLogOut.cfm" addtoken="false" />
 	</cffunction>
 
 </cfcomponent>
