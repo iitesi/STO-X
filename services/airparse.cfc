@@ -83,19 +83,20 @@
 					</cfloop>
 
 					<cfset local.stSegments[local.stAirSegment.XMLAttributes.Key] = {
-						ArrivalTime			: ParseDateTime(local.dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
-						Carrier 				: local.stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						DepartureTime		: ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
-						DepartureGMT		: dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
-						Destination			: local.stAirSegment.XMLAttributes.Destination,
-						Equipment				: (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
-						FlightNumber		: local.stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: local.stAirSegment.XMLAttributes.FlightTime,
-						Group						: local.stAirSegment.XMLAttributes.Group,
-						Origin					: local.stAirSegment.XMLAttributes.Origin,
-						TravelTime			: local.travelTime
+						ArrivalTime : ParseDateTime(local.dArrivalTime),
+						ArrivalGMT : ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
+						Carrier : local.stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane : local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						DepartureTime : ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
+						DepartureGMT : dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
+						Destination : local.stAirSegment.XMLAttributes.Destination,
+						Equipment : (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
+						FlightNumber : local.stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime : local.stAirSegment.XMLAttributes.FlightTime,
+						Group : local.stAirSegment.XMLAttributes.Group,
+						Origin : local.stAirSegment.XMLAttributes.Origin,
+						TravelTime : local.travelTime,
+						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
 					}>
 				</cfloop>
 
