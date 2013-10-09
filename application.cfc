@@ -135,7 +135,7 @@
 					<cfelseif isDefined("url")
 						AND structKeyExists(url, 'searchID')>
 						<cfset local.searchID = url.searchID>
-					</cfif>	
+					</cfif>
 					<!--- Check the session for the filter --->
 					<cfif structKeyExists(session, 'Filters')
 						AND structKeyExists(session.Filters, searchID)>
@@ -149,27 +149,28 @@
 			</cfif>
 			<cfif structKeyExists(arguments, 'rc')
 				AND structKeyExists(arguments.rc, 'Filter')>
-				<cfset acctID = arguments.rc.Filter.getAcctID()>
-				<cfset userID = arguments.rc.Filter.getUserID()>
-				<cfset username = arguments.rc.Filter.getUsername()>
-				<cfset department = arguments.rc.Filter.getDepartment()>
-				<cfset searchID = arguments.rc.Filter.getSearchID()>
+				<cfset local.acctID = arguments.rc.Filter.getAcctID()>
+				<cfset local.userID = arguments.rc.Filter.getUserID()>
+				<cfset local.username = arguments.rc.Filter.getUsername()>
+				<cfset local.department = arguments.rc.Filter.getDepartment()>
+				<cfset local.searchID = arguments.rc.Filter.getSearchID()>
 			</cfif>
 		<cfcatch>
 		</cfcatch>
 		</cftry>
 
 		<cfset local.errorException = structNew('linked')>
-		<cfset errorException = { acctID = acctID
-								, userID = userID
-								, username = username
-								, department = department
-								, searchID = searchID
+		<cfset local.errorException = {
+									acctID = local.acctID
+								, userID = local.userID
+								, username = local.username
+								, department = local.department
+								, searchID = local.searchID
 								, exception = arguments.exception
 								} >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=errorException, severityCode='Fatal' ) />
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
