@@ -96,7 +96,7 @@
 
 			<cfset controller( 'setup.setSearchID' )>
 			<cfset controller( 'setup.setFilter' )>
-			<cfset controller( 'setup.setAcctID' )>
+			<cfset controller( 'setp.setAcctID' )>
 			<cfset controller( 'setup.setAccount' )>
 			<cfset controller( 'setup.setPolicyID' )>
 			<cfset controller( 'setup.setPolicy' )>
@@ -119,15 +119,34 @@
 		<cfset local.username = ''>
 		<cfset local.department = ''>
 		<cfset local.searchID = ''>
+
 		<cftry>
+			<!--- If the rc scope isn't defined then look a little more to see if we can track down the searchID and pull from the session. --->
 			<cfif NOT structKeyExists(arguments, 'rc')
 				OR NOT structKeyExists(arguments.rc, 'Filter')>
-				<cfif structKeyExists(arguments, 'rc')
-					AND structKeyExists(arguments.rc, 'searchID')
-					AND structKeyExists(session, 'Filters')
-					AND structKeyExists(session.Filters, arguments.rc.searchID)>
-					<cfset arguments.rc.Filter = session.Filters[arguments.rc.searchID]>
+				<!--- Have to look directly at the url scope as the rc may or may not be defined.  Most likely not. --->
+				<cfif (structKeyExists(arguments, 'rc')
+					AND structKeyExists(arguments.rc, 'searchID'))
+					OR (isDefined("url")
+						AND structKeyExists(url, 'searchID'))>
+					<!--- Move that searchID into the local scope --->
+					<cfif structKeyExists(arguments, 'rc')
+						AND structKeyExists(arguments.rc, 'searchID')>
+						<cfset local.searchID = arguments.rc.searchID>
+					<cfelseif isDefined("url")
+						AND structKeyExists(url, 'searchID')>
+						<cfset local.searchID = url.searchID>
+					</cfif>	
+					<!--- Check the session for the filter --->
+					<cfif structKeyExists(session, 'Filters')
+						AND structKeyExists(session.Filters, searchID)>
+
+						<cfset arguments.rc.Filter = session.Filters[searchID]>
+
+					</cfif>
+
 				</cfif>
+
 			</cfif>
 			<cfif structKeyExists(arguments, 'rc')
 				AND structKeyExists(arguments.rc, 'Filter')>
@@ -140,6 +159,7 @@
 		<cfcatch>
 		</cfcatch>
 		</cftry>
+
 		<cfset local.errorException = structNew('linked')>
 		<cfset errorException = { acctID = acctID
 								, userID = userID
@@ -148,15 +168,18 @@
 								, searchID = searchID
 								, exception = arguments.exception
 								} >
+
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=errorException, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
+
 		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
 			<cfdump var="#arguments.exception#" />
 		</cfif>
+
 	</cffunction>
 
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">
