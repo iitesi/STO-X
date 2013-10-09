@@ -4,7 +4,6 @@
 	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
-	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
 	<cfset this.applicationManagement = true>
 
 	<cfset variables.framework = {
@@ -119,14 +118,47 @@
 		<cfset local.username = ''>
 		<cfset local.department = ''>
 		<cfset local.searchID = ''>
-		<cfif structKeyExists(arguments, 'rc')
-			AND structKeyExists(arguments.rc, 'Filter')>
-			<cfset acctID = arguments.rc.Filter.getAcctID()>
-			<cfset userID = arguments.rc.Filter.getUserID()>
-			<cfset username = arguments.rc.Filter.getUsername()>
-			<cfset department = arguments.rc.Filter.getDepartment()>
-			<cfset searchID = arguments.rc.Filter.getSearchID()>
-		</cfif>
+
+		<cftry>
+			<!--- If the rc scope isn't defined then look a little more to see if we can track down the searchID and pull from the session. --->
+			<cfif NOT structKeyExists(arguments, 'rc')
+				OR NOT structKeyExists(arguments.rc, 'Filter')>
+				<!--- Have to look directly at the url scope as the rc may or may not be defined.  Most likely not. --->
+				<cfif (structKeyExists(arguments, 'rc')
+					AND structKeyExists(arguments.rc, 'searchID'))
+					OR (isDefined("url")
+						AND structKeyExists(url, 'searchID'))>
+					<!--- Move that searchID into the local scope --->
+					<cfif structKeyExists(arguments, 'rc')
+						AND structKeyExists(arguments.rc, 'searchID')>
+						<cfset local.searchID = arguments.rc.searchID>
+					<cfelseif isDefined("url")
+						AND structKeyExists(url, 'searchID')>
+						<cfset local.searchID = url.searchID>
+					</cfif>	
+					<!--- Check the session for the filter --->
+					<cfif structKeyExists(session, 'Filters')
+						AND structKeyExists(session.Filters, searchID)>
+
+						<cfset arguments.rc.Filter = session.Filters[searchID]>
+
+					</cfif>
+
+				</cfif>
+
+			</cfif>
+			<cfif structKeyExists(arguments, 'rc')
+				AND structKeyExists(arguments.rc, 'Filter')>
+				<cfset acctID = arguments.rc.Filter.getAcctID()>
+				<cfset userID = arguments.rc.Filter.getUserID()>
+				<cfset username = arguments.rc.Filter.getUsername()>
+				<cfset department = arguments.rc.Filter.getDepartment()>
+				<cfset searchID = arguments.rc.Filter.getSearchID()>
+			</cfif>
+		<cfcatch>
+		</cfcatch>
+		</cftry>
+
 		<cfset local.errorException = structNew('linked')>
 		<cfset errorException = { acctID = acctID
 								, userID = userID
@@ -135,15 +167,18 @@
 								, searchID = searchID
 								, exception = arguments.exception
 								} >
+
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=errorException, severityCode='Fatal' ) />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
+
 		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
 			<cfdump var="#arguments.exception#" />
 		</cfif>
+
 	</cffunction>
 
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">

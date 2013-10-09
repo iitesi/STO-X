@@ -217,6 +217,7 @@
 						<cfset local.nCount = 0>
 						<cfset local.fareRuleKey = []>
 						<cfset local.refundable = false>
+						<cfset local.changePenalty = 0>
 <!---
 MULTI CARRIER AND PF
 GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
@@ -250,7 +251,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								</cfif>
 							<cfelseif local.airPricingSolution2.XMLName EQ 'air:ChangePenalty'>
 								<!--- Refundable or non refundable --->
-								<cfset local.changePenalty = 0>
 								<cfloop array="#local.airPricingSolution2.XMLChildren#" index="local.stFare">
 									<cfif local.changePenalty LTE replace(local.stFare.XMLText, 'USD', '')>
 										<cfset local.changePenalty = replace(local.stFare.XMLText, 'USD', '')>
