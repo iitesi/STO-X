@@ -31,7 +31,7 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="setServerUR123123L" output="false" returntype="void">
+	<cffunction name="setServerURL" output="false" returntype="void">
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
 		<cfreturn />
 	</cffunction>
