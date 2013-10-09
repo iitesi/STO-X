@@ -4,7 +4,6 @@
 	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
-	<cfset this.sessionTimeout = CreateTimespan(1,0,0,0)>
 	<cfset this.applicationManagement = true>
 
 	<cfset variables.framework = {
