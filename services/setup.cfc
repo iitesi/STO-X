@@ -31,7 +31,7 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="setServerURL" output="false" returntype="void">
+	<cffunction name="setServerUR123123L" output="false" returntype="void">
 		<cfset application.sServerURL = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/booking'>
 		<cfreturn />
 	</cffunction>
@@ -106,7 +106,7 @@
 
 
 			<cfif getsearch.Air>
-				<cfswitch expression="#getsearch.Air_Type#">
+				<cfswitch expression="#local.getsearch.Air_Type#">
 					<!---
 					airHeading - page header
 					heading - used in breadcrumb
@@ -115,22 +115,22 @@
 
 					<!--- Round trip tab --->
 					<cfcase value="RT">
-						<cfif DateFormat(getsearch.Depart_DateTime) NEQ DateFormat(getsearch.Arrival_DateTime)>
-							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')# - #DateFormat(getsearch.Arrival_DateTime, 'ddd mmm d')#")>
-							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')# - #DateFormat(getsearch.Arrival_DateTime, 'm/d')#")>
+						<cfif DateFormat(local.getsearch.Depart_DateTime) NEQ DateFormat(local.getsearch.Arrival_DateTime)>
+							<cfset local.searchfilter.setAirHeading("#application.stAirports[local.getsearch.Depart_City].city# (#local.getsearch.Depart_City#) to #application.stAirports[local.getsearch.Arrival_City].city# (#local.getsearch.Arrival_City#) :: #DateFormat(local.getsearch.Depart_DateTime, 'ddd mmm d')# - #DateFormat(local.getsearch.Arrival_DateTime, 'ddd mmm d')#")>
+							<cfset local.searchfilter.setHeading("#local.getsearch.Depart_City# to #local.getsearch.Arrival_City# :: #DateFormat(local.getsearch.Depart_DateTime, 'm/d')# - #DateFormat(local.getsearch.Arrival_DateTime, 'm/d')#")>
 						<cfelse>
-							<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
-							<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
+							<cfset local.searchfilter.setAirHeading("#application.stAirports[local.getsearch.Depart_City].city# (#local.getsearch.Depart_City#) to #application.stAirports[local.getsearch.Arrival_City].city# (#local.getsearch.Arrival_City#) :: #DateFormat(local.getsearch.Depart_DateTime, 'ddd mmm d')#")>
+							<cfset local.searchfilter.setHeading("#local.getsearch.Depart_City# to #local.getsearch.Arrival_City# :: #DateFormat(local.getsearch.Depart_DateTime, 'm/d')#")>
 						</cfif>
-						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
-						<cfset searchfilter.addLegsForTrip(getsearch.Arrival_City&' - '&getsearch.Depart_City&' on '&DateFormat(getsearch.Arrival_DateTime, 'ddd, m/d'))>
+						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Depart_City&' - '&local.getsearch.Arrival_City&' on '&DateFormat(local.getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Arrival_City&' - '&local.getsearch.Depart_City&' on '&DateFormat(local.getsearch.Arrival_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- One way --->
 					<cfcase value="OW">
-						<cfset searchfilter.setAirHeading("#application.stAirports[getsearch.Depart_City].city# (#getsearch.Depart_City#) to #application.stAirports[getsearch.Arrival_City].city# (#getsearch.Arrival_City#) :: #DateFormat(getsearch.Depart_DateTime, 'ddd mmm d')#")>
-						<cfset searchfilter.setHeading("#getsearch.Depart_City# to #getsearch.Arrival_City# :: #DateFormat(getsearch.Depart_DateTime, 'm/d')#")>
-						<cfset searchfilter.addLegsForTrip(getsearch.Depart_City&' - '&getsearch.Arrival_City&' on '&DateFormat(getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset local.searchfilter.setAirHeading("#application.stAirports[local.getsearch.Depart_City].city# (#local.getsearch.Depart_City#) to #application.stAirports[local.getsearch.Arrival_City].city# (#local.getsearch.Arrival_City#) :: #DateFormat(local.getsearch.Depart_DateTime, 'ddd mmm d')#")>
+						<cfset local.searchfilter.setHeading("#local.getsearch.Depart_City# to #local.getsearch.Arrival_City# :: #DateFormat(local.getsearch.Depart_DateTime, 'm/d')#")>
+						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Depart_City&' - '&local.getsearch.Arrival_City&' on '&DateFormat(local.getsearch.Depart_DateTime, 'ddd, m/d'))>
 					</cfcase>
 
 					<!--- Multi-city --->
@@ -142,33 +142,33 @@
 
 						<cfloop query="getsearchlegs">
 							<cfif Len(local.breadCrumb)>
-								<cfif ListLast(local.breadCrumb, '-') NEQ depart_city AND  depart_city NEQ arrival_city>
-									<cfset local.breadCrumb = "#local.breadCrumb#-#depart_city#-#arrival_city#">
+								<cfif ListLast(local.breadCrumb, '-') NEQ local.depart_city AND local.depart_city NEQ local.arrival_city>
+									<cfset local.breadCrumb = "#local.breadCrumb#-#local.depart_city#-#local.arrival_city#">
 								<cfelse>
-									<cfset  local.breadCrumb = "#local.breadCrumb#-#arrival_city#">
+									<cfset  local.breadCrumb = "#local.breadCrumb#-#local.arrival_city#">
 								</cfif>
 							<cfelse>
-								<cfset local.breadCrumb = "#depart_city#-#arrival_city#">
+								<cfset local.breadCrumb = "#local.depart_city#-#local.arrival_city#">
 							</cfif>
-							<cfset searchfilter.addLegsForTrip(getSearchLegs.Depart_City&' - '&getSearchLegs.Arrival_City&' on '&DateFormat(getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
-							<cfset searchfilter.addLegHeader("#application.stAirports[getSearchLegs.Depart_City].city# (#getSearchLegs.Depart_City#) to #application.stAirports[getSearchLegs.Arrival_City].city# (#getSearchLegs.Arrival_City#) :: #DateFormat(getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
+							<cfset local.searchfilter.addLegsForTrip(local.getSearchLegs.Depart_City&' - '&local.getSearchLegs.Arrival_City&' on '&DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
+							<cfset local.searchfilter.addLegHeader("#application.stAirports[local.getSearchLegs.Depart_City].city# (#local.getSearchLegs.Depart_City#) to #application.stAirports[local.getSearchLegs.Arrival_City].city# (#local.getSearchLegs.Arrival_City#) :: #DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
 						</cfloop>
 						<!--- populate headings for display --->
-						<cfset searchfilter.setAirHeading("Multi-city Destinations")>
-						<cfset searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(getSearchLegs.Depart_DateTime[getSearchLegs.recordCount], 'm/d')#")>
+						<cfset local.searchfilter.setAirHeading("Multi-city Destinations")>
+						<cfset local.searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(local.getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(local.getSearchLegs.Depart_DateTime[local.getSearchLegs.recordCount], 'm/d')#")>
 					</cfcase>
 				</cfswitch>
 
-			<cfelseif NOT getsearch.Air AND Len(Trim(getsearch.Arrival_City))>
-				<cfset searchfilter.setDestination(application.stAirports[getsearch.Arrival_City].city)>
+			<cfelseif NOT local.getsearch.Air AND Len(Trim(local.getsearch.Arrival_City))>
+				<cfset local.searchfilter.setDestination(application.stAirports[local.getsearch.Arrival_City].city)>
 			</cfif>
 
 			<!--- Set carHeading. --->
-			<cfif structKeyExists(getsearch, 'CarPickup_Airport') AND Len(Trim(getsearch.CarPickup_Airport))>
-				<cfif structKeyExists(getsearch, 'CarDropoff_Airport') AND Len(Trim(getsearch.CarDropoff_Airport)) AND (getsearch.CarDropoff_Airport NEQ getsearch.CarPickup_Airport)>
-					<cfset searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&'</small> - ' &getCarDropoffAirportData.Airport_Name&' ('&getsearch.CarDropoff_Airport&') <small>:: ' &DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
+			<cfif structKeyExists(local.getsearch, 'CarPickup_Airport') AND Len(Trim(local.getsearch.CarPickup_Airport))>
+				<cfif structKeyExists(local.getsearch, 'CarDropoff_Airport') AND Len(Trim(local.getsearch.CarDropoff_Airport)) AND (local.getsearch.CarDropoff_Airport NEQ local.getsearch.CarPickup_Airport)>
+					<cfset local.searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&local.getsearch.CarPickup_Airport&') <small>:: '&DateFormat(local.getsearch.CarPickup_DateTime, 'ddd mmm d')&'</small> - ' &local.getCarDropoffAirportData.Airport_Name&' ('&local.getsearch.CarDropoff_Airport&') <small>:: ' &DateFormat(local.getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
 				<cfelse>
-					<cfset searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&getsearch.CarPickup_Airport&') <small>:: '&DateFormat(getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
+					<cfset local.searchfilter.setCarHeading(getCarPickupAirportData.Airport_Name&' ('&local.getsearch.CarPickup_Airport&') <small>:: '&DateFormat(local.getsearch.CarPickup_DateTime, 'ddd mmm d')&' - '&DateFormat(local.getsearch.CarDropoff_DateTime, 'ddd mmm d')&'</small>') />
 				</cfif>
 			</cfif>
 
@@ -177,9 +177,9 @@
 			<!--- ================================================================================================ --->
 
 			<!---Set session variables--->
-			<cfset session.UserID = getSearch.User_ID>
-			<cfset session.AcctID = getSearch.Acct_ID>
-			<cfset session.PolicyID = getSearch.Policy_ID>
+			<cfset session.UserID = local.getSearch.User_ID>
+			<cfset session.AcctID = local.getSearch.Acct_ID>
+			<cfset session.PolicyID = local.getSearch.Policy_ID>
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
 			<cfif NOT arguments.requery OR NOT structKeyExists(session.searches[arguments.SearchID], "stAvailDetails")>
 				<!--- Otherwise, default the search session struct --->
@@ -206,7 +206,7 @@
 			<cfset local.searchfilter = getSearchService().new() />
 		</cfif>
 
-		<cfreturn searchfilter/>
+		<cfreturn local.searchfilter/>
 	</cffunction>
 
 	<cffunction name="setAccount" output="false">
@@ -274,12 +274,12 @@
 			</cfquery>
 
 			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
-				<cfset stTemp[sCol] = qAccount[sCol]>
+				<cfset local.stTemp[local.sCol] = local.qAccount[local.sCol]>
 			</cfloop>
-			<cfset stTemp.CouldYou = qCouldYou.CouldYou>
+			<cfset local.stTemp.CouldYou = local.qCouldYou.CouldYou>
 
-			<cfset stTemp.sBranch = Branches[qAccount.PCC_Booking]>
-			<cfset stTemp.Air_PF = ListToArray(stTemp.Air_PF, '~')>
+			<cfset local.stTemp.sBranch = local.Branches[local.qAccount.PCC_Booking]>
+			<cfset local.stTemp.Air_PF = ListToArray(local.stTemp.Air_PF, '~')>
 
 			<cfquery name="local.qOutOfPolicy" datasource="#getCorporateProductionDSN()#">
 				SELECT Vendor_ID, Type
@@ -287,13 +287,13 @@
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfset stTemp.aNonPolicyAir = []>
-			<cfset stTemp.aNonPolicyCar = []>
-			<cfset stTemp.aNonPolicyHotel = []>
+			<cfset local.stTemp.aNonPolicyAir = []>
+			<cfset local.stTemp.aNonPolicyCar = []>
+			<cfset local.stTemp.aNonPolicyHotel = []>
 
-			<cfloop query="qOutOfPolicy">
-				<cfset local.sType = 'aNonPolicy'&(qOutOfPolicy.Type EQ 'A' ? 'Air' : (qOutOfPolicy.Type EQ 'C' ? 'Car' : 'Hotel'))>
-				<cfset ArrayAppend(stTemp[sType], qOutOfPolicy.Vendor_ID)>
+			<cfloop query="local.qOutOfPolicy">
+				<cfset local.sType = 'aNonPolicy'&(local.qOutOfPolicy.Type EQ 'A' ? 'Air' : (local.qOutOfPolicy.Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(local.stTemp[local.sType], local.qOutOfPolicy.Vendor_ID)>
 			</cfloop>
 
 			<cfquery name="local.qPreferred" datasource="#getCorporateProductionDSN()#">
@@ -302,13 +302,13 @@
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfset stTemp.aPreferredAir = []>
-			<cfset stTemp.aPreferredCar = []>
-			<cfset stTemp.aPreferredHotel = []>
+			<cfset local.stTemp.aPreferredAir = []>
+			<cfset local.stTemp.aPreferredCar = []>
+			<cfset local.stTemp.aPreferredHotel = []>
 
 			<cfloop query="qPreferred">
-				<cfset local.sType = 'aPreferred'&(qPreferred.Type EQ 'A' ? 'Air' : (qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
-				<cfset ArrayAppend(stTemp[sType], qPreferred.Vendor_ID)>
+				<cfset local.sType = 'aPreferred'&(local.qPreferred.Type EQ 'A' ? 'Air' : (local.qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
+				<cfset ArrayAppend(local.stTemp[local.sType], local.qPreferred.Vendor_ID)>
 			</cfloop>
 
 			<cfquery name="local.locations" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
@@ -319,22 +319,22 @@
 				ORDER BY Office_Name
 			</cfquery>
 
-			<cfset stTemp.Offices = arrayNew(1) />
+			<cfset local.stTemp.Offices = arrayNew(1) />
 
 			<cfif locations.recordCount >
 
-				<cfloop query="locations">
+				<cfloop query="local.locations">
 					<cfset local.location = structNew() />
-					<cfset location.name = locations.Office_Name />
-					<cfset location.id = locations.Office_ID />
-					<cfset arrayAppend( stTemp.Offices, duplicate( location ) ) />
+					<cfset local.location.name = local.locations.Office_Name />
+					<cfset local.location.id = local.locations.Office_ID />
+					<cfset arrayAppend( local.stTemp.Offices, duplicate( local.location ) ) />
 				</cfloop>
 			</cfif>
 
-			<cfset application.Accounts[arguments.AcctID] = stTemp>
+			<cfset application.Accounts[arguments.AcctID] = local.stTemp>
 		</cfif>
 
-		<cfreturn stTemp/>
+		<cfreturn local.stTemp/>
 	</cffunction>
 
 	<cffunction name="setPolicy" output="false">
@@ -361,7 +361,7 @@
 
 			<cfset local.stTemp = {}>
 			<cfloop list="#qPolicy.ColumnList#" index="local.sCol">
-				<cfset stTemp[sCol] = qPolicy[sCol]>
+				<cfset local.stTemp[local.sCol] = local.qPolicy[local.sCol]>
 			</cfloop>
 
 			<cfquery name="local.qPreferredCarSizes" datasource="#getCorporateProductionDSN()#">
@@ -371,27 +371,27 @@
 				WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfset stTemp.aCarSizes = []>
+			<cfset local.stTemp.aCarSizes = []>
 			<cfloop query="qPreferredCarSizes">
-				<cfset ArrayAppend(stTemp.aCarSizes, qPreferredCarSizes.Car_Size)>
+				<cfset ArrayAppend(local.stTemp.aCarSizes, local.qPreferredCarSizes.Car_Size)>
 			</cfloop>
 
 			<cfquery name="local.qCDNumbers" datasource="#getCorporateProductionDSN()#">
 			SELECT IsNull(Value_ID, '0') AS Value_ID, Vendor_Code, CD_Number, DB_Number, DB_Type
 			FROM CD_Numbers
-			WHERE Acct_ID = <cfqueryparam value="#qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
+			WHERE Acct_ID = <cfqueryparam value="#local.qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
-			<cfset stTemp.CDNumbers = {}>
+			<cfset local.stTemp.CDNumbers = {}>
 			<cfloop query="qCDNumbers">
-				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].CD = qCDNumbers.CD_Number>
-				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].DB = qCDNumbers.DB_Number>
-				<cfset stTemp.CDNumbers[qCDNumbers.Value_ID][qCDNumbers.Vendor_Code].DBType = qCDNumbers.DB_Type>
+				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].CD = local.qCDNumbers.CD_Number>
+				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].DB = local.qCDNumbers.DB_Number>
+				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].DBType = local.qCDNumbers.DB_Type>
 			</cfloop>
 
-			<cfset application.Policies[arguments.PolicyID] = stTemp>
+			<cfset application.Policies[arguments.PolicyID] = local.stTemp>
 		</cfif>
 
-		<cfreturn stTemp/>
+		<cfreturn local.stTemp/>
 	</cffunction>
 
 	<cffunction name="setAirVendors" output="false" returntype="void">
@@ -404,10 +404,10 @@
 
 		<cfset local.stTemp = {}>
 
-		<cfloop query="qAirVendors">
-			<cfset stTemp[VendorCode].Name = ShortName>
-			<cfset stTemp[VendorCode].Bag1 = 0>
-			<cfset stTemp[VendorCode].Bag2 = 0>
+		<cfloop query="local.qAirVendors">
+			<cfset local.stTemp[local.qAirVendors.VendorCode].Name = local.qAirVendors.ShortName>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag1 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag2 = 0>
 		</cfloop>
 
 		<cfquery name="local.qBagFees" datasource="Corporate_Production">
@@ -418,12 +418,12 @@
 				AND	(OnlineDomBag2 IS NOT NULL AND OnlineDomBag2 <> 0)
 		</cfquery>
 
-		<cfloop query="qBagFees">
-			<cfset stTemp[ShortCode].Bag1 = OnlineDomBag1>
-			<cfset stTemp[ShortCode].Bag2 = OnlineDomBag2>
+		<cfloop query="local.qBagFees">
+			<cfset local.stTemp[local.qBagFees.ShortCode].Bag1 = local.qBagFees.OnlineDomBag1>
+			<cfset local.stTemp[local.qBagFees.ShortCode].Bag2 = local.qBagFees.OnlineDomBag2>
 		</cfloop>
 
-		<cfset application.stAirVendors = stTemp>
+		<cfset application.stAirVendors = local.stTemp>
 
 		<cfreturn />
 	</cffunction>
@@ -435,12 +435,14 @@
 		FROM RCAR
 		GROUP BY VendorCode, VendorName
 		</cfquery>
+
 		<cfset local.stTemp = {}>
-		<cfloop query="qCarVendors">
-			<cfset stTemp[VendorCode] = VendorName>
+
+		<cfloop query="local.qCarVendors">
+			<cfset local.stTemp[local.qCarVendors.VendorCode] = local.qCarVendors.VendorName>
 		</cfloop>
 
-		<cfset application.stCarVendors = stTemp>
+		<cfset application.stCarVendors = local.stTemp>
 
 		<cfreturn />
 	</cffunction>
@@ -454,11 +456,11 @@
 		ORDER BY VendorCode, VendorName
 		</cfquery>
 		<cfset local.stTemp = {} />
-		<cfloop query="qHotelChains">
-			<cfset stTemp[VendorCode] = qHotelChains.VendorName>
+		<cfloop query="local.qHotelChains">
+			<cfset local.stTemp[local.qHotelChains.VendorCode] = local.qHotelChains.VendorName>
 		</cfloop>
 
-		<cfset application.stHotelVendors = stTemp>
+		<cfset application.stHotelVendors = local.stTemp>
 
 		<cfreturn />
 	</cffunction>
@@ -470,11 +472,11 @@
 		FROM RAEQ
 		</cfquery>
 		<cfset local.stTemp = {}>
-		<cfloop query="qEquipment">
-			<cfset stTemp[EquipmentCode] = ShortName>
+		<cfloop query="local.qEquipment">
+			<cfset local.stTemp[EquipmentCode] = local.qEquipment.ShortName>
 		</cfloop>
 
-		<cfset application.stEquipment = stTemp>
+		<cfset application.stEquipment = local.stTemp>
 
 		<cfreturn />
 	</cffunction>
@@ -492,12 +494,12 @@
 
 		<cfset local.stTemp = {}>
 
-		<cfloop query="qAirports">
-			<cfset stTemp[code].city = city>
-			<cfset stTemp[code].airport = airport>
+		<cfloop query="local.qAirports">
+			<cfset local.stTemp[local.qAirports.code].city = local.qAirports.city>
+			<cfset local.stTemp[local.qAirports.code].airport = local.qAirports.airport>
 		</cfloop>
 
-		<cfset application.stAirports = stTemp>
+		<cfset application.stAirports = local.stTemp>
 
 		<cfreturn />
 	</cffunction>
@@ -508,11 +510,15 @@
 		SELECT code, Amenity
 		FROM RAMENITIES
 		</cfquery>
+
 		<cfset local.stTemp = {}>
+
 		<cfloop query="qAmenities">
-			<cfset stTemp[qAmenities.code] = qAmenities.Amenity>
+			<cfset local.stTemp[local.qAmenities.code] = local.qAmenities.Amenity>
 		</cfloop>
-		<cfset application.stAmenities = stTemp>
+
+		<cfset application.stAmenities = local.stTemp>
+
 		<cfreturn />
 
 	</cffunction>
@@ -522,11 +528,15 @@
 			SELECT code, State
 			FROM RSTATES
 		</cfquery>
+
 		<cfset local.stTemp = {}>
-		<cfloop query="qStates">
-			<cfset stTemp[qStates.code] = qStates.State>
+
+		<cfloop query="local.qStates">
+			<cfset local.stTemp[local.qStates.code] = local.qStates.State>
 		</cfloop>
-		<cfset application.stStates = stTemp>
+
+		<cfset application.stStates = local.stTemp>
+
 		<cfreturn />
 	</cffunction>
 
@@ -545,8 +555,8 @@
 
 		<!--- Populate the array row by row --->
 		<cfloop query="local.blackListedCarrierPairing">
-			<cfset local.temp[CurrentRow][1]=carrier1>
-			<cfset local.temp[CurrentRow][2]=carrier2>
+			<cfset local.temp[local.blackListedCarrierPairing.CurrentRow][1]=local.blackListedCarrierPairing.carrier1>
+			<cfset local.temp[local.blackListedCarrierPairing.CurrentRow][2]=local.blackListedCarrierPairing.carrier2>
 		</cfloop>
 
 		<cfset application.blacklistedCarrierPairing = local.temp>
@@ -568,13 +578,13 @@
 		</cfquery>
 
 		<cfset local.temp = {}>
-		<cfoutput query="blackListedCarrierPairing" group="carrier1">
+		<cfoutput query="local.blackListedCarrierPairing" group="carrier1">
 			<cfoutput>
-				<cfset temp[carrier1][carrier2] = ''>
+				<cfset local.temp[local.blackListedCarrierPairing.carrier1][local.blackListedCarrierPairing.carrier2] = ''>
 			</cfoutput>
 		</cfoutput>
 
-		<cfset application.blacklistedCarriers = temp>
+		<cfset application.blacklistedCarriers = local.temp>
 
 		<cfreturn />
 	</cffunction>
