@@ -39,9 +39,9 @@
 					</li>
 				</cfif>
 		    	<cfif rc.action CONTAINS 'confirmation.'>
-					<!---Logout - pass 0 in searchid to get past check in onRequest --->
+					<!---Logout--->
 					<li>
-						<a href="#buildURL('logout&searchid=0')#">Logout</a>
+						<a href="#buildURL('logout')#">Logout</a>
 					</li>
 		    	<cfelse>
 					<cfif showAirTab>
@@ -72,8 +72,7 @@
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
 					<li>
-						<!---Logout - pass 0 in searchid to get past check in onRequest --->
-						<a href="#buildURL('logout&searchid=0')#">Logout</a>
+						<a href="#buildURL('logout')#">Logout</a>
 					</li>
 				</cfif>
 			</ul>
