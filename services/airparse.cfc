@@ -738,14 +738,21 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfif>
 		</cfloop>
 
+		<cfif NOT structKeyExists(local, "nTripKey")
+			AND NOT structIsEmpty(stTrips)>
+			<cfset local.nTripKey = listGetAt(structKeyList(stTrips), 1)>
+		</cfif>
 
-		<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
-		<cfset local.bAllInactive = 0>
-		<cfif arguments.Policy.Policy_AirAdvRule EQ 1
-		AND DateDiff('d', local.stTrips[local.nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
-			<cfset local.bAllInactive = 1>
-			<cfif arguments.Policy.Policy_AirAdvDisp EQ 1>
-				<cfset local.stTrips = {}>
+		<cfif structKeyExists(local, "nTripKey")
+			AND local.nTripKey NEQ ''>
+			<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
+			<cfset local.bAllInactive = 0>
+			<cfif arguments.Policy.Policy_AirAdvRule EQ 1
+			AND DateDiff('d', local.stTrips[local.nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
+				<cfset local.bAllInactive = 1>
+				<cfif arguments.Policy.Policy_AirAdvDisp EQ 1>
+					<cfset local.stTrips = {}>
+				</cfif>
 			</cfif>
 		</cfif>
 
