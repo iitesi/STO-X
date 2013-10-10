@@ -134,21 +134,19 @@
 					</cfcase>
 
 					<!--- Multi-city --->
-					<!--- TODO: this logic for making breadcrumbs / title could be broken out into it's own function --->
+					<!--- FYI legs are also added in com/shortstravel/search/searchManager.load() --->
 					<cfcase value="MD" >
 						<cfset var local.breadCrumb = "">
 
-						<!--- FYI legs are also added in com/shortstravel/search/searchManager.load() --->
-
 						<cfloop query="getsearchlegs">
 							<cfif Len(local.breadCrumb)>
-								<cfif ListLast(local.breadCrumb, '-') NEQ local.depart_city AND local.depart_city NEQ local.arrival_city>
-									<cfset local.breadCrumb = "#local.breadCrumb#-#local.depart_city#-#local.arrival_city#">
+								<cfif ListLast(local.breadCrumb, '-') NEQ local.getsearchlegs.depart_city AND local.getsearchlegs.depart_city NEQ local.getsearchlegs.arrival_city>
+									<cfset local.breadCrumb = "#local.breadCrumb#-#local.getsearchlegs.depart_city#-#local.getsearchlegs.arrival_city#">
 								<cfelse>
-									<cfset  local.breadCrumb = "#local.breadCrumb#-#local.arrival_city#">
+									<cfset  local.breadCrumb = "#local.breadCrumb#-#local.getsearchlegs.arrival_city#">
 								</cfif>
 							<cfelse>
-								<cfset local.breadCrumb = "#local.depart_city#-#local.arrival_city#">
+								<cfset local.breadCrumb = "#local.getsearchlegs.depart_city#-#local.getsearchlegs.arrival_city#">
 							</cfif>
 							<cfset local.searchfilter.addLegsForTrip(local.getSearchLegs.Depart_City&' - '&local.getSearchLegs.Arrival_City&' on '&DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset local.searchfilter.addLegHeader("#application.stAirports[local.getSearchLegs.Depart_City].city# (#local.getSearchLegs.Depart_City#) to #application.stAirports[local.getSearchLegs.Arrival_City].city# (#local.getSearchLegs.Arrival_City#) :: #DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
