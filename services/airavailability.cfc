@@ -43,20 +43,20 @@
 			<cfelse>
 				<cfset local.sPriority = 'LOW'>
 			</cfif>
-			<cfset sThreadName = doAvailability( Filter = arguments.Filter
+			<cfset local.sThreadName = doAvailability( Filter = arguments.Filter
 												, Group = local.nLegIndex-1
 												, Account = arguments.Account
 												, Policy = arguments.Policy
-												, sPriority = sPriority)>
+												, sPriority = local.sPriority)>
 
-			<cfif sPriority EQ 'HIGH' AND sThreadName NEQ ''>
-				<cfset stThreads[sThreadName] = ''>
+			<cfif local.sPriority EQ 'HIGH' AND local.sThreadName NEQ ''>
+				<cfset local.stThreads[local.sThreadName] = ''>
 			</cfif>
 		</cfloop>
 		<!--- Join only if threads where thrown out. --->
-		<cfif NOT StructIsEmpty(stThreads)
-			AND sPriority EQ 'HIGH'>
-			<cfthread action="join" name="#structKeyList(stThreads)#" />
+		<cfif NOT StructIsEmpty(local.stThreads)
+			AND local.sPriority EQ 'HIGH'>
+			<cfthread action="join" name="#structKeyList(local.stThreads)#" />
 		</cfif>
 
 		<cfreturn />
@@ -181,7 +181,7 @@
 		<cfset local.targetBranch = arguments.Account.sBranch>
 		<cfif arguments.Filter.getAcctID() EQ 254
 			OR arguments.Filter.getAcctID() EQ 255>
-			<cfset targetBranch = 'P1601396'>
+			<cfset local.targetBranch = 'P1601396'>
 		</cfif>
 
 <!---
@@ -196,7 +196,7 @@
 				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Header/>
 					<soapenv:Body>
-						<air:AvailabilitySearchReq TargetBranch="#targetBranch#"
+						<air:AvailabilitySearchReq TargetBranch="#local.targetBranch#"
 								xmlns:air="#getUAPISchemas().air#"
 								xmlns:com="#getUAPISchemas().common#">
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
@@ -349,23 +349,23 @@
 		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
 		<!--- Loop through results. --->
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
+			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
 					<!--- Build up the distinct segment string. --->
-					<cfset sIndex = ''>
+					<cfset local.sIndex = ''>
 					<cfloop array="#aSegmentKeys#" index="local.sCol">
-						<cfset sIndex &= stAirSegment.XMLAttributes[sCol]>
+						<cfset local.sIndex &= local.stAirSegment.XMLAttributes[local.sCol]>
 					</cfloop>
 					<!--- Create a look up structure for the primary key. --->
-					<cfset stSegmentKeys[stAirSegment.XMLAttributes.Key] = {
-						HashIndex	: 	getUAPI().HashNumeric(sIndex),
-						Index		: 	sIndex
+					<cfset local.stSegmentKeys[local.stAirSegment.XMLAttributes.Key] = {
+						HashIndex	: 	getUAPI().HashNumeric(local.sIndex),
+						Index		: 	local.sIndex
 					}>
 				</cfloop>
 			</cfif>
 		</cfloop>
 
-		<cfreturn stSegmentKeys />
+		<cfreturn local.stSegmentKeys />
 	</cffunction>
 
 	<cffunction name="addSegmentRefs" output="false">
@@ -375,12 +375,12 @@
 		<cfset local.sAPIKey = ''>
 		<cfset local.cnt = 0>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
-			<cfif stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
+			<cfif local.stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
 				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
-					<cfif stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
-						<cfset sAPIKey = stAirSegmentRef.XMLAttributes.Key>
-						<cfset arguments.stSegmentKeys[sAPIKey].nLocation = cnt>
-						<cfset cnt++>
+					<cfif local.stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
+						<cfset local.sAPIKey = local.stAirSegmentRef.XMLAttributes.Key>
+						<cfset arguments.stSegmentKeys[local.sAPIKey].nLocation = local.cnt>
+						<cfset local.cnt++>
 					</cfif>
 				</cfloop>
 			</cfif>
@@ -394,10 +394,10 @@
 
 		<cfset local.stSegmentKeyLookUp = {}>
 		<cfloop collection="#arguments.stSegmentKeys#" item="local.sKey">
-			<cfset stSegmentKeyLookUp[stSegmentKeys[sKey].nLocation] = sKey>
+			<cfset local.stSegmentKeyLookUp[arguments.stSegmentKeys[local.sKey].nLocation] = local.sKey>
 		</cfloop>
 
-		<cfreturn stSegmentKeyLookUp />
+		<cfreturn local.stSegmentKeyLookUp />
 	</cffunction>
 
 	<cffunction name="parseSegments" output="false">
@@ -406,36 +406,36 @@
 
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
-				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.dArrivalGMT = stAirSegment.XMLAttributes.ArrivalTime>
-					<cfset local.dArrivalTime = GetToken(dArrivalGMT, 1, '.')>
-					<cfset local.dArrivalOffset = GetToken(GetToken(dArrivalGMT, 2, '-'), 1, ':')>
-					<cfset local.dDepartGMT = stAirSegment.XMLAttributes.DepartureTime>
-					<cfset local.dDepartTime = GetToken(dDepartGMT, 1, '.')>
-					<cfset local.dDepartOffset = GetToken(GetToken(dDepartGMT, 2, '-'), 1, ':')>
-					<cfset stSegments[arguments.stSegmentKeys[stAirSegment.XMLAttributes.Key].HashIndex] = {
-						Arrival				: dArrivalGMT,
-						ArrivalTime			: ParseDateTime(dArrivalTime),
-						ArrivalGMT			: ParseDateTime(DateAdd('h', dArrivalOffset, dArrivalTime)),
-						Carrier 			: stAirSegment.XMLAttributes.Carrier,
-						ChangeOfPlane		: stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
-						Departure			: dDepartGMT,
-						DepartureTime		: ParseDateTime(dDepartTime),
-						DepartureGMT		: ParseDateTime(DateAdd('h', dDepartOffset, dDepartTime)),
-						Destination			: stAirSegment.XMLAttributes.Destination,
-						Equipment			: stAirSegment.XMLAttributes.Equipment,
-						FlightNumber		: stAirSegment.XMLAttributes.FlightNumber,
-						FlightTime			: stAirSegment.XMLAttributes.FlightTime,
-						Group				: stAirSegment.XMLAttributes.Group,
-						Origin				: stAirSegment.XMLAttributes.Origin,
-						TravelTime			: stAirSegment.XMLAttributes.TravelTime
+			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
+				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
+					<cfset local.dArrivalTime = GetToken(local.dArrivalGMT, 1, '.')>
+					<cfset local.dArrivalOffset = GetToken(GetToken(local.dArrivalGMT, 2, '-'), 1, ':')>
+					<cfset local.dDepartGMT = local.stAirSegment.XMLAttributes.DepartureTime>
+					<cfset local.dDepartTime = GetToken(local.dDepartGMT, 1, '.')>
+					<cfset local.dDepartOffset = GetToken(GetToken(local.dDepartGMT, 2, '-'), 1, ':')>
+					<cfset local.stSegments[arguments.stSegmentKeys[local.stAirSegment.XMLAttributes.Key].HashIndex] = {
+						Arrival					: local.dArrivalGMT,
+						ArrivalTime			: ParseDateTime(local.dArrivalTime),
+						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
+						Carrier 				: local.stAirSegment.XMLAttributes.Carrier,
+						ChangeOfPlane		: local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
+						Departure				: local.dDepartGMT,
+						DepartureTime		: ParseDateTime(local.dDepartTime),
+						DepartureGMT		: ParseDateTime(DateAdd('h', local.dDepartOffset, local.dDepartTime)),
+						Destination			: local.stAirSegment.XMLAttributes.Destination,
+						Equipment				: local.stAirSegment.XMLAttributes.Equipment,
+						FlightNumber		: local.stAirSegment.XMLAttributes.FlightNumber,
+						FlightTime			: local.stAirSegment.XMLAttributes.FlightTime,
+						Group						: local.stAirSegment.XMLAttributes.Group,
+						Origin					: local.stAirSegment.XMLAttributes.Origin,
+						TravelTime			: local.stAirSegment.XMLAttributes.TravelTime
 					}>
 				</cfloop>
 			</cfif>
 		</cfloop>
 
-		<cfreturn stSegments />
+		<cfreturn local.stSegments />
 	</cffunction>
 
 	<cffunction name="parseConnections" output="false">
@@ -450,40 +450,40 @@
 		<cfset local.stSegmentIndex = {}>
 		<cfset local.firstSegmentIndex = ''>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
-			<cfif stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
-				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stConnection">
-					<cfif stConnection.XMLName EQ 'air:Connection'>
-						<cfif firstSegmentIndex EQ ''>
-							<cfset firstSegmentIndex = stConnection.XMLAttributes.SegmentIndex>
+			<cfif local.stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
+				<cfloop array="#local.stAirItinerarySolution.XMLChildren#" index="local.stConnection">
+					<cfif local.stConnection.XMLName EQ 'air:Connection'>
+						<cfif local.firstSegmentIndex EQ ''>
+							<cfset local.firstSegmentIndex = local.stConnection.XMLAttributes.SegmentIndex>
 						</cfif>
-						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex] = StructNew('linked')>
-						<cfset stSegmentIndex[stConnection.XMLAttributes.SegmentIndex][1] = stSegments[stSegmentKeys[stSegmentKeyLookUp[stConnection.XMLAttributes.SegmentIndex]].HashIndex]>
+						<cfset local.stSegmentIndex[local.stConnection.XMLAttributes.SegmentIndex] = StructNew('linked')>
+						<cfset local.stSegmentIndex[local.stConnection.XMLAttributes.SegmentIndex][1] = arguments.stSegments[arguments.stSegmentKeys[arguments.stSegmentKeyLookUp[local.stConnection.XMLAttributes.SegmentIndex]].HashIndex]>
 					</cfif>
 				</cfloop>
 			</cfif>
 		</cfloop>
-		<cfif firstSegmentIndex EQ ''>
-			<cfset firstSegmentIndex = arrayLen(structKeyArray(stSegmentKeyLookUp))-1>
+		<cfif local.firstSegmentIndex EQ ''>
+			<cfset local.firstSegmentIndex = arrayLen(structKeyArray(arguments.stSegmentKeyLookUp))-1>
 		</cfif>
 
 		<!--- Backfill with nonstops --->
-		<cfloop from="0" to="#firstSegmentIndex-1#" index="local.segmentIndex">
-			<cfset stSegmentIndex[ segmentIndex ] = StructNew('linked')>
-			<cfset stSegmentIndex[ segmentIndex ][1] = stSegments[ stSegmentKeys[ stSegmentKeyLookUp[ segmentIndex ] ].HashIndex ]>
+		<cfloop from="0" to="#local.firstSegmentIndex-1#" index="local.segmentIndex">
+			<cfset local.stSegmentIndex[ local.segmentIndex ] = StructNew('linked')>
+			<cfset local.stSegmentIndex[ local.segmentIndex ][1] = arguments.stSegments[ arguments.stSegmentKeys[ arguments.stSegmentKeyLookUp[ segmentIndex ] ].HashIndex ]>
 		</cfloop>
 
 		<!--- Add to that structure the missing connection points --->
 		<cfset local.stTrips = {}>
 		<cfset local.nCount = 0>
 		<cfset local.nSegNum = 1>
-		<cfset local.nMaxCount = arrayLen(structKeyArray(stSegmentKeys))>
-		<cfloop collection="#stSegmentIndex#" item="local.nIndex">
-			<cfset nCount = nIndex>
-			<cfset nSegNum = 1>
-			<cfloop condition="NOT StructKeyExists(stSegmentIndex, nCount+1) AND nCount LT nMaxCount AND StructKeyExists(stSegmentKeyLookUp, nCount+1)">
-				<cfset nSegNum++>
-				<cfset stSegmentIndex[nIndex][nSegNum] = stSegments[stSegmentKeys[stSegmentKeyLookUp[nCount+1]].HashIndex]>
-				<cfset nCount++>
+		<cfset local.nMaxCount = arrayLen(structKeyArray(arguments.stSegmentKeys))>
+		<cfloop collection="#local.stSegmentIndex#" item="local.nIndex">
+			<cfset local.nCount = local.nIndex>
+			<cfset local.nSegNum = 1>
+			<cfloop condition="NOT StructKeyExists(local.stSegmentIndex, local.nCount+1) AND local.nCount LT nMaxCount AND StructKeyExists(arguments.stSegmentKeyLookUp, local.nCount+1)">
+				<cfset local.nSegNum++>
+				<cfset local.stSegmentIndex[local.nIndex][local.nSegNum] = arguments.stSegments[arguments.stSegmentKeys[arguments.stSegmentKeyLookUp[local.nCount+1]].HashIndex]>
+				<cfset local.nCount++>
 			</cfloop>
 		</cfloop>
 
@@ -493,15 +493,15 @@
 		<cfset local.aCarriers = {}>
 		<cfset local.nHashNumeric = ''>
 		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#stSegmentIndex#" item="local.nIndex">
-			<cfloop collection="#stSegmentIndex[nIndex]#" item="local.sSegment">
-				<cfset sIndex = ''>
+		<cfloop collection="#local.stSegmentIndex#" item="local.nIndex">
+			<cfloop collection="#local.stSegmentIndex[local.nIndex]#" item="local.sSegment">
+				<cfset local.sIndex = ''>
 				<cfloop array="#aSegmentKeys#" index="local.stSegment">
-					<cfset sIndex &= stSegmentIndex[nIndex][sSegment][stSegment]>
+					<cfset local.sIndex &= local.stSegmentIndex[local.nIndex][sSegment][local.stSegment]>
 				</cfloop>
 			</cfloop>
-			<cfset nHashNumeric = getUAPI().hashNumeric(sIndex)>
-			<cfset local.stTrips[nHashNumeric].Segments = stSegmentIndex[nIndex]>
+			<cfset local.nHashNumeric = getUAPI().hashNumeric(local.sIndex)>
+			<cfset local.stTrips[nHashNumeric].Segments = local.stSegmentIndex[local.nIndex]>
 			<cfset local.stTrips[nHashNumeric].Class = 'X'>
 			<cfset local.stTrips[nHashNumeric].Ref = 'X'>
 		</cfloop>
@@ -535,13 +535,14 @@
 				<cfset local.origin = ''>
 				<cfset local.destination = ''>
 				<cfloop collection="#local.tripItem.segments#" index="local.segmentIndex" item="local.segment">
-					<cfif origin EQ ''>
-						<cfset origin = segment.origin>
+					<cfif local.origin EQ ''>
+						<cfset local.origin = local.segment.origin>
 					</cfif>
-					<cfset destination = segment.destination>
+					<cfset local.destination = local.segment.destination>
 				</cfloop>
-				<cfif NOT arrayFindNoCase(local.toCheck.arrival, destination)
-						OR NOT arrayFindNoCase(local.toCheck.departure, origin)>
+
+				<cfif NOT arrayFindNoCase(local.toCheck.arrival, local.destination)
+						OR NOT arrayFindNoCase(local.toCheck.departure, local.origin)>
 					<cfset local.badList = listAppend(local.badList, local.tripIndex)>
 				</cfif>
 			</cfloop>
@@ -569,8 +570,8 @@
 		<!--- Note: legs start with 1, groups start with 0 --->
 		<cfif arguments.Filter.getAirType() IS "MD">
 			<cfset local.nLeg = arguments.Group + 1 />
-			<cfset local.preferredDepartTime = arguments.Filter.getLegs()[1].Depart_DateTime[nLeg] />
-			<cfset local.preferredDepartTimeType = arguments.Filter.getLegs()[1].Depart_TimeType[nLeg] />
+			<cfset local.preferredDepartTime = arguments.Filter.getLegs()[1].Depart_DateTime[local.nLeg] />
+			<cfset local.preferredDepartTimeType = arguments.Filter.getLegs()[1].Depart_TimeType[local.nLeg] />
 		<cfelse>
 			<cfset local.preferredDepartTime = arguments.Filter.getDepartDateTime() />
 			<cfset local.preferredDepartTimeType = arguments.Filter.getDepartTimeType() />
@@ -586,31 +587,31 @@
 
 		<cfset local.aPreferredSort = [] />
 		<cfset local.sortQuery = QueryNew("nTripKey, departDiff, arrivalDiff", "varchar, numeric, numeric") />
-		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(aSortArray))) />
+		<cfset local.newRow = QueryAddRow(sortQuery, arrayLen(Evaluate(local.aSortArray))) />
 		<cfset local.queryCounter = 1 />
 
-		<cfloop array="#evaluate(aSortArray)#" index="local.nTripKey">
-			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][nTripKey] />
+		<cfloop array="#evaluate(local.aSortArray)#" index="local.nTripKey">
+			<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][local.nTripKey] />
 
 			<cfif arguments.Filter.getDepartTimeType() IS 'A'>
-				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.arrival)) />
+				<cfset local.departDateDiff = abs(dateDiff("n", local.preferredDepartTime, local.stTrip.arrival)) />
 			<cfelse>
-				<cfset departDateDiff = abs(dateDiff("n", preferredDepartTime, stTrip.depart)) />
+				<cfset local.departDateDiff = abs(dateDiff("n", local.preferredDepartTime, local.stTrip.depart)) />
 			</cfif>
 			<cfif arguments.Filter.getAirType() IS "RT">
 				<cfif arguments.Filter.getArrivalTimeType() IS 'A'>
-					<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.arrival)) />
+					<cfset local.arrivalDateDiff = abs(dateDiff("n", local.preferredArrivalTime, local.stTrip.arrival)) />
 				<cfelse>
-					<cfset arrivalDateDiff = abs(dateDiff("n", preferredArrivalTime, stTrip.depart)) />
+					<cfset local.arrivalDateDiff = abs(dateDiff("n", local.preferredArrivalTime, local.stTrip.depart)) />
 				</cfif>
 			<cfelse>
-				<cfset arrivalDateDiff = 0 />
+				<cfset local.arrivalDateDiff = 0 />
 			</cfif>
 
-			<cfset temp = querySetCell(sortQuery, "nTripKey", nTripKey, queryCounter) />
-			<cfset temp = querySetCell(sortQuery, "departDiff", departDateDiff, queryCounter) />
-			<cfset temp = querySetCell(sortQuery, "arrivalDiff", arrivalDateDiff, queryCounter) />
-			<cfset queryCounter++ />
+			<cfset local.temp = querySetCell(local.sortQuery, "nTripKey", local.nTripKey, local.queryCounter) />
+			<cfset local.temp = querySetCell(local.sortQuery, "departDiff", local.departDateDiff, local.queryCounter) />
+			<cfset local.temp = querySetCell(local.sortQuery, "arrivalDiff", local.arrivalDateDiff, local.queryCounter) />
+			<cfset local.queryCounter++ />
 		</cfloop>
 
 		<cfquery name="local.preferredSort" dbtype="query">
@@ -623,11 +624,11 @@
 			</cfif>
 		</cfquery>
 
-		<cfif preferredSort.recordCount>
-			<cfset aPreferredSort = listToArray(valueList(preferredSort.nTripKey)) />
+		<cfif local.preferredSort.recordCount>
+			<cfset local.aPreferredSort = listToArray(valueList(local.preferredSort.nTripKey)) />
 		</cfif>
 
-		<cfreturn aPreferredSort />
+		<cfreturn local.aPreferredSort />
 	</cffunction>
 
 
@@ -666,11 +667,4 @@
 		<cfreturn local.airportCodes[1].value>
 	</cffunction>
  <!--- // end of STM-2254 hack --->
-
-
-
-
-
-
-
 </cfcomponent>
