@@ -80,23 +80,23 @@
 					<tr>
 						<td colspan="6"><h3>Itinerary</h3></td>
 					</tr>
-					<cfloop collection="#stTrip.Groups#" item="Group" >
-						<cfset stGroup = stTrip.Groups[Group]>
+					<cfloop collection="#local.stTrip.Groups#" item="local.group" >
+						<cfset local.stGroup = local.stTrip.Groups[local.Group]>
 						<tr>
 							<td colspan="6">&nbsp;</td>
 						</tr>
 						<tr>
 							<td colspan="6"><strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d, yyyy')#</strong></td>
 						</tr>
-						<cfloop collection="#stGroup.Segments#" item="nSegment">
+						<cfloop collection="#local.stGroup.Segments#" item="local.nSegment">
 							<tr>
-								<td>#stGroup.Segments[nSegment].Carrier##stGroup.Segments[nSegment].FlightNumber#</td>
-								<td>#stGroup.Segments[nSegment].Origin#</td>
-								<td>#stGroup.Segments[nSegment].Destination#</td>
-								<td>#TimeFormat(stGroup.Segments[nSegment].DepartureTime, 'h:mmt')#</td>
-								<td>#TimeFormat(stGroup.Segments[nSegment].ArrivalTime, 'h:mmt')#</td>
+								<td>#local.stGroup.Segments[local.nSegment].Carrier##local.stGroup.Segments[local.nSegment].FlightNumber#</td>
+								<td>#local.stGroup.Segments[local.nSegment].Origin#</td>
+								<td>#local.stGroup.Segments[local.nSegment].Destination#</td>
+								<td>#TimeFormat(local.stGroup.Segments[local.nSegment].DepartureTime, 'h:mmt')#</td>
+								<td>#TimeFormat(local.stGroup.Segments[local.nSegment].ArrivalTime, 'h:mmt')#</td>
 								<cfif arguments.Group EQ ''>
-									<td>#stGroup.Segments[nSegment].Cabin#</td>
+									<td>#local.stGroup.Segments[local.nSegment].Cabin#</td>
 								</cfif>
 							</tr>
 						</cfloop>
