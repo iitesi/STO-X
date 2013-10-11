@@ -226,7 +226,7 @@ shortstravel.couldyou = {
 			for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
 				var selectedDate = shortstravel.couldyou.data[i];
 				if( selectedDate.message.indexOf( 'not available' ) == -1 ){
-					var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( shortstravel.couldyou.data[ prop ].total ) );
+					var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
 					if( dailySavings == maxSavings ){
 						selectedDate.maxSavings = true;
 					}
