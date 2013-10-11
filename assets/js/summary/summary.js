@@ -321,7 +321,6 @@ $(document).ready(function(){
 		else {
 			div += '&nbsp;&nbsp;</label>';
 		}
-		div += '</label>';
 		div += '<div class="controls">';
 		if (orgunit.OUFreeform == 1) {
 			div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
@@ -330,8 +329,13 @@ $(document).ready(function(){
 			div += '<select name="' + inputName + '" id="' + inputName + '"';
 			div += '>';
 			div += '<option value="-1"></option>';
-				for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
-					div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
+				if (orgunit.ouValues.length) {
+					for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
+						div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
+					}
+				}
+				else {
+					div += '<option value="' + orgunit.valueID + '">' + orgunit.valueDisplay + '</option>';
 				}
 			div += '</select>';
 		}

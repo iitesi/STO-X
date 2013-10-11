@@ -171,24 +171,9 @@
 	<div class="modal-body">
 	</div>
 </div>
-<cfif application.es.getCurrentEnvironment() NEQ "prod"
-	AND rc.Filter.getAcctID() NEQ 441>
-	<style type="text/css">
-	<!--
-	.watermark {
-		font-size:50px;
-		z-index:-1;
-		font-weight:bold;
-		position: fixed;
-		bottom: 0;
-		right: 0;
-		padding:20px;
-		color:#eee;
-	}
-	-->
-	</style>
-	<div class="watermark"><cfoutput>#uCase(application.es.getCurrentEnvironment())#</cfoutput></div>
-</cfif>
+<cfoutput>
+	#view('main/developers')#
+</cfoutput>
 		<cfif application.es.getCurrentEnvironment() EQ "prod">
 			<cfoutput>
 				<script type="text/javascript">

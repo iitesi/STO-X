@@ -7,4 +7,4 @@
 <!--- TODO: Fix this to point to proper location
 2:43 PM Monday, May 27, 2013 - Jim Priest - jpriest@shortstravel.com --->
 
-<p>You may return to the <a href="index.cfm" title="Return to home page">home page</a> and try again.</p>
+<p>You may return to the <cfoutput><a href="#application.sPortalURL#" title="Return to home page">home page</a></cfoutput> and try again.</p>

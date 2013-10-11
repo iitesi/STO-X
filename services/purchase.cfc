@@ -16,15 +16,15 @@
 		<cfargument name="Filter" required="true">
 
 		<cfquery datasource="#getBookingDSN()#">
-			INSERT INTO Invoices 
+			INSERT INTO Invoices
 				( searchID
 				, recloc
 				, urRecloc
 				, firstName
-				, lastName 
+				, lastName
 				, air
 				, airSelection
-				, car 
+				, car
 				, carSelection
 				, hotel
 				, hotelSelection
@@ -51,7 +51,7 @@
 				, <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getProfileID()#" cfsqltype="cf_sql_integer" >
-				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" > 
+				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" > )
 		</cfquery>
@@ -64,7 +64,7 @@
 		<cfargument name="urRecloc" required="true">
 
 		<cfquery datasource="#getBookingDSN()#">
-			UPDATE Invoices 
+			UPDATE Invoices
 			SET active = <cfqueryparam value="0" cfsqltype="cf_sql_integer" >
 			WHERE searchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_integer" >
 				AND urRecloc = <cfqueryparam value="#arguments.urRecloc#" cfsqltype="cf_sql_varchar" >
@@ -81,20 +81,22 @@
 			AND NOT arrayIsEmpty(arguments.errorMessage)>
 
 			<cfloop array="#arguments.errorMessage#" index="local.errorIndex" item="local.error">
+
 				<cfquery name="local.getMessage" datasource="#getBookingDSN()#">
 					SELECT message
 					FROM errorMessages
-					WHERE '#error#' LIKE '%' + error + '%'
+					WHERE '#local.error#' LIKE '%' + error + '%'
 				</cfquery>
-				<cfif getMessage.recordCount>
-					<cfset message = getMessage.message>
+
+				<cfif local.getMessage.recordCount>
+					<cfset local.message = local.getMessage.message>
 					<cfbreak>
 				</cfif>
 			</cfloop>
 
 		</cfif>
 
-		<cfreturn message/>
+		<cfreturn local.message/>
 	</cffunction>
 
 </cfcomponent>

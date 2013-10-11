@@ -12,44 +12,48 @@
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
 
-    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-    	<!--- throw out threads and get lowfare pricing --->
-			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
-			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
+		<cfif structKeyExists(arguments.rc, "filter")
+			AND dateCompare(arguments.rc.filter.getDepartDateTime(), now()) EQ 1>
+		    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+	    	<!--- throw out threads and get lowfare pricing --->
+				<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+				<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
 
 
-			<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
-			<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
-				<cfset sleep(10000)>
-				<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
-			</cfif>
-		<cfelse>
-			<cfset fw.getBeanFactory().getBean('lowfare').selectAir( searchID = rc.searchID
-																	, nTrip = rc.nTrip )>
-			<cfset session.searches[rc.searchID].stCars = {}>
-		</cfif>
-
-		<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
-		<cfset checkFilterStatus(arguments.rc)>
-		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
-
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-			<cfset removeOtherFlights(arguments.rc)>
-
-			<cfif arguments.rc.Filter.getHotel()
-				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
-				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
-			</cfif>
-			<cfif arguments.rc.Filter.getCar()
-				AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
-				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
-			</cfif>
-			<cfif rc.Account.couldYou EQ 1>
-				<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
+				<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
+				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
+					<cfset sleep(10000)>
+					<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+				</cfif>
+			<cfelse>
+				<cfset fw.getBeanFactory().getBean('lowfare').selectAir( searchID = rc.searchID
+																		, nTrip = rc.nTrip )>
+				<cfset session.searches[rc.searchID].stCars = {}>
 			</cfif>
 
-			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+			<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
+			<cfset checkFilterStatus(arguments.rc)>
+			<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
+
+			<cfif structKeyExists(arguments.rc, 'bSelect')>
+				<cfset removeOtherFlights(arguments.rc)>
+
+				<cfif arguments.rc.Filter.getHotel()
+					AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
+					<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
+				</cfif>
+				<cfif arguments.rc.Filter.getCar()
+					AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
+					<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
+				</cfif>
+				<cfif rc.Account.couldYou EQ 1>
+					<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
+				</cfif>
+
+				<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+			</cfif>
 		</cfif>
 
 		<cfreturn />

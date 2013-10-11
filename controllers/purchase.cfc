@@ -358,6 +358,14 @@
 																											, hostToken = hostToken
 																											, pnr = providerLocatorCode
 																											, searchID = rc.searchID )>
+
+					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
+																								, hostToken = hostToken
+																								, pcc = Traveler.getBAR()[1].PCC
+																								, bar = Traveler.getBAR()[1].Name
+																								, par = Traveler.getPAR()
+																								, searchID = rc.searchID)>
+					
 					<cfif responseMessage.error>
 						<cfset errorMessage = responseMessage.message>
 						<cfset errorType = 'TerminalEntry.displayPNR'>
@@ -417,13 +425,13 @@
 																										, userID = rc.Filter.getUserID()
 																										, searchID = rc.searchID )>
 					</cfif>
-					<cfif NOT responseMessage.error
+					<!--- <cfif NOT responseMessage.error
 						AND profileFound>
 						<!--- Remove second name : no error response --->
 						<cfset fw.getBeanFactory().getBean('TerminalEntry').removeSecondName( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
-					</cfif>
+					</cfif> --->
 					
 					<cfif application.es.getCurrentEnvironment() EQ 'prod'
 						AND airSelected

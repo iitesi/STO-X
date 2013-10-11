@@ -3,11 +3,11 @@
 <cfif rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 	<cfloop list="#rc.filter.getWidgetUrl()#" delimiters="&" index="item">
 		<cfif ListGetAt(item, 1, "=") IS "air">
-			<cfset airValue = ListGetAt(item, 2, "=") />		
+			<cfset airValue = ListGetAt(item, 2, "=") />
 		<cfelseif ListGetAt(item,1,"=") IS "hotel">
-			<cfset hotelValue = ListGetAt(item, 2, "=") />		
+			<cfset hotelValue = ListGetAt(item, 2, "=") />
 		<cfelseif ListGetAt(item,1,"=") IS "car">
-			<cfset carValue = ListGetAt(item, 2, "=") />		
+			<cfset carValue = ListGetAt(item, 2, "=") />
 		</cfif>
 	</cfloop>
 

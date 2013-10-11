@@ -11,7 +11,17 @@
 		<cfset session.filters = {} />
 		<cfset session.aMessages = [] />
 
-		<cflocation url="#application.sPortalURL#?Display=Validate/LogOut/act_processLogOut.cfm" addtoken="false" />
+		<cfset local.logoutURL = application.sPortalURL />
+
+		<cfif right(local.logoutURL, 10) IS NOT "/index.cfm">
+			<cfif right(local.logoutURL, 1) IS "/">
+				<cfset local.logoutURL = local.logoutURL & "index.cfm" />
+			<cfelse>
+				<cfset local.logoutURL = local.logoutURL & "/index.cfm" />
+			</cfif>
+		</cfif>
+
+		<cflocation url="#local.logoutURL#?Display=Validate/LogOut/act_processLogOut.cfm" addtoken="false" />
 	</cffunction>
 
 </cfcomponent>
