@@ -37,6 +37,10 @@
 				</cfloop>
 				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
 				<cfset statmentInformation = trim(statmentInformation)>
+
+				<cfif rc.Filter.getAcctID() EQ 255>
+					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
+				</cfif>
 				
 				<!--- Determine if pre trip approval is needed. --->
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy

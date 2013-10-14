@@ -1,11 +1,14 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="BookingDSN" />
+	<cfproperty name="CorporateProductionDSN" />
 
 	<cffunction name="init" returntype="any" access="public" output="false">
 		<cfargument name="BookingDSN" type="any" required="true"/>
+		<cfargument name="CorporateProductionDSN" type="any" required="true"/>
 
 		<cfset setBookingDSN( arguments.BookingDSN ) />
+		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
 
 		<cfreturn this />
 	</cffunction>
@@ -48,6 +51,29 @@
 		</cfquery>
 
 		<cfreturn qStates>
+	</cffunction>
+
+	<cffunction name="getLSUAccountID" output="false">
+		<cfargument name="Traveler">
+
+		<cfset local.accountID = arguments.Traveler.getAccountID()>
+		<cfif arguments.Traveler.getBookingDetail().getAirFOPID() CONTAINS 'bta_'>
+			<cfquery name="local.qAccountID" datasource="#getCorporateProductionDSN()#">
+				SELECT AccountID
+				FROM BTAs
+					, OU_BTAs
+					, OU_Values
+				WHERE BTAs.BTA_ID = OU_BTAs.BTA_ID
+					AND OU_BTAs.Value_ID = OU_Values.Value_ID
+					AND OU_BTAs.BTA_ID = <cfqueryparam value="#replace(arguments.Traveler.getBookingDetail().getAirFOPID(), 'bta_', '')#" cfsqltype="cf_sql_integer">
+					AND BTAs.Acct_ID = <cfqueryparam value="255" cfsqltype="cf_sql_integer">
+			</cfquery>
+			<cfif qAccountID.AccountID NEQ ''>
+				<cfset accountID = qAccountID.AccountID>
+			</cfif>
+		</cfif>
+
+		<cfreturn accountID>
 	</cffunction>
 
 	<cffunction name="getTXExceptionCodes" output="false">
