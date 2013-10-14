@@ -117,7 +117,6 @@
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
-
 						<!--- Parse credit card information --->
 						<cfset local.cardNumber = ''>
 						<cfset local.cardCVV = ''>
@@ -130,6 +129,10 @@
 									OR (Payment.getFOPID() NEQ ''
 										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
 									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
+									<cfif NOT isDate(Payment.getExpireDate())>
+										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
+										<cfset Payment.setExpireDate( createDate( right(Payment.getExpireDate(), 4), left(Payment.getExpireDate(), 2), mid(Payment.getExpireDate(), 3, 2)) )>
+									</cfif>
 									<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
 									<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
 								</cfif>
