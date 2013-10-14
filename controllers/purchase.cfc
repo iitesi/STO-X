@@ -213,6 +213,7 @@
 
 								<cfset Air.ProviderLocatorCode = ''>
 								<cfset Air.UniversalLocatorCode = ''>
+								<cfset Air.ReservationLocatorCode = ''>
 								<cfset Air.BookingTravelerSeats = [] />
 
 								<!--- Parse sell results --->
