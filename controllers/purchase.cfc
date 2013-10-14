@@ -10,6 +10,10 @@
 			<cfif arrayIsEmpty(errorMessage)>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
+				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
+				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID())>
+					<cfset Traveler.setUserID(rc.filter.getUserID()) />
+				</cfif>
 				<!--- Looks odd, but this is used to compare differences between their profile and what information
 				they entered into the summary page. --->
 				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = Traveler.getUserID() )>
