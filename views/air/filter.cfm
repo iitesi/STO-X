@@ -56,6 +56,11 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 						</ul>
 					</div>
 				</div>
+<div>
+	<cfoutput>
+		<a href="#buildURL('air.print&SearchID=#rc.SearchID#')#" title="Click for printer friendly version"><i class="icon-print"></i> Print</a>
+	</cfoutput>
+</div>
 			</div>
 
 			<div class="filterbar">
