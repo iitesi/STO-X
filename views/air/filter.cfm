@@ -50,11 +50,6 @@ F = first
 						</ul>
 					</div>
 				</div>
-				<div>
-					<cfoutput>
-						<a href="#buildURL('air.print&SearchID=#rc.SearchID#')#" target="_blank"} title="Click for printer friendly version"><i class="icon-print"></i> Print</a>
-					</cfoutput>
-				</div>
 			</div>
 
 			<div class="filterbar">
