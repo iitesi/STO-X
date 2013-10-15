@@ -10,6 +10,10 @@
 			<cfif arrayIsEmpty(errorMessage)>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
+				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
+				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID())>
+					<cfset Traveler.setUserID(rc.filter.getUserID()) />
+				</cfif>
 				<!--- Looks odd, but this is used to compare differences between their profile and what information
 				they entered into the summary page. --->
 				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = Traveler.getUserID() )>
@@ -37,6 +41,10 @@
 				</cfloop>
 				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
 				<cfset statmentInformation = trim(statmentInformation)>
+
+				<cfif rc.Filter.getAcctID() EQ 255>
+					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
+				</cfif>
 				
 				<!--- Determine if pre trip approval is needed. --->
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
@@ -117,7 +125,6 @@
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
-
 						<!--- Parse credit card information --->
 						<cfset local.cardNumber = ''>
 						<cfset local.cardCVV = ''>
@@ -130,6 +137,10 @@
 									OR (Payment.getFOPID() NEQ ''
 										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
 									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
+									<cfif NOT isDate(Payment.getExpireDate())>
+										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
+										<cfset Payment.setExpireDate( createDate( right(Payment.getExpireDate(), 4), left(Payment.getExpireDate(), 2), mid(Payment.getExpireDate(), 3, 2)) )>
+									</cfif>
 									<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
 									<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
 								</cfif>
@@ -202,6 +213,7 @@
 
 								<cfset Air.ProviderLocatorCode = ''>
 								<cfset Air.UniversalLocatorCode = ''>
+								<cfset Air.ReservationLocatorCode = ''>
 								<cfset Air.BookingTravelerSeats = [] />
 
 								<!--- Parse sell results --->
@@ -494,6 +506,12 @@
 																									, hostToken = hostToken
 																									, searchID = rc.searchID )>
 				</cfif>
+
+				<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
+																			, Traveler = Traveler
+																			, Air = Air
+																			, Filter = rc.Filter )>
+
 				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
