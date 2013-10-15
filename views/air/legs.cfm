@@ -21,13 +21,12 @@
 </cfsilent>
 
 <cfoutput>
-	<div class="legs clearfix">
+	<div id="legs" class="legs clearfix">
 		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
 			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			<a href="#popoverLink#" class="btn #popoverButtonClass# legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">Roundtrip From $#NumberFormat(session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total)#</a>
 		</cfif>
-
 
 		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>

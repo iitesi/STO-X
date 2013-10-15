@@ -27,8 +27,10 @@
 				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
 
-			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen,print">
+			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
+			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
+
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
