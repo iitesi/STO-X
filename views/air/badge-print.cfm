@@ -1,8 +1,3 @@
-<cfparam name="variables.minheight" default="250"/>
-<cfset ribbonClass = "">
-<cfset carrierList = "">
-<cfset thisSelectedLeg = "">
-
 <style>
 @media print {
 	.page-break	{ display: block; page-break-before: always; }
@@ -11,13 +6,26 @@
 .badge {font-family: Arial, Verdana, san-serif;}
 
 .smalltext {
-	font-size: smaller;
+	font-size: .7em;
 	font-family: Verdana, san-serif;
+	color: #666;
+}
+
+.largetext {
+	font-size: 130%;
+	font-family: Arial, Verdana, san-serif;
 }
 
 .flighttext {
 	font-size: .9em;
 	font-family: Arial, Verdana, san-serif;
+	color: #000;
+}
+
+.legtext {
+	font-size: .9em;
+	font-family: Arial, Verdana, san-serif;
+	color: #333;
 }
 
 #printschedule {
@@ -33,11 +41,7 @@
 }
 
 .back {background-color: #F4F4F4;}
-
 </style>
-
-
-
 
 <cfsavecontent variable="sBadge" trim="#true#">
 	<cfoutput>
@@ -54,9 +58,9 @@
 							<cfset stGroup = stTrip.Groups[Group]>
 							<tr class="topborder">
 								<td width="100">&nbsp;</td>
-								<td width="100"><strong>#stGroup.Origin#</strong></td>
+								<td width="100" class="legtext"><strong>#stGroup.Origin#</strong></td>
 								<td width="100">&nbsp;</td>
-								<td width="100"><strong>#stGroup.Destination#</strong></td>
+								<td width="100" class="legtext"><strong>#stGroup.Destination#</strong></td>
 							</tr>
 							<tr>
 								<td class="flighttext"><strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong></td>
@@ -69,9 +73,6 @@
 							<cfloop collection="#stGroup.Segments#" item="nSegment" >
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
-								<cfif NOT listFind(carrierList, stSegment.Carrier)>
-									<cfset carrierList = ListAppend(carrierList, stSegment.Carrier)>
-								</cfif>
 								<tr>
 									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
@@ -88,11 +89,11 @@
 					</table>
 				</td>
 				<td align="center" width="125">
-						<strong>$#NumberFormat(stTrip.Total)#</strong><br>
+						<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
 						<span class="smalltext">
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
-						#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>')#<br>
+						#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#
 						<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
 							PREFERRED / CONTRACTED<br>
 						<cfelseif stTrip.preferred EQ 1>

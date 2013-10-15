@@ -19,17 +19,17 @@
 
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
-			<h1>#rc.Filter.getAirHeading()#</h1>
+			<h2>#rc.Filter.getAirHeading()#</h3>
 			<ul  class="unstyled">
 				<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
-					<li><h2>#ListFirst(nLegItem, '::')#<small>:: #ListLast(nLegItem, "::")#</small></h2></li>
+					<li><h3>#ListFirst(nLegItem, '::')#<small>:: #ListLast(nLegItem, "::")#</small></h3></li>
 				</cfloop>
 			</ul>
 		<cfelse>
-			<h1>
+			<h2>
 			#ListFirst(rc.Filter.getAirHeading(), "::")#
 			<br><small>#ListLast(rc.Filter.getAirHeading(), "::")#</small>
-			</h1>
+			</h2>
 		</cfif>
 
 		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>

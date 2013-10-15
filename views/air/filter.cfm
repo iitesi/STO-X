@@ -22,11 +22,7 @@ F = first
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
-<!---
-9:29 AM Tuesday, August 20, 2013 - Jim Priest - jpriest@shortstravel.com
-hide the filter bar with a loading message until the page has fully rendered
-RailoQA takes forever to render the page - this may not be an issue in prod
- --->
+<!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
 	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
 </div>
@@ -47,20 +43,18 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
 									</ul>
 								</li>
-								<!--- <cfelse>
-									<li class="disabled"><a title="Sorting by price disabled.">Price</a></li> --->
-								</cfif>
+							</cfif>
 							<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
 							<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
 							<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
 						</ul>
 					</div>
 				</div>
-<div>
-	<cfoutput>
-		<a href="#buildURL('air.print&SearchID=#rc.SearchID#')#" title="Click for printer friendly version"><i class="icon-print"></i> Print</a>
-	</cfoutput>
-</div>
+				<div>
+					<cfoutput>
+						<a href="#buildURL('air.print&SearchID=#rc.SearchID#')#" target="_blank"} title="Click for printer friendly version"><i class="icon-print"></i> Print</a>
+					</cfoutput>
+				</div>
 			</div>
 
 			<div class="filterbar">
@@ -196,6 +190,7 @@ RailoQA takes forever to render the page - this may not be an issue in prod
 			</div>
 		</div><!--- // class=sixteen columns --->
 </div><!--- // class=filter --->
+
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
