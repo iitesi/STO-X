@@ -456,7 +456,7 @@ ul.tabs li a.active {
 	padding:4px;
 }
 .green {
-	color:#6EC601;
+	color:#46a546;  /*match bootstrap green*/
 }
 .destination {
 	border-top:1px solid #CCCCCC;
