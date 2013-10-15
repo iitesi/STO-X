@@ -4,7 +4,7 @@
 .screenbadge, .change-search, .airfilterbar, .hidefromprint, .modal-header {display: none;}
 
 /* general badge styling for print */
-.badge {font-family: Arial, Verdana, san-serif;}
+.badge, .printbadge {font-family: Arial, Verdana, sans-serif;}
 
 .smalltext {
 	font-size: .7em;

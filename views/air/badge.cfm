@@ -19,7 +19,6 @@
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
 
-
 			<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")>
 				<cfset bSelected = false />
 				<cfset thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey />
@@ -161,7 +160,7 @@
 		</div>
 
 		<!--- printer friendly badge - this is hidden via CSS --->
-		<div class="printbadge <cfif nCount MOD 5 EQ 0>page</cfif>">
+		<div class="printbadge">
 			<table width="600" border="0" id="printschedule" <cfif #nCount# MOD 2>class="back"</cfif>>
 			<tr>
 				<td align="center" width="125">
@@ -205,7 +204,9 @@
 					</table>
 				</td>
 				<td align="center" width="125">
-						<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
+						<cfif StructKeyExists(stTrip, "total")>
+							<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
+						</cfif>
 						<span class="smalltext">
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
@@ -228,5 +229,5 @@
 
 <!--- display badge --->
 <cfoutput>
-	<div id="flight#nTripKey#" class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" class="pull-left <cfif nCount MOD 5 EQ 0>page</cfif>">#sBadge#</div>
 </cfoutput>
