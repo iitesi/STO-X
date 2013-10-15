@@ -160,14 +160,14 @@
 						<cfif cardNumber NEQ ''
 							AND application.es.getCurrentEnvironment() EQ 'prod'
 							AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
-							<!--- Get credit card authorization --->
+							<!--- Get credit card authorization
 							<cfset local.authResponse = fw.getBeanFactory().getBean('TerminalEntry').getCCAuth( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, Air = Air
 																												, cardNumber = cardNumber
 																												, cardType = cardType
 																												, cardExpiration = cardExpiration
-																												, searchID = rc.searchID)>
+																												, searchID = rc.searchID)> --->
 						<cfelse>
 							<cfset authResponse.error = 0>
 							<cfset authResponse.message = ''>
@@ -182,12 +182,12 @@
 							</cfif>
 							<cfif application.es.getCurrentEnvironment() EQ 'prod'
 								AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
-								<!--- Start new session due to credit card/emulation --->
+								<!--- Start new session due to credit card/emulation
 								<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken
 																								, searchID = rc.searchID )>
 								<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																												, searchID = rc.searchID )>
+																												, searchID = rc.searchID )> --->
 							</cfif>
 
 							<cfif hostToken EQ ''>
@@ -213,6 +213,7 @@
 
 								<cfset Air.ProviderLocatorCode = ''>
 								<cfset Air.UniversalLocatorCode = ''>
+								<cfset Air.ReservationLocatorCode = ''>
 								<cfset Air.BookingTravelerSeats = [] />
 
 								<!--- Parse sell results --->
@@ -447,7 +448,7 @@
 					<cfif application.es.getCurrentEnvironment() EQ 'prod'
 						AND airSelected
 						AND NOT listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
-						<cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
+						<!--- <cfset responseMessage = fw.getBeanFactory().getBean('TerminalEntry').updateATFQ( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, Air = Air
 																										, pcc = Traveler.getBAR()[1].PCC
@@ -455,7 +456,7 @@
 																										, cardType = cardType
 																										, cardExpiration = cardExpiration
 																										, cardAuth = cardAuth
-																										, searchID = rc.searchID )>
+																										, searchID = rc.searchID )> --->
 					</cfif>
 				
 					<cfif responseMessage.error>
@@ -505,6 +506,12 @@
 																									, hostToken = hostToken
 																									, searchID = rc.searchID )>
 				</cfif>
+
+				<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
+																			, Traveler = Traveler
+																			, Air = Air
+																			, Filter = rc.Filter )>
+
 				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->

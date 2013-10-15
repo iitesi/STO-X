@@ -53,12 +53,16 @@
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
 						</cfif>
-						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);">
+						<cfif bSelected>
+							<cfset btnClass = "btn-success">
+						</cfif>
+
+						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
 							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
 					<cfelse>
-						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);">
+						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);" title="Click to select this flight.">
 					</cfif>
 				</td>
 			</tr>
