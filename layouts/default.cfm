@@ -18,16 +18,17 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<cfoutput>
-			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet">
-			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet">
-			<link href="#application.assetURL#/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet">
-			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" >
+			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet" media="screen">
+			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet" media="screen">
+			<link href="#application.assetURL#/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" media="screen">
+			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" media="screen">
+
 			<!--[if IE 7]>
-				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css">
+				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
 
-			<link href="#application.assetURL#/css/layout.css" rel="stylesheet">
-			<link href="#application.assetURL#/css/style.css" rel="stylesheet">
+			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen,print">
+			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
