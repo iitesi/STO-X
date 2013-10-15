@@ -1,4 +1,5 @@
 /* Save and include the following CSS styles on your page. */
+.printbadge {display: none;}
 
 .popover-content, .popover-title {
 	text-align: left;
@@ -729,7 +730,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 ----------------------------------------------------------------------------------------------------------
 */
 
-.legs {padding-bottom: 1em;}
+.legs {margin: 0;padding-bottom: 1em;}
 
 .legbtn {
 	margin-right: 1em;
@@ -1024,5 +1025,3 @@ tr.hotel-room td{
     text-align: left;
     border: 1px solid gray;
 }
-
-

@@ -1,0 +1,50 @@
+
+/* hide main sections of template, etc */
+#main-header, #footer, #legs, #developers, #hidefilterfromprint, #popupModal{ display: none; }
+.screenbadge, .change-search, .airfilterbar, .hidefromprint, .modal-header {display: none;}
+
+/* general badge styling for print */
+.badge, .printbadge {font-family: Arial, Verdana, sans-serif;}
+
+.smalltext {
+	font-size: .7em;
+	font-family: Verdana, san-serif;
+	color: #666;
+}
+
+.largetext {
+	font-size: 130%;
+	font-family: Arial, Verdana, san-serif;
+}
+
+.flighttext {
+	font-size: .9em;
+	font-family: Arial, Verdana, san-serif;
+	color: #000;
+}
+
+.legtext {
+	font-size: .9em;
+	font-family: Arial, Verdana, san-serif;
+	color: #333;
+}
+
+#printschedule {
+	border-bottom: 1px solid #ccc;
+}
+
+.topborder td {
+	border-top: 1px solid #e3e3e3;
+}
+
+.topborder:first-child td {
+    border-top: none;
+}
+
+.back {background-color: #F4F4F4;}
+
+ div.page
+      {
+        page-break-after: always;
+        page-break-inside: avoid;
+      }

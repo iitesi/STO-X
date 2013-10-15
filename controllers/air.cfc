@@ -150,13 +150,6 @@
 		<cfreturn />
 	</cffunction>
 
-
-	<cffunction name="print" output="false" hint="I display a printer friendly version of the air search results.">
-		<cfargument name="rc">
-			<cfset variables.fw.setLayout("print")>
-		<cfreturn />
-	</cffunction>
-
 	<cffunction name="summarypopup" output="false" hint="I get seat map for modal popup for summary page.">
 		<cfargument name="rc">
 
@@ -167,7 +160,6 @@
 				<cfset variables.fw.setLayout("popup")>
 		<cfreturn />
 	</cffunction>
-
 
 	<cffunction name="seatmap" output="false" hint="I get data to make a seat map.">
 		<cfargument name="rc">
