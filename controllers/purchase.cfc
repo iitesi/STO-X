@@ -510,10 +510,12 @@
 																									, searchID = rc.searchID )>
 				</cfif>
 
-				<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
+				<cfif airSelected>
+					<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
 																			, Traveler = Traveler
 																			, Air = Air
-																			, Filter = rc.Filter )>
+																			, Filter = rc.Filter )>					
+				</cfif>
 
 				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
