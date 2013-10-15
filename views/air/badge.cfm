@@ -232,6 +232,9 @@
 </cfsavecontent>
 
 <!--- display badge --->
+
+<!--- page break not working in Chrome: <cfif nCount MOD 5 EQ 0>page</cfif> --->
+
 <cfoutput>
-	<div id="flight#nTripKey#" class="pull-left <cfif nCount MOD 5 EQ 0>page</cfif>">#sBadge#</div>
+	<div id="flight#nTripKey#" class="pull-left">#sBadge#</div>
 </cfoutput>
