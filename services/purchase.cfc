@@ -25,6 +25,7 @@
 		<cfargument name="Filter">
 		<cfargument name="lowestCarRate">
 		<cfargument name="Air">
+		<cfargument name="statmentInformation">
 
 		<!--- Contains .error=true/false and .message=[] --->
 		<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
@@ -70,6 +71,15 @@
 																				, pnr = arguments.providerLocatorCode )>
 
 					<cfif NOT moveBARPARResponse.error>
+						<!---
+						Add auto ticketing remarks
+						Command = C:N:*SORT1 SORT2 SORT3 SORT4
+						--->
+						<cfset TerminalEntry.addStatmentInfo( targetBranch = arguments.targetBranch
+																, hostToken = arguments.hostToken
+																, statmentInformation = arguments.statmentInformation
+																, par = arguments.Traveler.getPAR()
+																, searchID = arguments.searchID )>
 						<!---
 						Add auto ticketing remarks
 						Command = T-OS-SO/1M98/OK TO TKT
@@ -157,17 +167,18 @@
 																						, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
 																						, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests() )>
 
-							<cfif NOT queueRecordResponse.error>
-								<!--- The whole process completed successfully --->
-								<cfset processFileFinishing = false>
-							<cfelse>
-								<!--- Start the process over if there was a simultanious change --->
-								<cfif NOT TerminalEntry.findInArray( queueRecordResponse.message, 'SIMULT' )>
-									<cfset processFileFinishing = false>
-								</cfif>
+							<cfset responseMessage = queueRecordResponse>
 
-								<cfset responseMessage = queueRecordResponse>
-							</cfif><!--- queueRecordResponse.error = true --->
+							<!--- The whole process completed successfully --->
+							<cfif NOT queueRecordResponse.error>
+								<cfset processFileFinishing = false>
+							<!--- Let the process start over again --->
+							<cfelseif queueRecordResponse.simultaneous>
+								<cfset processFileFinishing = true>
+							<!--- Throw purchase error --->
+							<cfelseif queueRecordResponse.error>
+								<cfset processFileFinishing = false>
+							</cfif>
 				
 						<cfelse>
 							<cfset responseMessage = verifyStoredFareResponse>

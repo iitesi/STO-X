@@ -345,7 +345,8 @@
 																				, Traveler = Traveler
 																				, Filter = rc.Filter
 																				, lowestCarRate = (structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)
-																				, Air = Air )>
+																				, Air = Air
+																				, statmentInformation = statmentInformation )>
 
 
 
