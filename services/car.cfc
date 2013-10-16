@@ -46,7 +46,8 @@
 
 		<cfif arguments.Filter.getAir()
 			AND structKeyExists(session.searches[SearchID].stItinerary, 'Air')
-			AND (arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()
+			AND (arguments.Filter.getDepartDateTimeActual() IS "Anytime"
+				OR arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()
 				OR arguments.Filter.getDepartDateTime() GT arguments.Filter.getCarPickupDateTime())>
 
 			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime )>
