@@ -30,6 +30,7 @@
 	</cfif>
 
 	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
+
 	<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 		#View('air/legs')#
 	</cfif>
@@ -37,9 +38,9 @@
 
 <div id="aircontent">
 	<cfif structKeyExists(session.searches[rc.SearchID].stAvailDetails, "aSortDuration") AND structKeyExists(session.searches[rc.SearchID].stAvailDetails.aSortDuration, rc.Group)>
-
-		#View('air/filter')#
-
+		<div id="hidefilterfromprint">
+			#View('air/filter')#
+		</div>
 		<!--- setup ArrayToLoop = array of leg nTripIDs --->
 		<cfif (rc.Group EQ 0 AND rc.Filter.getDepartTimeType() IS 'A') OR (rc.Group EQ 1 AND rc.Filter.getArrivalTimeType() IS 'A')>
 			<cfset arrayToLoop = session.searches[rc.SearchID].stAvailDetails.aSortArrivalPreferred[rc.Group] />
@@ -50,25 +51,28 @@
 		<cfset variables.nCount = 0>
 
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
+			<cfset variables.nCount = 0>
 
 			 <cfif StructKeyExists(rc, "southWestMatch") AND rc.southWestMatch EQ true>
 				<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
 				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+					<cfset nCount++>
 					#View('air/badge')#
 				</cfif>
 			<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
 				<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
 				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+					<cfset nCount++>
 					#View('air/badge')#
 				</cfif>
 			<cfelse>
 				<!--- this is first view so show everything --->
 				<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+				<cfset nCount++>
 				#View('air/badge')#
 			</cfif>
-
 		</cfloop>
 
 		<script type="application/javascript">

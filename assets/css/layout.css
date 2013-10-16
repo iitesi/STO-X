@@ -44,6 +44,9 @@ I disabled these styles which all relate to the custom theme and I don't believe
 
 /* #Media Queries
 ================================================== */
+@media only print {
+    #main-header, #footer, #legs, #filterbar, #developers, .change-search { display: none; }
+}
 
 @media only screen and (max-width: 959px) {
     #main-nav ul li {

@@ -31,12 +31,6 @@
 
         <echo message="Current Branch: ${git.branch}" />
 
-        <!-- Fetch latest list of tags from origin -->
-         <exec executable="git">
-            <arg value="fetch" />
-            <arg value="--tags" />
-        </exec>
-
         <!-- Create the tag in git -->
         <exec executable="git">
             <arg value="tag" />
@@ -88,6 +82,13 @@
 
      <target name="build-tag-name" description="Builds the name for the tag we're going to create and deploy">
 
+       <echo message="Fetching tag list from origin." />
+       <!-- Fetch latest list of tags from origin -->
+       <exec executable="git">
+            <arg value="fetch" />
+            <arg value="--tags" />
+        </exec>
+
         <input message="Please enter the release this build is for (yyyy.mm.dd)" addproperty="build.version" />
 
         <propertyfile file="build.properties">
@@ -126,6 +127,7 @@
         <property name="build.tagname" value="release-${buildprops.release}.${buildprops.revision}" />
 
         <!-- Commit the changes to the version file -->
+
         <exec executable="git">
             <arg value="commit" />
             <arg value="-a" />
@@ -133,6 +135,7 @@
             <arg value='"Updating revision file"' />
 
         </exec>
+
      </target>
 
      <target name="reinit-apps" description="Hits each customer's application an runs the initialization routine after a code push">

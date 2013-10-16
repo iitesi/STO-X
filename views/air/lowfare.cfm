@@ -38,15 +38,15 @@
 		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;searchid=#rc.searchID#&amp;requery=true" title="Search again"><i class="icon-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-				#View('air/legs')#
+			#View('air/legs')#
 		</cfif>
 	</div>
 
 	<div id="aircontent">
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare") AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.asortFare)>
-
-			#View('air/filter')#
-
+			<div id="hidefilterfromprint">
+				#View('air/filter')#
+			</div>
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>

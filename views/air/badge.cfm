@@ -1,4 +1,4 @@
-<cfparam name="variables.minheight" default="250"/>
+<cfparam name="variables.minheight" default="50"/>
 <cfset ribbonClass = "">
 <cfset carrierList = "">
 <cfset thisSelectedLeg = "">
@@ -19,7 +19,6 @@
 				<cfset ribbonClass = "ribbon " & ribbonClass>
 			</cfif>
 
-
 			<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")>
 				<cfset bSelected = false />
 				<cfset thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey />
@@ -29,7 +28,7 @@
 			</cfif>
 
 	<cfoutput>
-		<div class="badge">
+		<div class="screenbadge badge">
 			<!--- display ribbon --->
 			<span class="#ribbonclass#"></span>
 
@@ -161,13 +160,81 @@
 					</cfif>
 				</td>
 			</tr>
-
 		</table>
 		</div>
+
+		<!--- printer friendly badge - this is hidden via CSS --->
+		<div class="printbadge">
+			<table width="600" border="0" id="printschedule" <cfif #nCount# MOD 2>class="back"</cfif>>
+			<tr>
+				<td align="center" width="125">
+					<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
+					<br><strong>#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#</strong>
+				</td>
+				<td>
+					<table width="350" cellpadding="0" cellspacing="0" border="0">
+						<cfloop collection="#stTrip.Groups#" item="Group">
+							<cfset stGroup = stTrip.Groups[Group]>
+							<tr class="topborder">
+								<td width="100">&nbsp;</td>
+								<td width="100" class="legtext"><strong>#stGroup.Origin#</strong></td>
+								<td width="100">&nbsp;</td>
+								<td width="100" class="legtext"><strong>#stGroup.Destination#</strong></td>
+							</tr>
+							<tr>
+								<td class="flighttext"><strong>#DateFormat(stGroup.DepartureTime, 'ddd')#</strong></td>
+								<td class="flighttext">#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</td>
+								<td class="flighttext">	-	</td>
+								<td class="flighttext">#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</td>
+							</tr>
+							<cfset nCnt = 0>
+							<cfset segmentCount = arrayLen(structKeyArray(stGroup.Segments))>
+							<cfloop collection="#stGroup.Segments#" item="nSegment" >
+								<cfset nCnt++>
+								<cfset stSegment = stGroup.Segments[nSegment]>
+								<tr>
+									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
+									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
+									<td valign="top"class="flighttext" nowrap>#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+									<td valign="top"class="flighttext">
+										<cfif nCnt EQ 1>
+											#stGroup.TravelTime#
+											<cfset nFirstSeg = nSegment>
+										</cfif>
+									</td>
+								</tr>
+							</cfloop>
+						</cfloop>
+					</table>
+				</td>
+				<td align="center" width="125">
+						<cfif StructKeyExists(stTrip, "total")>
+							<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
+						</cfif>
+						<span class="smalltext">
+						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
+						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
+						#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#
+						<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
+							PREFERRED / CONTRACTED<br>
+						<cfelseif stTrip.preferred EQ 1>
+							PREFERRED<br>
+						<cfelseif bDisplayFare AND stTrip.PrivateFare>
+							CONTRACTED<br>
+						</cfif>
+						</span>
+				</td>
+			</tr>
+			</table>
+		</div>
+
 	</cfoutput>
 </cfsavecontent>
 
 <!--- display badge --->
+
+<!--- page break not working in Chrome: <cfif nCount MOD 5 EQ 0>page</cfif> --->
+
 <cfoutput>
-	<div id="flight#nTripKey#" style="min-height:#variables.minheight#px;float:left;">#sBadge#</div>
+	<div id="flight#nTripKey#" class="pull-left">#sBadge#</div>
 </cfoutput>

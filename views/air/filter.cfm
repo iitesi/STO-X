@@ -22,6 +22,7 @@ F = first
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
+
 <!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
 	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
@@ -49,11 +50,6 @@ F = first
 							<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
 						</ul>
 					</div>
-				</div>
-				<div>
-					<cfoutput>
-						<a href="#buildURL('air.print&SearchID=#rc.SearchID#')#" target="_blank"} title="Click for printer friendly version"><i class="icon-print"></i> Print</a>
-					</cfoutput>
 				</div>
 			</div>
 
@@ -189,7 +185,7 @@ F = first
 				</div> <!--- well filterselection --->
 			</div>
 		</div><!--- // class=sixteen columns --->
-</div><!--- // class=filter --->
+	</div><!--- // class=filter --->
 
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -198,4 +194,5 @@ F = first
 	</div>
 	<div id="myModalBody" class="modal-body"></div>
 </div>
+
 <div class="clearfix"></div>
