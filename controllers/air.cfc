@@ -48,7 +48,8 @@
 					AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
 					<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
 				</cfif>
-				<cfif rc.Account.couldYou EQ 1>
+				<cfif rc.Account.couldYou EQ 1
+					AND rc.Filter.getUserID() NEQ 3605><!--- Turning off for Chris due to testing purchase a lot :) --->
 					<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
 				</cfif>
 
