@@ -176,6 +176,7 @@
 																										, cardExpiration = cardExpiration
 																										, cardCVV = cardCVV
 																										, profileFound = profileFound
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																									 )>
 
 							<cfset Air.ProviderLocatorCode = ''>
@@ -229,6 +230,7 @@
 																										, universalLocatorCode = universalLocatorCode
 																										, version = version
 																										, profileFound = profileFound
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																									)>
 
 
@@ -312,6 +314,7 @@
 																										, version = version
 																										, profileFound = profileFound
 																										, lowestRateOffered = lowestRateOffered
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																									)>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
@@ -346,7 +349,7 @@
 																				, lowestCarRate = (structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)
 																				, Air = Air
 																				, statmentInformation = statmentInformation
-																				, developerIDs = application.es.getDeveloperIDs() )>
+																				, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false) )>
 
 
 
