@@ -26,6 +26,7 @@
 		<cfargument name="lowestCarRate">
 		<cfargument name="Air">
 		<cfargument name="statmentInformation">
+		<cfargument name="developerIDs">
 
 		<!--- Contains .error=true/false and .message=[] --->
 		<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
@@ -165,7 +166,8 @@
 																						, bookingPCC = arguments.pccBooking
 																						, searchID = arguments.searchID
 																						, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
-																						, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests() )>
+																						, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
+																						, developer = (listFind(arguments.developerIDs, arguments.Filter.getUserID()) ? true : false) )>
 
 							<cfset responseMessage = queueRecordResponse>
 

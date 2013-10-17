@@ -345,7 +345,8 @@
 																				, Filter = rc.Filter
 																				, lowestCarRate = (structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)
 																				, Air = Air
-																				, statmentInformation = statmentInformation )>
+																				, statmentInformation = statmentInformation
+																				, developerIDs = application.es.getDeveloperIDs() )>
 
 
 
