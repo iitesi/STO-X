@@ -143,7 +143,8 @@
 						<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
 																								, hostToken = arguments.hostToken
 																								, searchID = arguments.searchID
-																								, Air = arguments.Air )>
+																								, Air = arguments.Air
+																								, airSelected = airSelected )>
 
 						<cfif NOT verifyStoredFareResponse.error>
 							<!--- 
