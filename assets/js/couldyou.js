@@ -394,9 +394,9 @@ shortstravel.couldyou = {
 		$("#alternativesTable tr" ).on( "click", function(){
 			if( !$( this ).hasClass( 'fc-notAvailable' ) ){
 				var dateParts = $( this ).attr( 'id' ).split('-');
-				console.dir( dateParts );
+				// console.dir( dateParts );
 				var d = new Date( dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0);
-				console.log( d );
+				// console.log( d );
 				shortstravel.couldyou.changeDate( d );
 			};
 		})
@@ -536,7 +536,7 @@ $(document).ready(function(){
         },
 
         dayClick: function( date, allDay, jsEvent, view ) {
-        	console.log( date );
+        	// console.log( date );
 			shortstravel.couldyou.changeDate( date );
 		}
     })

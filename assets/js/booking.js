@@ -111,7 +111,7 @@ function getUnusedTickets(userid, acctid) {
 ----------------------------------------------------------------------*/
 function filterAir(reset) {
 
- console.clear();
+ // console.clear();
 
 	var loopcnt = 0;
 	var classy = $("#ClassY:checked").val();
