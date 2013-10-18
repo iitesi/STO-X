@@ -329,6 +329,10 @@
 					</cfif>
 					<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
 					<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
+					<!--- Update universal version --->
+					<cfif providerLocatorCode NEQ ''>
+						<cfset version++>
+					</cfif>
 					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
 				</cfif>
@@ -366,7 +370,8 @@
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
 																				, Traveler = Traveler
 																				, Air = Air
-																				, Filter = rc.Filter )>
+																				, Filter = rc.Filter
+																				, version = version )>
 				</cfif>
 
 				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
