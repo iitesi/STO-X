@@ -33,7 +33,7 @@
 
 		<cfset local.count = 0>
 		<cfset local.processFileFinishing = true>
-		<cfloop condition="count LTE 2 AND processFileFinishing">
+		<cfloop condition="count LT 2 AND processFileFinishing">
 			<cfset count++>
 			<!--- 
 			Pull up the PNR within the terminal session so all commands below run for that PNR
