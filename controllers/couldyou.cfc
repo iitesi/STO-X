@@ -89,6 +89,10 @@
 		<cfset var couldYou = session.searches[ rc.searchId ].couldYou />
 
 		<cfif NOT structIsEmpty( couldYou ) AND rc.selectedDate NEQ rc.originalDate>
+			<cfif session.userid EQ 46144>
+				<cfdump var="#rc#" label="rc">
+				<cfdump var="#session.searches[ rc.searchId ].stItinerary.vehicle#" label="first stItinerary.vehicle">
+			</cfif>
 
 			<cfif Search.getAir()>
 				<!---Update search object in session--->
@@ -194,6 +198,10 @@
 
 				<!---Update the stItinerary--->
 				<cfset session.searches[ rc.searchId ].stItinerary.vehicle = newVehicle />
+
+				<cfif session.userid EQ 46144>
+					<cfdump var="#session.searches[ rc.searchId ].stItinerary.vehicle#" label="second stItinerary.vehicle" abort>
+				</cfif>
 			</cfif>
 
 			<!---Save the updated search object to the database--->
