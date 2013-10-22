@@ -19,7 +19,8 @@
 			</style>
 			<div class="watermark"><cfoutput>#uCase(application.es.getCurrentEnvironment())#</cfoutput></div>
 		</cfif>
-		<cfif listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
+		<cfif isLocalHost(cgi.remote_addr)
+			OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 			<style type="text/css">
 			<!--
 			.dev-dropdown {
