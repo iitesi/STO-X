@@ -87,7 +87,6 @@
 	</bean>
 
 	<bean id="LocationManager" class="com.shortstravel.location.LocationManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="CorporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 		<constructor-arg name="googleMapsClientId"><bean factory-bean="EnvironmentService" factory-method="getGoogleMapsClientId" /></constructor-arg>
@@ -108,7 +107,7 @@
 	</bean>
 
 	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
@@ -121,13 +120,11 @@
 	</bean>
 
 	<bean id="UserManager" class="com.shortstravel.security.UserManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
 	<bean id="PolicyManager" class="com.shortstravel.account.PolicyManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
@@ -164,7 +161,6 @@
 	</bean>
 
 	<bean id="PaymentManager" class="com.shortstravel.traveler.PaymentManager">
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getBookDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>
 
@@ -202,7 +198,6 @@
 	</bean>
 
 	<bean id="findit" class="findit.services.findit" >
-		<constructor-arg name="bookDSN"><bean factory-bean="EnvironmentService" factory-method="getbookDSN" /></constructor-arg>
 		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
 	</bean>

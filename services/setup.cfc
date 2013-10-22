@@ -256,7 +256,7 @@
 				}>
 			</cfif> --->
 
-			<cfquery name="local.qAccount" datasource="book">
+			<cfquery name="local.qAccount" datasource="#getBookingDSN()#">
 				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
 					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
 					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
