@@ -5,11 +5,18 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td width="6%">
+							<!--- create ribbon
+							Note: Please do not display "CONTRACTED" flag on search results for Southwest.
+							--->
 							<cfif rc.Air.privateFare AND rc.Air.preferred>
-								<span class="ribbon ribbon-l-pref-cont"></span>
+								<cfif rc.Air.Carriers[1] EQ "WN">
+									<span class="ribbon ribbon-l-pref"></span>
+								<cfelse>
+									<span class="ribbon ribbon-l-pref-cont"></span>
+								</cfif>
 							<cfelseif rc.Air.preferred>
 								<span class="ribbon ribbon-l-pref"></span>
-							<cfelseif rc.Air.privateFare>
+							<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
 								<span class="ribbon ribbon-l-cont"></span>
 							</cfif>
 						</td>
@@ -134,7 +141,7 @@
 									</cfif>
 								</tr>
 								<tr>
-									<td colspan="2"></td>						
+									<td colspan="2"></td>
 							</cfif>
 							<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
 								<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) && len(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier])>

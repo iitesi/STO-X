@@ -5,12 +5,18 @@
 
 <cfsavecontent variable="sBadge" trim="#true#">
 
-			<!--- create ribbon --->
+			<!--- create ribbon
+			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
+			--->
 			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
-				<cfset ribbonClass = "ribbon-l-pref-cont">
+				<cfif stTrip.Carriers[1] EQ "WN">
+					<cfset ribbonClass = "ribbon-l-pref">
+				<cfelse>
+					<cfset ribbonClass = "ribbon-l-pref-cont">
+				</cfif>
 			<cfelseif stTrip.preferred EQ 1>
 				<cfset ribbonClass = "ribbon-l-pref">
-			<cfelseif bDisplayFare AND stTrip.PrivateFare>
+			<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN">
 				<cfset ribbonClass = "ribbon-l-cont">
 			</cfif>
 
@@ -215,12 +221,17 @@
 						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
 						#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#
+
 						<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
-							PREFERRED / CONTRACTED<br>
+							<cfif stTrip.Carriers[1] EQ "WN">
+								PREFERRED<br>
+							<cfelse>
+								PREFERRED / CONTRACTED<br>
+							</cfif>
 						<cfelseif stTrip.preferred EQ 1>
-							PREFERRED<br>
-						<cfelseif bDisplayFare AND stTrip.PrivateFare>
-							CONTRACTED<br>
+								PREFERRED<br>
+						<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN">
+								CONTRACTED<br>
 						</cfif>
 						</span>
 				</td>
