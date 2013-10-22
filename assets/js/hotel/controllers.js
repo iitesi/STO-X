@@ -583,8 +583,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 		google.maps.event.addListener($scope.map, 'dblclick', function(e) {
 			$scope.map.setCenter( e.latLng );
-			$scope.search.hotelLat = e.latLng.ob;
-			$scope.search.hotelLong = e.latLng.pb;
+			$scope.search.hotelLat = e.latLng.jb;
+			$scope.search.hotelLong = e.latLng.kb;
 			$scope.search.hotelSearch = 'latlong';
 			$scope.updateSearch();
 		  });
