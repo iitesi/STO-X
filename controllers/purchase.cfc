@@ -16,7 +16,7 @@
 				</cfif>
 				<!--- Looks odd, but this is used to compare differences between their profile and what information
 				they entered into the summary page. --->
-				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = Traveler.getUserID() )>
+				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = rc.Filter.getUserID() )>
 				<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
 				<cfset local.airSelected = (structKeyExists(itinerary, 'Air') ? true : false)>
 				<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')>
