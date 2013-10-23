@@ -59,7 +59,7 @@
 												<cfset seats = '' />
 												<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">
 													<cfloop collection="#rc.Traveler[travelerIndex].getBookingDetail().getSeats()#" item="seat" index="seatIndex">
-														<cfif seat.segmentRef EQ segment.key>
+														<cfif structKeyExists(segment, "key") AND (seat.segmentRef EQ segment.key)>
 															<cfif seat.seat NEQ 'Unknown'>
 																<cfset thisStatus = "unconfirmed" />
 																<cfswitch expression="#seat.status#">
@@ -85,6 +85,9 @@
 																<cfset seats = listAppend(seats, 'NA') />
 																<cfset showIcon = true />
 															</cfif>
+														<cfelse>
+															<cfset seats = listAppend(seats, 'NA') />
+															<cfset showIcon = true />
 														</cfif>
 													</cfloop>
 												</cfloop>
