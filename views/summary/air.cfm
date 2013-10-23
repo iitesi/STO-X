@@ -16,11 +16,18 @@
 
 			<td valign="top">
 
+			<!--- create ribbon
+			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
+			--->
 				<cfif rc.Air.privateFare AND rc.Air.preferred>
-					<span class="ribbon ribbon-l-pref-cont"></span>
+					<cfif rc.Air.Carriers[1] EQ "WN">
+						<span class="ribbon ribbon-l-pref"></span>
+					<cfelse>
+						<span class="ribbon ribbon-l-pref-cont"></span>
+					</cfif>
 				<cfelseif rc.Air.preferred>
 					<span class="ribbon ribbon-l-pref"></span>
-				<cfelseif rc.Air.privateFare>
+				<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
 					<span class="ribbon ribbon-l-cont"></span>
 				</cfif>
 
