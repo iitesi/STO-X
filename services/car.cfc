@@ -406,6 +406,7 @@
 
 		<cfset var carPickupAirport = arguments.search.getCarPickupAirport() />
 		<cfset var carDropoffAirport = arguments.search.getCarDropoffAirport() />
+		<cfset var carDifferentLocations = arguments.search.getCarDifferentLocations() />
 		<cfset var carPickupDateTime = arguments.search.getCarPickupDateTime() />
 		<cfset var carPickupDateTimeActual = arguments.search.getCarPickupDateTimeActual() />
 		<cfset var carDropoffDateTime = arguments.search.getCarDropoffDateTime() />
@@ -416,10 +417,10 @@
 		<cfif len(trim(carPickupAirport))>
 			<cfset formData.carPickupAirport = carPickupAirport />
 		</cfif>
-
 		<cfif len(trim(carDropoffAirport))>
 			<cfset formData.carDropoffAirport = carDropoffAirport />
 		</cfif>
+		<cfset formData.carDifferentLocations = carDifferentLocations />
 
 		<cfset formData.carPickupDate = (isDate(carPickupDateTime) ? dateFormat(carPickupDateTime, 'mm/dd/yyyy') : 'pick up date') />
 		<cfif isNumeric(left(trim(carPickupDateTimeActual), 1))>

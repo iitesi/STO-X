@@ -176,7 +176,7 @@
 										</cfif>
 									</cfloop>
 								</select>
-								<cfif rc.Filter.getCarPickUpAirport() NEQ rc.Filter.getCarDropoffAirport()>
+								<cfif rc.Filter.getCarDifferentLocations() EQ 1>
 									Drop-off Location
 									<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
 										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>

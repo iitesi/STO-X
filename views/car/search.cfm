@@ -16,8 +16,8 @@
 								</div>
 								<div class="form-element-content">
 									<div id="car-dropoff-option" class="btn-group" data-toggle="buttons-radio" style="float:left; text-align:right;">
-										<button id="car-dropoff-same" class="car-dropoff-option btn btn-mini btn-primary" value="same">Same Drop-off</button>
-										<button id="car-dropoff-different" class="car-dropoff-option btn btn-mini" value="different">Different Drop-off</button>
+										<button id="car-dropoff-same" class="car-dropoff-option btn btn-mini <cfif rc.formData.carDifferentLocations EQ 0>btn-primary</cfif>" value="same">Same Drop-off</button>
+										<button id="car-dropoff-different" class="car-dropoff-option btn btn-mini <cfif rc.formData.carDifferentLocations EQ 1>btn-primary</cfif>" value="different">Different Drop-off</button>
 									</div>
 								</div>
 							</div>

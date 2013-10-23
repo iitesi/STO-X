@@ -9,11 +9,11 @@ $(document).ready(function(){
 	var pickupAirport = $("#car-pickup-airport").val();
 	var dropoffAirport = $("#car-dropoff-airport").val();
 
-	if ((dropoffAirport == '') || (dropoffAirport == pickupAirport)) {
-		toggleCarFormFields(event, "#car-dropoff-same");
+	if ($("#car-dropoff-different").hasClass("btn-primary") || (dropoffAirport != pickupAirport)) {
+		toggleCarFormFields(event, "#car-dropoff-different");
 	}
 	else {
-		toggleCarFormFields(event, "#car-dropoff-different");
+		toggleCarFormFields(event, "#car-dropoff-same");
 	}
 
 	var todaysDate = new Date();
@@ -175,9 +175,15 @@ formSubmit = function( event ){
 	formData.carDropoffAirport = $("#car-dropoff-airport").val();
 	if (carDropoffOption == 'same') {
 		formData.carDropoffAirport = $("#car-pickup-airport").val();
+		formData.carDifferentLocations = 0;
 	}
-	else if ((carDropoffOption == 'different') && ($("#car-dropoff-airport").val() == '')) {
-		formErrors.push("car-dropoff-airport");
+	else if (carDropoffOption == 'different') {
+		if ($("#car-dropoff-airport").val() == '') {
+			formErrors.push("car-dropoff-airport");
+		}
+		else {
+			formData.carDifferentLocations = 1;
+		}
 	}
 	formData.carPickupDate = $("#car-pickup-date").val();
 	jsCarPickupDate = new Date($("#car-pickup-date").val());
@@ -194,7 +200,7 @@ formSubmit = function( event ){
 
 	switch (formData.carPickupTimeActual) {
 		case "Anytime":
-			formData.carPickupTime = "00:00";
+			formData.carPickupTime = "08:00";
 			break;
 		case "Early Morning":
 			formData.carPickupTime = "06:00";
@@ -233,7 +239,7 @@ formSubmit = function( event ){
 
 	switch (formData.carDropoffTimeActual) {
 		case "Anytime":
-			formData.carDropoffTime = "00:00";
+			formData.carDropoffTime = "18:00";
 			break;
 		case "Early Morning":
 			formData.carDropoffTime = "06:00";
