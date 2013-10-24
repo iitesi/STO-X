@@ -48,7 +48,7 @@ shortstravel.couldyou = {
 		dates.postStart = postStart;
 
 		var postEnd = new Date( dates.originalDepart );
-		postEnd.setDate( postStart.getDate() + 7);
+		postEnd.setDate( postEnd.getDate() + 7);
 		postEnd.setHours( 0,0,0,0 );
 		dates.postEnd = postEnd;
 
@@ -393,11 +393,10 @@ shortstravel.couldyou = {
 		$( '#numCheaperDates' ).html( numCheaperDates + ' cheaper dates found' );
 
 		$("#alternativesTable tr" ).on( "click", function(){
+
 			if( !$( this ).hasClass( 'fc-notAvailable' ) ){
 				var dateParts = $( this ).attr( 'id' ).split('-');
-				// console.dir( dateParts );
 				var d = new Date( dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0);
-				// console.log( d );
 				shortstravel.couldyou.changeDate( d );
 			};
 		})
@@ -415,6 +414,8 @@ shortstravel.couldyou = {
 		if( !( newDate.getTime() < shortstravel.couldyou.dates.preStart.getTime()  || newDate.getTime() > shortstravel.couldyou.dates.postEnd.getTime() )
 			&& selectedDate.message.indexOf( 'not available' ) == -1 )
 		{
+
+
 			$('.tripStartDate' ).html( dateFormat( selectedDate.departureDate, "ddd, mmm dd" ) );
 			if( shortstravel.search.airType != 'OW' ){
 				$('.tripEndDate' ).html( dateFormat( selectedDate.returnDate, "ddd, mmm dd" ) );
