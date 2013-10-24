@@ -276,14 +276,14 @@
 									<cfif arguments.Group+1 EQ cnt>
 										<air:SearchAirLeg>
 											<air:SearchOrigin>
-												<cfif arguments.filter.getAirFromCityCode() EQ 1>
+												<cfif airFrom_CityCode EQ 1>
 													<com:City Code="#depart_city#" />
 												<cfelse>
 													<com:Airport Code="#depart_city#" />
 												</cfif>
 											</air:SearchOrigin>
 											<air:SearchDestination>
-												<cfif arguments.filter.getAirToCityCode() EQ 1>
+												<cfif airTo_CityCode EQ 1>
 													<com:City Code="#arrival_city#" />
 												<cfelse>
 													<com:Airport Code="#arrival_city#" />
