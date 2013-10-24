@@ -85,9 +85,6 @@
 																<cfset seats = listAppend(seats, 'NA') />
 																<cfset showIcon = true />
 															</cfif>
-														<cfelse>
-															<cfset seats = listAppend(seats, 'NA') />
-															<cfset showIcon = true />
 														</cfif>
 													</cfloop>
 												</cfloop>
