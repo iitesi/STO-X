@@ -417,7 +417,7 @@ shortstravel.couldyou = {
 		{
 			$('.tripStartDate' ).html( dateFormat( selectedDate.departureDate, "ddd, mmm dd" ) );
 			if( shortstravel.search.airType != 'OW' ){
-				$('.tripEndDate' ).html( dateFormat( selectedDate.arrivalDate, "ddd, mmm dd" ) );
+				$('.tripEndDate' ).html( dateFormat( selectedDate.returnDate, "ddd, mmm dd" ) );
 			}
 
 			$('#tripTotal' ).html( shortstravel.couldyou.formatCurrency( selectedDate.total, 2 ));
@@ -445,7 +445,7 @@ shortstravel.couldyou = {
 					hotelTotal = selectedDate.hotel.Rooms[ 0 ].totalForStay;
 					$('#hotelBaseRate' ).html('');
 				} else {
-					var timeDiff = Math.abs(selectedDate.departureDate.getTime() - selectedDate.arrivalDate.getTime());
+					var timeDiff = Math.abs(selectedDate.departureDate.getTime() - selectedDate.returnDate.getTime());
 					var nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
 					hotelTotal = selectedDate.hotel.Rooms[0].dailyRate * nights;
 					$('#hotelBaseRate' ).html( shortstravel.couldyou.formatCurrency( selectedDate.hotel.Rooms[0].dailyRate, 2 ) );
