@@ -75,6 +75,7 @@ shortstravel.couldyou = {
 			dayData.returnDate = returnDate;
 			dayData.offset = i;
 			dayData.maxSavings = false;
+			dayData.message = '';
 
 			dataStore.push( dayData )
 		}
@@ -190,7 +191,7 @@ shortstravel.couldyou = {
 			if( selectedDate.hotel.Rooms[ 0 ].totalForStay != 0 ){
 				hotelTotal = selectedDate.hotel.Rooms[ 0 ].totalForStay;
 			} else {
-				var timeDiff = Math.abs(selectedDate.departureDate.getTime() - selectedDate.arrivalDate.getTime());
+				var timeDiff = Math.abs(selectedDate.departureDate.getTime() - selectedDate.returnDate.getTime());
 				var nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
 				hotelTotal = selectedDate.hotel.Rooms[0].dailyRate * nights;
 			}
