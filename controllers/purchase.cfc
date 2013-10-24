@@ -113,7 +113,7 @@
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
 							<cfset errorType = 'Air.airPrice'>
-						<cfelse>
+						<cfelseif trip[structKeyList(trip)].Total EQ Air.Total>
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
 							<cfset local.policy = Air.policy>
@@ -121,6 +121,9 @@
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
+						<cfelse>
+							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight, or contact us to complete your reservation.' )>
+							<cfset errorType = 'Air.airPrice'>
 						</cfif>
 					</cfif>
 
