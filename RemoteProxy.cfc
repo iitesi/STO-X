@@ -260,6 +260,7 @@
 		<cfset var cy = structNew() />
 		<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
 		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+		<cfset cy.started = now() />
 
 		<cfif Search.getAir()>
 			<cftry>
@@ -286,6 +287,11 @@
 				</cfcatch>
 			</cftry>
 		</cfif>
+
+		<cfset cy.ended = now() />
+
+		<!---Save the result of this call into the CouldYou logging table--->
+		<cfset getBean( "CouldYouService" ).saveAlternateTrip( cy ) />
 
 		<cfreturn cy />
 
