@@ -174,6 +174,7 @@
 
 	<div class="control-group" id="usernameDiv">
 		<div class="control-group">
+			<p><b>NOTE: Profile data will be saved for future reservations after purchase is confirmed.</b></p>
 			<label class="control-label" for="username">Username</label>
 			<div class="controls">
 				<input type="text" name="username_disabled" id="username_disabled" disabled />
