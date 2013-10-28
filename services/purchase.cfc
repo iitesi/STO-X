@@ -43,6 +43,15 @@
 																		, hostToken = arguments.hostToken
 																		, pnr = arguments.providerLocatorCode
 																		, searchID = arguments.searchID )>
+			<cfif arguments.airSelected>
+				<!--- 
+				Add form of payment to non air booked PNRs
+				Command = F-CK
+				--->
+				<cfset TerminalEntry.addFOPCheckAuxSegments( targetBranch = arguments.targetBranch
+															, hostToken = arguments.hostToken
+															, searchID = arguments.searchID )>
+			</cfif>
 
 			<cfif NOT displayPNRResponse.error>
 				<!---
