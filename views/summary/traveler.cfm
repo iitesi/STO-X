@@ -174,7 +174,7 @@
 
 	<div class="control-group" id="usernameDiv">
 		<div class="control-group">
-			<p><b>NOTE: Profile data will be saved for future reservations after purchase is confirmed.</b></p>
+			<p><b>NOTE: Click "Create Profile" to save a profile regardless of whether the reservation is purchased.</b></p>
 			<label class="control-label" for="username">Username</label>
 			<div class="controls">
 				<input type="text" name="username_disabled" id="username_disabled" disabled />
@@ -196,6 +196,12 @@
 				<input type="password" name="passwordConfirm" id="passwordConfirm" />
 			</div>
 		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<input type="submit" name="trigger" id="profileButton" class="btn btn-primary" value="CREATE PROFILE">
+			</div>
+		</dib>
 	</div>
 
 	<cfif rc.airSelected
