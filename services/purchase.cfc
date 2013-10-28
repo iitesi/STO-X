@@ -43,7 +43,7 @@
 																		, hostToken = arguments.hostToken
 																		, pnr = arguments.providerLocatorCode
 																		, searchID = arguments.searchID )>
-			<cfif arguments.airSelected>
+			<cfif NOT arguments.airSelected>
 				<!--- 
 				Add form of payment to non air booked PNRs
 				Command = F-CK
