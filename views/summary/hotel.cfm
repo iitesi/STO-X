@@ -34,13 +34,12 @@
 
 				<td colspan="3">
 					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
-					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="Over maximum daily rate">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
+					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="Over maximum daily rate" style="float:left; width:114px;">OUT OF POLICY *</span>')#
 
 					<!--- All accounts when out of policy --->
 					<cfif rc.showAll 
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
-						*&nbsp;&nbsp;
 						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Out of Policy</option>
 						<option value="P">Required property sold out</option>
@@ -55,7 +54,7 @@
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
 						<div class="#(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
-							*&nbsp;&nbsp;
+							<span style="float:left; width:114px;">STATE OF TEXAS *</span>
 							<select name="udid112" id="udid112" class="input-xlarge">
 							<option value="">Select an Exception Code</option>
 							<cfloop query="rc.qTXExceptionCodes">
