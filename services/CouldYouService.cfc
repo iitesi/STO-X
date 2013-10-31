@@ -10,16 +10,16 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="saveOriginalTrip" access="public" output="false" returntype="any" hint="">
+	<cffunction name="logOriginalTrip" access="public" output="false" returntype="any" hint="">
 		<cfargument name="trip" type="struct" required="true" hint="I am the structure of originally selected air, hotel and vehicle options for a search" />
 
 		<cfset var args = structNew() />
 		<cfset args.isOriginal = true />
 
-
+		<cfset getCouldYouManager().logTrip( argumentCollection = args ) />
 	</cffunction>
 
-	<cffunction name="saveAlternateTrip" access="public" output="false" returntype="any" hint="">
+	<cffunction name="logAlternateTrip" access="public" output="false" returntype="any" hint="">
 		<cfargument name="trip" type="struct" required="true" hint="Structure with air, hotel and vehicle data retrieved during a CouldYou search" />
 
 		<cfset var args = structNew() />
@@ -27,7 +27,7 @@
 
 
 
-		<cfset getCouldYouManager().saveTrip( argumentCollection = args ) />
+		<cfset getCouldYouManager().logTrip( argumentCollection = args ) />
 
 	</cffunction>
 
