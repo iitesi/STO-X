@@ -29,13 +29,12 @@
 
 				<td colspan="3">
 
-					#(rc.Vehicle.getPolicy() ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Vehicle.getAPolicies())#">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
+					#(rc.Vehicle.getPolicy() ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Vehicle.getAPolicies())#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
 
 					<!--- All accounts when out of policy --->
 					<cfif rc.showAll 
 						OR (NOT rc.Vehicle.getPolicy()
 						AND rc.Policy.Policy_CarReasonCode EQ 1)>
-						*&nbsp;&nbsp;
 						<select name="carReasonCode" id="carReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'carReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Outside Policy</option>
 						<option value="D">Required car vendor does not provide service at destination</option>
@@ -52,7 +51,7 @@
 					<cfif rc.showAll 
 						OR rc.Filter.getAcctID() EQ 235>
 						<div class="#(structKeyExists(rc.errors, 'udid111') ? 'error' : '')#">
-							*&nbsp;&nbsp;
+							<span style="float:left; width:114px;">STATE OF TEXAS *</span>
 							<select name="udid111" id="udid111" class="input-xlarge">
 							<option value="">Select an Exception Code</option>
 							<cfloop query="rc.qTXExceptionCodes">

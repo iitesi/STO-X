@@ -32,6 +32,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'stAirports') OR StructIsEmpty(application.stAirports)>
 			<cfset variables.bf.getBean("setup").setAirports(argumentcollection=arguments.rc)>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'sCityCodes') OR application.sCityCodes EQ ''>
+			<cfset variables.bf.getBean("setup").setCityCodes()>
+		</cfif>
 		<cfif NOT StructKeyExists(application, 'stAmenities') OR StructIsEmpty(application.stAmenities)>
 			<cfset variables.bf.getBean("setup").setAmenities(argumentcollection=arguments.rc)>
 		</cfif>

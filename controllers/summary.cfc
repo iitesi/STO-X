@@ -211,9 +211,9 @@
 				</cfif>
 			</cfloop>
 			<cfset rc.Traveler.setBirthdate( birthdate )>
-			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z ]', '', 'ALL') )>
-			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z ]', '', 'ALL') )>
-			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z ]', '', 'ALL') )>
+			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z]', '', 'ALL') )>
+			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
+			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
 			<cfset rc.errors = fw.getBeanFactory().getBean('Summary').error( Traveler = rc.Traveler
 																			, Air = rc.Air
@@ -224,7 +224,8 @@
 																			, acctID = rc.Filter.getAcctID()
 																			, searchID = rc.searchID
 																			, password = rc.password
-																			, passwordConfirm = rc.passwordConfirm )>
+																			, passwordConfirm = rc.passwordConfirm
+																			, action = rc.trigger )>
 			<cfif structIsEmpty(rc.errors)>
 				<cfif rc.trigger EQ 'ADD A TRAVELER'>
 					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
@@ -236,6 +237,11 @@
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
 				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
+				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
+					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
+																						, acctID = rc.Filter.getAcctID() ) />
+					<cfset rc.Filter.setUserID(newUserID) />
+					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 				</cfif>
 			<cfelse>
 				<cfset rc.message.addError('Please correct the fields in red below.')>

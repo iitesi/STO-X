@@ -100,6 +100,7 @@
 
 					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
+						<cfset local.originalAirfare = Air.Total /> 
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
@@ -113,7 +114,7 @@
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
 							<cfset errorType = 'Air.airPrice'>
-						<cfelse>
+						<cfelseif trip[structKeyList(trip)].Total EQ originalAirfare>
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
 							<cfset local.policy = Air.policy>
@@ -121,6 +122,9 @@
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
+						<cfelse>
+							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight, or contact us to complete your reservation.' )>
+							<cfset errorType = 'Air.airPrice'>
 						</cfif>
 					</cfif>
 
@@ -382,8 +386,8 @@
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )>
+						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
+																						, acctID = rc.Filter.getAcctID() )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler

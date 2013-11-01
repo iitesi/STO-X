@@ -502,6 +502,20 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="setCityCodes" output="false" returntype="void">
+
+		<cfquery name="local.qCityCodes" datasource="#getBookingDSN()#">
+			SELECT Location_Code
+			FROM lu_Geography
+			WHERE City_Code = <cfqueryparam value="1" cfsqltype="cf_sql_bit" />
+			ORDER BY Location_Code
+		</cfquery>
+
+		<cfset application.sCityCodes = valueList(qCityCodes.Location_Code) />
+
+		<cfreturn />
+	</cffunction>
+
 	<cffunction name="setAmenities" output="false" returntype="void">
 
 		<cfquery name="local.qAmenities" datasource="#getBookingDSN()#">
