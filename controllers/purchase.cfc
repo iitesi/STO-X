@@ -386,8 +386,8 @@
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )>
+						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
+																						, acctID = rc.Filter.getAcctID() )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
