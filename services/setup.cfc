@@ -124,6 +124,10 @@
 						</cfif>
 						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Depart_City&' - '&local.getsearch.Arrival_City&' on '&DateFormat(local.getsearch.Depart_DateTime, 'ddd, m/d'))>
 						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Arrival_City&' - '&local.getsearch.Depart_City&' on '&DateFormat(local.getsearch.Arrival_DateTime, 'ddd, m/d'))>
+
+
+						<cfset local.searchfilter = getSearchService().getTripType( local.getsearch.Depart_City, local.getsearch.Arrival_City, application.stAirports ) />
+
 					</cfcase>
 
 					<!--- One way --->
@@ -143,7 +147,7 @@
 								<cfif ListLast(local.breadCrumb, '-') NEQ local.getsearchlegs.depart_city AND local.getsearchlegs.depart_city NEQ local.getsearchlegs.arrival_city>
 									<cfset local.breadCrumb = "#local.breadCrumb#-#local.getsearchlegs.depart_city#-#local.getsearchlegs.arrival_city#">
 								<cfelse>
-									<cfset  local.breadCrumb = "#local.breadCrumb#-#local.getsearchlegs.arrival_city#">
+									<cfset local.breadCrumb = "#local.breadCrumb#-#local.getsearchlegs.arrival_city#">
 								</cfif>
 							<cfelse>
 								<cfset local.breadCrumb = "#local.getsearchlegs.depart_city#-#local.getsearchlegs.arrival_city#">
@@ -156,6 +160,13 @@
 						<cfset local.searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(local.getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(local.getSearchLegs.Depart_DateTime[local.getSearchLegs.recordCount], 'm/d')#")>
 					</cfcase>
 				</cfswitch>
+
+
+
+
+<!--- CFDUMP: Debugging --->
+<cfdump var="#now()#" label="Dump ( now() )" abort="true" format="html">
+
 
 			<cfelseif NOT local.getsearch.Air AND Len(Trim(local.getsearch.Arrival_City))>
 				<cfset local.searchfilter.setDestination(application.stAirports[local.getsearch.Arrival_City].city)>
@@ -488,16 +499,23 @@
 			SELECT Location_Code AS code
 				, Location_Name AS city
 				, Airport_Name AS airport
+				, country_code as countryCode
 			FROM lu_Geography
 			WHERE Location_Type = 125
 			ORDER BY code
 		</cfquery>
 
 		<cfset local.stTemp = {}>
+		<cfset local.domesticList = "US,VI,CA,MX,PR">
 
 		<cfloop query="local.qAirports">
+			<cfset local.domestic = "false">
+			<cfif listFindNoCase(local.domesticList, local.qAirports.countryCode)>
+				<cfset local.domestic = "true">
+			</cfif>
 			<cfset local.stTemp[local.qAirports.code].city = local.qAirports.city>
 			<cfset local.stTemp[local.qAirports.code].airport = local.qAirports.airport>
+			<cfset local.stTemp[local.qAirports.code].domestic = local.domestic>
 		</cfloop>
 
 		<cfset application.stAirports = local.stTemp>

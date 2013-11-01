@@ -132,14 +132,14 @@
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)>
+		<!--- <cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)> --->
 			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline>
 			<cfset local[local.sThreadName] = {}>
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<cfthread
+			<!--- <cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
@@ -149,7 +149,7 @@
 				Policy="#arguments.Policy#"
 				bRefundable="#arguments.bRefundable#"
 				airline="#arguments.airline#"
-				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#">
+				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"> --->
 
 				<!--- Put together the SOAP message. --->
 				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
@@ -215,8 +215,8 @@
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>
-			</cfthread>
-		</cfif>
+			<!--- </cfthread>
+		</cfif> --->
 
 		<cfreturn sThreadName>
 	</cffunction>
@@ -396,6 +396,7 @@
 									IncludeFlightDetails="false"
 									AllowChangeOfAirport="false"
 									ProhibitOvernightLayovers="true"
+									MaxConnectionTime="300"
 									ProhibitMultiAirportConnection="true"
 									PreferNonStop="true">
 									<cfif arguments.airline NEQ 'X'>
