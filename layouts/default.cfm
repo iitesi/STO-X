@@ -108,7 +108,7 @@
 						<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
-								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true" title="Start a new search"><i class="icon-search"></i></a>
+								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="icon-search"></i></a>
 								</cfoutput>
 							</div>
 							<cfoutput>#View('modal/search')#</cfoutput>

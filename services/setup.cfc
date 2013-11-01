@@ -178,8 +178,11 @@
 			<cfset session.UserID = local.getSearch.User_ID>
 			<cfset session.AcctID = local.getSearch.Acct_ID>
 			<cfset session.PolicyID = local.getSearch.Policy_ID>
+
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
-			<cfif NOT arguments.requery OR NOT structKeyExists(session.searches[arguments.SearchID], "stAvailDetails")>
+			<cfif NOT arguments.requery
+				OR NOT structKeyExists(session.searches, arguments.searchID)
+				OR NOT structKeyExists(session.searches[arguments.SearchID], "stAvailDetails")>
 				<!--- Otherwise, default the search session struct --->
 				<cfset session.searches[arguments.SearchID].stItinerary = {}>
 				<cfset session.searches[arguments.SearchID].stAvailTrips[0] = {}>

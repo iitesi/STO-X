@@ -62,7 +62,9 @@ setApplication
 
 	<cffunction name="setFilter" output="false" hint="Move the search into the rc scope so it is always available.">
 		<cfargument name="rc">
-		<cfif StructKeyExists(session, 'Filters') AND StructKeyExists(session.Filters, arguments.rc.SearchID) AND NOT StructKeyExists(arguments.rc, "requery")>
+		<cfif StructKeyExists(session, 'Filters')
+			AND StructKeyExists(session.Filters, arguments.rc.SearchID)
+			AND NOT StructKeyExists(arguments.rc, "requery")>
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
 		<cfelse>
 			<cfset rc.Filter = variables.fw.getBeanFactory().getBean("setup").setFilter(argumentcollection=arguments.rc)>
