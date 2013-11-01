@@ -168,7 +168,7 @@ $(document).ready(function(){
 		$( "#ccEmails" ).val( traveler.ccEmails );
 		var birthdate = new Date( traveler.birthdate );
 		$( "#month" ).val( birthdate.getUTCMonth()+1 );
-		$( "#day" ).val( birthdate.getDate() );
+		$( "#day" ).val( birthdate.getUTCDate() );
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
