@@ -31,6 +31,8 @@
 
 		<h1>Purchase Reservation</h1>
 
+		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
+
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
 				<div class="legs clearfix">
@@ -38,12 +40,17 @@
 					<cfloop array="#session.searches[rc.searchID].Travelers#" index="travIndex" item="trav">
 						<cfset count++>
 						<cfif trav.getFirstName() NEQ ''>
+							<input type="submit" name="trigger" id="travelerNameButton#count#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#" value="#count#. #trav.getFirstName()# #trav.getLastName()#">
+						<cfelse>
+							<input type="submit" name="trigger" id="travelerNameButton#count#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#" value="#count#. Traveler">
+						</cfif>
+						<!--- <cfif trav.getFirstName() NEQ ''>
 							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#">
 								#count#. #trav.getFirstName()# #trav.getLastName()#</a>
 						<cfelse>
 							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#">
 								#count#. Traveler</a>
-						</cfif>
+						</cfif> --->
 					</cfloop>
 					<cfif rc.travelerNumber NEQ 1>
 						<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#">
@@ -53,8 +60,6 @@
 				</div>
 			</div>
 		</cfif>
-
-		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 			<cfparam name="rc.showAll" default="0">
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
