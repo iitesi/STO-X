@@ -310,7 +310,9 @@
 									IncludeFlightDetails="false"
 									AllowChangeOfAirport="false"
 									ProhibitOvernightLayovers="true"
-									MaxConnectionTime="300"
+									<cfif arguments.filter.getIsDomesticTrip() IS "true">
+										MaxConnectionTime="300"
+									</cfif>
 									ProhibitMultiAirportConnection="true"
 									PreferNonStop="true">
 									<cfif Len(arguments.filter.getAirlines()) EQ 2>

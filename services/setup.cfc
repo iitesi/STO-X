@@ -125,9 +125,7 @@
 						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Depart_City&' - '&local.getsearch.Arrival_City&' on '&DateFormat(local.getsearch.Depart_DateTime, 'ddd, m/d'))>
 						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Arrival_City&' - '&local.getsearch.Depart_City&' on '&DateFormat(local.getsearch.Arrival_DateTime, 'ddd, m/d'))>
 
-
-						<cfset local.searchfilter = getSearchService().getTripType( local.getsearch.Depart_City, local.getsearch.Arrival_City, application.stAirports ) />
-
+						<cfset local.searchfilter.addIsDomesticTrip = getSearchService().getTripType( local.getsearch.Depart_City, local.getsearch.Arrival_City, application.stAirports ) />
 					</cfcase>
 
 					<!--- One way --->
@@ -135,12 +133,14 @@
 						<cfset local.searchfilter.setAirHeading("#application.stAirports[local.getsearch.Depart_City].city# (#local.getsearch.Depart_City#) to #application.stAirports[local.getsearch.Arrival_City].city# (#local.getsearch.Arrival_City#) :: #DateFormat(local.getsearch.Depart_DateTime, 'ddd mmm d')#")>
 						<cfset local.searchfilter.setHeading("#local.getsearch.Depart_City# to #local.getsearch.Arrival_City# :: #DateFormat(local.getsearch.Depart_DateTime, 'm/d')#")>
 						<cfset local.searchfilter.addLegsForTrip(local.getsearch.Depart_City&' - '&local.getsearch.Arrival_City&' on '&DateFormat(local.getsearch.Depart_DateTime, 'ddd, m/d'))>
+						<cfset local.searchfilter.addIsDomesticTrip = getSearchService().getTripType( local.getsearch.Depart_City, local.getsearch.Arrival_City, application.stAirports ) />
 					</cfcase>
 
 					<!--- Multi-city --->
 					<!--- FYI legs are also added in com/shortstravel/search/searchManager.load() --->
 					<cfcase value="MD" >
-						<cfset var local.breadCrumb = "">
+						<cfset local.breadCrumb = "">
+						<cfset local.tripList = "">
 
 						<cfloop query="getsearchlegs">
 							<cfif Len(local.breadCrumb)>
@@ -154,19 +154,20 @@
 							</cfif>
 							<cfset local.searchfilter.addLegsForTrip(local.getSearchLegs.Depart_City&' - '&local.getSearchLegs.Arrival_City&' on '&DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd, m/d'))>
 							<cfset local.searchfilter.addLegHeader("#application.stAirports[local.getSearchLegs.Depart_City].city# (#local.getSearchLegs.Depart_City#) to #application.stAirports[local.getSearchLegs.Arrival_City].city# (#local.getSearchLegs.Arrival_City#) :: #DateFormat(local.getSearchLegs.Depart_DateTime, 'ddd mmm d')#")>
-						</cfloop>
-						<!--- populate headings for display --->
+
+							<cfset local.isDomesticTripList = getSearchService().getTripType( local.getSearchLegs.Depart_City, local.getSearchLegs.Arrival_City, application.stAirports ) />
+							<cfset local.tripList = listAppend(local.tripList, local.isDomesticTripList)>
+						</cfloop
+>						<!--- populate headings for display --->
 						<cfset local.searchfilter.setAirHeading("Multi-city Destinations")>
 						<cfset local.searchfilter.setHeading("#local.breadCrumb# :: #DateFormat(local.getSearchLegs.Depart_DateTime[1], 'm/d')#-#DateFormat(local.getSearchLegs.Depart_DateTime[local.getSearchLegs.recordCount], 'm/d')#")>
+
+						<cfset local.searchfilter.addIsDomesticTrip("true")/>
+						<cfif listFindNoCase(local.tripList, "false")>
+							<cfset local.searchfilter.addIsDomesticTrip("false")/>
+						</cfif>
 					</cfcase>
 				</cfswitch>
-
-
-
-
-<!--- CFDUMP: Debugging --->
-<cfdump var="#now()#" label="Dump ( now() )" abort="true" format="html">
-
 
 			<cfelseif NOT local.getsearch.Air AND Len(Trim(local.getsearch.Arrival_City))>
 				<cfset local.searchfilter.setDestination(application.stAirports[local.getsearch.Arrival_City].city)>
