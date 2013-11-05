@@ -4,7 +4,6 @@
 	<!--[if IE 7]>    <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
 	<!--[if IE 8]>    <html class="lt-ie9" lang="en"> <![endif]-->
 	<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
-
 	<head>
 		<meta charset="utf-8">
 		<title>
@@ -15,22 +14,20 @@
 			</cfif>
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="Short's Travel Online">
+		<meta name="author" content="Short's Travel Management">
 		<cfoutput>
 			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" media="screen">
-
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
-
 			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
-
+			<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
@@ -41,16 +38,14 @@
 					}
 				</style>
 			</cfif>
-
 			<!--[if lt IE 9]>
 						<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
-
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
 			<script src="#application.assetURL#/js/bootstrap.min.js"></script>
-			<script src="#application.assetURL#/js/booking.js"></script><!---Custom--->
+			<script src="#application.assetURL#/js/booking.js"></script>
 		</cfoutput>
 	</head>
 
