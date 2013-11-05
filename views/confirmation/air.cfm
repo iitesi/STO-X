@@ -34,12 +34,13 @@
 							<table width="100%" border="0" cellpadding="0" cellspacing="0">
 								<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 									<cfset count = 0>
+									<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 									<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 										<cfset count++>
 										<tr>
 											<td width="110">
 												<cfif count EQ 1>
-													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
+													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
 												</cfif>
 											</td>
 											<td width="80" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
