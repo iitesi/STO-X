@@ -260,6 +260,7 @@
 		<cfset var cy = structNew() />
 		<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
 		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+		<cfset cy.searchId = arguments.searchId />
 		<cfset cy.searchStarted = now() />
 
 		<cfif Search.getAir()>
@@ -291,7 +292,20 @@
 		<cfset cy.searchEnded = now() />
 
 		<!---Save the result of this call into the CouldYou logging table--->
-		<cfset getBean( "CouldYouService" ).logAlternateTrip( cy ) />
+		<cftry>
+			<cfset getBean( "CouldYouService" ).logAlternateTrip( arguments.searchId, cy ) />
+
+			<cfcatch type="any">
+				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
+				<cfif getBean( 'EnvironmentService' ).getEnableBugLog()>
+					 <cfset getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) />
+					 <cfset super.onError( arguments.exception, arguments.eventName )>
+				<cfelse>
+					 <cfset super.onError( arguments.exception, arguments.eventName )>
+				 </cfif>
+			</cfcatch>
+		</cftry>
+
 
 		<cfreturn cy />
 

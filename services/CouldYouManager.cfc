@@ -10,13 +10,42 @@
 		<cfreturn this>
 	</cffunction>
 
+	<cffunction name="deleteTrips" access="public" output="false" returntype="void" hint="">
+		<cfargument name="searchId" type="numeric" required="true" />
+
+		<cfquery datasource="#getBookingDSN()#">
+			DELETE FROM CouldYou
+			WHERE searchId = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.searchId#" />
+		</cfquery>
+
+	</cffunction>
+	
+	<cffunction name="selectTrip" access="public" output="false" returntype="void" hint="">
+		<cfargument name="searchId" type="numeric" required="true" />
+		<cfargument name="selectedDate" type="date" required="true" />
+
+		<cfquery datasource="#getBookingDSN()#">
+			UPDATE CouldYou
+			Set isSelected = 0
+			WHERE searchId = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.searchId#" />
+		</cfquery>
+
+		<cfquery datasource="#getBookingDSN()#">
+			UPDATE CouldYou
+			SET isSelected = 1
+			WHERE searchId = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.searchId#" />
+				AND departDate = <cfqueryparam cfsqltype="cf_sql_date" value="#arguments.selectedDate#" />
+		</cfquery>
+	
+	</cffunction>
+	
 	<cffunction name="logTrip" access="public" output="false" returntype="any" hint="">
 		<cfargument name="searchId" type="numeric" required="true" />
 		<cfargument name="isOriginal" type="boolean" required="true" />
 		<cfargument name="isSelected" type="boolean" required="true" />
 		<cfargument name="isWeekendDeparture" type="boolean" required="true" />
 		<cfargument name="daysFromOriginal" type="numeric" required="true" />
-		<cfargument name="daysFromOriginal" type="numeric" required="true" />
+		<cfargument name="departDate" type="date" required="true" />
 		<cfargument name="airAvailable" type="boolean" required="true" />
 		<cfargument name="hotelAvailable" type="boolean" required="true" />
 		<cfargument name="vehicleAvailable" type="boolean" required="true" />
@@ -34,6 +63,7 @@
 				, isSelected
 				, isWeekendDeparture
 				, daysFromOriginal
+				, departDate
 				, airAvailable
 				, hotelAvailable
 				, vehicleAvailable
@@ -56,12 +86,13 @@
 					, tripCost
 				</cfif>
 			   )
-			Vales(
+			Values(
 				  <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.searchId#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.isOriginal#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.isSelected#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.isWeekendDeparture#" />
 				, <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.daysFromOriginal#" />
+				, <cfqueryparam cfsqltype="cf_sql_date" value="#arguments.departDate#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.airAvailable#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.hotelAvailable#" />
 				, <cfqueryparam cfsqltype="cf_sql_bit" value="#arguments.vehicleAvailable#" />
@@ -73,6 +104,9 @@
 				</cfif>
 				<cfif structkeyExists( arguments, "airCost" )>
 					, <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.airCost#" />
+				</cfif>
+				<cfif structkeyExists( arguments, "hotelCost" )>
+					, <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hotelCost#" />
 				</cfif>
 				<cfif structkeyExists( arguments, "vehicleCost" )>
 					, <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.vehicleCost#" />

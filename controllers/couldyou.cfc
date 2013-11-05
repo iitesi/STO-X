@@ -5,6 +5,9 @@
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 
+		<!---Remove any CouldYou alternate trips logged for this search ID--->
+		<cfset fw.getBeanFactory().getBean( "CouldYouService" ).deleteTripsForSearch( rc.searchID ) />
+
 		<!---Redirect if not all specified services are selected--->
 		<cfif arguments.rc.Filter.getAir() AND NOT structKeyExists( rc.itinerary, "Air" ) >
 			<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -56,6 +59,9 @@
 			</cfif>
 		</cfloop>
 		<!---End currency equality check--->
+
+		<!---Save original selections to CouldYou log--->
+		<cfset fw.getBeanFactory().getBean( "CouldYouService" ).logOriginalTrip( rc.SearchID, rc.itinerary ) />
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '')>
@@ -197,8 +203,13 @@
 
 			</cfif>
 
+			<!---Update the selection in the CouldYou log table--->
+			<cfset fw.getBeanFactory().getBean( "CouldYouService" ).selectTrip( rc.searchId, rc.selectedDate ) />
+
 			<!---Save the updated search object to the database--->
 			<cfset fw.getBeanFactory().getBean('SearchService').save( argumentCollection = newVals ) />
+
+
 
 		</cfif>
 
