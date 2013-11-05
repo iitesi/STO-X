@@ -99,11 +99,10 @@
 					<td>
 						<strong>#TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong>
 					</td>
-					<td width="50">
-						-
-					</td>
+					<td width="50">	-	</td>
+					<cfset tripLength = rc.airhelpers.getTripDays(stGroup.DepartureTime, stGroup.ArrivalTime)>
 					<td>
-						<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong>
+						<strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')# #tripLength#</strong>
 					</td>
 				</tr>
 				<cfset nCnt = 0>
