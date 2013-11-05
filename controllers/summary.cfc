@@ -227,7 +227,9 @@
 																			, passwordConfirm = rc.passwordConfirm
 																			, action = rc.trigger )>
 			<cfif structIsEmpty(rc.errors)>
-				<cfif rc.trigger EQ 'ADD A TRAVELER'>
+				<cfif isNumeric(left(rc.trigger, 1))>
+					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#(left(rc.trigger, 1))#')>
+				<cfelseif rc.trigger EQ 'ADD A TRAVELER'>
 					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
 					<cfif rc.travelerNumber LTE 4>
 						<cfset rc.travelerNumber = rc.travelerNumber>
