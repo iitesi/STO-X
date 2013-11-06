@@ -134,7 +134,11 @@
 						<cfset local.cardCVV = ''>
 						<cfset local.cardExpiration = ''>
 						<cfset local.cardType = 'VI'>
-						<cfif Traveler.getBookingDetail().getAirFOPID() NEQ 0>
+						<cfif Traveler.getBookingDetail().getAirFOPID() EQ 0 OR Traveler.getBookingDetail().getNewAirCC() EQ 1>
+							<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
+							<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
+							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
+						<cfelse>
 							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 								<cfif (Payment.getBTAID() NEQ ''
 									AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
@@ -149,10 +153,6 @@
 									<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
 								</cfif>
 							</cfloop>
-						<cfelse>
-							<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
-							<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
-							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
 						</cfif>
 						<cfif LEFT(cardNumber, 1) EQ 5>
 							<cfset cardType = 'CA'>
