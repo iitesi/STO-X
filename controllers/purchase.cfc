@@ -34,9 +34,12 @@
 				<cfset local.sort2 = ''>
 				<cfset local.sort3 = ''>
 				<cfset local.sort4 = ''>
+				<cfset local.udids = {}>
 				<cfloop array="#Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
 					<cfif orgUnit.getOUType() EQ 'sort'>
 						<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
+					<cfelseif orgUnit.getOUType() EQ 'udid'>
+						<cfset local.udids[orgUnit.getOUPosition()] = orgUnit.getValueReport()>
 					</cfif>
 				</cfloop>
 				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
@@ -175,6 +178,7 @@
 																										, Air = Air
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, cardNumber = cardNumber
 																										, cardType = cardType
 																										, cardExpiration = cardExpiration
@@ -230,6 +234,7 @@
 																										, Hotel = Hotel
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, providerLocatorCode = providerLocatorCode
 																										, universalLocatorCode = universalLocatorCode
 																										, version = version
@@ -313,6 +318,7 @@
 																										, carrier = carrier
 																										, flightNumber = flightNumber
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, providerLocatorCode = providerLocatorCode
 																										, universalLocatorCode = universalLocatorCode
 																										, version = version
