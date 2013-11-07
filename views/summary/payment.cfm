@@ -14,6 +14,13 @@
 			</div>
 		</div>
 
+		<div id="airNewCard" class="control-group">
+			<label class="control-label" for="newAirCC">Enter New Card</label>
+			<div class="controls newCard">
+				<input type="checkbox" name="newAirCC" id="newAirCC" value="1" />
+			</div>
+		</div>
+
 		<div id="airManual" class="hide">
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
@@ -98,10 +105,17 @@
 			
 		<div class="control-group">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
-			<div class="controls">
+			<div class="controls" id="hotelFOPIDDiv">
 				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
 				<select name="hotelFOPID" id="hotelFOPID">
 				</select>
+			</div>
+		</div>
+
+		<div id="hotelNewCard" class="control-group">
+			<label class="control-label" for="newHotelCC">Enter New Card</label>
+			<div class="controls newCard">
+				<input type="checkbox" name="newHotelCC" id="newHotelCC" value="1" />
 			</div>
 		</div>
 

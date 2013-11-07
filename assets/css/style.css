@@ -361,6 +361,13 @@ ul.tabs li a.active {
 ----------------------------------------------------------------------------------------------------------
 */
 
+.tripLength {
+	color: #C00;
+	font-family: Arial, sans-serif;
+	font-size: smaller;
+	text-transform: uppercase;
+}
+
 .badge {
 	background-color: #FFF;
 	padding: 10px;

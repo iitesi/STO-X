@@ -201,7 +201,7 @@
 			<div class="controls">
 				<input type="submit" name="trigger" id="profileButton" class="btn btn-primary" value="CREATE PROFILE">
 			</div>
-		</dib>
+		</div>
 	</div>
 
 	<cfif rc.airSelected

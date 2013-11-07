@@ -328,7 +328,7 @@
 
 			<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
 
-				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0>
+				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
 					<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
 						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
 						<cfset local.error.airCCNumber = ''>
@@ -398,7 +398,7 @@
 			<cfif isObject(arguments.Hotel)
 				AND arguments.Traveler.getBookingDetail().getHotelNeeded()>
 
-				<cfif arguments.Traveler.getBookingDetail().getHotelFOPID() EQ 0>
+				<cfif arguments.Traveler.getBookingDetail().getHotelFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
 					<cfif Len(arguments.Traveler.getBookingDetail().getHotelCCNumber()) LT 15>
 						<cfset local.error.hotelCCNumber = ''>
 					</cfif>
