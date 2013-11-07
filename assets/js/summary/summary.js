@@ -389,11 +389,27 @@ $(document).ready(function(){
 				}
 			}
 		}
-		if (manualEntry == 1) {
+		/* if (manualEntry == 1) {
 			$( "#" + typeOfService + "FOPID" ).append('<option value="0">Enter a new card</option>')
-		}
+		} */
 		$( "#" + typeOfService + "FOPID" ).val( traveler.bookingDetail[typeOfService + 'FOPID'] );
-		if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
+		if ($( "#" + typeOfService + "FOPID" ).val() === null) {
+			$( "#" + typeOfService + "FOPID" ).append('<option value="0"></option>')
+		}
+		var showNewCard = 0;
+		if (traveler.bookingDetail.newAirCC == 1) {
+			$( "#newAirCC" ).attr( 'checked', true );
+			showNewCard = 1;
+		}
+		if (traveler.bookingDetail.newHotelCC == 1) {
+			$( "#newHotelCC" ).attr( 'checked', true );
+			showNewCard = 1;
+		}
+		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
+			$( "#" + typeOfService + "FOPIDDiv" ).hide();
+			if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
+				$( "#" + typeOfService + "NewCard" ).hide();
+			}			
 			$( "#" + typeOfService + "Manual" ).show();
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
@@ -450,6 +466,32 @@ $(document).ready(function(){
 		}
 		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
 	}
+
+	$(".newCard").on("click", function() {
+		var airCard = $("#newAirCC");
+		var hotelCard = $("#newHotelCC");
+
+		var showAirNewCard = (airCard.attr("checked") == 'checked');
+		var showHotelNewCard = (hotelCard.attr("checked") == 'checked');
+
+		if (showAirNewCard) {
+			$("#airFOPIDDiv").hide();
+			$("#airManual").show();
+		}
+		else {
+			$("#airFOPIDDiv").show();
+			$("#airManual").hide();
+		}
+
+		if (showHotelNewCard) {
+			$("#hotelFOPIDDiv").hide();
+			$("#hotelManual").show();
+		}
+		else {
+			$("#hotelFOPIDDiv").show();
+			$("#hotelManual").hide();
+		}
+	});
 
 	function recalculateTotal() {
 		var total = 0;
