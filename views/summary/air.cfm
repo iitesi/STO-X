@@ -117,8 +117,9 @@
 			<td width="630">
 				<cfset seatFieldNames = ''>
 				<cfset totalCount = 0>
-				<table width="600" padding="0" align="center">
+				<table width="600" padding="0" align="center" border="0">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
+					<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
@@ -126,7 +127,7 @@
 						<tr>
 							<td>
 								<cfif count EQ 1>
-									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
+									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
 								</cfif>
 							</td>
 

@@ -14,6 +14,9 @@
 		<cfif NOT structKeyExists(rc, "message")>
 			<cfset rc.message = new booking.helpers.messages()>
 		</cfif>
+		<cfif NOT structKeyExists(rc, "air")>
+			<cfset rc.airhelpers = new booking.helpers.air()>
+		</cfif>
 	</cffunction>
 
 </cfcomponent>

@@ -31,12 +31,24 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	];
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
-	$scope.filterItems.vendorsFilterApplied = false;
-	$scope.filterItems.amenitiesFilterApplied = false;
-	$scope.filterItems.showVendorFilter = false;
-	$scope.filterItems.showAmenitiesFilter = false;
-	$scope.filterItems.showRatingsFilter = false;
-
+	$scope.propertyNameFilterValue = ''; //This is outside the $scope.filterItems so that it doesn't get run on every keypress in the search box
+	
+	$scope.filtersApplied = {
+		vendors: false,
+		amenities: false,
+		vendorName: false,
+		rating: false,
+		inPolicy: false,
+		noSoldOut: false
+	}
+	
+	$scope.filtersVisible = {
+		vendors: false,
+		amenities: false,
+		vendorName: false,
+		rating: false
+	}
+	
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
@@ -137,6 +149,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	//Watches to see if any of the items in the filter bar change and kicks off the filterHotels process
 	$scope.$watch( "filterItems", function(newValue){
 
+		if( $scope.searchCompleted ){
+			$scope.filterHotels();
+		}
+
+	}, true)
+
+	$scope.calculateFiltersApplied = function(){
+
 		var selectedAmenities = 0;
 		for( var i=0; i < $scope.filterItems.amenities.length; i++ ){
 			if( $scope.filterItems.amenities[i].checked == true ){
@@ -145,9 +165,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		if( selectedAmenities > 0 ){
-			$scope.filterItems.amenitiesFilterApplied = true;
+			$scope.filtersApplied.amenities = true;
 		} else {
-			$scope.filterItems.amenitiesFilterApplied = false;
+			$scope.filtersApplied.amenities = false;
 		}
 
 		var selectedVendors = 0;
@@ -158,15 +178,33 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		if( selectedVendors > 0 ){
-			$scope.filterItems.vendorsFilterApplied = true;
+			$scope.filtersApplied.vendors = true;
 		} else {
-			$scope.filterItems.vendorsFilterApplied = false;
+			$scope.filtersApplied.vendors = false;
 		}
 
-		if( $scope.searchCompleted ){
-			$scope.filterHotels();
+		var selectedRatings = 0;
+		for( var r=0; r < $scope.filterItems.ratings.length; r++ ){
+			var rating = $scope.filterItems.ratings[r];
+			if( rating.checked == true ){
+				selectedRatings++;
+			}
 		}
-	}, true)
+
+		if ( selectedRatings > 0 ){
+			$scope.filtersApplied.ratings = true;
+		} else {
+			$scope.filtersApplied.ratings = false;
+		}
+
+
+		if( $scope.propertyNameFilterValue.length ){
+			$scope.filtersApplied.vendorName = true;
+		} else {
+			$scope.filtersApplied.vendorName = false;
+		}
+
+	}
 
 	$scope.updateVisibleHotels = function(){
 		try{
@@ -303,7 +341,20 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	}
 
+	$scope.setFilterVisibility = function( filterName ){
+
+		for ( var prop in $scope.filtersVisible ) {
+			if( prop == filterName ){
+				$scope.filtersVisible[ prop ] = !$scope.filtersVisible[ prop ];
+			} else {
+				$scope.filtersVisible[ prop ] = false;
+			}
+		}
+
+	}
+
 	$scope.clearFilters = function(){
+		$scope.propertyNameFilterValue = '';
 		for( var i=0; i < $scope.filterItems.vendors.length; i++ ){
 			var vendor = $scope.filterItems.vendors[i];
 			vendor.checked = false;
@@ -318,10 +369,19 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 		$scope.filterItems.noSoldOut = false;
 		$scope.filterItems.inPolicyOnly = false;
-		$scope.filterItems.vendorsFilterApplied = false;
-		$scope.filterItems.amenitiesFilterApplied = false;
-		$scope.filterItems.showVendorFilter = false;
-		$scope.filterItems.showAmenitiesFilter = false;
+		$scope.filtersApplied.vendorName = false;
+		$scope.filtersApplied.vendors = false;
+		$scope.filtersApplied.amenities = false;
+		$scope.filtersApplied.ratings = false;
+		$scope.filtersApplied.noSoldOut = false;
+		$scope.filtersApplied.inPolicyOnly = false;
+		$scope.filtersVisible.vendors = false;
+		$scope.filtersVisible.amenities = false;
+		$scope.filtersVisible.vendorName = false;
+		$scope.filtersVisible.rating = false;
+
+		$scope.filterHotels();
+
 	}
 
 	$scope.filtersApplied = function(){
@@ -333,6 +393,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.filterHotels = function(){
+
+		$scope.calculateFiltersApplied();
+
 		var filteredHotels = [];
 		var visibleHotels = [];
 
@@ -457,6 +520,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 		}
 
+		//Vendor Name check
+		if( display ){
+			if ( $scope.propertyNameFilterValue.length ){
+				if( hotel.PropertyName.toLowerCase().indexOf($scope.propertyNameFilterValue.toLowerCase() ) == -1 ){
+					display = false;
+				}
+			}
+		}
 		return display;
 
 	}

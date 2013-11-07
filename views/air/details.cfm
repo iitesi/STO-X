@@ -24,14 +24,17 @@
 	<cfset nCnt = 0>
 	<cfset aKeys = structKeyArray(stGroup.Segments)>
 	<cfloop collection="#stGroup.Segments#" item="nSegment" >
+
 		<cfset nCnt++>
 		<cfset stSegment = stGroup.Segments[nSegment]>
+		<cfset tripLength = rc.airhelpers.getTripDays(stSegment.DepartureTime, stSegment.ArrivalTime)>
+
 		<div class="media">
 			<a class="pull-left" href="##">
 				<img class="carrierimg" src="assets/img/airlines/#stSegment.Carrier#_sm.png">
 			</a>
 			<div class="media-body">
-				<span class="media-heading"><b>#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber#</b> :: #TimeFormat(stSegment.DepartureTime, 'h:mm tt')# - #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')# &nbsp;&nbsp; <span class="muted">#stSegment.Origin# - #stSegment.Destination#</span></span>
+				<span class="media-heading"><b>#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber#</b> :: #TimeFormat(stSegment.DepartureTime, 'h:mm tt')# - #TimeFormat(stSegment.ArrivalTime, 'h:mm tt')# #tripLength# &nbsp;&nbsp; <span class="muted">#stSegment.Origin# - #stSegment.Destination#</span></span>
 				<br>
 				<span class="muted">
 					#int(stSegment.FlightTime/60)#h #stSegment.FlightTime%60#m
