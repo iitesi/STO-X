@@ -5,6 +5,17 @@
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 
+		<!---Remove any CouldYou alternate trips logged for this search ID--->
+		<cftry>
+			<cfset fw.getBeanFactory().getBean( "CouldYouService" ).deleteTripsForSearch( rc.searchID ) />
+			<cfcatch type="any">
+				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
+				<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
+					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+				</cfif>
+			</cfcatch>
+		</cftry>
+
 		<!---Redirect if not all specified services are selected--->
 		<cfif arguments.rc.Filter.getAir() AND NOT structKeyExists( rc.itinerary, "Air" ) >
 			<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -56,6 +67,17 @@
 			</cfif>
 		</cfloop>
 		<!---End currency equality check--->
+
+		<!---Save original selections to CouldYou log--->
+		<cftry>
+			<cfset fw.getBeanFactory().getBean( "CouldYouService" ).logOriginalTrip( rc.SearchID, rc.itinerary ) />
+			<cfcatch type="any">
+				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
+				<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
+					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+				 </cfif>
+			</cfcatch>
+		</cftry>
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '')>
@@ -197,8 +219,23 @@
 
 			</cfif>
 
+			<!---Update the selection in the CouldYou log table--->
+			<cftry>
+				<cfset variables.fw.getBeanFactory().getBean( "CouldYouService" ).selectTrip( rc.searchId, rc.selectedDate ) />
+
+				<cfcatch type="any">
+					<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
+					<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
+						 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+					 </cfif>
+				</cfcatch>
+			</cftry>
+
+
 			<!---Save the updated search object to the database--->
 			<cfset fw.getBeanFactory().getBean('SearchService').save( argumentCollection = newVals ) />
+
+
 
 		</cfif>
 
