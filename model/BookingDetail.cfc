@@ -40,6 +40,8 @@
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="lostSavings" />
+	<cfproperty name="newAirCC" />
+	<cfproperty name="newHotelCC" />
 	<cfproperty name="password" />
 	<cfproperty name="preTrip" />
 	<cfproperty name="reservationCode" />
@@ -102,6 +104,8 @@
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setLostSavings( '' )>
+		<cfset setNewAirCC( 0 )>
+		<cfset setNewHotelCC( 0 )>
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
 		<cfset setReservationCode( '' )>

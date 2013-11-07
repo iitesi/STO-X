@@ -9,6 +9,15 @@
 
 	<target name="init">
 		<property name="application.name" value="sto" />
+        <!-- log the results of this build to disk -->
+        <tstamp>
+            <format property="timestamp" pattern="yyyy-MM-dd_HH-mm-ss"/>
+        </tstamp>
+        <property name="build.log.dir" location="c:/_deploylogs"/>
+        <mkdir dir="${build.log.dir}"/>
+        <property name="build.log.filename" value="build_${timestamp}.log"/>
+        <record name="${build.log.dir}/${build.log.filename}" loglevel="verbose" append="false"/>
+        <echo message="${ant.project.name} deploy logged to ${build.log.filename}"/>
 	</target>
 
      <target name="deploy" description="Create a release of the application" depends="init,update-local-repo,build-tag-name" >
@@ -142,7 +151,31 @@
 
  	<echo>TODO: Reinitializing application(s)</echo>
   	<!--<get src="<APPLICATION URL HERE>" dest="<FILE SYSTEM PATH TO FILE TO USE FOR RESULT>" />-->
-  
+
 </target>
+
+
+     <target name="test" description="Test">
+        <!-- Fetch from origin before we begin -->
+        <echo message="Resetting application" />
+        <reload server="http://r.local" />
+
+     </target>
+
+
+    <macrodef name="reload" description="Reload Fusebox framework.">
+        <attribute name="server" />
+        <sequential>
+            <echo message="Reload on @{server}" />
+                <exec executable="curl" outputproperty="curl.output" resultproperty="curl.result">
+                <!-- <arg value="-silent" /> -->
+                <arg value="@{server}/booking/index.cfm?action=main.reload&amp;reload=true" />
+                <!-- <arg value="-o NUL" /> -->
+            </exec>
+<echo>${curl.output}</echo>
+
+        </sequential>
+    </macrodef>
+
 
 </project>
