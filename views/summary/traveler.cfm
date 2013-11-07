@@ -6,6 +6,7 @@
 		<label class="control-label" for="userID">Change Traveler&nbsp;&nbsp;</label>		
 		<div class="controls">
 			<select name="userID" id="userID" class="input-xlarge">
+			<!--- Do not allow Georgetown to book on behalf of a guest traveler --->
 			<cfif structKeyExists(rc, "acctID") AND rc.acctID NEQ 303>
 				<option value="0">GUEST TRAVELER</option>
 			</cfif>			
