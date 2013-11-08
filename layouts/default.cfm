@@ -27,7 +27,7 @@
 			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
-			<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {
