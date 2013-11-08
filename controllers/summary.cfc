@@ -224,9 +224,12 @@
 																			, acctID = rc.Filter.getAcctID()
 																			, searchID = rc.searchID
 																			, password = rc.password
-																			, passwordConfirm = rc.passwordConfirm )>
+																			, passwordConfirm = rc.passwordConfirm
+																			, action = rc.trigger )>
 			<cfif structIsEmpty(rc.errors)>
-				<cfif rc.trigger EQ 'ADD A TRAVELER'>
+				<cfif isNumeric(left(rc.trigger, 1))>
+					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#(left(rc.trigger, 1))#')>
+				<cfelseif rc.trigger EQ 'ADD A TRAVELER'>
 					<cfset rc.travelerNumber = arrayLen(structKeyArray(session.searches[rc.searchID].Travelers))+1>
 					<cfif rc.travelerNumber LTE 4>
 						<cfset rc.travelerNumber = rc.travelerNumber>
@@ -236,6 +239,11 @@
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
 				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
+				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
+					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
+																						, acctID = rc.Filter.getAcctID() ) />
+					<cfset rc.Filter.setUserID(newUserID) />
+					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 				</cfif>
 			<cfelse>
 				<cfset rc.message.addError('Please correct the fields in red below.')>

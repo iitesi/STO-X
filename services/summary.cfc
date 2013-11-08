@@ -212,9 +212,11 @@
 		<cfargument name="searchID" required="false" default="">
 		<cfargument name="password" required="false" default="">
 		<cfargument name="passwordConfirm" required="false" default="">
+		<cfargument name="action" required="false" default="">
 
 		<cfset local.error = {}>
 
+		<!--- Profile-related form fields --->
 		<cfif arguments.Traveler.getFirstName() EQ ''>
 			<cfset local.error.fullname = ''>
 		</cfif>
@@ -283,11 +285,6 @@
 				<cfset local.error.passwordConfirm = '' />
 			</cfif>
 		</cfif>
-		<cfif NOT arguments.Traveler.getBookingDetail().getAirNeeded()
-			AND NOT arguments.Traveler.getBookingDetail().getHotelNeeded()
-			AND NOT arguments.Traveler.getBookingDetail().getCarNeeded()>
-			<cfset local.error.travelServices = ''>
-		</cfif>
 
 		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU">
 			<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
@@ -321,128 +318,137 @@
 			</cfif>
 		</cfloop>
 
-		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
+		<!--- Form fields not needed for profile creation --->
+		<cfif arguments.action NEQ "CREATE PROFILE">
+			<cfif NOT arguments.Traveler.getBookingDetail().getAirNeeded()
+				AND NOT arguments.Traveler.getBookingDetail().getHotelNeeded()
+				AND NOT arguments.Traveler.getBookingDetail().getCarNeeded()>
+				<cfset local.error.travelServices = ''>
+			</cfif>
 
-			<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0>
-				<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
-					OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
-					<cfset local.error.airCCNumber = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirCCMonth() EQ ''
-					OR arguments.Traveler.getBookingDetail().getAirCCYear() EQ ''>
-					<cfset local.error.airCCExpiration = ''>
-				<cfelse>
-					<cfset local.airCCExpiration = createDate(arguments.Traveler.getBookingDetail().getAirCCYear(), arguments.Traveler.getBookingDetail().getAirCCMonth(), 1)>
-					<cfset local.airCCExpiration = createDate(year(local.airCCExpiration), month(local.airCCExpiration), daysInMonth(local.airCCExpiration))>
-					<cfif local.airCCExpiration LTE now()>
+			<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
+
+				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
+					<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
+						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
+						<cfset local.error.airCCNumber = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirCCMonth() EQ ''
+						OR arguments.Traveler.getBookingDetail().getAirCCYear() EQ ''>
 						<cfset local.error.airCCExpiration = ''>
+					<cfelse>
+						<cfset local.airCCExpiration = createDate(arguments.Traveler.getBookingDetail().getAirCCYear(), arguments.Traveler.getBookingDetail().getAirCCMonth(), 1)>
+						<cfset local.airCCExpiration = createDate(year(local.airCCExpiration), month(local.airCCExpiration), daysInMonth(local.airCCExpiration))>
+						<cfif local.airCCExpiration LTE now()>
+							<cfset local.error.airCCExpiration = ''>
+						</cfif>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirCCCVV() EQ ''
+						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCCVV())>
+						<cfset local.error.airCCCVV = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirBillingName() EQ ''>
+						<cfset local.error.airBillingName = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirBillingAddress() EQ ''>
+						<cfset local.error.airBillingAddress = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirBillingCity() EQ ''>
+						<cfset local.error.airBillingCity = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''
+						OR arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
+						<cfset local.error.airBillingState = ''>
 					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirCCCVV() EQ ''
-					OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCCVV())>
-					<cfset local.error.airCCCVV = ''>
+
+				<!--- To Do: Pass variables in --->
+				<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
+				<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total />
+				<!--- To Do: Pass variables in --->
+
+				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
+				<cfif arguments.Policy.Policy_HotelNotBooking EQ 1
+					AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
+					AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
+					AND arguments.Filter.getAirType() EQ 'RT'>
+					<cfset local.error.hotelNotBooked = ''>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingName() EQ ''>
-					<cfset local.error.airBillingName = ''>
+				<cfif NOT inPolicy
+					AND arguments.Policy.Policy_AirReasonCode EQ 1>
+					<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>
+						<cfset local.error.airReasonCode = ''>
+					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingAddress() EQ ''>
-					<cfset local.error.airBillingAddress = ''>
+				<cfif arguments.Air.Total GT lowestFare
+					AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
+					AND arguments.Policy.Policy_AirLostSavings EQ 1>
+					<cfif arguments.Traveler.getBookingDetail().getLostSavings() EQ ''>
+						<cfset local.error.lostSavings = ''>
+					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingCity() EQ ''>
-					<cfset local.error.airBillingCity = ''>
+				<cfif arguments.acctID EQ 235>
+					<cfif arguments.Traveler.getBookingDetail().getUDID113() EQ ''>
+						<cfset local.error.udid113 = ''>
+					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''
-					OR arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
-					<cfset local.error.airBillingState = ''>
-				</cfif>
+
 			</cfif>
 
-			<!--- To Do: Pass variables in --->
-			<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
-			<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total />
-			<!--- To Do: Pass variables in --->
+			<cfif isObject(arguments.Hotel)
+				AND arguments.Traveler.getBookingDetail().getHotelNeeded()>
 
-			<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
-			<cfif arguments.Policy.Policy_HotelNotBooking EQ 1
-				AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
-				AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
-				AND arguments.Filter.getAirType() EQ 'RT'>
-				<cfset local.error.hotelNotBooked = ''>
-			</cfif>
-			<cfif NOT inPolicy
-				AND arguments.Policy.Policy_AirReasonCode EQ 1>
-				<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>
-					<cfset local.error.airReasonCode = ''>
-				</cfif>
-			</cfif>
-			<cfif arguments.Air.Total GT lowestFare
-				AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
-				AND arguments.Policy.Policy_AirLostSavings EQ 1>
-				<cfif arguments.Traveler.getBookingDetail().getLostSavings() EQ ''>
-					<cfset local.error.lostSavings = ''>
-				</cfif>
-			</cfif>
-			<cfif arguments.acctID EQ 235>
-				<cfif arguments.Traveler.getBookingDetail().getUDID113() EQ ''>
-					<cfset local.error.udid113 = ''>
-				</cfif>
-			</cfif>
-
-		</cfif>
-
-		<cfif isObject(arguments.Hotel)
-			AND arguments.Traveler.getBookingDetail().getHotelNeeded()>
-
-			<cfif arguments.Traveler.getBookingDetail().getHotelFOPID() EQ 0>
-				<cfif Len(arguments.Traveler.getBookingDetail().getHotelCCNumber()) LT 15>
-					<cfset local.error.hotelCCNumber = ''>
-				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getHotelCCMonth() EQ ''
-					OR arguments.Traveler.getBookingDetail().getHotelCCYear() EQ ''>
-					<cfset local.error.hotelCCExpiration = ''>
-				<cfelse>
-					<cfset local.hotelCCExpiration = createDate(arguments.Traveler.getBookingDetail().getHotelCCYear(), arguments.Traveler.getBookingDetail().getHotelCCMonth(), 1)>
-					<cfset local.hotelCCExpiration = createDate(year(local.hotelCCExpiration), month(local.hotelCCExpiration), daysInMonth(local.hotelCCExpiration))>
-					<cfif local.hotelCCExpiration LTE now()>
+				<cfif arguments.Traveler.getBookingDetail().getHotelFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
+					<cfif Len(arguments.Traveler.getBookingDetail().getHotelCCNumber()) LT 15>
+						<cfset local.error.hotelCCNumber = ''>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getHotelCCMonth() EQ ''
+						OR arguments.Traveler.getBookingDetail().getHotelCCYear() EQ ''>
 						<cfset local.error.hotelCCExpiration = ''>
+					<cfelse>
+						<cfset local.hotelCCExpiration = createDate(arguments.Traveler.getBookingDetail().getHotelCCYear(), arguments.Traveler.getBookingDetail().getHotelCCMonth(), 1)>
+						<cfset local.hotelCCExpiration = createDate(year(local.hotelCCExpiration), month(local.hotelCCExpiration), daysInMonth(local.hotelCCExpiration))>
+						<cfif local.hotelCCExpiration LTE now()>
+							<cfset local.error.hotelCCExpiration = ''>
+						</cfif>
+					</cfif>
+					<cfif arguments.Traveler.getBookingDetail().getHotelBillingName() EQ ''>
+						<cfset local.error.hotelBillingName = ''>
 					</cfif>
 				</cfif>
-				<cfif arguments.Traveler.getBookingDetail().getHotelBillingName() EQ ''>
-					<cfset local.error.hotelBillingName = ''>
+
+				<cfif NOT arguments.Hotel.getRooms()[1].getIsInPolicy()
+					AND arguments.Policy.Policy_HotelReasonCode>
+					<cfif arguments.Traveler.getBookingDetail().getHotelReasonCode() EQ ''>
+						<cfset local.error.hotelReasonCode = ''>
+					</cfif>
 				</cfif>
+
+				<cfif arguments.acctID EQ 235>
+					<cfif arguments.Traveler.getBookingDetail().getUDID112() EQ ''>
+						<cfset local.error.udid112 = ''>
+					</cfif>
+				</cfif>
+
 			</cfif>
 
-			<cfif NOT arguments.Hotel.getRooms()[1].getIsInPolicy()
-				AND arguments.Policy.Policy_HotelReasonCode>
-				<cfif arguments.Traveler.getBookingDetail().getHotelReasonCode() EQ ''>
-					<cfset local.error.hotelReasonCode = ''>
+			<cfif isObject(arguments.Vehicle)
+				AND arguments.Traveler.getBookingDetail().getCarNeeded()>
+
+				<cfif NOT arguments.Vehicle.getPolicy()
+					AND arguments.Policy.Policy_CarReasonCode EQ 1>
+					<cfif arguments.Traveler.getBookingDetail().getCarReasonCode() EQ ''>
+						<cfset local.error.carReasonCode = ''>
+					</cfif>
 				</cfif>
-			</cfif>
 
-			<cfif arguments.acctID EQ 235>
-				<cfif arguments.Traveler.getBookingDetail().getUDID112() EQ ''>
-					<cfset local.error.udid112 = ''>
+				<cfif arguments.acctID EQ 235>
+					<cfif arguments.Traveler.getBookingDetail().getUDID111() EQ ''>
+						<cfset local.error.udid111 = ''>
+					</cfif>
 				</cfif>
+
 			</cfif>
-
-		</cfif>
-
-		<cfif isObject(arguments.Vehicle)
-			AND arguments.Traveler.getBookingDetail().getCarNeeded()>
-
-			<cfif NOT arguments.Vehicle.getPolicy()
-				AND arguments.Policy.Policy_CarReasonCode EQ 1>
-				<cfif arguments.Traveler.getBookingDetail().getCarReasonCode() EQ ''>
-					<cfset local.error.carReasonCode = ''>
-				</cfif>
-			</cfif>
-
-			<cfif arguments.acctID EQ 235>
-				<cfif arguments.Traveler.getBookingDetail().getUDID111() EQ ''>
-					<cfset local.error.udid111 = ''>
-				</cfif>
-			</cfif>
-
 		</cfif>
 
 		<cfreturn error/>

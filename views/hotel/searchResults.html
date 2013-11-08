@@ -37,14 +37,18 @@
         <div class="navbar filterby">
             <div class="navbar-inner">
                 <ul class="nav">
-                    <li ng-class="{'active': filterItems.vendorsFilterApplied }">
-                        <a href="javascript: void(0)" ng-click="filterItems.showVendorFilter=!filterItems.showVendorFilter;filterItems.showAmenitiesFilter=false;filterItems.showRatingsFilter=false"  >Hotel Chain <i class="icon-caret-down"></i></a>
+                    <li ng-class="{'active': filtersApplied.vendorName }">
+                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendorName' )" >Hotel Name <i class="icon-caret-down"></i></a>
                     </li>
-                    <li ng-class="{'active': filterItems.amenitiesFilterApplied }">
-                        <a href="javascript: void(0)" ng-click="filterItems.showAmenitiesFilter=!filterItems.showAmenitiesFilter;filterItems.showVendorFilter=false;filterItems.showRatingsFilter=false;" >Amenities <i class="icon-caret-down"></i></a>
+                    <li ng-class="{'active': filtersApplied.vendors }">
+                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendors' )" >Hotel Chain <i class="icon-caret-down"></i></a>
                     </li>
-                    <li>
-                        <a href="javascript: void(0)" ng-click="filterItems.showRatingsFilter=!filterItems.showRatingsFilter;filterItems.showAmenitiesFilter=false;filterItems.showVendorFilter=false;">Rating <i class="icon-caret-down"></i></a>
+
+                    <li ng-class="{'active': filtersApplied.amenities }">
+                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'amenities' )" >Amenities <i class="icon-caret-down"></i></a>
+                    </li>
+                    <li ng-class="{'active': filtersApplied.rating }">
+                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="icon-caret-down"></i></a>
                     </li>
 
                     <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly">In Policy</a></li>
@@ -56,31 +60,44 @@
             <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties
         </div>
 
-        <div class="well" ng-show="filterItems.showVendorFilter">
+        <div class="well" ng-show="filtersVisible.vendors">
             <div class="row">
                 <div class="span3" ng-repeat="vendor in filterItems.vendors">
                     <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</label>
                  </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filterItems.showVendorFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.vendor=false" title="Close filters"><i class="icon-remove"></i></button>
                 </span>
              </div>
         </div>
 
-        <div class="well" ng-show="filterItems.showAmenitiesFilter">
+        <div class="well" ng-show="filtersVisible.vendorName">
+            <div class="row">
+                <div class="span4">
+                    <form class="form-inline">
+                        <input type="text" ng-model="propertyNameFilterValue"> <button ng-click="filterHotels()" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+                <span class="pull-right">
+                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="icon-remove"></i></button>
+                </span>
+             </div>
+        </div>
+
+        <div class="well" ng-show="filtersVisible.amenities">
             <div class="row">
                 <div class="span3" ng-repeat="amenity in filterItems.amenities">
                     <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
                 </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filterItems.showAmenitiesFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.amenities=false" title="Close filters"><i class="icon-remove"></i></button>
                 </span>
             </div>
         </div>
         
-        <div class="well" ng-show="filterItems.showRatingsFilter">
+        <div class="well" ng-show="filtersVisible.rating">
             <div class="row">
                 <div class="span9" ng-repeat="item in filterItems.ratings">
                     <label><input type="checkbox" value="{{item.rating}}" ng-model="item.checked">
@@ -95,7 +112,7 @@
                 </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filterItems.showRatingsFilter=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.ratings=false" title="Close filters"><i class="icon-remove"></i></button>
                 </span>
             </div>
         </div>

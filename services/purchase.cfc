@@ -181,14 +181,14 @@
 
 							<cfset responseMessage = queueRecordResponse>
 
-							<!--- The whole process completed successfully --->
-							<cfif NOT queueRecordResponse.error>
-								<cfset processFileFinishing = false>
 							<!--- Let the process start over again --->
-							<cfelseif queueRecordResponse.simultaneous>
+							<cfif queueRecordResponse.simultaneous>
 								<cfset processFileFinishing = true>
 							<!--- Throw purchase error --->
 							<cfelseif queueRecordResponse.error>
+								<cfset processFileFinishing = false>
+							<!--- The whole process completed successfully --->
+							<cfelse>
 								<cfset processFileFinishing = false>
 							</cfif>
 				

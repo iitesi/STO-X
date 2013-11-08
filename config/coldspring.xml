@@ -169,6 +169,15 @@
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
 
+	<bean id="CouldYouService" class="booking.services.CouldYouService">
+        <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+        <constructor-arg name="CouldYouManager"><ref bean="CouldYouManager" /></constructor-arg>
+	</bean>
+
+	<bean id="CouldYouManager" class="booking.services.CouldYouManager">
+        <constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
 	<bean id="AirParse" class="booking.services.AirParse">
 		<constructor-arg name="UAPI"><ref bean="UAPI" /></constructor-arg>
 	</bean>

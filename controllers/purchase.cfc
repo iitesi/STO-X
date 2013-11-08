@@ -34,9 +34,12 @@
 				<cfset local.sort2 = ''>
 				<cfset local.sort3 = ''>
 				<cfset local.sort4 = ''>
+				<cfset local.udids = {}>
 				<cfloop array="#Traveler.getOrgUnit()#" index="local.orgUnitIndex" item="local.orgUnit">
 					<cfif orgUnit.getOUType() EQ 'sort'>
 						<cfset local['sort#orgUnit.getOUPosition()#'] = orgUnit.getValueReport()>
+					<cfelseif orgUnit.getOUType() EQ 'udid'>
+						<cfset local.udids[orgUnit.getOUPosition()] = orgUnit.getValueReport()>
 					</cfif>
 				</cfloop>
 				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
@@ -134,7 +137,11 @@
 						<cfset local.cardCVV = ''>
 						<cfset local.cardExpiration = ''>
 						<cfset local.cardType = 'VI'>
-						<cfif Traveler.getBookingDetail().getAirFOPID() NEQ 0>
+						<cfif Traveler.getBookingDetail().getAirFOPID() EQ 0 OR Traveler.getBookingDetail().getNewAirCC() EQ 1>
+							<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
+							<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
+							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
+						<cfelse>
 							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 								<cfif (Payment.getBTAID() NEQ ''
 									AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
@@ -149,10 +156,6 @@
 									<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
 								</cfif>
 							</cfloop>
-						<cfelse>
-							<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
-							<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
-							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
 						</cfif>
 						<cfif LEFT(cardNumber, 1) EQ 5>
 							<cfset cardType = 'CA'>
@@ -175,6 +178,7 @@
 																										, Air = Air
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, cardNumber = cardNumber
 																										, cardType = cardType
 																										, cardExpiration = cardExpiration
@@ -230,6 +234,7 @@
 																										, Hotel = Hotel
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, providerLocatorCode = providerLocatorCode
 																										, universalLocatorCode = universalLocatorCode
 																										, version = version
@@ -313,6 +318,7 @@
 																										, carrier = carrier
 																										, flightNumber = flightNumber
 																										, statmentInformation = statmentInformation
+																										, udids = udids
 																										, providerLocatorCode = providerLocatorCode
 																										, universalLocatorCode = universalLocatorCode
 																										, version = version
@@ -386,8 +392,8 @@
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )>
+						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
+																						, acctID = rc.Filter.getAcctID() )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler

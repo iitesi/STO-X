@@ -9,6 +9,15 @@
 
 	<target name="init">
 		<property name="application.name" value="sto" />
+        <!-- log the results of this build to disk -->
+        <tstamp>
+            <format property="timestamp" pattern="yyyy-MM-dd_HH-mm-ss"/>
+        </tstamp>
+        <property name="build.log.dir" location="c:/_deploylogs"/>
+        <mkdir dir="${build.log.dir}"/>
+        <property name="build.log.filename" value="build_${ant.project.name}_${timestamp}.log"/>
+        <record name="${build.log.dir}/${build.log.filename}" loglevel="verbose" append="false"/>
+        <echo message="${ant.project.name} deploy logged to ${build.log.filename}"/>
 	</target>
 
      <target name="deploy" description="Create a release of the application" depends="init,update-local-repo,build-tag-name" >
@@ -142,7 +151,5 @@
 
  	<echo>TODO: Reinitializing application(s)</echo>
   	<!--<get src="<APPLICATION URL HERE>" dest="<FILE SYSTEM PATH TO FILE TO USE FOR RESULT>" />-->
-  
-</target>
-
+  </target>
 </project>

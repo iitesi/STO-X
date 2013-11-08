@@ -37,7 +37,7 @@
 
 			<td colspan="2">
 
-				#(rc.Air.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#">OUT OF POLICY</span>&nbsp;&nbsp;&nbsp;')#
+				#(rc.Air.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
 
 				<!---
 				If they are out of policy
@@ -46,7 +46,6 @@
 				<cfif rc.showAll
 					OR (NOT inPolicy
 					AND rc.Policy.Policy_AirReasonCode EQ 1)>
-					*&nbsp;&nbsp;
 					<select name="airReasonCode" id="airReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
 					<option value="">Select Reason for Booking Out of Policy</option>
 					<cfloop query="rc.qOutOfPolicy">
@@ -65,7 +64,7 @@
 					OR (rc.Air.Total GT lowestFare
 					AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 					AND rc.Policy.Policy_AirLostSavings EQ 1)>
-					*&nbsp;&nbsp;
+					<!--- *&nbsp;&nbsp; --->
 					<div class="#(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
 						<select name="lostSavings" id="lostSavings" class="input-xlarge">
 						<option value="">Select Reason for Not Booking the Lowest Fare</option>
@@ -88,7 +87,7 @@
 				<cfif rc.showAll
 					OR rc.Filter.getAcctID() EQ 235>
 					<div class="#(structKeyExists(rc.errors, 'udid113') ? 'error' : '')#">
-						*&nbsp;&nbsp;
+						<span style="float:left; width:114px;">STATE OF TEXAS *</span>
 						<select name="udid113" id="udid113" class="input-xlarge">
 						<option value="">Select an Exception Code</option>
 						<cfloop query="rc.qTXExceptionCodes">
@@ -102,7 +101,7 @@
 
 			</td>
 
-		<tr>
+		</tr>
 		<tr>
 
 			<td width="50"></td>
@@ -118,8 +117,9 @@
 			<td width="630">
 				<cfset seatFieldNames = ''>
 				<cfset totalCount = 0>
-				<table width="600" padding="0" align="center">
+				<table width="600" padding="0" align="center" border="0">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
+					<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
@@ -127,7 +127,7 @@
 						<tr>
 							<td>
 								<cfif count EQ 1>
-									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>
+									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
 								</cfif>
 							</td>
 
@@ -195,7 +195,7 @@
 				</span>
 
 			</td>
-		<tr>
+		</tr>
 
 		<tr>
 			<td colspan="4"><br></td>
