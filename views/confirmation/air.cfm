@@ -38,15 +38,15 @@
 									<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 										<cfset count++>
 										<tr>
-											<td width="110">
+											<td width="120">
 												<cfif count EQ 1>
-													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
+													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>&nbsp;#tripLength#
 												</cfif>
 											</td>
 											<td width="80" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 												#segment.Carrier# #segment.FlightNumber#
 											</td>
-											<td width="110" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
+											<td width="100" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 												#segment.Origin# - #segment.Destination#
 											</td>
 											<td width="100">
