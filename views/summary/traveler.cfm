@@ -6,7 +6,10 @@
 		<label class="control-label" for="userID">Change Traveler&nbsp;&nbsp;</label>		
 		<div class="controls">
 			<select name="userID" id="userID" class="input-xlarge">
-			<option value="0">GUEST TRAVELER</option>
+			<!--- Do not allow Georgetown to book on behalf of a guest traveler --->
+			<cfif structKeyExists(rc, "acctID") AND rc.acctID NEQ 303>
+				<option value="0">GUEST TRAVELER</option>
+			</cfif>			
 			<cfloop query="rc.allTravelers">
 				<option value="#rc.allTravelers.User_ID#">#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#</option>
 			</cfloop>

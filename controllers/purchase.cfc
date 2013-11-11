@@ -48,7 +48,15 @@
 				<cfif rc.Filter.getAcctID() EQ 255>
 					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
 				</cfif>
-				
+
+				<!--- If new air or hotel credit card entered, make airFOPID or hotelFOPID EQ 0. --->
+				<cfif Traveler.getBookingDetail().getNewAirCC() EQ 1>
+					<cfset Traveler.getBookingDetail().setAirFOPID(0) />
+				</cfif>
+				<cfif Traveler.getBookingDetail().getNewHotelCC() EQ 1>
+					<cfset Traveler.getBookingDetail().setHotelFOPID(0) />
+				</cfif>
+
 				<!--- Determine if pre trip approval is needed. --->
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
 																								, Filter = rc.Filter
