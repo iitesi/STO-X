@@ -357,7 +357,7 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
-
+					<cfset sleep(30000)> <!--- pause for 30 seconds --->
 					<cfset fw.getBeanFactory().getBean('Purchase').fileFinishing( targetBranch = rc.Account.sBranch
 																				, hostToken = hostToken
 																				, pccBooking = rc.Account.PCC_Booking
