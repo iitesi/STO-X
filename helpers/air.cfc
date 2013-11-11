@@ -9,13 +9,14 @@
 		<cfargument name="departureTime" required="yes" />
 		<cfargument name="arrivalTime" required="yes" />
 		<cfset local.tripLength = "">
-		<cfif dateDiff("d", arguments.DepartureTime, arguments.ArrivalTime) GT 0>
+		<cfif dateCompare(arguments.ArrivalTime, arguments.DepartureTime, 'd') GT 0>
 			<cfset day = "day">
-			<cfif dateDiff("d", arguments.DepartureTime, arguments.ArrivalTime) GT 1>
+			<cfif dateCompare(arguments.ArrivalTime, arguments.DepartureTime, 'd') GT 1>
 				<cfset day = "days">
 			</cfif>
-			<cfset local.tripLength = "&nbsp; <span class='tripLength'>+#dateDiff('d', arguments.DepartureTime, arguments.ArrivalTime)# #day#</span>">
+			<cfset local.tripLength = "&nbsp; <span class='tripLength'>+#dateCompare(arguments.ArrivalTime,arguments.DepartureTime, 'd')# #day#</span>">
 		</cfif>
+
 		<cfreturn local.tripLength />
 	</cffunction>
 </cfcomponent>
