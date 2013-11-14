@@ -10,6 +10,7 @@
 		AND isObject(rc.Air.PricingSolution)>
 		<cfset rc.Air.Total = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 'USD', '')>
 		<cfset rc.Air.Base = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), 'USD', '')>
+		<cfset rc.Air.ApproximateBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getApproximateBasePrice(), 'USD', '')>
 		<cfset rc.Air.Taxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), 'USD', '')>
 	</cfif>
 	<div class="carrow" style="padding:15px; float:right;">
@@ -28,7 +29,9 @@
 
 			<div class="row minlineheight" id="airTotalRow">
 				<div class="span1">Flight</div>
-				<div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div>
+				<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
+				<div class="span1">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
+				<!--- <div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div> --->
 				<div class="span2">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
 				<div class="span1" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
 			</div>
