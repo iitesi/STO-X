@@ -3,8 +3,8 @@
 <cfset carrierList = "">
 <cfset thisSelectedLeg = "">
 
-<cfsavecontent variable="sBadge" trim="#true#">
 
+	<cfsavecontent variable="sBadge" trim="#true#">
 			<!--- create ribbon
 			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 			--->
@@ -80,12 +80,16 @@
 			<tr>
 				<td colspan="4">&nbsp;</td>
 			</tr>
-			<cfloop collection="#stTrip.Groups#" item="Group" >
+			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfset stGroup = stTrip.Groups[Group]>
+
+<cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
+<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)>
+
 				<tr>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Origin].airport#">
-						<strong>#stGroup.Origin#</strong>
+						<strong>#stGroup.Origin# #group#</strong>
 					</td>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Destination].airport#">
@@ -245,6 +249,15 @@
 
 <!--- page break not working in Chrome: <cfif nCount MOD 5 EQ 0>page</cfif> --->
 
+<!--- CFDUMP: Debugging --->
+<cfdump var="#epoch#" label="Dump ( epoch )" abort="true" format="html">
+
+
+<cfloop collection="epoch" item="epochItem" index="epochIndex">
+
+</cfloop>
+
+
 <cfoutput>
-	<div id="flight#nTripKey#" class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" data-takeoff1="1" data-landing1="2" class="pull-left">#sBadge#</div>
 </cfoutput>

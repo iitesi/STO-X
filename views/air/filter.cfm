@@ -1,16 +1,3 @@
-<!---
-AIR CODES
------------------------
-1 = refundable
-0 = non refundable
------------------------
-Y = economy
-C = business
-F = first
------------------------
-(X) = not selected
- --->
-
 <cfsilent>
 	<cfparam name="rc.filter" default="">
 	<cfparam name="rc.bRefundable" default="0">
@@ -21,7 +8,6 @@ F = first
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
-
 
 <!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
@@ -178,10 +164,92 @@ F = first
 							</div>
 						</div>
 					</div> <!--- row --->
-					<br><br>
-					<span class="pull-right">
-						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
-					</span>
+					<br>
+
+ <script>
+ // Resources
+ // http://jsfiddle.net/jrweinb/MQ6VT/
+ // http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
+
+ // http://marcneuwirth.com/blog/2010/02/21/using-a-jquery-ui-slider-to-select-a-time-range/
+ // http://marcneuwirth.com/blog/2011/05/22/revisiting-the-jquery-ui-time-slider/
+
+
+ // http://stackoverflow.com/questions/1425913/show-hide-div-based-on-value-of-jquery-ui-slider
+
+ // http://stackoverflow.com/questions/10213678/jquery-ui-slider-ajax-result
+
+
+// using data-attributes - maybe give each badge a data-takeoff data-landing attribute?
+// http://stackoverflow.com/questions/15582349/modify-this-function-to-show-hide-by-data-attributes-instead-of-by-class
+
+$(function() {
+	$( "#slider-range1" ).slider({
+		range: true,
+		min: 0,
+		max: 1439,
+		step: 5,
+		slide: function( event, ui ) {
+			var hours1 = Math.floor(ui.value / 60);
+			var minutes1 = ui.value - (hours1 * 60);
+			if(hours1.length == 1) hours1 = '0' + hours1;
+			if(minutes1.length == 1) minutes1 = '0' + minutes1;
+
+				$( "#amount1" ).html( "Wed " + hours1+':'+minutes1 );
+			}
+	});
+
+$( "#slider-range2" ).slider({
+		range: true,
+		min: 0,
+		max: 1435,
+		step: 5,
+		slide: function( event, ui ) {
+			var hours2 = Math.floor(ui.value / 60);
+			var minutes2 = ui.value - (hours2 * 60);
+			if(hours2.length == 1) hours2 = '0' + hours2;
+			if(minutes2.length == 1) minutes2 = '0' + minutes2;
+
+				$( "#amount2" ).html( "Sat " + hours2+':'+minutes2 );
+			}
+	});
+
+
+	$( "#amount1" ).html( "Wed " + $( "#slider-range" ).slider( "values", 0 ) + " - Thur" + $( "#slider-range" ).slider( "values", 1 ) );
+	$( "#amount2" ).html( "Wed " + $( "#slider-range" ).slider( "values", 0 ) + " - Thur" + $( "#slider-range" ).slider( "values", 1 ) );
+});
+</script>
+
+
+<cfoutput>
+	<b>Times</b>
+<div class="row">
+
+					<div id="airlines" class="span3">
+
+						<p>
+							<label for="amount1">Take-off #application.stAirports[rc.filter.getArrivalCity()].city#</label>
+							<span id="amount1"></span>
+						</p>
+						<div id="slider-range1"></div>
+					</div>
+
+					<div id="airlines" class="span3 offset1">
+						another slider goes here
+
+					</div>
+
+
+					</div>
+</div>
+</cfoutput>
+
+
+					<div>
+						<span class="pull-right">
+							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+						</span>
+				</div>
 				</div> <!--- well filterselection --->
 			</div>
 		</div><!--- // class=sixteen columns --->
