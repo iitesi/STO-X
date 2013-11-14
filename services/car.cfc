@@ -206,12 +206,12 @@
 				</cfif>
 
 				<cfif arguments.nCouldYou NEQ 0>
-					<cfif structKeyExists(cfthread.corporateRates.stCars, local.sCarType)
-					AND structKeyExists(cfthread.corporateRates.stCars[local.sCarType], local.sCarChain)>
-						<cfset local.CarRate = cfthread.corporateRates.stCars[local.sCarType][sCarChain].EstimatedTotalAmount>
-					<cfelseif structKeyExists(cfthread.publicRates.stCars, local.sCarType)
-					AND structKeyExists(cfthread.publicRates.stCars[local.sCarType], local.sCarChain)>
-						<cfset local.CarRate = cfthread.publicRates.stCars[local.sCarType][local.sCarChain].EstimatedTotalAmount>
+					<cfif structKeyExists(cfthread.corporateRates.stCars, arguments.sCarType)
+					AND structKeyExists(cfthread.corporateRates.stCars[arguments.sCarType], arguments.sCarChain)>
+						<cfset local.CarRate = cfthread.corporateRates.stCars[arguments.sCarType][arguments.sCarChain].EstimatedTotalAmount>
+					<cfelseif structKeyExists(cfthread.publicRates.stCars, arguments.sCarType)
+					AND structKeyExists(cfthread.publicRates.stCars[arguments.sCarType], arguments.sCarChain)>
+						<cfset local.CarRate = cfthread.publicRates.stCars[arguments.sCarType][arguments.sCarChain].EstimatedTotalAmount>
 					</cfif>
 				</cfif>
 			</cfif>
