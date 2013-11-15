@@ -1,6 +1,9 @@
 <cfsilent>
 	<cfparam name="rc.filter" default="">
 	<cfparam name="rc.bRefundable" default="0">
+
+
+
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
 			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
@@ -165,23 +168,29 @@
 						</div>
 					</div> <!--- row --->
 					<br>
-
- <script>
- // Resources
- // http://jsfiddle.net/jrweinb/MQ6VT/
- // http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
-
- // http://marcneuwirth.com/blog/2010/02/21/using-a-jquery-ui-slider-to-select-a-time-range/
- // http://marcneuwirth.com/blog/2011/05/22/revisiting-the-jquery-ui-time-slider/
-
-
- // http://stackoverflow.com/questions/1425913/show-hide-div-based-on-value-of-jquery-ui-slider
-
- // http://stackoverflow.com/questions/10213678/jquery-ui-slider-ajax-result
+					<div>
+						<span class="pull-right">
+							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+						</span>
+				</div>
+				</div> <!--- well filterselection --->
+			</div>
+		</div><!--- // class=sixteen columns --->
+	</div><!--- // class=filter --->
 
 
-// using data-attributes - maybe give each badge a data-takeoff data-landing attribute?
-// http://stackoverflow.com/questions/15582349/modify-this-function-to-show-hide-by-data-attributes-instead-of-by-class
+<br><br><br><br><br><br>
+
+<script>
+		// Resources
+		// http://jsfiddle.net/jrweinb/MQ6VT/
+		// http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
+		// http://marcneuwirth.com/blog/2010/02/21/using-a-jquery-ui-slider-to-select-a-time-range/
+		// http://marcneuwirth.com/blog/2011/05/22/revisiting-the-jquery-ui-time-slider/
+		// http://stackoverflow.com/questions/1425913/show-hide-div-based-on-value-of-jquery-ui-slider
+		// http://stackoverflow.com/questions/10213678/jquery-ui-slider-ajax-result
+		// using data-attributes - maybe give each badge a data-takeoff data-landing attribute?
+		// http://stackoverflow.com/questions/15582349/modify-this-function-to-show-hide-by-data-attributes-instead-of-by-class
 
 $(function() {
 	$( "#slider-range1" ).slider({
@@ -244,16 +253,7 @@ $( "#slider-range2" ).slider({
 </div>
 </cfoutput>
 
-
-					<div>
-						<span class="pull-right">
-							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
-						</span>
-				</div>
-				</div> <!--- well filterselection --->
-			</div>
-		</div><!--- // class=sixteen columns --->
-	</div><!--- // class=filter --->
+<br>
 
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

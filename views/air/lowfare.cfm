@@ -11,6 +11,8 @@
 	</cfif>
 </cfsilent>
 
+<cfset epochTotal = []>
+
 <cfoutput>
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
@@ -145,3 +147,11 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
 <cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
 --->
+
+
+
+
+<cfset epochTotal = getBeanFactory().getBean('underscore').uniq(epochTotal)>
+<cfdump var="#epochTotal#" label="EpochTotal"/>
+<cfdump var="#getBeanFactory().getBean('underscore').max(epochTotal)#" label="EpochTotal Max" abort="false"/>
+<cfdump var="#getBeanFactory().getBean('underscore').min(epochTotal)#" label="EpochTotal Min" abort="true"/>

@@ -4,9 +4,12 @@
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
 
-    <bean id="AuthorizationService" class="com.shortstravel.security.AuthorizationService">
-        <constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
-    </bean>
+	<!-- setup underscore library - http://russplaysguitar.github.io/UnderscoreCF -->
+	<bean id="underscore" class="com.underscore.underscore" />
+
+	<bean id="AuthorizationService" class="com.shortstravel.security.AuthorizationService">
+		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+	</bean>
 
 	<bean id="UAPI" class="com.travelport.uapi">
 		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
@@ -213,8 +216,8 @@
 
 	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
 
-    <bean id="BugLogService" class="com.bugloghq.bugLogService">
-        <constructor-arg name="bugLogListener"><value>http://venus/buglog/listeners/bugLogLIstenerWS.cfc?wsdl</value></constructor-arg>
-        <constructor-arg name="apikey"><value>2CF20630-DD24-491F-BA44314842183AFC</value></constructor-arg>
-    </bean>
+	<bean id="BugLogService" class="com.bugloghq.bugLogService">
+		<constructor-arg name="bugLogListener"><value>http://venus/buglog/listeners/bugLogLIstenerWS.cfc?wsdl</value></constructor-arg>
+		<constructor-arg name="apikey"><value>2CF20630-DD24-491F-BA44314842183AFC</value></constructor-arg>
+	</bean>
 </beans>

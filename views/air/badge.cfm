@@ -82,9 +82,14 @@
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfset stGroup = stTrip.Groups[Group]>
+				<!--- set epoch time for each takeoff and landing time --->
+				<cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
+				<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)>
 
-<cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
-<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)>
+				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime))>
+				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime))>
+
+
 
 				<tr>
 					<td>&nbsp;</td>
@@ -245,19 +250,14 @@
 	</cfoutput>
 </cfsavecontent>
 
-<!--- display badge --->
+<!--- DISPLAY BADGE --->
 
-<!--- page break not working in Chrome: <cfif nCount MOD 5 EQ 0>page</cfif> --->
-
-<!--- CFDUMP: Debugging --->
-<cfdump var="#epoch#" label="Dump ( epoch )" abort="true" format="html">
-
-
-<cfloop collection="epoch" item="epochItem" index="epochIndex">
-
+<!--- set unique data-attributes for each badge for filtering by time --->
+<cfset dataString = "">
+<cfloop collection="#epoch#" item="epochItem" index="epochIndex">
+	<cfset dataString = listAppend(dataString, epochIndex & '="#epochItem#"', ' ')>
 </cfloop>
 
-
 <cfoutput>
-	<div id="flight#nTripKey#" data-takeoff1="1" data-landing1="2" class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" #dataString# class="pull-left">#sBadge#</div>
 </cfoutput>

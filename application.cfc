@@ -171,7 +171,7 @@
 								} >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) />
+			 <!--- <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) /> --->
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
