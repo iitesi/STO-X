@@ -22,13 +22,15 @@
 		<cfset local.assetURL = getAssetURL()>
 
 		<cfset local.ccAddress = "">
-		<cfif len(arguments.cc_address)>
+		<!--- Adding a CF email validity check. If this continues to generate errors, will change to regex. --->
+		<cfif len(arguments.cc_address) AND isValid("email", arguments.cc_address)>
 			<cfset local.ccAddress = arguments.cc_address>
 		</cfif>
 
-		<cfset local.toAddress = arguments.to_address>
-		<cfif NOT Len(local.toAddress)>
+		<cfif len(arguments.email_Address) AND isValid("email", arguments.email_Address)>
 			<cfset local.toAddress = arguments.email_Address>
+		<cfelse>
+			<cfset local.toAddress = arguments.to_address>
 		</cfif>
 
 		<cfset local.subject = arguments.Email_Subject>
