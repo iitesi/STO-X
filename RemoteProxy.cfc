@@ -298,8 +298,7 @@
 			<cfcatch type="any">
 				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
 				<cfif getBean( 'EnvironmentService' ).getEnableBugLog()>
-					 <cfset getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) />
-					 <cfset super.onError( arguments.exception, arguments.eventName )>
+					 <cfset getBean('BugLogService').notifyService( message=cfcatch.Message, exception=local.errorException, severityCode='Fatal' ) />
 				<cfelse>
 					 <cfset super.onError( arguments.exception, arguments.eventName )>
 				 </cfif>
