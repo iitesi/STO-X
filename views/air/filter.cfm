@@ -203,8 +203,8 @@ $(document).ready(function () {
 
 				// grab the  min/max times from badge range so we can set in slider below
 				// this would be dynamically populated
-        var mintime = 660;
-        var maxtime = 1055;
+        var mintime = 560;
+        var maxtime = 810;
 
 				var slidertime1 = moment().startOf('day').seconds(mintime*60).format('h:mma');
 				var slidertime2 = moment().startOf('day').seconds(maxtime*60).format('h:mma');
@@ -281,11 +281,13 @@ $("#slider-range").slider({
 					console.log('Time: ' + ui.values[0] + ' to ' +  ui.values[1]);
 					console.log( '-----------------' );
  					if($(this).attr('takeofftime0') >= ui.values[0] && $(this).attr('takeofftime0') <= ui.values[1]){
-						$(this).css({"border-color": "red",
-						             "border-weight":"2px",
-						             "border-style":"solid"});
+						$(this).show();
+						// $(this).css({"border-color": "red",
+						//             "border-weight":"2px",
+						//             "border-style":"solid"});
    				} else {
-						$(this).removeAttr("style")
+						// $(this).removeAttr("style")
+						$(this).hide()
    				}
 				});
 
