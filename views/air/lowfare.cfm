@@ -12,7 +12,6 @@
 </cfsilent>
 
 <cfset epochTotal = []>
-
 <cfoutput>
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
@@ -75,6 +74,9 @@
 	 			var sortbyprice = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred)#;
 	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBagPreferred)#;
 	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2Preferred)#;
+
+				var epochmax = getBeanFactory().getBean('underscore').max(#epochTotal#);
+				var epochmin = getBeanFactory().getBean('underscore').min(#epochTotal#);
 
 				// flightresults is used in booking.js to filter flights
 				// here we loop over session searches and stuff all the flights avail in flightresults
@@ -147,11 +149,3 @@ asortfare =  #arraylen(session.searches[rc.searchid].stlowfaredetails.asortfare)
 <cfdump var="#session.searches[rc.SearchID]#"  expand="false" label="session.searches"/>
 <cfdump var="#rc#" label="Dump ( RC SCOPE )" expand="false">
 --->
-
-
-
-
-<cfset epochTotal = getBeanFactory().getBean('underscore').uniq(epochTotal)>
-<cfdump var="#epochTotal#" label="EpochTotal"/>
-<cfdump var="#getBeanFactory().getBean('underscore').max(epochTotal)#" label="EpochTotal Max" abort="false"/>
-<cfdump var="#getBeanFactory().getBean('underscore').min(epochTotal)#" label="EpochTotal Min" abort="true"/>

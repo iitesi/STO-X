@@ -82,12 +82,24 @@
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfset stGroup = stTrip.Groups[Group]>
+
+
+
+
+
+
+				<!---
+				TODO: 9:31 AM Monday, November 18, 2013 - Jim Priest - jpriest@shortstravel.com
+				This epock setting needs to move somewhere else - maybe airparse? so we can access it sooner (in js)
+				--->
 				<!--- set epoch time for each takeoff and landing time --->
 				<cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
 				<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)>
-
 				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime))>
 				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime))>
+
+
+
 
 
 

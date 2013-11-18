@@ -179,6 +179,16 @@
 	</div><!--- // class=filter --->
 
 
+
+
+
+
+
+
+
+
+
+
 <br><br><br><br><br><br>
 
 <script>
@@ -245,7 +255,6 @@ $( "#slider-range2" ).slider({
 
 					<div id="airlines" class="span3 offset1">
 						another slider goes here
-
 					</div>
 
 
@@ -254,6 +263,25 @@ $( "#slider-range2" ).slider({
 </cfoutput>
 
 <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
