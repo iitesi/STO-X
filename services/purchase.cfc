@@ -1,12 +1,15 @@
 <cfcomponent output="false" accessors="true">
 	<cfproperty name="TerminalEntry"/>
+	<cfproperty name="UniversalAdapter"/>
 	<cfproperty name="bookingDSN"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="TerminalEntry" requred="true" />
+		<cfargument name="UniversalAdapter" requred="true" />
 		<cfargument name="bookingDSN" requred="true" />
 
 		<cfset setTerminalEntry( arguments.TerminalEntry ) />
+		<cfset setUniversalAdapter( arguments.UniversalAdapter ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
 
 		<cfreturn this>
@@ -27,187 +30,231 @@
 		<cfargument name="Air">
 		<cfargument name="statmentInformation">
 		<cfargument name="developer">
+		<cfargument name="version">
 
-		<!--- Contains .error=true/false and .message=[] --->
-		<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
+		<cftry>
+			<!--- Sleep for seconds before starting this process --->
+			<cfset sleep(30000)>
 
-		<cfset local.count = 0>
-		<cfset local.processFileFinishing = true>
-		<cfloop condition="count LT 2 AND processFileFinishing">
-			<cfset count++>
-			<!--- 
-			Pull up the PNR within the terminal session so all commands below run for that PNR
-			Command = *K65D84
-			--->
-			<cfset local.displayPNRResponse = TerminalEntry.displayPNR( targetBranch = arguments.targetBranch
-																		, hostToken = arguments.hostToken
-																		, pnr = arguments.providerLocatorCode
-																		, searchID = arguments.searchID )>
-			<cfif NOT arguments.airSelected>
+			<!--- Contains .error=true/false and .message=[] --->
+			<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
+
+			<cfset local.count = 0>
+			<cfset local.processFileFinishing = true>
+			<cfloop condition="count LT 2 AND processFileFinishing">
+				<cfset count++>
 				<!--- 
-				Add form of payment to non air booked PNRs
-				Command = F-CK
+				Pull up the PNR within the terminal session so all commands below run for that PNR
+				Command = *K65D84
 				--->
-				<cfset TerminalEntry.addFOPCheckAuxSegments( targetBranch = arguments.targetBranch
-															, hostToken = arguments.hostToken
-															, searchID = arguments.searchID )>
-			</cfif>
-
-			<cfif NOT displayPNRResponse.error>
-				<!---
-				Read the PAR into the terminal session for the move
-				Command = S*1M98/SHORTS-DOHMEN/CHRISTINE L05
-				--->
-				<cfset local.readPARResponse = TerminalEntry.readPAR( targetBranch = arguments.targetBranch
-																	, hostToken = arguments.hostToken
-																	, pcc = arguments.Traveler.getBAR()[1].PCC
-																	, bar = arguments.Traveler.getBAR()[1].Name
-																	, par = arguments.Traveler.getPAR()
-																	, searchID = arguments.searchID)>
-				
-				<cfif NOT readPARResponse.error>
-					<!---
-					Move PAR and BAR
-					Command = C:N:
-					Command = MVP/
-					Command = MVBT/1M98//SHORTS
-					--->
-					<cfset local.moveBARPARResponse = TerminalEntry.moveBARPAR( targetBranch = arguments.targetBranch
-																				, hostToken = arguments.hostToken
-																				, pcc = arguments.Traveler.getBAR()[1].PCC
-																				, bar = arguments.Traveler.getBAR()[1].Name
-																				, par = arguments.Traveler.getPAR()
-																				, searchID = arguments.searchID
-																				, pnr = arguments.providerLocatorCode )>
-
-					<cfif NOT moveBARPARResponse.error>
-						<!---
-						Add auto ticketing remarks
-						Command = C:N:*SORT1 SORT2 SORT3 SORT4
-						--->
-						<cfset TerminalEntry.addStatmentInfo( targetBranch = arguments.targetBranch
-																, hostToken = arguments.hostToken
-																, statmentInformation = arguments.statmentInformation
-																, par = arguments.Traveler.getPAR()
-																, searchID = arguments.searchID )>
-						<!---
-						Add auto ticketing remarks
-						Command = T-OS-SO/1M98/OK TO TKT
-						--->
-						<cfset TerminalEntry.addAutoTicketRemark( targetBranch = arguments.targetBranch
-																, hostToken = arguments.hostToken
-																, bookingPCC = arguments.pccBooking
-																, searchID = arguments.searchID )>
-
-						<!--- 
-						Add ticketing date
-						Command = T-U53-MM/DD/YYYY
-						--->
-						<cfset TerminalEntry.addTicketDate( targetBranch = arguments.targetBranch
-															, hostToken = arguments.hostToken
-															, searchID = arguments.searchID )>
-
-						<cfif arguments.hotelSelected>
-							<!---
-							Add hotel lost savings code : no error response
-							Command = T-H*DDMM/SV-C
-							--->
-							<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
-																								, hostToken = arguments.hostToken
-																								, serviceType = 'H'
-																								, startDate = arguments.Filter.getCheckInDate()
-																								, reasonCode = arguments.Traveler.getBookingDetail().getCarReasonCode()
-																								, lowestRateOffered = 0
-																								, searchID = arguments.searchID )>
-
-						</cfif>
-						<cfif arguments.vehicleSelected>
-							<!---
-							Add vehicle lost savings code : no error response
-							Command = T-C*DDMM/SA-100.00
-							--->
-							<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
-																, hostToken = arguments.hostToken
-																, serviceType = 'C'
-																, startDate = arguments.Filter.getCarPickupDateTime()
-																, reasonCode = arguments.Traveler.getBookingDetail().getHotelReasonCode()
-																, lowestRateOffered = arguments.lowestCarRate
-																, searchID = arguments.searchID )>
-
-						</cfif>
-
-						<!--- 
-						Add received by line into the PNR
-						Command = R:CHRISTINE DOHMEN 319-231-8322
-						--->
-						<cfset TerminalEntry.addReceivedBy( targetBranch = arguments.targetBranch
-															, hostToken = arguments.hostToken
-															, userID = arguments.Filter.getUserID()
-															, searchID = arguments.searchID )>
-
-						<!---
-						Verify stored fare
-						Command = T:V or T:R
-						--->
-						<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
-																								, hostToken = arguments.hostToken
-																								, searchID = arguments.searchID
-																								, Air = arguments.Air
-																								, airSelected = airSelected )>
-
-						<cfif NOT verifyStoredFareResponse.error>
-							<!--- 
-							Remove duplicate accounting line.  *PT to see the lines in the PNR, then move down 
-							to count more, then remove that line number if there were two accounting lines found.
-							Command = *PT
-							Command = MD
-							Command = C:1T-
-							--->
-							<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
+				<cfset local.displayPNRResponse = TerminalEntry.displayPNR( targetBranch = arguments.targetBranch
 																			, hostToken = arguments.hostToken
+																			, pnr = arguments.providerLocatorCode
 																			, searchID = arguments.searchID )>
+				<cfif NOT arguments.airSelected>
+					<!--- 
+					Add form of payment to non air booked PNRs
+					Command = F-CK
+					--->
+					<cfset TerminalEntry.addFOPCheckAuxSegments( targetBranch = arguments.targetBranch
+																, hostToken = arguments.hostToken
+																, searchID = arguments.searchID )>
+				</cfif>
+
+				<cfif NOT displayPNRResponse.error>
+					<!---
+					Read the PAR into the terminal session for the move
+					Command = S*1M98/SHORTS-DOHMEN/CHRISTINE L05
+					--->
+					<cfset local.readPARResponse = TerminalEntry.readPAR( targetBranch = arguments.targetBranch
+																		, hostToken = arguments.hostToken
+																		, pcc = arguments.Traveler.getBAR()[1].PCC
+																		, bar = arguments.Traveler.getBAR()[1].Name
+																		, par = arguments.Traveler.getPAR()
+																		, searchID = arguments.searchID)>
+					
+					<cfif NOT readPARResponse.error>
+						<!---
+						Move PAR and BAR
+						Command = C:N:
+						Command = MVP/
+						Command = MVBT/1M98//SHORTS
+						--->
+						<cfset local.moveBARPARResponse = TerminalEntry.moveBARPAR( targetBranch = arguments.targetBranch
+																					, hostToken = arguments.hostToken
+																					, pcc = arguments.Traveler.getBAR()[1].PCC
+																					, bar = arguments.Traveler.getBAR()[1].Name
+																					, par = arguments.Traveler.getPAR()
+																					, searchID = arguments.searchID
+																					, pnr = arguments.providerLocatorCode )>
+
+						<cfif NOT moveBARPARResponse.error>
+							<!---
+							Add auto ticketing remarks
+							Command = C:N:*SORT1 SORT2 SORT3 SORT4
+							--->
+							<cfset TerminalEntry.addStatmentInfo( targetBranch = arguments.targetBranch
+																	, hostToken = arguments.hostToken
+																	, statmentInformation = arguments.statmentInformation
+																	, par = arguments.Traveler.getPAR()
+																	, searchID = arguments.searchID )>
+							<!---
+							Add auto ticketing remarks
+							Command = T-OS-SO/1M98/OK TO TKT
+							--->
+							<cfset TerminalEntry.addAutoTicketRemark( targetBranch = arguments.targetBranch
+																	, hostToken = arguments.hostToken
+																	, bookingPCC = arguments.pccBooking
+																	, searchID = arguments.searchID )>
+
+							<!--- 
+							Add ticketing date
+							Command = T-U53-MM/DD/YYYY
+							--->
+							<cfset TerminalEntry.addTicketDate( targetBranch = arguments.targetBranch
+																, hostToken = arguments.hostToken
+																, searchID = arguments.searchID )>
+
+							<cfif arguments.hotelSelected>
+								<!---
+								Add hotel lost savings code : no error response
+								Command = T-H*DDMM/SV-C
+								--->
+								<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
+																									, hostToken = arguments.hostToken
+																									, serviceType = 'H'
+																									, startDate = arguments.Filter.getCheckInDate()
+																									, reasonCode = arguments.Traveler.getBookingDetail().getCarReasonCode()
+																									, lowestRateOffered = 0
+																									, searchID = arguments.searchID )>
+
+							</cfif>
+							<cfif arguments.vehicleSelected>
+								<!---
+								Add vehicle lost savings code : no error response
+								Command = T-C*DDMM/SA-100.00
+								--->
+								<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
+																	, hostToken = arguments.hostToken
+																	, serviceType = 'C'
+																	, startDate = arguments.Filter.getCarPickupDateTime()
+																	, reasonCode = arguments.Traveler.getBookingDetail().getHotelReasonCode()
+																	, lowestRateOffered = arguments.lowestCarRate
+																	, searchID = arguments.searchID )>
+
+							</cfif>
+
+							<!--- 
+							Add received by line into the PNR
+							Command = R:CHRISTINE DOHMEN 319-231-8322
+							--->
+							<cfset TerminalEntry.addReceivedBy( targetBranch = arguments.targetBranch
+																, hostToken = arguments.hostToken
+																, userID = arguments.Filter.getUserID()
+																, searchID = arguments.searchID )>
 
 							<!---
-							Determine appropriate queue
-							Command = QEP/1M98/34*CSR+161C/99*CNM
+							Verify stored fare
+							Command = T:V or T:R
 							--->
-							<cfset local.queueRecordResponse = TerminalEntry.queueRecord( targetBranch = arguments.targetBranch
-																						, hostToken = arguments.hostToken
-																						, bookingPCC = arguments.pccBooking
-																						, searchID = arguments.searchID
-																						, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
-																						, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
-																						, developer = arguments.developer )>
+							<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
+																									, hostToken = arguments.hostToken
+																									, searchID = arguments.searchID
+																									, Air = arguments.Air
+																									, airSelected = airSelected )>
 
-							<cfset responseMessage = queueRecordResponse>
+							<cfif NOT verifyStoredFareResponse.error>
+								<!--- 
+								Remove duplicate accounting line.  *PT to see the lines in the PNR, then move down 
+								to count more, then remove that line number if there were two accounting lines found.
+								Command = *PT
+								Command = MD
+								Command = C:1T-
+								--->
+								<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
+																				, hostToken = arguments.hostToken
+																				, searchID = arguments.searchID )>
 
-							<!--- Let the process start over again --->
-							<cfif queueRecordResponse.simultaneous>
-								<cfset processFileFinishing = true>
-							<!--- Throw purchase error --->
-							<cfelseif queueRecordResponse.error>
-								<cfset processFileFinishing = false>
-							<!--- The whole process completed successfully --->
-							<cfelse>
-								<cfset processFileFinishing = false>
-							</cfif>
-				
-						<cfelse>
-							<cfset responseMessage = verifyStoredFareResponse>
-						</cfif><!--- verifyStoredFareResponse.error = true --->
+								
+
+								<cfif airSelected>
+									<cfset UniversalAdapter.addTSA( targetBranch = rc.Account.sBranch
+																	, Traveler = arguments.Traveler
+																	, Air = arguments.Air
+																	, Filter = arguments.Filter
+																	, version = arguments.version )>
+								</cfif>
+
+								<!---
+								Determine appropriate queue
+								Command = QEP/1M98/34*CSR+161C/99*CNM
+								--->
+								<cfset local.queueRecordResponse = TerminalEntry.queueRecord( targetBranch = arguments.targetBranch
+																							, hostToken = arguments.hostToken
+																							, bookingPCC = arguments.pccBooking
+																							, searchID = arguments.searchID
+																							, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
+																							, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
+																							, developer = arguments.developer )>
+
+								<cfset responseMessage = queueRecordResponse>
+
+								<!--- Let the process start over again --->
+								<cfif queueRecordResponse.simultaneous>
+									<cfset processFileFinishing = true>
+								<!--- Throw purchase error --->
+								<cfelseif queueRecordResponse.error>
+									<cfset processFileFinishing = false>
+								<!--- The whole process completed successfully --->
+								<cfelse>
+									<cfset processFileFinishing = false>
+								</cfif>
+								
+								<cfif NOT processFileFinishing>
+									<!--- Sign out of terminal entry session --->
+									<cfset TerminalEntry.closeSession( targetBranch = arguments.targetBranch
+																		, hostToken = arguments.hostToken
+																		, searchID = arguments.searchID )>
+								</cfif>
 					
-					<cfelse>
-						<cfset responseMessage = moveBARPARResponse>
-					</cfif><!--- moveBARPARResponse.error = true --->
+							<cfelse>
+								<cfset responseMessage = verifyStoredFareResponse>
+							</cfif><!--- verifyStoredFareResponse.error = true --->
+						
+						<cfelse>
+							<cfset responseMessage = moveBARPARResponse>
+						</cfif><!--- moveBARPARResponse.error = true --->
 
+					<cfelse>
+						<cfset responseMessage = readPARResponse>
+					</cfif><!--- readPARResponse.error = true --->
+				
 				<cfelse>
-					<cfset responseMessage = readPARResponse>
-				</cfif><!--- readPARResponse.error = true --->
-			
-			<cfelse>
-				<cfset responseMessage = displayPNRResponse>
-			</cfif><!--- displayPNRResponse.error = true --->
-		</cfloop>
+					<cfset responseMessage = displayPNRResponse>
+				</cfif><!--- displayPNRResponse.error = true --->
+			</cfloop>
+
+		<cfcatch>
+			<cfset local.acctID = arguments.Filter.getAcctID()>
+			<cfset local.userID = arguments.Filter.getUserID()>
+			<cfset local.username = arguments.Filter.getUsername()>
+			<cfset local.department = arguments.Filter.getDepartment()>
+			<cfset local.searchID = arguments.Filter.getSearchID()>
+
+			<cfset local.errorException = structNew('linked')>
+			<cfset local.errorException = { acctID = local.acctID
+											, userID = local.userID
+											, username = local.username
+											, department = local.department
+											, searchID = local.searchID
+											, exception = exception
+										} >
+
+			<cfset application.fw.factory.getBean('BugLogService').notifyService( message = exception.message
+																				, exception = local.errorException
+																				, severityCode = 'Fatal' ) />
+		</cfcatch>
+		</cftry>
 
 		<cfreturn responseMessage>
 	</cffunction>
