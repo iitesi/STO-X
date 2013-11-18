@@ -178,7 +178,7 @@
 								
 
 								<cfif airSelected>
-									<cfset UniversalAdapter.addTSA( targetBranch = rc.Account.sBranch
+									<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
 																	, Traveler = arguments.Traveler
 																	, Air = arguments.Air
 																	, Filter = arguments.Filter
@@ -247,10 +247,10 @@
 											, username = local.username
 											, department = local.department
 											, searchID = local.searchID
-											, exception = exception
+											, exception = cfcatch
 										} >
 
-			<cfset application.fw.factory.getBean('BugLogService').notifyService( message = exception.message
+			<cfset application.fw.factory.getBean('BugLogService').notifyService( message = cfcatch.message
 																				, exception = local.errorException
 																				, severityCode = 'Fatal' ) />
 		</cfcatch>

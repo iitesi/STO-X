@@ -397,8 +397,9 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
-
+					<cfset local.threadName = 'purchase#rc.searchID##minute(now())##second(now())#'>
 					<cfthread 
+						name="#threadName#"
 						action="run"
 						targetBranch="#rc.Account.sBranch#"
 						hostToken="#hostToken#"
