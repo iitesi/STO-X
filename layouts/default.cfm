@@ -46,6 +46,10 @@
 			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
 			<script src="#application.assetURL#/js/bootstrap.min.js"></script>
 			<script src="#application.assetURL#/js/booking.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+
+
 		</cfoutput>
 	</head>
 

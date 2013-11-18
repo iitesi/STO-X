@@ -93,15 +93,27 @@
 				This epock setting needs to move somewhere else - maybe airparse? so we can access it sooner (in js)
 				--->
 				<!--- set epoch time for each takeoff and landing time --->
-				<cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
-				<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)>
-				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime))>
-				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime))>
+
+				<!--- <cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
+				<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)> --->
+
+
+				<cfset takeoffTime = TimeFormat(stGroup.DepartureTime, 'HH:mm')>
+				<cfset takeofftime = (hour(takeOffTime)*60) + (minute(takeOffTime))>
+
+				<cfset landingTime = TimeFormat(stGroup.ArrivalTime, 'HH:mm')>
+				<cfset landingTime = (hour(landingTime)*60) + (minute(landingTime))>
+
+				<cfset "epoch.takeofftime#group#" = takeoffTime>
+				<cfset "epoch.landingtime#group#" = landingTime>
+
+				<!--- <cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime))>
+				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime))> --->
 
 
 
-
-
+				<cfset arrayAppend(epochTotal, takeofftime)>
+				<cfset arrayAppend(epochTotal, landingTime)>
 
 				<tr>
 					<td>&nbsp;</td>

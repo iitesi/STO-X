@@ -75,8 +75,8 @@
 	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBagPreferred)#;
 	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2Preferred)#;
 
-				var epochmax = getBeanFactory().getBean('underscore').max(#epochTotal#);
-				var epochmin = getBeanFactory().getBean('underscore').min(#epochTotal#);
+				var epochmax = #getBeanFactory().getBean('underscore').max(epochTotal)#;
+				var epochmin = #getBeanFactory().getBean('underscore').min(epochTotal)#;
 
 				// flightresults is used in booking.js to filter flights
 				// here we loop over session searches and stuff all the flights avail in flightresults
@@ -117,7 +117,6 @@
 #View('modal/popup')#
 
 </cfoutput>
-
 
 
 <!--- AIR CODES
