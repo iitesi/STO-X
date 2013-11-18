@@ -11,7 +11,7 @@
 			<cfcatch type="any">
 				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
 				<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
-					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=cfcatch.Message, exception=rc, severityCode='Fatal' ) />
 				</cfif>
 			</cfcatch>
 		</cftry>
@@ -74,7 +74,7 @@
 			<cfcatch type="any">
 				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
 				<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
-					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+					 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=cfcatch.Message, exception=rc, severityCode='Fatal' ) />
 				 </cfif>
 			</cfcatch>
 		</cftry>
@@ -226,7 +226,7 @@
 				<cfcatch type="any">
 					<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
 					<cfif variables.fw.getBeanFactory().getBean( 'EnvironmentService' ).getEnableBugLog()>
-						 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=rc, severityCode='Fatal' ) />
+						 <cfset variables.fw.getBeanFactory().getBean('BugLogService').notifyService( message=cfcatch.Message, exception=rc, severityCode='Fatal' ) />
 					 </cfif>
 				</cfcatch>
 			</cftry>

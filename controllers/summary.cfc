@@ -244,9 +244,14 @@
 																						, acctID = rc.Filter.getAcctID() ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
+					<cfset rc.message.addInfo('Your profile has been created.') />
 				</cfif>
 			<cfelse>
-				<cfset rc.message.addError('Please correct the fields in red below.')>
+				<cfif rc.trigger EQ 'CREATE PROFILE'>
+					<cfset rc.message.addError('Your profile has not been saved. Please correct the fields in red below and click "Create Profile" again.') />
+				<cfelse>
+					<cfset rc.message.addError('Please correct the fields in red below.') />
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" abort="true" /> --->

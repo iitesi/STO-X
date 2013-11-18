@@ -132,6 +132,15 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
+		if (traveler.bookingDetail.createProfile == 1) {
+			$( "#createProfileDiv" ).show();
+			$( "#createProfile" ).attr( 'checked', true );
+			$( "#usernameDiv" ).show();
+			$( "#username" ).val( traveler.bookingDetail.username );
+			$( "#username_disabled" ).val( traveler.bookingDetail.username );
+			$( "#password" ).val( traveler.bookingDetail.password );
+			$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
+		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
 			$( "#firstName" ).prop('disabled', true);

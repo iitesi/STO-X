@@ -18,7 +18,9 @@
 	<cfproperty name="airFeeType" />
 	<cfproperty name="airFOPID" />
 	<cfproperty name="airLowestFare" />
+	<cfproperty name="airLowestPublicFare" />
 	<cfproperty name="airReasonCode" />
+	<cfproperty name="airRefundableFare" />
 	<cfproperty name="auxFeeType" />
 	<cfproperty name="bookingFee" />
 	<cfproperty name="carNeeded" />
@@ -82,7 +84,9 @@
 		<cfset setAirFeeType( '' )>
 		<cfset setAirFOPID( '' )>
 		<cfset setAirLowestFare( 0 )>
+		<cfset setAirLowestPublicFare( 0 )>
 		<cfset setAirReasonCode( '' )>
+		<cfset setAirRefundableFare( 0 )>
 		<cfset setAuxFeeType( '' )>
 		<cfset setBookingFee( 0 )>
 		<cfset setCarNeeded( false )>
