@@ -203,8 +203,8 @@ $(document).ready(function () {
 
 				// grab the  min/max times from badge range so we can set in slider below
 				// this would be dynamically populated
-        var mintime = 560;
-        var maxtime = 810;
+        var mintime = 330;
+        var maxtime = 1173;
 
 				var slidertime1 = moment().startOf('day').seconds(mintime*60).format('h:mma');
 				var slidertime2 = moment().startOf('day').seconds(maxtime*60).format('h:mma');
@@ -218,7 +218,7 @@ $("#slider-range").slider({
     range: true,
     min: mintime,
     max: maxtime,
-    step: 5,
+    step: 10,
     values: [mintime, maxtime],
 
     slide: function (e, ui) {
@@ -308,7 +308,7 @@ $("#slider-range").slider({
 					<div id="airlines" class="span3">
 
 							<div id="time-range">
-							    <p>Time Range: <span class="slider-time"></span> - <span class="slider-time2"></span>
+							    <p>Departure: <span class="slider-time"></span> - <span class="slider-time2"></span>
 
 							    </p>
 							    <div class="sliders_step1">
