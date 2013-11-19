@@ -117,7 +117,9 @@
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+			<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
 			<cfparam name="rc.noMiddleName" default="0">
+			<cfparam name="rc.nameChange" default="0">
 			<cfparam name="rc.createProfile" default="0">
 			<cfparam name="rc.saveProfile" default="0">
 			<cfparam name="rc.airSaveCard" default="0">
@@ -126,6 +128,10 @@
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
 			<cfset rc.Traveler.populateFromStruct( rc )>
+			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
+			<cfif currentMiddleName NEQ originalMiddleName>
+				<cfset rc.nameChange = 1 />
+			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
