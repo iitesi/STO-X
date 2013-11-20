@@ -97,7 +97,8 @@
 																	, hostToken = arguments.hostToken
 																	, statmentInformation = arguments.statmentInformation
 																	, par = arguments.Traveler.getPAR()
-																	, searchID = arguments.searchID )>
+																	, searchID = arguments.searchID
+																	, Traveler = arguments.Traveler )>
 							<!---
 							Add auto ticketing remarks
 							Command = T-OS-SO/1M98/OK TO TKT
