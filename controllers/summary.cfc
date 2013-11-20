@@ -129,7 +129,8 @@
 			<cfparam name="rc.carNeeded" default="0">
 			<cfset rc.Traveler.populateFromStruct( rc )>
 			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
-			<cfif currentMiddleName NEQ originalMiddleName>
+			<!--- If profile exists and middle name has been changed --->
+			<cfif isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName)>
 				<cfset rc.nameChange = 1 />
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
