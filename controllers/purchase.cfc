@@ -397,6 +397,12 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
+					
+					<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
+																						, Filter = rc.Filter
+																						, pccBooking = rc.Account.PCC_Booking
+																						, providerLocatorCode = providerLocatorCode  )>
+
 					<cfset local.threadName = 'purchase#rc.searchID##minute(now())##second(now())#'>
 					<cfthread 
 						name="#threadName#"
