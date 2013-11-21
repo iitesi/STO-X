@@ -5,7 +5,7 @@
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
 	<cfif variables.nLegs EQ 2>
-		<cfset variables.minheight = 325>
+		<cfset variables.minheight = 335>
 	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 375>
 	</cfif>

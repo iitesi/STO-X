@@ -122,6 +122,9 @@
 										<td align="center">#nRow#</td>
 									</tr>
 								</cfif>
+								<cfif NOT structKeyExists(rc.stSeats[nRow], sColumn)>
+									<cfset rc.stSeats[nRow][sColumn].AVAIL = "NoSeat" />
+								</cfif>
 								<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
 								<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
 								<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
@@ -136,24 +139,20 @@
 </cfif>>
 </td> --->
 
- <!--- JIM CODE --->
-<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
-	<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
-	<cfif rc.action EQ 'air.summarypopup' AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-		<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
-		<!--- <a href="##" style="display: block;" class="availableSeat" id="#rc.nSegment#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a> --->
-	</cfif>
-</td>
-
-
+									<!--- JIM CODE --->
+									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+										<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
+										<cfif rc.action EQ 'air.summarypopup' AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+											<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+											<!--- <a href="##" style="display: block;" class="availableSeat" id="#rc.nSegment#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a> --->
+										</cfif>
+									</td>
 								</tr>
 							</cfloop>
 							</table>
 						</td>
 					</cfloop>
 				</tr>
-
-
 
 				<!--- Display wing --->
 				<tr>
