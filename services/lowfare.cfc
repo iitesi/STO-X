@@ -435,13 +435,17 @@
 											<com:Carrier Code="ZK"/>
 										</air:ProhibitedCarriers>
 									</cfif>
-									<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
+									<cfif arguments.fareType EQ "PrivateFaresOnly">
+										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="true"/>
+									<cfelse>
+										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
+									</cfif>
 								</air:AirSearchModifiers>
 								<com:SearchPassenger
 									Code="ADT" />
 								<air:AirPricingModifiers
 									ProhibitNonRefundableFares="#bProhibitNonRefundableFares#"
-									FaresIndicator="PublicAndPrivateFares"
+									FaresIndicator="#arguments.fareType#"
 									ProhibitMinStayFares="false"
 									ProhibitMaxStayFares="false"
 									CurrencyType="USD"
