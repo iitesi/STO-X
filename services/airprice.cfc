@@ -26,9 +26,6 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="bRestricted" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicFaresOnly --->
-		<cfargument name="bAccountCodes" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip" required="false" default="">
 		<cfargument name="nCouldYou" required="false" default="0">
 		<cfargument name="bSaveAirPrice" required="false" default="0">
@@ -65,9 +62,6 @@
 		<cfset local.sMessage = prepareSoapHeader( stSelected = local.stSelected
 											, sCabin = arguments.sCabin
 											, bRefundable = arguments.bRefundable
-											, bRestricted = arguments.bRestricted
-											, sFaresIndicator = arguments.sFaresIndicator
-											, bAccountCodes = arguments.bAccountCodes
 											, nCouldYou = arguments.nCouldYou
 											, stAccount = arguments.Account
 											, findIt = arguments.findIt )>
@@ -133,15 +127,11 @@
 		<cfargument name="stSelected" required="true">
 		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="bRestricted" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicFaresOnly --->
-		<cfargument name="bAccountCodes" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nCouldYou" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="stAccount" required="true">
 		<cfargument name="findIt" required="true">
 
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
-		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
 		<!--- Code needs to be reworked and put in a better location --->
@@ -175,10 +165,9 @@
 									</cfif>
 								</cfloop>
 							</air:AirItinerary>
-							<air:AirPricingModifiers ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="#arguments.sFaresIndicator#" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="#ProhibitRestrictedFares#" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
+							<air:AirPricingModifiers ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								<cfif arrayLen(arguments.stAccount.Air_PF)
-									AND arrayLen(local.carriers) EQ 1
-									AND arguments.bAccountCodes EQ 1>
+									AND arrayLen(local.carriers) EQ 1>
 									<air:AccountCodes>
 										<cfloop array="#arguments.stAccount.Air_PF#" index="local.sPF">
 											<cfif getToken(sPF, 2, ',') EQ local.carriers[1]>
