@@ -34,7 +34,7 @@
 
 		<cftry>
 			<!--- Sleep for seconds before starting this process --->
-			<cfset sleep(30000)>
+			<cfset sleep(45000)>
 
 			<!--- Contains .error=true/false and .message=[] --->
 			<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
