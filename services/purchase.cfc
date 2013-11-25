@@ -34,7 +34,7 @@
 
 		<cftry>
 			<!--- Sleep for seconds before starting this process --->
-			<cfset sleep(30000)>
+			<cfset sleep(45000)>
 
 			<!--- Contains .error=true/false and .message=[] --->
 			<cfset local.responseMessage = TerminalEntry.blankResponseMessage()>
@@ -175,17 +175,7 @@
 								<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
 																				, searchID = arguments.searchID )>
-
 								
-
-								<cfif airSelected>
-									<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
-																	, Traveler = arguments.Traveler
-																	, Air = arguments.Air
-																	, Filter = arguments.Filter
-																	, version = arguments.version )>
-								</cfif>
-
 								<!---
 								Determine appropriate queue
 								Command = QEP/1M98/34*CSR+161C/99*CNM
@@ -209,6 +199,14 @@
 								<!--- The whole process completed successfully --->
 								<cfelse>
 									<cfset processFileFinishing = false>
+								</cfif>
+
+								<cfif airSelected>
+									<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
+																	, Traveler = arguments.Traveler
+																	, Air = arguments.Air
+																	, Filter = arguments.Filter
+																	, version = arguments.version )>
 								</cfif>
 								
 								<cfif NOT processFileFinishing>
