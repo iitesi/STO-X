@@ -255,9 +255,9 @@ ul.tabs li a.active {
 }
 #filter li{
 	float:left;
+	list-style: none;
 	margin-right:10px;
 	position:relative;
-    list-style: none;
 }
 #filter li:hover ul{ /* Display the dropdown on hover */
 	left:0; /* Bring back on-screen when needed */
@@ -286,8 +286,8 @@ ul.tabs li a.active {
 }
 
 .filter .navbar-inner {
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .spinner {
