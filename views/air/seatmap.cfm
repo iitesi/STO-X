@@ -64,7 +64,7 @@
 
 		<div id="seats">
 			<!--- show seatmap heading --->
-			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#.png">
+			<img class="popuplogo pull-left" src="assets/img/airlines/#currentSegment.Carrier#_sm.png">
 			<div class="media-heading pull-left">
 				<h3>#application.stAirVendors[currentSegment.Carrier].Name# #currentSegment.FlightNumber# #application.stAirports[currentSegment.Origin].airport# (#currentSegment.Origin#) to #application.stAirports[currentSegment.Destination].airport# (#currentSegment.Destination#)
 				<cfif structKeyExists(rc, "seat") AND Len(rc.seat)>
@@ -74,7 +74,6 @@
 				#DateFormat(currentSegment.DepartureTime, 'ddd, mmm d')# - #TimeFormat(currentSegment.DepartureTime, 'h:mm tt')# to #TimeFormat(currentSegment.ArrivalTime, 'h:mm tt')#
 			</div>
 			<div class="clearfix"></div>
-			<br>
 
 		<!--- show seatmap rc.stSeats is returned from doSeatMap --->
 			<cfif isStruct(rc.stSeats) AND NOT structIsEmpty(rc.stSeats) AND NOT StructKeyExists(rc.stSeats, 'Error')>
@@ -122,32 +121,26 @@
 										<td align="center">#nRow#</td>
 									</tr>
 								</cfif>
+
 								<cfif NOT structKeyExists(rc.stSeats[nRow], sColumn)>
-									<cfset rc.stSeats[nRow][sColumn].AVAIL = "NoSeat" />
+									<cfset rc.stSeats[nRow][sColumn].AVAIL = "No Seat" />
 								</cfif>
-								<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
-								<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
-								<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
-								<cfset sDesc = Replace(sDesc, ',', ', ')>
-								<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
-								<tr>
 
-<!--- 	CHRIS CODE
-<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" style="display: block;" title="#sDesc#" id="#nRow##sColumn#"
-<cfif structKeyExists(rc, 'summary') AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-	onClick="$('##seat#currentSegment.Carrier##currentSegment.FlightNumber#').val('#nRow##sColumn#');return false;console.log('clicked');"
-</cfif>>
-</td> --->
-
-									<!--- JIM CODE --->
-									<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
-										<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
-										<cfif rc.action EQ 'air.summarypopup' AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-											<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
-											<!--- <a href="##" style="display: block;" class="availableSeat" id="#rc.nSegment#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a> --->
-										</cfif>
-									</td>
-								</tr>
+								<cfif structKeyExists(rc.stSeats[nRow], sColumn)>
+									<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
+									<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
+									<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
+									<cfset sDesc = Replace(sDesc, ',', ', ')>
+									<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
+									<tr>
+										<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+											<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
+											<cfif rc.action EQ 'air.summarypopup' AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+												<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+											</cfif>
+										</td>
+									</tr>
+								</cfif>
 							</cfloop>
 							</table>
 						</td>
