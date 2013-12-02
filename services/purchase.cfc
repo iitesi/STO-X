@@ -166,6 +166,18 @@
 
 							<cfif NOT verifyStoredFareResponse.error>
 								<!--- 
+								If NASCAR, remove BARPAR accounting line.  *PT to see the lines in the PNR, then remove the
+								T-CA-43@021433 accounting line if found.
+								Command = *PT
+								Command = C:1T-
+								--->
+								<cfif arguments.Filter.getAcctID() EQ 348>
+									<cfset TerminalEntry.removeBARPARAccounting( targetBranch = arguments.targetBranch
+																				, hostToken = arguments.hostToken
+																				, searchID = arguments.searchID )>									
+								</cfif>
+
+								<!--- 
 								Remove duplicate accounting line.  *PT to see the lines in the PNR, then move down 
 								to count more, then remove that line number if there were two accounting lines found.
 								Command = *PT
