@@ -38,7 +38,8 @@
 
 		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''
+					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode()
 																					, Filter = rc.Filter )>
@@ -47,6 +48,9 @@
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
 					<cfset Traveler.getBookingDetail().setReservationCode( '' )>
 					<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
+				</cfif>
+				<cfif Traveler.getBookingDetail().getPurchaseCompleted()>
+					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				</cfif>
 			</cfloop>
 		</cfif>

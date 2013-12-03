@@ -7,7 +7,8 @@
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 			
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-			<cfif arrayIsEmpty(errorMessage)>
+			<cfif arrayIsEmpty(errorMessage)
+				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
@@ -449,8 +450,11 @@
 				</cfif>
 			</cfif>
 		</cfloop>
-		<!--- Moved the redirect to outside the travelers loop. --->
+
 		<cfif arrayIsEmpty(errorMessage)>
+			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+				<cfset Traveler.getBookingDetail().setPurchaseCompleted( true )>
+			</cfloop>
 			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 		</cfif>
 
