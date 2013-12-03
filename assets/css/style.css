@@ -290,6 +290,11 @@ ul.tabs li a.active {
 	padding-right: 2px;
 }
 
+/*adjust last value to tighten up filter bar button spacing but make sure to test in all browsers!*/
+.navbar .nav > li > a {
+	padding: 10px 12px;
+}
+
 .spinner {
 	color: #045596;
 	padding-right: 2em;
