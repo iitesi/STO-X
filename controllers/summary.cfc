@@ -117,7 +117,9 @@
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+			<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
 			<cfparam name="rc.noMiddleName" default="0">
+			<cfparam name="rc.nameChange" default="0">
 			<cfparam name="rc.createProfile" default="0">
 			<cfparam name="rc.saveProfile" default="0">
 			<cfparam name="rc.airSaveCard" default="0">
@@ -126,6 +128,11 @@
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
 			<cfset rc.Traveler.populateFromStruct( rc )>
+			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
+			<!--- If profile exists and middle name has been changed --->
+			<cfif isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName)>
+				<cfset rc.nameChange = 1 />
+			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
@@ -244,9 +251,14 @@
 																						, acctID = rc.Filter.getAcctID() ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
+					<cfset rc.message.addInfo('Your profile has been created.') />
 				</cfif>
 			<cfelse>
-				<cfset rc.message.addError('Please correct the fields in red below.')>
+				<cfif rc.trigger EQ 'CREATE PROFILE'>
+					<cfset rc.message.addError('Your profile has not been saved. Please correct the fields in red below and click "Create Profile" again.') />
+				<cfelse>
+					<cfset rc.message.addError('Please correct the fields in red below.') />
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- <cfdump var="#session.searches[rc.SearchID].travelers#" abort="true" /> --->

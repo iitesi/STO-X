@@ -1,7 +1,11 @@
 <cfcomponent extends="abstract" accessors="true">
 
 	<!--- // DEPENDENCY INJECTION --->
+	<cfproperty name="airAvailability" setter="true" getter="false">
+	<cfproperty name="airPrice" setter="true" getter="false">
+	<cfproperty name="email" setter="true" getter="false">
 	<cfproperty name="general" setter="true" getter="false">
+	<cfproperty name="lowFare" setter="true" getter="false">
 
 
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
@@ -17,18 +21,18 @@
 			AND dateCompare(arguments.rc.filter.getDepartDateTime(), now()) EQ 1>
 		    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 	    	<!--- throw out threads and get lowfare pricing --->
-				<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-				<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
 
 
 				<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
 				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
 					<cfset sleep(10000)>
-					<cfset fw.getBeanFactory().getBean('lowfare').selectAir(argumentcollection=arguments.rc)>
+					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
 				</cfif>
 			<cfelse>
-				<cfset fw.getBeanFactory().getBean('lowfare').selectAir( searchID = rc.searchID
+				<cfset variables.lowfare.selectAir( searchID = rc.searchID
 																		, nTrip = rc.nTrip )>
 				<cfset session.searches[rc.searchID].stCars = {}>
 			</cfif>
@@ -66,12 +70,12 @@
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset arguments.rc.sPriority = 'LOW'>
 			<!--- Throw out a threads and get availability --->
-			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<cfset fw.getBeanFactory().getBean('lowfare').threadLowFare(argumentcollection=arguments.rc)>
+			<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
-			<cfset fw.getBeanFactory().getBean('airavailability').selectLeg(argumentcollection=arguments.rc)>
+			<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
 
 		<!--- TODO: need to refactor this count as it doesn't accurately show leg/schedule counts
@@ -108,7 +112,7 @@
 	<cffunction name="price" output="false" hint="I run doAirPrice.">
 		<cfargument name="rc">
 
-		<cfset fw.getBeanFactory().getBean('AirPrice').doAirPrice(argumentcollection=arguments.rc)>
+		<cfset variables.AirPrice.doAirPrice(argumentcollection=arguments.rc)>
 
 		<cfset session.searches[rc.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
 		<cfset session.searches[rc.SearchID].stSelected[0] = {}>
@@ -176,7 +180,7 @@
 		<cfargument name="rc">
 
 		<cfset rc.bSuppress = 1>
-		<cfset fw.getBeanFactory().getBean('email').doEmail( argumentcollection = arguments.rc )>
+		<cfset variables.email.doEmail( argumentcollection = arguments.rc )>
 
 		<cfset rc.message.AddInfo("Your email has been sent.")>
 		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
@@ -188,7 +192,7 @@
 		<cfargument name="rc">
 
 		<cfset local.newSearchID = "">
-		<cfset fw.getBeanFactory().getBean('lowfare').removeFlight( arguments.rc.searchID )>
+		<cfset variables.lowfare.removeFlight( arguments.rc.searchID )>
 
 		<cfset local.newSearchID = ListLast( StructKeyList(session.searches) )>
 		<cfset rc.message.AddInfo("Saved search deleted successfully!")>

@@ -45,6 +45,7 @@
 				<cfset local.statmentInformation = sort1&' '&sort2&' '&sort3&' '&sort4>
 				<cfset statmentInformation = trim(statmentInformation)>
 
+				<!--- LSU can charge to a different department cc which means the accountid needs to also change. --->
 				<cfif rc.Filter.getAcctID() EQ 255>
 					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
 				</cfif>
@@ -357,39 +358,55 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
-					<cfset sleep(30000)> <!--- pause for 30 seconds --->
-					<cfset fw.getBeanFactory().getBean('Purchase').fileFinishing( targetBranch = rc.Account.sBranch
-																				, hostToken = hostToken
-																				, pccBooking = rc.Account.PCC_Booking
-																				, providerLocatorCode = providerLocatorCode
-																				, searchID = rc.searchID
-																				, airSelected = airSelected
-																				, hotelSelected = hotelSelected
-																				, vehicleSelected = vehicleSelected
-																				, Traveler = Traveler
-																				, Filter = rc.Filter
-																				, lowestCarRate = (structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)
-																				, Air = Air
-																				, statmentInformation = statmentInformation
-																				, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false) )>
+					
+					<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
+																						, Filter = rc.Filter
+																						, pccBooking = rc.Account.PCC_Booking
+																						, providerLocatorCode = providerLocatorCode  )>
 
+					<cfset local.threadName = 'purchase#rc.searchID##minute(now())##second(now())#'>
+					<cfthread 
+						name="#threadName#"
+						action="run"
+						targetBranch="#rc.Account.sBranch#"
+						hostToken="#hostToken#"
+						pccBooking="#rc.Account.PCC_Booking#"
+						providerLocatorCode="#providerLocatorCode#"
+						searchID="#rc.searchID#"
+						airSelected="#airSelected#"
+						hotelSelected="#hotelSelected#"
+						vehicleSelected="#vehicleSelected#"
+						Traveler="#Traveler#"
+						Filter="#rc.Filter#"
+						lowestCarRate="#(structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)#"
+						Air="#Air#"
+						statmentInformation="#statmentInformation#"
+						developer="#(listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)#" 
+						version="#version#">
 
-
-				</cfif>
+						<cfset fw.getBeanFactory().getBean('Purchase').fileFinishing( targetBranch = arguments.targetBranch
+																					, hostToken = arguments.hostToken
+																					, pccBooking = arguments.pccBooking
+																					, providerLocatorCode = arguments.providerLocatorCode
+																					, searchID = arguments.searchID
+																					, airSelected = arguments.airSelected
+																					, hotelSelected = arguments.hotelSelected
+																					, vehicleSelected = arguments.vehicleSelected
+																					, Traveler = arguments.Traveler
+																					, Filter = arguments.Filter
+																					, lowestCarRate = arguments.lowestCarRate
+																					, Air = arguments.Air
+																					, statmentInformation = arguments.statmentInformation
+																					, developer =  arguments.developer
+																					, version = arguments.version )>
+						
+					</cfthread>
 
 				<!--- Sign out of session if error or normal purchase flow --->
-				<cfif hostToken NEQ ''>
+				<cfelseif hostToken NEQ ''>
 					<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																									, hostToken = hostToken
 																									, searchID = rc.searchID )>
-				</cfif>
-
-				<cfif airSelected>
-					<cfset fw.getBeanFactory().getBean('UniversalAdapter').addTSA( targetBranch = rc.Account.sBranch
-																				, Traveler = Traveler
-																				, Air = Air
-																				, Filter = rc.Filter
-																				, version = version )>
 				</cfif>
 
 				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>

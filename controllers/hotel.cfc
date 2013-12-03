@@ -79,7 +79,7 @@
 			<cfset structDelete( session.searches[ arguments.rc.searchId ].stItinerary, "Hotel" ) />
 		</cfif>
 		<cfif structKeyExists( session.searches[ arguments.rc.searchId ], "Hotels" )>
-			<cfset structDelete( session.searches[ arguments.rc.searchId ], "Hotels" ) />
+			<cfset session.searches[ arguments.rc.searchId ].Hotels = arrayNew( 1 ) />
 		</cfif>
 		<cfif structKeyExists( session.searches[ arguments.rc.searchId ], "CouldYou" ) AND structKeyExists( session.searches[ arguments.rc.searchId ].CouldYou, "Hotel" )>
 			<cfset structDelete( session.searches[ arguments.rc.searchId ].CouldYou, "Hotel" ) />

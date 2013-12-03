@@ -18,7 +18,9 @@
 	<cfproperty name="airFeeType" />
 	<cfproperty name="airFOPID" />
 	<cfproperty name="airLowestFare" />
+	<cfproperty name="airLowestPublicFare" />
 	<cfproperty name="airReasonCode" />
+	<cfproperty name="airRefundableFare" />
 	<cfproperty name="auxFeeType" />
 	<cfproperty name="bookingFee" />
 	<cfproperty name="carNeeded" />
@@ -40,6 +42,7 @@
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="lostSavings" />
+	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
 	<cfproperty name="newHotelCC" />
 	<cfproperty name="password" />
@@ -82,7 +85,9 @@
 		<cfset setAirFeeType( '' )>
 		<cfset setAirFOPID( '' )>
 		<cfset setAirLowestFare( 0 )>
+		<cfset setAirLowestPublicFare( 0 )>
 		<cfset setAirReasonCode( '' )>
+		<cfset setAirRefundableFare( 0 )>
 		<cfset setAuxFeeType( '' )>
 		<cfset setBookingFee( 0 )>
 		<cfset setCarNeeded( false )>
@@ -104,6 +109,7 @@
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setLostSavings( '' )>
+		<cfset setNameChange( false )>
 		<cfset setNewAirCC( 0 )>
 		<cfset setNewHotelCC( 0 )>
 		<cfset setPassword( '' )>

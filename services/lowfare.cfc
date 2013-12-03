@@ -90,7 +90,20 @@
 														, Account = arguments.Account
 														, Policy = arguments.Policy
 														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
-														, airline = airline )>
+														, airline = airline
+														, fareType = "PublicFaresOnly" )>
+					<cfset local.stThreads[local.sThreadName] = ''>
+
+					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+														, sCabin = local.sCabin
+														, bRefundable = bRefundable
+														, sPriority = arguments.sPriority
+														, stPricing = arguments.stPricing
+														, Account = arguments.Account
+														, Policy = arguments.Policy
+														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+														, airline = airline
+														, fareType = "PrivateFaresOnly" )>
 					<cfset local.stThreads[local.sThreadName] = ''>
 				</cfloop>
 			</cfloop>
@@ -128,12 +141,13 @@
 		<cfargument name="BlackListedCarrierPairing" required="false">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 		<cfargument name="airline" required="true">
+		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly" />
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)>
-			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline>
+			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.fareType>
 			<cfset local[local.sThreadName] = {}>
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
@@ -149,10 +163,11 @@
 				Policy="#arguments.Policy#"
 				bRefundable="#arguments.bRefundable#"
 				airline="#arguments.airline#"
-				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#">
+				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
+				fareType="#arguments.fareType#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline)>
+				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType)>
 
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
@@ -228,6 +243,8 @@
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 		<cfargument name="Account" required="false"	default="">
 		<cfargument name="airline" required="true">
+		<cfargument name="policy" required="true">
+		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly" />
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<!--- grab leg query out of filter --->
@@ -241,7 +258,13 @@
 			<cfset local.targetBranch = 'P1601396'>
 		</cfif>
 
+
 		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
+		<!--- STM-2434 if the account doesn’t allow nonrefundables, to only call for
+		 refundable fares in the uAPI lowfare call --->
+		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
+			<cfset local.bProhibitNonRefundableFares = true>
+		</cfif>
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
 
 <!---
@@ -412,13 +435,17 @@
 											<com:Carrier Code="ZK"/>
 										</air:ProhibitedCarriers>
 									</cfif>
-									<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
+									<cfif arguments.fareType EQ "PrivateFaresOnly">
+										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="true"/>
+									<cfelse>
+										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
+									</cfif>
 								</air:AirSearchModifiers>
 								<com:SearchPassenger
 									Code="ADT" />
 								<air:AirPricingModifiers
 									ProhibitNonRefundableFares="#bProhibitNonRefundableFares#"
-									FaresIndicator="PublicAndPrivateFares"
+									FaresIndicator="#arguments.fareType#"
 									ProhibitMinStayFares="false"
 									ProhibitMaxStayFares="false"
 									CurrencyType="USD"

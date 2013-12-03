@@ -73,6 +73,7 @@
 
 	<bean id="purchase" class="booking.services.purchase" >
 		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
+		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 	</bean>
 

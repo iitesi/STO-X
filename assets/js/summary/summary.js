@@ -132,6 +132,15 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
+		if (traveler.bookingDetail.createProfile == 1) {
+			$( "#createProfileDiv" ).show();
+			$( "#createProfile" ).attr( 'checked', true );
+			$( "#usernameDiv" ).show();
+			$( "#username" ).val( traveler.bookingDetail.username );
+			$( "#username_disabled" ).val( traveler.bookingDetail.username );
+			$( "#password" ).val( traveler.bookingDetail.password );
+			$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
+		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
 			$( "#firstName" ).prop('disabled', true);
@@ -599,7 +608,7 @@ $(document).ready(function(){
 	if (acctID == 348) {
 
 		$( "#orgUnits" ).on('change', '#custom', function() {
-			var custom = $( "#custom" ).val()
+			var custom = $( "#custom" ).val();
 			$.ajax({type:"POST",
 				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
 				data: 	{
@@ -609,10 +618,10 @@ $(document).ready(function(){
 				dataType: 'json',
 				success:function(values) {
 					var originalValue = $("#sort1").val();
-					$( "#sort1" ).html('')
-					$( "#sort1" ).append('<option value="0"></option>')
+					$( "#sort1" ).html('');
+					$( "#sort1" ).append('<option value="0"></option>');
 					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort1" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
+						$( "#sort1" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 					}
 					$( "#sort1" ).val( originalValue );
 					$( "#sort1" ).trigger( "change" );
@@ -621,8 +630,8 @@ $(document).ready(function(){
 		});
 
 		$( "#orgUnits" ).on('change', '#sort1', function() {
-			var custom = $( "#custom" ).val()
-			var sort1 = $( "#sort1" ).val()
+			var custom = $( "#custom" ).val();
+			var sort1 = $( "#sort1" ).val();
 			$.ajax({type:"POST",
 				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
 				data: 	{
@@ -633,10 +642,10 @@ $(document).ready(function(){
 				dataType: 'json',
 				success:function(values) {
 					var originalValue = $("#sort2").val();
-					$( "#sort2" ).html('')
-					$( "#sort2" ).append('<option value="0"></option>')
+					$( "#sort2" ).html('');
+					$( "#sort2" ).append('<option value="0"></option>');
 					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort2" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
+						$( "#sort2" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 					}
 					$( "#sort2" ).val( originalValue );
 					$( "#sort2" ).trigger("change");
@@ -645,9 +654,9 @@ $(document).ready(function(){
 		});
 
 		$( "#orgUnits" ).on('change', '#sort2', function() {
-			var custom = $( "#custom" ).val()
-			var sort1 = $( "#sort1" ).val()
-			var sort2 = $( "#sort2" ).val()
+			var custom = $( "#custom" ).val();
+			var sort1 = $( "#sort1" ).val();
+			var sort2 = $( "#sort2" ).val();
 			$.ajax({type:"POST",
 				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
 				data: 	{
@@ -658,21 +667,23 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					$( "#sort3" ).html('')
-					$( "#sort3" ).append('<option value="0"></option>')
+					var originalValue = $("#sort3").val();
+					$( "#sort3" ).html('');
+					$( "#sort3" ).append('<option value="0"></option>');
 					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort3" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
+						$( "#sort3" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 					}
+					$( "#sort3" ).val( originalValue );
 					$( "#sort3" ).trigger("change");
 				}
 			});
 		});
 
 		$( "#orgUnits" ).on('change', '#sort3', function() {
-			var custom = $( "#custom" ).val()
-			var sort1 = $( "#sort1" ).val()
-			var sort2 = $( "#sort2" ).val()
-			var sort3 = $( "#sort3" ).val()
+			var custom = $( "#custom" ).val();
+			var sort1 = $( "#sort1" ).val();
+			var sort2 = $( "#sort2" ).val();
+			var sort3 = $( "#sort3" ).val();
 			$.ajax({type:"POST",
 				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
 				data: 	{
@@ -684,11 +695,13 @@ $(document).ready(function(){
 						},
 				dataType: 'json',
 				success:function(values) {
-					$( "#sort4" ).html('')
-					$( "#sort4" ).append('<option value="0"></option>')
+					var originalValue = $("#sort4").val();
+					$( "#sort4" ).html('');
+					$( "#sort4" ).append('<option value="0"></option>');
 					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort4" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>')
+						$( "#sort4" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 					}
+					$( "#sort4" ).val( originalValue );
 				}
 			});
 		});

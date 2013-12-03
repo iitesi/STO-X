@@ -42,6 +42,7 @@
 								</cfif>
 								<cfset airCurrency = left(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 3) />
 								<cfset airBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), airCurrency, '') />
+								<cfset airApproximateBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getApproximateBasePrice(), airCurrency, '') />
 								<cfset airTaxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), airCurrency, '') />
 								<cfset airTotal = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), airCurrency, '') />
 								<tr>
@@ -53,7 +54,9 @@
 											CBA
 										</cfif></td>
 									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td>
+									<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
+									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : airApproximateBase&' '&airCurrency)#</td>
+									<!--- <td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td> --->
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : airTaxes&' '&airCurrency)#</td>
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : airTotal&' '&airCurrency)#</td>
 									<cfset totalAmount = totalAmount + airTotal />
