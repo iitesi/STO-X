@@ -118,20 +118,22 @@
 
 							<cfif arguments.hotelSelected>
 								<!---
-								Add hotel lost savings code : no error response
+								Add hotel reason code : no error response
 								Command = T-H*DDMM/SV-C
 								--->
 								<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
 																									, hostToken = arguments.hostToken
 																									, serviceType = 'H'
 																									, startDate = arguments.Filter.getCheckInDate()
-																									, reasonCode = arguments.Traveler.getBookingDetail().getCarReasonCode()
+																									, reasonCode = arguments.Traveler.getBookingDetail().getHotelReasonCode()
 																									, lowestRateOffered = 0
 																									, searchID = arguments.searchID )>
 
 							</cfif>
 							<cfif arguments.vehicleSelected>
 								<!---
+								Add vehicle reason code : no error response
+								Command = T-C*DDMM/SV-Cx
 								Add vehicle lost savings code : no error response
 								Command = T-C*DDMM/SA-100.00
 								--->
@@ -139,7 +141,7 @@
 																	, hostToken = arguments.hostToken
 																	, serviceType = 'C'
 																	, startDate = arguments.Filter.getCarPickupDateTime()
-																	, reasonCode = arguments.Traveler.getBookingDetail().getHotelReasonCode()
+																	, reasonCode = len(arguments.Traveler.getBookingDetail().getCarReasonCode()) ? arguments.Traveler.getBookingDetail().getCarReasonCode() : 'A'
 																	, lowestRateOffered = arguments.lowestCarRate
 																	, searchID = arguments.searchID )>
 
