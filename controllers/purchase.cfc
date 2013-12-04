@@ -162,23 +162,27 @@
 						<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 					</cfif>
 
-					<!--- Do a lowest public air price before air create for U12 --->
-					<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
-																					, Account = rc.Account
-																					, Policy = rc.Policy
-																					, sCabin = Air.Class
-																					, bRefundable = 0
-																					, bRestricted = 0
-																					, sFaresIndicator = "PublicFaresOnly"
-																					, bAccountCodes = 0
-																					, nTrip = Air.nTrip
-																					, nCouldYou = 0
-																					, bSaveAirPrice = 1
-																					, findIt = rc.Filter.getFindIt()
-																					, bIncludeClass = 1
-																				)>
-					<cfif NOT structIsEmpty(lowestPublicTrip)>
-						<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
+					<!--- If private fare, do a lowest public air price before air create for U12 --->
+					<cfif Air.privateFare>
+						<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																						, Account = rc.Account
+																						, Policy = rc.Policy
+																						, sCabin = Air.Class
+																						, bRefundable = 0
+																						, bRestricted = 0
+																						, sFaresIndicator = "PublicFaresOnly"
+																						, bAccountCodes = 0
+																						, nTrip = Air.nTrip
+																						, nCouldYou = 0
+																						, bSaveAirPrice = 1
+																						, findIt = rc.Filter.getFindIt()
+																						, bIncludeClass = 1
+																					)>
+						<cfif NOT structIsEmpty(lowestPublicTrip)>
+							<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
+						</cfif>
+					<cfelse>
+						<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
