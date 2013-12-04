@@ -52,7 +52,7 @@
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
 							</cfif>
-							<li><a href="#" id="timebtn" title="Click to view/hide non-stop flights">Time</a></li>
+							<li><a href="#" class="filterbytime" id="timebtn" title="Click to view/hide time filters">Time</a></li>
 							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
@@ -70,7 +70,7 @@
 					</cfoutput>
 				</div>
 
-				<!--- new filter well --->
+				<!--- filter well for airline/class/fares --->
 				<div class="well filterselection">
 					<div class="row">
 						<div class="span7">
@@ -173,11 +173,64 @@
 						<span class="pull-right">
 							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
 						</span>
+					</div>
+				</div> <!--- // well filterselection --->
+			</div> <!--- // filterbar --->
+
+			<!--- time sliders --->
+			<div class="clearfix"></div>
+			<div class="filtertimeselection">
+
+<div class="pull-left" id="timefilter">
+		<div class="span12">
+			<b>Times</b>
+			<div class="row">
+				<div class="span3">
+					<div id="time-range">
+							<p>Departure: Atlanta<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+							<div class="sliders_step1 departure1">
+									<div class="slider-range"></div>
+							</div>
+					</div>
 				</div>
-				</div> <!--- well filterselection --->
+
+				<div class="span3">
+					<div id="time-range">
+							<p>Arrival: Miami<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+							<div class="sliders_step1 arrival1">
+									<div class="slider-range"></div>
+							</div>
+					</div>
+				</div>
+
+				<div class="span3">
+					<div id="time-range departure2">
+						<p>Departure: Miami<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+						<div class="sliders_step1 departure2">
+							<div class="slider-range"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="span3">
+					<div id="time-range arrival2">
+						<p>Arrival: Atlanta<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+						<div class="sliders_step1 arrival2">
+							<div class="slider-range"></div>
+						</div>
+					</div>
+				</div>
 			</div>
-		</div><!--- // class=sixteen columns --->
-	</div><!--- // class=filter --->
+		</div>
+	</div>
+
+
+
+			</div> <!--- // filtertimeselection --->
+
+
+		</div><!--- // sixteen columns --->
+	</div><!--- // filter --->
 
 
 
@@ -336,48 +389,32 @@ $(".slider-range").slider({
 <!--- <cfdump var="#session.searches[rc.SearchID]#" label="Dump ( session.searches[rc.SearchID] )" abort="true" format="html">
  --->
 
-<div class="pull-left" id="timefilter">
-	<div class="span12">
-		<b>Times</b>
-		<div class="row">
-			<div class="span3">
-				<div id="time-range">
-						<p>Departure: Atlanta<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-						<div class="sliders_step1 departure1">
-								<div class="slider-range"></div>
+
+
+
+
+<!--- 				<div class="well filtertimeselection">
+					<div class="row">
+						<div class="sixteen columns">
+							<div class="row">
+
+								<h1>TIME SLIDERS GO HERE</h1>
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non, sint, dolores, dolorem in dolorum itaque unde cumque eaque fugiat sapiente debitis deserunt vero culpa temporibus tempora sunt sequi quo magni.</p>
+
+
+							<input type="hidden" id="NonStops" name="NonStops" value="0">
+							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
+							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
+							</div>
 						</div>
-				</div>
-			</div>
-
-			<div class="span3">
-				<div id="time-range">
-						<p>Arrival: Miami<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-						<div class="sliders_step1 arrival1">
-								<div class="slider-range"></div>
-						</div>
-				</div>
-			</div>
-
-			<div class="span3">
-				<div id="time-range departure2">
-					<p>Departure: Miami<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-					<div class="sliders_step1 departure2">
-						<div class="slider-range"></div>
+					</div> <!--- row --->
+					<br>
+					<div>
+						<span class="pull-right">
+							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+						</span>
 					</div>
-				</div>
-			</div>
-
-			<div class="span3">
-				<div id="time-range arrival2">
-					<p>Arrival: Atlanta<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-					<div class="sliders_step1 arrival2">
-						<div class="slider-range"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+				</div> --->
 
 
 
@@ -390,3 +427,7 @@ $(".slider-range").slider({
 </div>
 
 <div class="clearfix"></div>
+
+
+
+

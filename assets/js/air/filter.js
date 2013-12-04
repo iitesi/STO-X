@@ -37,11 +37,10 @@ $(document).ready(function(){
 
 //------------------------------------------------------------------------------
 // FILTER
+// 9:46 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+// This should all be redone in Angular.js :)
 //------------------------------------------------------------------------------
 
-	// 9:29 AM Tuesday, August 20, 2013 - Jim Priest - jpriest@shortstravel.com
-	// hide the filter bar with a loading message until the page has fully rendered
-	// RailoQA takes forever to render the page - this may not be an issue in prod
 	$('#filterbarloading').hide();
 	$('.airfilterbar').show();
 
@@ -57,11 +56,12 @@ $(document).ready(function(){
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
-		$('.filterby, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
+		$('.filterby, .filterbytime, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+		$('.filtertimeselection').hide();
 		$('.spinner').show();
 
 		// reset sorting and filters
@@ -70,8 +70,14 @@ $(document).ready(function(){
 		return false;
 	});
 
+	// display airline/class/fare filter well
 	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1});
+		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 99});
+	});
+
+	// display time slider filter well
+	$('.filterbytime').on('click', function() {
+		$(".filtertimeselection").slideToggle().css({"position": "relative", "z-index": 98});
 	});
 
 // toggle active button state if filter is active

@@ -285,6 +285,13 @@ ul.tabs li a.active {
 	display: none;
 }
 
+.filtertimeselection {
+	margin: 2em 0;
+	position: relative;
+	z-index: 1;
+	display: none;
+}
+
 .filter .navbar-inner {
 	padding-left: 2px;
 	padding-right: 2px;
