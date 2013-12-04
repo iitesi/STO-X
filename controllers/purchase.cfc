@@ -414,7 +414,8 @@
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
+						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
+																						, OriginalUser = Profile )>
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile()>
