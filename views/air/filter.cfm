@@ -7,6 +7,7 @@
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
 			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+			<script type='text/javascript' src='#application.assetURL#/js/air/timeslider.js'></script>
 		</cfoutput>
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />
@@ -71,7 +72,7 @@
 				</div>
 
 				<!--- filter well for airline/class/fares --->
-				<div class="well filterselection">
+				<div id="filterwell" class="well filterselection">
 					<div class="row">
 						<div class="span7">
 							<div class="row">
@@ -171,251 +172,83 @@
 					<br>
 					<div>
 						<span class="pull-right">
-							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
+							<button type="button" class="closefilterwell close" title="Close filters"><i class="icon-remove"></i></button>
 						</span>
 					</div>
 				</div> <!--- // well filterselection --->
 			</div> <!--- // filterbar --->
 
+
+
+
+
+
+
+<!--- 10:08 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+TODO:
+* Need to loop over flights and get
+* Earliest time/latest time (Kayak) or just use 12/12?
+* Arrival/Departure Cities (filter / session.searchID?)
+ --->
+
 			<!--- time sliders --->
-			<div class="clearfix"></div>
-			<div class="filtertimeselection">
+			<div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
+			<div id="sliderwell" class="well filtertimeselection">
 
-<div class="pull-left" id="timefilter">
-		<div class="span12">
-			<b>Times</b>
-			<div class="row">
-				<div class="span3">
-					<div id="time-range">
-							<p>Departure: Atlanta<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-							<div class="sliders_step1 departure1">
-									<div class="slider-range"></div>
+
+
+							<div>
+								<b>Times</b>
+								<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
 							</div>
-					</div>
-				</div>
 
-				<div class="span3">
-					<div id="time-range">
-							<p>Arrival: Miami<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-							<div class="sliders_step1 arrival1">
-									<div class="slider-range"></div>
-							</div>
-					</div>
-				</div>
+							<div class="row">
+								<div class="span12">
+									<div class="row">
+										<div class="span3">
+											<div id="time-range">
+													<p>Departure: Atlanta<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+													<div class="sliders_step1 departure1">
+															<div class="slider-range"></div>
+													</div>
+											</div>
+										</div>
 
-				<div class="span3">
-					<div id="time-range departure2">
-						<p>Departure: Miami<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-						<div class="sliders_step1 departure2">
-							<div class="slider-range"></div>
-						</div>
-					</div>
-				</div>
+										<div class="span3">
+											<div id="time-range">
+													<p>Arrival: Miami<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+													<div class="sliders_step1 arrival1">
+															<div class="slider-range"></div>
+													</div>
+											</div>
+										</div>
 
-				<div class="span3">
-					<div id="time-range arrival2">
-						<p>Arrival: Atlanta<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-						<div class="sliders_step1 arrival2">
-							<div class="slider-range"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+										<div class="span3">
+											<div id="time-range departure2">
+												<p>Departure: Miami<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+												<div class="sliders_step1 departure2">
+													<div class="slider-range"></div>
+												</div>
+											</div>
+										</div>
 
+										<div class="span3">
+											<div id="time-range arrival2">
+												<p>Arrival: Atlanta<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+												<div class="sliders_step1 arrival2">
+													<div class="slider-range"></div>
+												</div>
+											</div>
+										</div>
+									</div> <!--- // row --->
+								</div> <!--- // span12 --->
+							</div> <!--- // row --->
 
-
+			<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
 			</div> <!--- // filtertimeselection --->
-
 
 		</div><!--- // sixteen columns --->
 	</div><!--- // filter --->
-
-
-
-<script>
-		// Resources
-		// http://jsfiddle.net/jrweinb/MQ6VT/
-		// http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
-		// http://marcneuwirth.com/blog/2010/02/21/using-a-jquery-ui-slider-to-select-a-time-range/
-		// http://marcneuwirth.com/blog/2011/05/22/revisiting-the-jquery-ui-time-slider/
-		// http://stackoverflow.com/questions/1425913/show-hide-div-based-on-value-of-jquery-ui-slider
-		// http://stackoverflow.com/questions/10213678/jquery-ui-slider-ajax-result
-
-		// http://ghusse.github.io/jQRangeSlider/documentation.html#zoomMethods
-		// http://momentjs.com/docs/
-
-		// using data-attributes - maybe give each badge a data-takeoff data-landing attribute?
-		// http://stackoverflow.com/questions/15582349/modify-this-function-to-show-hide-by-data-attributes-instead-of-by-class
-
-		// MAX	1395168300		1055
-		// MIN	1394202000   	660
-
-
-$(document).ready(function () {
-
-				// grab the  min/max times from badge range so we can set in slider below
-				// this would be dynamically populated
-				var mintime = 330;
-				var maxtime = 1173;
-
-				var slidertime1 = moment().startOf('day').seconds(mintime*60).format('h:mma');
-				var slidertime2 = moment().startOf('day').seconds(maxtime*60).format('h:mma');
-
-				$('.slider-time').text( slidertime1 );
-				$('.slider-time2').text( slidertime2 );
-
-	 // -------------------------------------------------------
-
-$(".slider-range").slider({
-		range: true,
-		min: mintime,
-		max: maxtime,
-		step: 10,
-		values: [mintime, maxtime],
-
-		slide: function (e, ui) {
-					var hours1 = Math.floor(ui.values[0] / 60);
-					var minutes1 = ui.values[0] - (hours1 * 60);
-					if (hours1.length == 1) hours1 = '0' + hours1;
-					if (minutes1.length == 1) minutes1 = '0' + minutes1;
-					if (minutes1 == 0) minutes1 = '00';
-					if (hours1 >= 12) {
-							if (hours1 == 12) {
-									hours1 = hours1;
-									minutes1 = minutes1 + " PM";
-							} else {
-									hours1 = hours1 - 12;
-									minutes1 = minutes1 + " PM";
-							}
-					} else {
-							hours1 = hours1;
-							minutes1 = minutes1 + " AM";
-					}
-					if (hours1 == 0) {
-							hours1 = 12;
-							minutes1 = minutes1;
-					}
-
-
-				// set min time
-				$('.slider-time').html(hours1 + ':' + minutes1);
-
-					var hours2 = Math.floor(ui.values[1] / 60);
-					var minutes2 = ui.values[1] - (hours2 * 60);
-
-					if (hours2.length == 1) hours2 = '0' + hours2;
-					if (minutes2.length == 1) minutes2 = '0' + minutes2;
-					if (minutes2 == 0) minutes2 = '00';
-					if (hours2 >= 12) {
-							if (hours2 == 12) {
-									hours2 = hours2;
-									minutes2 = minutes2 + " PM";
-							} else if (hours2 == 24) {
-									hours2 = 11;
-									minutes2 = "59 PM";
-							} else {
-									hours2 = hours2 - 12;
-									minutes2 = minutes2 + " PM";
-							}
-					} else {
-							hours2 = hours2;
-							minutes2 = minutes2 + " AM";
-					}
-
-				// set the max time
-				$('.slider-time2').html(hours2 + ':' + minutes2);
-
-
-
-				// show or hide badges based on attr for each badge
-				$('div[id^="flight"]').each(function(e){
-					console.log( $(this).attr('takeofftime0' ) );
-					console.log('Time: ' + ui.values[0] + ' to ' +  ui.values[1]);
-					console.log( '-----------------' );
-					if($(this).attr('takeofftime0') >= ui.values[0] && $(this).attr('takeofftime0') <= ui.values[1]){
-						$(this).show();
-					} else {
-						$(this).hide()
-					}
-				});
-		}
-});
-
-
-});
-</script>
-
-<style>
-
-/*.ui-slider .ui-slider-handle{
-		width:50px;
-		height:50px;
-		background:url(../images/slider_grabber.png) no-repeat; overflow: hidden;
-		position:absolute;
-		top: -10px;
-		border-style:none;
-}
-
-*/
-
-
-.ui-slider .ui-slider-handle {
-		cursor: default;
-		height: 1.2em;
-		position: absolute;
-		width: .8em;
-		z-index: 2;
-}
-
-.ui-slider {width: 80%; z-index: 0;}
-
-.arrival1 > .ui-slider .ui-slider-range, .arrival2 > .ui-slider .ui-slider-range { background: #ccc; }
-.departure1 > .ui-slider .ui-slider-range, .departure2 > .ui-slider .ui-slider-range { background: #5E99CB; }
-
-.ui-widget-content { background: #4883B3; }
-
-</style>
-
-
-
-
-
-
-
-
- <!--- CFDUMP: Debugging --->
-<!--- <cfdump var="#session.searches[rc.SearchID]#" label="Dump ( session.searches[rc.SearchID] )" abort="true" format="html">
- --->
-
-
-
-
-
-<!--- 				<div class="well filtertimeselection">
-					<div class="row">
-						<div class="sixteen columns">
-							<div class="row">
-
-								<h1>TIME SLIDERS GO HERE</h1>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non, sint, dolores, dolorem in dolorum itaque unde cumque eaque fugiat sapiente debitis deserunt vero culpa temporibus tempora sunt sequi quo magni.</p>
-
-
-							<input type="hidden" id="NonStops" name="NonStops" value="0">
-							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
-							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
-							</div>
-						</div>
-					</div> <!--- row --->
-					<br>
-					<div>
-						<span class="pull-right">
-							<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
-						</span>
-					</div>
-				</div> --->
-
 
 
 <!-- Modal -->
@@ -427,7 +260,3 @@ $(".slider-range").slider({
 </div>
 
 <div class="clearfix"></div>
-
-
-
-

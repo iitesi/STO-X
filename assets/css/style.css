@@ -286,15 +286,19 @@ ul.tabs li a.active {
 }
 
 .filtertimeselection {
-	margin: 2em 0;
+	display: none;
+	margin-top: 1em;
+	margin-bottom: 2em;
 	position: relative;
 	z-index: 1;
-	display: none;
+	-webkit-box-shadow: 3px 3px 5px rgba(50, 50, 50, 0.2);
+	-moz-box-shadow:    3px 3px 5px rgba(50, 50, 50, 0.2);
+	box-shadow:         3px 3px 5px rgba(50, 50, 50, 0.2);
 }
 
 .filter .navbar-inner {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 /*adjust last value to tighten up filter bar button spacing but make sure to test in all browsers!*/
@@ -1044,3 +1048,33 @@ tr.hotel-room td{
     text-align: left;
     border: 1px solid gray;
 }
+
+
+/*
+----------------------------------------------------------------------------------------------------------
+	AIR TIME SLIDERS
+----------------------------------------------------------------------------------------------------------
+*/
+
+/*.ui-slider .ui-slider-handle{
+		width:50px;
+		height:50px;
+		background:url(../images/slider_grabber.png) no-repeat; overflow: hidden;
+		position:absolute;
+		top: -10px;
+		border-style:none;
+}
+*/
+
+.ui-slider .ui-slider-handle {
+		cursor: default;
+		height: 1.2em;
+		position: absolute;
+		width: .8em;
+		z-index: 2;
+}
+
+.ui-slider {width: 70%; z-index: 0;}
+.arrival1 > .ui-slider .ui-slider-range, .arrival2 > .ui-slider .ui-slider-range { background: #ccc; }
+.departure1 > .ui-slider .ui-slider-range, .departure2 > .ui-slider .ui-slider-range { background: #5E99CB; }
+.ui-widget-content { background: #4883B3; }

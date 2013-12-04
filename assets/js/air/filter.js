@@ -48,8 +48,13 @@ $(document).ready(function(){
 		$(this).slideUp();
 	});
 
-	$('.closewell').on('click', function() {
-		$(this).parent().parent().slideUp();
+	$('.closefilterwell').on('click', function() {
+		$('#filterwell').slideUp();
+	});
+
+	$('.closesliderwell').on('click', function() {
+		$('#sliderwell').slideUp();
+		$("#timebtn").parent().toggleClass('active');
 	});
 
 	$('.removefilters').on('click', function() {
@@ -78,6 +83,11 @@ $(document).ready(function(){
 	// display time slider filter well
 	$('.filterbytime').on('click', function() {
 		$(".filtertimeselection").slideToggle().css({"position": "relative", "z-index": 98});
+		$("#timebtn").parent().toggleClass('active');
+		// if the other filter is open let's close it
+		if( $('.filterselection').is(':visible') ){
+			$(".filterselection").slideUp('fast');
+		}
 	});
 
 // toggle active button state if filter is active
