@@ -20,10 +20,17 @@
 // 	MIN	1394202000   	660
 
 $(document).ready(function () {
+
+
+	// see code in badge.cfm to populate the data-attributes for each badge with the min/max times for that badge
+	// that logic needs to be moved 'up' earlier in process (airParse) so we can grab min/max times here in JS
 	// grab the  min/max times from badge range so we can set in slider below
 	// this would be dynamically populated
-	var mintime = 330;
-	var maxtime = 1173;
+	// var mintime = 330;
+	// var maxtime = 1173;
+	var mintime = 0;
+	var maxtime = 1439;
+	var steptime = 60;
 
 	var slidertime1 = moment().startOf('day').seconds(mintime*60).format('h:mma');
 	var slidertime2 = moment().startOf('day').seconds(maxtime*60).format('h:mma');
@@ -35,7 +42,7 @@ $(document).ready(function () {
 		range: true,
 		min: mintime,
 		max: maxtime,
-		step: 10,
+		step: steptime,
 		values: [mintime, maxtime],
 
 		slide: function (e, ui) {

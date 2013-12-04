@@ -83,42 +83,26 @@
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfset stGroup = stTrip.Groups[Group]>
 
+				<!--- set times for badges, and get total times so we can set time sliders in filter --->
+				<cfset departureTime = TimeFormat(stGroup.DepartureTime, 'HH:mm')>
+				<cfset departureTime = (hour(departureTime)*60) + (minute(departureTime))>
+				<cfset arrivalTime = TimeFormat(stGroup.ArrivalTime, 'HH:mm')>
+				<cfset arrivalTime = (hour(arrivalTime)*60) + (minute(arrivalTime))>
+				<cfset "timeFilter.departureTime#group#" = departureTime>
+				<cfset "timeFilter.arrivalTime#group#" = arrivalTime>
 
+				<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+				STM-2544 need to create a container of min/max times so we can use to set filters
+				See code in lowfare.cfm
 
+				<cfset arrayAppend(timeFilterTotal, departureTime)>
+				<cfset arrayAppend(timeFilterTotal, arrivalTime)> --->
 
-
-
-				<!---
-				TODO: 9:31 AM Monday, November 18, 2013 - Jim Priest - jpriest@shortstravel.com
-				This epock setting needs to move somewhere else - maybe airparse? so we can access it sooner (in js)
-				--->
-				<!--- set epoch time for each takeoff and landing time --->
-
-				<!--- <cfset "epoch.takeoff#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime)>
-				<cfset "epoch.landing#group#" = dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime)> --->
-
-
-				<cfset takeoffTime = TimeFormat(stGroup.DepartureTime, 'HH:mm')>
-				<cfset takeofftime = (hour(takeOffTime)*60) + (minute(takeOffTime))>
-
-				<cfset landingTime = TimeFormat(stGroup.ArrivalTime, 'HH:mm')>
-				<cfset landingTime = (hour(landingTime)*60) + (minute(landingTime))>
-
-				<cfset "epoch.takeofftime#group#" = takeoffTime>
-				<cfset "epoch.landingtime#group#" = landingTime>
-
-				<!--- <cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.DepartureTime))>
-				<cfset arrayAppend(epochTotal, dateDiff('s', dateConvert('utc2Local', createDateTime(1970, 1, 1, 0, 0, 0)), stGroup.ArrivalTime))> --->
-
-
-
-				<cfset arrayAppend(epochTotal, takeofftime)>
-				<cfset arrayAppend(epochTotal, landingTime)>
 
 				<tr>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Origin].airport#">
-						<strong>#stGroup.Origin# #group#</strong>
+						<strong>#stGroup.Origin#</strong>
 					</td>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Destination].airport#">
@@ -274,14 +258,14 @@
 	</cfoutput>
 </cfsavecontent>
 
-<!--- DISPLAY BADGE --->
 
 <!--- set unique data-attributes for each badge for filtering by time --->
 <cfset dataString = "">
-<cfloop collection="#epoch#" item="epochItem" index="epochIndex">
-	<cfset dataString = listAppend(dataString, epochIndex & '="#epochItem#"', ' ')>
+<cfloop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex">
+	<cfset dataString = listAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"', ' ')>
 </cfloop>
 
+<!--- display badge --->
 <cfoutput>
 	<div id="flight#nTripKey#" #dataString# class="pull-left">#sBadge#</div>
 </cfoutput>

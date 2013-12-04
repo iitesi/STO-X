@@ -184,12 +184,12 @@
 
 
 
-<!--- 10:08 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
-TODO:
-* Need to loop over flights and get
-* Earliest time/latest time (Kayak) or just use 12/12?
-* Arrival/Departure Cities (filter / session.searchID?)
- --->
+			<!--- 10:08 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+			TODO:
+			* Need to loop over flights and get
+			* Earliest time/latest time (Kayak) or just use 12/12?
+			* Arrival/Departure Cities (filter / session.searchID?)
+			 --->
 
 			<!--- time sliders --->
 			<div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
@@ -198,9 +198,43 @@ TODO:
 
 
 							<div>
-								<b>Times</b>
+								<b><cfswitch expression="#rc.filter.getAirType()#">
+										<cfcase value="RT">Round Trip</cfcase>
+										<cfcase value="OW">One Way</cfcase>
+									</cfswitch> Times</b>
 								<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
 							</div>
+<cfoutput>
+<cfswitch expression="#rc.filter.getAirType()#">
+	<cfcase value="RT">
+		<h1>Round Trip</h1>
+		Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
+		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+		<hr>
+		Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
+		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+		<hr>
+		Departure: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
+		#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# (time range)
+		<hr>
+		Arrival: #application.stAirports[rc.filter.getDepartCity()].city#<br />
+		#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# (time range)
+		<hr>
+
+	</cfcase>
+	<cfcase value="OW">
+		<h1>one way</h1>
+		Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
+		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+		<hr>
+		Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
+		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+		<hr>
+	</cfcase>
+</cfswitch>
+</cfoutput>
+
+
 
 							<div class="row">
 								<div class="span12">
@@ -251,6 +285,10 @@ TODO:
 	</div><!--- // filter --->
 
 
+
+
+
+
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
@@ -260,3 +298,8 @@ TODO:
 </div>
 
 <div class="clearfix"></div>
+
+
+
+
+
