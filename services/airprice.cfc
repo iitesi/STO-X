@@ -139,10 +139,16 @@
 		<cfargument name="nCouldYou" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="stAccount" required="true">
 		<cfargument name="findIt" required="true">
+		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
+		<cfset local.ClassOfService = '' />
+
+		<cfif arguments.bIncludeClass>
+			<cfset local.ClassOfService = 'ClassOfService="#local.stSegment.Class#"' />
+		</cfif>
 
 		<!--- Code needs to be reworked and put in a better location --->
 		<cfset local.targetBranch = arguments.stAccount.sBranch>
@@ -169,7 +175,7 @@
 													<cfset arrayAppend(local.carriers, local.stSegment.Carrier)>
 												</cfif>
 												<cfset local.nCount++>
-												<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" />
+												<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" #local.ClassOfService# />
 											</cfloop>
 										</cfloop>
 									</cfif>

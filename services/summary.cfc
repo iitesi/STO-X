@@ -28,7 +28,7 @@
 				, Description
 			FROM FareSavingsCode
 			WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-				AND FareSavingsCodeID NOT IN (35)
+				AND FareSavingsCodeID NOT IN (35,114)
 				<cfif arguments.acctID NEQ 348>
 					AND Acct_ID IS NULL
 				<cfelse>
