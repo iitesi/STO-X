@@ -144,48 +144,48 @@
 						</cfif>
 					</cfif>
 
-					<!--- Do a lowest refundable air price before air create for U6 --->
-					<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
-																					, Account = rc.Account
-																					, Policy = rc.Policy
-																					, sCabin = Air.Class
-																					, bRefundable = 1
-																					, bRestricted = 0
-																					, sFaresIndicator = "PublicAndPrivateFares"
-																					, bAccountCodes = 1
-																					, nTrip = Air.nTrip
-																					, nCouldYou = 0
-																					, bSaveAirPrice = 1
-																					, findIt = rc.Filter.getFindIt()
-																				)>
-					<cfif NOT structIsEmpty(refundableTrip)>
-						<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
-					</cfif>
-
-					<!--- If private fare, do a lowest public air price before air create for U12 --->
-					<cfif Air.privateFare>
-						<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+					<cfif arrayIsEmpty(errorMessage)>
+						<!--- Do a lowest refundable air price before air create for U6 --->
+						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
 																						, Policy = rc.Policy
 																						, sCabin = Air.Class
-																						, bRefundable = 0
+																						, bRefundable = 1
 																						, bRestricted = 0
-																						, sFaresIndicator = "PublicFaresOnly"
-																						, bAccountCodes = 0
+																						, sFaresIndicator = "PublicAndPrivateFares"
+																						, bAccountCodes = 1
 																						, nTrip = Air.nTrip
 																						, nCouldYou = 0
 																						, bSaveAirPrice = 1
 																						, findIt = rc.Filter.getFindIt()
-																						, bIncludeClass = 1
 																					)>
-						<cfif NOT structIsEmpty(lowestPublicTrip)>
-							<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
+						<cfif NOT structIsEmpty(refundableTrip)>
+							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
-					<cfelse>
-						<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
-					</cfif>
 
-					<cfif arrayIsEmpty(errorMessage)>
+						<!--- If private fare, do a lowest public air price before air create for U12 --->
+						<cfif Air.privateFare>
+							<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																							, Account = rc.Account
+																							, Policy = rc.Policy
+																							, sCabin = Air.Class
+																							, bRefundable = 0
+																							, bRestricted = 0
+																							, sFaresIndicator = "PublicFaresOnly"
+																							, bAccountCodes = 0
+																							, nTrip = Air.nTrip
+																							, nCouldYou = 0
+																							, bSaveAirPrice = 1
+																							, findIt = rc.Filter.getFindIt()
+																							, bIncludeClass = 1
+																						)>
+							<cfif NOT structIsEmpty(lowestPublicTrip)>
+								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
+							</cfif>
+						<cfelse>
+							<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
+						</cfif>
+
 						<!--- Parse credit card information --->
 						<cfset local.cardNumber = ''>
 						<cfset local.cardCVV = ''>
