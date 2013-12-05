@@ -194,9 +194,14 @@
 					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
 				</div>
 
-				<div class="row">
+				<!--- 11:37 AM Thursday, December 05, 2013 - Jim Priest - jpriest@shortstravel.com
+				All the templates need to be seriously refactored here. Using row-fluid here will make
+				the sliders smaller as the screen shrinks. Ideally they would stack vertically
+				but with skeleton+bootstrap+jqueryui something is overriding that --->
+
+				<div class="row-fluid">
 					<div class="span12">
-						<div class="row">
+						<div class="row-fluid">
 
 						<cfoutput>
 							<cfswitch expression="#rc.filter.getAirType()#">
@@ -204,9 +209,9 @@
 									<div class="span3">
 										<div id="time-range">
 												<p>Departure: #application.stAirports[rc.filter.getDepartCity()].city#
-												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-												<div class="sliders_step1 departure-slider">
-														<div class="slider-range"></div>
+												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time0"></span> - <span class="slider-time1"></span></p>
+												<div class="departure-slider">
+														<div class="slider-range0"></div>
 												</div>
 										</div>
 									</div>
@@ -214,9 +219,9 @@
 									<div class="span3">
 										<div id="time-range">
 												<p>Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#
-												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-												<div class="sliders_step1 arrival-slider">
-														<div class="slider-range"></div>
+												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time2"></span> - <span class="slider-time3"></span></p>
+												<div class="arrival-slider">
+														<div class="slider-range1"></div>
 												</div>
 										</div>
 									</div>
@@ -224,9 +229,9 @@
 									<div class="span3">
 										<div id="time-range departure2">
 											<p>Departure: #application.stAirports[rc.filter.getArrivalCity()].city#
-											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-											<div class="sliders_step1 departure-slider">
-												<div class="slider-range"></div>
+											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time4"></span> - <span class="slider-time5"></span></p>
+											<div class="departure-slider">
+												<div class="slider-range2"></div>
 											</div>
 										</div>
 									</div>
@@ -234,9 +239,9 @@
 									<div class="span3">
 										<div id="time-range arrival2">
 											<p>Arrival: #application.stAirports[rc.filter.getDepartCity()].city#
-											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-											<div class="sliders_step1 arrival-slider">
-												<div class="slider-range"></div>
+											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time6"></span> - <span class="slider-time7"></span></p>
+											<div class="arrival-slider">
+												<div class="slider-range3"></div>
 											</div>
 										</div>
 									</div>
