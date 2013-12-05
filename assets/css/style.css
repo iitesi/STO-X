@@ -1075,6 +1075,6 @@ tr.hotel-room td{
 }
 
 .ui-slider {width: 70%; z-index: 0;}
-.arrival1 > .ui-slider .ui-slider-range, .arrival2 > .ui-slider .ui-slider-range { background: #ccc; }
-.departure1 > .ui-slider .ui-slider-range, .departure2 > .ui-slider .ui-slider-range { background: #5E99CB; }
+.arrival-slider > .ui-slider .ui-slider-range { background: #ccc; }
+.departure-slider > .ui-slider .ui-slider-range { background: #A4C1D9; }
 .ui-widget-content { background: #4883B3; }

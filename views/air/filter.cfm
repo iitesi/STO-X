@@ -179,11 +179,6 @@
 			</div> <!--- // filterbar --->
 
 
-
-
-
-
-
 			<!--- 10:08 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
 			TODO:
 			* Need to loop over flights and get
@@ -194,91 +189,77 @@
 			<!--- time sliders --->
 			<div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
 			<div id="sliderwell" class="well filtertimeselection">
+				<div>
+					<b>Times</b>
+					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
+				</div>
 
+				<div class="row">
+					<div class="span12">
+						<div class="row">
 
-
-							<div>
-								<b><cfswitch expression="#rc.filter.getAirType()#">
-										<cfcase value="RT">Round Trip</cfcase>
-										<cfcase value="OW">One Way</cfcase>
-									</cfswitch> Times</b>
-								<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
-							</div>
-<cfoutput>
-<cfswitch expression="#rc.filter.getAirType()#">
-	<cfcase value="RT">
-		<h1>Round Trip</h1>
-		Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
-		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
-		<hr>
-		Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
-		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
-		<hr>
-		Departure: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
-		#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# (time range)
-		<hr>
-		Arrival: #application.stAirports[rc.filter.getDepartCity()].city#<br />
-		#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# (time range)
-		<hr>
-
-	</cfcase>
-	<cfcase value="OW">
-		<h1>one way</h1>
-		Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
-		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
-		<hr>
-		Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
-		#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
-		<hr>
-	</cfcase>
-</cfswitch>
-</cfoutput>
-
-
-
-							<div class="row">
-								<div class="span12">
-									<div class="row">
-										<div class="span3">
-											<div id="time-range">
-													<p>Departure: Atlanta<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-													<div class="sliders_step1 departure1">
-															<div class="slider-range"></div>
-													</div>
-											</div>
-										</div>
-
-										<div class="span3">
-											<div id="time-range">
-													<p>Arrival: Miami<br />Fri <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-													<div class="sliders_step1 arrival1">
-															<div class="slider-range"></div>
-													</div>
-											</div>
-										</div>
-
-										<div class="span3">
-											<div id="time-range departure2">
-												<p>Departure: Miami<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-												<div class="sliders_step1 departure2">
-													<div class="slider-range"></div>
+						<cfoutput>
+							<cfswitch expression="#rc.filter.getAirType()#">
+								<cfcase value="RT">
+									<div class="span3">
+										<div id="time-range">
+												<p>Departure: #application.stAirports[rc.filter.getDepartCity()].city#
+												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+												<div class="sliders_step1 departure-slider">
+														<div class="slider-range"></div>
 												</div>
-											</div>
 										</div>
+									</div>
 
-										<div class="span3">
-											<div id="time-range arrival2">
-												<p>Arrival: Atlanta<br />Sat <span class="slider-time"></span> - <span class="slider-time2"></span></p>
-												<div class="sliders_step1 arrival2">
-													<div class="slider-range"></div>
+									<div class="span3">
+										<div id="time-range">
+												<p>Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#
+												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+												<div class="sliders_step1 arrival-slider">
+														<div class="slider-range"></div>
 												</div>
+										</div>
+									</div>
+
+									<div class="span3">
+										<div id="time-range departure2">
+											<p>Departure: #application.stAirports[rc.filter.getArrivalCity()].city#
+											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+											<div class="sliders_step1 departure-slider">
+												<div class="slider-range"></div>
 											</div>
 										</div>
-									</div> <!--- // row --->
-								</div> <!--- // span12 --->
-							</div> <!--- // row --->
+									</div>
 
-			<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
+									<div class="span3">
+										<div id="time-range arrival2">
+											<p>Arrival: #application.stAirports[rc.filter.getDepartCity()].city#
+											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time"></span> - <span class="slider-time2"></span></p>
+											<div class="sliders_step1 arrival-slider">
+												<div class="slider-range"></div>
+											</div>
+										</div>
+									</div>
+								</cfcase>
+
+								<cfcase value="OW">
+									<h1>one way</h1>
+									Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
+									#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+
+									<hr>
+									Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
+									#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
+									<hr>
+								</cfcase>
+							</cfswitch>
+						</cfoutput>
+
+
+						</div> <!--- // row --->
+					</div> <!--- // span12 --->
+				</div> <!--- // row --->
+				<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
 			</div> <!--- // filtertimeselection --->
 
 		</div><!--- // sixteen columns --->
@@ -298,8 +279,3 @@
 </div>
 
 <div class="clearfix"></div>
-
-
-
-
-

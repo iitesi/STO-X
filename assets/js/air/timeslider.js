@@ -20,8 +20,6 @@
 // 	MIN	1394202000   	660
 
 $(document).ready(function () {
-
-
 	// see code in badge.cfm to populate the data-attributes for each badge with the min/max times for that badge
 	// that logic needs to be moved 'up' earlier in process (airParse) so we can grab min/max times here in JS
 	// grab the  min/max times from badge range so we can set in slider below
@@ -46,65 +44,22 @@ $(document).ready(function () {
 		values: [mintime, maxtime],
 
 		slide: function (e, ui) {
-					var hours1 = Math.floor(ui.values[0] / 60);
-					var minutes1 = ui.values[0] - (hours1 * 60);
-					if (hours1.length == 1) hours1 = '0' + hours1;
-					if (minutes1.length == 1) minutes1 = '0' + minutes1;
-					if (minutes1 == 0) minutes1 = '00';
-					if (hours1 >= 12) {
-							if (hours1 == 12) {
-									hours1 = hours1;
-									minutes1 = minutes1 + " PM";
-							} else {
-									hours1 = hours1 - 12;
-									minutes1 = minutes1 + " PM";
-							}
-					} else {
-							hours1 = hours1;
-							minutes1 = minutes1 + " AM";
-					}
-					if (hours1 == 0) {
-							hours1 = 12;
-							minutes1 = minutes1;
-					}
+					var time1 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
+					$('.slider-time').html(time1);
+
+					var time2 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
+					$('.slider-time2').html(time2);
 
 
-				// set min time
-				$('.slider-time').html(hours1 + ':' + minutes1);
-
-					var hours2 = Math.floor(ui.values[1] / 60);
-					var minutes2 = ui.values[1] - (hours2 * 60);
-
-					if (hours2.length == 1) hours2 = '0' + hours2;
-					if (minutes2.length == 1) minutes2 = '0' + minutes2;
-					if (minutes2 == 0) minutes2 = '00';
-					if (hours2 >= 12) {
-							if (hours2 == 12) {
-									hours2 = hours2;
-									minutes2 = minutes2 + " PM";
-							} else if (hours2 == 24) {
-									hours2 = 11;
-									minutes2 = "59 PM";
-							} else {
-									hours2 = hours2 - 12;
-									minutes2 = minutes2 + " PM";
-							}
-					} else {
-							hours2 = hours2;
-							minutes2 = minutes2 + " AM";
-					}
-
-				// set the max time
-				$('.slider-time2').html(hours2 + ':' + minutes2);
 
 
 
 				// show or hide badges based on attr for each badge
 				$('div[id^="flight"]').each(function(e){
-					console.log( $(this).attr('takeofftime0' ) );
-					console.log('Time: ' + ui.values[0] + ' to ' +  ui.values[1]);
-					console.log( '-----------------' );
-					if($(this).attr('takeofftime0') >= ui.values[0] && $(this).attr('takeofftime0') <= ui.values[1]){
+					// console.log( $(this).data('departuretime0') );
+					// console.log('Time: ' + ui.values[0] + ' to ' +  ui.values[1]);
+					// console.log( '-----------------' );
+					if($(this).data('departuretime0') >= ui.values[0] && $(this).data('departuretime0') <= ui.values[1]){
 						$(this).show();
 					} else {
 						$(this).hide()
