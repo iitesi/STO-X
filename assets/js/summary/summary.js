@@ -357,7 +357,7 @@ $(document).ready(function(){
 			}
 			else {
 				$( "#" + inputName ).val( orgunit.valueID );
-				if( inputName == 'custom' && acctID != 1 ){
+				if( inputName == 'custom' && acctID != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
 					$( "#" + inputName ).attr( "disabled", true );
 				}
 			}
