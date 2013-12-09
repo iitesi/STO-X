@@ -79,7 +79,7 @@
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode())>
 										<td width="8%"><strong>Reason</strong></td>
 										<td width="34%">
-											<cfswitch expression="#rc.Traveler[travelerIndex].getCarReasonCode()#">
+											<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode()#">
 												<cfcase value="D">Required car vendor does not provide service at origination and/or destination</cfcase>
 												<cfcase value="S">Required car size sold out</cfcase>
 												<cfcase value="V">Required car vendor sold out</cfcase>
