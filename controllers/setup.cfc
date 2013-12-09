@@ -98,7 +98,7 @@ setApplication
 		<cfargument name="rc" type="struct" required="true" />
 
 		<cfif StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, arguments.rc.AcctID)
-			AND isStruct( application.Accounts[ arguments.rc.AcctId ] ) AND NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ].tmc )>
+			AND isStruct( application.Accounts[ arguments.rc.AcctId ] ) AND NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ], "tmc" )>
 
 			<cfset application.Accounts[ arguments.rc.AcctId ].tmc = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[ arguments.rc.AcctId ].AccountBrand ) />
 
