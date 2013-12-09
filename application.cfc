@@ -98,6 +98,7 @@
 			<cfset controller( 'setup.setFilter' )>
 			<cfset controller( 'setup.setAcctID' )>
 			<cfset controller( 'setup.setAccount' )>
+			<cfset controller( 'setup.setTMC' )>
 			<cfset controller( 'setup.setPolicyID' )>
 			<cfset controller( 'setup.setPolicy' )>
 			<cfset controller( 'setup.setGroup' )>

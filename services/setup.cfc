@@ -273,17 +273,19 @@
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfquery name="local.qCouldYou" datasource="#getCorporateProductionDSN()#">
-				SELECT CouldYou
+			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
+				<cfset local.stTemp[local.sCol] = local.qAccount[local.sCol]>
+			</cfloop>
+
+			<cfquery name="local.extendedInfo" datasource="#getCorporateProductionDSN()#">
+				SELECT CouldYou,Account_Brand
 				FROM Accounts
 				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 					AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
-				<cfset local.stTemp[local.sCol] = local.qAccount[local.sCol]>
-			</cfloop>
-			<cfset local.stTemp.CouldYou = local.qCouldYou.CouldYou>
+			<cfset local.stTemp.CouldYou = local.extendedInfo.CouldYou>
+			<cfset local.stTemp.AccountBrand = local.extendedInfo.Account_Brand>
 
 			<cfset local.stTemp.sBranch = local.Branches[local.qAccount.PCC_Booking]>
 			<cfset local.stTemp.Air_PF = ListToArray(local.stTemp.Air_PF, '~')>
