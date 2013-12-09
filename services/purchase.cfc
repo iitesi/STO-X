@@ -168,12 +168,12 @@
 
 							<cfif NOT verifyStoredFareResponse.error>
 								<!--- 
-								If NASCAR, remove BARPAR accounting line.  *PT to see the lines in the PNR, then remove the
-								T-CA-43@021433 accounting line if found.
+								If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
+								*PT to see the lines in the PNR, then remove the T-CA-43@021433 accounting line if found.
 								Command = *PT
 								Command = C:1T-
 								--->
-								<cfif arguments.Filter.getAcctID() EQ 348>
+								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
 									<cfset TerminalEntry.removeBARPARAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
 																				, searchID = arguments.searchID )>									
