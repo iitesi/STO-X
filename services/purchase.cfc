@@ -167,29 +167,32 @@
 																									, airSelected = airSelected )>
 
 							<cfif NOT verifyStoredFareResponse.error>
-								<!--- 
-								If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
-								*PT to see the lines in the PNR, then remove the T-CA-43@021433 accounting line if found.
-								Command = *PT
-								Command = C:1T-
-								--->
 								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
+									<!--- 
+									If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
+									*PT to see the lines in the PNR, then move down to count more, 
+									then remove the T-CA-43@021433 accounting line if found.
+									Command = *PT
+									Command = MD
+									Command = C:1T-
+									--->
 									<cfset TerminalEntry.removeBARPARAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
-																				, searchID = arguments.searchID )>									
-								</cfif>
-
-								<!--- 
-								Remove duplicate accounting line.  *PT to see the lines in the PNR, then move down 
-								to count more, then remove that line number if there were two accounting lines found.
-								Command = *PT
-								Command = MD
-								Command = C:1T-
-								--->
-								<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
+																				, searchID = arguments.searchID )>
+								<cfelse>
+									<!--- 
+									Otherwise, remove duplicate accounting line. Only run if removeBARPARAccounting() has not been performed.
+									*PT to see the lines in the PNR, then move down to count more, 
+									then remove that line number if there were two accounting lines found.
+									Command = *PT
+									Command = MD
+									Command = C:1T-
+									--->
+									<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
 																				, searchID = arguments.searchID )>
-								
+								</cfif>
+
 								<!---
 								Determine appropriate queue
 								Command = QEP/1M98/34*CSR+161C/99*CNM
