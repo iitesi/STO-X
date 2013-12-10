@@ -393,6 +393,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
 			<cfset local.stTrips[tripIndex].Carriers = structKeyArray(local.aCarriers)>
 			<cfset local.stTrips[tripIndex].validCarriers = flagBlackListedCarriers(local.stTrips[tripIndex].Carriers)>
+			<cfset local.stTrips[tripIndex].PlatingCarrier = setPlatingCarrier(local.stTrips[tripIndex].Groups)>
 			<cfset StructDelete(local.stTrips[local.tripIndex], 'Segments')>
 		</cfloop>
 
@@ -532,6 +533,25 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfif>
 
 		<cfreturn local.validFlight/>
+	</cffunction>
+
+	<cffunction name="setPlatingCarrier" output="false" hint="I find the plating/validating carrier per trip.">
+		<cfargument name="groups" required="true" />
+
+		<cfset local.platingCarrier = '' />
+		<!--- The plating or validating carrier is always the carrier in the first segment in the last group --->
+		<cfloop collection="#arguments.groups#" index="local.groupIndex" item="local.group">
+			<cfset local.actualGroupCount = groupIndex + 1 />
+
+			<cfif actualGroupCount EQ structCount(arguments.groups)>
+				<cfloop collection="#group.Segments#" index="local.segmentIndex" item="local.segment">
+					<cfset local.platingCarrier = segment.Carrier />
+					<cfbreak>
+				</cfloop>
+			</cfif>
+		</cfloop>
+
+		<cfreturn local.platingCarrier />
 	</cffunction>
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
