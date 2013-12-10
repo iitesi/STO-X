@@ -5,10 +5,36 @@
 // 	* jQuery UI Sliders : http://jqueryui.com/
 // 	* Moment.js for handling times : http://momentjs.com/
 // ===============================================
+
+// TODO
+// ===============================================
+// see code in badge.cfm to populate the data-attributes for each badge with the min/max times for that badge
+// that logic needs to be moved 'up' earlier in process (airParse) so we can grab min/max times here in JS
+// grab the  min/max times from badge range so we can set in slider below
+// this would be dynamically populated
+// var mintime = 330;
+// var maxtime = 1173;
+
+
 // Useful Resources for Sliders
-//
-// http://stanford.wikia.com/wiki/Kayak.com_Time_Slider
-// http://stackoverflow.com/questions/4764844/how-do-i-show-hide-elements-using-jquery-when-there-are-two-intersecting-princip
+// ===============================================
+// plugins
+// http://isotope.metafizzy.co/docs/filtering.html
+// http://tinysort.sjeiti.com/
+// http://stackoverflow.com/questions/2558893/jquery-select-elements-with-value-between-x-and-y
+
+// ding ding
+// http://stackoverflow.com/questions/8880336/how-to-select-an-li-with-jquery-using-multiple-data-attributes-and-multiple-logi
+// http://stackoverflow.com/questions/15912599/javascript-select-elements-with-data-value-in-range-of-x-and-y
+
+
+//	http://www.jquery4u.com/data-manipulation/jquery-filter-objects-data-attribute/
+// 	https://github.com/layervault/jquery.data.filter/blob/master/src/jquery.data.filter.js
+
+// 	http://stanford.wikia.com/wiki/Kayak.com_Time_Slider
+// 	http://stackoverflow.com/questions/4764844/how-do-i-show-hide-elements-using-jquery-when-there-are-two-intersecting-princip
+// 	http://jsfiddle.net/danieltulp/gz5gN/42/
+// 	http://jsfiddle.net/bZmJ8/11/
 //
 // 	http://jsfiddle.net/jrweinb/MQ6VT/
 // 	http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
@@ -24,16 +50,11 @@
 // 	MIN	1394202000   	660
 
 $(document).ready(function () {
-	// see code in badge.cfm to populate the data-attributes for each badge with the min/max times for that badge
-	// that logic needs to be moved 'up' earlier in process (airParse) so we can grab min/max times here in JS
-	// grab the  min/max times from badge range so we can set in slider below
-	// this would be dynamically populated
-	// var mintime = 330;
-	// var maxtime = 1173;
-
 	var mintime = 0;
 	var maxtime = 1440
 	var steptime = 60;
+
+	var takeoff0 = new Array();
 
 	// for roundtrip we need 8 times
 	var slidertime = new Array();
@@ -63,24 +84,11 @@ $(document).ready(function () {
 		values: [mintime, maxtime],
 
 		slide: function (e, ui) {
-					var time0 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
-					var time1 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
-					$('.slider-time0').html(time0);
-					$('.slider-time1').html(time1);
-
-				// show or hide badges based on attr for each badge
-				// being mindful it may already be hidden by another filter
-				//
-				// add class 'filtered' and check that along with time to see if it should be hidden?
-
-
-				$('div[id^="flight"]').each(function(e){
-					if( $(this).data('departuretime0') >= ui.values[0] && $(this).data('departuretime0') <= ui.values[1]){
-						$(this).show();
-					} else {
-						$(this).hide()
-					}
-				});
+			var time0 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
+			var time1 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
+			$('.slider-time0').html(time0);
+			$('.slider-time1').html(time1);
+			doShowHideBadges();
 		}
 	}); // slider-range0
 
@@ -92,23 +100,40 @@ $(document).ready(function () {
 		values: [mintime, maxtime],
 
 		slide: function (e, ui) {
-					var time2 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
-					var time3 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
-					$('.slider-time2').html(time2);
-					$('.slider-time3').html(time3);
-
-				// show or hide badges based on attr for each badge
-				$('div[id^="flight"]').each(function(e){
-					if($(this).data('arrivaltime0') >= ui.values[0] && $(this).data('arrivaltime0') <= ui.values[1]){
-						$(this).show();
-					} else {
-						$(this).hide()
-					}
-				});
+			var time2 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
+			var time3 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
+			$('.slider-time2').html(time2);
+			$('.slider-time3').html(time3);
+			doShowHideBadges();
 		}
 	}); // slider-range1
-
-
-
-
 });
+
+
+// div id="flight732914299"
+// class="pull-left"
+// data-departuretime1="1340"
+// data-departuretime0="865"
+// data-arrivaltime0="980"
+// data-arrivaltime1="10"
+
+
+	function doShowHideBadges(){
+    //hide all initially then loop through each
+    $('div[id^="flight"]').hide().each(function(e){
+
+        //show items for first slider
+        // var sliderValue1 = $('.slider-range0').slider("option", "values");
+        // if($(this).data('departuretime0') >= sliderValue1[0] && $(this).data('departuretime0') <= sliderValue1[1]){
+        //     $(this).show();
+        // }
+
+        // show items for second slider
+        var sliderValue2 = $('.slider-range1').slider("option", "values");
+         if($(this).data('arrivaltime0') >= sliderValue2[0] && $(this).data('arrivaltime0') <= sliderValue2[1]){
+             $(this).show();
+         }
+
+        //other sliders
+    });
+	}
