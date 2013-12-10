@@ -1,13 +1,13 @@
-<cfcomponent output="false" accessors="true">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-	<cfproperty name="UAPI">
+	<cfproperty name="UAPIFactory">
 	<cfproperty name="uAPISchemas">
 
 	<cffunction name="init" output="false" hint="Init method.">
-		<cfargument name="UAPI">
+		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 
-		<cfset setUAPI(arguments.UAPI)>
+		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas(arguments.uAPISchemas)>
 
 		<cfreturn this>

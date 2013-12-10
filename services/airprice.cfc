@@ -1,17 +1,17 @@
-<cfcomponent output="false" accessors="true">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-	<cfproperty name="uAPI" />
+	<cfproperty name="UAPIFactory" />
 	<cfproperty name="uAPISchemas" />
 	<cfproperty name="AirParse" />
 	<cfproperty name="AirAdapter" />
 
     <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
-    	<cfargument name="uAPI" type="any" required="true" />
+    	<cfargument name="UAPIFactory" type="any" required="true" />
     	<cfargument name="uAPISchemas" type="any" required="true" />
     	<cfargument name="AirParse" type="any" required="false" default="" />
     	<cfargument name="AirAdapter" type="any" required="false" default="" />
 
-    	<cfset setUAPI( arguments.uAPI ) />
+    	<cfset setUAPIFactory( arguments.UAPIFactory ) />
     	<cfset setUAPISchemas( arguments.uAPISchemas ) />
     	<cfset setAirParse( arguments.AirParse ) />
     	<cfset setAirAdapter( arguments.AirAdapter ) />

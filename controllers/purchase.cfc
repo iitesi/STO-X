@@ -388,7 +388,7 @@
 					<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
 					<!--- Parse error --->
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
-						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( vehicleResponse )>
+						<cfset errorMessage = fw.getBeanFactory().getBean('UAPIFactory').load( rc.TMC ).parseError( vehicleResponse )>
 						<cfset errorType = 'Vehicle'>
 					</cfif>
 					<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
@@ -472,7 +472,7 @@
 																					, Filter = rc.Filter )>
 
 				<cfelse>
-					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
+					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.TMC ).databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
 					<!--- If account has Purchase Error Contact Info in STO Admin --->

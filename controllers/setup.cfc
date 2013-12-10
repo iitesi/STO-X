@@ -105,6 +105,10 @@ setApplication
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		</cfif>
 
+		<cfif NOT structKeyExists( session, "TMC" )>
+			<cfset session.tmc = application.Accounts[ arguments.rc.AcctId].tmc />
+		</cfif>
+
 		<cfreturn />
 
 	</cffunction>
