@@ -462,7 +462,7 @@
 																						, OriginalUser = Profile )>
 					</cfif>
 					<!--- Create profile in database --->
-					<cfif Traveler.getBookingDetail().getCreateProfile()>
+					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
 																						, acctID = rc.Filter.getAcctID() )) />
 					</cfif>
