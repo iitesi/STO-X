@@ -104,6 +104,13 @@
 				WHERE Airport_Code = <cfqueryparam value="#getsearch.CarDropoff_Airport#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 
+			<cfquery name="local.getUserAdmin" datasource="#getCorporateProductionDSN()#">
+				SELECT STO_Admin
+				FROM Users_Accounts
+				WHERE User_ID = <cfqueryparam value="#getsearch.User_ID#" cfsqltype="cf_sql_integer" />
+					AND Acct_ID = <cfqueryparam value="#getsearch.Acct_ID#" cfsqltype="cf_sql_integer" />
+			</cfquery>
+			<cfset local.searchfilter.setUserAdmin(getUserAdmin.STO_Admin) />
 
 			<cfif getsearch.Air>
 				<cfswitch expression="#local.getsearch.Air_Type#">

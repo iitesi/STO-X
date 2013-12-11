@@ -66,6 +66,8 @@
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
 			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
 			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">
+			<input type="hidden" name="arrangerAdmin" id="arrangerAdmin" value="#rc.Filter.getUserAdmin()#">
+			<input type="hidden" name="arrangerSTMEmployee" id="arrangerSTMEmployee" value="#rc.Filter.getSTMEmployee()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>

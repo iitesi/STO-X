@@ -12,6 +12,8 @@ $(document).ready(function(){
 	var vehicleSelected = $( "#vehicleSelected" ).val();
 	var vendor = $( "#vendor" ).val();
 	var arrangerID = $( "#arrangerID" ).val();
+	var arrangerAdmin = $( "#arrangerAdmin" ).val();
+	var arrangerSTMEmployee = $( "#arrangerSTMEmployee" ).val();
 	var errors = $( "#errors" ).val();
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
@@ -357,7 +359,7 @@ $(document).ready(function(){
 			}
 			else {
 				$( "#" + inputName ).val( orgunit.valueID );
-				if( inputName == 'custom' && acctID != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
+				if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
 					$( "#" + inputName ).attr( "disabled", true );
 				}
 			}
