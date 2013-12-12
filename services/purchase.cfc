@@ -197,13 +197,15 @@
 								If Southwest, change KK segments to HK before queue
 								Command = .IHK
 								--->
-								<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
-									<cfif carrier IS 'WN'>
-										<cfset TerminalEntry.confirmSegments( targetBranch = arguments.targetBranch
-																				, hostToken = arguments.hostToken
-																				, searchID = arguments.searchID )>
-									</cfif>
-								</cfloop>
+								<cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
+									<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
+										<cfif carrier IS 'WN'>
+											<cfset TerminalEntry.confirmSegments( targetBranch = arguments.targetBranch
+																					, hostToken = arguments.hostToken
+																					, searchID = arguments.searchID )>
+										</cfif>
+									</cfloop>
+								</cfif>
 
 								<!---
 								Determine appropriate queue
