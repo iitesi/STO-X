@@ -478,29 +478,36 @@ $(document).ready(function(){
 		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
 	}
 
-	$(".newCard").on("click", function() {
+	$(".newCard").on("click", "input[type=checkbox]", function() {
 		var airCard = $("#newAirCC");
 		var hotelCard = $("#newHotelCC");
+		var showAirNewCard = (airCard.attr("checked") == "checked");
 
-		var showAirNewCard = (airCard.attr("checked") == 'checked');
-		var showHotelNewCard = (hotelCard.attr("checked") == 'checked');
-
-		if (showAirNewCard) {
-			$("#airFOPIDDiv").hide();
-			$("#airManual").show();
+		if (this.name == 'newAirCC') {
+			if (this.checked) {
+				$("#airFOPIDDiv").hide();
+				$("#airManual").show();
+				$("#copyAirCCDiv").show();
+			}
+			else {
+				$("#airFOPIDDiv").show();
+				$("#airManual").hide();
+				$("#copyAirCCDiv").hide();
+			}
 		}
-		else {
-			$("#airFOPIDDiv").show();
-			$("#airManual").hide();
-		}
-
-		if (showHotelNewCard) {
-			$("#hotelFOPIDDiv").hide();
-			$("#hotelManual").show();
-		}
-		else {
-			$("#hotelFOPIDDiv").show();
-			$("#hotelManual").hide();
+		else if (this.name == 'newHotelCC') {
+			if (this.checked) {
+				$("#hotelFOPIDDiv").hide();
+				$("#hotelManual").show();
+				if (showAirNewCard) {
+					$("#copyAirCCDiv").show();
+				}
+			}
+			else {
+				$("#hotelFOPIDDiv").show();
+				$("#hotelManual").hide();
+				$("#copyAirCCDiv").hide();
+			}
 		}
 	});
 
