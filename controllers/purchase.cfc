@@ -459,12 +459,14 @@
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
-																						, OriginalUser = Profile )>
+																						, OriginalUser = Profile
+																						, Account = rc.Account )>
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )) />
+																						, acctID = rc.Filter.getAcctID()
+																						, Account = rc.Account )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler

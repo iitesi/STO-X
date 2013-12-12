@@ -252,7 +252,8 @@
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
-																						, acctID = rc.Filter.getAcctID() ) />
+																						, acctID = rc.Filter.getAcctID()
+																						, Account = rc.Account ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 					<cfset rc.message.addInfo('Your profile has been created.') />
