@@ -350,6 +350,15 @@
 							</cfif>
 						</cfif>
 					</cfloop>
+					<cfset local.specialCarReservation = false />
+					<!--- If NASCAR National car rental with direct bill and loyalty card --->
+					<cfif directBillType EQ 'ID'
+							AND directBillNumber NEQ ''
+							AND Vehicle.getVendorCode() IS 'ZL'
+							AND Traveler.getBookingDetail().getCarFF() NEQ ''>
+						<cfset local.specialCarReservation = true />
+					</cfif>
+					<cfset Traveler.getBookingDetail().setSpecialCarReservation(specialCarReservation) />
 					<!--- Find arriving flight details --->
 					<cfset local.carrier = ''>
 					<cfset local.flightNumber = ''>
@@ -379,6 +388,7 @@
 																										, profileFound = profileFound
 																										, lowestRateOffered = lowestRateOffered
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, specialCarReservation = specialCarReservation
 																									)>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
