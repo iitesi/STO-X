@@ -23,8 +23,8 @@
 		<cfargument name="stAccount" required="false" default="#application.Accounts[session.AcctID]#">
 
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.searchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
-		<cfset local.sResponse = UAPI.callUAPI('AirService', local.sMessage, arguments.searchID)>
-		<cfset local.stResponse = UAPI.formatUAPIRsp(local.sResponse)>
+		<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.searchID)>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 		<cfset local.stSeats = parseSeats(local.stResponse)>
 
 		<cfreturn local.stSeats />

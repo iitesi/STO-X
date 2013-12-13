@@ -268,9 +268,26 @@
 			</cfif> --->
 
 			<cfquery name="local.qAccount" datasource="#getBookingDSN()#">
-				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
-					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email
+				SELECT Acct_ID
+					, Account_Name
+					, Delivery_AON
+					, Logo
+					, PCC_Booking
+					, PNR_AddAccount
+					, BTA_Move
+					, Gov_Rates
+					,	Air_PTC
+					, Air_PF
+					, Hotel_RateCodes
+					, Account_Policies
+					, Account_Approval
+					, Account_AllowRequests
+					, RMUs
+					,	RMU_Agent
+					, RMU_NonAgent
+					, CBA_AllDepts
+					, Error_Contact
+					, Error_Email
 				FROM Accounts
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
@@ -305,6 +322,15 @@
 				<cfset local.sType = 'aNonPolicy'&(local.qOutOfPolicy.Type EQ 'A' ? 'Air' : (local.qOutOfPolicy.Type EQ 'C' ? 'Car' : 'Hotel'))>
 				<cfset ArrayAppend(local.stTemp[local.sType], local.qOutOfPolicy.Vendor_ID)>
 			</cfloop>
+
+			<cfquery name="local.qLogo" datasource="#getCorporateProductionDSN()#">
+				SELECT account_logo
+				FROM accounts
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<!--- get logo from corporate_production accounts table --->
+			<cfset local.stTemp.account_logo = local.qLogo.account_logo>
 
 			<cfquery name="local.qPreferred" datasource="#getCorporateProductionDSN()#">
 				SELECT Acct_ID, Vendor_ID, Type

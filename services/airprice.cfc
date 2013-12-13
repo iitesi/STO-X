@@ -74,10 +74,10 @@
 											, findIt = arguments.findIt
 											, bIncludeClass = arguments.bIncludeClass )>
 		<!--- Call the UAPI. --->
-		<cfset local.sResponse 	= UAPI.callUAPI('AirService', local.sMessage, arguments.SearchID)>
+		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', local.sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
 		<!--- Format the UAPI response. --->
-		<cfset local.aResponse 	= UAPI.formatUAPIRsp(local.sResponse)>
+		<cfset local.aResponse 	= getUAPI().formatUAPIRsp(local.sResponse)>
 		<!--- <cfdump var="#aResponse#" abort> --->
 		<!--- Parse the segments. --->
 		<cfset local.stSegments	= AirParse.parseSegments(local.aResponse)>
