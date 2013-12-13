@@ -163,15 +163,34 @@
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
 
-						<!--- If private fare, do a lowest public air price before air create for U12 --->
-						<cfif Air.privateFare>
+						<!--- Check to see if this is a contracted Southwest flight --->
+						<cfset local.contractedSWFlight = false />
+						<cfif Air.platingCarrier IS 'WN'>
+							<cfset local.privateCarriers = '' />
+							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
+								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
+							</cfloop>
+
+							<!--- If the account policy has Southwest listed as a private fare --->
+							<cfif listFindNoCase(privateCarriers, 'WN')>
+								<cfset local.contractedSWFlight = true />
+							</cfif>
+						</cfif>
+
+						<!--- If private fare or contracted Southwest flight, do a lowest public air price before air create for U12 --->
+						<cfif Air.privateFare OR contractedSWFlight>
+							<cfset local.faresIndicator = 'PublicFaresOnly' />
+							<cfif contractedSWFlight>
+								<cfset local.faresIndicator = 'PrivateFaresOnly' />
+							</cfif>
+								
 							<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
 																							, bRefundable = 0
 																							, bRestricted = 0
-																							, sFaresIndicator = "PublicFaresOnly"
+																							, sFaresIndicator = faresIndicator
 																							, bAccountCodes = 0
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
