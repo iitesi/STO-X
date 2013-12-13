@@ -1,10 +1,15 @@
 <cfcomponent output="false" accessors="true">
 
 	<cfproperty name="uAPI" />
+	<cfproperty name="searchService" />
 
 	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
 		<cfargument name="uAPI" type="any" required="true" />
+		<cfargument name="searchService" />
+
 		<cfset setUAPI( arguments.uAPI ) />
+		<cfset setSearchService( arguments.SearchService ) />
+
 		<cfreturn this />
 	</cffunction>
 
@@ -538,16 +543,41 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="setPlatingCarrier" output="false" hint="I find the plating/validating carrier per trip.">
 		<cfargument name="groups" required="true" />
 
+		<cfset local.numGroups = structCount(arguments.groups) />
 		<cfset local.platingCarrier = '' />
-		<!--- The plating or validating carrier is always the carrier in the first segment in the last group --->
+		<cfset local.isDomesticTrip = true />
+
+		<!--- Check to see if domestic or international trip --->
+		<cfloop collection="#arguments.groups#" index="local.groupIndex" item="local.group">
+			<cfset local.isDomesticTrip = getSearchService().getTripType(group.origin, group.destination, application.stAirports) />
+			<cfif NOT isDomesticTrip>
+				<cfbreak>
+			</cfif>
+		</cfloop>
+
 		<cfloop collection="#arguments.groups#" index="local.groupIndex" item="local.group">
 			<cfset local.actualGroupCount = groupIndex + 1 />
 
-			<cfif actualGroupCount EQ structCount(arguments.groups)>
+			<!--- For domestic trips, the plating or validating carrier is always the carrier in the first segment in the last group --->
+			<cfif isDomesticTrip>
+				<cfif actualGroupCount EQ numGroups>
+					<cfloop collection="#group.Segments#" index="local.segmentIndex" item="local.segment">
+						<cfset local.platingCarrier = segment.Carrier />
+						<cfbreak>
+					</cfloop>
+				</cfif>
+			<!--- For international trips, the plating or validating carrier is the first carrier over the pond (on the way out) --->
+			<cfelse>
 				<cfloop collection="#group.Segments#" index="local.segmentIndex" item="local.segment">
-					<cfset local.platingCarrier = segment.Carrier />
-					<cfbreak>
+					<cfset local.isSegmentDomesticTrip = getSearchService().getTripType(segment.origin, segment.destination, application.stAirports) />
+					<cfif NOT isSegmentDomesticTrip>
+						<cfset local.platingCarrier = segment.Carrier />
+						<cfbreak>
+					</cfif>
 				</cfloop>
+			</cfif>
+			<cfif len(local.platingCarrier)>
+				<cfbreak>
 			</cfif>
 		</cfloop>
 
