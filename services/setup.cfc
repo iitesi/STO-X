@@ -10,14 +10,14 @@
 	<cfproperty name="useLinkedDatabases" />
 
 	<cffunction name="init" output="false">
-		<cfargument name="assetURL" type="string" requred="true" />
-		<cfargument name="bookingDSN" type="string" requred="true" />
-		<cfargument name="corporateProductionDSN" type="string" requred="true" />
-		<cfargument name="currentEnvironment" type="string" requred="true" />
-		<cfargument name="portalURL" type="string" requred="true" />
+		<cfargument name="assetURL" type="string" required="true" />
+		<cfargument name="bookingDSN" type="string" required="true" />
+		<cfargument name="corporateProductionDSN" type="string" required="true" />
+		<cfargument name="currentEnvironment" type="string" required="true" />
+		<cfargument name="portalURL" type="string" required="true" />
 		<cfargument name="searchService" />
-		<cfargument name="searchWidgetURL" type="string" requred="true" />
-		<cfargument name="useLinkedDatabases" type="boolean" requred="true" />
+		<cfargument name="searchWidgetURL" type="string" required="true" />
+		<cfargument name="useLinkedDatabases" type="boolean" required="true" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -273,11 +273,32 @@
 			</cfif> --->
 
 			<cfquery name="local.qAccount" datasource="#getBookingDSN()#">
-				SELECT Acct_ID, Account_Name, Delivery_AON, Logo, PCC_Booking, PNR_AddAccount, BTA_Move, Gov_Rates,
-					Air_PTC, Air_PF, Hotel_RateCodes, Account_Policies, Account_Approval, Account_AllowRequests, RMUs,
-					RMU_Agent, RMU_NonAgent, CBA_AllDepts, Error_Contact, Error_Email,
-					    (SELECT Air_Card FROM zeus.Corporate_Production.dbo.Accounts WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card,
-                		(SELECT Hotel_Card FROM zeus.Corporate_Production.dbo.Accounts WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Hotel_Card
+				SELECT Acct_ID
+				, Account_Name
+				, Delivery_AON
+				, Logo
+				, PCC_Booking
+				, PNR_AddAccount
+				, BTA_Move
+				, Gov_Rates
+				,	Air_PTC
+				, Air_PF
+				, Hotel_RateCodes
+				, Account_Policies
+				, Account_Approval
+				, Account_AllowRequests
+				, RMUs
+				,	RMU_Agent
+				, RMU_NonAgent
+				, CBA_AllDepts
+				, Error_Contact
+				, Error_Email
+				, (SELECT Air_Card
+						FROM zeus.Corporate_Production.dbo.Accounts
+						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card
+				,	(SELECT Hotel_Card
+						FROM zeus.Corporate_Production.dbo.Accounts
+						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Hotel_Card
 				FROM Accounts
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
