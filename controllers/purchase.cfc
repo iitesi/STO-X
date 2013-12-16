@@ -25,6 +25,7 @@
 				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
+				<cfset local.specialCarReservation = false />
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
@@ -369,7 +370,6 @@
 							</cfif>
 						</cfif>
 					</cfloop>
-					<cfset local.specialCarReservation = false />
 					<!--- If NASCAR National car rental with direct bill and loyalty card --->
 					<cfif directBillType EQ 'ID'
 							AND directBillNumber NEQ ''
