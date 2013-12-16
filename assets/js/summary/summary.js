@@ -370,6 +370,7 @@ $(document).ready(function(){
 	function loadPayments(traveler, typeOfService) {
 		var payments = traveler.payment
 		$( "#" + typeOfService + "FOPID" ).html('')
+		$( "#" + typeOfService + "FOPIDDiv" ).show();
 		var manualEntry = 1;
 		for( var i=0, l=traveler.payment.length; i<l; i++ ) {
 			if (traveler.payment[i][typeOfService + 'Use'] == true) {
@@ -634,6 +635,37 @@ $(document).ready(function(){
 					}
 					$( "#sort1" ).val( originalValue );
 					$( "#sort1" ).trigger( "change" );
+				}
+			});
+
+			$.ajax({type:"POST",
+				url: 'RemoteProxy.cfc?method=updateTravelerCompany',
+				data: 	{
+							  userID : $("#userID").val()
+							, acctID : acctID
+							, arrangerID : arrangerID
+							, searchID : searchID
+							, travelerNumber : travelerNumber
+							, valueID : custom
+						},
+				dataType: 'json',
+				success:function(traveler) {
+					$( "#airSpinner" ).show();
+					$( "#hotelSpinner" ).show();
+					$( "#carSpinner" ).show();
+
+					if (airSelected == 'true') {
+						loadPayments(traveler, 'air');
+						$( "#airSpinner" ).hide();
+					}
+					if (hotelSelected == 'true') {
+						loadPayments(traveler, 'hotel');
+						$( "#hotelSpinner" ).hide();
+					}
+					if (vehicleSelected == 'true') {
+						loadCarPayments(traveler);
+						$( "#carSpinner" ).hide();
+					}
 				}
 			});
 		});
