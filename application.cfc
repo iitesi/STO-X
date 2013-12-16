@@ -91,20 +91,18 @@
 				<cfif NOT session.isAuthorized>
 					<cflocation url="#getBeanFactory().getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
 				</cfif>
-
 			</cfif>
 
 			<cfset controller( 'setup.setSearchID' )>
 			<cfset controller( 'setup.setFilter' )>
 			<cfset controller( 'setup.setAcctID' )>
 			<cfset controller( 'setup.setAccount' )>
-			<cfset controller( 'setup.setTMC' )>
 			<cfset controller( 'setup.setPolicyID' )>
 			<cfset controller( 'setup.setPolicy' )>
 			<cfset controller( 'setup.setGroup' )>
 			<cfset controller( 'setup.setBlackListedCarrierPairing' )>
+			<cfset controller( 'setup.setTMC' )>
 		</cfif>
-
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">

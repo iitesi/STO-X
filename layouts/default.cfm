@@ -33,11 +33,8 @@
 			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
-			<!--- 11:29 AM Thursday, December 12, 2013 - Jim Priest - jpriest@shortstravel.com
-			should be 1!  Set to 0 until TMC policy info is populated in DB --->
-
 			<!--- override header colors for TMC so their light logos will display properly --->
-			<cfif rc.account.tmc.getIsExternal() EQ 0>
+			<cfif rc.account.tmc.getIsExternal() EQ 1>
 				<style type="text/css">
 					##main-header {background-color: ##292929}
 					##header-top {background-color: ##F1F1F1}
@@ -45,16 +42,15 @@
 				</style>
 			</cfif>
 
+			<!--- overried header colors if getPassthrough is sent from widget - usually for other shorts accounts
+				These can be set in account config and passed on URL from widget	--->
 			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
-					body {
-						background-color: ###rc.filter.getBodyColor()#;
-					}
-					##main-header, ##header-top {
-						background-color: ###rc.filter.getHeaderColor()#;
-					}
+					body {background-color: ###rc.filter.getBodyColor()#;}
+					##main-header, ##header-top {background-color: ###rc.filter.getHeaderColor()#;}
 				</style>
 			</cfif>
+
 			<!--[if lt IE 9]>
 						<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
@@ -73,76 +69,53 @@
 				<div id="header-top">
 					<div class="container">
 						<div class="sixteen columns">
-<cfoutput>
+							<cfoutput>
 
 
-<!---
-<img src="http://dummyimage.com/100x50/f0f/fff" alt=""/>
-http://jsfiddle.net/thecrumb/DWZjB/
-http://stackoverflow.com/questions/18707761/left-center-right-divs-with-vertical-alignment --->
+							<cfif rc.account.tmc.getIsExternal() EQ 1>
 
-<div id="logo-container">
-	<div id="header">
-		<a href="#application.sPortalURL#" title="Home">
-			<img src="assets/img/logos/findit-logo.png" alt="FindIt" class="pull-left">
-		</a>
-		<div id="headerContent">
-			<cfif structKeyExists(rc, "account")
-				AND isStruct(rc.account)
-				AND NOT structIsEmpty(rc.account)
-				AND rc.account.acct_ID NEQ 1
-				AND len(trim(rc.account.account_logo))
-				AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#")>
-				<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#" class="pull-right" />
-			</cfif>
-		</div>
-	</div>
+								<div id="logo-container">
+									<div id="header">
+										<a href="#application.sPortalURL#" title="Home">
+											<img src="assets/img/logos/findit-logo.png" alt="FindIt" class="pull-left">
+										</a>
+										<div id="headerContent">
+											<cfif structKeyExists(rc, "account")
+												AND isStruct(rc.account)
+												AND NOT structIsEmpty(rc.account)
+												AND rc.account.acct_ID NEQ 1
+												AND len(trim(rc.account.account_logo))
+												AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#")>
+												<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#" class="pull-right" />
+											</cfif>
+										</div>
+									</div>
+								</div> <!--- // logo-container --->
 
+							<cfelse>
 
+								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
+									<a href="#rc.filter.getSiteUrl()#" title="Home">
+								<cfelse>
+									<a href="#application.sPortalURL#" title="Home">
+								</cfif>
+									<cfif structKeyExists(rc, "account")
+										AND isStruct(rc.account)
+										AND NOT structIsEmpty(rc.account)
+										AND rc.account.acct_ID NEQ 1
+										AND len(trim(rc.account.account_logo))
+										AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#")>
+										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
+									<cfelse>
+										<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
+									</cfif>
+								</a>
 
+							</cfif>
 
+							#View('main/navigation')#
 
-
-
-
-</div> <!--- // logo-container --->
-
-
-
-<!---
-<cfif rc.account.tmc.getIsExternal() EQ 0>
-
-
-<cfelse>
-
-	<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
-		<a href="#rc.filter.getSiteUrl()#" title="Home">
-	<cfelse>
-		<a href="#application.sPortalURL#" title="Home">
-	</cfif>
-		<cfif structKeyExists(rc, "account")
-			AND isStruct(rc.account)
-			AND NOT structIsEmpty(rc.account)
-			AND rc.account.acct_ID NEQ 1
-			AND len(trim(rc.account.account_logo))
-			AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#")>
-			<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
-		<cfelse>
-			<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
-		</cfif>
-	</a>
-</cfif> --->
-
-
-
-
-
-
-</cfoutput>
-
-
-
-							<cfoutput>#View('main/navigation')#</cfoutput>
+							</cfoutput>
 						</div> <!--- // sixteen columns --->
 							<cfif structKeyExists(rc, 'filter')
 								AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
@@ -158,8 +131,6 @@ http://stackoverflow.com/questions/18707761/left-center-right-divs-with-vertical
 					</div> <!--- // container --->
 				</div> <!--- // header-top --->
 
-
-
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
@@ -169,14 +140,14 @@ http://stackoverflow.com/questions/18707761/left-center-right-divs-with-vertical
 								<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#cookie.token#&date=#cookie.date#' />
 							</cfif>
 
-						<!--- button to open search in modal window --->
+							<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
 								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="icon-search"></i></a>
 								</cfoutput>
 							</div>
 							<cfoutput>#View('modal/search')#</cfoutput>
-						<!--- // end modal window --->
+							<!--- // end modal window --->
 
 							<div class="fifteen columns">
 								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
@@ -262,11 +233,3 @@ http://stackoverflow.com/questions/18707761/left-center-right-divs-with-vertical
 	</body>
 	</html>
 </cfif>
-
-<!--- uncomment for debugging
-<cfif IsLocalHost(cgi.local_addr)>
-	<cfdump var="#application#" expand="false">
-	<cfdump var="#session.searches[rc.SearchID]#" expand="false">
-	<cfdump var="#session.filters#" expand="false">
-</cfif>
---->

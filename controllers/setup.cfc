@@ -97,11 +97,12 @@ setApplication
 	<cffunction name="setTMC" access="public" output="false" returntype="any" hint="">
 		<cfargument name="rc" type="struct" required="true" />
 
-		<cfif StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, arguments.rc.AcctID)
-			AND isStruct( application.Accounts[ arguments.rc.AcctId ] ) AND NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ], "tmc" )>
+		<cfif StructKeyExists(application, 'Accounts')
+			AND StructKeyExists(application.Accounts, arguments.rc.AcctID)
+			AND isStruct( application.Accounts[ arguments.rc.AcctId ] )
+			AND NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ], "tmc" )>
 
 			<cfset application.Accounts[ arguments.rc.AcctId ].tmc = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[ arguments.rc.AcctId ].AccountBrand ) />
-
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		</cfif>
 
@@ -114,22 +115,19 @@ setApplication
 	</cffunction>
 
 	<cffunction name="setPolicyID" output="false">
-		<cfargument name="rc">
-
 		<cfset rc.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
-
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="setPolicy" output="false">
 		<cfargument name="rc">
 
-		<!---Move the Policy into the rc scope so it is always available.--->
+		<!---	Move the Policy into the rc scope so it is always available.
+					Lazy loading, adds policies to the application scope as needed.--->
 		<cfif StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, rc.PolicyID)>
 			<cfset rc.Policy = application.Policies[rc.PolicyID]>
-		<!---Lazy loading, adds policies to the application scope as needed.--->
 		<cfelse>
-			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy(argumentcollection=arguments.rc)>
+			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
 		</cfif>
 
 		<cfreturn />

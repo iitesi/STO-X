@@ -43,35 +43,26 @@
 	*zoom: 1;
 }
 
-
-
 #logo-container {
 	float: left;
 	width: 450px;
 }
 
-#header{position:relative;border:1px solid blue; height:90px;}
-#header img{position:absolute;bottom:0;left:0;}
-#headerContent{
-    position:absolute;
-    bottom:0;
-    left:50%;
-    border:1px solid green;
-    }
-
-/*
-
-#logo-center {
-	height: 75px;
-	width: 500px;
-	display: table-cell;
-	text-align: center;
-	vertical-align: middle;
+#header {position:relative;
+	height: 80px;
 }
 
-#logo-center a {
-	display: table-cell;
-}*/
+#header img {
+	bottom: 10px;
+	left: 0;
+	position: absolute;
+}
+
+#headerContent{
+	bottom:0;
+	left: 49%;
+	position: absolute;
+}
 
 #main-nav ul,
 #main-nav ul li {
