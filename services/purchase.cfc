@@ -217,7 +217,8 @@
 																							, searchID = arguments.searchID
 																							, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
 																							, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
-																							, developer = arguments.developer )>
+																							, developer = arguments.developer
+																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation() )>
 
 								<cfset responseMessage = queueRecordResponse>
 
