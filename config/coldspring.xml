@@ -178,6 +178,7 @@
 
 	<bean id="AirParse" class="booking.services.AirParse">
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
 	</bean>
 
 	<bean id="lowfare" class="booking.services.lowfare">

@@ -46,6 +46,7 @@
 						<option value="R">Required room rate sold out</option>
 						<option value="C">Required property was higher than another property</option>
 						<option value="L">Leisure Rental (paying for it themselves)</option>
+						<option value="B">I am booking a blacklisted hotel</option>
 						</select> <br><br>
 
 					</cfif>

@@ -25,6 +25,7 @@
 				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
+				<cfset local.specialCarReservation = false />
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
@@ -163,15 +164,35 @@
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
 
+						<!--- Check to see if this is a Southwest flight that is not contracted --->
+						<cfset local.SWFlight = false />
+						<cfif Air.platingCarrier IS 'WN'>
+							<cfset local.privateCarriers = '' />
+							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
+								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
+							</cfloop>
+
+							<!--- If the account policy does not have Southwest listed as a private fare --->
+							<cfif listFindNoCase(privateCarriers, 'WN') EQ 0>
+								<cfset local.SWFlight = true />
+							</cfif>
+						</cfif>
+
 						<!--- If private fare, do a lowest public air price before air create for U12 --->
-						<cfif Air.privateFare>
+						<!--- If a Southwest flight and the account does not have contracted rates with SW, do a lowest private air price for U12 --->
+						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR SWFlight>
+							<cfset local.faresIndicator = 'PublicFaresOnly' />
+							<cfif SWFlight>
+								<cfset local.faresIndicator = 'PrivateFaresOnly' />
+							</cfif>
+								
 							<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
 																							, bRefundable = 0
 																							, bRestricted = 0
-																							, sFaresIndicator = "PublicFaresOnly"
+																							, sFaresIndicator = faresIndicator
 																							, bAccountCodes = 0
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
@@ -350,6 +371,14 @@
 							</cfif>
 						</cfif>
 					</cfloop>
+					<!--- If NASCAR National car rental with direct bill and loyalty card --->
+					<cfif directBillType EQ 'ID'
+							AND directBillNumber NEQ ''
+							AND Vehicle.getVendorCode() IS 'ZL'
+							AND Traveler.getBookingDetail().getCarFF() NEQ ''>
+						<cfset local.specialCarReservation = true />
+					</cfif>
+					<cfset Traveler.getBookingDetail().setSpecialCarReservation(specialCarReservation) />
 					<!--- Find arriving flight details --->
 					<cfset local.carrier = ''>
 					<cfset local.flightNumber = ''>
@@ -379,6 +408,7 @@
 																										, profileFound = profileFound
 																										, lowestRateOffered = lowestRateOffered
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, specialCarReservation = specialCarReservation
 																									)>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
@@ -459,12 +489,14 @@
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
-																						, OriginalUser = Profile )>
+																						, OriginalUser = Profile
+																						, Account = rc.Account )>
 					</cfif>
 					<!--- Create profile in database --->
-					<cfif Traveler.getBookingDetail().getCreateProfile()>
+					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )) />
+																						, acctID = rc.Filter.getAcctID()
+																						, Account = rc.Account )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
