@@ -281,7 +281,8 @@
 				, PNR_AddAccount
 				, BTA_Move
 				, Gov_Rates
-				,	Air_PTC
+				, PrePaid_Rates
+				, Air_PTC
 				, Air_PF
 				, Hotel_RateCodes
 				, Account_Policies
