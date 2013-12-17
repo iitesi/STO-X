@@ -294,10 +294,10 @@
 				, Error_Contact
 				, Error_Email
 				, (SELECT Air_Card
-						FROM zeus.Corporate_Production.dbo.Accounts
+						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card
 				,	(SELECT Hotel_Card
-						FROM zeus.Corporate_Production.dbo.Accounts
+						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Hotel_Card
 				FROM Accounts
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
