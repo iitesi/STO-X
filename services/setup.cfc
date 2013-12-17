@@ -272,27 +272,6 @@
 
 			<cfquery name="local.qAccount" datasource="#getBookingDSN()#">
 				SELECT Acct_ID
-<<<<<<< HEAD
-					, Account_Name
-					, Delivery_AON
-					, Logo
-					, PCC_Booking
-					, PNR_AddAccount
-					, BTA_Move
-					, Gov_Rates
-					,	Air_PTC
-					, Air_PF
-					, Hotel_RateCodes
-					, Account_Policies
-					, Account_Approval
-					, Account_AllowRequests
-					, RMUs
-					,	RMU_Agent
-					, RMU_NonAgent
-					, CBA_AllDepts
-					, Error_Contact
-					, Error_Email
-=======
 				, Account_Name
 				, Delivery_AON
 				, Logo
@@ -319,7 +298,6 @@
 				,	(SELECT Hotel_Card
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Hotel_Card
->>>>>>> develop
 				FROM Accounts
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>

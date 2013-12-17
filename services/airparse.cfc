@@ -1,23 +1,15 @@
 <cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-<<<<<<< HEAD
 	<cfproperty name="UAPIFactory" />
-
-	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
-		<cfargument name="UAPIFactory" type="any" required="true" />
-		<cfset setUAPIFactory( arguments.UAPIFactory ) />
-=======
-	<cfproperty name="uAPI" />
 	<cfproperty name="searchService" />
 
 	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
-		<cfargument name="uAPI" type="any" required="true" />
+		<cfargument name="UAPIFactory" type="any" required="true" />
 		<cfargument name="searchService" />
 
-		<cfset setUAPI( arguments.uAPI ) />
+		<cfset setUAPIFactory( arguments.UAPIFactory ) />
 		<cfset setSearchService( arguments.SearchService ) />
 
->>>>>>> develop
 		<cfreturn this />
 	</cffunction>
 
