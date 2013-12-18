@@ -12,6 +12,8 @@ $(document).ready(function(){
 	var vehicleSelected = $( "#vehicleSelected" ).val();
 	var vendor = $( "#vendor" ).val();
 	var arrangerID = $( "#arrangerID" ).val();
+	var arrangerAdmin = $( "#arrangerAdmin" ).val();
+	var arrangerSTMEmployee = $( "#arrangerSTMEmployee" ).val();
 	var errors = $( "#errors" ).val();
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
@@ -357,7 +359,7 @@ $(document).ready(function(){
 			}
 			else {
 				$( "#" + inputName ).val( orgunit.valueID );
-				if( inputName == 'custom' && acctID != 1 ){
+				if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
 					$( "#" + inputName ).attr( "disabled", true );
 				}
 			}
@@ -368,6 +370,7 @@ $(document).ready(function(){
 	function loadPayments(traveler, typeOfService) {
 		var payments = traveler.payment
 		$( "#" + typeOfService + "FOPID" ).html('')
+		$( "#" + typeOfService + "FOPIDDiv" ).show();
 		var manualEntry = 1;
 		for( var i=0, l=traveler.payment.length; i<l; i++ ) {
 			if (traveler.payment[i][typeOfService + 'Use'] == true) {
@@ -476,29 +479,36 @@ $(document).ready(function(){
 		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
 	}
 
-	$(".newCard").on("click", function() {
+	$(".newCard").on("click", "input[type=checkbox]", function() {
 		var airCard = $("#newAirCC");
 		var hotelCard = $("#newHotelCC");
+		var showAirNewCard = (airCard.attr("checked") == "checked");
 
-		var showAirNewCard = (airCard.attr("checked") == 'checked');
-		var showHotelNewCard = (hotelCard.attr("checked") == 'checked');
-
-		if (showAirNewCard) {
-			$("#airFOPIDDiv").hide();
-			$("#airManual").show();
+		if (this.name == 'newAirCC') {
+			if (this.checked) {
+				$("#airFOPIDDiv").hide();
+				$("#airManual").show();
+				$("#copyAirCCDiv").show();
+			}
+			else {
+				$("#airFOPIDDiv").show();
+				$("#airManual").hide();
+				$("#copyAirCCDiv").hide();
+			}
 		}
-		else {
-			$("#airFOPIDDiv").show();
-			$("#airManual").hide();
-		}
-
-		if (showHotelNewCard) {
-			$("#hotelFOPIDDiv").hide();
-			$("#hotelManual").show();
-		}
-		else {
-			$("#hotelFOPIDDiv").show();
-			$("#hotelManual").hide();
+		else if (this.name == 'newHotelCC') {
+			if (this.checked) {
+				$("#hotelFOPIDDiv").hide();
+				$("#hotelManual").show();
+				if (showAirNewCard) {
+					$("#copyAirCCDiv").show();
+				}
+			}
+			else {
+				$("#hotelFOPIDDiv").show();
+				$("#hotelManual").hide();
+				$("#copyAirCCDiv").hide();
+			}
 		}
 	});
 
@@ -625,6 +635,37 @@ $(document).ready(function(){
 					}
 					$( "#sort1" ).val( originalValue );
 					$( "#sort1" ).trigger( "change" );
+				}
+			});
+
+			$.ajax({type:"POST",
+				url: 'RemoteProxy.cfc?method=updateTravelerCompany',
+				data: 	{
+							  userID : $("#userID").val()
+							, acctID : acctID
+							, arrangerID : arrangerID
+							, searchID : searchID
+							, travelerNumber : travelerNumber
+							, valueID : custom
+						},
+				dataType: 'json',
+				success:function(traveler) {
+					$( "#airSpinner" ).show();
+					$( "#hotelSpinner" ).show();
+					$( "#carSpinner" ).show();
+
+					if (airSelected == 'true') {
+						loadPayments(traveler, 'air');
+						$( "#airSpinner" ).hide();
+					}
+					if (hotelSelected == 'true') {
+						loadPayments(traveler, 'hotel');
+						$( "#hotelSpinner" ).hide();
+					}
+					if (vehicleSelected == 'true') {
+						loadCarPayments(traveler);
+						$( "#carSpinner" ).hide();
+					}
 				}
 			});
 		});

@@ -82,6 +82,7 @@
 												<cfcase value="R">Required room rate sold out</cfcase>
 												<cfcase value="C">Required property was higher than another property</cfcase>
 												<cfcase value="L">Leisure Rental (paying for it themselves)</cfcase>
+												<cfcase value="B">I am booking a blacklisted hotel</cfcase>
 											</cfswitch>
 										</td>
 									<cfelse>

@@ -28,7 +28,7 @@
 				, Description
 			FROM FareSavingsCode
 			WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-				AND FareSavingsCodeID NOT IN (35)
+				AND FareSavingsCodeID NOT IN (35,114)
 				<cfif arguments.acctID NEQ 348>
 					AND Acct_ID IS NULL
 				<cfelse>
@@ -290,7 +290,7 @@
 			<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
 			<cfif local.OU.getOURequired() EQ 1
 				AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
-					OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0)))>
+					OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
 				<cfset local.error[field] = '' />
 			</cfif>
 			<cfif local.OU.getOUFreeform() EQ 1

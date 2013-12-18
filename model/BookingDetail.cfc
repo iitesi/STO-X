@@ -47,8 +47,10 @@
 	<cfproperty name="newHotelCC" />
 	<cfproperty name="password" />
 	<cfproperty name="preTrip" />
+	<cfproperty name="purchaseCompleted" />
 	<cfproperty name="reservationCode" />
 	<cfproperty name="saveProfile" />
+	<cfproperty name="specialCarReservation" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="specialNeeds" />
 	<cfproperty name="seats" />
@@ -114,9 +116,11 @@
 		<cfset setNewHotelCC( 0 )>
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
+		<cfset setPurchaseCompleted( false )>
 		<cfset setReservationCode( '' )>
 		<cfset setSaveProfile( false )>
 		<cfset setSeats( [] )>
+		<cfset setSpecialCarReservation( '' )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setSpecialNeeds( '' )>
 		<cfset setSort1( '' )>

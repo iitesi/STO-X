@@ -12,15 +12,17 @@
 			var carresults = [
 				<cfset nCount = 0>
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
-					<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-						<cfif nCount NEQ 0>,</cfif>
-						<cfset nCount++>
-						<cfif structKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
-							[#session.searches[rc.SearchID].stCars[sCategory][sVendor].sJavascript#]
-						<cfelse>
-							['#LCase(sCategory)##LCase(sVendor)#','#LCase(sCategory)#','#LCase(sVendor)#',0,0]
-						</cfif>
-					</cfloop>
+					<cfif NOT structIsEmpty(session.searches[rc.SearchID].stCars[sCategory])>
+						<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
+							<cfif nCount NEQ 0>,</cfif>
+							<cfset nCount++>
+							<cfif structKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
+								[#session.searches[rc.SearchID].stCars[sCategory][sVendor].sJavascript#]
+							<cfelse>
+								['#LCase(sCategory)##LCase(sVendor)#','#LCase(sCategory)#','#LCase(sVendor)#',0,0]
+							</cfif>
+						</cfloop>
+					</cfif>
 				</cfloop>];
 
 			var carcategories = [
@@ -216,7 +218,7 @@
 						<div class="span2">
 							<b>Car</b>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
-								<cfif Right(carCategory, 3) IS "car">
+								<cfif Right(carCategory, 3) IS "car" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 								</cfif>
 							</cfloop>
@@ -224,7 +226,7 @@
 						<div class="span2">
 							<b>Van</b>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
-								<cfif Right(carCategory, 3) IS "van">
+								<cfif Right(carCategory, 3) IS "van" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 								</cfif>
 							</cfloop>
@@ -232,7 +234,7 @@
 						<div class="span2">
 							<b>SUV</b>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
-								<cfif Right(carCategory, 3) IS "suv">
+								<cfif Right(carCategory, 3) IS "suv" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<label class="checkbox" for="fltrCategory#LCase(carCategory)#"><input id="fltrCategory#LCase(carCategory)#" type="checkbox" name="fltrCategory" value="#carCategory#"> #Left(carCategory, Len(carCategory)-3)#</label>
 								</cfif>
 							</cfloop>

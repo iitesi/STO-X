@@ -119,30 +119,30 @@
 							<cfif arguments.hotelSelected>
 								<!---
 								Add hotel reason code : no error response
-								Command = T-H*DDMM/SV-C
+								Command = T-H*DDMM/SV-HC
+								Use reason code if traveler was required to select one
+								Use "A" if not required
 								--->
-								<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
-																									, hostToken = arguments.hostToken
-																									, serviceType = 'H'
-																									, startDate = arguments.Filter.getCheckInDate()
-																									, reasonCode = arguments.Traveler.getBookingDetail().getHotelReasonCode()
-																									, lowestRateOffered = 0
-																									, searchID = arguments.searchID )>
+								<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
+																	, hostToken = arguments.hostToken
+																	, serviceType = 'H'
+																	, startDate = arguments.Filter.getCheckInDate()
+																	, reasonCode = len(arguments.Traveler.getBookingDetail().getHotelReasonCode()) ? arguments.Traveler.getBookingDetail().getHotelReasonCode() : 'A'
+																	, searchID = arguments.searchID )>
 
 							</cfif>
 							<cfif arguments.vehicleSelected>
 								<!---
 								Add vehicle reason code : no error response
 								Command = T-C*DDMM/SV-Cx
-								Add vehicle lost savings code : no error response
-								Command = T-C*DDMM/SA-100.00
+								Use reason code if traveler was required to select one
+								Use "A" if not required
 								--->
-								<cfset TerminalEntry.addLostSavings( targetBranch = arguments.targetBranch
+								<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
 																	, hostToken = arguments.hostToken
 																	, serviceType = 'C'
 																	, startDate = arguments.Filter.getCarPickupDateTime()
 																	, reasonCode = len(arguments.Traveler.getBookingDetail().getCarReasonCode()) ? arguments.Traveler.getBookingDetail().getCarReasonCode() : 'A'
-																	, lowestRateOffered = arguments.lowestCarRate
 																	, searchID = arguments.searchID )>
 
 							</cfif>
@@ -157,6 +157,20 @@
 																, searchID = arguments.searchID )>
 
 							<!---
+							If Southwest, change KK segments to HK before queue
+							Command = .IHK
+							--->
+							<cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
+								<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
+									<cfif carrier IS 'WN'>
+										<cfset TerminalEntry.confirmSegments( targetBranch = arguments.targetBranch
+																				, hostToken = arguments.hostToken
+																				, searchID = arguments.searchID )>
+									</cfif>
+								</cfloop>
+							</cfif>
+
+							<!---
 							Verify stored fare
 							Command = T:V or T:R
 							--->
@@ -167,29 +181,32 @@
 																									, airSelected = airSelected )>
 
 							<cfif NOT verifyStoredFareResponse.error>
-								<!--- 
-								If NASCAR, remove BARPAR accounting line.  *PT to see the lines in the PNR, then remove the
-								T-CA-43@021433 accounting line if found.
-								Command = *PT
-								Command = C:1T-
-								--->
-								<cfif arguments.Filter.getAcctID() EQ 348>
+								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
+									<!--- 
+									If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
+									*PT to see the lines in the PNR, then move down to count more, 
+									then remove the T-CA-43@021433 accounting line if found.
+									Command = *PT
+									Command = MD
+									Command = C:1T-
+									--->
 									<cfset TerminalEntry.removeBARPARAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
-																				, searchID = arguments.searchID )>									
-								</cfif>
-
-								<!--- 
-								Remove duplicate accounting line.  *PT to see the lines in the PNR, then move down 
-								to count more, then remove that line number if there were two accounting lines found.
-								Command = *PT
-								Command = MD
-								Command = C:1T-
-								--->
-								<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
+																				, searchID = arguments.searchID )>
+								<cfelse>
+									<!--- 
+									Otherwise, remove duplicate accounting line. Only run if removeBARPARAccounting() has not been performed.
+									*PT to see the lines in the PNR, then move down to count more, 
+									then remove that line number if there were two accounting lines found.
+									Command = *PT
+									Command = MD
+									Command = C:1T-
+									--->
+									<cfset TerminalEntry.removeDuplicateAccounting( targetBranch = arguments.targetBranch
 																				, hostToken = arguments.hostToken
 																				, searchID = arguments.searchID )>
-								
+								</cfif>
+
 								<!---
 								Determine appropriate queue
 								Command = QEP/1M98/34*CSR+161C/99*CNM
@@ -200,7 +217,8 @@
 																							, searchID = arguments.searchID
 																							, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
 																							, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
-																							, developer = arguments.developer )>
+																							, developer = arguments.developer
+																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation() )>
 
 								<cfset responseMessage = queueRecordResponse>
 

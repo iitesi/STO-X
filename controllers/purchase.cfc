@@ -7,7 +7,8 @@
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 			
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-			<cfif arrayIsEmpty(errorMessage)>
+			<cfif arrayIsEmpty(errorMessage)
+				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
@@ -24,6 +25,7 @@
 				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
+				<cfset local.specialCarReservation = false />
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
@@ -106,7 +108,7 @@
 					<cfset profileFound = false>
 				</cfif>
 
-				<!--- Sell Air --->
+				<!--- Price Air --->
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
 
@@ -118,6 +120,9 @@
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
 																							, bRefundable = Air.Ref
+																							, bRestricted = 0
+																							, sFaresIndicator = "PublicAndPrivateFares"
+																							, bAccountCodes = 1
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
 																							, bSaveAirPrice = 1
@@ -141,6 +146,67 @@
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
+						<!--- Do a lowest refundable air price before air create for U6 --->
+						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																						, Account = rc.Account
+																						, Policy = rc.Policy
+																						, sCabin = Air.Class
+																						, bRefundable = 1
+																						, bRestricted = 0
+																						, sFaresIndicator = "PublicAndPrivateFares"
+																						, bAccountCodes = 1
+																						, nTrip = Air.nTrip
+																						, nCouldYou = 0
+																						, bSaveAirPrice = 1
+																						, findIt = rc.Filter.getFindIt()
+																					)>
+						<cfif NOT structIsEmpty(refundableTrip)>
+							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
+						</cfif>
+
+						<!--- Check to see if this is a Southwest flight that is not contracted --->
+						<cfset local.SWFlight = false />
+						<cfif Air.platingCarrier IS 'WN'>
+							<cfset local.privateCarriers = '' />
+							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
+								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
+							</cfloop>
+
+							<!--- If the account policy does not have Southwest listed as a private fare --->
+							<cfif listFindNoCase(privateCarriers, 'WN') EQ 0>
+								<cfset local.SWFlight = true />
+							</cfif>
+						</cfif>
+
+						<!--- If private fare, do a lowest public air price before air create for U12 --->
+						<!--- If a Southwest flight and the account does not have contracted rates with SW, do a lowest private air price for U12 --->
+						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR SWFlight>
+							<cfset local.faresIndicator = 'PublicFaresOnly' />
+							<cfif SWFlight>
+								<cfset local.faresIndicator = 'PrivateFaresOnly' />
+							</cfif>
+								
+							<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																							, Account = rc.Account
+																							, Policy = rc.Policy
+																							, sCabin = Air.Class
+																							, bRefundable = 0
+																							, bRestricted = 0
+																							, sFaresIndicator = faresIndicator
+																							, bAccountCodes = 0
+																							, nTrip = Air.nTrip
+																							, nCouldYou = 0
+																							, bSaveAirPrice = 1
+																							, findIt = rc.Filter.getFindIt()
+																							, bIncludeClass = 1
+																						)>
+							<cfif NOT structIsEmpty(lowestPublicTrip)>
+								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
+							</cfif>
+						<cfelse>
+							<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
+						</cfif>
+
 						<!--- Parse credit card information --->
 						<cfset local.cardNumber = ''>
 						<cfset local.cardCVV = ''>
@@ -305,6 +371,14 @@
 							</cfif>
 						</cfif>
 					</cfloop>
+					<!--- If NASCAR National car rental with direct bill and loyalty card --->
+					<cfif directBillType EQ 'ID'
+							AND directBillNumber NEQ ''
+							AND Vehicle.getVendorCode() IS 'ZL'
+							AND Traveler.getBookingDetail().getCarFF() NEQ ''>
+						<cfset local.specialCarReservation = true />
+					</cfif>
+					<cfset Traveler.getBookingDetail().setSpecialCarReservation(specialCarReservation) />
 					<!--- Find arriving flight details --->
 					<cfset local.carrier = ''>
 					<cfset local.flightNumber = ''>
@@ -334,6 +408,7 @@
 																										, profileFound = profileFound
 																										, lowestRateOffered = lowestRateOffered
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, specialCarReservation = specialCarReservation
 																									)>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
@@ -413,12 +488,15 @@
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
-						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler )>
+						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
+																						, OriginalUser = Profile
+																						, Account = rc.Account )>
 					</cfif>
 					<!--- Create profile in database --->
-					<cfif Traveler.getBookingDetail().getCreateProfile()>
+					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
-																						, acctID = rc.Filter.getAcctID() )) />
+																						, acctID = rc.Filter.getAcctID()
+																						, Account = rc.Account )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
@@ -429,6 +507,10 @@
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
+					<!--- If account has Purchase Error Contact Info in STO Admin --->
+					<cfif len(rc.Account.Error_Contact)>
+						<cfset arrayAppend( errorMessage, rc.Account.Error_Contact )>
+					</cfif>
 					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage )>
 					<cfset local.errorList = message>
 					<cfif rc.Filter.getSTMEmployee()
@@ -449,8 +531,11 @@
 				</cfif>
 			</cfif>
 		</cfloop>
-		<!--- Moved the redirect to outside the travelers loop. --->
+
 		<cfif arrayIsEmpty(errorMessage)>
+			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+				<cfset Traveler.getBookingDetail().setPurchaseCompleted( true )>
+			</cfloop>
 			<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 		</cfif>
 

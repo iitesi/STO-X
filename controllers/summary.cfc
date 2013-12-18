@@ -38,7 +38,8 @@
 
 		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''
+					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode()
 																					, Filter = rc.Filter )>
@@ -47,6 +48,9 @@
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )>
 					<cfset Traveler.getBookingDetail().setReservationCode( '' )>
 					<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
+				</cfif>
+				<cfif Traveler.getBookingDetail().getPurchaseCompleted()>
+					<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#')>
 				</cfif>
 			</cfloop>
 		</cfif>
@@ -248,7 +252,8 @@
 					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
-																						, acctID = rc.Filter.getAcctID() ) />
+																						, acctID = rc.Filter.getAcctID()
+																						, Account = rc.Account ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 					<cfset rc.message.addInfo('Your profile has been created.') />

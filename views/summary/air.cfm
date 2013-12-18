@@ -36,9 +36,6 @@
 			</td>
 
 			<td colspan="2">
-
-				#(rc.Air.Policy ? '' : '<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
-
 				<!---
 				If they are out of policy
 				AND they want to capture reason codes
@@ -46,6 +43,9 @@
 				<cfif rc.showAll
 					OR (NOT inPolicy
 					AND rc.Policy.Policy_AirReasonCode EQ 1)>
+
+					<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">OUT OF POLICY *</span>
+
 					<select name="airReasonCode" id="airReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
 					<option value="">Select Reason for Booking Out of Policy</option>
 					<cfloop query="rc.qOutOfPolicy">
@@ -64,15 +64,15 @@
 					OR (rc.Air.Total GT lowestFare
 					AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 					AND rc.Policy.Policy_AirLostSavings EQ 1)>
-					<!--- *&nbsp;&nbsp; --->
-					<div class="#(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
-						<select name="lostSavings" id="lostSavings" class="input-xlarge">
-						<option value="">Select Reason for Not Booking the Lowest Fare</option>
-						<cfloop query="rc.qOutOfPolicy">
-							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
-						</cfloop>
-						</select> <br><br>
-					</div>
+
+					<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span>
+
+					<select name="lostSavings" id="lostSavings" class="input-xlarge #(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
+					<option value="">Select Reason for Not Booking the Lowest Fare</option>
+					<cfloop query="rc.qOutOfPolicy">
+						<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
+					</cfloop>
+					</select> <br><br>
 
 				<!---
 				If the fare is the same

@@ -332,6 +332,30 @@
 		</cftry>
 	</cffunction>
 	
+	<cffunction name="updateTravelerCompany" access="remote" output="false" returntype="any" returnformat="json" hint="I update a particular traveler whose company has been changed on the summary page and associated payments">
+		<cfargument name="userID" required="true" type="numeric" />
+		<cfargument name="acctID" required="true" type="numeric" />
+		<cfargument name="arrangerID" required="true" type="numeric" />
+		<cfargument name="searchID" required="true" type="numeric" />
+		<cfargument name="travelerNumber" required="true" type="numeric" />
+		<cfargument name="valueID" required="true" type="numeric" />
+
+		<cfset local.qOrgUnitValues = getBean("OrgUnitService").getOrgUnitValues(ouID = 399
+																					, valueID = arguments.valueID
+																					, returnFormat = "query") />
+
+		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueID(qOrgUnitValues.Value_ID) />
+		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueDisplay(qOrgUnitValues.Value_Display) />
+		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueReport(qOrgUnitValues.Value_Report) />
+
+		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].setPayment(getBean("PaymentService").getUserPayments(userID = arguments.userID
+																					, acctID = arguments.acctID
+																					, valueID = arguments.valueID
+																					, arrangerID = arguments.arrangerID) )>
+
+		<cfreturn session.searches[arguments.searchID].travelers[arguments.travelerNumber] />
+	</cffunction>
+
 	<cffunction name="getUAPILogEntries" access="remote" output="false" returntype="any" returnformat="plain" hint="I retrieve entries from the uAPI log based on the specified criteria">
 		<cfargument name="searchID" type="numeric" required="false" />
 		<cfargument name="acctId" type="numeric" required="false" />
