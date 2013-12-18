@@ -276,7 +276,10 @@
 				SELECT Acct_ID
 				, Account_Name
 				, Delivery_AON
-				, Logo
+				, (SELECT Account_Logo
+						FROM Corporate_Production.dbo.Accounts
+						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Logo
+				<!--- , Logo --->
 				, PCC_Booking
 				, PNR_AddAccount
 				, BTA_Move
