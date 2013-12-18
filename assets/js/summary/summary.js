@@ -155,11 +155,11 @@ $(document).ready(function(){
 			}
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
-			$( "#saveProfileDiv" ).show();
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
+				$( "#saveProfileDiv" ).hide();
 				$( "#createProfileDiv" ).hide();
 				$( "#firstName2" ).val( '' );
 				$( "#lastName2" ).val( '' );
