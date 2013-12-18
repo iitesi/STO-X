@@ -18,6 +18,7 @@ $(document).ready(function(){
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
+	var findit = $("#findit").val();
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -183,10 +184,9 @@ $(document).ready(function(){
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
-		// If a FindIt guest
-		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
-			$( "#userID" ).val( 0 );
-			// $( "#userIDDiv" ).hide();
+		// If an unregistered FindIt guest
+		if (findit == 1 && $("#userID").val() == 0) {
+			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
 
 			$.ajax({type: "POST",
