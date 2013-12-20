@@ -339,6 +339,7 @@
 		<cfargument name="searchID" required="true" type="numeric" />
 		<cfargument name="travelerNumber" required="true" type="numeric" />
 		<cfargument name="valueID" required="true" type="numeric" />
+		<cfargument name="vendor" required="false" default="" />
 
 		<cfset local.qOrgUnitValues = getBean("OrgUnitService").getOrgUnitValues(ouID = 399
 																					, valueID = arguments.valueID
@@ -352,6 +353,13 @@
 																					, acctID = arguments.acctID
 																					, valueID = arguments.valueID
 																					, arrangerID = arguments.arrangerID) )>
+
+		<cfif arguments.vendor NEQ ''>
+			<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].addPayment(getBean("PaymentService").getCarPayments(userID = arguments.userID
+																					, acctID = arguments.acctID
+																					, valueID = arguments.valueID
+																					, vendor = arguments.vendor) )>
+		</cfif>
 
 		<cfreturn session.searches[arguments.searchID].travelers[arguments.travelerNumber] />
 	</cffunction>

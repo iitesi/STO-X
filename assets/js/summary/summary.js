@@ -647,6 +647,7 @@ $(document).ready(function(){
 							, searchID : searchID
 							, travelerNumber : travelerNumber
 							, valueID : custom
+							, vendor : vendor
 						},
 				dataType: 'json',
 				success:function(traveler) {
