@@ -98,6 +98,7 @@
 
 		<cfset local.fees = {}>
 		<cfset local.feeType = ''>
+		<cfset local.fees.complex = false>
 
 		<!--- Determine if an agent is booking for the traveler --->
 		<cfquery name="local.qAgentSine" datasource="Corporate_Production" cachedwithin="#createTimeSpan(1,0,0,0)#">
@@ -130,23 +131,22 @@
 					AND Location_Type = <cfqueryparam value="125" cfsqltype="cf_sql_integer">
 			</cfquery>
 
+			<cfset local.intl = false>
 			<cfloop query="local.qSearch">
 				<cfif local.qSearch.Country_Code NEQ 'US'>
-					<cfif local.qAgentSine.AccountID EQ ''>
-						<cfset local.feeType = 'OINTL'>
-					<cfelse>
+					<cfset local.intl = true>
+					<cfif local.qAgentSine.AccountID NEQ ''>
 						<cfset local.feeType = 'INTL'>
 					</cfif>
 				</cfif>
 			</cfloop>
 
-			<cfif (local.feeType EQ 'OINTL' OR local.feeType EQ 'INTL')
+			<cfif (local.feeType EQ 'INTL' OR local.intl)
 				AND (ArrayLen(arguments.Air.Carriers) GT 1
 				OR arguments.Filter.getAirType() EQ 'MD'
 				OR local.segmentCount GT 6)>
-					<cfif local.qAgentSine.AccountID EQ ''>
-						<cfset local.feeType = 'OINTLRD'>
-					<cfelse>
+					<cfset local.fees.complex = true>
+					<cfif local.qAgentSine.AccountID NEQ ''>
 						<cfset local.feeType = 'INTLRD'>
 					</cfif>
 			</cfif>
@@ -192,7 +192,7 @@
 
 		<cfset local.fees.requestFee = (local.qRequest.Fee_Amount NEQ '' ? local.qRequest.Fee_Amount : 0)>
 		<cfset local.fees.fee = (local.qSpecificFee.Fee_Amount NEQ '' ? local.qSpecificFee.Fee_Amount : 0)>
-		<cfset local.fees.complex = (local.feeType NEQ 'OINTLRD' AND local.feeType NEQ 'INTLRD' ? false : true)>
+		<!--- <cfset local.fees.complex = (local.feeType NEQ 'OINTLRD' AND local.feeType NEQ 'INTLRD' ? false : true)> --->
 		<cfset local.fees.agent = local.qAgentSine.AccountID>
 		<cfset local.fees.airFee = (local.qSpecificFee.Fee_Amount NEQ '' ? local.qSpecificFee.Fee_Amount : 0)>
 		<cfset local.fees.airFeeType = local.feeType>
