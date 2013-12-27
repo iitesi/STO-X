@@ -507,12 +507,13 @@
 					<cfset fw.getBeanFactory().getBean('UAPI').databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
+					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage
+																							, errorContact = rc.Account.Error_Contact )>
+					<cfset local.errorList = message>
 					<!--- If account has Purchase Error Contact Info in STO Admin --->
 					<cfif len(rc.Account.Error_Contact)>
-						<cfset arrayAppend( errorMessage, rc.Account.Error_Contact )>
+						<cfset errorList = listAppend(errorList, rc.Account.Error_Contact)>
 					</cfif>
-					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage )>
-					<cfset local.errorList = message>
 					<cfif rc.Filter.getSTMEmployee()
 						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
