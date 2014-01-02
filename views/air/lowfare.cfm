@@ -50,23 +50,20 @@
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
-			<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "stPriced")>
-				<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
+				<cfset nCount++>
+				#View('air/badge')#
+			</cfloop>
+
+			<cfset variables.bSelected = false>
+			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
+				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
 					#View('air/badge')#
-				</cfloop>
-			</cfif>
-			<cfset variables.bSelected = false>
-			<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFarePreferred")>
-				<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
-					<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
-						<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-						<cfset nCount++>
-						#View('air/badge')#
-					</cfif>
-				</cfloop>
-			</cfif>
+				</cfif>
+			</cfloop>
 
 			<script type="application/javascript">
 				// define for sorting ( see air/filter.js and booking.js airSort() )
