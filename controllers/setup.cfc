@@ -122,6 +122,11 @@ setApplication
 	<cffunction name="setPolicy" output="false">
 		<cfargument name="rc">
 
+		<!--- doublecheck the policyID is set --->
+		<cfif NOT structKeyExists(rc, "policyID")>
+			<cfset rc.policyID = arguments.rc.filter.getPolicyID()>
+		</cfif>
+
 		<!---	Move the Policy into the rc scope so it is always available.
 					Lazy loading, adds policies to the application scope as needed.--->
 		<cfif StructKeyExists(application, 'Policies')
