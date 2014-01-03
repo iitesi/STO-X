@@ -279,12 +279,13 @@
 								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
+							<cfelse>
+								<cfset universalLocatorCode = Air.UniversalLocatorCode>
 							</cfif>
 
 							<!--- Update session with new Air record --->
 							<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
 							<cfset providerLocatorCode = Air.ProviderLocatorCode>
-							<cfset universalLocatorCode = Air.UniversalLocatorCode>
 							<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
 							<cfset Traveler.getBookingDetail().setSeats(Air.BookingTravelerSeats) />
 							<!--- Update universal version --->
@@ -333,12 +334,13 @@
 						<cfset errorMessage = Hotel.getMessages()>
 						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
+					<cfelse>
+						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
 					</cfif>
 
-					<!--- Update session with new Air record --->
+					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
 					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
-					<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
 					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Update universal version --->
 					<cfif providerLocatorCode NEQ ''>
@@ -420,14 +422,15 @@
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( vehicleResponse )>
 						<cfset errorType = 'Vehicle'>
+					<cfelse>
+						<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
 					</cfif>
 					<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
-					<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
 					<!--- Update universal version --->
 					<cfif providerLocatorCode NEQ ''>
 						<cfset version++>
 					</cfif>
-					<!--- Update session with new Hotel record --->
+					<!--- Update session with new Vehicle record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
 				</cfif>
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
