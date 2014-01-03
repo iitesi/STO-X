@@ -135,7 +135,7 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
-		if (traveler.bookingDetail.createProfile == 1) {
+		if (traveler.bookingDetail.createProfile == 1 && $("#userID") == 0) {
 			$( "#createProfileDiv" ).show();
 			$( "#createProfile" ).attr( 'checked', true );
 			$( "#usernameDiv" ).show();
