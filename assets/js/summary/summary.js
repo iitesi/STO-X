@@ -120,6 +120,9 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() == null) {
 			$( "#userID" ).val(0);
 		}
+		if (findit == 1) {
+			$( "#nameChange" ).hide();
+		}
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
 		if (traveler.noMiddleName == 1) {
