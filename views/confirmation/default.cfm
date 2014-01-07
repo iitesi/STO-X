@@ -38,31 +38,29 @@
 </cfsilent>
 
 <div style="width:960px;">
-	<cfif (application.es.getCurrentEnvironment() NEQ 'prod'
-		AND NOT (application.es.getCurrentEnvironment() EQ 'beta'
-			AND rc.Filter.getAcctID() EQ 441))
-		OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
-		<span style="float:right">
-			<cfoutput>
-				<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
-					<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-						<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
-							<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
-								<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
-							</a>
-						</cfif>
-					</cfloop>
-				</cfif>
-			</cfoutput>
+	<div class="container page-header">
+		<span>
+			<h1>RESERVATION CREATED</h1>
 		</span>
-	</cfif>
-
-	<div class="container">
-		<div class="page-header">
-			<cfoutput>
-				<h1>RESERVATION CREATED</h1>
-			</cfoutput>
-		</div>
+		<span style="float:right">
+			<cfif (application.es.getCurrentEnvironment() NEQ 'prod'
+				AND NOT (application.es.getCurrentEnvironment() EQ 'beta'
+					AND rc.Filter.getAcctID() EQ 441))
+				OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
+				<cfoutput>
+					<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
+						<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
+							<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
+								<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
+									<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
+								</a>
+							</cfif>
+						</cfloop>
+					</cfif>
+				</cfoutput>
+			</cfif>
+			&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="window.print();return false;"><span class="icon-large icon-print"></span> Print View</a>
+		</span>
 	</div>
 	<cfoutput>
 

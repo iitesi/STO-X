@@ -18,6 +18,7 @@ $(document).ready(function(){
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
+	var findit = $("#findit").val();
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -119,6 +120,9 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() == null) {
 			$( "#userID" ).val(0);
 		}
+		if (findit == 1) {
+			$( "#nameChange" ).hide();
+		}
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
 		if (traveler.noMiddleName == 1) {
@@ -134,7 +138,7 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
-		if (traveler.bookingDetail.createProfile == 1) {
+		if (traveler.bookingDetail.createProfile == 1 && $("#userID") == 0) {
 			$( "#createProfileDiv" ).show();
 			$( "#createProfile" ).attr( 'checked', true );
 			$( "#usernameDiv" ).show();
@@ -155,11 +159,11 @@ $(document).ready(function(){
 			}
 			$( "#firstName2" ).val( traveler.firstName );
 			$( "#lastName2" ).val( traveler.lastName );
-			$( "#saveProfileDiv" ).show();
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
+				$( "#saveProfileDiv" ).hide();
 				$( "#createProfileDiv" ).hide();
 				$( "#firstName2" ).val( '' );
 				$( "#lastName2" ).val( '' );
@@ -183,10 +187,9 @@ $(document).ready(function(){
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
-		// If a FindIt guest
-		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
-			$( "#userID" ).val( 0 );
-			// $( "#userIDDiv" ).hide();
+		// If an unregistered FindIt guest
+		if (findit == 1 && $("#userID").val() == 0) {
+			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
 
 			$.ajax({type: "POST",
@@ -647,6 +650,7 @@ $(document).ready(function(){
 							, searchID : searchID
 							, travelerNumber : travelerNumber
 							, valueID : custom
+							, vendor : vendor
 						},
 				dataType: 'json',
 				success:function(traveler) {
