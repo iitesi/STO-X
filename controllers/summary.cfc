@@ -78,7 +78,7 @@
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
-		<cfif listFind('198731,213137,215289', rc.filter.getUserID())>
+		<cfif listFind('198731,213137,215289,215292', rc.filter.getUserID())>
 			<cfset local.internalTMC = false />
 		<cfelse>
 			<cfset local.internalTMC = true />
