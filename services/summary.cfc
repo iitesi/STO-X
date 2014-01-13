@@ -22,6 +22,7 @@
 
 	<cffunction name="getOutOfPolicy" output="false">
 		<cfargument name="acctID" required="true" type="numeric">
+		<cfargument name="tmcID" required="false" type="numeric" default="1">
 
 		<cfquery name="local.qOutOfPolicy" datasource="Corporate_Production" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
 			SELECT FareSavingsCode
@@ -29,10 +30,18 @@
 			FROM FareSavingsCode
 			WHERE STO = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 				AND FareSavingsCodeID NOT IN (35,114)
-				<cfif arguments.acctID NEQ 348>
-					AND Acct_ID IS NULL
+				<!--- Short's/Internal TMC --->
+				<cfif listFind('1,2', arguments.tmcID)>
+					AND TMCID = <cfqueryparam value="1" cfsqltype="cf_sql_integer" />
+					<!--- NASCAR --->
+					<cfif arguments.acctID EQ 348>
+						AND Acct_ID = <cfqueryparam value="#arguments.acctID#" cfsqltype="cf_sql_integer" />
+					<cfelse>
+						AND Acct_ID IS NULL
+					</cfif>
+				<!--- External TMC --->
 				<cfelse>
-					AND Acct_ID = <cfqueryparam value="348" cfsqltype="cf_sql_integer">
+					AND TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer" />
 				</cfif>
 			ORDER BY FareSavingsCode
 		</cfquery>
