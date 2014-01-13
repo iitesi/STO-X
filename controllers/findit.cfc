@@ -1,9 +1,17 @@
 <cfcomponent extends="abstract">
 
+	<!--- 12:28 PM Monday, January 13, 2014 - Jim Priest - jpriest@shortstravel.com
+	this query logic really needs to move to service! --->
+
+	<cfset variables.bookingDSN = "booking">
+	<cfif cgi.local_host IS 'RailoQA'>
+		<cfset variables.bookingDSN = "findit">
+	</cfif>
+
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<cfquery name="local.getTrip" datasource="booking">
+		<cfquery name="local.getTrip" datasource="#variables.bookingDSN#">
 			SELECT tripData
 			FROM FindItOptions
 			WHERE SearchID = <cfqueryparam value="#rc.searchID#" cfsqltype="cf_sql_numeric">
@@ -46,8 +54,9 @@
 			<cfset rc.message.addError('The flight from FindIt is no longer available.')>
 			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
 		</cfif>
-
 	</cffunction>
+
+
 
 	<cffunction name="send" output="false">
 		<cfargument name="rc">
