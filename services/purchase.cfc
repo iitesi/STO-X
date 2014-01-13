@@ -31,6 +31,7 @@
 		<cfargument name="statmentInformation">
 		<cfargument name="developer">
 		<cfargument name="version">
+		<cfargument name="Account">
 
 		<cftry>
 			<!--- Sleep for seconds before starting this process --->
@@ -99,52 +100,55 @@
 																	, par = arguments.Traveler.getPAR()
 																	, searchID = arguments.searchID
 																	, Traveler = arguments.Traveler )>
-							<!---
-							Add auto ticketing remarks
-							Command = T-OS-SO/1M98/OK TO TKT
-							--->
-							<cfset TerminalEntry.addAutoTicketRemark( targetBranch = arguments.targetBranch
-																	, hostToken = arguments.hostToken
-																	, bookingPCC = arguments.pccBooking
-																	, searchID = arguments.searchID )>
-
-							<!--- 
-							Add ticketing date
-							Command = T-U53-MM/DD/YYYY
-							--->
-							<cfset TerminalEntry.addTicketDate( targetBranch = arguments.targetBranch
-																, hostToken = arguments.hostToken
-																, searchID = arguments.searchID )>
-
-							<cfif arguments.hotelSelected>
+							<!--- Short's Travel/Internal TMCs only --->
+							<cfif NOT arguments.Account.tmc.getIsExternal()>
 								<!---
-								Add hotel reason code : no error response
-								Command = T-H*DDMM/SV-HC
-								Use reason code if traveler was required to select one
-								Use "A" if not required
+								Add auto ticketing remarks
+								Command = T-OS-SO/1M98/OK TO TKT
 								--->
-								<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
+								<cfset TerminalEntry.addAutoTicketRemark( targetBranch = arguments.targetBranch
+																		, hostToken = arguments.hostToken
+																		, bookingPCC = arguments.pccBooking
+																		, searchID = arguments.searchID )>
+
+								<!--- 
+								Add ticketing date
+								Command = T-U53-MM/DD/YYYY
+								--->
+								<cfset TerminalEntry.addTicketDate( targetBranch = arguments.targetBranch
 																	, hostToken = arguments.hostToken
-																	, serviceType = 'H'
-																	, startDate = arguments.Filter.getCheckInDate()
-																	, reasonCode = len(arguments.Traveler.getBookingDetail().getHotelReasonCode()) ? arguments.Traveler.getBookingDetail().getHotelReasonCode() : 'A'
 																	, searchID = arguments.searchID )>
 
-							</cfif>
-							<cfif arguments.vehicleSelected>
-								<!---
-								Add vehicle reason code : no error response
-								Command = T-C*DDMM/SV-Cx
-								Use reason code if traveler was required to select one
-								Use "A" if not required
-								--->
-								<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
-																	, hostToken = arguments.hostToken
-																	, serviceType = 'C'
-																	, startDate = arguments.Filter.getCarPickupDateTime()
-																	, reasonCode = len(arguments.Traveler.getBookingDetail().getCarReasonCode()) ? arguments.Traveler.getBookingDetail().getCarReasonCode() : 'A'
-																	, searchID = arguments.searchID )>
+								<cfif arguments.hotelSelected>
+									<!---
+									Add hotel reason code : no error response
+									Command = T-H*DDMM/SV-HC
+									Use reason code if traveler was required to select one
+									Use "A" if not required
+									--->
+									<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
+																		, hostToken = arguments.hostToken
+																		, serviceType = 'H'
+																		, startDate = arguments.Filter.getCheckInDate()
+																		, reasonCode = len(arguments.Traveler.getBookingDetail().getHotelReasonCode()) ? arguments.Traveler.getBookingDetail().getHotelReasonCode() : 'A'
+																		, searchID = arguments.searchID )>
 
+								</cfif>
+								<cfif arguments.vehicleSelected>
+									<!---
+									Add vehicle reason code : no error response
+									Command = T-C*DDMM/SV-Cx
+									Use reason code if traveler was required to select one
+									Use "A" if not required
+									--->
+									<cfset TerminalEntry.addReasonCode( targetBranch = arguments.targetBranch
+																		, hostToken = arguments.hostToken
+																		, serviceType = 'C'
+																		, startDate = arguments.Filter.getCarPickupDateTime()
+																		, reasonCode = len(arguments.Traveler.getBookingDetail().getCarReasonCode()) ? arguments.Traveler.getBookingDetail().getCarReasonCode() : 'A'
+																		, searchID = arguments.searchID )>
+
+								</cfif>
 							</cfif>
 
 							<!--- 
@@ -220,7 +224,8 @@
 																							, developer = arguments.developer
 																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation()
 																							, Air = arguments.Air
-																							, airSelected = airSelected )>
+																							, airSelected = airSelected
+																							, Account = arguments.Account )>
 
 								<cfset responseMessage = queueRecordResponse>
 

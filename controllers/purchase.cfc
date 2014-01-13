@@ -244,6 +244,8 @@
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 							<cfset errorType = 'TerminalEntry.openSession'>
 						<cfelse>
+							<cfset local.LowestAir = session.searches[rc.searchID].stTrips[session.searches[rc.searchID].stLowFareDetails.aSortFare[1]] />
+
 							<!--- Sell air --->
 							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
@@ -251,6 +253,7 @@
 																										, Profile = Profile
 																										, Account = rc.Account
 																										, Air = Air
+																										, LowestAir = LowestAir
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
 																										, udids = udids
@@ -460,7 +463,8 @@
 						Air="#Air#"
 						statmentInformation="#statmentInformation#"
 						developer="#(listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)#" 
-						version="#version#">
+						version="#version#"
+						Account="#rc.Account#">
 
 						<cfset fw.getBeanFactory().getBean('Purchase').fileFinishing( targetBranch = arguments.targetBranch
 																					, hostToken = arguments.hostToken
@@ -476,7 +480,8 @@
 																					, Air = arguments.Air
 																					, statmentInformation = arguments.statmentInformation
 																					, developer =  arguments.developer
-																					, version = arguments.version )>
+																					, version = arguments.version
+																					, Account = arguments.Account )>
 						
 					</cfthread>
 
