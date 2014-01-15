@@ -423,7 +423,7 @@
 					<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
 					<!--- Parse error --->
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
-						<cfset errorMessage = fw.getBeanFactory().getBean('UAPIFactory').load( rc.TMC ).parseError( vehicleResponse )>
+						<cfset errorMessage = fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).parseError( vehicleResponse )>
 						<cfset errorType = 'Vehicle'>
 					<cfelse>
 						<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
