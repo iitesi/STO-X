@@ -64,6 +64,7 @@
 			<cfparam name="rc.showAll" default="0">
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
+			<input type="hidden" name="externalTMC" id="externalTMC" value="#rc.Account.tmc.getIsExternal()#">
 			<input type="hidden" name="findit" id="findit" value="#rc.Filter.getFindIt()#">
 			<input type="hidden" name="travelerNumber" id="travelerNumber" value="#rc.travelerNumber#">
 			<input type="hidden" name="arrangerID" id="arrangerID" value="#rc.Filter.getUserID()#">

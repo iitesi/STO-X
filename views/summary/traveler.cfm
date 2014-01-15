@@ -26,8 +26,6 @@
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">
 			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
 			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-small">
-			<input type="hidden" name="firstName" id="firstName2">
-			<input type="hidden" name="lastName" id="lastName2">
 			<br>
 			<label class="checkbox">
 				<input type="checkbox" name="noMiddleName" id="noMiddleName" value="1">

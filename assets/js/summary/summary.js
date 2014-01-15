@@ -19,6 +19,11 @@ $(document).ready(function(){
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
 	var findit = $("#findit").val();
+	var externalTMC = $("#externalTMC").val();
+	var finditOA = 0;
+	if (findit == 1 && externalTMC == 1) {
+		var finditOA = 1;
+	}
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -149,32 +154,32 @@ $(document).ready(function(){
 		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
-			$( "#firstName" ).prop('disabled', true);
-			$( "#lastName" ).prop('disabled', true);
-			if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
-				$( "#fullNameDiv" ).hide();
+			if (finditOA) {
+				$( "#userIDDiv" ).hide();
+				$( "#saveProfileDiv" ).hide();
 			}
 			else {
-				$( "#fullNameDiv" ).show();
+				$( "#firstName" ).prop('disabled', true);
+				$( "#lastName" ).prop('disabled', true);
+				if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
+					$( "#fullNameDiv" ).hide();
+				}
+				else {
+					$( "#fullNameDiv" ).show();
+				}				
 			}
-			$( "#firstName2" ).val( traveler.firstName );
-			$( "#lastName2" ).val( traveler.lastName );
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
 				$( "#saveProfileDiv" ).hide();
 				$( "#createProfileDiv" ).hide();
-				$( "#firstName2" ).val( '' );
-				$( "#lastName2" ).val( '' );
 			}
 		}
 		else {
 			$( "#fullNameDiv" ).show();
 			$( "#firstName" ).prop('disabled', false);
 			$( "#lastName" ).prop('disabled', false);
-			$( "#firstName2" ).val( '' );
-			$( "#lastName2" ).val( '' );
 			$( "#saveProfileDiv" ).hide();
 		}
 		$( "#phoneNumber" ).val( traveler.phoneNumber );

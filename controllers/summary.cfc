@@ -473,7 +473,9 @@
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+			<cfset local.originalFirstName = rc.Traveler.getFirstName() />
 			<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
+			<cfset local.originalLastName = rc.Traveler.getLastName() />
 			<cfparam name="rc.noMiddleName" default="0">
 			<cfparam name="rc.nameChange" default="0">
 			<cfparam name="rc.createProfile" default="0">
@@ -484,9 +486,13 @@
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
 			<cfset rc.Traveler.populateFromStruct( rc )>
+			<cfset local.currentFirstName = rc.Traveler.getFirstName() />
 			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
-			<!--- If profile exists and middle name has been changed --->
-			<cfif isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName)>
+			<cfset local.currentLastName = rc.Traveler.getLastName() />
+			<!--- If profile exists and name has been changed --->
+			<cfif ((isDefined("originalFirstName") AND (currentFirstName NEQ originalFirstName))
+				OR (isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName))
+				OR (isDefined("originalLastName") AND (currentLastName NEQ originalLastName)))>
 				<cfset rc.nameChange = 1 />
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
