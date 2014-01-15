@@ -352,6 +352,23 @@
 				<cfset ArrayAppend(local.stTemp[local.sType], local.qPreferred.Vendor_ID)>
 			</cfloop>
 
+			<cfquery name="local.qAirITNumbers" datasource="#getCorporateProductionDSN()#">
+				SELECT Carrier, IT_Number
+				FROM Airline_ITNumbers
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<cfset local.stTemp.AirITNumbers = arrayNew(1) />
+
+			<cfif qAirITNumbers.recordCount >
+				<cfloop query="local.qAirITNumbers">
+					<cfset local.airITNumber = structNew() />
+					<cfset local.airITNumber.carrier = local.qAirITNumbers.Carrier />
+					<cfset local.airITNumber.ITNumber = local.qAirITNumbers.IT_Number />
+					<cfset arrayAppend( local.stTemp.AirITNumbers, duplicate( local.airITNumber ) ) />
+				</cfloop>
+			</cfif>
+
 			<cfquery name="local.locations" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
 				SELECT Office_ID, Office_Name
 				FROM Account_Offices
