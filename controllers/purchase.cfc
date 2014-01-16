@@ -425,13 +425,13 @@
 					<!--- If the VERIFY ATFQ error occurs, do terminal commands to verify the stored fare, then do VehicleCreate again --->
 					<cfif Vehicle.error>
 						<!--- Display PNR --->
-						<cfset local.displayPNRResponse = TerminalEntry.displayPNR( targetBranch = rc.Account.sBranch
+						<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, pnr = providerLocatorCode
 																										, searchID = rc.searchID )>
 						<cfif NOT displayPNRResponse.error>
 							<!--- T:R --->
-							<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = rc.Account.sBranch
+							<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, Air = Air
@@ -439,12 +439,12 @@
 																										, command = 'T:R' )>
 							<cfif NOT verifyStoredFareResponse.error>
 								<!--- ER --->
-								<cfset local.erRecordResponse = TerminalEntry.erRecord( targetBranch = rc.Account.sBranch
+								<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 								<!--- If error, ER again --->
 								<cfif erRecordResponse.error>
-									<cfset local.erRecordResponse = TerminalEntry.erRecord( targetBranch = rc.Account.sBranch
+									<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 
