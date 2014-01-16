@@ -418,6 +418,66 @@
 					<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
 																									, response = vehicleResponse )>
 					<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
+
+					<!--- If the VERIFY ATFQ error occurs, do terminal commands to verify the stored fare, then do VehicleCreate again --->
+					<cfif Vehicle.error>
+						<!--- Display PNR --->
+						<cfset local.displayPNRResponse = TerminalEntry.displayPNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pnr = providerLocatorCode
+																										, searchID = rc.searchID )>
+						<cfif NOT displayPNRResponse.error>
+							<!--- T:R --->
+							<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID
+																										, Air = Air
+																										, airSelected = airSelected
+																										, command = 'T:R' )>
+							<cfif NOT verifyStoredFareResponse.error>
+								<!--- ER --->
+								<cfset local.erRecordResponse = TerminalEntry.erRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+								<!--- If error, ER again --->
+								<cfif erRecordResponse.error>
+									<cfset local.erRecordResponse = TerminalEntry.erRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+
+								</cfif>
+								<cfif NOT erRecordResponse.error>
+									<!--- Sell vehicle --->
+									<cfset local.vehicleResponse = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Vehicle = Vehicle
+																										, Filter = rc.Filter
+																										, directBillNumber = directBillNumber
+																										, corporateDiscountNumber = corporateDiscountNumber
+																										, directBillType = directBillType
+																										, carrier = carrier
+																										, flightNumber = flightNumber
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, lowestRateOffered = lowestRateOffered
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, specialCarReservation = specialCarReservation
+																									)>
+									<!--- Parse the vehicle --->
+									<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
+																											, response = vehicleResponse )>
+									<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
+								</cfif>
+							</cfif>
+						</cfif>
+					</cfif>
+
 					<!--- Parse error --->
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPI').parseError( vehicleResponse )>
