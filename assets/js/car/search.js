@@ -5,15 +5,15 @@ $(document).ready(function(){
 		formSubmit(event, this);
 	});
 
-	$("button.car-dropoff-option").on("click", function(event){toggleCarFormFields(event, this)});
+	$("button.car-dropoff-option").on("click", function(event){toggleCarFormFields(this)});
 	var pickupAirport = $("#car-pickup-airport").val();
 	var dropoffAirport = $("#car-dropoff-airport").val();
 
 	if ($("#car-dropoff-different").hasClass("btn-primary") || (dropoffAirport != pickupAirport)) {
-		toggleCarFormFields(event, "#car-dropoff-different");
+		toggleCarFormFields("#car-dropoff-different");
 	}
 	else {
-		toggleCarFormFields(event, "#car-dropoff-same");
+		toggleCarFormFields("#car-dropoff-same");
 	}
 
 	var todaysDate = new Date();
@@ -114,7 +114,7 @@ $(document).ready(function(){
 	});
 });
 
-toggleCarFormFields = function(event, btn){
+toggleCarFormFields = function(btn){
 	var selectedCarDropoffButton = $(btn);
 	var btnValue = selectedCarDropoffButton.val();
 
