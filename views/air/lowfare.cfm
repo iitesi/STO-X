@@ -11,7 +11,6 @@
 	</cfif>
 </cfsilent>
 
-<cfdump var="#rc.account#">
 <cfoutput>
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
