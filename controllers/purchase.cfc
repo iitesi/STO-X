@@ -240,10 +240,10 @@
 							<cfset cardType = 'AX'>
 						</cfif>
 						
-						<cfif hostToken EQ ''>
+						<!--- <cfif hostToken EQ ''>
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 							<cfset errorType = 'TerminalEntry.openSession'>
-						<cfelse>
+						<cfelse> --->
 							<cfset local.LowestAir = session.searches[rc.searchID].stTrips[session.searches[rc.searchID].stLowFareDetails.aSortFare[1]] />
 
 							<!--- Sell air --->
@@ -296,7 +296,7 @@
 								<cfset version++>
 							</cfif>
 
-						</cfif>
+						<!--- </cfif> --->
 					</cfif>
 				</cfif>
 
