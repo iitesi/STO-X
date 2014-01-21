@@ -78,9 +78,20 @@
 		<!--- <cfdump var="#sResponse#" abort> --->
 		<!--- Format the UAPI response. --->
 		<cfset local.aResponse 	= getUAPI().formatUAPIRsp(local.sResponse)>
-		<!--- <cfdump var="#aResponse#" abort> --->
 		<!--- Parse the segments. --->
 		<cfset local.stSegments	= AirParse.parseSegments(local.aResponse)>
+
+		<!--- Add faultstring if it exists so we can parse in findIt (STM-2903) --->
+		<cfif FindNoCase('faultstring', local.sResponse) NEQ 0>
+			<cfset local.faultstring = ''>
+			<cfloop array="#local.aResponse#" item="local.faultItem">
+				<cfif faultItem.XMLName EQ 'faultstring'>
+					<cfset local.faultstring = faultItem.xmlText>
+				</cfif>
+			</cfloop>
+			<cfset local.stTrips.faultMessage = local.faultstring>
+		</cfif>
+
 		<cfif NOT StructIsEmpty(local.stSegments)>
 			<!--- Parse the trips. --->
 			<cfset local.stTrips = AirParse.parseTrips(local.aResponse, local.stSegments)>
