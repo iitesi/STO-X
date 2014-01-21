@@ -83,17 +83,17 @@
 				</cfif>
 
 				<!--- Open terminal session --->
-				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+				<!--- <cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
 
 				<cfif hostToken EQ ''>
 					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
 					<cfset errorType = 'TerminalEntry.openSession'>
-				</cfif>
+				</cfif> --->
 
 				<!--- Find the profile in the GDS --->
 				<cfset local.profileFound = true>
-				<cfif arrayIsEmpty(errorMessage)
+				<!--- <cfif arrayIsEmpty(errorMessage)
 					AND Traveler.getPAR() NEQ ''>
 					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken
@@ -106,7 +106,7 @@
 					</cfif>
 				<cfelse>
 					<cfset profileFound = false>
-				</cfif>
+				</cfif> --->
 
 				<!--- Price Air --->
 				<cfif airSelected
