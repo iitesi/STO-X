@@ -164,25 +164,25 @@
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
 
-						<!--- Check to see if this is a Southwest flight that is not contracted --->
-						<cfset local.SWFlight = false />
+						<!--- Check to see if this is a contracted Southwest flight --->
+						<cfset local.contractedSWFlight = false />
 						<cfif Air.platingCarrier IS 'WN'>
 							<cfset local.privateCarriers = '' />
 							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
 								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
 							</cfloop>
 
-							<!--- If the account policy does not have Southwest listed as a private fare --->
-							<cfif listFindNoCase(privateCarriers, 'WN') EQ 0>
-								<cfset local.SWFlight = true />
+							<!--- If the account policy has Southwest listed as a private fare --->
+							<cfif listFindNoCase(privateCarriers, 'WN')>
+								<cfset local.contractedSWFlight = true />
 							</cfif>
 						</cfif>
 
 						<!--- If private fare, do a lowest public air price before air create for U12 --->
-						<!--- If a Southwest flight and the account does not have contracted rates with SW, do a lowest private air price for U12 --->
-						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR SWFlight>
+						<!--- If a contracted Southwest flight, do a lowest private air price for U12 --->
+						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR contractedSWFlight>
 							<cfset local.faresIndicator = 'PublicFaresOnly' />
-							<cfif SWFlight>
+							<cfif contractedSWFlight>
 								<cfset local.faresIndicator = 'PrivateFaresOnly' />
 							</cfif>
 								
