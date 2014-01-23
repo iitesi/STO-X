@@ -93,6 +93,9 @@
 
 				<!--- Find the profile in the GDS --->
 				<cfset local.profileFound = true>
+				<cfif left(Traveler.getPAR(), 14) EQ 'STODEFAULTUSER'>
+					<cfset Traveler.setPAR('') />
+				</cfif>
 				<cfif arrayIsEmpty(errorMessage)
 					AND Traveler.getPAR() NEQ ''>
 					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
