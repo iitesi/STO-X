@@ -79,18 +79,18 @@
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
-		<cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
+		<!--- <cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
 			<cfset local.internalTMC = false />
 		<cfelse>
 			<cfset local.internalTMC = true />
-		</cfif>
+		</cfif> --->
 		<!--- Short's Travel/Internal TMC --->
-		<!--- <cfif NOT rc.Account.tmc.getIsExternal()>
+		<cfif NOT rc.Account.tmc.getIsExternal()>
 			<cfset local.internalTMC = true />
 		<!--- External TMC --->
 		<cfelse>
 			<cfset local.internalTMC = false />
-		</cfif> --->
+		</cfif>
 
 		<cfif rc.travelerNumber EQ 1
 			AND (NOT structKeyExists(session.searches[rc.SearchID], 'travelers')
