@@ -328,7 +328,10 @@
 
 			<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
 
-				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
+				<!--- For LSU (acctID 255) --->
+				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_0' AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1>
+					<cfset local.error.airFOPID = ''>
+				<cfelseif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
 					<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
 						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
 						<cfset local.error.airCCNumber = ''>
