@@ -5,7 +5,7 @@
 	<cfif rc.airSelected>
 		<div id="airPayment">
 		
-		<div class="control-group">
+		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
 				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>

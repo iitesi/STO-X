@@ -393,10 +393,10 @@ $(document).ready(function(){
 				if (traveler.payment[i].acctNum4 != '') {
 					endingIn = ' ending in ' + traveler.payment[i].acctNum4;
 				}
-				if (traveler.payment[i].btaID != '') {
+				if (traveler.payment[i].btaID !== '') {
 					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
-				else if (traveler.payment[i].fopID != '') {
+				else if (traveler.payment[i].fopID !== '') {
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
