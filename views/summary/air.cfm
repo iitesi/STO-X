@@ -78,9 +78,12 @@
 				If the fare is the same
 				--->
 				<cfelseif rc.Air.Total EQ lowestFare>
-
-					<input type="hidden" name="lostSavings" value="C">
-
+					<cfset defaultLostSavingsCode = "C" />
+					<!--- If Peak TMC --->
+					<cfif rc.Account.tmc.getTMCID() EQ 3>
+						<cfset defaultLostSavingsCode = "L" />
+					</cfif>
+					<input type="hidden" name="lostSavings" value="#defaultLostSavingsCode#" />
 				</cfif>
 
 				<!--- State of Texas --->

@@ -502,11 +502,14 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
-					
-					<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
+
+					<!--- Short's Travel/Internal TMCs only --->
+					<cfif NOT rc.Account.tmc.getIsExternal()>
+						<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
 																						, Filter = rc.Filter
 																						, pccBooking = rc.Account.PCC_Booking
-																						, providerLocatorCode = providerLocatorCode  )>
+																						, providerLocatorCode = providerLocatorCode  )>						
+					</cfif>
 
 					<cfset local.threadName = 'purchase#rc.searchID##minute(now())##second(now())#'>
 					<cfthread 
