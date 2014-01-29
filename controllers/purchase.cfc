@@ -222,9 +222,11 @@
 						<cfelse>
 							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 								<cfif (Payment.getBTAID() NEQ ''
-									AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
 									OR (Payment.getFOPID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())
+									OR (Payment.getFOPID() NEQ ''
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1')>
 									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
 									<cfif NOT isDate(Payment.getExpireDate())>
 										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
