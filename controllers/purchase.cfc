@@ -93,6 +93,9 @@
 
 				<!--- Find the profile in the GDS --->
 				<cfset local.profileFound = true>
+				<cfif left(Traveler.getPAR(), 14) EQ 'STODEFAULTUSER'>
+					<cfset Traveler.setPAR('') />
+				</cfif>
 				<cfif arrayIsEmpty(errorMessage)
 					AND Traveler.getPAR() NEQ ''>
 					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
@@ -164,25 +167,25 @@
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
 
-						<!--- Check to see if this is a Southwest flight that is not contracted --->
-						<cfset local.SWFlight = false />
+						<!--- Check to see if this is a contracted Southwest flight --->
+						<cfset local.contractedSWFlight = false />
 						<cfif Air.platingCarrier IS 'WN'>
 							<cfset local.privateCarriers = '' />
 							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
 								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
 							</cfloop>
 
-							<!--- If the account policy does not have Southwest listed as a private fare --->
-							<cfif listFindNoCase(privateCarriers, 'WN') EQ 0>
-								<cfset local.SWFlight = true />
+							<!--- If the account policy has Southwest listed as a private fare --->
+							<cfif listFindNoCase(privateCarriers, 'WN')>
+								<cfset local.contractedSWFlight = true />
 							</cfif>
 						</cfif>
 
 						<!--- If private fare, do a lowest public air price before air create for U12 --->
-						<!--- If a Southwest flight and the account does not have contracted rates with SW, do a lowest private air price for U12 --->
-						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR SWFlight>
+						<!--- If a contracted Southwest flight, do a lowest private air price for U12 --->
+						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR contractedSWFlight>
 							<cfset local.faresIndicator = 'PublicFaresOnly' />
-							<cfif SWFlight>
+							<cfif contractedSWFlight>
 								<cfset local.faresIndicator = 'PrivateFaresOnly' />
 							</cfif>
 								
@@ -219,9 +222,11 @@
 						<cfelse>
 							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 								<cfif (Payment.getBTAID() NEQ ''
-									AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
 									OR (Payment.getFOPID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())>
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())
+									OR (Payment.getFOPID() NEQ ''
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1')>
 									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
 									<cfif NOT isDate(Payment.getExpireDate())>
 										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
@@ -499,11 +504,14 @@
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
 				<cfif arrayIsEmpty(errorMessage)>
-					
-					<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
+
+					<!--- Short's Travel/Internal TMCs only --->
+					<cfif NOT rc.Account.tmc.getIsExternal()>
+						<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
 																						, Filter = rc.Filter
 																						, pccBooking = rc.Account.PCC_Booking
-																						, providerLocatorCode = providerLocatorCode  )>
+																						, providerLocatorCode = providerLocatorCode  )>						
+					</cfif>
 
 					<cfset local.threadName = 'purchase#rc.searchID##minute(now())##second(now())#'>
 					<cfthread 

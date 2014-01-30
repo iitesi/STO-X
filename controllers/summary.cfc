@@ -79,18 +79,18 @@
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
-		<cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
+		<!--- <cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
 			<cfset local.internalTMC = false />
 		<cfelse>
 			<cfset local.internalTMC = true />
-		</cfif>
+		</cfif> --->
 		<!--- Short's Travel/Internal TMC --->
-		<!--- <cfif NOT rc.Account.tmc.getIsExternal()>
+		<cfif NOT rc.Account.tmc.getIsExternal()>
 			<cfset local.internalTMC = true />
 		<!--- External TMC --->
 		<cfelse>
 			<cfset local.internalTMC = false />
-		</cfif> --->
+		</cfif>
 
 		<cfif rc.travelerNumber EQ 1
 			AND (NOT structKeyExists(session.searches[rc.SearchID], 'travelers')
@@ -290,7 +290,8 @@
 							<cfset local.parseFlightFOPResponse = fw.getBeanFactory().getBean('UserService').parseFlightFOP(flightFOP = displayFlightFOPResponse.message)>
 
 							<cfif isArray(parseFlightFOPResponse) AND arrayLen(parseFlightFOPResponse)>
-								<cfif isNumeric(parseFlightFOPResponse[1].cardNumber)>
+								<!--- As of 1/28/14, Short's receives only masked credit card numbers from Apollo. For now, displaying these masked numbers to users, but not using them. --->
+								<!--- <cfif isNumeric(parseFlightFOPResponse[1].cardNumber)> --->
 									<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
 
 									<cfset payment.setAirUse(true) />
@@ -303,9 +304,11 @@
 									<cfset local.expirationMonth = left(parseFlightFOPResponse[1].cardExpiration, 2) />
 									<cfset local.expirationDay = '01' />
 									<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+									<cfset payment.setBTAID('') />
+									<cfset payment.setFOPID('-1') />
 									<cfset payment.setFOPDescription('Personal Flight Credit Card') />
 									<cfset arrayAppend(rc.traveler.getPayment(), payment) />
-								</cfif>
+								<!--- </cfif> --->
 							</cfif>
 						</cfif>
 
@@ -398,6 +401,8 @@
 											<cfset local.expirationMonth = parseHotelFOPResponse[1].cardExpirationMonth />
 											<cfset local.expirationDay = '01' />
 											<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+											<cfset payment.setBTAID('') />
+											<cfset payment.setFOPID('-1') />
 											<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
 											<cfset arrayAppend(rc.traveler.getPayment(), payment) />											
 										</cfif>
@@ -465,17 +470,6 @@
 		FORM SELECTED
 		--->
 		<cfif structKeyExists(rc, 'trigger')>
-			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
-																						, acctID = rc.Filter.getAcctID()
-																						, valueID = rc.Filter.getValueID()
-																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
-			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
-			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
-			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
-			<cfset local.originalFirstName = rc.Traveler.getFirstName() />
-			<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
-			<cfset local.originalLastName = rc.Traveler.getLastName() />
 			<cfparam name="rc.noMiddleName" default="0">
 			<cfparam name="rc.nameChange" default="0">
 			<cfparam name="rc.createProfile" default="0">
@@ -485,15 +479,30 @@
 			<cfparam name="rc.airNeeded" default="0">
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
-			<cfset rc.Traveler.populateFromStruct( rc )>
-			<cfset local.currentFirstName = rc.Traveler.getFirstName() />
-			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
-			<cfset local.currentLastName = rc.Traveler.getLastName() />
-			<!--- If profile exists and name has been changed --->
-			<cfif ((isDefined("originalFirstName") AND (currentFirstName NEQ originalFirstName))
-				OR (isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName))
-				OR (isDefined("originalLastName") AND (currentLastName NEQ originalLastName)))>
-				<cfset rc.nameChange = 1 />
+			<cfif internalTMC>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
+																						, acctID = rc.Filter.getAcctID()
+																						, valueID = rc.Filter.getValueID()
+																						, arrangerID = rc.Filter.getUserID()
+																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+				<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+				<cfset rc.Traveler.setBookingDetail( BookingDetail )>
+				<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+				<cfset local.originalFirstName = rc.Traveler.getFirstName() />
+				<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
+				<cfset local.originalLastName = rc.Traveler.getLastName() />
+				<cfset rc.Traveler.populateFromStruct( rc )>
+				<cfset local.currentFirstName = rc.Traveler.getFirstName() />
+				<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
+				<cfset local.currentLastName = rc.Traveler.getLastName() />
+				<!--- If profile exists and name has been changed --->
+				<cfif ((isDefined("originalFirstName") AND (currentFirstName NEQ originalFirstName))
+					OR (isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName))
+					OR (isDefined("originalLastName") AND (currentLastName NEQ originalLastName)))>
+					<cfset rc.nameChange = 1 />
+				</cfif>
+			<cfelse>
+				<cfset rc.Traveler.populateFromStruct( rc )>
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
