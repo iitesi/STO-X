@@ -117,12 +117,12 @@
 
 					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
-						<cfset local.originalAirfare = Air.Total /> 
+						<cfset local.originalAirfare = Air.Total />
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
-																							, bRefundable = Air.Ref
+																							, bRefundable = Air.RequestedRefundable
 																							, bRestricted = 0
 																							, sFaresIndicator = "PublicAndPrivateFares"
 																							, bAccountCodes = 1

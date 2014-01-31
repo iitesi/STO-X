@@ -151,6 +151,7 @@
 	<cffunction name="parseTrips" output="false" hint="I take response and segments and parse trip data.">
 		<cfargument name="response" required="true">
 		<cfargument name="stSegments" required="true">
+		<cfargument name="bRefundable" required="false" default="false">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -274,6 +275,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.Class = local.sOverallClass>
 						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
 						<cfset local.stTrip.Ref = local.refundable>
+						<cfset local.stTrip.RequestedRefundable = arguments.bRefundable>
 						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>

@@ -150,6 +150,13 @@
 			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.fareType>
 			<cfset local[local.sThreadName] = {}>
 
+			<cfset local.bRefundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
+			<!--- STM-2434 if the account doesn’t allow nonrefundables, to only call for
+			 refundable fares in the uAPI lowfare call --->
+			<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
+				<cfset local.bRefundable = true>
+			</cfif>
+
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
@@ -161,7 +168,7 @@
 				sCabin="#arguments.sCabin#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
-				bRefundable="#arguments.bRefundable#"
+				bRefundable="#local.bRefundable#"
 				airline="#arguments.airline#"
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
 				fareType="#arguments.fareType#">
@@ -180,7 +187,8 @@
 					<cfset attributes.stSegments = getAirParse().parseSegments( stResponse = attributes.aResponse )>
 					<!--- Parse the trips. --->
 					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
-																		, stSegments = attributes.stSegments )>
+																		, stSegments = attributes.stSegments
+																		, bRefundable = arguments.bRefundable )>
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
@@ -258,13 +266,6 @@
 			<cfset local.targetBranch = 'P1601396'>
 		</cfif>
 
-
-		<cfset local.bProhibitNonRefundableFares = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
-		<!--- STM-2434 if the account doesn’t allow nonrefundables, to only call for
-		 refundable fares in the uAPI lowfare call --->
-		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
-			<cfset local.bProhibitNonRefundableFares = true>
-		</cfif>
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
 
 <!---
@@ -444,7 +445,7 @@
 								<com:SearchPassenger
 									Code="ADT" />
 								<air:AirPricingModifiers
-									ProhibitNonRefundableFares="#bProhibitNonRefundableFares#"
+									ProhibitNonRefundableFares="#arguments.bRefundable#"
 									FaresIndicator="#arguments.fareType#"
 									ProhibitMinStayFares="false"
 									ProhibitMaxStayFares="false"
