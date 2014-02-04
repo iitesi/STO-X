@@ -101,7 +101,7 @@
 			<cfset controller( 'setup.setPolicy' )>
 			<cfset controller( 'setup.setGroup' )>
 			<cfset controller( 'setup.setBlackListedCarrierPairing' )>
-			<cfset controller( 'setup.setTMC' )>
+
 		</cfif>
 	</cffunction>
 

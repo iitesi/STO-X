@@ -5,6 +5,8 @@ setApplication
 --->
 	<cffunction name="setApplication" output="false" returntype="void">
 
+		<cfset application.Accounts = structNew() />
+
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>
 			<cfset variables.bf.getBean("setup").setServerURL(argumentcollection=arguments.rc)>
 		</cfif>
@@ -88,31 +90,13 @@ setApplication
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
 		<cfelse>
-			<cfset rc.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc)>
+			<cfset local.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
+			<cfset local.Account.TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( local.Account.AccountBrand ) />
+			<cfset session.TMC = local.Account.TMC />
+			<cfset rc.Account = local.Account>
 		</cfif>
 
 		<cfreturn />
-	</cffunction>
-
-	<cffunction name="setTMC" access="public" output="false" returntype="any" hint="">
-		<cfargument name="rc" type="struct" required="true" />
-
-		<cfif StructKeyExists(application, 'Accounts')
-			AND StructKeyExists(application.Accounts, arguments.rc.AcctID)
-			AND isStruct( application.Accounts[ arguments.rc.AcctId ] )
-			AND (NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ], "tmc" )
-				OR NOT structKeyExists( application.Accounts[ arguments.rc.AcctId ].tmc, "ShortName"))>
-
-			<cfset application.Accounts[ arguments.rc.AcctId ].tmc = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[ arguments.rc.AcctId ].AccountBrand ) />
-			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
-
-			<cfif NOT structKeyExists( session, "TMC" )>
-				<cfset session.tmc = application.Accounts[ arguments.rc.AcctId].tmc />
-			</cfif>
-		</cfif>
-
-		<cfreturn />
-
 	</cffunction>
 
 	<cffunction name="setPolicyID" output="false">
