@@ -46,6 +46,7 @@
 		<cfset session.searches = {}>
 		<cfset session.filters = {}>
 		<cfset session.aMessages = []>
+		<cfset controller( 'setup.setAccount' )>
 	</cffunction>
 
 	<cffunction name="setupRequest">
