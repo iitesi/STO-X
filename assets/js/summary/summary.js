@@ -443,7 +443,7 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
 					$( "#copyAirCCDiv" ).hide();
 				}
 				else {
