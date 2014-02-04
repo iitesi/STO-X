@@ -92,6 +92,7 @@ setApplication
 		<cfelse>
 			<cfset local.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
 			<cfset local.Account.TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( local.Account.AccountBrand ) />
+			<cfset application.Accounts[arguments.rc.AcctID] = local.Account>
 			<cfset session.TMC = local.Account.TMC />
 			<cfset rc.Account = local.Account>
 		</cfif>
