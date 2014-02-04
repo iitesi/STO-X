@@ -90,11 +90,21 @@ setApplication
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
 		<cfelse>
-			<cfset local.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
-			<cfset local.Account.TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( local.Account.AccountBrand ) />
-			<cfset application.Accounts[arguments.rc.AcctID] = local.Account>
-			<cfset session.TMC = local.Account.TMC />
-			<cfset rc.Account = local.Account>
+			<cfset application.Accounts[arguments.rc.AcctID] = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
+			<cfset application.Accounts[arguments.rc.AcctID].TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[arguments.rc.AcctID].AccountBrand ) />
+			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
+			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setTMC" output="false">
+		<cfargument name="rc">
+
+		<!---Move the Account into the rc scope so it is always available.--->
+		<cfif NOT StructKeyExists(session, 'TMC') OR NOT isobject(session.TMC )>
+			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
 		</cfif>
 
 		<cfreturn />
