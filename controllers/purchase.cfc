@@ -134,7 +134,7 @@
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
 							<cfset errorType = 'Air.airPrice'>
-						<cfelseif trip[structKeyList(trip)].Total EQ originalAirfare>
+						<cfelseif NOT structKeyExists(trip, 'faultMessage') AND trip[structKeyList(trip)].Total EQ originalAirfare>
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
 							<cfset local.policy = Air.policy>
@@ -149,6 +149,7 @@
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
+						<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
 						<!--- Do a lowest refundable air price before air create for U6 --->
 						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
@@ -163,7 +164,7 @@
 																						, bSaveAirPrice = 1
 																						, findIt = rc.Filter.getFindIt()
 																					)>
-						<cfif NOT structIsEmpty(refundableTrip)>
+						<cfif NOT structIsEmpty(refundableTrip) AND NOT structKeyExists(refundableTrip, 'faultMessage')>
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
 						</cfif>
 
@@ -181,6 +182,7 @@
 							</cfif>
 						</cfif>
 
+						<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
 						<!--- If private fare, do a lowest public air price before air create for U12 --->
 						<!--- If a contracted Southwest flight, do a lowest private air price for U12 --->
 						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR contractedSWFlight>
@@ -203,11 +205,9 @@
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
 																						)>
-							<cfif NOT structIsEmpty(lowestPublicTrip)>
+							<cfif NOT structIsEmpty(lowestPublicTrip) AND NOT structKeyExists(lowestPublicTrip, 'faultMessage')>
 								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
 							</cfif>
-						<cfelse>
-							<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
 						</cfif>
 
 						<!--- Parse credit card information --->
