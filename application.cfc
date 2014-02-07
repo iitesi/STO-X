@@ -169,6 +169,7 @@
 								, department = local.department
 								, searchID = local.searchID
 								, exception = arguments.exception
+								, session = session
 								} >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>

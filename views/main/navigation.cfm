@@ -40,9 +40,9 @@
 				</cfif>
 		    	<cfif rc.action CONTAINS 'confirmation.' AND NOT rc.Account.tmc.getIsExternal()>
 					<!---Logout--->
-					<li>
+					<!---<li>
 						<a href="#buildURL('logout')#">Logout</a>
-					</li>
+					</li>--->
 		    	<cfelse>
 					<cfif showAirTab>
 						<!---Air--->
@@ -71,11 +71,11 @@
 				    <li <cfif rc.action CONTAINS 'summary.'>class="active"</cfif>>
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
-					<cfif NOT rc.Account.tmc.getIsExternal()>
+					<!---<cfif NOT rc.Account.tmc.getIsExternal()>
 						<li>
 							<a href="#buildURL('logout')#">Logout</a>
 						</li>
-					</cfif>
+					</cfif>--->
 				</cfif>
 			</ul>
 		</nav>
