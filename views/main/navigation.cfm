@@ -38,7 +38,7 @@
 						<a href="#application.sPortalURL#">Home</a>
 					</li>
 				</cfif>
-		    	<cfif rc.action CONTAINS 'confirmation.'>
+		    	<cfif rc.action CONTAINS 'confirmation.' AND NOT rc.Account.tmc.getIsExternal()>
 					<!---Logout--->
 					<li>
 						<a href="#buildURL('logout')#">Logout</a>
@@ -71,9 +71,11 @@
 				    <li <cfif rc.action CONTAINS 'summary.'>class="active"</cfif>>
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
-					<li>
-						<a href="#buildURL('logout')#">Logout</a>
-					</li>
+					<cfif NOT rc.Account.tmc.getIsExternal()>
+						<li>
+							<a href="#buildURL('logout')#">Logout</a>
+						</li>
+					</cfif>
 				</cfif>
 			</ul>
 		</nav>
