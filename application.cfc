@@ -169,7 +169,7 @@
 								, department = local.department
 								, searchID = local.searchID
 								, exception = arguments.exception
-								, session = session
+								, session = serializeJSON( session )
 								} >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
@@ -180,7 +180,7 @@
 		 </cfif>
 
 		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
-			<cfdump var="#arguments.exception#" />
+			<cfdump var="#local.errorException#" />
 		</cfif>
 
 	</cffunction>
