@@ -164,7 +164,8 @@
 							If Southwest, change KK segments to HK before queue
 							Command = .IHK
 							--->
-							<cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
+							<!--- Per STM-2961: Moving this to after AirCreate and before File Finishing --->
+							<!--- <cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
 								<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
 									<cfif carrier IS 'WN'>
 										<cfset TerminalEntry.confirmSegments( targetBranch = arguments.targetBranch
@@ -172,7 +173,7 @@
 																				, searchID = arguments.searchID )>
 									</cfif>
 								</cfloop>
-							</cfif>
+							</cfif> --->
 
 							<!---
 							Verify stored fare
