@@ -49,7 +49,7 @@
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
 							<a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
 						</li>
-					<cfelse>
+					<cfelseif rc.filter.getPassthrough() NEQ 1>
 						<!---Air--->
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
 							<a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Air</a>
