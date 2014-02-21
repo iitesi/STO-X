@@ -35,6 +35,7 @@
 		<cfargument name="stSelected" required="false" default="">
 		<cfargument name="findIt" required="false" default="0">
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -64,15 +65,16 @@
 
 		<!--- Put together the SOAP message. --->
 		<cfset local.sMessage = prepareSoapHeader( stSelected = local.stSelected
-											, sCabin = arguments.sCabin
-											, bRefundable = arguments.bRefundable
-											, bRestricted = arguments.bRestricted
-											, sFaresIndicator = arguments.sFaresIndicator
-											, bAccountCodes = arguments.bAccountCodes
-											, nCouldYou = arguments.nCouldYou
-											, stAccount = arguments.Account
-											, findIt = arguments.findIt
-											, bIncludeClass = arguments.bIncludeClass )>
+													, sCabin = arguments.sCabin
+													, bRefundable = arguments.bRefundable
+													, bRestricted = arguments.bRestricted
+													, sFaresIndicator = arguments.sFaresIndicator
+													, bAccountCodes = arguments.bAccountCodes
+													, nCouldYou = arguments.nCouldYou
+													, stAccount = arguments.Account
+													, findIt = arguments.findIt
+													, bIncludeClass = arguments.bIncludeClass
+													, bIncludeCabin = arguments.bIncludeCabin )>
 		<!--- Call the UAPI. --->
 		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', local.sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
@@ -153,6 +155,7 @@
 		<cfargument name="stAccount" required="true">
 		<cfargument name="findIt" required="true">
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
@@ -183,11 +186,13 @@
 													<cfset arrayAppend(local.carriers, local.stSegment.Carrier)>
 												</cfif>
 												<cfset local.nCount++>
-												<cfif arguments.bIncludeClass>
-													<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" ClassOfService="#local.stSegment.Class#" />
-												<cfelse>
-													<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" />
-												</cfif>
+												<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" 
+													<cfif arguments.bIncludeClass>
+														ClassOfService="#local.stSegment.Class#" 
+													</cfif>
+													<cfif arguments.bIncludeCabin>
+														CabinClass="#local.stSegment.Cabin#"
+													</cfif>/>
 											</cfloop>
 										</cfloop>
 									</cfif>
@@ -205,11 +210,13 @@
 										</cfloop>
 									</air:AccountCodes>
 								</cfif>
-								<air:PermittedCabins>
-									<cfloop array="#local.aCabins#" index="local.sCabin">
-										<air:CabinClass Type="#(ListFind('Y,C,F', local.sCabin) ? (local.sCabin EQ 'Y' ? 'Economy' : (local.sCabin EQ 'C' ? 'Business' : 'First')) : local.sCabin)#" />
-									</cfloop>
-								</air:PermittedCabins>
+								<cfif NOT arguments.bIncludeCabin>
+									<air:PermittedCabins>
+										<cfloop array="#local.aCabins#" index="local.sCabin">
+											<air:CabinClass Type="#(ListFind('Y,C,F', local.sCabin) ? (local.sCabin EQ 'Y' ? 'Economy' : (local.sCabin EQ 'C' ? 'Business' : 'First')) : local.sCabin)#" />
+										</cfloop>
+									</air:PermittedCabins>
+								</cfif>
 							</air:AirPricingModifiers>
 							<com:SearchPassenger PricePTCOnly="false" Code="ADT"/>
 							<air:AirPricingCommand/>
