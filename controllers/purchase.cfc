@@ -115,7 +115,7 @@
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
 
-					<cfif NOT structKeyExists(Air, 'PricingSolution')
+						<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
 						<cfset local.originalAirfare = Air.Total />
@@ -133,6 +133,7 @@
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
 																							, bIncludeCabin = 1
+																							, totalOnly = 1
 																						)>						
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
@@ -149,9 +150,7 @@
 							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight, or contact us to complete your reservation.' )>
 							<cfset errorType = 'Air.airPrice'>
 						</cfif>
-					</cfif>
 
-					<cfif arrayIsEmpty(errorMessage)>
 						<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
 						<!--- Do a lowest refundable air price before air create for U6 --->
 						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
@@ -164,8 +163,9 @@
 																						, bAccountCodes = 1
 																						, nTrip = Air.nTrip
 																						, nCouldYou = 0
-																						, bSaveAirPrice = 1
+																						, bSaveAirPrice = 0
 																						, findIt = rc.Filter.getFindIt()
+																						, totalOnly = 0
 																					)>
 						<cfif NOT structIsEmpty(refundableTrip) AND NOT structKeyExists(refundableTrip, 'faultMessage')>
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
@@ -204,14 +204,18 @@
 																							, bAccountCodes = 0
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
-																							, bSaveAirPrice = 1
+																							, bSaveAirPrice = 0
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
+																							, totalOnly = 0
 																						)>
 							<cfif NOT structIsEmpty(lowestPublicTrip) AND NOT structKeyExists(lowestPublicTrip, 'faultMessage')>
 								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
 							</cfif>
 						</cfif>
+					</cfif>
+
+					<cfif arrayIsEmpty(errorMessage)>
 
 						<!--- Parse credit card information --->
 						<cfset local.cardNumber = ''>
