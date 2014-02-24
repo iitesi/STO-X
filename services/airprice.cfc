@@ -36,6 +36,7 @@
 		<cfargument name="findIt" required="false" default="0">
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="totalOnly" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -123,7 +124,8 @@
 				<cfset local.stTrips[local.nTripKey].sXML = local.sResponse>
 				<cfset local.stTrips[local.nTripKey].PricingSolution = AirAdapter.parsePricingSolution( response = local.sResponse )>
 			</cfif>
-			<cfif arguments.nCouldYou EQ 0>
+			<cfif arguments.nCouldYou EQ 0
+				AND NOT arguments.totalOnly>
 				<!--- Add trip id to the list of priced items --->
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, local.nTripKey)>
 				<!--- Merge all data into the current session structures. --->
