@@ -34,6 +34,24 @@
 		<cfset session.searches[arguments.SearchID]['Air'] = true />
 		<!--- Move over the information into the stItinerary --->
 		<cfset session.searches[arguments.SearchID].stItinerary.Air = session.searches[arguments.SearchID].stTrips[arguments.nTrip]>
+
+		<cfquery datasource="booking">
+			INSERT INTO Logs
+				( Search_ID
+				, ElapsedTime
+				, Service
+				, Request
+				, Response
+				, Timestamp )
+			VALUES
+				( #arguments.searchID#
+				, 0
+				, 'A'
+				, 'Selection for lowfare'
+				, '#serializeJSON(session.searches[arguments.SearchID].stItinerary.Air)#'
+				, getDate() )
+		</cfquery>		
+
 		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
