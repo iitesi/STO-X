@@ -115,7 +115,7 @@
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
 
-						<cfif NOT structKeyExists(Air, 'PricingSolution')
+					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
 						<cfset local.originalAirfare = Air.Total />
@@ -133,6 +133,7 @@
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
 																							, bIncludeCabin = 1
+																							, bIncludeBookingCodes = 1
 																							, totalOnly = 1
 																						)>						
 						<cfif structIsEmpty(trip)>
