@@ -36,6 +36,7 @@
 		<cfargument name="findIt" required="false" default="0">
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="totalOnly" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
@@ -75,7 +76,8 @@
 													, stAccount = arguments.Account
 													, findIt = arguments.findIt
 													, bIncludeClass = arguments.bIncludeClass
-													, bIncludeCabin = arguments.bIncludeCabin )>
+													, bIncludeCabin = arguments.bIncludeCabin
+													, bIncludeBookingCodes = arguments.bIncludeBookingCodes )>
 		<!--- Call the UAPI. --->
 		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', local.sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
@@ -158,6 +160,7 @@
 		<cfargument name="findIt" required="true">
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
@@ -221,7 +224,27 @@
 								</cfif>
 							</air:AirPricingModifiers>
 							<com:SearchPassenger PricePTCOnly="false" Code="ADT"/>
-							<air:AirPricingCommand/>
+							<cfif arguments.bIncludeBookingCodes>
+								<cfset local.nCount = 0 />
+								<air:AirPricingCommand>
+								<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">
+									<cfif structKeyExists(local.stGroup, "Groups")>
+										<cfloop collection="#local.stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
+											<cfloop collection="#local.stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
+												<cfset local.nCount++>
+												<air:AirSegmentPricingModifiers AirSegmentRef="#local.nCount#T">
+													<air:PermittedBookingCodes>
+														<air:BookingCode Code="#local.stSegment.Class#"/>
+													</air:PermittedBookingCodes>
+												</air:AirSegmentPricingModifiers>
+											</cfloop>
+										</cfloop>
+									</cfif>
+								</cfloop>
+								</air:AirPricingCommand>
+							<cfelse>
+								<air:AirPricingCommand/>
+							</cfif>
 						</air:AirPriceReq>
 					</soapenv:Body>
 				</soapenv:Envelope>
