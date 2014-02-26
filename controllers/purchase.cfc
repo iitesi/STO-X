@@ -133,7 +133,7 @@
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
 																							, bIncludeCabin = 1
-																							, totalOnly = 1
+																							, totalOnly = 0
 																						)>						
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
@@ -165,7 +165,7 @@
 																						, nCouldYou = 0
 																						, bSaveAirPrice = 0
 																						, findIt = rc.Filter.getFindIt()
-																						, totalOnly = 0
+																						, totalOnly = 1
 																					)>
 						<cfif NOT structIsEmpty(refundableTrip) AND NOT structKeyExists(refundableTrip, 'faultMessage')>
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
@@ -207,7 +207,7 @@
 																							, bSaveAirPrice = 0
 																							, findIt = rc.Filter.getFindIt()
 																							, bIncludeClass = 1
-																							, totalOnly = 0
+																							, totalOnly = 1
 																						)>
 							<cfif NOT structIsEmpty(lowestPublicTrip) AND NOT structKeyExists(lowestPublicTrip, 'faultMessage')>
 								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
