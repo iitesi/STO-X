@@ -87,9 +87,7 @@
 			</cfif>
 			<tr>
 				<td colspan="4">&nbsp;
-					<cfif application.es.getCurrentEnvironment() NEQ "prod">
-						<font color="white">#flightnumbers#</font>
-					</cfif>
+					<font color="white">#flightnumbers#</font>
 				</td>
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group" >
@@ -128,9 +126,8 @@
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')# 
-										<cfif application.es.getCurrentEnvironment() NEQ "prod">
-											(#(bDisplayFare ? stSegment.Class : '')#)
-										</cfif></td>
+										<font color="white">(#(bDisplayFare ? stSegment.Class : '')#)</font>
+										</td>
 						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
