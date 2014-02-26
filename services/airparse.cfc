@@ -201,7 +201,7 @@
 
 						<cfloop array="#local.airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif local.journey.XMLName EQ 'air:AirSegmentRef'>
-								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? arguments.stSegments[local.journey.XMLAttributes.Key] : {}>
+								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.journey.XMLAttributes.Key]) : {}>
 
 								<cfloop array="#local.distinctFields#" index="local.field">
 									<cfset local.tripKey &= local.stTrip.Segments[local.journey.XMLAttributes.Key][local.field]>
@@ -212,7 +212,7 @@
 
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
 
-						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? arguments.stSegments[local.airPricingSolution.XMLAttributes.Key] : {}>
+						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.airPricingSolution.XMLAttributes.Key]) : {}>
 
 						<cfloop array="#local.distinctFields#" index="local.field">
 							<cfset local.tripKey &= local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key][local.field]>
@@ -283,6 +283,20 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
 		</cfloop>
+
+<!--- <cfdump var="#attributes.stTrips#" /> --->
+<!--- <cfloop collection="#local.stTrips#" index="i" item="trip">
+	<cfset segmentnumbers = ''>
+	<cfloop collection="#trip.segments#" index="i" item="segment">
+		<cfset segmentnumbers = listAppend(segmentnumbers, segment.flightnumber)>
+	</cfloop>
+	<cfdump var="#segmentnumbers#" />
+	<cfif segmentnumbers EQ '5266,1561,1761,5473'>
+		<cfdump var="#trip#" />
+		<cfabort />				
+	</cfif>
+</cfloop>
+<cfabort /> --->
 
 		<cfreturn  local.stTrips/>
 	</cffunction>
