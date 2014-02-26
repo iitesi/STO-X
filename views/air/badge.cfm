@@ -43,6 +43,14 @@
 						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif>
 			--->
+			<cfset flightnumbers = ''>
+			<cfloop collection="#stTrip.Groups#" item="Group" >
+				<cfset stGroup = stTrip.Groups[Group]>
+				<cfloop collection="#stGroup.Segments#" item="nSegment" >
+					<cfset stSegment = stGroup.Segments[nSegment]>
+					<cfset flightnumbers = listAppend(flightnumbers, stGroup.Segments[nSegment].flightNumber)>
+				</cfloop>
+			</cfloop>
 
 			<table height="#variables.minheight#" width="100%" border="0">
 			<tr align="center">
@@ -78,7 +86,11 @@
 				</tr>
 			</cfif>
 			<tr>
-				<td colspan="4">&nbsp;</td>
+				<td colspan="4">&nbsp;
+					<cfif application.es.getCurrentEnvironment() NEQ "prod">
+						<font color="white">#flightnumbers#</font>
+					</cfif>
+				</td>
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group" >
 				<cfset stGroup = stTrip.Groups[Group]>
