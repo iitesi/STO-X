@@ -191,13 +191,7 @@
 													<cfset arrayAppend(local.carriers, local.stSegment.Carrier)>
 												</cfif>
 												<cfset local.nCount++>
-												<air:AirSegment Key="#local.nCount#T" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" Group="#local.nGroup#" FlightNumber="#local.stSegment.FlightNumber#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" 
-													<cfif arguments.bIncludeClass>
-														ClassOfService="#local.stSegment.Class#" 
-													</cfif>
-													<cfif arguments.bIncludeCabin>
-														CabinClass="#local.stSegment.Cabin#"
-													</cfif>/>
+												<air:AirSegment Key="#local.nCount#T" Group="#local.nGroup#" Carrier="#local.stSegment.Carrier#" ProviderCode="1V" FlightNumber="#local.stSegment.FlightNumber#" Origin="#local.stSegment.Origin#" Destination="#local.stSegment.Destination#" DepartureTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.DepartureTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm:ss')#" ArrivalTime="#DateFormat(DateAdd('d', arguments.nCouldYou, local.stSegment.ArrivalTime), 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.ArrivalTime, 'HH:mm:ss')#" <cfif arguments.bIncludeClass> ClassOfService="#local.stSegment.Class#"</cfif><cfif arguments.bIncludeCabin> CabinClass="#local.stSegment.Cabin#"</cfif>/>
 											</cfloop>
 										</cfloop>
 									</cfif>
