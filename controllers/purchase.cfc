@@ -134,6 +134,7 @@
 																							, bIncludeClass = 1
 																							, bIncludeCabin = 1
 																							, totalOnly = 0
+																							, bIncludeBookingCodes = 1
 																						)>						
 						<cfif structIsEmpty(trip)>
 							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
