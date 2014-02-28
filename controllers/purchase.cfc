@@ -229,12 +229,13 @@
 							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
 						<cfelse>
 							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
-								<cfif (Payment.getBTAID() NEQ ''
+								<cfif Payment.getAirUse()
+									AND ((Payment.getBTAID() NEQ ''
 										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
 									OR (Payment.getFOPID() NEQ ''
 										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())
 									OR (Payment.getFOPID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1')>
+										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1'))>
 									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
 									<cfif NOT isDate(Payment.getExpireDate())>
 										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
