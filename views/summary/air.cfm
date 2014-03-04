@@ -190,9 +190,9 @@
 				</span>
 
 				Total including taxes and refunds<br>
-				#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
+				#(rc.Air.RequestedRefundable ? 'Refundable' : 'No Refunds')#<br>
 				<span class="blue bold">
-					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
+					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.RequestedRefundable ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
 						Flight change/cancellation policy
 					</a>
 				</span>

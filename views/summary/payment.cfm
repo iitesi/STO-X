@@ -92,7 +92,7 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
+			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.RequestedRefundable ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
 				Flight change/cancellation policy
 			</a>
 		</div>
