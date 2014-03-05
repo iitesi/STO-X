@@ -293,7 +293,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cfdump var="#segmentnumbers#" />
 	<cfif segmentnumbers EQ '5266,1561,1761,5473'>
 		<cfdump var="#trip#" />
-		<cfabort />				
+		<cfabort />
 	</cfif>
 </cfloop>
 <cfabort /> --->
@@ -327,19 +327,31 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="stTrips2" 	required="true">
 
 		<cfset local.stCombinedTrips = arguments.stTrips1>
+
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
-				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)>
+
+				<!--- Note:	private/contracted should override public!
+				if keys match AND the existing trip isn't a privateFare - override the trips
+
+				Questions:
+				- if both sides are private - we assume they are the same? but is that the case? should one 'win' and overwrite the other?
+				--->
+				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)
+					AND local.stCombinedTrips[local.sTripKey].privateFare NEQ true>
 					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
 						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = arguments.stTrips2[local.sTripKey][local.sFareKey]>
 					</cfloop>
 				<cfelse>
+					<!--- if keys don't match just add it to the combined trip --->
 					<cfset local.stCombinedTrips[local.sTripKey] = arguments.stTrips2[local.sTripKey]>
 				</cfif>
+
 			</cfloop>
 		<cfelseif IsStruct(arguments.stTrips2)>
 			<cfset local.stCombinedTrips = arguments.stTrips2>
 		</cfif>
+
 		<cfif NOT IsStruct(local.stCombinedTrips)>
 			<cfset local.stCombinedTrips = {}>
 		</cfif>
