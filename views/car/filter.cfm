@@ -186,7 +186,8 @@
 										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 											<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
-												OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)>
+												OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
+												OR (vehicleLocation.distance LTE 30)>
 												<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 												</option>
 											</cfif>
