@@ -53,6 +53,7 @@
 		</cfquery>		
 
 		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
+		<cfset session.searches[arguments.SearchID].RequestedRefundable = session.searches[arguments.SearchID].stItinerary.Air.RequestedRefundable />
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
 			<cfif IsNumeric(local.nKey) AND local.nKey NEQ arguments.SearchID>
@@ -61,14 +62,14 @@
 		</cfloop>
 
 		<!--- <cfif cgi.http_host EQ "r.local" OR cgi.local_host IS "RailoQA"> --->
-			<cfmail to="kmyers@shortstravel.com;klamont@shortstravel.com"
+			<!--- <cfmail to="kmyers@shortstravel.com;klamont@shortstravel.com"
 					from="kmyers@shortstravel.com"
 					subject="FLIGHT SELECTED FOR SEARCH #arguments.SearchID#"
 					type="html">
 				<div style="margin:5px;border:1px solid silver;background-color:##ebebeb;font-family:arial;font-size:12px;padding:5px;">
 					<cfdump var="#session.searches[arguments.SearchID].stItinerary#">
 				</div>
-			</cfmail>
+			</cfmail> --->
 		<!--- </cfif> --->
 
 		<cfreturn />

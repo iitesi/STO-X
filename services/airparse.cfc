@@ -275,7 +275,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.Class = local.sOverallClass>
 						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
 						<cfset local.stTrip.Ref = local.refundable>
-						<cfset local.stTrip.RequestedRefundable = arguments.bRefundable>
+						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : 0)>
 						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>

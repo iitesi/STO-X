@@ -115,6 +115,11 @@
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
 
+						<cfset local.bRefundable = 0 />
+						<cfif structKeyExists(session.searches[rc.SearchID], "RequestedRefundable")>
+							<cfset local.bRefundable = session.searches[rc.SearchID].RequestedRefundable />
+						</cfif>
+
 						<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
@@ -123,7 +128,7 @@
 																							, Account = rc.Account
 																							, Policy = rc.Policy
 																							, sCabin = Air.Class
-																							, bRefundable = Air.RequestedRefundable
+																							, bRefundable = bRefundable
 																							, bRestricted = 0
 																							, sFaresIndicator = "PublicAndPrivateFares"
 																							, bAccountCodes = 1
@@ -268,6 +273,7 @@
 																										, Account = rc.Account
 																										, Air = Air
 																										, LowestAir = LowestAir
+																										, bRefundable = bRefundable
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
 																										, udids = udids
