@@ -50,7 +50,7 @@
 				, 'Selection for lowfare'
 				, '#serializeJSON(session.searches[arguments.SearchID].stItinerary.Air)#'
 				, getDate() )
-		</cfquery>		
+		</cfquery>
 
 		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
 		<cfset session.searches[arguments.SearchID].RequestedRefundable = session.searches[arguments.SearchID].stItinerary.Air.RequestedRefundable />
@@ -96,34 +96,31 @@
 			<cfset local.airlines = ['X']>
 		<cfelse>
 			<cfset local.airlines = [arguments.Filter.getAirlines()]>
-			<!--- <cfset local.airlines = ['X',arguments.Filter.getAirlines()]> --->
 		</cfif>
 
 		<cfif arguments.Filter.getClassOfService() EQ ''>
 			<cfset local.aCabins = ['X']>
 		<cfelseif Len(arguments.sCabins)> <!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
-			<cfset local.aCabins = ['X',arguments.sCabins]>
+			<cfset local.aCabins = [arguments.sCabins]>
 		<cfelse> <!--- otherwise get the class/cabin passed from the widget --->
-			<cfset local.aCabins = ['X',arguments.Filter.getClassOfService()]>
+			<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
 		</cfif>
 
-
 		<!--- Create a thread for every combination of cabin, fare and airline. --->
-		<cfloop array="#aCabins#" index="local.sCabin">
-			<cfloop array="#aRefundable#" index="local.bRefundable">
-				<cfloop array="#airlines#" index="local.airlineIndex" item="local.airline">
+		<cfloop array="#local.aCabins#" index="local.sCabin">
+			<cfloop array="#local.aRefundable#" index="local.bRefundable">
+				<cfloop array="#local.airlines#" index="local.airlineIndex" item="local.airline">
 					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 														, sCabin = local.sCabin
-														, bRefundable = bRefundable
+														, bRefundable = local.bRefundable
 														, sPriority = arguments.sPriority
 														, stPricing = arguments.stPricing
 														, Account = arguments.Account
 														, Policy = arguments.Policy
 														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
-														, airline = airline
+														, airline = local.airline
 														, fareType = "PublicFaresOnly" )>
 					<cfset local.stThreads[local.sThreadName] = ''>
-
 					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 														, sCabin = local.sCabin
 														, bRefundable = bRefundable
