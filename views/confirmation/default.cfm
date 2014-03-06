@@ -71,8 +71,12 @@
 					<cfif listLen(preTripApprovalList) GT 1 OR showNoPreTripText>
 						#replace(preTripApprovalList, ",", ", ", "all")#:<br />
 					</cfif>
-					WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
-					YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
+					<cfif structKeyExists(rc.Account, "ConfirmationMessage_Required") AND len(rc.Account.ConfirmationMessage_Required)>
+						#paragraphFormat(rc.Account.ConfirmationMessage_Required)#
+					<cfelse>
+						WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
+						YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
+					</cfif>
 					<cfif showNoPreTripText>
 						<br /><br />
 					</cfif>
@@ -82,8 +86,12 @@
 					<cfif listLen(noPreTripApprovalList) GT 1 OR showPreTripText>
 						#replace(noPreTripApprovalList, ",", ", ", "all")#:<br />
 					</cfif>
-					WE HAVE CREATED YOUR RESERVATION.<br />
-					YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
+					<cfif structKeyExists(rc.Account, "ConfirmationMessage_NotRequired") AND len(rc.Account.ConfirmationMessage_NotRequired)>
+						#paragraphFormat(rc.Account.ConfirmationMessage_NotRequired)#
+					<cfelse>
+						WE HAVE CREATED YOUR RESERVATION.<br />
+						YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
+					</cfif>
 				</cfif>
 			</div>
 		</div>

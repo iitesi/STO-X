@@ -295,6 +295,8 @@
 				, CBA_AllDepts
 				, Error_Contact
 				, Error_Email
+				, ConfirmationMessage_NotRequired
+				, ConfirmationMessage_Required
 				, (SELECT Air_Card
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card
