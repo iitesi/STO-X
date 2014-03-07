@@ -313,6 +313,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
 
 				<cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
+					AND structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 					AND arguments.stTrips2[local.sTripKey].privateFare )
 					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)>
 
