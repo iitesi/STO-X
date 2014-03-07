@@ -110,17 +110,6 @@
 		<cfloop array="#local.aCabins#" index="local.sCabin">
 			<cfloop array="#local.aRefundable#" index="local.bRefundable">
 				<cfloop array="#local.airlines#" index="local.airlineIndex" item="local.airline">
-					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
-														, sCabin = local.sCabin
-														, bRefundable = local.bRefundable
-														, sPriority = arguments.sPriority
-														, stPricing = arguments.stPricing
-														, Account = arguments.Account
-														, Policy = arguments.Policy
-														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
-														, airline = local.airline
-														, fareType = "PublicFaresOnly" )>
-					<cfset local.stThreads[local.sThreadName] = ''>
 
 					<cfset local.wnFound = false>
 					<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
@@ -154,6 +143,17 @@
 															, accountCode = '' )>
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfif>
+					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+														, sCabin = local.sCabin
+														, bRefundable = local.bRefundable
+														, sPriority = arguments.sPriority
+														, stPricing = arguments.stPricing
+														, Account = arguments.Account
+														, Policy = arguments.Policy
+														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+														, airline = local.airline
+														, fareType = "PublicFaresOnly" )>
+					<cfset local.stThreads[local.sThreadName] = ''>
 				</cfloop>
 			</cfloop>
 		</cfloop>
@@ -517,7 +517,7 @@
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
 									ForceSegmentSelect="false"
-									<cfif arguments.fareType EQ 'PrivateFaresOnly'>AccountCodeFaresOnly="true"</cfif> >
+									<cfif arguments.fareType EQ 'PrivateFaresOnly' AND arguments.accountCode NEQ ''>AccountCodeFaresOnly="true"</cfif> >
 									<cfif arguments.fareType EQ 'PrivateFaresOnly'
 										AND arguments.accountCode NEQ ''>
 										<air:AccountCodes>
