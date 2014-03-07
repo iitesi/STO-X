@@ -267,6 +267,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								</cfloop>
 							</cfif>
 						</cfloop>
+						<cfset local.stTrip.Key = local.airPricingSolution.XMLAttributes.Key>
 						<cfset local.stTrip.Base = Mid(local.airPricingSolution.XMLAttributes.BasePrice, 4)>
 						<cfset local.stTrip.ApproximateBase = Mid(local.airPricingSolution.XMLAttributes.ApproximateBasePrice, 4)>
 						<cfset local.stTrip.Total = Mid(local.airPricingSolution.XMLAttributes.TotalPrice, 4)>
