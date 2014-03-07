@@ -279,7 +279,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>
-				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
+				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable&bPrivateFare )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
 		</cfloop>
@@ -326,30 +326,22 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="stTrips1" 	required="true">
 		<cfargument name="stTrips2" 	required="true">
 
-		<cfset local.stCombinedTrips = arguments.stTrips1>
+		<cfset local.stCombinedTrips = structCopy(arguments.stTrips1)>
 
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
 
-				<!--- Note:	private/contracted should override public!
-				if keys match AND the existing trip isn't a privateFare - override the trips
-
-				Questions:
-				- if both sides are private - we assume they are the same? but is that the case? should one 'win' and overwrite the other?
-				--->
-				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)
-					AND local.stCombinedTrips[local.sTripKey].privateFare NEQ true>
+				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)>
 					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
-						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = arguments.stTrips2[local.sTripKey][local.sFareKey]>
+						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = structCopy(arguments.stTrips2[local.sTripKey][local.sFareKey])>
 					</cfloop>
 				<cfelse>
-					<!--- if keys don't match just add it to the combined trip --->
-					<cfset local.stCombinedTrips[local.sTripKey] = arguments.stTrips2[local.sTripKey]>
+					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
 				</cfif>
 
 			</cfloop>
 		<cfelseif IsStruct(arguments.stTrips2)>
-			<cfset local.stCombinedTrips = arguments.stTrips2>
+			<cfset local.stCombinedTrips = structCopy(arguments.stTrips2)>
 		</cfif>
 
 		<cfif NOT IsStruct(local.stCombinedTrips)>
