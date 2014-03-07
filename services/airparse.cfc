@@ -102,6 +102,7 @@
 						Group : local.stAirSegment.XMLAttributes.Group,
 						Origin : local.stAirSegment.XMLAttributes.Origin,
 						TravelTime : local.travelTime,
+						Key : local.stAirSegment.XMLAttributes.Key,
 						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
 					}>
 				</cfloop>
@@ -299,27 +300,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 <cfabort /> --->
 
 		<cfreturn  local.stTrips/>
-	</cffunction>
-
-	<cffunction name="mergeSegments" output="false" hint="I merge passed in segments.">
-		<cfargument name="stSegments1" 	required="true">
-		<cfargument name="stSegments2" 	required="true">
-
-		<cfset local.stSegments = arguments.stSegments1>
-		<cfif IsStruct(local.stSegments) AND IsStruct(arguments.stSegments2)>
-			<cfloop collection="#arguments.stSegments2#" item="local.sSegmentKey">
-				<cfif NOT StructKeyExists(local.stSegments, local.sSegmentKey)>
-					<cfset local.stSegments[local.sSegmentKey] = arguments.stSegments2[local.sSegmentKey]>
-				</cfif>
-			</cfloop>
-		<cfelse>
-			<cfset local.stSegments = arguments.stSegments2>
-		</cfif>
-		<cfif NOT IsStruct(local.stSegments)>
-			<cfset local.stSegments = {}>
-		</cfif>
-
-		<cfreturn local.stSegments/>
 	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
