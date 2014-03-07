@@ -333,7 +333,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)>
 					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
-						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = structCopy(arguments.stTrips2[local.sTripKey][local.sFareKey])>
+						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = arguments.stTrips2[local.sTripKey][local.sFareKey]>
 					</cfloop>
 				<cfelse>
 					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
