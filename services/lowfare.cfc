@@ -79,7 +79,7 @@
 	<cffunction name="threadLowFare" output="false" hint="I assemble info to pass to thread.">
 		<!--- arguments getting passed in from RC --->
 		<cfargument name="sPriority" required="false" default="HIGH">
-		<cfargument name="bRefundable" required="false" default="X">
+		<cfargument name="bRefundable" required="false" default="false">
 		<cfargument name="Filter" required="false" default="X">
 		<cfargument name="stPricing" required="true">
 		<cfargument name="Account" required="true">
@@ -122,7 +122,11 @@
 														, fareType = "PublicFaresOnly" )>
 					<cfset local.stThreads[local.sThreadName] = ''>
 
+					<cfset local.wnFound = false>
 					<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
+						<cfif getToken(local.sPF, 2, ',') EQ 'WN'>
+							<cfset local.wnFound = true>
+						</cfif>
 						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = bRefundable
@@ -136,6 +140,20 @@
 															, accountCode = sPF )>
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfloop>
+					<cfif NOT local.wnFound>
+						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+															, sCabin = local.sCabin
+															, bRefundable = bRefundable
+															, sPriority = arguments.sPriority
+															, stPricing = arguments.stPricing
+															, Account = arguments.Account
+															, Policy = arguments.Policy
+															, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+															, airline = 'WN'
+															, fareType = "PrivateFaresOnly"
+															, accountCode = '' )>
+						<cfset local.stThreads[local.sThreadName] = ''>
+					</cfif>
 				</cfloop>
 			</cfloop>
 		</cfloop>
@@ -152,9 +170,15 @@
 					<cfset local.errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
 					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD: #thread.error.message#', exception=local.errorException, severityCode='Error' ) />
 					<!--- <cfdump var="#thread#" /><cfabort /> --->
+				<cfelseif structKeyExists(local.thread, 'stTrips')>
+					<!--- Merge all data into the current session structures. --->
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.thread.stTrips)>
 				</cfif>
 			</cfloop>
 		</cfif>
+
+		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
+		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 
 		<cfreturn />
 	</cffunction>
@@ -236,13 +260,13 @@
 					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
-					<cfset attributes.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
+					<cfset thread.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
 																			, Account = arguments.Account)>
 
-					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
-					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
-					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+					<!--- Merge all data into the current session structures. 
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>--->
+					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid]
+					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)> --->
 				<cfelse>
 					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 						<cfset local.faultstring = ''>
@@ -464,6 +488,10 @@
 										<air:PermittedCarriers>
 											<com:Carrier Code="#arguments.airline#"/>
 										</air:PermittedCarriers>
+									<cfelseif arguments.fareType EQ 'PrivateFaresOnly'>
+										<air:PermittedCarriers>
+											<com:Carrier Code="#GetToken(arguments.accountCode, 2, ',')#"/>
+										</air:PermittedCarriers>
 									<cfelse>
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="G4"/>
@@ -477,8 +505,7 @@
 										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
 									</cfif>
 								</air:AirSearchModifiers>
-								<com:SearchPassenger
-									Code="ADT" />
+								<com:SearchPassenger Code="ADT" />
 								<air:AirPricingModifiers
 									ProhibitNonRefundableFares="#arguments.bRefundable#"
 									FaresIndicator="#arguments.fareType#"

@@ -279,7 +279,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>
-				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable&bPrivateFare )>
+				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
 		</cfloop>
@@ -323,20 +323,20 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
-		<cfargument name="stTrips1" 	required="true">
-		<cfargument name="stTrips2" 	required="true">
+		<cfargument name="stTrips1" required="true">
+		<cfargument name="stTrips2" required="true">
 
 		<cfset local.stCombinedTrips = structCopy(arguments.stTrips1)>
 
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
 
-				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)>
-					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
-						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = arguments.stTrips2[local.sTripKey][local.sFareKey]>
-					</cfloop>
-				<cfelse>
+				<cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
+					AND arguments.stTrips2[local.sTripKey].privateFare )
+					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)>
+
 					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
+
 				</cfif>
 
 			</cfloop>
@@ -369,8 +369,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="addGroups" output="false" hint="I add groups.">
-		<cfargument name="stTrips" 	required="true">
-		<cfargument name="sType" 	required="false"	default="Fare">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="sType" required="false" default="Fare">
 
 		<cfset local.stGroups = {}>
 		<cfset local.aCarriers = {}>
