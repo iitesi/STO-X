@@ -113,23 +113,28 @@
 
 					<cfset local.wnFound = false>
 					<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
-						<cfif getToken(local.sPF, 2, ',') EQ 'WN'>
-							<cfset local.wnFound = true>
+						<cfif local.airline EQ 'X'
+							OR local.airline EQ getToken(sPF, 2, ',')>
+							<cfif getToken(local.sPF, 2, ',') EQ 'WN'>
+								<cfset local.wnFound = true>
+							</cfif>
+							<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+																, sCabin = local.sCabin
+																, bRefundable = bRefundable
+																, sPriority = arguments.sPriority
+																, stPricing = arguments.stPricing
+																, Account = arguments.Account
+																, Policy = arguments.Policy
+																, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+																, airline = airline
+																, fareType = "PrivateFaresOnly"
+																, accountCode = sPF )>
+							<cfset local.stThreads[local.sThreadName] = ''>
 						</cfif>
-						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
-															, sCabin = local.sCabin
-															, bRefundable = bRefundable
-															, sPriority = arguments.sPriority
-															, stPricing = arguments.stPricing
-															, Account = arguments.Account
-															, Policy = arguments.Policy
-															, BlackListedCarrierPairing = local.BlackListedCarrierPairing
-															, airline = airline
-															, fareType = "PrivateFaresOnly"
-															, accountCode = sPF )>
-						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfloop>
-					<cfif NOT local.wnFound>
+					<cfif NOT local.wnFound
+						AND (local.airline EQ 'X'
+							OR local.airline EQ 'WN')>
 						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = bRefundable
@@ -143,17 +148,19 @@
 															, accountCode = '' )>
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfif>
-					<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
-														, sCabin = local.sCabin
-														, bRefundable = local.bRefundable
-														, sPriority = arguments.sPriority
-														, stPricing = arguments.stPricing
-														, Account = arguments.Account
-														, Policy = arguments.Policy
-														, BlackListedCarrierPairing = local.BlackListedCarrierPairing
-														, airline = local.airline
-														, fareType = "PublicFaresOnly" )>
-					<cfset local.stThreads[local.sThreadName] = ''>
+					<cfif local.airline NEQ 'WN'>
+						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+															, sCabin = local.sCabin
+															, bRefundable = local.bRefundable
+															, sPriority = arguments.sPriority
+															, stPricing = arguments.stPricing
+															, Account = arguments.Account
+															, Policy = arguments.Policy
+															, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+															, airline = local.airline
+															, fareType = "PublicFaresOnly" )>
+						<cfset local.stThreads[local.sThreadName] = ''>
+					</cfif>
 				</cfloop>
 			</cfloop>
 		</cfloop>
@@ -517,11 +524,11 @@
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
 									ForceSegmentSelect="false"
-									<cfif arguments.fareType EQ 'PrivateFaresOnly' AND arguments.accountCode NEQ ''>AccountCodeFaresOnly="true"</cfif> >
+									<cfif arguments.fareType EQ 'PrivateFaresOnly' AND arguments.accountCode NEQ '' AND getToken(arguments.accountCode, 2, ',') NEQ 'WN'>AccountCodeFaresOnly="true"</cfif> >
 									<cfif arguments.fareType EQ 'PrivateFaresOnly'
 										AND arguments.accountCode NEQ ''>
 										<air:AccountCodes>
-											<com:AccountCode Code="#GetToken(arguments.accountCode, 3, ',')#" ProviderCode="1V" SupplierCode="#GetToken(arguments.accountCode, 2, ',')#" />
+											<com:AccountCode Code="#getToken(arguments.accountCode, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(arguments.accountCode, 2, ',')#" />
 										</air:AccountCodes>
 									</cfif>
 								</air:AirPricingModifiers>
