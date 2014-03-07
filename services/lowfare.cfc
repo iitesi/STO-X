@@ -452,6 +452,7 @@
 									</cfif>
 									ProhibitMultiAirportConnection="true"
 									PreferNonStop="true">
+
 									<cfif arguments.airline NEQ 'X'>
 										<air:PermittedCarriers>
 											<com:Carrier Code="#arguments.airline#"/>
@@ -481,8 +482,10 @@
 									ProhibitRestrictedFares="false"
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
-									ForceSegmentSelect="false">
-									<cfif NOT ArrayIsEmpty(arguments.Account.Air_PF)>
+									ForceSegmentSelect="false"
+									<cfif arguments.fareType EQ 'PrivateFaresOnly'>AccountCodeFaresOnly="true"</cfif> >
+									<cfif arguments.fareType EQ 'PrivateFaresOnly'
+										AND NOT ArrayIsEmpty(arguments.Account.Air_PF)>
 										<air:AccountCodes>
 											<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
 												<com:AccountCode Code="#GetToken(sPF, 3, ',')#" ProviderCode="1V" SupplierCode="#GetToken(sPF, 2, ',')#" />
