@@ -138,6 +138,7 @@
 				<cfif arguments.sCabin NEQ local.stTrips[local.nTripKey].Class>
 					<cfset session.searches[arguments.SearchID].sUserMessage = 'Pricing returned '&(local.stTrips[local.nTripKey].Class EQ 'Y' ? 'economy' : (local.stTrips[local.nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
 				</cfif>
+				<cfset session.searches[arguments.SearchID].stTrips[local.nTripKey] = local.stTrips[local.nTripKey] />
 			<cfelse>
 				<cfset local.TotalFare = local.stTrips[local.nTripKey].Total>
 			</cfif>
