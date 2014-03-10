@@ -329,7 +329,7 @@
 		<cfif arguments.Filter.getAcctID() EQ 254
 			OR arguments.Filter.getAcctID() EQ 255>
 			<!--- If Southwest lowfare call --->
-			<cfif arguments.airline EQ 'WN' OR arguments.fareType EQ 'PrivateFaresOnly'>
+			<cfif arguments.fareType EQ 'PrivateFaresOnly' AND (arguments.airline EQ 'WN' OR GetToken(arguments.accountCode, 2, ',') EQ 'WN')>
 				<cfset local.targetBranch = 'P1601400'>
 			<!--- All other lowfare calls --->
 			<cfelse>
