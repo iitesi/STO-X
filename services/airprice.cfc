@@ -171,7 +171,25 @@
 		<cfset local.targetBranch = arguments.stAccount.sBranch>
 		<cfif arguments.stAccount.Acct_ID EQ 254
 			OR arguments.stAccount.Acct_ID EQ 255>
-			<cfset local.targetBranch = 'P1601396'>
+			<cfset local.wnFound = false />
+			<cfloop collection="#arguments.stSelected#" item="local.stGroup" index="local.nGroup">
+				<cfif structKeyExists(local.stGroup, "Groups")>
+					<cfloop collection="#local.stGroup.Groups#" item="local.stInnerGroup" index="local.nInnerGroup">
+						<cfloop collection="#local.stInnerGroup.Segments#" item="local.stSegment" index="local.nSegment">
+							<cfif local.stSegment.Carrier EQ 'WN'>
+								<cfset local.wnFound = true />
+							</cfif>
+						</cfloop>
+					</cfloop>
+				</cfif>
+			</cfloop>
+			<!--- If Southwest flight --->
+			<cfif local.wnFound>
+				<cfset local.targetBranch = 'P1601400'>
+			<!--- All other flights --->
+			<cfelse>
+				<cfset local.targetBranch = 'P1601396'>
+			</cfif>
 		</cfif>
 
 		<cfsavecontent variable="local.sMessage">

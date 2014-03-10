@@ -328,7 +328,13 @@
 		<cfset local.targetBranch = arguments.Account.sBranch>
 		<cfif arguments.Filter.getAcctID() EQ 254
 			OR arguments.Filter.getAcctID() EQ 255>
-			<cfset local.targetBranch = 'P1601396'>
+			<!--- If Southwest lowfare call --->
+			<cfif arguments.airline EQ 'WN' OR arguments.fareType EQ 'PrivateFaresOnly'>
+				<cfset local.targetBranch = 'P1601400'>
+			<!--- All other lowfare calls --->
+			<cfelse>
+				<cfset local.targetBranch = 'P1601396'>
+			</cfif>
 		</cfif>
 
 		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
