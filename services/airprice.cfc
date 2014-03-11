@@ -38,6 +38,7 @@
 		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="totalOnly" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="fullAirPrice" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -100,47 +101,49 @@
 		<cfif NOT StructIsEmpty(local.stSegments)>
 			<!--- Parse the trips. --->
 			<cfset local.stTrips = AirParse.parseTrips(local.aResponse, local.stSegments)>
-			<!--- Add group node --->
-			<cfset local.stTrips = AirParse.addGroups(local.stTrips)>
-			<!--- Check low fare. --->
-			<cfset local.stTrips = AirParse.addTotalBagFare(local.stTrips)>
-			<!--- Mark preferred carriers. --->
-			<cfset local.stTrips = AirParse.addPreferred(local.stTrips, arguments.Account)>
-			<!--- Calculate total trip time--->
-			<cfloop collection="#local.stTrips#" item="local.tripKey">
-				<cfset local.trip = local.stTrips[ local.tripKey ]/>
-				<cfloop collection="#trip.groups#" item="local.group">
-					<cfset local.group = local.trip.groups[ local.group ] />
-					<cfset local.tripDuration = AirParse.calculateTripTime( local.group.segments ) />
-					<cfloop collection="#local.group.segments#" item="local.segment">
-						<cfset local.group.segments[ local.segment ].traveltime = local.tripDuration />
+			<cfif arguments.fullAirPrice>
+				<!--- Add group node --->
+				<cfset local.stTrips = AirParse.addGroups(local.stTrips)>
+				<!--- Check low fare. --->
+				<cfset local.stTrips = AirParse.addTotalBagFare(local.stTrips)>
+				<!--- Mark preferred carriers. --->
+				<cfset local.stTrips = AirParse.addPreferred(local.stTrips, arguments.Account)>
+				<!--- Calculate total trip time--->
+				<cfloop collection="#local.stTrips#" item="local.tripKey">
+					<cfset local.trip = local.stTrips[ local.tripKey ]/>
+					<cfloop collection="#trip.groups#" item="local.group">
+						<cfset local.group = local.trip.groups[ local.group ] />
+						<cfset local.tripDuration = AirParse.calculateTripTime( local.group.segments ) />
+						<cfloop collection="#local.group.segments#" item="local.segment">
+							<cfset local.group.segments[ local.segment ].traveltime = local.tripDuration />
+						</cfloop>
+						<cfset local.group.TravelTime = int( local.tripDuration / 60 ) & 'h' & ' ' & local.tripDuration MOD 60 & 'm' />
 					</cfloop>
-					<cfset local.group.TravelTime = int( local.tripDuration / 60 ) & 'h' & ' ' & local.tripDuration MOD 60 & 'm' />
 				</cfloop>
-			</cfloop>
-			<!--- Add trip id to the list of priced items --->
-			<cfset local.nTripKey = getTripKey(local.stTrips)>
-			<cfset local.stTrips[local.nTripKey].nTrip = local.nTripKey>
-			<!--- Save XML if needed - AirCreate --->
-			<cfif arguments.bSaveAirPrice>
-				<cfset local.stTrips[local.nTripKey].sXML = local.sResponse>
-				<cfset local.stTrips[local.nTripKey].PricingSolution = AirAdapter.parsePricingSolution( response = local.sResponse )>
-			</cfif>
-			<cfif arguments.nCouldYou EQ 0
-				AND NOT arguments.totalOnly>
 				<!--- Add trip id to the list of priced items --->
-				<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, local.nTripKey)>
-				<!--- Merge all data into the current session structures. --->
-				<cfset session.searches[arguments.SearchID].stTrips = AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, local.stTrips)>
-				<!--- Finish up the results --->
-				<cfset local.void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
-				<!--- Clear out their results --->
-				<cfif arguments.sCabin NEQ local.stTrips[local.nTripKey].Class>
-					<cfset session.searches[arguments.SearchID].sUserMessage = 'Pricing returned '&(local.stTrips[local.nTripKey].Class EQ 'Y' ? 'economy' : (local.stTrips[local.nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
+				<cfset local.nTripKey = getTripKey(local.stTrips)>
+				<cfset local.stTrips[local.nTripKey].nTrip = local.nTripKey>
+				<!--- Save XML if needed - AirCreate --->
+				<cfif arguments.bSaveAirPrice>
+					<cfset local.stTrips[local.nTripKey].sXML = local.sResponse>
+					<cfset local.stTrips[local.nTripKey].PricingSolution = AirAdapter.parsePricingSolution( response = local.sResponse )>
 				</cfif>
-				<cfset session.searches[arguments.SearchID].stTrips[local.nTripKey] = local.stTrips[local.nTripKey] />
-			<cfelse>
-				<cfset local.TotalFare = local.stTrips[local.nTripKey].Total>
+				<cfif arguments.nCouldYou EQ 0
+					AND NOT arguments.totalOnly>
+					<!--- Add trip id to the list of priced items --->
+					<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, local.nTripKey)>
+					<!--- Merge all data into the current session structures. --->
+					<cfset session.searches[arguments.SearchID].stTrips = AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, local.stTrips)>
+					<!--- Finish up the results --->
+					<cfset local.void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
+					<!--- Clear out their results --->
+					<cfif arguments.sCabin NEQ local.stTrips[local.nTripKey].Class>
+						<cfset session.searches[arguments.SearchID].sUserMessage = 'Pricing returned '&(local.stTrips[local.nTripKey].Class EQ 'Y' ? 'economy' : (local.stTrips[local.nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
+					</cfif>
+					<cfset session.searches[arguments.SearchID].stTrips[local.nTripKey] = local.stTrips[local.nTripKey] />
+				<cfelse>
+					<cfset local.TotalFare = local.stTrips[local.nTripKey].Total>
+				</cfif>
 			</cfif>
 		<cfelse>
 			<cfset session.searches[arguments.SearchID].sUserMessage = 'Fare type selected is unavailable for pricing.'>
