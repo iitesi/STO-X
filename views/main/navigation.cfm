@@ -38,18 +38,18 @@
 						<a href="#application.sPortalURL#">Home</a>
 					</li>
 				</cfif>
-		    	<cfif rc.action CONTAINS 'confirmation.'>
+		    	<cfif rc.action CONTAINS 'confirmation.' AND NOT rc.Account.tmc.getIsExternal() AND rc.filter.getPassthrough() NEQ 1>
 					<!---Logout--->
-					<li>
+					<!---<li>
 						<a href="#buildURL('logout')#">Logout</a>
-					</li>
+					</li>--->
 		    	<cfelse>
 					<cfif showAirTab>
 						<!---Air--->
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
 							<a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
 						</li>
-					<cfelse>
+					<cfelseif rc.filter.getPassthrough() NEQ 1>
 						<!---Air--->
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
 							<a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Air</a>
@@ -71,9 +71,11 @@
 				    <li <cfif rc.action CONTAINS 'summary.'>class="active"</cfif>>
 				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
-					<li>
-						<a href="#buildURL('logout')#">Logout</a>
-					</li>
+					<!---<cfif NOT rc.Account.tmc.getIsExternal() AND rc.filter.getPassthrough() NEQ 1>
+						<li>
+							<a href="#buildURL('logout')#">Logout</a>
+						</li>
+					</cfif>--->
 				</cfif>
 			</ul>
 		</nav>

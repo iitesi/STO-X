@@ -18,6 +18,12 @@ $(document).ready(function(){
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
+	var findit = $("#findit").val();
+	var externalTMC = $("#externalTMC").val();
+	var finditOA = 0;
+	if (findit == 1 && externalTMC == 1) {
+		var finditOA = 1;
+	}
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -119,6 +125,9 @@ $(document).ready(function(){
 		if ($( "#userID" ).val() == null) {
 			$( "#userID" ).val(0);
 		}
+		if (findit == 1) {
+			$( "#nameChange" ).hide();
+		}
 		$( "#firstName" ).val( traveler.firstName );
 		$( "#middleName" ).val( traveler.middleName );
 		if (traveler.noMiddleName == 1) {
@@ -134,7 +143,7 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
-		if (traveler.bookingDetail.createProfile == 1) {
+		if (traveler.bookingDetail.createProfile == 1 && $("#userID") == 0) {
 			$( "#createProfileDiv" ).show();
 			$( "#createProfile" ).attr( 'checked', true );
 			$( "#usernameDiv" ).show();
@@ -145,32 +154,32 @@ $(document).ready(function(){
 		}
 		$( "#lastName" ).val( traveler.lastName );
 		if ($( "#userID" ).val() != 0) {
-			$( "#firstName" ).prop('disabled', true);
-			$( "#lastName" ).prop('disabled', true);
-			if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
-				$( "#fullNameDiv" ).hide();
+			if (finditOA) {
+				$( "#userIDDiv" ).hide();
+				$( "#saveProfileDiv" ).hide();
 			}
 			else {
-				$( "#fullNameDiv" ).show();
+				$( "#firstName" ).prop('disabled', true);
+				$( "#lastName" ).prop('disabled', true);
+				if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
+					$( "#fullNameDiv" ).hide();
+				}
+				else {
+					$( "#fullNameDiv" ).show();
+				}				
 			}
-			$( "#firstName2" ).val( traveler.firstName );
-			$( "#lastName2" ).val( traveler.lastName );
-			$( "#saveProfileDiv" ).show();
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
 				$( "#firstName" ).prop('disabled', false);
 				$( "#lastName" ).prop('disabled', false);
+				$( "#saveProfileDiv" ).hide();
 				$( "#createProfileDiv" ).hide();
-				$( "#firstName2" ).val( '' );
-				$( "#lastName2" ).val( '' );
 			}
 		}
 		else {
 			$( "#fullNameDiv" ).show();
 			$( "#firstName" ).prop('disabled', false);
 			$( "#lastName" ).prop('disabled', false);
-			$( "#firstName2" ).val( '' );
-			$( "#lastName2" ).val( '' );
 			$( "#saveProfileDiv" ).hide();
 		}
 		$( "#phoneNumber" ).val( traveler.phoneNumber );
@@ -183,10 +192,9 @@ $(document).ready(function(){
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
 
-		// If a FindIt guest
-		if (traveler.firstName == undefined && traveler.stoDefaultUser == 0) {
-			$( "#userID" ).val( 0 );
-			// $( "#userIDDiv" ).hide();
+		// If an unregistered FindIt guest
+		if (findit == 1 && $("#userID").val() == 0) {
+			$( "#userIDDiv" ).hide();
 			$( "#saveProfileDiv" ).hide();
 
 			$.ajax({type: "POST",
@@ -390,10 +398,10 @@ $(document).ready(function(){
 				if (traveler.payment[i].acctNum4 != '') {
 					endingIn = ' ending in ' + traveler.payment[i].acctNum4;
 				}
-				if (traveler.payment[i].btaID != '') {
+				if (traveler.payment[i].btaID !== '') {
 					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
-				else if (traveler.payment[i].fopID != '') {
+				else if (traveler.payment[i].fopID !== '') {
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
@@ -435,7 +443,7 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
 					$( "#copyAirCCDiv" ).hide();
 				}
 				else {
@@ -647,6 +655,7 @@ $(document).ready(function(){
 							, searchID : searchID
 							, travelerNumber : travelerNumber
 							, valueID : custom
+							, vendor : vendor
 						},
 				dataType: 'json',
 				success:function(traveler) {

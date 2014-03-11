@@ -1,13 +1,13 @@
-<cfcomponent output="false" accessors="true">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-	<cfproperty name="uAPI" />
+	<cfproperty name="UAPIFactory" />
 	<cfproperty name="searchService" />
 
 	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
-		<cfargument name="uAPI" type="any" required="true" />
+		<cfargument name="UAPIFactory" type="any" required="true" />
 		<cfargument name="searchService" />
 
-		<cfset setUAPI( arguments.uAPI ) />
+		<cfset setUAPIFactory( arguments.UAPIFactory ) />
 		<cfset setSearchService( arguments.SearchService ) />
 
 		<cfreturn this />
@@ -102,6 +102,7 @@
 						Group : local.stAirSegment.XMLAttributes.Group,
 						Origin : local.stAirSegment.XMLAttributes.Origin,
 						TravelTime : local.travelTime,
+						Key : local.stAirSegment.XMLAttributes.Key,
 						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
 					}>
 				</cfloop>
@@ -151,6 +152,7 @@
 	<cffunction name="parseTrips" output="false" hint="I take response and segments and parse trip data.">
 		<cfargument name="response" required="true">
 		<cfargument name="stSegments" required="true">
+		<cfargument name="bRefundable" required="false" default="false">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -200,7 +202,7 @@
 
 						<cfloop array="#local.airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif local.journey.XMLName EQ 'air:AirSegmentRef'>
-								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? arguments.stSegments[local.journey.XMLAttributes.Key] : {}>
+								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.journey.XMLAttributes.Key]) : {}>
 
 								<cfloop array="#local.distinctFields#" index="local.field">
 									<cfset local.tripKey &= local.stTrip.Segments[local.journey.XMLAttributes.Key][local.field]>
@@ -211,7 +213,7 @@
 
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
 
-						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? arguments.stSegments[local.airPricingSolution.XMLAttributes.Key] : {}>
+						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.airPricingSolution.XMLAttributes.Key]) : {}>
 
 						<cfloop array="#local.distinctFields#" index="local.field">
 							<cfset local.tripKey &= local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key][local.field]>
@@ -265,6 +267,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 								</cfloop>
 							</cfif>
 						</cfloop>
+						<cfset local.stTrip.Key = local.airPricingSolution.XMLAttributes.Key>
 						<cfset local.stTrip.Base = Mid(local.airPricingSolution.XMLAttributes.BasePrice, 4)>
 						<cfset local.stTrip.ApproximateBase = Mid(local.airPricingSolution.XMLAttributes.ApproximateBasePrice, 4)>
 						<cfset local.stTrip.Total = Mid(local.airPricingSolution.XMLAttributes.TotalPrice, 4)>
@@ -274,6 +277,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.Class = local.sOverallClass>
 						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
 						<cfset local.stTrip.Ref = local.refundable>
+						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : 0)>
 						<cfset local.stTrip.changePenalty = changePenalty>
 					</cfif>
 				</cfloop>
@@ -282,48 +286,46 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfif>
 		</cfloop>
 
+<!--- <cfdump var="#attributes.stTrips#" /> --->
+<!--- <cfloop collection="#local.stTrips#" index="i" item="trip">
+	<cfset segmentnumbers = ''>
+	<cfloop collection="#trip.segments#" index="i" item="segment">
+		<cfset segmentnumbers = listAppend(segmentnumbers, segment.flightnumber)>
+	</cfloop>
+	<cfdump var="#segmentnumbers#" />
+	<cfif segmentnumbers EQ '5266,1561,1761,5473'>
+		<cfdump var="#trip#" />
+		<cfabort />
+	</cfif>
+</cfloop>
+<cfabort /> --->
+
 		<cfreturn  local.stTrips/>
 	</cffunction>
 
-	<cffunction name="mergeSegments" output="false" hint="I merge passed in segments.">
-		<cfargument name="stSegments1" 	required="true">
-		<cfargument name="stSegments2" 	required="true">
-
-		<cfset local.stSegments = arguments.stSegments1>
-		<cfif IsStruct(local.stSegments) AND IsStruct(arguments.stSegments2)>
-			<cfloop collection="#arguments.stSegments2#" item="local.sSegmentKey">
-				<cfif NOT StructKeyExists(local.stSegments, local.sSegmentKey)>
-					<cfset local.stSegments[local.sSegmentKey] = arguments.stSegments2[local.sSegmentKey]>
-				</cfif>
-			</cfloop>
-		<cfelse>
-			<cfset local.stSegments = arguments.stSegments2>
-		</cfif>
-		<cfif NOT IsStruct(local.stSegments)>
-			<cfset local.stSegments = {}>
-		</cfif>
-
-		<cfreturn local.stSegments/>
-	</cffunction>
-
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
-		<cfargument name="stTrips1" 	required="true">
-		<cfargument name="stTrips2" 	required="true">
+		<cfargument name="stTrips1" required="true">
+		<cfargument name="stTrips2" required="true">
 
-		<cfset local.stCombinedTrips = arguments.stTrips1>
+		<cfset local.stCombinedTrips = structCopy(arguments.stTrips1)>
+
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
-				<cfif StructKeyExists(local.stCombinedTrips, local.sTripKey)>
-					<cfloop collection="#arguments.stTrips2[sTripKey]#" item="local.sFareKey">
-						<cfset local.stCombinedTrips[local.sTripKey][local.sFareKey] = arguments.stTrips2[local.sTripKey][local.sFareKey]>
-					</cfloop>
-				<cfelse>
-					<cfset local.stCombinedTrips[local.sTripKey] = arguments.stTrips2[local.sTripKey]>
+
+				<cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
+					AND structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
+					AND arguments.stTrips2[local.sTripKey].privateFare )
+					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)>
+
+					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
+
 				</cfif>
+
 			</cfloop>
 		<cfelseif IsStruct(arguments.stTrips2)>
-			<cfset local.stCombinedTrips = arguments.stTrips2>
+			<cfset local.stCombinedTrips = structCopy(arguments.stTrips2)>
 		</cfif>
+
 		<cfif NOT IsStruct(local.stCombinedTrips)>
 			<cfset local.stCombinedTrips = {}>
 		</cfif>
@@ -349,8 +351,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="addGroups" output="false" hint="I add groups.">
-		<cfargument name="stTrips" 	required="true">
-		<cfargument name="sType" 	required="false"	default="Fare">
+		<cfargument name="stTrips" required="true">
+		<cfargument name="sType" required="false" default="Fare">
 
 		<cfset local.stGroups = {}>
 		<cfset local.aCarriers = {}>

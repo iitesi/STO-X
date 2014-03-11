@@ -30,10 +30,6 @@
 	border-top: 1px solid #555;
 }
 
-#logo-container {
-	float: left;
-}
-
 #header-top .tagline {
 	float: left;
 	margin-left: 20px;
@@ -47,14 +43,25 @@
 	*zoom: 1;
 }
 
-#logo-center {
-	height: 75px;
-	display: table;
+#logo-container {
+	float: left;
+	width: 450px;
 }
 
-#logo-center a {
-	display: table-cell;
-	vertical-align: middle;
+#header {position:relative;
+	height: 80px;
+}
+
+#header img {
+	bottom: 10px;
+	left: 0;
+	position: absolute;
+}
+
+#headerContent{
+	bottom:0;
+	left: 49%;
+	position: absolute;
 }
 
 #main-nav ul,

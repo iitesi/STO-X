@@ -68,7 +68,8 @@
 
 		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( userID = rc.Filter.getUserID()
 																								, acctID = rc.Filter.getAcctID() )>
-		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID() )>
+		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID()
+																						, tmcID = rc.Account.tmc.getTMCID() )>
 		<cfset rc.qStates = fw.getBeanFactory().getBean('Summary').getStates()>
 		<cfset rc.qTXExceptionCodes = fw.getBeanFactory().getBean('Summary').getTXExceptionCodes()>
 		<cfset rc.fees = fw.getBeanFactory().getBean('Summary').determineFees(userID = rc.Filter.getUserID()
@@ -76,32 +77,388 @@
 																			, Air = rc.Air
 																			, Filter = rc.Filter)>
 
+		<!--- Determine whether the traveler is coming from an internal or external TMC --->
+		<!--- TODO: Replace below logic with the true logic after testing is over --->
+		<!--- <cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
+			<cfset local.internalTMC = false />
+		<cfelse>
+			<cfset local.internalTMC = true />
+		</cfif> --->
+		<!--- Short's Travel/Internal TMC --->
+		<cfif NOT rc.Account.tmc.getIsExternal()>
+			<cfset local.internalTMC = true />
+		<!--- External TMC --->
+		<cfelse>
+			<cfset local.internalTMC = false />
+		</cfif>
+
 		<cfif rc.travelerNumber EQ 1
 			AND (NOT structKeyExists(session.searches[rc.SearchID], 'travelers')
 			OR NOT structKeyExists(session.searches[rc.SearchID].travelers, rc.travelerNumber))>
 			<!--- Stand up the default profile into an object --->
-			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.Filter.getProfileID()
+			<!--- If user is booking through Short's --->
+			<cfif internalTMC>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.Filter.getProfileID()
 																						, acctID = rc.Filter.getAcctID()
 																						, valueID = rc.Filter.getValueID()
 																						, arrangerID = rc.Filter.getUserID()
 																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+			<!--- If user is booking through another TMC --->
+			<cfelse>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadTMCUser(userID = rc.Filter.getProfileID()
+																						, acctID = rc.Filter.getAcctID()
+																						, valueID = rc.Filter.getValueID())>
+			</cfif>
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
 		<cfelseif NOT structKeyExists(session.searches[rc.SearchID], 'travelers')
 			OR NOT structKeyExists(session.searches[rc.SearchID].travelers, rc.travelerNumber)>
 			<!--- Stand up the default profile into an object --->
-			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = 0
+			<!--- If user is booking through Short's --->
+			<cfif internalTMC>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = 0
 																						, acctID = rc.Filter.getAcctID()
 																						, valueID = rc.Filter.getValueID()
 																						, arrangerID = rc.Filter.getUserID()
 																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+			<!--- If user is booking through another TMC --->
+			<cfelse>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadTMCUser(userID = 0
+																						, acctID = rc.Filter.getAcctID()
+																						, valueID = rc.Filter.getValueID())>
+			</cfif>
 			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
 		<cfelse>
 			<!--- Traveler is already in an object --->
 			<cfset rc.Traveler = session.searches[rc.SearchID].travelers[rc.travelerNumber]>
+		</cfif>
+
+		<!--- If user is booking through another TMC, create a shell PNR and parse through it --->
+		<cfif NOT internalTMC>
+			<!--- If air has been selected and air details have not been pulled or hotel has been selected and hotel details
+				have not been pulled or car has been selected and car details have not been pulled --->
+			<cfif (rc.airSelected AND NOT structKeyExists(rc.Traveler, 'airProfileParsed'))
+				OR (rc.hotelSelected AND NOT structKeyExists(rc.Traveler, 'hotelProfileParsed'))
+				OR (rc.vehicleSelected AND NOT structKeyExists(rc.Traveler, 'vehicleProfileParsed'))>
+
+				<cfset local.errorMessage = []>
+				<!--- Create shell PNR for traveler --->
+				<!--- Open terminal session --->
+				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																						, searchID = rc.searchID )>
+
+				<cfif hostToken EQ ''>
+					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+					<cfset errorType = 'TerminalEntry.openSession'>
+				</cfif>
+
+				<!---
+				Sell passive air segment to create shell PNR
+				Command = 0XX1Y30DECALOMCIBK1
+				--->
+				<cfif rc.airSelected AND NOT structKeyExists(rc.Traveler, 'airProfileParsed')>
+					<cfset local.sellPassiveAirSegmentResponse = fw.getBeanFactory().getBean('TerminalEntry').sellPassiveAirSegment( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, searchID = rc.searchID)>
+
+					<cfif sellPassiveAirSegmentResponse.error>
+						<cfset arrayAppend( errorMessage, 'Could not sell passive air segment.' )>
+						<cfset errorType = 'TerminalEntry.sellPassiveAirSegment'>
+					</cfif>
+				</cfif>
+
+				<cfif arrayIsEmpty(errorMessage)>
+					<!---
+					Get the profile into the terminal session
+					Command = S*1M98/SHORTS-DOHMEN/CHRISTINE L05
+					--->
+					<cfset local.readPARResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, pcc = rc.Traveler.getBAR()[1].PCC
+																						, bar = rc.Traveler.getBAR()[1].Name
+																						, par = rc.Traveler.getPAR()
+																						, searchID = rc.searchID)>
+
+					<cfif readPARResponse.error>
+						<cfset arrayAppend( errorMessage, 'Could not read profile.' )>
+						<cfset errorType = 'TerminalEntry.readPAR'>
+					</cfif>
+				</cfif>
+
+				<cfif arrayIsEmpty(errorMessage)>
+					<!---
+					Move over profile and TravelScreen
+					Command = MVP/
+					Command = SPE
+					--->
+					<cfset local.moveProfileResponse = fw.getBeanFactory().getBean('TerminalEntry').moveProfile( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, searchID = rc.searchID)>
+
+					<cfif moveProfileResponse.error>
+						<cfset arrayAppend( errorMessage, 'Could not move profile.' )>
+						<cfset errorType = 'TerminalEntry.moveProfile'>
+					</cfif>
+				</cfif>
+
+				<!--- Read through the profile and parse for information --->
+				<cfif arrayIsEmpty(errorMessage)>
+					<!--- Air parsing --->
+					<cfif rc.airSelected AND NOT structKeyExists(session.searches[rc.SearchID].travelers[rc.travelerNumber], 'airProfileParsed')>
+						<!---
+						Display name field
+						Command = *N
+						--->
+						<cfset local.displayNameFieldResponse = fw.getBeanFactory().getBean('TerminalEntry').displayNameField( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displayNameFieldResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display name field.' )>
+							<cfset errorType = 'TerminalEntry.displayNameField'>
+						<cfelse>
+							<!--- Parse names --->
+							<cfset local.parseNameFieldResponse = fw.getBeanFactory().getBean('UserService').parseNames(userNames = displayNameFieldResponse.message)>
+
+							<cfset rc.Traveler.setFirstName(parseNameFieldResponse.firstName) />
+							<cfset rc.Traveler.setMiddleName(parseNameFieldResponse.middleName) />
+							<cfset rc.Traveler.setLastName(parseNameFieldResponse.lastName) />
+						</cfif>
+
+						<!---
+						Display phone and email fields
+						Command = *PP
+						--->
+						<cfset local.displayPhoneFieldResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPhoneField( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displayPhoneFieldResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display phone fields.' )>
+							<cfset errorType = 'TerminalEntry.displayPhoneField'>
+						<cfelse>
+							<!--- Parse phone numbers and email address --->
+							<cfset local.parsePhoneFieldResponse = fw.getBeanFactory().getBean('UserService').parsePhoneNumbers(phoneNumbers = displayPhoneFieldResponse.message)>
+
+							<cfset rc.Traveler.setPhoneNumber(parsePhoneFieldResponse.businessPhone) />
+							<cfset rc.Traveler.setHomePhone(parsePhoneFieldResponse.homePhone) />
+							<cfset rc.Traveler.setWirelessPhone(parsePhoneFieldResponse.cellPhone) />
+							<cfset rc.Traveler.setEmail(parsePhoneFieldResponse.email) />
+						</cfif>
+
+						<!---
+						Display frequent flyer numbers
+						Command = *MP
+						--->
+						<cfset local.displayFFNumbersResponse = fw.getBeanFactory().getBean('TerminalEntry').displayFFNumbers( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displayFFNumbersResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display frequent flyer numbers.' )>
+							<cfset errorType = 'TerminalEntry.displayFFNumbers'>
+						<cfelse>
+							<!--- Parse frequent flyer numbers --->
+							<cfset local.parseFFNumbersResponse = fw.getBeanFactory().getBean('UserService').parseFFNumbers(FFNumbers = displayFFNumbersResponse.message)>
+
+							<cfif isArray(parseFFNumbersResponse) AND arrayLen(parseFFNumbersResponse)>
+								<cfloop array="#parseFFNumbersResponse#" item="local.FFNumber" index="local.FFNumberIndex">
+									<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new() />
+									<cfset rc.LoyaltyProgram.setShortCode(parseFFNumbersResponse[FFNumberIndex].shortCode) />
+									<cfset rc.LoyaltyProgram.setCustType('A') />
+									<cfset rc.LoyaltyProgram.setAcctNum(parseFFNumbersResponse[FFNumberIndex].acctNum) />
+									<cfset arrayAppend(rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram) />
+								</cfloop>
+							</cfif>
+						</cfif>
+
+						<!---
+						Display flight FOP
+						Command = *T
+						--->
+						<cfset local.displayFlightFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayFlightFOP( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displayFlightFOPResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display flight form of payment.' )>
+							<cfset errorType = 'TerminalEntry.displayFlightFOP'>
+						<cfelse>
+							<cfset local.parseFlightFOPResponse = fw.getBeanFactory().getBean('UserService').parseFlightFOP(flightFOP = displayFlightFOPResponse.message)>
+
+							<cfif isArray(parseFlightFOPResponse) AND arrayLen(parseFlightFOPResponse)>
+								<!--- As of 1/28/14, Short's receives only masked credit card numbers from Apollo. For now, displaying these masked numbers to users, but not using them. --->
+								<!--- <cfif isNumeric(parseFlightFOPResponse[1].cardNumber)> --->
+									<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
+
+									<cfset payment.setAirUse(true) />
+									<cfset payment.setHotelUse(false) />
+									<cfset payment.setCarUse(false) />
+									<cfset payment.setBookItUse(true) />
+									<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseFlightFOPResponse[1].cardNumber)) />
+									<cfset payment.setAcctNum4(right(parseFlightFOPResponse[1].cardNumber, 4)) />
+									<cfset local.expirationYear = '20#right(parseFlightFOPResponse[1].cardExpiration, 2)#' />
+									<cfset local.expirationMonth = left(parseFlightFOPResponse[1].cardExpiration, 2) />
+									<cfset local.expirationDay = '01' />
+									<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+									<cfset payment.setBTAID('') />
+									<cfset payment.setFOPID('-1') />
+									<cfset payment.setFOPDescription('Personal Flight Credit Card') />
+									<cfset arrayAppend(rc.traveler.getPayment(), payment) />
+								<!--- </cfif> --->
+							</cfif>
+						</cfif>
+
+						<!---
+						Display seat preference
+						Command = SP*PI
+						--->
+						<!--- SP*PI command used for displaying both seat preference and hotel FOP line number --->
+						<cfset local.displaySeatPreferenceResponse = fw.getBeanFactory().getBean('TerminalEntry').displaySeatPreferenceHotelFOP( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displaySeatPreferenceResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display seat preference.' )>
+							<cfset errorType = 'TerminalEntry.displaySeatPreferenceHotelFOP'>
+						<cfelse>
+							<cfset rc.Traveler.setWindowAisle(fw.getBeanFactory().getBean('UserService').parseWindowAisle(seatPreferences = displaySeatPreferenceResponse.message)) />
+						</cfif>
+
+						<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].airProfileParsed = true />
+					</cfif>
+
+					<!--- Hotel parsing --->
+					<cfif rc.hotelSelected AND NOT structKeyExists(rc.Traveler, 'hotelProfileParsed')>
+						<!---
+						Display hotel loyalty numbers
+						Command = SP*MI/HOTEL
+						--->
+						<cfset local.displayHotelLoyaltyNumbersResponse = fw.getBeanFactory().getBean('TerminalEntry').displayLoyaltyNumbers( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID
+																							, loyaltyType = 'HOTEL')>
+
+						<cfif displayHotelLoyaltyNumbersResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display hotel loyalty numbers.' )>
+							<cfset errorType = 'TerminalEntry.displayLoyaltyNumbers'>
+						<cfelse>
+							<!--- Parse hotel loyalty numbers --->
+							<cfset local.parseHotelLoyaltyNumbersResponse = fw.getBeanFactory().getBean('UserService').parseLoyaltyNumbers(loyaltyNumbers = displayHotelLoyaltyNumbersResponse.message)>
+
+							<cfif isArray(parseHotelLoyaltyNumbersResponse) AND arrayLen(parseHotelLoyaltyNumbersResponse)>
+								<cfloop array="#parseHotelLoyaltyNumbersResponse#" item="local.hotelLoyaltyNumber" index="local.hotelLoyaltyNumberIndex">
+									<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new() />
+									<cfset rc.LoyaltyProgram.setShortCode(parseHotelLoyaltyNumbersResponse[hotelLoyaltyNumberIndex].shortCode) />
+									<cfset rc.LoyaltyProgram.setCustType('H') />
+									<cfset rc.LoyaltyProgram.setAcctNum(parseHotelLoyaltyNumbersResponse[hotelLoyaltyNumberIndex].acctNum) />
+									<cfset arrayAppend(rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram) />
+								</cfloop>
+							</cfif>
+						</cfif>
+
+						<!---
+						Display hotel FOP
+						Command = SP*PI
+						Command = SP*GP
+						--->
+						<!--- SP*PI command used for displaying both seat preference and hotel FOP line number --->
+						<cfset local.displayHotelFOPLineNumberResponse = fw.getBeanFactory().getBean('TerminalEntry').displaySeatPreferenceHotelFOP( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID)>
+
+						<cfif displayHotelFOPLineNumberResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment line number.' )>
+							<cfset errorType = 'TerminalEntry.displaySeatPreferenceHotelFOP'>
+						<cfelse>
+							<cfset local.parseHotelFOPLineNumberResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOPLineNumber(hotelFOP = displayHotelFOPLineNumberResponse.message)>
+							<cfif isNumeric(parseHotelFOPLineNumberResponse)>
+								<cfset local.displayHotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID)>
+
+								<cfif displayHotelFOPResponse.error>
+									<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
+									<cfset errorType = 'TerminalEntry.displayHotelFOP'>
+								<cfelse>
+									<cfset local.parseHotelFOPResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOP(hotelFOP = displayHotelFOPResponse.message
+																									, hotelFOPLineNumber = parseHotelFOPLineNumberResponse)>
+								
+									<cfif isArray(parseHotelFOPResponse) AND arrayLen(parseHotelFOPResponse)>
+										<cfif isNumeric(parseHotelFOPResponse[1].cardNumber)>
+											<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
+
+											<cfset payment.setAirUse(false) />
+											<cfset payment.setHotelUse(true) />
+											<cfset payment.setCarUse(false) />
+											<cfset payment.setBookItUse(true) />
+											<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseHotelFOPResponse[1].cardNumber)) />
+											<cfset payment.setAcctNum4(right(parseHotelFOPResponse[1].cardNumber, 4)) />
+											<cfset local.expirationYear = parseHotelFOPResponse[1].cardExpirationYear />
+											<cfset local.expirationMonth = parseHotelFOPResponse[1].cardExpirationMonth />
+											<cfset local.expirationDay = '01' />
+											<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+											<cfset payment.setBTAID('') />
+											<cfset payment.setFOPID('-1') />
+											<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
+											<cfset arrayAppend(rc.traveler.getPayment(), payment) />											
+										</cfif>
+									</cfif>
+								</cfif>
+							</cfif>
+						</cfif>
+
+						<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].hotelProfileParsed = true />
+					</cfif>
+
+					<!--- Vehicle parsing --->
+					<cfif rc.vehicleSelected AND NOT structKeyExists(rc.Traveler, 'vehicleProfileParsed')>
+						<!---
+						Display car loyalty numbers
+						Command = SP*MI/CAR
+						--->
+						<cfset local.displayCarLoyaltyNumbersResponse = fw.getBeanFactory().getBean('TerminalEntry').displayLoyaltyNumbers( targetBranch = rc.Account.sBranch
+																							, hostToken = hostToken
+																							, searchID = rc.searchID
+																							, loyaltyType = 'CAR')>
+
+						<cfif displayCarLoyaltyNumbersResponse.error>
+							<cfset arrayAppend( errorMessage, 'Could not display car loyalty numbers.' )>
+							<cfset errorType = 'TerminalEntry.displayLoyaltyNumbers'>
+						<cfelse>
+							<!--- Parse car loyalty numbers --->
+							<cfset local.parseCarLoyaltyNumbersResponse = fw.getBeanFactory().getBean('UserService').parseLoyaltyNumbers(loyaltyNumbers = displayCarLoyaltyNumbersResponse.message)>
+
+							<cfif isArray(parseCarLoyaltyNumbersResponse) AND arrayLen(parseCarLoyaltyNumbersResponse)>
+								<cfloop array="#parseCarLoyaltyNumbersResponse#" item="local.carLoyaltyNumber" index="local.carLoyaltyNumberIndex">
+									<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new() />
+									<cfset rc.LoyaltyProgram.setShortCode(parseCarLoyaltyNumbersResponse[carLoyaltyNumberIndex].shortCode) />
+									<cfset rc.LoyaltyProgram.setCustType('C') />
+									<cfset rc.LoyaltyProgram.setAcctNum(parseCarLoyaltyNumbersResponse[carLoyaltyNumberIndex].acctNum) />
+									<cfset arrayAppend(rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram) />
+								</cfloop>
+							</cfif>
+						</cfif>
+
+						<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].vehicleProfileParsed = true />
+					</cfif>
+				</cfif>
+
+				<!--- Ignore the shell PNR --->
+				<cfset fw.getBeanFactory().getBean('TerminalEntry').ignoreShellPNR( targetBranch = rc.Account.sBranch
+																					, hostToken = hostToken
+																					, hostToken = hostToken
+																					, searchID = rc.searchID )>
+
+				<!--- Close terminal session --->
+				<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																					, hostToken = hostToken
+																					, searchID = rc.searchID )>
+
+			</cfif>
 		</cfif>
 		<cfif rc.travelerNumber EQ 1>
 			<cfset rc.Traveler.getBookingDetail().setAirNeeded( (rc.airSelected ? 1 : 0) )>
@@ -113,15 +470,6 @@
 		FORM SELECTED
 		--->
 		<cfif structKeyExists(rc, 'trigger')>
-			<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
-																						, acctID = rc.Filter.getAcctID()
-																						, valueID = rc.Filter.getValueID()
-																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
-			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
-			<cfset rc.Traveler.setBookingDetail( BookingDetail )>
-			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
-			<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
 			<cfparam name="rc.noMiddleName" default="0">
 			<cfparam name="rc.nameChange" default="0">
 			<cfparam name="rc.createProfile" default="0">
@@ -131,11 +479,30 @@
 			<cfparam name="rc.airNeeded" default="0">
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
-			<cfset rc.Traveler.populateFromStruct( rc )>
-			<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
-			<!--- If profile exists and middle name has been changed --->
-			<cfif isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName)>
-				<cfset rc.nameChange = 1 />
+			<cfif internalTMC>
+				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
+																						, acctID = rc.Filter.getAcctID()
+																						, valueID = rc.Filter.getValueID()
+																						, arrangerID = rc.Filter.getUserID()
+																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+				<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+				<cfset rc.Traveler.setBookingDetail( BookingDetail )>
+				<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+				<cfset local.originalFirstName = rc.Traveler.getFirstName() />
+				<cfset local.originalMiddleName = rc.Traveler.getMiddleName() />
+				<cfset local.originalLastName = rc.Traveler.getLastName() />
+				<cfset rc.Traveler.populateFromStruct( rc )>
+				<cfset local.currentFirstName = rc.Traveler.getFirstName() />
+				<cfset local.currentMiddleName = rc.Traveler.getMiddleName() />
+				<cfset local.currentLastName = rc.Traveler.getLastName() />
+				<!--- If profile exists and name has been changed --->
+				<cfif ((isDefined("originalFirstName") AND (currentFirstName NEQ originalFirstName))
+					OR (isDefined("originalMiddleName") AND (currentMiddleName NEQ originalMiddleName))
+					OR (isDefined("originalLastName") AND (currentLastName NEQ originalLastName)))>
+					<cfset rc.nameChange = 1 />
+				</cfif>
+			<cfelse>
+				<cfset rc.Traveler.populateFromStruct( rc )>
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))

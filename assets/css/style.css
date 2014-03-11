@@ -1,6 +1,12 @@
 /* Save and include the following CSS styles on your page. */
 .printbadge {display: none;}
 
+#onbehalfof {
+	color: #999;
+	float: right;
+	font-weight: bold;
+}
+
 .popover-content, .popover-title {
 	text-align: left;
 }

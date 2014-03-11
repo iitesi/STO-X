@@ -5,7 +5,7 @@
 	<cfif rc.airSelected>
 		<div id="airPayment">
 		
-		<div class="control-group">
+		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
 				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>
@@ -92,7 +92,7 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
+			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
 				Flight change/cancellation policy
 			</a>
 		</div>
