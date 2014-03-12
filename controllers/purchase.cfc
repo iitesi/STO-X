@@ -272,7 +272,7 @@
 							<!--- Only contains the last 4 digits --->
 							<cfset local.cardNumber = Traveler.getBookingDetail().getAirCCNumber() />
 
-							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+							<cfset local.initialAirResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -291,7 +291,12 @@
 																										, token = local.token
 																									 )>
 
-							<cfdump var="stop processing" abort>
+							<cfset local.airResponse = '' />
+							<cfif local.initialAirResponse.status_code EQ 200>
+								<cfset local.airResponseTemp = xmlParse(local.initialAirResponse.filecontent) />
+								<cfset local.airResponse = xmlParse(airResponseTemp.xmlRoot.xmlChildren[2].xmlChildren[1].xmlText) />
+							</cfif>
+
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
