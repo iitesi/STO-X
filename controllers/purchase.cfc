@@ -159,7 +159,7 @@
 
 						<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
 						<!--- Do a lowest refundable air price before air create for U6 --->
-						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+						<!--- <cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
 																						, Policy = rc.Policy
 																						, sCabin = Air.Class
@@ -175,7 +175,7 @@
 																					)>
 						<cfif NOT structIsEmpty(refundableTrip) AND NOT structKeyExists(refundableTrip, 'faultMessage')>
 							<cfset Traveler.getBookingDetail().setAirRefundableFare(refundableTrip[structKeyList(refundableTrip)].Total) />
-						</cfif>
+						</cfif> --->
 
 						<!--- Check to see if this is a contracted Southwest flight --->
 						<cfset local.contractedSWFlight = false />
@@ -194,7 +194,7 @@
 						<cfset Traveler.getBookingDetail().setAirLowestPublicFare(Air.total) />
 						<!--- If private fare, do a lowest public air price before air create for U12 --->
 						<!--- If a contracted Southwest flight, do a lowest private air price for U12 --->
-						<cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR contractedSWFlight>
+						<!--- <cfif (Air.privateFare AND Air.platingCarrier IS NOT 'WN') OR contractedSWFlight>
 							<cfset local.faresIndicator = 'PublicFaresOnly' />
 							<cfif contractedSWFlight>
 								<cfset local.faresIndicator = 'PrivateFaresOnly' />
@@ -218,13 +218,13 @@
 							<cfif NOT structIsEmpty(lowestPublicTrip) AND NOT structKeyExists(lowestPublicTrip, 'faultMessage')>
 								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
 							</cfif>
-						</cfif>
+						</cfif> --->
 					</cfif>
 
 					<cfif arrayIsEmpty(errorMessage)>
 
 						<!--- Parse credit card information --->
-						<cfset local.cardNumber = ''>
+						<!--- <cfset local.cardNumber = ''>
 						<cfset local.cardCVV = ''>
 						<cfset local.cardExpiration = ''>
 						<cfset local.cardType = 'VI'>
@@ -257,7 +257,7 @@
 							<cfset cardType = 'DS'>
 						<cfelseif LEFT(cardNumber, 1) EQ 3>
 							<cfset cardType = 'AX'>
-						</cfif>
+						</cfif> --->
 						
 						<cfif hostToken EQ ''>
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
@@ -266,6 +266,12 @@
 							<cfset local.LowestAir = session.searches[rc.searchID].stTrips[session.searches[rc.searchID].stLowFareDetails.aSortFare[1]] />
 
 							<!--- Sell air --->
+							<cfset local.airFOPID = Traveler.getBookingDetail().getAirFOPID() />
+							<cfset local.timestamp = now() />
+							<cfset local.token = hash(rc.Account.sBranch & rc.Account.PCC_Booking & local.airFOPID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
+							<!--- Only contains the last 4 digits --->
+							<cfset local.cardNumber = Traveler.getBookingDetail().getAirCCNumber() />
+
 							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -277,14 +283,15 @@
 																										, Filter = rc.Filter
 																										, statmentInformation = statmentInformation
 																										, udids = udids
-																										, cardNumber = cardNumber
-																										, cardType = cardType
-																										, cardExpiration = cardExpiration
-																										, cardCVV = cardCVV
+																										, cardNumber = local.cardNumber
 																										, profileFound = profileFound
-																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, airFOPID = local.airFOPID
+																										, timestamp = local.timestamp
+																										, token = local.token
 																									 )>
 
+							<cfdump var="stop processing" abort>
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
