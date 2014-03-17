@@ -79,7 +79,7 @@
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
-		<!--- <cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
+		<!--- <cfif listFind('46144,198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
 			<cfset local.internalTMC = false />
 		<cfelse>
 			<cfset local.internalTMC = true />
@@ -298,7 +298,8 @@
 									<cfset payment.setHotelUse(false) />
 									<cfset payment.setCarUse(false) />
 									<cfset payment.setBookItUse(true) />
-									<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseFlightFOPResponse[1].cardNumber)) />
+									<cfset payment.setAcctNum(right(parseFlightFOPResponse[1].cardNumber, 4)) />
+									<!--- <cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseFlightFOPResponse[1].cardNumber)) /> --->
 									<cfset payment.setAcctNum4(right(parseFlightFOPResponse[1].cardNumber, 4)) />
 									<cfset local.expirationYear = '20#right(parseFlightFOPResponse[1].cardExpiration, 2)#' />
 									<cfset local.expirationMonth = left(parseFlightFOPResponse[1].cardExpiration, 2) />
@@ -376,36 +377,41 @@
 						<cfelse>
 							<cfset local.parseHotelFOPLineNumberResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOPLineNumber(hotelFOP = displayHotelFOPLineNumberResponse.message)>
 							<cfif isNumeric(parseHotelFOPLineNumberResponse)>
-								<cfset local.displayHotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, searchID = rc.searchID)>
+								<cfset local.timestamp = now() />
+								<cfset local.token = hash(rc.Account.sBranch & hostToken & rc.searchID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
 
-								<cfif displayHotelFOPResponse.error>
+								<cfset local.hotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( timestamp = local.timestamp
+																									, token = local.token
+																									, targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID
+																									, hotelFOPLineNumber = local.parseHotelFOPLineNumberResponse ) />
+
+								<cfif hotelFOPResponse.error>
 									<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
 									<cfset errorType = 'TerminalEntry.displayHotelFOP'>
 								<cfelse>
-									<cfset local.parseHotelFOPResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOP(hotelFOP = displayHotelFOPResponse.message
-																									, hotelFOPLineNumber = parseHotelFOPLineNumberResponse)>
-								
-									<cfif isArray(parseHotelFOPResponse) AND arrayLen(parseHotelFOPResponse)>
-										<cfif isNumeric(parseHotelFOPResponse[1].cardNumber)>
-											<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
+									<cfset local.hotelFOP = deserializeJSON(hotelFOPResponse.message.filecontent) />
+									<cfif isStruct(local.hotelFOP) AND structKeyExists(local.hotelFOP, "cardNumber") AND isNumeric(local.hotelFOP.cardNumber)>
+										<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
 
-											<cfset payment.setAirUse(false) />
-											<cfset payment.setHotelUse(true) />
-											<cfset payment.setCarUse(false) />
-											<cfset payment.setBookItUse(true) />
-											<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseHotelFOPResponse[1].cardNumber)) />
-											<cfset payment.setAcctNum4(right(parseHotelFOPResponse[1].cardNumber, 4)) />
-											<cfset local.expirationYear = parseHotelFOPResponse[1].cardExpirationYear />
-											<cfset local.expirationMonth = parseHotelFOPResponse[1].cardExpirationMonth />
-											<cfset local.expirationDay = '01' />
-											<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
-											<cfset payment.setBTAID('') />
-											<cfset payment.setFOPID('-1') />
-											<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
-											<cfset arrayAppend(rc.traveler.getPayment(), payment) />											
-										</cfif>
+										<cfset payment.setAirUse(false) />
+										<cfset payment.setHotelUse(true) />
+										<cfset payment.setCarUse(false) />
+										<cfset payment.setBookItUse(true) />
+										<cfset payment.setAcctNum(local.hotelFOP.cardNumber) />
+										<cfset payment.setAcctNum4(local.hotelFOP.cardNumber) />
+										<cfset local.expirationYear = local.hotelFOP.cardExpirationYear />
+										<cfset local.expirationMonth = local.hotelFOP.cardExpirationMonth />
+										<cfset local.expirationDay = '01' />
+										<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+										<cfset payment.setBTAID('') />
+										<cfset payment.setFOPID('-1') />
+										<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
+										<cfset arrayAppend(rc.traveler.getPayment(), payment) />
+									<cfelse>
+										<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
+										<cfset errorType = 'TerminalEntry.displayHotelFOP'>
 									</cfif>
 								</cfif>
 							</cfif>
