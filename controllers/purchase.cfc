@@ -285,7 +285,7 @@
 							</cfif>
 							<cfset local.cardNumber = Traveler.getBookingDetail().getAirCCNumber() />
 
-							<cfset local.initialAirResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -304,21 +304,6 @@
 																										, token = local.token
 																									 )>
 
-							<!--- <cfset session.initialAirResponse = local.initialAirResponse />
-							<cfdump var="#session.initialAirResponse#" label="initialAirResponse">
-							<cfdump var="#session.initialAirResponse.status_code#" label="status_code">
-							<cfdump var="#isXML(session.initialAirResponse.filecontent)#" label="isXML">
-							<cfdump var="#session.initialAirResponse.filecontent#" label="filecontent" abort> --->
-							<cfset local.airResponse = '' />
-							<!--- TODO: Need to check that filecontent contains something --->
-							<cfif local.initialAirResponse.status_code EQ 200>
-								<cfset local.airResponseTemp = xmlParse(session.initialAirResponse.filecontent) />
-								<cfset local.airResponse = xmlParse(airResponseTemp.xmlRoot.xmlChildren[2].xmlChildren[1].xmlText) />
-							<cfelse>
-								<cfset arrayAppend( errorMessage, 'A problem was encountered during purchase. Please contact us to complete your reservation.' )>
-								<cfset errorType = 'Air.airCreate'>
-							</cfif>
-
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
 							<cfset Air.SupplierLocatorCode = ''>
@@ -326,18 +311,14 @@
 							<cfset Air.BookingTravelerSeats = [] />
 
 							<!--- Parse sell results --->
-							<cfif arrayIsEmpty(errorMessage)>
-								<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
+							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )>
-							</cfif>
 
 							<!--- Parse error --->
 							<cfif Air.UniversalLocatorCode EQ ''
 								OR Air.error>
-								<cfif arrayIsEmpty(errorMessage) AND structKeyExists(Air, "messages")>
-									<cfset errorMessage = Air.messages>
-									<cfset errorType = 'Air'>
-								</cfif>
+								<cfset errorMessage = Air.messages>
+								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
 							<cfelse>
@@ -367,7 +348,7 @@
 					<cfset local.timestamp = now() />
 					<cfset local.token = hash(rc.Account.sBranch & rc.Account.PCC_Booking & local.hotelFOPID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
 
-					<cfset local.initialHotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, searchID = rc.searchID
 																										, Traveler = Traveler
@@ -386,33 +367,19 @@
 																										, token = local.token
 																									)>
 
-					<cfset local.hotelResponse = '' />
-					<!--- TODO: Need to check that filecontent contains something --->
-					<cfif local.initialHotelResponse.status_code EQ 200>
-						<cfset local.hotelResponseTemp = xmlParse(local.initialHotelResponse.filecontent) />
-						<cfset local.hotelResponse = xmlParse(hotelResponseTemp.xmlRoot.xmlChildren[2].xmlChildren[1].xmlText) />
-					<cfelse>
-						<cfset arrayAppend( errorMessage, 'A problem was encountered during purchase. Please contact us to complete your reservation.' )>
-						<cfset errorType = 'Hotel.hotelCreate'>
-					</cfif>
-
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
 					<cfset Hotel.setHotelConfirmation('')>
 
 					<!--- Parse sell results --->
-					<cfif arrayIsEmpty(errorMessage)>
-						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																							, response = hotelResponse )>
-					</cfif>
 
 					<!--- Parse error --->
 					<cfif Hotel.getUniversalLocatorCode() EQ ''
 						OR Hotel.getError()>
-						<cfif arrayIsEmpty(errorMessage) AND structKeyExists(Hotel, "messages")>
-							<cfset errorMessage = Hotel.getMessages()>
-							<cfset errorType = 'Hotel'>
-						</cfif>
+						<cfset errorMessage = Hotel.getMessages()>
+						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
 					<cfelse>
 						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
