@@ -399,14 +399,15 @@
 										<cfset payment.setHotelUse(true) />
 										<cfset payment.setCarUse(false) />
 										<cfset payment.setBookItUse(true) />
-										<cfset payment.setAcctNum(local.hotelFOP.cardNumber) />
-										<cfset payment.setAcctNum4(local.hotelFOP.cardNumber) />
+										<cfset payment.setAcctNum(local.hotelFOP.cardNumberRight4) />
+										<cfset payment.setAcctNum4(local.hotelFOP.cardNumberRight4) />
 										<cfset local.expirationYear = local.hotelFOP.cardExpirationYear />
 										<cfset local.expirationMonth = local.hotelFOP.cardExpirationMonth />
 										<cfset local.expirationDay = '01' />
 										<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
 										<cfset payment.setBTAID('') />
 										<cfset payment.setFOPID('-1') />
+										<cfset payment.setPCIID(local.hotelFOP.pciID) />
 										<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
 										<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 									<cfelse>
