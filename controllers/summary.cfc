@@ -3,12 +3,15 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<!--- for testing purposes --->
-		<cfparam name="session.searches[rc.searchID].stItinerary" default="#structNew()#">
-		<!--- <cfdump var="#session.searches[rc.searchID].stItinerary#" abort="true" /> --->
-		<!--- <cfset structDelete(session.searches[rc.SearchID], 'travelers')> --->
-		<!--- for testing purposes --->
+		<!--- If the user entered or removed a new credit card that was processed in secure-sto --->
+		<cfif structKeyExists(rc, 'data')>
+			<!--- Had too many complications with urlEncodedFormat on the way over --->
+			<cfset local.cleanData = replace(rc.data, " ", "+", "ALL") />
+			<cfset fw.getBeanFactory().getBean('Summary').updateTraveler( searchID = rc.searchID
+																		, ccData = local.cleanData ) />
+		</cfif>
 
+		<cfparam name="session.searches[rc.searchID].stItinerary" default="#structNew()#">
 		<cfparam name="rc.travelerNumber" default="1">
 		<cfparam name="rc.remove" default="">
 		<cfparam name="rc.add" default="">
@@ -486,6 +489,10 @@
 			<cfparam name="rc.airNeeded" default="0">
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
+			<!--- Keep track of the fopID's of any new air or hotel cards entered --->
+			<cfset local.originalAirFOPID = rc.Traveler.getBookingDetail().getAirFOPID() />
+			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="1"> --->
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID()
@@ -512,6 +519,14 @@
 				<cfset rc.Traveler.populateFromStruct( rc )>
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
+			<!--- If a new air or hotel credit card was entered, keep the fopID that was returned from the creditCards table --->
+			<cfif rc.Traveler.getBookingDetail().getNewAirCC()>
+				<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
+			</cfif>
+			<cfif rc.Traveler.getBookingDetail().getNewHotelCC()>
+				<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
+			</cfif>
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2"> --->
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
 				AND (structKeyExists(rc, "day") AND len(rc.day))>
@@ -600,6 +615,7 @@
 			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="3" abort> --->
 			<cfset rc.errors = fw.getBeanFactory().getBean('Summary').error( Traveler = rc.Traveler
 																			, Air = rc.Air
 																			, Hotel = rc.Hotel

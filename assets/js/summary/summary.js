@@ -24,6 +24,7 @@ $(document).ready(function(){
 	if (findit == 1 && externalTMC == 1) {
 		var finditOA = 1;
 	}
+	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -418,12 +419,16 @@ $(document).ready(function(){
 		}
 		var showNewCard = 0;
 		if (traveler.bookingDetail.newAirCC == 1) {
-			$( "#newAirCC" ).attr( 'checked', true );
+			$( "#newAirCC" ).val( 1 );
 			showNewCard = 1;
+			$( "#addAirCC" ).hide();
+			$( "#removeAirCC" ).show();
 		}
 		if (traveler.bookingDetail.newHotelCC == 1) {
-			$( "#newHotelCC" ).attr( 'checked', true );
+			$( "#newHotelCC" ).val( 1 );
 			showNewCard = 1;
+			$( "#addHotelCC" ).hide();
+			$( "#removeHotelCC" ).show();
 		}
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
 			$( "#" + typeOfService + "FOPIDDiv" ).hide();
@@ -433,6 +438,8 @@ $(document).ready(function(){
 			$( "#" + typeOfService + "Manual" ).show();
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
+			var displayMonth = $( "#" + typeOfService + "CCMonth" ).val() - 1;
+			$( "#" + typeOfService + "CCMonthDisplay" ).val( monthNames[displayMonth] );
 			$( "#" + typeOfService + "CCYear" ).val( traveler.bookingDetail[typeOfService + 'CCYear'] );
 			$( "#" + typeOfService + "CCCVV" ).val( traveler.bookingDetail[typeOfService + 'CCCVV'] );
 			$( "#" + typeOfService + "BillingName" ).val( traveler.bookingDetail[typeOfService + 'BillingName'] );
@@ -443,7 +450,8 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				// if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				if (traveler.bookingDetail.airNeeded == 'false' || $( "#newAirCC" ).val() == 0) {
 					$( "#copyAirCCDiv" ).hide();
 				}
 				else {
@@ -788,4 +796,22 @@ $( "#purchaseButton" ).on("click", function (e) {
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
 	$( "#purchaseForm" ).submit();
+});
+
+$(".displayPaymentModal").click(function() {
+	var paymentType = $(this).attr("data-paymentType");
+	var oldSrc = $("#addIframe").attr("src");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	$("#addIframe").attr("src", newSrc);
+	$("#displayPaymentWindow").modal('show');
+});
+
+$(".removePaymentModal").click(function() {
+	var paymentType = $(this).attr("data-paymentType");
+	var newFOPID = $(this).attr("data-id");
+	var oldSrc = $("#removeIframe").attr("src");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	newSrc = newSrc + "&fopID=" + newFOPID;
+	$("#removeIframe").attr("src", newSrc);
+	$("#removePaymentWindow").modal('show');
 });

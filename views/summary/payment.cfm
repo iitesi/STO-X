@@ -15,25 +15,40 @@
 		</div>
 
 		<div id="airNewCard" class="control-group">
+			<div id="addAirCC">
+				<label class="control-label" for="addAirCC"><a name="displayPaymentModal" class="change-search displayPaymentModal" data-toggle="modal" data-backdrop="static" data-paymentType="air">Enter New Card</a></label>
+			</div>
+			<div id="removeAirCC" class="hide">
+				<label class="control-label" for="removeAirCC"><a name="removePaymentModal" class="change-search removePaymentModal" data-toggle="modal" data-backdrop="static" data-paymentType="air" data-id="#rc.Traveler.getBookingDetail().getAirFOPID()#">Remove Card</a></label>
+			</div>
+			<input type="hidden" name="newAirCC" id="newAirCC" value="0" />			
+		</div>
+
+		<div>
+			<cfoutput>
+				#view('summary/securepayment')#
+			</cfoutput>
+		</div>
+		<!--- <div id="airNewCard" class="control-group">
 			<label class="control-label" for="newAirCC">Enter New Card</label>
 			<div class="controls newCard">
 				<input type="checkbox" name="newAirCC" id="newAirCC" value="1" />
 			</div>
-		</div>
+		</div> --->
 
 		<div id="airManual" class="hide">
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="airCCNumber">Card Number *</label>
 				<div class="controls">
-					<input type="text" name="airCCNumber" id="airCCNumber" size="20" maxlength="16" autocomplete="off">
+					<input type="text" name="airCCNumber" id="airCCNumber" size="20" maxlength="16" autocomplete="off" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="airCCMonth">Expiration *</label>
 				<div class="controls">
-					<select name="airCCMonth" id="airCCMonth" class="input-medium">
+					<!--- <select name="airCCMonth" id="airCCMonth" class="input-medium">
 						<option value=""></option>
 						<cfloop from="1" to="12" index="m">
 							<option value="#m#">#MonthAsString(m)#</option>
@@ -44,48 +59,52 @@
 						<cfloop from="#Year(Now())#" to="#Year(Now())+20#" index="y">
 							<option value="#y#">#y#</option>
 						</cfloop>
-					</select>
+					</select> --->
+					<input type="hidden" name="airCCMonth" id="airCCMonth" maxlength="4" autocomplete="off" class="input-small">
+					<input type="text" name="airCCMonthDisplay" id="airCCMonthDisplay" maxlength="10" autocomplete="off" class="input-small" readonly>
+					<input type="text" name="airCCYear" id="airCCYear" maxlength="4" autocomplete="off" class="input-small" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
 				<label class="control-label" for="airCCCVV">CVV Security Code *</label>
 				<div class="controls">
-					<input type="text" name="airCCCVV" id="airCCCVV" maxlength="4" autocomplete="off" class="input-small">
+					<input type="text" name="airCCCVV" id="airCCCVV" maxlength="4" autocomplete="off" class="input-small" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
 				<label class="control-label" for="airBillingName">Name on Card *</label>
 				<div class="controls">
-					<input type="text" name="airBillingName" id="airBillingName" maxlength="50">
+					<input type="text" name="airBillingName" id="airBillingName" maxlength="50" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
 				<label class="control-label" for="airBillingAddress">Billing Address *</label>
 				<div class="controls">
-					<input type="text" name="airBillingAddress" id="airBillingAddress" maxlength="50">
+					<input type="text" name="airBillingAddress" id="airBillingAddress" maxlength="50" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
 				<label class="control-label" for="airBillingCity">City *</label>
 				<div class="controls">
-					<input type="text" name="airBillingCity" id="airBillingCity" maxlength="50" class="input-medium">
+					<input type="text" name="airBillingCity" id="airBillingCity" maxlength="50" class="input-medium" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
 				<label class="control-label" for="airBillingState">State, Zip *</label>
 				<div class="controls">
-					<select name="airBillingState" id="airBillingState" class="input-small">
+					<!--- <select name="airBillingState" id="airBillingState" class="input-small">
 						<option value=""></option>
 						<cfloop query="rc.qStates">
 							<option value="#State_Code#">#State_Code#</option>
 						</cfloop>
-					</select>
-					<input type="text" name="airBillingZip" id="airBillingZip" maxlength="15" class="input-small">
+					</select> --->
+					<input type="text" name="airBillingState" id="airBillingState" maxlength="2" class="input-small" readonly>
+					<input type="text" name="airBillingZip" id="airBillingZip" maxlength="15" class="input-small" readonly>
 				</div>
 			</div>
 
@@ -113,11 +132,21 @@
 		</div>
 
 		<div id="hotelNewCard" class="control-group">
+			<div id="addHotelCC">
+				<label class="control-label" for="addHotelCC"><a name="displayPaymentModal" class="change-search displayPaymentModal" data-toggle="modal" data-backdrop="static" data-paymentType="hotel">Enter New Card</a></label>
+			</div>
+			<div id="removeHotelCC" class="hide">
+				<label class="control-label" for="removeHotelCC"><a name="removePaymentModal" class="change-search removePaymentModal" data-toggle="modal" data-backdrop="static" data-paymentType="hotel" data-id="#rc.Traveler.getBookingDetail().getHotelFOPID()#">Remove Card</a></label>
+			</div>
+			<input type="hidden" name="newHotelCC" id="newHotelCC" value="0" />
+		</div>
+
+		<!--- <div id="hotelNewCard" class="control-group">
 			<label class="control-label" for="newHotelCC">Enter New Card</label>
 			<div class="controls newCard">
 				<input type="checkbox" name="newHotelCC" id="newHotelCC" value="1" />
 			</div>
-		</div>
+		</div> --->
 
 		<div id="hotelManual" class="hide">
 
@@ -134,14 +163,14 @@
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCNumber">Card Number *</label>
 				<div class="controls">
-					<input type="text" name="hotelCCNumber" id="hotelCCNumber" size="20" maxlength="16" autocomplete="off">
+					<input type="text" name="hotelCCNumber" id="hotelCCNumber" size="20" maxlength="16" autocomplete="off" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCMonth">Expiration *</label>
 				<div class="controls">
-					<select name="hotelCCMonth" id="hotelCCMonth" class="input-medium">
+					<!--- <select name="hotelCCMonth" id="hotelCCMonth" class="input-medium">
 						<option value=""></option>
 						<cfloop from="1" to="12" index="m">
 							<option value="#m#">#MonthAsString(m)#</option>
@@ -152,14 +181,17 @@
 						<cfloop from="#Year(Now())#" to="#Year(Now())+20#" index="y">
 							<option value="#y#">#y#</option>
 						</cfloop>
-					</select>
+					</select> --->
+					<input type="hidden" name="hotelCCMonth" id="hotelCCMonth" maxlength="4" autocomplete="off" class="input-small">
+					<input type="text" name="hotelCCMonthDisplay" id="hotelCCMonthDisplay" maxlength="10" autocomplete="off" class="input-small" readonly>
+					<input type="text" name="hotelCCYear" id="hotelCCYear" maxlength="4" autocomplete="off" class="input-small" readonly>
 				</div>
 			</div>
 
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
 				<label class="control-label" for="hotelBillingName">Name on Card *</label>
 				<div class="controls">
-					<input type="text" name="hotelBillingName" id="hotelBillingName" size="20" maxlength="50">
+					<input type="text" name="hotelBillingName" id="hotelBillingName" size="20" maxlength="50" readonly>
 				</div>
 			</div>
 
