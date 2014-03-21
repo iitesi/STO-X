@@ -433,9 +433,14 @@ $(document).ready(function(){
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
 			$( "#" + typeOfService + "FOPIDDiv" ).hide();
 			if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
-				$( "#" + typeOfService + "NewCard" ).hide();
-			}			
-			$( "#" + typeOfService + "Manual" ).show();
+				// $( "#" + typeOfService + "NewCard" ).hide();
+			}	
+			if (typeOfService == 'hotel' && showNewCard == 0) {
+				$( "#" + typeOfService + "Manual" ).hide();
+			}
+			else {
+				$( "#" + typeOfService + "Manual" ).show();
+			}
 			$( "#" + typeOfService + "CCName" ).val( traveler.bookingDetail[typeOfService + 'CCName'] );
 			$( "#" + typeOfService + "CCType" ).val( traveler.bookingDetail[typeOfService + 'CCType'] );
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
@@ -460,7 +465,7 @@ $(document).ready(function(){
 				}
 				else {
 					$( "#copyAirCCDiv" ).show();
-					if (traveler.bookingDetail.copyAirCC == 1) {
+					if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
 						$( "#copyAirCC" ).attr( 'checked', true );
 					}
 					else {
@@ -627,11 +632,33 @@ $(document).ready(function(){
 		}
 	})
 
-	$( "#copyAirCC" ).click(function() {
-		$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
-		$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
-		$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
-		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+	$( "#copyAirCC" ).on("click", function () {
+		if ($(this).prop('checked')) {
+			$( "#newHotelCC" ).val( $( "#newAirCC" ).val() );
+			$( "#hotelFOPID" ).val( $( "#airFOPID" ).val() );
+			$( "#hotelCCName" ).val( $( "#airCCName" ).val() );
+			$( "#hotelCCType" ).val( $( "#airCCType" ).val() );
+			$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
+			$( "#hotelCCNumberRight4" ).val( $( "#airCCNumberRight4" ).val() );
+			$( "#hotelCCExpiration" ).val( $( "#airCCExpiration" ).val() );
+			$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
+			$( "#hotelCCMonthDisplay" ).val( $( "#airCCMonthDisplay" ).val() );
+			$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
+			$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+		}
+		else {
+			$( "#newHotelCC" ).val( 0 );
+			$( "#hotelFOPID" ).val( 0 );
+			$( "#hotelCCName" ).val( '' );
+			$( "#hotelCCType" ).val( '' );
+			$( "#hotelCCNumber" ).val( '' );
+			$( "#hotelCCNumberRight4" ).val( '' );
+			$( "#hotelCCExpiration" ).val( '' );
+			$( "#hotelCCMonth" ).val( '' );
+			$( "#hotelCCMonthDisplay" ).val( '' );
+			$( "#hotelCCYear" ).val( '' );
+			$( "#hotelBillingName" ).val( '' );
+		}
 	})
 
 	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number

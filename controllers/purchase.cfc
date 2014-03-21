@@ -349,6 +349,10 @@
 					AND arrayIsEmpty(errorMessage)>
 					<!--- Sell hotel --->
 					<cfset local.hotelFOPID = Traveler.getBookingDetail().getHotelFOPID() />
+					<!--- If the hotel form of payment details were copied from air --->
+					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
+						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
+					</cfif>
 					<cfset local.timestamp = now() />
 					<cfset local.token = hash(rc.Account.sBranch & rc.Account.PCC_Booking & local.hotelFOPID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
 
