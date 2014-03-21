@@ -436,7 +436,11 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "NewCard" ).hide();
 			}			
 			$( "#" + typeOfService + "Manual" ).show();
+			$( "#" + typeOfService + "CCName" ).val( traveler.bookingDetail[typeOfService + 'CCName'] );
+			$( "#" + typeOfService + "CCType" ).val( traveler.bookingDetail[typeOfService + 'CCType'] );
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
+			$( "#" + typeOfService + "CCNumberRight4" ).val( traveler.bookingDetail[typeOfService + 'CCNumberRight4'] );
+			$( "#" + typeOfService + "CCExpiration" ).val( traveler.bookingDetail[typeOfService + 'CCExpiration'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
 			var displayMonth = $( "#" + typeOfService + "CCMonth" ).val() - 1;
 			$( "#" + typeOfService + "CCMonthDisplay" ).val( monthNames[displayMonth] );
@@ -800,7 +804,8 @@ $( "#purchaseButton" ).on("click", function (e) {
 
 $(".displayPaymentModal").click(function() {
 	var paymentType = $(this).attr("data-paymentType");
-	var oldSrc = $("#addIframe").attr("src");
+	var oldSrc = $("#displayFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
 	var newSrc = oldSrc + "&paymentType=" + paymentType;
 	$("#addIframe").attr("src", newSrc);
 	$("#displayPaymentWindow").modal('show');
@@ -809,7 +814,8 @@ $(".displayPaymentModal").click(function() {
 $(".removePaymentModal").click(function() {
 	var paymentType = $(this).attr("data-paymentType");
 	var newFOPID = $(this).attr("data-id");
-	var oldSrc = $("#removeIframe").attr("src");
+	var oldSrc = $("#removeFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
 	var newSrc = oldSrc + "&paymentType=" + paymentType;
 	newSrc = newSrc + "&fopID=" + newFOPID;
 	$("#removeIframe").attr("src", newSrc);

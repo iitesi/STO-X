@@ -492,7 +492,7 @@
 			<!--- Keep track of the fopID's of any new air or hotel cards entered --->
 			<cfset local.originalAirFOPID = rc.Traveler.getBookingDetail().getAirFOPID() />
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="1"> --->
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="1" abort> --->
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID()
@@ -526,7 +526,7 @@
 			<cfif rc.Traveler.getBookingDetail().getNewHotelCC()>
 				<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
 			</cfif>
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2"> --->
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2" abort> --->
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
 				AND (structKeyExists(rc, "day") AND len(rc.day))>

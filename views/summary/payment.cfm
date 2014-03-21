@@ -4,7 +4,7 @@
 
 	<cfif rc.airSelected>
 		<div id="airPayment">
-		
+
 		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
@@ -41,7 +41,10 @@
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="airCCNumber">Card Number *</label>
 				<div class="controls">
+					<input type="hidden" name="airCCName" id="airCCName">
+					<input type="hidden" name="airCCType" id="airCCType">
 					<input type="text" name="airCCNumber" id="airCCNumber" size="20" maxlength="16" autocomplete="off" readonly>
+					<input type="hidden" name="airCCNumberRight4" id="airCCNumberRight4">
 				</div>
 			</div>
 
@@ -60,7 +63,8 @@
 							<option value="#y#">#y#</option>
 						</cfloop>
 					</select> --->
-					<input type="hidden" name="airCCMonth" id="airCCMonth" maxlength="4" autocomplete="off" class="input-small">
+					<input type="hidden" name="airCCExpiration" id="airCCExpiration">
+					<input type="hidden" name="airCCMonth" id="airCCMonth">
 					<input type="text" name="airCCMonthDisplay" id="airCCMonthDisplay" maxlength="10" autocomplete="off" class="input-small" readonly>
 					<input type="text" name="airCCYear" id="airCCYear" maxlength="4" autocomplete="off" class="input-small" readonly>
 				</div>
@@ -163,7 +167,10 @@
 			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCNumber">Card Number *</label>
 				<div class="controls">
+					<input type="hidden" name="hotelCCName" id="hotelCCName">
+					<input type="hidden" name="hotelCCType" id="hotelCCType">
 					<input type="text" name="hotelCCNumber" id="hotelCCNumber" size="20" maxlength="16" autocomplete="off" readonly>
+					<input type="hidden" name="hotelCCNumberRight4" id="hotelCCNumberRight4">
 				</div>
 			</div>
 
@@ -182,7 +189,8 @@
 							<option value="#y#">#y#</option>
 						</cfloop>
 					</select> --->
-					<input type="hidden" name="hotelCCMonth" id="hotelCCMonth" maxlength="4" autocomplete="off" class="input-small">
+					<input type="hidden" name="hotelCCExpiration" id="hotelCCExpiration">
+					<input type="hidden" name="hotelCCMonth" id="hotelCCMonth">
 					<input type="text" name="hotelCCMonthDisplay" id="hotelCCMonthDisplay" maxlength="10" autocomplete="off" class="input-small" readonly>
 					<input type="text" name="hotelCCYear" id="hotelCCYear" maxlength="4" autocomplete="off" class="input-small" readonly>
 				</div>

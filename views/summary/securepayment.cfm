@@ -26,9 +26,10 @@
 			<div class="modal-body">
 				<div id="addModalBody">
 					<cfoutput>
+						<div id="displayFrameAddress" class="hide">#local.displayFrameAddress#</div>
 						<iframe
 							id="addIframe"
-							src="#displayFrameAddress#"
+							src=""
 							width="540"
 							height="382"
 							frameBorder="0"></iframe>
@@ -49,9 +50,10 @@
 			<div class="modal-body">
 				<div id="removeModalBody">
 					<cfoutput>
+						<div id="removeFrameAddress" class="hide">#local.removeFrameAddress#</div>
 						<iframe
 							id="removeIframe"
-							src="#removeFrameAddress#"
+							src=""
 							width="540"
 							height="82"
 							frameBorder="0"></iframe>
