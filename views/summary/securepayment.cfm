@@ -1,13 +1,20 @@
 <cfsilent>
 	<cfset local.timestamp = now() />
-	<cfset local.token = hash(rc.Filter.getUserID() & rc.searchID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
+	<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.timestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.timestamp, 'HH:mm:ss')#" />
+	<cfset local.token = hash(local.string&rc.account.SecurityCode) />
+	<cfif cgi.http_host EQ "r.local">
+		<cfset local.secureURL = "http://" & cgi.http_host />
+	<cfelse>
+		<cfset local.secureURL = "https://" & cgi.http_host />
+	</cfif>
 
-	<cfset local.coreFrameAddress = "http://r.local/secure-sto/index.cfm?action=" />
-	<cfset local.coreFrameParameters = "&searchID=#rc.searchID#" />
+	<cfset local.coreFrameAddress = local.secureURL & "/secure-sto/index.cfm?action=" />
+	<cfset local.coreFrameParameters = "&acctID=#rc.Filter.getAcctID()#" />
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&userID=#rc.Filter.getUserID()#" />
+	<cfset local.coreFrameParameters = local.coreFrameParameters & "&searchID=#rc.searchID#" />
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&travelerNumber=#rc.travelerNumber#" />
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&token=#token#" />
-	<cfset local.coreFrameParameters = local.coreFrameParameters & "&timestamp=#now()#" />
+	<cfset local.coreFrameParameters = local.coreFrameParameters & "&timestamp=#timestamp#" />
 
 	<cfset local.displayFrameAddress = local.coreFrameAddress & "summary.addPayment" & local.coreFrameParameters />
 	<cfset local.stateList = valueList(rc.qStates.State_Code) />

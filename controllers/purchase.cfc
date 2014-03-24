@@ -82,6 +82,10 @@
 					<cfset rc.Account.PCC_Booking = '2B2C'>
 				</cfif>
 
+				<cfset local.timestamp = now() />
+				<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.timestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.timestamp, 'HH:mm:ss')#" />
+				<cfset local.token = hash(local.string&rc.account.SecurityCode) />
+
 				<!--- Open terminal session --->
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
@@ -267,8 +271,6 @@
 
 							<!--- Sell air --->
 							<cfset local.airFOPID = Traveler.getBookingDetail().getAirFOPID() />
-							<cfset local.timestamp = now() />
-							<cfset local.token = hash(rc.Account.sBranch & rc.Account.PCC_Booking & local.airFOPID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
 							<!--- Get last 4 digits of air payment card for U231 --->
 							<cfif NOT len(Traveler.getBookingDetail().getAirCCNumber())>
 								<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
@@ -353,12 +355,9 @@
 					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
 						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
 					</cfif>
-					<cfset local.timestamp = now() />
-					<cfset local.token = hash(rc.Account.sBranch & rc.Account.PCC_Booking & local.hotelFOPID & dateFormat(local.timestamp, 'mm/dd/yyyy') & timeFormat(local.timestamp, "HH:mm:ss")) />
 
 					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
-																										, searchID = rc.searchID
 																										, Traveler = Traveler
 																										, Profile = Profile
 																										, Hotel = Hotel
@@ -613,13 +612,16 @@
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
 																						, OriginalUser = Profile
-																						, Account = rc.Account )>
+																						, Account = rc.Account
+																						, acctID = rc.Filter.getAcctID()
+																						, searchID = rc.searchID )>
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
+																						, Account = rc.Account
 																						, acctID = rc.Filter.getAcctID()
-																						, Account = rc.Account )) />
+																						, searchID = rc.searchID )) />
 					</cfif>
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler

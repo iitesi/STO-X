@@ -2,16 +2,13 @@
 
 	<cfproperty name="BookingDSN" />
 	<cfproperty name="CorporateProductionDSN" />
-	<cfproperty name="EncryptionKey" />
 
 	<cffunction name="init" returntype="any" access="public" output="false">
 		<cfargument name="BookingDSN" type="any" required="true"/>
 		<cfargument name="CorporateProductionDSN" type="any" required="true"/>
-		<cfargument name="EncryptionKey" type="any" required="true"/>
 
 		<cfset setBookingDSN( arguments.BookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
-		<cfset setEncryptionKey( arguments.EncryptionKey ) />
 
 		<cfreturn this />
 	</cffunction>
@@ -541,14 +538,35 @@
 	</cffunction>
 
 	<cffunction name="updateTraveler" output="false">
+        <cfargument name="timestamp" required="true" />
+        <cfargument name="token" required="true" />
+        <cfargument name="acctID" required="true" />
+        <cfargument name="userID" required="true" />
         <cfargument name="searchID" required="true" />
         <cfargument name="ccData" required="true" />
 
         <!--- Tried using urlEncodedFormat in the URL string, but had too many complications --->
 		<!--- <cfset local.unencryptedCCData = decrypt(toString(toBinary(urlDecode(arguments.ccData))), getEncryptionKey()) /> --->
 
-		<cfset local.unencryptedCCData = decrypt(toString(toBinary(arguments.ccData)), getEncryptionKey()) />
-		<cfset local.unencryptedCCData = deserializeJSON(local.unencryptedCCData) />
+		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
+
+		<cfif cgi.http_host EQ "r.local">
+			<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfelse>
+			<cfset local.secureURL = "https://" & cgi.http_host />
+		</cfif>
+
+		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
+		<cfhttp url="#local.secureURL#/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
+			<cfhttpparam type="formfield" name="timestamp" value="#arguments.timestamp#" />
+			<cfhttpparam type="formfield" name="token" value="#arguments.token#" />
+			<cfhttpparam type="formfield" name="acctID" value="#arguments.acctID#" />
+			<cfhttpparam type="formfield" name="userID" value="#arguments.userID#" />
+			<cfhttpparam type="formfield" name="searchID" value="#arguments.searchID#" />
+			<cfhttpparam type="formfield" name="cardData" value="#local.encryptedCCData#" />
+		</cfhttp>
+
+		<cfset local.unencryptedCCData = deserializeJSON(local.response.filecontent) />
 
 		<cfset local.newCC = 1 />
 		<cfif unencryptedCCData.cardType IS 'AX'>
