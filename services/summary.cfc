@@ -557,7 +557,7 @@
 		</cfif>
 
 		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
-		<cfhttp url="#local.secureURL#/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response" timeout="10" throwonerror="true">
+		<cfhttp url="#local.secureURL#/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
 			<cfhttpparam type="formfield" name="datetimestamp" value="#arguments.datetimestamp#" />
 			<cfhttpparam type="formfield" name="token" value="#arguments.token#" />
 			<cfhttpparam type="formfield" name="acctID" value="#arguments.acctID#" />
