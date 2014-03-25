@@ -553,7 +553,7 @@
 		<cfif cgi.http_host EQ "r.local">
 			<cfset local.secureURL = "http://" & cgi.http_host />
 		<cfelse>
-			<cfset local.secureURL = "https://" & cgi.http_host />
+			<cfset local.secureURL = "https://europa.shortstravel.com" />
 		</cfif>
 
 		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
