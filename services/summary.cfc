@@ -566,46 +566,50 @@
 			<cfhttpparam type="formfield" name="cardData" value="#local.encryptedCCData#" />
 		</cfhttp>
 
-		<cfset local.unencryptedCCData = deserializeJSON(local.response.filecontent) />
+		<cfif isJSON(local.response.filecontent)>
+			<cfset local.unencryptedCCData = deserializeJSON(local.response.filecontent) />
+			<cfset local.newCC = 1 />
+			<cfif unencryptedCCData.cardType IS 'AX'>
+				<cfset local.cardNumber = '***********#unencryptedCCData.cardNumberRight4#' />
+			<cfelseif len(unencryptedCCData.cardType)>
+				<cfset local.cardNumber = '************#unencryptedCCData.cardNumberRight4#' />
+			<cfelse>
+				<!--- If a card has been removed --->
+				<cfset local.cardNumber = '' />
+				<cfset local.newCC = 0 />
+			</cfif>
 
-		<cfset local.newCC = 1 />
-		<cfif unencryptedCCData.cardType IS 'AX'>
-			<cfset local.cardNumber = '***********#unencryptedCCData.cardNumberRight4#' />
-		<cfelseif len(unencryptedCCData.cardType)>
-			<cfset local.cardNumber = '************#unencryptedCCData.cardNumberRight4#' />
+			<cfif unencryptedCCData.paymentType IS 'air'>
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewAirCC( local.newCC ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirFOPID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCName( unencryptedCCData.cardName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCType( unencryptedCCData.cardType ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumber( local.cardNumber ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCExpiration( unencryptedCCData.ccExpiration ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCMonth( unencryptedCCData.ccMonth ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCYear( unencryptedCCData.ccYear ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCCVV( unencryptedCCData.ccCVV ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingName( unencryptedCCData.billingName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingAddress( unencryptedCCData.billingAddress ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingCity( unencryptedCCData.billingCity ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingState( unencryptedCCData.billingState ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingZip( unencryptedCCData.billingZip ) />
+			<cfelseif unencryptedCCData.paymentType IS 'hotel'>
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewHotelCC( local.newCC ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelFOPID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCName( unencryptedCCData.cardName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCType( unencryptedCCData.cardType ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumber( local.cardNumber ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCExpiration( unencryptedCCData.ccExpiration ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCMonth( unencryptedCCData.ccMonth ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCYear( unencryptedCCData.ccYear ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelBillingName( unencryptedCCData.billingName ) />
+			</cfif>
 		<cfelse>
-			<!--- If a card has been removed --->
-			<cfset local.cardNumber = '' />
-			<cfset local.newCC = 0 />
-		</cfif>
-
-		<cfif unencryptedCCData.paymentType IS 'air'>
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewAirCC( local.newCC ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirFOPID( unencryptedCCData.pciID ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCName( unencryptedCCData.cardName ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCType( unencryptedCCData.cardType ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumber( local.cardNumber ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCExpiration( unencryptedCCData.ccExpiration ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCMonth( unencryptedCCData.ccMonth ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCYear( unencryptedCCData.ccYear ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCCVV( unencryptedCCData.ccCVV ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingName( unencryptedCCData.billingName ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingAddress( unencryptedCCData.billingAddress ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingCity( unencryptedCCData.billingCity ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingState( unencryptedCCData.billingState ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingZip( unencryptedCCData.billingZip ) />
-		<cfelseif unencryptedCCData.paymentType IS 'hotel'>
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewHotelCC( local.newCC ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelFOPID( unencryptedCCData.pciID ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCName( unencryptedCCData.cardName ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCType( unencryptedCCData.cardType ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumber( local.cardNumber ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCExpiration( unencryptedCCData.ccExpiration ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCMonth( unencryptedCCData.ccMonth ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCYear( unencryptedCCData.ccYear ) />
-			<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelBillingName( unencryptedCCData.billingName ) />
+			<cfdump var="#local.response#" label="local.response">
+			<cfdump var="#arguments#" label="arguments" abort>
 		</cfif>
 
 		<cfreturn />
