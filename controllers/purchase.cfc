@@ -82,8 +82,8 @@
 					<cfset rc.Account.PCC_Booking = '2B2C'>
 				</cfif>
 
-				<cfset local.timestamp = now() />
-				<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.timestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.timestamp, 'HH:mm:ss')#" />
+				<cfset local.datetimestamp = now() />
+				<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.datetimestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.datetimestamp, 'HH:mm:ss')#" />
 				<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 
 				<!--- Open terminal session --->
@@ -309,7 +309,7 @@
 																										, profileFound = profileFound
 																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, airFOPID = local.airFOPID
-																										, timestamp = local.timestamp
+																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									 )>
 
@@ -373,7 +373,7 @@
 																										, profileFound = profileFound
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, hotelFOPID = local.hotelFOPID
-																										, timestamp = local.timestamp
+																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									)>
 

@@ -538,7 +538,7 @@
 	</cffunction>
 
 	<cffunction name="updateTraveler" output="false">
-        <cfargument name="timestamp" required="true" />
+        <cfargument name="datetimestamp" required="true" />
         <cfargument name="token" required="true" />
         <cfargument name="acctID" required="true" />
         <cfargument name="userID" required="true" />
@@ -558,7 +558,7 @@
 
 		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
 		<cfhttp url="#local.secureURL#/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
-			<cfhttpparam type="formfield" name="timestamp" value="#arguments.timestamp#" />
+			<cfhttpparam type="formfield" name="datetimestamp" value="#arguments.datetimestamp#" />
 			<cfhttpparam type="formfield" name="token" value="#arguments.token#" />
 			<cfhttpparam type="formfield" name="acctID" value="#arguments.acctID#" />
 			<cfhttpparam type="formfield" name="userID" value="#arguments.userID#" />

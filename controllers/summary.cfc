@@ -3,15 +3,15 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<cfset local.timestamp = now() />
-		<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.timestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.timestamp, 'HH:mm:ss')#" />
+		<cfset local.datetimestamp = now() />
+		<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.datetimestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.datetimestamp, 'HH:mm:ss')#" />
 		<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 
 		<!--- If the user entered or removed a new credit card that was processed in secure-sto --->
 		<cfif structKeyExists(rc, 'data')>
 			<!--- Had too many complications with urlEncodedFormat on the way over --->
 			<cfset local.cleanData = replace(rc.data, " ", "+", "ALL") />
-			<cfset fw.getBeanFactory().getBean('Summary').updateTraveler( timestamp = local.timestamp
+			<cfset fw.getBeanFactory().getBean('Summary').updateTraveler( datetimestamp = local.datetimestamp
 																		, token = local.token
 																		, acctID = rc.Filter.getAcctID()
 																		, userID = rc.Filter.getUserID()
@@ -388,7 +388,7 @@
 						<cfelse>
 							<cfset local.parseHotelFOPLineNumberResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOPLineNumber(hotelFOP = displayHotelFOPLineNumberResponse.message)>
 							<cfif isNumeric(parseHotelFOPLineNumberResponse)>
-								<cfset local.hotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( timestamp = local.timestamp
+								<cfset local.hotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( datetimestamp = local.datetimestamp
 																									, token = local.token
 																									, targetBranch = rc.Account.sBranch
 																									, hostToken = hostToken
