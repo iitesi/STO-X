@@ -290,13 +290,16 @@
 				, Account_Approval
 				, Account_AllowRequests
 				, RMUs
-				,	RMU_Agent
+				, RMU_Agent
 				, RMU_NonAgent
 				, CBA_AllDepts
 				, Error_Contact
 				, Error_Email
 				, ConfirmationMessage_NotRequired
 				, ConfirmationMessage_Required
+				, (SELECT SecurityCode
+						FROM Corporate_Production.dbo.Accounts
+						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS SecurityCode
 				, (SELECT Air_Card
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card

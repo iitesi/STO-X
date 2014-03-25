@@ -24,6 +24,7 @@ $(document).ready(function(){
 	if (findit == 1 && externalTMC == 1) {
 		var finditOA = 1;
 	}
+	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -399,13 +400,13 @@ $(document).ready(function(){
 					endingIn = ' ending in ' + traveler.payment[i].acctNum4;
 				}
 				if (traveler.payment[i].btaID !== '') {
-					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
 				else if (traveler.payment[i].fopID !== '') {
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
-					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].fopID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
 			}
 		}
@@ -418,21 +419,36 @@ $(document).ready(function(){
 		}
 		var showNewCard = 0;
 		if (traveler.bookingDetail.newAirCC == 1) {
-			$( "#newAirCC" ).attr( 'checked', true );
+			$( "#newAirCC" ).val( 1 );
 			showNewCard = 1;
+			$( "#addAirCC" ).hide();
+			$( "#removeAirCC" ).show();
 		}
 		if (traveler.bookingDetail.newHotelCC == 1) {
-			$( "#newHotelCC" ).attr( 'checked', true );
+			$( "#newHotelCC" ).val( 1 );
 			showNewCard = 1;
+			$( "#addHotelCC" ).hide();
+			$( "#removeHotelCC" ).show();
 		}
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
 			$( "#" + typeOfService + "FOPIDDiv" ).hide();
 			if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
-				$( "#" + typeOfService + "NewCard" ).hide();
-			}			
-			$( "#" + typeOfService + "Manual" ).show();
+				// $( "#" + typeOfService + "NewCard" ).hide();
+			}	
+			if (typeOfService == 'hotel' && showNewCard == 0) {
+				$( "#" + typeOfService + "Manual" ).hide();
+			}
+			else {
+				$( "#" + typeOfService + "Manual" ).show();
+			}
+			$( "#" + typeOfService + "CCName" ).val( traveler.bookingDetail[typeOfService + 'CCName'] );
+			$( "#" + typeOfService + "CCType" ).val( traveler.bookingDetail[typeOfService + 'CCType'] );
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
+			$( "#" + typeOfService + "CCNumberRight4" ).val( traveler.bookingDetail[typeOfService + 'CCNumberRight4'] );
+			$( "#" + typeOfService + "CCExpiration" ).val( traveler.bookingDetail[typeOfService + 'CCExpiration'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
+			var displayMonth = $( "#" + typeOfService + "CCMonth" ).val() - 1;
+			$( "#" + typeOfService + "CCMonthDisplay" ).val( monthNames[displayMonth] );
 			$( "#" + typeOfService + "CCYear" ).val( traveler.bookingDetail[typeOfService + 'CCYear'] );
 			$( "#" + typeOfService + "CCCVV" ).val( traveler.bookingDetail[typeOfService + 'CCCVV'] );
 			$( "#" + typeOfService + "BillingName" ).val( traveler.bookingDetail[typeOfService + 'BillingName'] );
@@ -443,12 +459,13 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				// if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
+				if (traveler.bookingDetail.airNeeded == 'false' || $( "#newAirCC" ).val() == 0) {
 					$( "#copyAirCCDiv" ).hide();
 				}
 				else {
 					$( "#copyAirCCDiv" ).show();
-					if (traveler.bookingDetail.copyAirCC == 1) {
+					if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
 						$( "#copyAirCC" ).attr( 'checked', true );
 					}
 					else {
@@ -615,11 +632,33 @@ $(document).ready(function(){
 		}
 	})
 
-	$( "#copyAirCC" ).click(function() {
-		$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
-		$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
-		$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
-		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+	$( "#copyAirCC" ).on("click", function () {
+		if ($(this).prop('checked')) {
+			$( "#newHotelCC" ).val( $( "#newAirCC" ).val() );
+			$( "#hotelFOPID" ).val( $( "#airFOPID" ).val() );
+			$( "#hotelCCName" ).val( $( "#airCCName" ).val() );
+			$( "#hotelCCType" ).val( $( "#airCCType" ).val() );
+			$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
+			$( "#hotelCCNumberRight4" ).val( $( "#airCCNumberRight4" ).val() );
+			$( "#hotelCCExpiration" ).val( $( "#airCCExpiration" ).val() );
+			$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
+			$( "#hotelCCMonthDisplay" ).val( $( "#airCCMonthDisplay" ).val() );
+			$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
+			$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+		}
+		else {
+			$( "#newHotelCC" ).val( 0 );
+			$( "#hotelFOPID" ).val( 0 );
+			$( "#hotelCCName" ).val( '' );
+			$( "#hotelCCType" ).val( '' );
+			$( "#hotelCCNumber" ).val( '' );
+			$( "#hotelCCNumberRight4" ).val( '' );
+			$( "#hotelCCExpiration" ).val( '' );
+			$( "#hotelCCMonth" ).val( '' );
+			$( "#hotelCCMonthDisplay" ).val( '' );
+			$( "#hotelCCYear" ).val( '' );
+			$( "#hotelBillingName" ).val( '' );
+		}
 	})
 
 	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number
@@ -788,4 +827,24 @@ $( "#purchaseButton" ).on("click", function (e) {
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
 	$( "#purchaseForm" ).submit();
+});
+
+$(".displayPaymentModal").click(function() {
+	var paymentType = $(this).attr("data-paymentType");
+	var oldSrc = $("#displayFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	$("#addIframe").attr("src", newSrc);
+	$("#displayPaymentWindow").modal('show');
+});
+
+$(".removePaymentModal").click(function() {
+	var paymentType = $(this).attr("data-paymentType");
+	var newFOPID = $(this).attr("data-id");
+	var oldSrc = $("#removeFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	newSrc = newSrc + "&fopID=" + newFOPID;
+	$("#removeIframe").attr("src", newSrc);
+	$("#removePaymentWindow").modal('show');
 });
