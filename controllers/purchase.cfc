@@ -379,7 +379,6 @@
 
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
-					<cfset Hotel.setHotelConfirmation('')>
 
 					<!--- Parse sell results --->
 					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
