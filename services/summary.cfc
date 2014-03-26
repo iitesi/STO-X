@@ -336,10 +336,12 @@
 			</cfif>
 
 			<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
-
 				<!--- For LSU (acctID 255) --->
 				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_0' AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1>
-					<cfset local.error.airFOPID = ''>
+					<!--- Exclude SOLA (acctID 254) ghost payment/central bill cards --->
+					<cfif arguments.acctID NEQ 254>
+						<cfset local.error.airFOPID = ''>
+					</cfif>
 				<cfelseif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
 					<!--- Removing isNumeric logic now that new credit card numbers are masked --->
 					<!--- <cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
