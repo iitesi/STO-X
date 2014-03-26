@@ -4,8 +4,10 @@
 	<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 	<cfif cgi.http_host EQ "r.local">
 		<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfset local.returnURL = "http://" & cgi.http_host />
 	<cfelse>
 		<cfset local.secureURL = "https://europa.shortstravel.com" />
+		<cfset local.returnURL = "https://" & cgi.http_host />
 	</cfif>
 
 	<cfset local.coreFrameAddress = local.secureURL & "/secure-sto/index.cfm?action=" />
@@ -15,6 +17,7 @@
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&travelerNumber=#rc.travelerNumber#" />
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&token=#token#" />
 	<cfset local.coreFrameParameters = local.coreFrameParameters & "&datetimestamp=#datetimestamp#" />
+	<cfset local.coreFrameParameters = local.coreFrameParameters & "&returnURL=#returnURL#" />
 
 	<cfset local.displayFrameAddress = local.coreFrameAddress & "summary.addPayment" & local.coreFrameParameters />
 	<cfset local.stateList = valueList(rc.qStates.State_Code) />
