@@ -287,12 +287,8 @@
 										<cfset Traveler.getBookingDetail().setAirCCNumber(Payment.getAcctNum()) />
 									</cfif>
 								</cfloop>
-							<!--- If a masked credit card number --->
-							<cfelseif len(Traveler.getBookingDetail().getAirCCNumber()) GT 4>
-								<cfset local.airCCNumber4 = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
-								<cfset Traveler.getBookingDetail().setAirCCNumber(local.airCCNumber4) />
 							</cfif>
-							<cfset local.cardNumber = Traveler.getBookingDetail().getAirCCNumber() />
+							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
 							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
