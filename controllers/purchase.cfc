@@ -145,8 +145,8 @@
 																							, totalOnly = 0
 																							, bIncludeBookingCodes = 1
 																						)>						
-						<cfif structIsEmpty(trip)>
-							<cfset arrayAppend( errorMessage, 'Could not price record.' )>
+						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
+							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')
 							AND trip[structKeyList(trip)].Total LTE originalAirfare>
