@@ -110,7 +110,7 @@
 	<cfif rc.hotelSelected>
 		<div id="hotelPayment">
 			
-		<div class="control-group">
+		<div class="control-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
 			<div class="controls" id="hotelFOPIDDiv">
 				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
