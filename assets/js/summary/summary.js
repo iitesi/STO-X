@@ -418,24 +418,20 @@ $(document).ready(function(){
 			$( "#" + typeOfService + "FOPID" ).append('<option value="0"></option>')
 		}
 		var showNewCard = 0;
-		if (traveler.bookingDetail.newAirCC == 1) {
-			$( "#newAirCC" ).val( 1 );
+		var capitalizedTypeOfService = typeOfService.charAt(0).toUpperCase() + typeOfService.substring(1);
+		var newCC = "new" + capitalizedTypeOfService + "CC";
+		$( "#new" + capitalizedTypeOfService + "CC" ).val( traveler.bookingDetail[newCC] );
+		if ($( "#new" + capitalizedTypeOfService + "CC" ).val() == 1) {
 			showNewCard = 1;
-			$( "#addAirCC" ).hide();
-			$( "#removeAirCC" ).show();
-		}
-		if (traveler.bookingDetail.newHotelCC == 1) {
-			$( "#newHotelCC" ).val( 1 );
-			showNewCard = 1;
-			$( "#addHotelCC" ).hide();
-			$( "#removeHotelCC" ).show();
+			$( "#add" + capitalizedTypeOfService + "CC" ).hide();
+			$( "#remove" + capitalizedTypeOfService + "CC" ).show();
 		}
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
 			$( "#" + typeOfService + "FOPIDDiv" ).hide();
 			if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
 				// $( "#" + typeOfService + "NewCard" ).hide();
-			}	
-			if (typeOfService == 'hotel' && showNewCard == 0) {
+			}
+			if (showNewCard == 0) {
 				$( "#" + typeOfService + "Manual" ).hide();
 			}
 			else {
