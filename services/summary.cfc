@@ -625,4 +625,28 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="setSummaryFormVariables" access="remote" output="false">
+		<cfset newFormData = {} />
+		<cfloop list="#arguments.formData#" index="ii" delimiters="&">
+			<cfif right(ii, 1) IS "=">
+				<cfset formValue = "" />
+			<cfelse>
+				<cfset formValue = urlDecode(listLast(ii, '=')) />
+			</cfif>
+			<cfset "newFormData.#listFirst(ii, '=')#" = formValue />
+		</cfloop>
+		<cfif (structKeyExists(newFormData, "year") AND len(newFormData.year))
+			AND (structKeyExists(newFormData, "month") AND len(newFormData.month))
+			AND (structKeyExists(newFormData, "day") AND len(newFormData.day))>
+			<cfset newFormData.birthDate = createDate(newFormData.year, newFormData.month, newFormData.day) />
+		<cfelse>
+			<cfset newFormData.birthDate = '' />
+		</cfif>
+
+		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].populateFromStruct( newFormData ) />
+		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getBookingDetail().populateFromStruct( newFormData ) />
+
+		<cfreturn session.searches[newFormData.searchID].travelers[newFormData.travelerNumber] />
+	</cffunction>
+
 </cfcomponent>

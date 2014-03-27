@@ -833,6 +833,15 @@ $( "#purchaseButton" ).on("click", function (e) {
 });
 
 $(".displayPaymentModal").click(function() {
+	var formData = $("#purchaseForm").serialize();
+	$.ajax({
+		type: "POST",
+		url: "/booking/services/summary.cfc",
+		data: {
+			method: "setSummaryFormVariables",
+			formData: formData,
+		}
+	});
 	var paymentType = $(this).attr("data-paymentType");
 	var oldSrc = $("#displayFrameAddress").html();
 	oldSrc = oldSrc.replace(/&amp;/g, "&");
@@ -842,6 +851,15 @@ $(".displayPaymentModal").click(function() {
 });
 
 $(".removePaymentModal").click(function() {
+	var formData = $("#purchaseForm").serialize();
+	$.ajax({
+		type: "POST",
+		url: "/booking/services/summary.cfc",
+		data: {
+			method: "setSummaryFormVariables",
+			formData: formData,
+		}
+	});
 	var paymentType = $(this).attr("data-paymentType");
 	var newFOPID = $(this).attr("data-id");
 	var oldSrc = $("#removeFrameAddress").html();

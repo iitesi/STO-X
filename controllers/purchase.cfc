@@ -5,7 +5,7 @@
 
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
-			
+		
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 			<cfif arrayIsEmpty(errorMessage)
 				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
