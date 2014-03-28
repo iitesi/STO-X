@@ -1,12 +1,12 @@
 <cfcomponent extends="abstract">
 
-	<!--- 12:28 PM Monday, January 13, 2014 - Jim Priest - jpriest@shortstravel.com
-	this query logic really needs to move to service! --->
-
 	<cfset variables.bookingDSN = "booking">
+
+	<!--- Change DSN to DB1 if we are testing Jeff's VB apps
+				otherwise we'll use Zeus
 	<cfif cgi.local_host IS 'RailoQA'>
 		<cfset variables.bookingDSN = "findit">
-	</cfif>
+	</cfif> --->
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
@@ -25,10 +25,10 @@
 		<cfset local.stSelected[1].Groups = structNew("linked")>
 		<cfset local.stSelected[2].Groups = structNew("linked")>
 		<cfset local.stSelected[3].Groups = structNew("linked")>
-		<cfloop from="0" to="#arrayLen(structKeyArray(trip.Groups))-1#" index="local.index">
+		<cfloop from="0" to="#arrayLen(structKeyArray(local.trip.Groups))-1#" index="local.index">
 			<cfset local.stSelected[local.index].Groups[0].segments = structNew("linked")>
-			<cfloop array="#structSort(trip.Groups[local.index].segments, 'text', 'asc', 'departureTime')#" index="local.segmentIndex" item="local.segment">
-				<cfset local.stSelected[local.index].Groups[0].segments[local.segment] = trip.Groups[local.index].segments[local.segment]>
+			<cfloop array="#structSort(local.trip.Groups[local.index].segments, 'text', 'asc', 'departureTime')#" index="local.segmentIndex" item="local.segment">
+				<cfset local.stSelected[local.index].Groups[0].segments[local.segment] = local.trip.Groups[local.index].segments[local.segment]>
 			</cfloop>
 		</cfloop>
 
@@ -42,7 +42,7 @@
 																					, bSaveAirPrice = 0
 																					, stSelected = stSelected
 																					, findIt = 1)>
-<!--- <cfdump var="#pricedTrip#" /><cfabort /> --->
+
 		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
 		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
 
@@ -56,15 +56,12 @@
 		</cfif>
 	</cffunction>
 
-
-
 	<cffunction name="send" output="false">
 		<cfargument name="rc">
 
-		<!--- <cfdump var="#session.searches[rc.searchID].stTrips[rc.nTripID]#" /> --->
-
 		<cfset local.trip = session.searches[rc.searchID].stTrips[rc.nTripID]>
 		<cfset local.flights = ''>
+
 		<cfloop collection="#trip.groups#" index="local.groupIndex" item="local.group">
 			<cfloop collection="#group.segments#" index="local.segmentIndex" item="local.segment">
 				<cfset local.flights = flights&segment.carrier>
@@ -79,6 +76,7 @@
 			</cfloop>
 			<cfset local.flights = left(local.flights, len(local.flights)-1)&'|'>
 		</cfloop>
+
 		<cfset local.flights = left(local.flights, len(local.flights)-1)>
 
 		<cfquery name="local.getUser" datasource="Corporate_Production">
@@ -87,7 +85,7 @@
 			WHERE User_ID = <cfqueryparam value="#rc.Filter.getUserID()#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 
-		<cfquery result="local.dbFindIt" datasource="Booking">
+		<cfquery result="local.dbFindIt" datasource="#variables.bookingDSN#">
 			INSERT INTO FindItRequests
 				(Worked
 				,WorkedBySTO
