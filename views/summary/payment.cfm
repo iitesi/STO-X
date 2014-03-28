@@ -24,12 +24,6 @@
 			<input type="hidden" name="newAirCC" id="newAirCC" value="0" />			
 		</div>
 
-		<div>
-			<cfoutput>
-				#view('summary/securepayment')#
-			</cfoutput>
-		</div>
-
 		<div id="airManual" class="hide">
 
 			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
@@ -219,5 +213,11 @@
 
 		</div>
 	</cfif>
+
+	<div>
+		<cfoutput>
+			#view('summary/securepayment')#
+		</cfoutput>
+	</div>
 
 </cfoutput>
