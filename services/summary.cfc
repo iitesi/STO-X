@@ -635,6 +635,7 @@
 			</cfif>
 			<cfset "newFormData.#listFirst(ii, '=')#" = formValue />
 		</cfloop>
+
 		<cfif (structKeyExists(newFormData, "year") AND len(newFormData.year))
 			AND (structKeyExists(newFormData, "month") AND len(newFormData.month))
 			AND (structKeyExists(newFormData, "day") AND len(newFormData.day))>
@@ -642,6 +643,80 @@
 		<cfelse>
 			<cfset newFormData.birthDate = '' />
 		</cfif>
+
+		<cfset local.inputName = '' />
+		<cfloop array="#session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()#" item="local.orgUnit" index="local.orgUnitIndex">
+			<cfset local.inputName = orgUnit.getOUType() & orgUnit.getOUPosition() />
+			<cfif local.orgunit.getOUFreeform()>
+				<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueReport( newFormData[inputName] ) />
+				<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueDisplay( newFormData[inputName] ) />
+			<cfelse>
+				<cfif structKeyExists(newFormData, inputName)>
+					<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueID( newFormData[inputName] ) />
+				</cfif>
+			</cfif>
+		</cfloop>
+
+		<!--- TODO: Fix the frequent flyer/loyalty numbers at some point. --->
+		<!--- <cfif newFormData.airSelected>
+			<cfset local.carriers = urlDecode(newFormData.carriers) />
+			<cfset carriers = replaceNoCase(carriers, "&quot;", "'", "ALL") />
+			<cfdump var="#carriers#" abort>
+			<cfloop array="#carriers#" item="local.carrier">
+				<cfset local.airFound = false />
+				<cfloop array="#session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram()#" item="local.program" index="local.programIndex">
+					<cfif program.getShortCode() EQ carrier AND program.getCustType() EQ 'A'>
+						<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram()[local.programIndex].setAcctNum( newFormData['airFF#carrier#'] ) />
+						<cfset local.airFound = true />
+					</cfif>
+				</cfloop>
+				<cfif NOT local.airFound>
+					<cfset local.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new() />
+					<cfset local.LoyaltyProgram.setShortCode( carrier ) />
+					<cfset local.LoyaltyProgram.setCustType( 'A' ) />
+					<cfset local.LoyaltyProgram.setAcctNum( newFormData['airFF#carrier#'] ) />
+					<cfset arrayAppend( session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram(), local.LoyaltyProgram ) />
+				</cfif>
+			</cfloop>
+			<cfset local.seats = {} />
+			<cfloop list="#newFormData.seatFieldNames#" index="local.seat">
+				<cfset local.seats[local.seat] = uCase( newFormData[local.seat] ) />
+			</cfloop>
+			<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getBookingDetail().setSeats( local.seats ) />
+		</cfif>
+		<cfif newFormData.hotelSelected OR newFormData.vehicleSelected>
+			<cfset local.hotelFound = false>
+			<cfset local.vehicleFound = false>
+			<cfloop array="#rc.Traveler.getLoyaltyProgram()#" item="local.program" index="local.programIndex">
+				<cfif rc.hotelSelected
+					AND program.getShortCode() EQ rc.Hotel.getChainCode()
+					AND program.getCustType() EQ 'H'>
+					<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc.hotelFF )>
+					<cfset local.hotelFound = true>
+				<cfelseif rc.vehicleSelected
+					AND program.getShortCode() EQ rc.Vehicle.getVendorCode()
+					AND program.getCustType() EQ 'C'>
+					<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc.carFF )>
+					<cfset local.vehicleFound = true>
+				</cfif>
+			</cfloop>
+			<cfif rc.hotelSelected
+				AND NOT local.hotelFound>
+				<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
+				<cfset rc.LoyaltyProgram.setShortCode( rc.Hotel.getChainCode() )>
+				<cfset rc.LoyaltyProgram.setCustType( 'H' )>
+				<cfset rc.LoyaltyProgram.setAcctNum( rc.hotelFF )>
+				<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+			</cfif>
+			<cfif rc.vehicleSelected
+				AND NOT local.vehicleFound>
+				<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
+				<cfset rc.LoyaltyProgram.setShortCode( rc.Vehicle.getVendorCode() )>
+				<cfset rc.LoyaltyProgram.setCustType( 'C' )>
+				<cfset rc.LoyaltyProgram.setAcctNum( rc.carFF )>
+				<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+			</cfif>
+		</cfif> --->
 
 		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].populateFromStruct( newFormData ) />
 		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getBookingDetail().populateFromStruct( newFormData ) />
