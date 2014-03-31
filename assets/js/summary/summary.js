@@ -420,7 +420,9 @@ $(document).ready(function(){
 		var showNewCard = 0;
 		var capitalizedTypeOfService = typeOfService.charAt(0).toUpperCase() + typeOfService.substring(1);
 		var newCC = "new" + capitalizedTypeOfService + "CC";
+		var newCCID = "new" + capitalizedTypeOfService + "CCID";
 		$( "#new" + capitalizedTypeOfService + "CC" ).val( traveler.bookingDetail[newCC] );
+		$( "#new" + capitalizedTypeOfService + "CCID" ).val( traveler.bookingDetail[newCCID] );
 		if ($( "#new" + capitalizedTypeOfService + "CC" ).val() == 1) {
 			showNewCard = 1;
 			$( "#add" + capitalizedTypeOfService + "CC" ).hide();
@@ -455,7 +457,7 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (traveler.bookingDetail.airNeeded == 1 && $( "#newAirCC" ).val() == 1) {
+				if (traveler.bookingDetail.airNeeded == 1 && $( "#newAirCC" ).val() == 1 && $( "#newHotelCC" ).val() != 1) {
 					$( "#hotelManual" ).show();
 					$( "#copyAirCCDiv" ).show();
 					if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
@@ -597,6 +599,7 @@ $(document).ready(function(){
 	$( "#copyAirCC" ).on("click", function () {
 		if ($(this).prop('checked')) {
 			$( "#newHotelCC" ).val( $( "#newAirCC" ).val() );
+			$( "#newHotelCCID" ).val( $( "#newAirCCID" ).val() );
 			$( "#hotelFOPID" ).val( $( "#airFOPID" ).val() );
 			$( "#hotelCCName" ).val( $( "#airCCName" ).val() );
 			$( "#hotelCCType" ).val( $( "#airCCType" ).val() );
@@ -614,6 +617,7 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#newHotelCC" ).val( 0 );
+			$( "#newHotelCCID" ).val( 0 );
 			$( "#hotelFOPID" ).val( 0 );
 			$( "#hotelCCName" ).val( '' );
 			$( "#hotelCCType" ).val( '' );

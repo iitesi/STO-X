@@ -21,7 +21,8 @@
 			<div id="removeAirCC" class="hide">
 				<label class="control-label" for="removeAirCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="air" data-id="#rc.Traveler.getBookingDetail().getAirFOPID()#"></label>
 			</div>
-			<input type="hidden" name="newAirCC" id="newAirCC" value="0" />			
+			<input type="hidden" name="newAirCC" id="newAirCC" />			
+			<input type="hidden" name="newAirCCID" id="newAirCCID" />			
 		</div>
 
 		<div id="airManual" class="hide">
@@ -120,12 +121,13 @@
 			<div id="removeHotelCC" class="hide">
 				<label class="control-label" for="removeHotelCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel" data-id="#rc.Traveler.getBookingDetail().getHotelFOPID()#"></label>
 			</div>
-			<input type="hidden" name="newHotelCC" id="newHotelCC" value="0" />
+			<input type="hidden" name="newHotelCC" id="newHotelCC" />
+			<input type="hidden" name="newHotelCCID" id="newHotelCCID" />			
 		</div>
 
 		<div id="hotelManual" class="hide">
 
-			<div class="control-group #(rc.airSelected EQ 0 ? 'hide' : '')#" id="copyAirCCDiv">
+			<div class="control-group" id="copyAirCCDiv">
 				<label class="control-label" for="copyAirCC"></label>
 				<div class="controls">
 					<label class="copyAirCC">

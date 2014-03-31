@@ -528,10 +528,18 @@
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<!--- If a new air or hotel credit card was entered, keep the fopID that was returned from the creditCards table --->
 			<cfif rc.Traveler.getBookingDetail().getNewAirCC()>
-				<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
+				<cfif len(local.originalAirFOPID) AND local.originalAirFOPID NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
+				<cfelseif rc.Traveler.getBookingDetail().getNewAirCCID() NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setAirFOPID( rc.Traveler.getBookingDetail().getNewAirCCID() ) />
+				</cfif>
 			</cfif>
 			<cfif rc.Traveler.getBookingDetail().getNewHotelCC()>
-				<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
+				<cfif len(local.originalHotelFOPID) AND local.originalHotelFOPID NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
+				<cfelseif rc.Traveler.getBookingDetail().getNewHotelCCID() NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( rc.Traveler.getBookingDetail().getNewHotelCCID() ) />
+				</cfif>
 			</cfif>
 			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2" abort> --->
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
