@@ -30,9 +30,12 @@
 							<!--- If flight --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
 								<cfset airCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getAirCCNumber() />
-								<cfset airCardType = rc.Traveler[travelerIndex].getBookingDetail().getAirCCType() />
-								<cfif airCardType IS "CA">
-									<cfset airCardType = "MC" />
+								<cfset airCardType = "" />
+								<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getAirCCType())>
+									<cfset airCardType = rc.Traveler[travelerIndex].getBookingDetail().getAirCCType() />
+									<cfif airCardType IS "CA">
+										<cfset airCardType = "MC" />
+									</cfif>
 								</cfif>
 								<cfset airCurrency = left(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 3) />
 								<cfset airBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), airCurrency, '') />
@@ -60,9 +63,12 @@
 							<!--- If hotel --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
 								<cfset hotelCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCNumber() />
-								<cfset hotelCardType = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCType() />
-								<cfif hotelCardType IS "CA">
-									<cfset hotelCardType = "MC" />
+								<cfset hotelCardType = "" />
+								<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelCCType())>
+									<cfset hotelCardType = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCType() />
+									<cfif hotelCardType IS "CA">
+										<cfset hotelCardType = "MC" />
+									</cfif>
 								</cfif>
 								<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getTotalForStayCurrency() />
