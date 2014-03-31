@@ -472,6 +472,16 @@ $(document).ready(function(){
 				}
 			}
 		}
+		else if (typeOfService == 'hotel' && $( "#newAirCCID" ).val() != 0 && $( "#newHotelCCID" ).val() == 0) {
+			$( "#hotelManual" ).show();
+			$( "#copyAirCCDiv" ).show();
+			if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
+				$( "#copyAirCC" ).attr( 'checked', true );
+			}
+			else {
+				$( "#copyAirCC" ).attr( 'checked', false );
+			}
+		}
 		else {
 			$( "#" + typeOfService + "Manual" ).hide();
 		}
