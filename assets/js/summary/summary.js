@@ -455,19 +455,18 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				// if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
-				if (traveler.bookingDetail.airNeeded == 'false' || $( "#newAirCC" ).val() == 0) {
-					$( "#copyAirCCDiv" ).hide();
-				}
-				else {
+				if (traveler.bookingDetail.airNeeded == 1 && $( "#newAirCC" ).val() == 1) {
+					$( "#hotelManual" ).show();
 					$( "#copyAirCCDiv" ).show();
 					if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
 						$( "#copyAirCC" ).attr( 'checked', true );
 					}
 					else {
 						$( "#copyAirCC" ).attr( 'checked', false );
-
 					}
+				}
+				else {
+					$( "#copyAirCCDiv" ).hide();
 				}
 			}
 		}
@@ -499,39 +498,6 @@ $(document).ready(function(){
 		}
 		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
 	}
-
-	$(".newCard").on("click", "input[type=checkbox]", function() {
-		var airCard = $("#newAirCC");
-		var hotelCard = $("#newHotelCC");
-		var showAirNewCard = (airCard.attr("checked") == "checked");
-
-		if (this.name == 'newAirCC') {
-			if (this.checked) {
-				$("#airFOPIDDiv").hide();
-				$("#airManual").show();
-				$("#copyAirCCDiv").show();
-			}
-			else {
-				$("#airFOPIDDiv").show();
-				$("#airManual").hide();
-				$("#copyAirCCDiv").hide();
-			}
-		}
-		else if (this.name == 'newHotelCC') {
-			if (this.checked) {
-				$("#hotelFOPIDDiv").hide();
-				$("#hotelManual").show();
-				if (showAirNewCard) {
-					$("#copyAirCCDiv").show();
-				}
-			}
-			else {
-				$("#hotelFOPIDDiv").show();
-				$("#hotelManual").hide();
-				$("#copyAirCCDiv").hide();
-			}
-		}
-	});
 
 	function recalculateTotal() {
 		var total = 0;
