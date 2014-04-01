@@ -318,7 +318,10 @@
 									<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
 									<cfset payment.setBTAID('') />
 									<cfset payment.setFOPID('-1') />
+									<cfset payment.setPCIID(0) />
+									<cfset payment.setFOPCode(parseFlightFOPResponse[1].cardType) />
 									<cfset payment.setFOPDescription('Personal Flight Credit Card') />
+									<cfset payment.setPaymentType('Profile') />
 									<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 								<!--- </cfif> --->
 							</cfif>
@@ -418,7 +421,9 @@
 										<cfset payment.setBTAID('') />
 										<cfset payment.setFOPID('-1') />
 										<cfset payment.setPCIID(local.hotelFOP.pciID) />
+										<cfset payment.setFOPCode(local.hotelFOP.cardType) />
 										<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
+										<cfset payment.setPaymentType('Profile') />
 										<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 									<cfelse>
 										<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>

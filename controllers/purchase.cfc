@@ -330,7 +330,6 @@
 									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_'&Payment.getPCIID())
 								OR (Payment.getFOPID() NEQ ''
 									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
-								<cfdump var="#payment#">
 								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
 								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
 							</cfif>
