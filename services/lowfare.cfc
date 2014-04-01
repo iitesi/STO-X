@@ -279,11 +279,7 @@
 					<cfset thread.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
 																			, Account = arguments.Account)>
 
-					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
-					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
-					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-				<cfelse>
+				<cfelse> <!--- // faultstring found - let's throw an error --->
 
 					<!--- 12:20 PM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
 					Grab faultstring if we are running travelTech report. Please do not remove.
