@@ -100,9 +100,11 @@
 
 		<cfif arguments.Filter.getClassOfService() EQ ''>
 			<cfset local.aCabins = ['X']>
-		<cfelseif Len(arguments.sCabins)> <!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
+		<cfelseif Len(arguments.sCabins)>
+			<!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
 			<cfset local.aCabins = [arguments.sCabins]>
-		<cfelse> <!--- otherwise get the class/cabin passed from the widget --->
+		<cfelse>
+			<!--- otherwise get the class/cabin passed from the widget --->
 			<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
 		</cfif>
 
@@ -120,7 +122,7 @@
 							</cfif>
 							<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 																, sCabin = local.sCabin
-																, bRefundable = bRefundable
+																, bRefundable = local.bRefundable
 																, sPriority = arguments.sPriority
 																, stPricing = arguments.stPricing
 																, Account = arguments.Account
@@ -137,7 +139,7 @@
 							OR local.airline EQ 'WN')>
 						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
-															, bRefundable = bRefundable
+															, bRefundable = local.bRefundable
 															, sPriority = arguments.sPriority
 															, stPricing = arguments.stPricing
 															, Account = arguments.Account
@@ -170,6 +172,7 @@
 			AND structKeyList(stThreads) NEQ ''
 			AND arguments.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(stThreads)#" />
+
 			<cfloop collection="#cfthread#" index="local.i" item="local.thread">
 				<cfif thread.status NEQ 'COMPLETED'
 					AND thread.status NEQ 'RUNNING'
@@ -183,6 +186,12 @@
 				</cfif>
 			</cfloop>
 		</cfif>
+
+		<!--- 12:20 PM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
+					Delete the thread if we are running travelTech report. Please do not remove.
+					this prevents thread name error - http://cfmlblog.adamcameron.me/2013/02/thread-longevity-weirdness.html
+					<cfset structdelete(cfthread,"#structKeyList(stThreads)#")>
+		--->
 
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
@@ -270,11 +279,24 @@
 					<cfset thread.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
 																			, Account = arguments.Account)>
 
-					<!--- Merge all data into the current session structures. 
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>--->
-					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid]
-					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)> --->
+					<!--- Merge all data into the current session structures. --->
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, attributes.stTrips)>
+					<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
+					<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 				<cfelse>
+
+					<!--- 12:20 PM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
+					Grab faultstring if we are running travelTech report. Please do not remove.
+					Comment out the error handling below.
+					<cfset local.faultstring = ''>
+					<cfloop array="#attributes.aResponse#" item="local.faultItem">
+						<cfif faultItem.XMLName EQ 'faultstring'>
+							<cfset local.faultstring = faultItem.xmlText>
+						</cfif>
+					</cfloop>
+					<cfset session.faultString = 'uAPI Faultcode Error: '&local.faultstring>
+					--->
+
 					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 						<cfset local.faultstring = ''>
 						<cfloop array="#attributes.aResponse#" item="local.faultItem">
