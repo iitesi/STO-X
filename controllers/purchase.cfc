@@ -5,7 +5,7 @@
 
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
-		
+
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 			<cfif arrayIsEmpty(errorMessage)
 				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
@@ -236,42 +236,6 @@
 
 					<cfif arrayIsEmpty(errorMessage)>
 
-						<!--- Parse credit card information --->
-						<!--- <cfset local.cardNumber = ''>
-						<cfset local.cardCVV = ''>
-						<cfset local.cardExpiration = ''>
-						<cfset local.cardType = 'VI'>
-						<cfif Traveler.getBookingDetail().getAirFOPID() EQ 0 OR Traveler.getBookingDetail().getNewAirCC() EQ 1>
-							<cfset cardNumber = Traveler.getBookingDetail().getAirCCNumber()>
-							<cfset cardCVV = Traveler.getBookingDetail().getAirCCCVV()>
-							<cfset cardExpiration = Traveler.getBookingDetail().getAirCCYear()&'-'&numberFormat(Traveler.getBookingDetail().getAirCCMonth(), '00')>
-						<cfelse>
-							<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
-								<cfif Payment.getAirUse()
-									AND ((Payment.getBTAID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'bta_'&Payment.getBTAID())
-									OR (Payment.getFOPID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_'&Payment.getFOPID())
-									OR (Payment.getFOPID() NEQ ''
-										AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1'))>
-									<cfset cardNumber = fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getAcctNum() )>
-									<cfif NOT isDate(Payment.getExpireDate())>
-										<cfset Payment.setExpireDate( fw.getBeanFactory().getBean('PaymentService').decryption( Payment.getExpireDate() ) )>
-										<cfset Payment.setExpireDate( createDate( right(Payment.getExpireDate(), 4), left(Payment.getExpireDate(), 2), mid(Payment.getExpireDate(), 3, 2)) )>
-									</cfif>
-									<cfset cardExpiration = dateFormat(Payment.getExpireDate(), 'yyyy-mm')>
-									<cfset Traveler.getBookingDetail().setAirCCNumber(cardNumber) />
-								</cfif>
-							</cfloop>
-						</cfif>
-						<cfif LEFT(cardNumber, 1) EQ 5>
-							<cfset cardType = 'CA'>
-						<cfelseif LEFT(cardNumber, 1) EQ 6>
-							<cfset cardType = 'DS'>
-						<cfelseif LEFT(cardNumber, 1) EQ 3>
-							<cfset cardType = 'AX'>
-						</cfif> --->
-						
 						<cfif hostToken EQ ''>
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 							<cfset errorType = 'TerminalEntry.openSession'>
@@ -280,7 +244,7 @@
 
 							<!--- Sell air --->
 							<cfset local.airFOPID = Traveler.getBookingDetail().getAirFOPID() />
-							<!--- Get last 4 digits of air payment card for U231 --->
+							<!--- Get last 4 digits of air payment card for U231 and card type for confirmation page --->
 							<cfif NOT len(Traveler.getBookingDetail().getAirCCNumber())>
 								<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
 									<cfif Payment.getAirUse()
@@ -291,6 +255,7 @@
 										OR (Payment.getFOPID() NEQ ''
 											AND Traveler.getBookingDetail().getAirFOPID() EQ 'fop_-1'))>
 										<cfset Traveler.getBookingDetail().setAirCCNumber(Payment.getAcctNum()) />
+										<cfset Traveler.getBookingDetail().setAirCCType(Payment.getFopCode()) />
 									</cfif>
 								</cfloop>
 							</cfif>
@@ -359,6 +324,22 @@
 					<!--- If the hotel form of payment details were copied from air --->
 					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
 						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
+					</cfif>
+
+					<!--- Get last 4 digits of hotel payment card and card type for confirmation page --->
+					<cfif NOT len(Traveler.getBookingDetail().getHotelCCNumber())>
+						<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
+							<cfif Payment.getHotelUse()
+								AND ((Payment.getBTAID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'bta_'&Payment.getPCIID())
+								OR (Payment.getFOPID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_'&Payment.getPCIID())
+								OR (Payment.getFOPID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
+								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
+								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
+							</cfif>
+						</cfloop>
 					</cfif>
 
 					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 

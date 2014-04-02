@@ -248,6 +248,15 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 									AND local.airPricingSolution2.XMLAttributes.PrivateFare NEQ ''>
 									<cfset local.bPrivateFare = true>
 								</cfif>
+
+
+							<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
+										fareCalc used for travelTech reporting only. Please do not remove.
+							<cfelseif airPricingSolution2.XMLName EQ 'air:FareCalc'>
+								<cfset local.fareCalc = airPricingSolution2.xmlText>
+							--->
+
+
 							<cfelseif local.airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
 								<cfset local.sClass = (StructKeyExists(local.airPricingSolution2.XMLAttributes, 'CabinClass') ? local.airPricingSolution2.XMLAttributes.CabinClass : 'Economy')>
@@ -289,6 +298,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 							<cfset local.stTrip.connections[local.airPricingSolution.XMLAttributes.SegmentIndex] = true>
 						</cfif>
 						
+						<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
+									fareCalc used for travelTech reporting only! Please do not remove.
+						<cfset local.stTrip.fareCalc = local.fareCalc>
+						--->
+
 					</cfif>
 				</cfloop>
 
@@ -296,20 +310,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
 		</cfloop>
-
-<!--- <cfdump var="#attributes.stTrips#" /> --->
-<!--- <cfloop collection="#local.stTrips#" index="i" item="trip">
-	<cfset segmentnumbers = ''>
-	<cfloop collection="#trip.segments#" index="i" item="segment">
-		<cfset segmentnumbers = listAppend(segmentnumbers, segment.flightnumber)>
-	</cfloop>
-	<cfdump var="#segmentnumbers#" />
-	<cfif segmentnumbers EQ '5266,1561,1761,5473'>
-		<cfdump var="#trip#" />
-		<cfabort />
-	</cfif>
-</cfloop>
-<cfabort /> --->
 
 		<cfreturn  local.stTrips/>
 	</cffunction>

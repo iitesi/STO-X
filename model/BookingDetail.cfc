@@ -50,7 +50,9 @@
 	<cfproperty name="lostSavings" />
 	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
+	<cfproperty name="newAirCCID" />
 	<cfproperty name="newHotelCC" />
+	<cfproperty name="newHotelCCID" />
 	<cfproperty name="password" />
 	<cfproperty name="preTrip" />
 	<cfproperty name="purchaseCompleted" />
@@ -125,7 +127,9 @@
 		<cfset setLostSavings( '' )>
 		<cfset setNameChange( false )>
 		<cfset setNewAirCC( 0 )>
+		<cfset setNewAirCCID( 0 )>
 		<cfset setNewHotelCC( 0 )>
+		<cfset setNewHotelCCID( 0 )>
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
 		<cfset setPurchaseCompleted( false )>
