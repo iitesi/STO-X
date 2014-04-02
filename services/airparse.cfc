@@ -195,6 +195,8 @@
 				<cfset local.nDuration = 0>
 				<cfset local.bPrivateFare = false>
 				<cfset local.tripKey = ''>
+				<cfset local.connections = {}>
+				<cfset local.stopOvers = {}>
 
 				<cfloop array="#local.responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
@@ -279,8 +281,17 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.Ref = local.refundable>
 						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : 0)>
 						<cfset local.stTrip.changePenalty = changePenalty>
+
+					<cfelseif local.airPricingSolution.XMLName EQ 'air:Connection'>
+
+						<cfif NOT structKeyExists(local.airPricingSolution.XMLAttributes, 'StopOver')
+							OR NOT local.airPricingSolution.XMLAttributes.StopOver>
+							<cfset local.stTrip.connections[local.airPricingSolution.XMLAttributes.SegmentIndex] = true>
+						</cfif>
+						
 					</cfif>
 				</cfloop>
+
 				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
