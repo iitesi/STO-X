@@ -547,8 +547,7 @@
 									ProhibitRestrictedFares="false"
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
-									ForceSegmentSelect="false"
-									<cfif arguments.fareType EQ 'PrivateFaresOnly' AND arguments.accountCode NEQ '' AND getToken(arguments.accountCode, 2, ',') NEQ 'WN'>AccountCodeFaresOnly="true"</cfif> >
+									ForceSegmentSelect="false" >
 									<cfif arguments.fareType EQ 'PrivateFaresOnly'
 										AND arguments.accountCode NEQ ''>
 										<air:AccountCodes>
