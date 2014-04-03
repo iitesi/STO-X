@@ -504,7 +504,6 @@
 			<!--- Keep track of the fopID's of any new air or hotel cards entered --->
 			<cfset local.originalAirFOPID = rc.Traveler.getBookingDetail().getAirFOPID() />
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="1" abort> --->
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID()
@@ -532,21 +531,20 @@
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<!--- If a new air or hotel credit card was entered, keep the fopID that was returned from the creditCards table --->
-			<cfif rc.Traveler.getBookingDetail().getNewAirCC()>
+			<cfif rc.Traveler.getBookingDetail().getNewAirCC() EQ 1>
 				<cfif len(local.originalAirFOPID) AND isNumeric(local.originalAirFOPID) AND local.originalAirFOPID NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
 				<cfelseif rc.Traveler.getBookingDetail().getNewAirCCID() NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setAirFOPID( rc.Traveler.getBookingDetail().getNewAirCCID() ) />
 				</cfif>
 			</cfif>
-			<cfif rc.Traveler.getBookingDetail().getNewHotelCC()>
+			<cfif rc.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
 				<cfif len(local.originalHotelFOPID) AND isNumeric(local.originalHotelFOPID) AND local.originalHotelFOPID NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
 				<cfelseif rc.Traveler.getBookingDetail().getNewHotelCCID() NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( rc.Traveler.getBookingDetail().getNewHotelCCID() ) />
 				</cfif>
 			</cfif>
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2" abort> --->
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
 				AND (structKeyExists(rc, "day") AND len(rc.day))>
@@ -635,7 +633,6 @@
 			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="3" abort> --->
 			<cfset rc.errors = fw.getBeanFactory().getBean('Summary').error( Traveler = rc.Traveler
 																			, Air = rc.Air
 																			, Hotel = rc.Hotel
