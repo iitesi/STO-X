@@ -309,11 +309,11 @@
 		<cfset airArgs.findIt = session.filters[ arguments.Search.getSearchId() ].getFindIt() />
 
 		<!--- Don't want to overwrite the air details for the flight originally selected (price may change during this AirPrice call) --->
-		<!--- <cfif airArgs.nCouldYou NEQ 0> --->
+		<cfif airArgs.nCouldYou NEQ 0>
 			<cfset var flight = this.doAirPrice( argumentCollection = airArgs ) />
-		<!--- <cfelse>
+		<cfelse>
 			<cfset var flight = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air />
-		</cfif> --->
+		</cfif>
 
 		<cfif NOT isStruct( flight ) OR structIsEmpty( flight )>
 			<cfset flight = "" />
