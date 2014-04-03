@@ -33,7 +33,7 @@
 				</cfif>
 			<cfelse>
 				<cfset variables.lowfare.selectAir( searchID = rc.searchID
-																		, nTrip = rc.nTrip )>
+													, nTrip = rc.nTrip )>
 				<cfset session.searches[rc.searchID].stCars = {}>
 			</cfif>
 

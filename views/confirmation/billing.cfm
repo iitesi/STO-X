@@ -31,14 +31,11 @@
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
 								<cfset airCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getAirCCNumber() />
 								<cfset airCardType = "" />
-								<cfif left(airCardNumber, 1) EQ 4>
-									<cfset airCardType = "VI" />
-								<cfelseif left(airCardNumber, 1) EQ 5>
-									<cfset airCardType = "MC" />
-								<cfelseif left(airCardNumber, 1) EQ 6>
-									<cfset airCardType = "DS" />
-								<cfelseif left(airCardNumber, 1) EQ 3>
-									<cfset airCardType = "AX" />
+								<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getAirCCType())>
+									<cfset airCardType = rc.Traveler[travelerIndex].getBookingDetail().getAirCCType() />
+									<cfif airCardType IS "CA">
+										<cfset airCardType = "MC" />
+									</cfif>
 								</cfif>
 								<cfset airCurrency = left(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 3) />
 								<cfset airBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getBasePrice(), airCurrency, '') />
@@ -67,14 +64,11 @@
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
 								<cfset hotelCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCNumber() />
 								<cfset hotelCardType = "" />
-								<cfif left(hotelCardNumber, 1) EQ 4>
-									<cfset hotelCardType = "VI" />
-								<cfelseif left(hotelCardNumber, 1) EQ 5>
-									<cfset hotelCardType = "MC" />
-								<cfelseif left(hotelCardNumber, 1) EQ 6>
-									<cfset hotelCardType = "DS" />
-								<cfelseif left(hotelCardNumber, 1) EQ 3>
-									<cfset hotelCardType = "AX" />
+								<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelCCType())>
+									<cfset hotelCardType = rc.Traveler[travelerIndex].getBookingDetail().getHotelCCType() />
+									<cfif hotelCardType IS "CA">
+										<cfset hotelCardType = "MC" />
+									</cfif>
 								</cfif>
 								<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 									<cfset hotelCurrency = rc.Hotel.getRooms()[1].getTotalForStayCurrency() />

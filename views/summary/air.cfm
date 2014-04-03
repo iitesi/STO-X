@@ -78,9 +78,12 @@
 				If the fare is the same
 				--->
 				<cfelseif rc.Air.Total EQ lowestFare>
-
-					<input type="hidden" name="lostSavings" value="C">
-
+					<cfset defaultLostSavingsCode = "C" />
+					<!--- If Peak TMC --->
+					<cfif rc.Account.tmc.getTMCID() EQ 3>
+						<cfset defaultLostSavingsCode = "L" />
+					</cfif>
+					<input type="hidden" name="lostSavings" value="#defaultLostSavingsCode#" />
 				</cfif>
 
 				<!--- State of Texas --->
@@ -187,9 +190,9 @@
 				</span>
 
 				Total including taxes and refunds<br>
-				#(rc.Air.Ref ? 'Refundable' : 'No Refunds')#<br>
+				#(session.searches[rc.SearchID].RequestedRefundable ? 'Refundable' : 'No Refunds')#<br>
 				<span class="blue bold">
-					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(rc.Air.Ref ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
+					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
 						Flight change/cancellation policy
 					</a>
 				</span>

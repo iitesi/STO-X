@@ -11,7 +11,10 @@
 	<cfproperty name="airBillingZip" />
 	<cfproperty name="airCCExpiration" />
 	<cfproperty name="airCCMonth" />
+	<cfproperty name="airCCName" />
 	<cfproperty name="airCCNumber" />
+	<cfproperty name="airCCNumberRight4" />
+	<cfproperty name="airCCType" />
 	<cfproperty name="airCCYear" />
 	<cfproperty name="airCCCVV" />
 	<cfproperty name="airConfirmation" />
@@ -35,7 +38,10 @@
 	<cfproperty name="hotelBillingName" />
 	<cfproperty name="hotelCCExpiration" />
 	<cfproperty name="hotelCCMonth" />
+	<cfproperty name="hotelCCName" />
 	<cfproperty name="hotelCCNumber" />
+	<cfproperty name="hotelCCNumberRight4" />
+	<cfproperty name="hotelCCType" />
 	<cfproperty name="hotelCCYear" />
 	<cfproperty name="hotelConfirmation" />
 	<cfproperty name="hotelFF" />
@@ -44,7 +50,9 @@
 	<cfproperty name="lostSavings" />
 	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
+	<cfproperty name="newAirCCID" />
 	<cfproperty name="newHotelCC" />
+	<cfproperty name="newHotelCCID" />
 	<cfproperty name="password" />
 	<cfproperty name="preTrip" />
 	<cfproperty name="purchaseCompleted" />
@@ -80,7 +88,10 @@
 		<cfset setAirBillingZip( '' )>
 		<cfset setAirCCExpiration( '' )>
 		<cfset setAirCCMonth( '' )>
+		<cfset setAirCCName( '' )>
 		<cfset setAirCCNumber( '' )>
+		<cfset setAirCCNumberRight4( '' )>
+		<cfset setAirCCType( '' )>
 		<cfset setAirCCYear( '' )>
 		<cfset setAirCCCVV( '' )>
 		<cfset setAirConfirmation( '' )>
@@ -104,7 +115,10 @@
 		<cfset setHotelBillingName( '' )>
 		<cfset setHotelCCExpiration( '' )>
 		<cfset setHotelCCMonth( '' )>
+		<cfset setHotelCCName( '' )>
 		<cfset setHotelCCNumber( '' )>
+		<cfset setHotelCCNumberRight4( '' )>
+		<cfset setHotelCCType( '' )>
 		<cfset setHotelCCYear( '' )>
 		<cfset setHotelConfirmation( '' )>
 		<cfset setHotelFF( '' )>
@@ -113,7 +127,9 @@
 		<cfset setLostSavings( '' )>
 		<cfset setNameChange( false )>
 		<cfset setNewAirCC( 0 )>
+		<cfset setNewAirCCID( 0 )>
 		<cfset setNewHotelCC( 0 )>
+		<cfset setNewHotelCCID( 0 )>
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
 		<cfset setPurchaseCompleted( false )>

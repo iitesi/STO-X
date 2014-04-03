@@ -1,13 +1,13 @@
-<cfcomponent output="false" accessors="true">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-	<cfproperty name="UAPI">
+	<cfproperty name="UAPIFactory">
 	<cfproperty name="uAPISchemas">
 
 	<cffunction name="init" output="false" hint="Init method.">
-		<cfargument name="UAPI">
+		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 
-		<cfset setUAPI(arguments.UAPI)>
+		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas(arguments.uAPISchemas)>
 
 		<cfreturn this>
@@ -23,8 +23,8 @@
 		<cfargument name="stAccount" required="false" default="#application.Accounts[session.AcctID]#">
 
 		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.searchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
-		<cfset local.sResponse = UAPI.callUAPI('AirService', local.sMessage, arguments.searchID)>
-		<cfset local.stResponse = UAPI.formatUAPIRsp(local.sResponse)>
+		<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.searchID)>
+		<cfset local.stResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 		<cfset local.stSeats = parseSeats(local.stResponse)>
 
 		<cfreturn local.stSeats />

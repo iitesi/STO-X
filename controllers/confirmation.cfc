@@ -65,7 +65,9 @@
 			<cfif rc.Traveler[local.travelerIndex].getBookingDetail().getAirNeeded()>
 				<cfset arrayAppend(rc.airTravelers, local.travelerIndex) />
 				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode())>
-					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason(rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode()) />
+					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason( fareSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode()																																								
+																																								, acctID = rc.Filter.getAcctID()
+																																								, tmcID = rc.Account.tmc.getTMCID() ) />
 				</cfif>
 			</cfif>
 			<cfif rc.Traveler[local.travelerIndex].getBookingDetail().getHotelNeeded()>

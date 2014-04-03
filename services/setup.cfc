@@ -58,10 +58,6 @@
 		<cfargument name="Append" 	required="false" default="0">
 		<cfargument name="requery" required="false" default="false">
 
-		<!---
-			TODO: The manual query below is redundant and should be removed and this method refactored to use the local.searchFilter object
-			Further, the local.searchFilter object should be renamed to just local.Search
-		--->
 		<cfset local.searchfilter = getSearchService().load( arguments.searchId ) />
 
 		<cfif arguments.SearchID NEQ 0>
@@ -247,7 +243,9 @@
 					"1H7N" = "P1601399",
 					"2B2C" = "P1601396",
 					"176T" = "P1601397",
-					"1AM2" = "P1601398"
+					"1AM2" = "P1601398",
+					"2B7B" = "P1642776",
+					"155O" = "P1647862"
 				}>
 			<!--- <cfelse>
 				<cfset local.Branches = {
@@ -256,7 +254,7 @@
 					"17D8" = "P7003159",
 					"1AM2" = "P7003153",
 					"1CO2" = "P7003175",
-					"1H7M" = "P7003150",
+					"1H7M" = "P7003150",()
 					"1H7N" = "P7003185",
 					"1M98" = "P7003155",
 					"1N32" = "P7003173",
@@ -292,11 +290,16 @@
 				, Account_Approval
 				, Account_AllowRequests
 				, RMUs
-				,	RMU_Agent
+				, RMU_Agent
 				, RMU_NonAgent
 				, CBA_AllDepts
 				, Error_Contact
 				, Error_Email
+				, ConfirmationMessage_NotRequired
+				, ConfirmationMessage_Required
+				, (SELECT SecurityCode
+						FROM Corporate_Production.dbo.Accounts
+						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS SecurityCode
 				, (SELECT Air_Card
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Air_Card
@@ -307,18 +310,19 @@
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfquery name="local.qCouldYou" datasource="#getCorporateProductionDSN()#">
-				SELECT CouldYou
+			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
+				<cfset local.stTemp[local.sCol] = local.qAccount[local.sCol]>
+			</cfloop>
+
+			<cfquery name="local.extendedInfo" datasource="#getCorporateProductionDSN()#">
+				SELECT CouldYou,Account_Brand
 				FROM Accounts
 				WHERE Accounts.Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 					AND Accounts.Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
 
-			<cfloop list="#qAccount.ColumnList#" index="local.sCol">
-				<cfset local.stTemp[local.sCol] = local.qAccount[local.sCol]>
-			</cfloop>
-			<cfset local.stTemp.CouldYou = local.qCouldYou.CouldYou>
-
+			<cfset local.stTemp.CouldYou = local.extendedInfo.CouldYou>
+			<cfset local.stTemp.AccountBrand = local.extendedInfo.Account_Brand>
 			<cfset local.stTemp.sBranch = local.Branches[local.qAccount.PCC_Booking]>
 			<cfset local.stTemp.Air_PF = ListToArray(local.stTemp.Air_PF, '~')>
 
@@ -337,6 +341,15 @@
 				<cfset ArrayAppend(local.stTemp[local.sType], local.qOutOfPolicy.Vendor_ID)>
 			</cfloop>
 
+			<cfquery name="local.qLogo" datasource="#getCorporateProductionDSN()#">
+				SELECT account_logo
+				FROM accounts
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<!--- get logo from corporate_production accounts table --->
+			<cfset local.stTemp.account_logo = local.qLogo.account_logo>
+
 			<cfquery name="local.qPreferred" datasource="#getCorporateProductionDSN()#">
 				SELECT Acct_ID, Vendor_ID, Type
 				FROM Preferred_Vendors
@@ -351,6 +364,23 @@
 				<cfset local.sType = 'aPreferred'&(local.qPreferred.Type EQ 'A' ? 'Air' : (local.qPreferred.Type EQ 'C' ? 'Car' : 'Hotel'))>
 				<cfset ArrayAppend(local.stTemp[local.sType], local.qPreferred.Vendor_ID)>
 			</cfloop>
+
+			<cfquery name="local.qAirITNumbers" datasource="#getCorporateProductionDSN()#">
+				SELECT Carrier, IT_Number
+				FROM Airline_ITNumbers
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<cfset local.stTemp.AirITNumbers = arrayNew(1) />
+
+			<cfif qAirITNumbers.recordCount >
+				<cfloop query="local.qAirITNumbers">
+					<cfset local.airITNumber = structNew() />
+					<cfset local.airITNumber.carrier = local.qAirITNumbers.Carrier />
+					<cfset local.airITNumber.ITNumber = local.qAirITNumbers.IT_Number />
+					<cfset arrayAppend( local.stTemp.AirITNumbers, duplicate( local.airITNumber ) ) />
+				</cfloop>
+			</cfif>
 
 			<cfquery name="local.locations" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimeSpan( 0, 12, 0, 0)#">
 				SELECT Office_ID, Office_Name
@@ -385,16 +415,64 @@
 		<cfif arguments.PolicyID NEQ 0>
 			<!---Lazy loading, adds policies to the application scope as needed.--->
 			<cfquery name="local.qPolicy" datasource="#getCorporateProductionDSN()#">
-			SELECT Policy_ID, Acct_ID, Policy_Include, Policy_Approval, Policy_Window, Policy_AirReasonCode, Policy_AirLostSavings,
-			Policy_AirFirstClass, Policy_AirBusinessClass, Policy_AirLowRule, Policy_AirLowDisp, Policy_AirLowPad,
-			Policy_AirMaxRule, Policy_AirMaxDisp, Policy_AirMaxTotal, Policy_AirPrefRule, Policy_AirPrefDisp, Policy_AirAdvRule,
-			Policy_AirAdvDisp, Policy_AirAdv, Policy_AirRefRule, Policy_AirRefDisp, Policy_AirNonRefRule, Policy_AirNonRefDisp,
-			Policy_FindIt, Policy_FindItDays, Policy_FindItDiff, Policy_FindItFee, Policy_CarReasonCode, Policy_CarMaxRule, Policy_CarMaxDisp,
-			Policy_CarMaxRate, Policy_CarPrefRule, Policy_CarPrefDisp, Policy_CarTypeRule, Policy_CarTypeDisp, Policy_CarOnlyRates,
-			Policy_HotelReasonCode, Policy_HotelMaxRule, Policy_HotelMaxDisp, Policy_HotelMaxRate, Policy_HotelPrefRule, Policy_HotelPrefDisp,
-			Policy_HotelNotBooking, Policy_AirFee, Policy_AirIntFee, Policy_NonAirFee, Policy_SpecialRequestFee, Policy_AgentAirFee,
-			Policy_AgentAirIntFee, Policy_AgentNonAirFee, Policy_ComplexFee, BookIt_MonthFee, BookIt_TransFee, Policy_AllowRequests,
-			Policy_AirApproval, Policy_HotelApproval, Policy_CarApproval
+			SELECT Policy_ID
+			, Acct_ID
+			, Policy_Include
+			, Policy_Approval
+			, Policy_Window
+			, Policy_AirReasonCode
+			, Policy_AirLostSavings
+			,	Policy_AirFirstClass
+			, Policy_AirBusinessClass
+			, Policy_AirLowRule
+			, Policy_AirLowDisp
+			, Policy_AirLowPad
+			,	Policy_AirMaxRule
+			, Policy_AirMaxDisp
+			, Policy_AirMaxTotal
+			, Policy_AirPrefRule
+			, Policy_AirPrefDisp
+			, Policy_AirAdvRule
+			,	Policy_AirAdvDisp
+			, Policy_AirAdv
+			, Policy_AirRefRule
+			, Policy_AirRefDisp
+			, Policy_AirNonRefRule
+			, Policy_AirNonRefDisp
+			,	Policy_FindIt
+			, Policy_FindItDays
+			, Policy_FindItDiff
+			, Policy_FindItFee
+			, Policy_CarReasonCode
+			, Policy_CarMaxRule
+			, Policy_CarMaxDisp
+			, Policy_CarMaxRate
+			, Policy_CarPrefRule
+			, Policy_CarPrefDisp
+			, Policy_CarTypeRule
+			, Policy_CarTypeDisp
+			, Policy_CarOnlyRates
+			, Policy_HotelReasonCode
+			, Policy_HotelMaxRule
+			, Policy_HotelMaxDisp
+			, Policy_HotelMaxRate
+			, Policy_HotelPrefRule
+			, Policy_HotelPrefDisp
+			, Policy_HotelNotBooking
+			, Policy_AirFee
+			, Policy_AirIntFee
+			, Policy_NonAirFee
+			, Policy_SpecialRequestFee
+			, Policy_AgentAirFee
+			, Policy_AgentAirIntFee
+			, Policy_AgentNonAirFee
+			, Policy_ComplexFee
+			, BookIt_MonthFee
+			, BookIt_TransFee
+			, Policy_AllowRequests
+			, Policy_AirApproval
+			, Policy_HotelApproval
+			, Policy_CarApproval
 			FROM Account_Policies
 			WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 			AND Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
@@ -407,6 +485,7 @@
 
 			<cfquery name="local.qPreferredCarSizes" datasource="#getCorporateProductionDSN()#">
 				SELECT Car_Size
+
 					, Policy_ID
 				FROM Policy_CarSizes
 				WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">

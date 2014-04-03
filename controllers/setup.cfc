@@ -5,6 +5,8 @@ setApplication
 --->
 	<cffunction name="setApplication" output="false" returntype="void">
 
+		<cfset application.Accounts = structNew() />
+
 		<cfif NOT StructKeyExists(application, 'sServerURL') OR application.sServerURL EQ ''>
 			<cfset variables.bf.getBean("setup").setServerURL(argumentcollection=arguments.rc)>
 		</cfif>
@@ -88,29 +90,47 @@ setApplication
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
 		<cfelse>
-			<cfset rc.Account = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc)>
+			<cfset application.Accounts[arguments.rc.AcctID] = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
+			<cfset application.Accounts[arguments.rc.AcctID].TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[arguments.rc.AcctID].AccountBrand ) />
+			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
+			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setTMC" output="false">
+		<cfargument name="rc">
+
+		<!---Move the Account into the rc scope so it is always available.--->
+		<cfif NOT StructKeyExists(session, 'TMC') OR NOT isobject(session.TMC )>
+			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="setPolicyID" output="false">
-		<cfargument name="rc">
-
 		<cfset rc.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
-
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="setPolicy" output="false">
 		<cfargument name="rc">
 
-		<!---Move the Policy into the rc scope so it is always available.--->
-		<cfif StructKeyExists(application, 'Policies') AND StructKeyExists(application.Policies, rc.PolicyID)>
+		<!--- doublecheck the policyID is set --->
+		<cfif NOT structKeyExists(rc, "policyID")>
+			<cfset rc.policyID = arguments.rc.filter.getPolicyID()>
+		</cfif>
+
+		<!---	Move the Policy into the rc scope so it is always available.
+					Lazy loading, adds policies to the application scope as needed.--->
+		<cfif StructKeyExists(application, 'Policies')
+			AND structKeyExists(arguments.rc, 'PolicyID')
+			AND StructKeyExists(application.Policies, rc.PolicyID)>
 			<cfset rc.Policy = application.Policies[rc.PolicyID]>
-		<!---Lazy loading, adds policies to the application scope as needed.--->
 		<cfelse>
-			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy(argumentcollection=arguments.rc)>
+			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
 		</cfif>
 
 		<cfreturn />

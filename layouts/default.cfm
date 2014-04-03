@@ -1,3 +1,7 @@
+<cfsilent>
+	<cfparam name="session.userID" default="" />
+</cfsilent>
+
 <cfif cgi.SCRIPT_NAME DOES NOT CONTAIN '.cfc'>
 	<!DOCTYPE html>
 	<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -28,16 +32,25 @@
 			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
+
+			<!--- override header colors for TMC so their light logos will display properly --->
+			<cfif rc.account.tmc.getIsExternal() EQ 1>
 				<style type="text/css">
-					body {
-						background-color: ###rc.filter.getBodyColor()#;
-					}
-					##main-header, ##header-top {
-						background-color: ###rc.filter.getHeaderColor()#;
-					}
+					##main-header {background-color: ##292929}
+					##header-top {background-color: ##F1F1F1}
+					##main-nav ul li.active, ##main-nav ul li:hover {background-color: ##555}
 				</style>
 			</cfif>
+
+			<!--- overried header colors if getPassthrough is sent from widget - usually for other shorts accounts
+				These can be set in account config and passed on URL from widget	--->
+			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
+				<style type="text/css">
+					body {background-color: ###rc.filter.getBodyColor()#;}
+					##main-header, ##header-top {background-color: ###rc.filter.getHeaderColor()#;}
+				</style>
+			</cfif>
+
 			<!--[if lt IE 9]>
 						<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
@@ -48,53 +61,75 @@
 			<script src="#application.assetURL#/js/booking.js"></script>
 		</cfoutput>
 	</head>
-
-	<cfsilent>
-		<cfparam name="session.userID" default="" />
-	</cfsilent>
 	<body>
 		<div id="main-wrapper" class="wide">
 			<header id="main-header">
+
+
 				<div id="header-top">
 					<div class="container">
 						<div class="sixteen columns">
-							<div id="logo-container">
-								<div id="logo-center"><!---logo here--->
-									<cfoutput>
-										<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
-											<a href="#rc.filter.getSiteUrl()#" title="Home">
-										<cfelse>
-											<a href="#application.sPortalURL#" title="Home">
-										</cfif>
-										<cfif structKeyExists(rc, "account")
-											AND isStruct(rc.account)
-											AND NOT structIsEmpty(rc.account)
-											AND rc.account.acct_ID NEQ 1
-											AND len(trim(rc.account.logo))
-											AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.logo)#")>
-												<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.logo#" alt="#rc.account.account_name#" />
-										<cfelse>
-											<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
-										</cfif>
+							<cfoutput>
+
+
+							<cfif rc.account.tmc.getIsExternal() EQ 1>
+
+								<div id="logo-container">
+									<div id="header">
+										<a href="#application.sPortalURL#" title="Home">
+											<img src="assets/img/logos/findit-logo.png" alt="FindIt" class="pull-left">
 										</a>
-									</cfoutput>
-								</div>
-							</div>
-							<cfoutput>#View('main/navigation')#</cfoutput>
-						</div>
-						<cfif structKeyExists(rc, 'filter')
-							AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
-							<div style="color:#999;float:right;font-weight:bold">
-								Booking on behalf of
-								<cfif rc.Filter.getProfileID() NEQ 0>
-									<cfoutput>#rc.Filter.getProfileUsername()#</cfoutput>
+										<div id="headerContent">
+											<cfif structKeyExists(rc, "account")
+												AND isStruct(rc.account)
+												AND NOT structIsEmpty(rc.account)
+												AND rc.account.acct_ID NEQ 1
+												AND len(trim(rc.account.account_logo))
+												AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
+												<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#" class="pull-right" />
+											</cfif>
+										</div>
+									</div>
+								</div> <!--- // logo-container --->
+
+							<cfelse>
+
+								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
+									<a href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
-									Guest Traveler
+									<a href="#application.sPortalURL#" title="Home">
 								</cfif>
-							</div>
-						</cfif>
-					</div>
-				</div>
+									<cfif structKeyExists(rc, "account")
+										AND isStruct(rc.account)
+										AND NOT structIsEmpty(rc.account)
+										AND rc.account.acct_ID NEQ 1
+										AND len(trim(rc.account.account_logo))
+										AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
+										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
+									<cfelse>
+										<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
+									</cfif>
+								</a>
+
+							</cfif>
+
+							#View('main/navigation')#
+
+							</cfoutput>
+						</div> <!--- // sixteen columns --->
+							<cfif structKeyExists(rc, 'filter')
+								AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
+								<div id="onbehalfof">
+									Booking on behalf of
+									<cfif rc.Filter.getProfileID() NEQ 0>
+										<cfoutput>#rc.Filter.getProfileUsername()#</cfoutput>
+									<cfelse>
+										Guest Traveler
+									</cfif>
+								</div>
+							</cfif>
+					</div> <!--- // container --->
+				</div> <!--- // header-top --->
 
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
@@ -105,14 +140,14 @@
 								<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#cookie.token#&date=#cookie.date#' />
 							</cfif>
 
-						<!--- button to open search in modal window --->
+							<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
 								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="icon-search"></i></a>
 								</cfoutput>
 							</div>
 							<cfoutput>#View('modal/search')#</cfoutput>
-						<!--- // end modal window --->
+							<!--- // end modal window --->
 
 							<div class="fifteen columns">
 								<cfoutput>#View('air/breadcrumbs')#</cfoutput>
@@ -198,11 +233,3 @@
 	</body>
 	</html>
 </cfif>
-
-<!--- uncomment for debugging
-<cfif IsLocalHost(cgi.local_addr)>
-	<cfdump var="#application#" expand="false">
-	<cfdump var="#session.searches[rc.SearchID]#" expand="false">
-	<cfdump var="#session.filters#" expand="false">
-</cfif>
---->
