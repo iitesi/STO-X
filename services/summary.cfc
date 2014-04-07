@@ -256,6 +256,9 @@
 		<cfif arguments.Traveler.getGender() EQ ''>
 			<cfset local.error.gender = ''>
 		</cfif>
+		<cfif arguments.Traveler.getTravelNumber() NEQ '' AND arguments.Traveler.getTravelNumberType() EQ ''>
+			<cfset local.error.travelNumber = ''>
+		</cfif>
 
 		<!--- If a guest traveler has checked the checkbox to create a new profile --->
 		<cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>

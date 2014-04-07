@@ -192,6 +192,9 @@ $(document).ready(function(){
 		$( "#day" ).val( birthdate.getUTCDate() );
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
+		$( "#redress" ).val( traveler.redress );
+		$( "#travelNumber" ).val( traveler.travelNumber );
+		$( "#travelNumberType" ).val( traveler.travelNumberType );
 
 		// If an unregistered FindIt guest
 		if (findit == 1 && $("#userID").val() == 0) {
