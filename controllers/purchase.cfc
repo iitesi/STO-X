@@ -152,17 +152,11 @@
 							AND trip[structKeyList(trip)].Total LTE originalAirfare>
 							<cfset local.nTrip = Air.nTrip>
 							<cfset local.aPolicies = Air.aPolicies>
-							<cfif structKeyExists(Air, 'connections')>
-								<cfset local.connections = Air.connections>
-							</cfif>
 							<cfset local.policy = Air.policy>
 							<cfset Air = trip[structKeyList(trip)]>
 							<cfset Air.nTrip = nTrip>
 							<cfset Air.aPolicies = aPolicies>
 							<cfset Air.policy = policy>
-							<cfif structKeyExists(local, 'connections')>
-								<cfset Air.connections = local.connections>
-							</cfif>
 						<cfelse>
 							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
 							<cfset errorType = 'Air.airPrice'>

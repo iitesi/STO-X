@@ -195,7 +195,6 @@
 				<cfset local.nDuration = 0>
 				<cfset local.bPrivateFare = false>
 				<cfset local.tripKey = ''>
-				<cfset local.connections = {}>
 				<cfset local.stopOvers = {}>
 
 				<cfloop array="#local.responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
@@ -291,12 +290,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : 0)>
 						<cfset local.stTrip.changePenalty = changePenalty>
 
-					<cfelseif local.airPricingSolution.XMLName EQ 'air:Connection'>
+					<!--- <cfelseif local.airPricingSolution.XMLName EQ 'air:Connection'>
 
 						<cfif NOT structKeyExists(local.airPricingSolution.XMLAttributes, 'StopOver')
 							OR NOT local.airPricingSolution.XMLAttributes.StopOver>
 							<cfset local.stTrip.connections[local.airPricingSolution.XMLAttributes.SegmentIndex] = true>
-						</cfif>
+						</cfif> --->
 						
 						<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
 									fareCalc used for travelTech reporting only! Please do not remove.
