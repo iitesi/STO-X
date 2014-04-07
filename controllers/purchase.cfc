@@ -278,7 +278,18 @@
 							<cfset Air.UniversalLocatorCode = ''>
 							<cfset Air.SupplierLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
+							<cfset Air.PricingInfoKey = ''>
 							<cfset Air.BookingTravelerSeats = [] />
+
+							<cfset Air.AirITNumber = '' />
+							<!--- Add the plating carrier's air IT number, if one exists for this account --->
+							<cfif structKeyExists(rc.Account, 'AirITNumbers') AND arrayLen(rc.Account.AirITNumbers)>
+								<cfloop array="#rc.Account.AirITNumbers#" index="local.numberIndex" item="local.number">
+									<cfif number.carrier EQ Air.PlatingCarrier>
+										<cfset Air.AirITNumber = number.ITNumber />
+									</cfif>
+								</cfloop>
+							</cfif>
 
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
