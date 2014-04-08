@@ -70,11 +70,10 @@ $(document).ready(function(){
 		$('.spinner').show();
 
 		// reset time sliders
-		$(".slider-range0").slider("values", [0, 1440]);
-		$(".slider-range1").slider("values", [0, 1440]);
-
-
-
+		$(".takeoff-range0").slider("values", [0, 1440]);
+		$(".takeoff-range1").slider("values", [0, 1440]);
+		$(".landing-range0").slider("values", [0, 1440]);
+		$(".landing-range1").slider("values", [0, 1440]);
 
 		// reset sorting and filters
 		sortAir( sortbyprice );
