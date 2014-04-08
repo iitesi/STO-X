@@ -2,138 +2,185 @@
 // Air Time Sliders
 // ===============================================
 // Dependencies
-// 	* jQuery UI Sliders : http://jqueryui.com/
-// 	* Moment.js for handling times : http://momentjs.com/
+// 	* jQuery UI - Sliders : http://jqueryui.com/
+// 	* Moment.js - For handling times : http://momentjs.com/
+//  * Underscore.js - For just making things easier : http://underscorejs.org/
 // ===============================================
-
-// TODO
-// ===============================================
-// see code in badge.cfm to populate the data-attributes for each badge with the min/max times for that badge
-// that logic needs to be moved 'up' earlier in process (airParse) so we can grab min/max times here in JS
-// grab the  min/max times from badge range so we can set in slider below
-// this would be dynamically populated
-// var mintime = 330;
-// var maxtime = 1173;
-
-
-// Useful Resources for Sliders
-// ===============================================
-// plugins
-// http://isotope.metafizzy.co/docs/filtering.html
-// http://tinysort.sjeiti.com/
-// http://stackoverflow.com/questions/2558893/jquery-select-elements-with-value-between-x-and-y
-
-// ding ding
-// http://stackoverflow.com/questions/8880336/how-to-select-an-li-with-jquery-using-multiple-data-attributes-and-multiple-logi
-// http://stackoverflow.com/questions/15912599/javascript-select-elements-with-data-value-in-range-of-x-and-y
-
-
-//	http://www.jquery4u.com/data-manipulation/jquery-filter-objects-data-attribute/
-// 	https://github.com/layervault/jquery.data.filter/blob/master/src/jquery.data.filter.js
-
-// 	http://stanford.wikia.com/wiki/Kayak.com_Time_Slider
-// 	http://stackoverflow.com/questions/4764844/how-do-i-show-hide-elements-using-jquery-when-there-are-two-intersecting-princip
-// 	http://jsfiddle.net/danieltulp/gz5gN/42/
-// 	http://jsfiddle.net/bZmJ8/11/
-//
-// 	http://jsfiddle.net/jrweinb/MQ6VT/
-// 	http://stackoverflow.com/questions/18095439/jquery-ui-slider-using-time-as-range-not-timeline-js-fixed-width
-// 	http://marcneuwirth.com/blog/2010/02/21/using-a-jquery-ui-slider-to-select-a-time-range/
-// 	http://marcneuwirth.com/blog/2011/05/22/revisiting-the-jquery-ui-time-slider/
-// 	http://stackoverflow.com/questions/1425913/show-hide-div-based-on-value-of-jquery-ui-slider
-// 	http://stackoverflow.com/questions/10213678/jquery-ui-slider-ajax-result
-// 	http://ghusse.github.io/jQRangeSlider/documentation.html#zoomMethods
-// 	http://momentjs.com/docs/
-// 	using data-attributes - give each badge a data-takeoff data-landing attribute to use for filtering
-// 	http://stackoverflow.com/questions/15582349/modify-this-function-to-show-hide-by-data-attributes-instead-of-by-class
-// 	MAX	1395168300		1055
-// 	MIN	1394202000   	660
 
 $(document).ready(function () {
 	var mintime = 0;
-	var maxtime = 1440
-	var steptime = 60;
+	var maxtime = 1440;
+	var steptime = 30;
+	var baseRange = [0,1440];
+	var departRange = [0,1440];
+	var arriveRange = [0,1440];
 
-	var takeoff0 = new Array();
+	// display slider times  (min max)
+	$('.takeoff-time0').text(showTime(mintime));
+	$('.takeoff-time1').text(showTime(maxtime));
+	$('.takeoff-time2').text(showTime(mintime));
+	$('.takeoff-time3').text(showTime(maxtime));
 
-	// for roundtrip we need 8 times
-	var slidertime = new Array();
-		slidertime[0] = moment().startOf('day').minutes(maxtime).format('h:mma');
-		slidertime[1] = moment().startOf('day').minutes(mintime).format('h:mma');
-		slidertime[2] = moment().startOf('day').minutes(maxtime).format('h:mma');
-		slidertime[3] = moment().startOf('day').minutes(mintime).format('h:mma');
-		slidertime[4] = moment().startOf('day').minutes(maxtime).format('h:mma');
-		slidertime[5] = moment().startOf('day').minutes(mintime).format('h:mma');
-		slidertime[6] = moment().startOf('day').minutes(maxtime).format('h:mma');
-		slidertime[7] = moment().startOf('day').minutes(mintime).format('h:mma');
+	$('.landing-time0').text(showTime(mintime));
+	$('.landing-time1').text(showTime(maxtime));
+	$('.landing-time2').text(showTime(mintime));
+	$('.landing-time3').text(showTime(maxtime));
 
-	$('.slider-time0').text( slidertime[0] );
-	$('.slider-time1').text( slidertime[1] );
-	$('.slider-time2').text( slidertime[2] );
-	$('.slider-time3').text( slidertime[3] );
-	$('.slider-time4').text( slidertime[4] );
-	$('.slider-time5').text( slidertime[5] );
-	$('.slider-time6').text( slidertime[6] );
-	$('.slider-time7').text( slidertime[7] );
-
-	$(".slider-range0").slider({
+	// takeoff sliders
+	$(".takeoff-range0").slider({
 		range: true,
 		min: mintime,
 		max: maxtime,
 		step: steptime,
-		values: [mintime, maxtime],
-
+		values: departRange,
 		slide: function (e, ui) {
-			var time0 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
-			var time1 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
-			$('.slider-time0').html(time0);
-			$('.slider-time1').html(time1);
-			doShowHideBadges();
+			$('.takeoff-time0').html(showTime(ui.values[0])); //  +' ('+ ui.values[0]+')'
+			$('.takeoff-time1').html(showTime(ui.values[1])); //  +' ('+ ui.values[1]+')'
+			filterBlocks(ui.values, null, 'd0');
 		}
-	}); // slider-range0
+	});
 
-	$(".slider-range1").slider({
+	$(".takeoff-range1").slider({
 		range: true,
 		min: mintime,
 		max: maxtime,
 		step: steptime,
-		values: [mintime, maxtime],
-
+		values: departRange,
 		slide: function (e, ui) {
-			var time2 = moment().startOf('day').add('m', ui.values[0]).format('h:mma');
-			var time3 = moment().startOf('day').add('m', ui.values[1]).format('h:mma');
-			$('.slider-time2').html(time2);
-			$('.slider-time3').html(time3);
-			doShowHideBadges();
+			$('.takeoff-time2').html(showTime(ui.values[0]));
+			$('.takeoff-time3').html(showTime(ui.values[1]));
+			filterBlocks(ui.values, null, 'd1');
 		}
-	}); // slider-range1
-});
+	});
 
+// landing slider2
+	$(".landing-range0").slider({
+		range: true,
+		min: mintime,
+		max: maxtime,
+		step: steptime,
+		values: arriveRange,
+		slide: function (e, ui) {
+			$('.landing-time0').html(showTime(ui.values[0]));
+			$('.landing-time1').html(showTime(ui.values[1]));
+			filterBlocks(null, ui.values, 'a0');
+		}
+	});
 
-// div id="flight732914299"
-// class="pull-left"
-// data-departuretime1="1340"
-// data-departuretime0="865"
-// data-arrivaltime0="980"
-// data-arrivaltime1="10"
+	$(".landing-range1").slider({
+		range: true,
+		min: mintime,
+		max: maxtime,
+		step: steptime,
+		values: arriveRange,
+		slide: function (e, ui) {
+			$('.landing-time2').html(showTime(ui.values[0]));
+			$('.landing-time3').html(showTime(ui.values[1]));
+			filterBlocks(null, ui.values, 'a1');
+		}
+	});
 
+	$( ".showlanding" ).on( "click", function() {
+		$("#landing").show('slow');
+		$(this).hide();
+	});
 
-	function doShowHideBadges(){
-    //hide all initially then loop through each
-    $('div[id^="flight"]').hide().each(function(e){
+	function filterBlocks(departRange, arriveRange, id) {
+		departRange0 = $('.takeoff-range0').slider('values');
+		departRange1 = $('.takeoff-range1').slider('values');
+		arriveRange0 = $('.landing-range0').slider('values');
+		arriveRange1 = $('.landing-range1').slider('values');
 
-        //show items for first slider
-        // var sliderValue1 = $('.slider-range0').slider("option", "values");
-        // if($(this).data('departuretime0') >= sliderValue1[0] && $(this).data('departuretime0') <= sliderValue1[1]){
-        //     $(this).show();
-        // }
+  	$('div[id^="flight"]').each(function(){
+			var departTime0 = $(this).data('departuretime0');
+			var departTime1 = $(this).data('departuretime1');
+			var arriveTime0 = $(this).data('arrivaltime0');
+			var arriveTime1 = $(this).data('arrivaltime1');
 
-        // show items for second slider
-        var sliderValue2 = $('.slider-range1').slider("option", "values");
-         if($(this).data('arrivaltime0') >= sliderValue2[0] && $(this).data('arrivaltime0') <= sliderValue2[1]){
-             $(this).show();
-         }
+			// filter departures
+			if ( id == 'd0' ) {
+				$(this).removeClass('dfiltered0');
+				if( departTime0.isBetween(departRange[0],departRange[1]) && !$(this).hasAnyClass('hiddend1','hiddena0','hiddena1') ){
+						$(this).addClass('hiddend0').addClass('dfiltered0');
+				} else if ($(this).hasAnyClass('dfiltered1')) {
+					$(this).removeClass('hiddend0');
+				}	else {
+				 	$(this).removeClass('hiddend0').addClass('dfiltered0');
+				}
+			}
 
-        //other sliders
-    });
+			if ( id == 'd1' ) {
+				$(this).removeClass('dfiltered1');
+				if( departTime1.isBetween(departRange[0],departRange[1]) && !$(this).hasAnyClass('hiddend0','hiddena0','hiddena1') ){
+					$(this).addClass('hiddend1').addClass('dfiltered1');
+				} else if ($(this).hasAnyClass('dfiltered0')) {
+					$(this).removeClass('hiddend1');
+				}	else {
+				 	$(this).removeClass('hiddend1').addClass('dfiltered1');
+				}
+			}
+
+			// filter landings
+			if ( id == 'a0' ) {
+				$(this).removeClass('afiltered0');
+				if( arriveTime0.isBetween(arriveRange[0],arriveRange[1]) && !$(this).hasAnyClass('hiddena1','hiddend0','hiddend1') ){
+						$(this).addClass('hiddena0').addClass('afiltered0');
+				} else if ($(this).hasAnyClass('afilterea1')) {
+					$(this).removeClass('hiddena0');
+				}	else {
+				 	$(this).removeClass('hiddena0').addClass('afiltered0');
+				}
+			}
+
+			if ( id == 'a1' ) {
+				$(this).removeClass('afiltered1');
+				if( arriveTime1.isBetween(arriveRange[0],arriveRange[1]) && !$(this).hasAnyClass('hiddena0','hiddend0','hiddend1') ){
+					$(this).addClass('hiddena1').addClass('afiltered1');
+				} else if ($(this).hasAnyClass('afilterea0')) {
+					$(this).removeClass('hiddena1');
+				}	else {
+				 	$(this).removeClass('hiddena1').addClass('afiltered1');
+				}
+			}
+
+			// last check - if the sliders have moved back to default values - 'reset'
+			if ( id == 'd0' && _.isEqual(baseRange, departRange)) {
+				$(this).removeClass('hiddend0').removeClass('dfiltered0');
+			}
+
+			if ( id == 'd1' && _.isEqual(baseRange, departRange)) {
+				$(this).removeClass('hiddend1').removeClass('dfiltered1');
+			}
+
+			if ( id == 'a0' && _.isEqual(baseRange, arriveRange)) {
+				$(this).removeClass('hiddena0').removeClass('afilterea0');
+			}
+
+			if ( id == 'a1' && _.isEqual(baseRange, arriveRange)) {
+				$(this).removeClass('hiddena1').removeClass('afilterea1');
+			}
+
+		});
 	}
+
+	// function to see if number is between two values
+	Number.prototype.isBetween = function(first,last){
+		return !(first < last ? this >= first && this <= last : this >= last && this <= first);
+	}
+
+	// use moment.js library to easily display friendly times
+	function showTime(mins) {
+		return moment().startOf('day').add('m', mins).format('h:mma');
+	}
+
+	// update to hasClass() to allow multiple classes
+	$.fn.hasAnyClass = function() {
+		for (var i = 0; i < arguments.length; i++) {
+			if (this.hasClass(arguments[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+});

@@ -11,17 +11,6 @@
 	</cfif>
 </cfsilent>
 
-
-<!---
-4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
-STM-2544 need to create a container of min/max times so we can use to set filters
-<cfset timeFilterTotal = {}>
-<cfset timeFilterTotal[0] = {}>
-<cfset timeFilterTotal[1] = {}>
-<cfset timeFilterTotal[2] = {}>
-<cfset timeFilterTotal[3] = {}>
- --->
-
 <cfoutput>
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
@@ -85,13 +74,6 @@ STM-2544 need to create a container of min/max times so we can use to set filter
 	 			var sortbyprice1bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBagPreferred)#;
 	 			var sortbyprice2bag = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortBag2Preferred)#;
 
-				<!---
-				4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
-				STM-2544 need to create a container of min/max times so we can use to set filters
-				var epochmax = #getBeanFactory().getBean('underscore').max(timeFilterTotal)#;
-				var epochmin = #getBeanFactory().getBean('underscore').min(timeFilterTotal)#;
-				--->
-
 				// flightresults is used in booking.js to filter flights
 				// here we loop over session searches and stuff all the flights avail in flightresults
 				var flightresults = [
@@ -127,8 +109,8 @@ STM-2544 need to create a container of min/max times so we can use to set filter
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 	</form>
 
-<!--- TODO - need to call default loading  --->
-#View('modal/popup')#
+	<!--- call default loading modal  --->
+	#View('modal/popup')#
 
 </cfoutput>
 

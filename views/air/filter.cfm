@@ -2,8 +2,6 @@
 	<cfparam name="rc.filter" default="">
 	<cfparam name="rc.bRefundable" default="0">
 
-
-
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
 			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
@@ -178,14 +176,6 @@
 				</div> <!--- // well filterselection --->
 			</div> <!--- // filterbar --->
 
-
-			<!--- 10:08 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
-			TODO:
-			* Need to loop over flights and get
-			* Earliest time/latest time (Kayak) or just use 12/12?
-			* Arrival/Departure Cities (filter / session.searchID?)
-			 --->
-
 			<!--- time sliders --->
 			<div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
 			<div id="sliderwell" class="well filtertimeselection">
@@ -206,57 +196,61 @@
 						<cfoutput>
 							<cfswitch expression="#rc.filter.getAirType()#">
 								<cfcase value="RT">
-									<div class="span3">
-										<div id="time-range">
-												<p>Departure: #application.stAirports[rc.filter.getDepartCity()].city#
-												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time0"></span> - <span class="slider-time1"></span></p>
-												<div class="departure-slider">
-														<div class="slider-range0"></div>
-												</div>
-										</div>
-									</div>
 
-									<div class="span3">
-										<div id="time-range">
-												<p>Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#
-												<br />#DateFormat(rc.filter.getDepartDateTime(), "ddd")# <span class="slider-time2"></span> - <span class="slider-time3"></span></p>
-												<div class="arrival-slider">
-														<div class="slider-range1"></div>
-												</div>
-										</div>
-									</div>
 
-									<div class="span3">
-										<div id="time-range departure2">
-											<p>Departure: #application.stAirports[rc.filter.getArrivalCity()].city#
-											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time4"></span> - <span class="slider-time5"></span></p>
-											<div class="departure-slider">
-												<div class="slider-range2"></div>
-											</div>
-										</div>
-									</div>
+<!---  --->
 
-									<div class="span3">
-										<div id="time-range arrival2">
-											<p>Arrival: #application.stAirports[rc.filter.getDepartCity()].city#
-											<br />#DateFormat(rc.filter.getArrivalDateTime(), "ddd")# <span class="slider-time6"></span> - <span class="slider-time7"></span></p>
-											<div class="arrival-slider">
-												<div class="slider-range3"></div>
-											</div>
-										</div>
-									</div>
+<!-- SLIDERS -->
+		<div id="sliders">
+			<div id="takeoff">
+				<div class="sliderbox">
+					<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+					<div class="departure-slider">
+						<div class="takeoff-range0"></div>
+					</div>
+				</div>
+
+				<div class="sliderbox">
+					<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
+					<div class="departure-slider">
+						<div class="takeoff-range1"></div>
+					</div>
+				</div>
+			</div>
+
+		<a href="##" class="showlanding">Show landing times</a>
+
+			<div id="landing">
+				<div class="sliderbox">
+					<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+					<div class="arrival-slider">
+						<div class="landing-range0"></div>
+					</div>
+				</div>
+
+				<div class="sliderbox">
+					<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
+					<div class="arrival-slider">
+						<div class="landing-range1"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
 								</cfcase>
 
 								<cfcase value="OW">
-									<h1>one way</h1>
-									Departure: #application.stAirports[rc.filter.getDepartCity()].city#<br />
-									#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
 
-									<hr>
-									Arrival: #application.stAirports[rc.filter.getArrivalCity()].city#<br />
-									#DateFormat(rc.filter.getDepartDateTime(), "ddd")# (time range)
-									<hr>
+
+
 								</cfcase>
+
+
 							</cfswitch>
 						</cfoutput>
 
