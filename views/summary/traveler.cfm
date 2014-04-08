@@ -99,6 +99,28 @@
 
 	<div id="orgUnits"> </div>
 
+	<div class="control-group">
+		<label class="control-label" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
+		<div class="controls">
+			<input type="text" name="redress" id="redress" class="input-medium">
+		</div>
+	</div>
+
+	<div class="control-group #(structKeyExists(rc.errors, 'travelNumber') ? 'error' : '')#">
+		<label class="control-label" for="travelNumber">Known Traveler ##&nbsp;&nbsp;</label>
+		<div class="controls">
+			<input type="text" name="travelNumber" id="travelNumber" class="input-medium">
+			<select name="travelNumberType" id="travelNumberType" class="input-medium">
+			<option value=""></option>
+			<option value="TrustedTraveler">Trusted Traveler</option>
+			<option value="Clear">TSA PreCheck</option>
+			<option value="Nexus">NEXUS</option>
+			<option value="GlobalEntry">Global Entry</option>
+			<option value="Sentri">SENTRI</option>
+			</select>
+		</div>
+	</div>
+
 	<cfif rc.travelerNumber EQ 1>
 		
 		<input type="hidden" name="airNeeded" id="airNeeded" value="#(rc.airSelected ? 1 : 0)#">

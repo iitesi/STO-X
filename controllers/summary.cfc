@@ -3,12 +3,23 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
-		<!--- for testing purposes --->
-		<cfparam name="session.searches[rc.searchID].stItinerary" default="#structNew()#">
-		<!--- <cfdump var="#session.searches[rc.searchID].stItinerary#" abort="true" /> --->
-		<!--- <cfset structDelete(session.searches[rc.SearchID], 'travelers')> --->
-		<!--- for testing purposes --->
+		<cfset local.datetimestamp = now() />
+		<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.datetimestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.datetimestamp, 'HH:mm:ss')#" />
+		<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 
+		<!--- If the user entered or removed a new credit card that was processed in secure-sto --->
+		<cfif structKeyExists(rc, 'data')>
+			<!--- Had too many complications with urlEncodedFormat on the way over --->
+			<cfset local.cleanData = replace(rc.data, " ", "+", "ALL") />
+			<cfset fw.getBeanFactory().getBean('Summary').updateTraveler( datetimestamp = local.datetimestamp
+																		, token = local.token
+																		, acctID = rc.Filter.getAcctID()
+																		, userID = rc.Filter.getUserID()
+																		, searchID = rc.searchID
+																		, ccData = local.cleanData ) />
+		</cfif>
+
+		<cfparam name="session.searches[rc.searchID].stItinerary" default="#structNew()#">
 		<cfparam name="rc.travelerNumber" default="1">
 		<cfparam name="rc.remove" default="">
 		<cfparam name="rc.add" default="">
@@ -79,7 +90,7 @@
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
-		<!--- <cfif listFind('198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
+		<!--- <cfif listFind('46144,198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
 			<cfset local.internalTMC = false />
 		<cfelse>
 			<cfset local.internalTMC = true />
@@ -298,7 +309,8 @@
 									<cfset payment.setHotelUse(false) />
 									<cfset payment.setCarUse(false) />
 									<cfset payment.setBookItUse(true) />
-									<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseFlightFOPResponse[1].cardNumber)) />
+									<cfset payment.setAcctNum(right(parseFlightFOPResponse[1].cardNumber, 4)) />
+									<!--- <cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseFlightFOPResponse[1].cardNumber)) /> --->
 									<cfset payment.setAcctNum4(right(parseFlightFOPResponse[1].cardNumber, 4)) />
 									<cfset local.expirationYear = '20#right(parseFlightFOPResponse[1].cardExpiration, 2)#' />
 									<cfset local.expirationMonth = left(parseFlightFOPResponse[1].cardExpiration, 2) />
@@ -306,7 +318,10 @@
 									<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
 									<cfset payment.setBTAID('') />
 									<cfset payment.setFOPID('-1') />
+									<cfset payment.setPCIID(0) />
+									<cfset payment.setFOPCode(parseFlightFOPResponse[1].cardType) />
 									<cfset payment.setFOPDescription('Personal Flight Credit Card') />
+									<cfset payment.setPaymentType('Profile') />
 									<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 								<!--- </cfif> --->
 							</cfif>
@@ -376,36 +391,43 @@
 						<cfelse>
 							<cfset local.parseHotelFOPLineNumberResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOPLineNumber(hotelFOP = displayHotelFOPLineNumberResponse.message)>
 							<cfif isNumeric(parseHotelFOPLineNumberResponse)>
-								<cfset local.displayHotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( targetBranch = rc.Account.sBranch
+								<cfset local.hotelFOPResponse = fw.getBeanFactory().getBean('TerminalEntry').displayHotelFOP( datetimestamp = local.datetimestamp
+																									, token = local.token
+																									, targetBranch = rc.Account.sBranch
 																									, hostToken = hostToken
-																									, searchID = rc.searchID)>
+																									, acctID = rc.Filter.getAcctID()
+																									, userID = rc.Filter.getUserID()
+																									, searchID = rc.searchID
+																									, hotelFOPLineNumber = local.parseHotelFOPLineNumberResponse ) />
 
-								<cfif displayHotelFOPResponse.error>
+								<cfif hotelFOPResponse.error>
 									<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
 									<cfset errorType = 'TerminalEntry.displayHotelFOP'>
 								<cfelse>
-									<cfset local.parseHotelFOPResponse = fw.getBeanFactory().getBean('UserService').parseHotelFOP(hotelFOP = displayHotelFOPResponse.message
-																									, hotelFOPLineNumber = parseHotelFOPLineNumberResponse)>
-								
-									<cfif isArray(parseHotelFOPResponse) AND arrayLen(parseHotelFOPResponse)>
-										<cfif isNumeric(parseHotelFOPResponse[1].cardNumber)>
-											<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
+									<cfset local.hotelFOP = deserializeJSON(hotelFOPResponse.message.filecontent) />
+									<cfif isStruct(local.hotelFOP) AND structKeyExists(local.hotelFOP, "cardNumber") AND isNumeric(local.hotelFOP.cardNumber)>
+										<cfset local.payment = fw.getBeanFactory().getBean('PaymentManager').new() />
 
-											<cfset payment.setAirUse(false) />
-											<cfset payment.setHotelUse(true) />
-											<cfset payment.setCarUse(false) />
-											<cfset payment.setBookItUse(true) />
-											<cfset payment.setAcctNum(fw.getBeanFactory().getBean('PaymentService').encrypt(parseHotelFOPResponse[1].cardNumber)) />
-											<cfset payment.setAcctNum4(right(parseHotelFOPResponse[1].cardNumber, 4)) />
-											<cfset local.expirationYear = parseHotelFOPResponse[1].cardExpirationYear />
-											<cfset local.expirationMonth = parseHotelFOPResponse[1].cardExpirationMonth />
-											<cfset local.expirationDay = '01' />
-											<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
-											<cfset payment.setBTAID('') />
-											<cfset payment.setFOPID('-1') />
-											<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
-											<cfset arrayAppend(rc.traveler.getPayment(), payment) />											
-										</cfif>
+										<cfset payment.setAirUse(false) />
+										<cfset payment.setHotelUse(true) />
+										<cfset payment.setCarUse(false) />
+										<cfset payment.setBookItUse(true) />
+										<cfset payment.setAcctNum(local.hotelFOP.cardNumberRight4) />
+										<cfset payment.setAcctNum4(local.hotelFOP.cardNumberRight4) />
+										<cfset local.expirationYear = local.hotelFOP.cardExpirationYear />
+										<cfset local.expirationMonth = local.hotelFOP.cardExpirationMonth />
+										<cfset local.expirationDay = '01' />
+										<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
+										<cfset payment.setBTAID('') />
+										<cfset payment.setFOPID('-1') />
+										<cfset payment.setPCIID(local.hotelFOP.pciID) />
+										<cfset payment.setFOPCode(local.hotelFOP.cardType) />
+										<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
+										<cfset payment.setPaymentType('Profile') />
+										<cfset arrayAppend(rc.traveler.getPayment(), payment) />
+									<cfelse>
+										<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
+										<cfset errorType = 'TerminalEntry.displayHotelFOP'>
 									</cfif>
 								</cfif>
 							</cfif>
@@ -479,6 +501,9 @@
 			<cfparam name="rc.airNeeded" default="0">
 			<cfparam name="rc.hotelNeeded" default="0">
 			<cfparam name="rc.carNeeded" default="0">
+			<!--- Keep track of the fopID's of any new air or hotel cards entered --->
+			<cfset local.originalAirFOPID = rc.Traveler.getBookingDetail().getAirFOPID() />
+			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID()
@@ -505,6 +530,21 @@
 				<cfset rc.Traveler.populateFromStruct( rc )>
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
+			<!--- If a new air or hotel credit card was entered, keep the fopID that was returned from the creditCards table --->
+			<cfif rc.Traveler.getBookingDetail().getNewAirCC() EQ 1>
+				<cfif len(local.originalAirFOPID) AND isNumeric(local.originalAirFOPID) AND local.originalAirFOPID NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
+				<cfelseif rc.Traveler.getBookingDetail().getNewAirCCID() NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setAirFOPID( rc.Traveler.getBookingDetail().getNewAirCCID() ) />
+				</cfif>
+			</cfif>
+			<cfif rc.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
+				<cfif len(local.originalHotelFOPID) AND isNumeric(local.originalHotelFOPID) AND local.originalHotelFOPID NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
+				<cfelseif rc.Traveler.getBookingDetail().getNewHotelCCID() NEQ 0>
+					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( rc.Traveler.getBookingDetail().getNewHotelCCID() ) />
+				</cfif>
+			</cfif>
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
 				AND (structKeyExists(rc, "day") AND len(rc.day))>

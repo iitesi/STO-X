@@ -24,6 +24,7 @@ $(document).ready(function(){
 	if (findit == 1 && externalTMC == 1) {
 		var finditOA = 1;
 	}
+	var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
@@ -191,6 +192,9 @@ $(document).ready(function(){
 		$( "#day" ).val( birthdate.getUTCDate() );
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
+		$( "#redress" ).val( traveler.redress );
+		$( "#travelNumber" ).val( traveler.travelNumber );
+		$( "#travelNumberType" ).val( traveler.travelNumberType );
 
 		// If an unregistered FindIt guest
 		if (findit == 1 && $("#userID").val() == 0) {
@@ -399,13 +403,13 @@ $(document).ready(function(){
 					endingIn = ' ending in ' + traveler.payment[i].acctNum4;
 				}
 				if (traveler.payment[i].btaID !== '') {
-					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].btaID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
 				else if (traveler.payment[i].fopID !== '') {
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
-					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].fopID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 				}
 			}
 		}
@@ -417,22 +421,35 @@ $(document).ready(function(){
 			$( "#" + typeOfService + "FOPID" ).append('<option value="0"></option>')
 		}
 		var showNewCard = 0;
-		if (traveler.bookingDetail.newAirCC == 1) {
-			$( "#newAirCC" ).attr( 'checked', true );
+		var capitalizedTypeOfService = typeOfService.charAt(0).toUpperCase() + typeOfService.substring(1);
+		var newCC = "new" + capitalizedTypeOfService + "CC";
+		var newCCID = "new" + capitalizedTypeOfService + "CCID";
+		$( "#new" + capitalizedTypeOfService + "CC" ).val( traveler.bookingDetail[newCC] );
+		$( "#new" + capitalizedTypeOfService + "CCID" ).val( traveler.bookingDetail[newCCID] );
+		if ($( "#new" + capitalizedTypeOfService + "CC" ).val() == 1) {
 			showNewCard = 1;
-		}
-		if (traveler.bookingDetail.newHotelCC == 1) {
-			$( "#newHotelCC" ).attr( 'checked', true );
-			showNewCard = 1;
+			$( "#add" + capitalizedTypeOfService + "CC" ).hide();
+			$( "#remove" + capitalizedTypeOfService + "CC" ).show();
 		}
 		if ($( "#" + typeOfService + "FOPID" ).val() == 0 || showNewCard == 1) {
 			$( "#" + typeOfService + "FOPIDDiv" ).hide();
 			if ($( "#" + typeOfService + "FOPID" ).val() == 0) {
-				$( "#" + typeOfService + "NewCard" ).hide();
-			}			
-			$( "#" + typeOfService + "Manual" ).show();
+				// $( "#" + typeOfService + "NewCard" ).hide();
+			}
+			if (showNewCard == 0) {
+				$( "#" + typeOfService + "Manual" ).hide();
+			}
+			else {
+				$( "#" + typeOfService + "Manual" ).show();
+			}
+			$( "#" + typeOfService + "CCName" ).val( traveler.bookingDetail[typeOfService + 'CCName'] );
+			$( "#" + typeOfService + "CCType" ).val( traveler.bookingDetail[typeOfService + 'CCType'] );
 			$( "#" + typeOfService + "CCNumber" ).val( traveler.bookingDetail[typeOfService + 'CCNumber'] );
+			$( "#" + typeOfService + "CCNumberRight4" ).val( traveler.bookingDetail[typeOfService + 'CCNumberRight4'] );
+			$( "#" + typeOfService + "CCExpiration" ).val( traveler.bookingDetail[typeOfService + 'CCExpiration'] );
 			$( "#" + typeOfService + "CCMonth" ).val( traveler.bookingDetail[typeOfService + 'CCMonth'] );
+			var displayMonth = $( "#" + typeOfService + "CCMonth" ).val() - 1;
+			$( "#" + typeOfService + "CCMonthDisplay" ).val( monthNames[displayMonth] );
 			$( "#" + typeOfService + "CCYear" ).val( traveler.bookingDetail[typeOfService + 'CCYear'] );
 			$( "#" + typeOfService + "CCCVV" ).val( traveler.bookingDetail[typeOfService + 'CCCVV'] );
 			$( "#" + typeOfService + "BillingName" ).val( traveler.bookingDetail[typeOfService + 'BillingName'] );
@@ -443,19 +460,29 @@ $(document).ready(function(){
 				$( "#" + typeOfService + "BillingZip" ).val( traveler.bookingDetail[typeOfService + 'BillingZip'] );
 			}
 			else {
-				if (traveler.bookingDetail.airNeeded == 'false' || $(" #airFOPID").val() != 0) {
-					$( "#copyAirCCDiv" ).hide();
-				}
-				else {
+				if (traveler.bookingDetail.airNeeded == 1 && $( "#newAirCC" ).val() == 1 && $( "#newHotelCC" ).val() != 1) {
+					$( "#hotelManual" ).show();
 					$( "#copyAirCCDiv" ).show();
-					if (traveler.bookingDetail.copyAirCC == 1) {
+					if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
 						$( "#copyAirCC" ).attr( 'checked', true );
 					}
 					else {
 						$( "#copyAirCC" ).attr( 'checked', false );
-
 					}
 				}
+				else {
+					$( "#copyAirCCDiv" ).hide();
+				}
+			}
+		}
+		else if (typeOfService == 'hotel' && airSelected && traveler.bookingDetail['newAirCCID'] != 0 && $( "#newHotelCCID" ).val() == 0) {
+			$( "#hotelManual" ).show();
+			$( "#copyAirCCDiv" ).show();
+			if (traveler.bookingDetail.copyAirCC == 1 && traveler.bookingDetail.hotelFOPID == 0) {
+				$( "#copyAirCC" ).attr( 'checked', true );
+			}
+			else {
+				$( "#copyAirCC" ).attr( 'checked', false );
 			}
 		}
 		else {
@@ -486,39 +513,6 @@ $(document).ready(function(){
 		}
 		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
 	}
-
-	$(".newCard").on("click", "input[type=checkbox]", function() {
-		var airCard = $("#newAirCC");
-		var hotelCard = $("#newHotelCC");
-		var showAirNewCard = (airCard.attr("checked") == "checked");
-
-		if (this.name == 'newAirCC') {
-			if (this.checked) {
-				$("#airFOPIDDiv").hide();
-				$("#airManual").show();
-				$("#copyAirCCDiv").show();
-			}
-			else {
-				$("#airFOPIDDiv").show();
-				$("#airManual").hide();
-				$("#copyAirCCDiv").hide();
-			}
-		}
-		else if (this.name == 'newHotelCC') {
-			if (this.checked) {
-				$("#hotelFOPIDDiv").hide();
-				$("#hotelManual").show();
-				if (showAirNewCard) {
-					$("#copyAirCCDiv").show();
-				}
-			}
-			else {
-				$("#hotelFOPIDDiv").show();
-				$("#hotelManual").hide();
-				$("#copyAirCCDiv").hide();
-			}
-		}
-	});
 
 	function recalculateTotal() {
 		var total = 0;
@@ -615,11 +609,42 @@ $(document).ready(function(){
 		}
 	})
 
-	$( "#copyAirCC" ).click(function() {
-		$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
-		$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
-		$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
-		$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+	$( "#copyAirCC" ).on("click", function () {
+		if ($(this).prop('checked')) {
+			$( "#newHotelCC" ).val( $( "#newAirCC" ).val() );
+			$( "#newHotelCCID" ).val( $( "#newAirCCID" ).val() );
+			$( "#hotelFOPID" ).val( $( "#airFOPID" ).val() );
+			$( "#hotelCCName" ).val( $( "#airCCName" ).val() );
+			$( "#hotelCCType" ).val( $( "#airCCType" ).val() );
+			$( "#hotelCCNumber" ).val( $( "#airCCNumber" ).val() );
+			$( "#hotelCCNumberRight4" ).val( $( "#airCCNumberRight4" ).val() );
+			$( "#hotelCCExpiration" ).val( $( "#airCCExpiration" ).val() );
+			$( "#hotelCCMonth" ).val( $( "#airCCMonth" ).val() );
+			$( "#hotelCCMonthDisplay" ).val( $( "#airCCMonthDisplay" ).val() );
+			$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
+			$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
+			var hotelCCMonthYear = $( "#airCCMonthDisplay" ).val() + ' ' + $( "#airCCYear" ).val();
+			$( "#copyAirCCNumber" ).html( $( "#airCCNumber" ).val() );
+			$( "#copyAirCCMonthYear" ).html( hotelCCMonthYear );
+			$( "#copyAirBillingName" ).html( $( "#airBillingName" ).val() );
+		}
+		else {
+			$( "#newHotelCC" ).val( 0 );
+			$( "#newHotelCCID" ).val( 0 );
+			$( "#hotelFOPID" ).val( 0 );
+			$( "#hotelCCName" ).val( '' );
+			$( "#hotelCCType" ).val( '' );
+			$( "#hotelCCNumber" ).val( '' );
+			$( "#hotelCCNumberRight4" ).val( '' );
+			$( "#hotelCCExpiration" ).val( '' );
+			$( "#hotelCCMonth" ).val( '' );
+			$( "#hotelCCMonthDisplay" ).val( '' );
+			$( "#hotelCCYear" ).val( '' );
+			$( "#hotelBillingName" ).val( '' );
+			$( "#copyAirCCNumber" ).html( '' );
+			$( "#copyAirCCMonthYear" ).html( '' );
+			$( "#copyAirBillingName" ).html( '' );
+		}
 	})
 
 	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number
@@ -788,4 +813,42 @@ $( "#purchaseButton" ).on("click", function (e) {
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
 	$( "#purchaseForm" ).submit();
+});
+
+$(".displayPaymentModal").click(function() {
+	var formData = $("#purchaseForm").serialize();
+	$.ajax({
+		type: "POST",
+		url: "/booking/services/summary.cfc",
+		data: {
+			method: "setSummaryFormVariables",
+			formData: formData,
+		}
+	});
+	var paymentType = $(this).attr("data-paymentType");
+	var oldSrc = $("#displayFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	$("#addIframe").attr("src", newSrc);
+	$("#displayPaymentWindow").modal('show');
+});
+
+$(".removePaymentModal").click(function() {
+	var formData = $("#purchaseForm").serialize();
+	$.ajax({
+		type: "POST",
+		url: "/booking/services/summary.cfc",
+		data: {
+			method: "setSummaryFormVariables",
+			formData: formData,
+		}
+	});
+	var paymentType = $(this).attr("data-paymentType");
+	var newFOPID = $(this).attr("data-id");
+	var oldSrc = $("#removeFrameAddress").html();
+	oldSrc = oldSrc.replace(/&amp;/g, "&");
+	var newSrc = oldSrc + "&paymentType=" + paymentType;
+	newSrc = newSrc + "&fopID=" + newFOPID;
+	$("#removeIframe").attr("src", newSrc);
+	$("#removePaymentWindow").modal('show');
 });

@@ -256,6 +256,9 @@
 		<cfif arguments.Traveler.getGender() EQ ''>
 			<cfset local.error.gender = ''>
 		</cfif>
+		<cfif arguments.Traveler.getTravelNumber() NEQ '' AND arguments.Traveler.getTravelNumberType() EQ ''>
+			<cfset local.error.travelNumber = ''>
+		</cfif>
 
 		<!--- If a guest traveler has checked the checkbox to create a new profile --->
 		<cfif arguments.Traveler.getBookingDetail().getCreateProfile() EQ 1 AND arguments.Traveler.getUserID() EQ 0>
@@ -336,41 +339,49 @@
 			</cfif>
 
 			<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
-
 				<!--- For LSU (acctID 255) --->
 				<cfif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 'bta_0' AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1>
-					<cfset local.error.airFOPID = ''>
+					<!--- Exclude SOLA (acctID 254) ghost payment/central bill cards --->
+					<cfif arguments.acctID NEQ 254>
+						<cfset local.error.airFOPID = ''>
+					</cfif>
 				<cfelseif arguments.Traveler.getBookingDetail().getAirFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewAirCC() EQ 1>
-					<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
-						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())>
-						<cfset local.error.airCCNumber = ''>
+					<!--- Removing isNumeric logic now that new credit card numbers are masked --->
+					<!--- <cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15
+						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCNumber())> --->
+					<cfset local.airCCError = false />
+					<cfif Len(arguments.Traveler.getBookingDetail().getAirCCNumber()) LT 15>
+						<cfset local.airCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirCCMonth() EQ ''
 						OR arguments.Traveler.getBookingDetail().getAirCCYear() EQ ''>
-						<cfset local.error.airCCExpiration = ''>
+						<cfset local.airCCError = true />
 					<cfelse>
 						<cfset local.airCCExpiration = createDate(arguments.Traveler.getBookingDetail().getAirCCYear(), arguments.Traveler.getBookingDetail().getAirCCMonth(), 1)>
 						<cfset local.airCCExpiration = createDate(year(local.airCCExpiration), month(local.airCCExpiration), daysInMonth(local.airCCExpiration))>
 						<cfif local.airCCExpiration LTE now()>
-							<cfset local.error.airCCExpiration = ''>
+							<cfset local.airCCError = true />
 						</cfif>
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirCCCVV() EQ ''
 						OR NOT isNumeric(arguments.Traveler.getBookingDetail().getAirCCCVV())>
-						<cfset local.error.airCCCVV = ''>
+						<cfset local.airCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirBillingName() EQ ''>
-						<cfset local.error.airBillingName = ''>
+						<cfset local.airCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirBillingAddress() EQ ''>
-						<cfset local.error.airBillingAddress = ''>
+						<cfset local.airCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirBillingCity() EQ ''>
-						<cfset local.error.airBillingCity = ''>
+						<cfset local.airCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getAirBillingState() EQ ''
 						OR arguments.Traveler.getBookingDetail().getAirBillingZip() EQ ''>
-						<cfset local.error.airBillingState = ''>
+						<cfset local.airCCError = true />
+					</cfif>
+					<cfif airCCError>
+						<cfset local.error.airFOPID = '' />
 					</cfif>
 				</cfif>
 
@@ -411,21 +422,25 @@
 				AND arguments.Traveler.getBookingDetail().getHotelNeeded()>
 
 				<cfif arguments.Traveler.getBookingDetail().getHotelFOPID() EQ 0 OR arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
+					<cfset local.hotelCCError = false />
 					<cfif Len(arguments.Traveler.getBookingDetail().getHotelCCNumber()) LT 15>
-						<cfset local.error.hotelCCNumber = ''>
+						<cfset local.hotelCCError = true />
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getHotelCCMonth() EQ ''
 						OR arguments.Traveler.getBookingDetail().getHotelCCYear() EQ ''>
-						<cfset local.error.hotelCCExpiration = ''>
+						<cfset local.hotelCCError = true />
 					<cfelse>
 						<cfset local.hotelCCExpiration = createDate(arguments.Traveler.getBookingDetail().getHotelCCYear(), arguments.Traveler.getBookingDetail().getHotelCCMonth(), 1)>
 						<cfset local.hotelCCExpiration = createDate(year(local.hotelCCExpiration), month(local.hotelCCExpiration), daysInMonth(local.hotelCCExpiration))>
 						<cfif local.hotelCCExpiration LTE now()>
-							<cfset local.error.hotelCCExpiration = ''>
+							<cfset local.hotelCCError = true />
 						</cfif>
 					</cfif>
 					<cfif arguments.Traveler.getBookingDetail().getHotelBillingName() EQ ''>
-						<cfset local.error.hotelBillingName = ''>
+						<cfset local.hotelCCError = true />
+					</cfif>
+					<cfif hotelCCError>
+						<cfset local.error.hotelFOPID = '' />
 					</cfif>
 				</cfif>
 
@@ -533,6 +548,185 @@
 		</cfif>
 
 		<cfreturn local.approval>
+	</cffunction>
+
+	<cffunction name="updateTraveler" output="false">
+        <cfargument name="datetimestamp" required="true" />
+        <cfargument name="token" required="true" />
+        <cfargument name="acctID" required="true" />
+        <cfargument name="userID" required="true" />
+        <cfargument name="searchID" required="true" />
+        <cfargument name="ccData" required="true" />
+
+        <!--- Tried using urlEncodedFormat in the URL string, but had too many complications --->
+		<!--- <cfset local.unencryptedCCData = decrypt(toString(toBinary(urlDecode(arguments.ccData))), getEncryptionKey()) /> --->
+
+		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
+
+		<cfif cgi.http_host EQ "r.local">
+			<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfelse>
+			<cfset local.secureURL = "https://europa.shortstravel.com" />
+		</cfif>
+
+		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
+		<cfhttp url="#local.secureURL#/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
+			<cfhttpparam type="formfield" name="datetimestamp" value="#arguments.datetimestamp#" />
+			<cfhttpparam type="formfield" name="token" value="#arguments.token#" />
+			<cfhttpparam type="formfield" name="acctID" value="#arguments.acctID#" />
+			<cfhttpparam type="formfield" name="userID" value="#arguments.userID#" />
+			<cfhttpparam type="formfield" name="searchID" value="#arguments.searchID#" />
+			<cfhttpparam type="formfield" name="cardData" value="#local.encryptedCCData#" />
+		</cfhttp>
+
+		<cfif isJSON(local.response.filecontent)>
+			<cfset local.unencryptedCCData = deserializeJSON(local.response.filecontent) />
+			<cfset local.newCC = 1 />
+			<cfif unencryptedCCData.cardType IS 'AX'>
+				<cfset local.cardNumber = '***********#unencryptedCCData.cardNumberRight4#' />
+			<cfelseif len(unencryptedCCData.cardType)>
+				<cfset local.cardNumber = '************#unencryptedCCData.cardNumberRight4#' />
+			<cfelse>
+				<!--- If a card has been removed --->
+				<cfset local.cardNumber = '' />
+				<cfset local.newCC = 0 />
+			</cfif>
+
+			<cfif unencryptedCCData.paymentType IS 'air'>
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewAirCC( local.newCC ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewAirCCID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirFOPID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCName( unencryptedCCData.cardName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCType( unencryptedCCData.cardType ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumber( local.cardNumber ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCExpiration( unencryptedCCData.ccExpiration ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCMonth( unencryptedCCData.ccMonth ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCYear( unencryptedCCData.ccYear ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirCCCVV( unencryptedCCData.ccCVV ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingName( unencryptedCCData.billingName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingAddress( unencryptedCCData.billingAddress ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingCity( unencryptedCCData.billingCity ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingState( unencryptedCCData.billingState ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setAirBillingZip( unencryptedCCData.billingZip ) />
+			<cfelseif unencryptedCCData.paymentType IS 'hotel'>
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewHotelCC( local.newCC ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewHotelCCID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelFOPID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCName( unencryptedCCData.cardName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCType( unencryptedCCData.cardType ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumber( local.cardNumber ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCExpiration( unencryptedCCData.ccExpiration ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCMonth( unencryptedCCData.ccMonth ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCYear( unencryptedCCData.ccYear ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelBillingName( unencryptedCCData.billingName ) />
+			</cfif>
+		<cfelse>
+			<cfdump var="#local.response#" label="local.response">
+			<cfdump var="#arguments#" label="arguments" abort>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setSummaryFormVariables" access="remote" output="false">
+		<cfset newFormData = {} />
+		<cfloop list="#arguments.formData#" index="ii" delimiters="&">
+			<cfif right(ii, 1) IS "=">
+				<cfset formValue = "" />
+			<cfelse>
+				<cfset formValue = urlDecode(listLast(ii, '=')) />
+			</cfif>
+			<cfset "newFormData.#listFirst(ii, '=')#" = formValue />
+		</cfloop>
+
+		<cfif (structKeyExists(newFormData, "year") AND len(newFormData.year))
+			AND (structKeyExists(newFormData, "month") AND len(newFormData.month))
+			AND (structKeyExists(newFormData, "day") AND len(newFormData.day))>
+			<cfset newFormData.birthDate = createDate(newFormData.year, newFormData.month, newFormData.day) />
+		<cfelse>
+			<cfset newFormData.birthDate = '' />
+		</cfif>
+
+		<cfset local.inputName = '' />
+		<cfloop array="#session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()#" item="local.orgUnit" index="local.orgUnitIndex">
+			<cfset local.inputName = orgUnit.getOUType() & orgUnit.getOUPosition() />
+			<cfif local.orgunit.getOUFreeform()>
+				<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueReport( newFormData[inputName] ) />
+				<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueDisplay( newFormData[inputName] ) />
+			<cfelse>
+				<cfif structKeyExists(newFormData, inputName)>
+					<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getOrgUnit()[local.orgUnitIndex].setValueID( newFormData[inputName] ) />
+				</cfif>
+			</cfif>
+		</cfloop>
+
+		<!--- TODO: Fix the frequent flyer/loyalty numbers at some point. --->
+		<!--- <cfif newFormData.airSelected>
+			<cfset local.carriers = urlDecode(newFormData.carriers) />
+			<cfset carriers = replaceNoCase(carriers, "&quot;", "'", "ALL") />
+			<cfdump var="#carriers#" abort>
+			<cfloop array="#carriers#" item="local.carrier">
+				<cfset local.airFound = false />
+				<cfloop array="#session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram()#" item="local.program" index="local.programIndex">
+					<cfif program.getShortCode() EQ carrier AND program.getCustType() EQ 'A'>
+						<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram()[local.programIndex].setAcctNum( newFormData['airFF#carrier#'] ) />
+						<cfset local.airFound = true />
+					</cfif>
+				</cfloop>
+				<cfif NOT local.airFound>
+					<cfset local.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new() />
+					<cfset local.LoyaltyProgram.setShortCode( carrier ) />
+					<cfset local.LoyaltyProgram.setCustType( 'A' ) />
+					<cfset local.LoyaltyProgram.setAcctNum( newFormData['airFF#carrier#'] ) />
+					<cfset arrayAppend( session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getLoyaltyProgram(), local.LoyaltyProgram ) />
+				</cfif>
+			</cfloop>
+			<cfset local.seats = {} />
+			<cfloop list="#newFormData.seatFieldNames#" index="local.seat">
+				<cfset local.seats[local.seat] = uCase( newFormData[local.seat] ) />
+			</cfloop>
+			<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getBookingDetail().setSeats( local.seats ) />
+		</cfif>
+		<cfif newFormData.hotelSelected OR newFormData.vehicleSelected>
+			<cfset local.hotelFound = false>
+			<cfset local.vehicleFound = false>
+			<cfloop array="#rc.Traveler.getLoyaltyProgram()#" item="local.program" index="local.programIndex">
+				<cfif rc.hotelSelected
+					AND program.getShortCode() EQ rc.Hotel.getChainCode()
+					AND program.getCustType() EQ 'H'>
+					<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc.hotelFF )>
+					<cfset local.hotelFound = true>
+				<cfelseif rc.vehicleSelected
+					AND program.getShortCode() EQ rc.Vehicle.getVendorCode()
+					AND program.getCustType() EQ 'C'>
+					<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc.carFF )>
+					<cfset local.vehicleFound = true>
+				</cfif>
+			</cfloop>
+			<cfif rc.hotelSelected
+				AND NOT local.hotelFound>
+				<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
+				<cfset rc.LoyaltyProgram.setShortCode( rc.Hotel.getChainCode() )>
+				<cfset rc.LoyaltyProgram.setCustType( 'H' )>
+				<cfset rc.LoyaltyProgram.setAcctNum( rc.hotelFF )>
+				<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+			</cfif>
+			<cfif rc.vehicleSelected
+				AND NOT local.vehicleFound>
+				<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
+				<cfset rc.LoyaltyProgram.setShortCode( rc.Vehicle.getVendorCode() )>
+				<cfset rc.LoyaltyProgram.setCustType( 'C' )>
+				<cfset rc.LoyaltyProgram.setAcctNum( rc.carFF )>
+				<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+			</cfif>
+		</cfif> --->
+
+		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].populateFromStruct( newFormData ) />
+		<cfset session.searches[newFormData.searchID].travelers[newFormData.travelerNumber].getBookingDetail().populateFromStruct( newFormData ) />
+
+		<cfreturn session.searches[newFormData.searchID].travelers[newFormData.travelerNumber] />
 	</cffunction>
 
 </cfcomponent>

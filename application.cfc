@@ -169,7 +169,6 @@
 								, department = local.department
 								, searchID = local.searchID
 								, exception = arguments.exception
-								, session = serializeJSON( session )
 								} >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
