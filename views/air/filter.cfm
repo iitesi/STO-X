@@ -51,7 +51,13 @@
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
 							</cfif>
-							<li><a href="#" class="filterbytime" id="timebtn" title="Click to view/hide time filters">Time</a></li>
+							<!--- 2:03 PM Wednesday, April 09, 2014 - Jim Priest - priest@thecrumb.com
+							only show sliders for one-way and round-trip
+							multi-city is going to take a re-write of the badge/filter/slider code
+							to accommodate all the permutations that would be possible with multi-city --->
+							<cfif rc.filter.getAirType() EQ "OW" OR rc.filter.getAirType() EQ "RT">
+								<li><a href="#" class="filterbytime" id="timebtn" title="Click to view/hide time filters">Time</a></li>
+							</cfif>
 							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
@@ -196,61 +202,68 @@
 						<cfoutput>
 							<cfswitch expression="#rc.filter.getAirType()#">
 								<cfcase value="RT">
+									<!-- SLIDERS -->
+									<div id="sliders">
+										<div id="takeoff">
+											<div class="sliderbox">
+												<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+												<div class="departure-slider">
+													<div class="takeoff-range0"></div>
+												</div>
+											</div>
 
+											<div class="sliderbox">
+												<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
+												<div class="departure-slider">
+													<div class="takeoff-range1"></div>
+												</div>
+											</div>
+										</div>
 
-<!---  --->
+										<a href="##" class="showlanding">Show landing times</a>
 
-<!-- SLIDERS -->
-		<div id="sliders">
-			<div id="takeoff">
-				<div class="sliderbox">
-					<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
-					<div class="departure-slider">
-						<div class="takeoff-range0"></div>
-					</div>
-				</div>
+										<div id="landing">
+											<div class="sliderbox">
+												<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+												<div class="arrival-slider">
+													<div class="landing-range0"></div>
+												</div>
+											</div>
 
-				<div class="sliderbox">
-					<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
-					<div class="departure-slider">
-						<div class="takeoff-range1"></div>
-					</div>
-				</div>
-			</div>
-
-		<a href="##" class="showlanding">Show landing times</a>
-
-			<div id="landing">
-				<div class="sliderbox">
-					<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
-					<div class="arrival-slider">
-						<div class="landing-range0"></div>
-					</div>
-				</div>
-
-				<div class="sliderbox">
-					<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
-					<div class="arrival-slider">
-						<div class="landing-range1"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-
-
-
-
-
+											<div class="sliderbox">
+												<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
+												<div class="arrival-slider">
+													<div class="landing-range1"></div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</cfcase>
 
 								<cfcase value="OW">
+									<!-- SLIDERS -->
+									<div id="sliders">
+										<div id="takeoff">
+											<div class="sliderbox">
+												<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+												<div class="departure-slider">
+													<div class="takeoff-range0"></div>
+												</div>
+											</div>
+										</div>
 
+										<a href="##" class="showlanding">Show landing times</a>
 
-
+										<div id="landing">
+											<div class="sliderbox">
+												<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+												<div class="arrival-slider">
+													<div class="landing-range0"></div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</cfcase>
-
-
 							</cfswitch>
 						</cfoutput>
 
