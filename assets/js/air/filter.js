@@ -58,6 +58,17 @@ $(document).ready(function(){
 	});
 
 	$('.removefilters').on('click', function() {
+
+		// reset time sliders and filtered and hidden badges
+		$(".takeoff-range0").slider("values", [0, 1440]);
+		$(".takeoff-range1").slider("values", [0, 1440]);
+		$(".landing-range0").slider("values", [0, 1440]);
+		$(".landing-range1").slider("values", [0, 1440]);
+
+		$('div[id^="flight"]').removeClass('hiddend0 hiddend1 hiddena0 hiddena1');
+		$('div[id^="flight"]').removeClass('dfiltered0 dfiltered1 afiltered0 afiltered1');
+
+
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
@@ -68,12 +79,6 @@ $(document).ready(function(){
 		$('.filterselection').hide();
 		$('.filtertimeselection').hide();
 		$('.spinner').show();
-
-		// reset time sliders
-		$(".takeoff-range0").slider("values", [0, 1440]);
-		$(".takeoff-range1").slider("values", [0, 1440]);
-		$(".landing-range0").slider("values", [0, 1440]);
-		$(".landing-range1").slider("values", [0, 1440]);
 
 		// reset sorting and filters
 		sortAir( sortbyprice );
@@ -215,10 +220,11 @@ $(document).ready(function(){
 			e.preventDefault();
 	});
 
-//------------------------------------------------------------------------------
-// Run the filterAir() over the initial values of the filter bar
-//------------------------------------------------------------------------------
-filterAir();
+	//------------------------------------------------------------------------------
+	// on initial page load, run the filterAir()
+	// over the initial values of the filter bar
+	//------------------------------------------------------------------------------
+	filterAir();
 
 }); // end of $(document).ready(function()
 
@@ -231,6 +237,8 @@ filterAir();
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/
 
 var filterAirDelay = new FunctionGuard(filterAir);
+var sliderAirDelay = new FunctionGuard(filterAir, 500, null, 'slider');
+
 var resetAirDelay = new FunctionGuard(filterAir, 500, null, 'true');
 
 function FunctionGuard(fn, quietTime, context /*,fixed args*/) {

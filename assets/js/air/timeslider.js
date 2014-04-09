@@ -33,11 +33,11 @@ $(document).ready(function () {
 		max: maxtime,
 		step: steptime,
 		values: departRange,
-		slide: function (e, ui) {
+		slide: _.throttle( function (e, ui) {
 			$('.takeoff-time0').html(showTime(ui.values[0])); //  +' ('+ ui.values[0]+')'
 			$('.takeoff-time1').html(showTime(ui.values[1])); //  +' ('+ ui.values[1]+')'
 			filterBlocks(ui.values, null, 'd0');
-		}
+		}, 200)
 	});
 
 	$(".takeoff-range1").slider({
@@ -46,11 +46,11 @@ $(document).ready(function () {
 		max: maxtime,
 		step: steptime,
 		values: departRange,
-		slide: function (e, ui) {
+		slide: _.throttle( function (e, ui) {
 			$('.takeoff-time2').html(showTime(ui.values[0]));
 			$('.takeoff-time3').html(showTime(ui.values[1]));
 			filterBlocks(ui.values, null, 'd1');
-		}
+		}, 200)
 	});
 
 // landing slider2
@@ -60,11 +60,11 @@ $(document).ready(function () {
 		max: maxtime,
 		step: steptime,
 		values: arriveRange,
-		slide: function (e, ui) {
+		slide: _.throttle( function (e, ui) {
 			$('.landing-time0').html(showTime(ui.values[0]));
 			$('.landing-time1').html(showTime(ui.values[1]));
 			filterBlocks(null, ui.values, 'a0');
-		}
+		}, 200)
 	});
 
 	$(".landing-range1").slider({
@@ -73,12 +73,13 @@ $(document).ready(function () {
 		max: maxtime,
 		step: steptime,
 		values: arriveRange,
-		slide: function (e, ui) {
+		slide: _.throttle( function (e, ui) {
 			$('.landing-time2').html(showTime(ui.values[0]));
 			$('.landing-time3').html(showTime(ui.values[1]));
 			filterBlocks(null, ui.values, 'a1');
-		}
-	});
+		}, 200)
+
+	}); // slider
 
 	$( ".showlanding" ).on( "click", function() {
 		$("#landing").show('slow');
@@ -159,8 +160,12 @@ $(document).ready(function () {
 			if ( id == 'a1' && _.isEqual(baseRange, arriveRange)) {
 				$(this).removeClass('hiddena1').removeClass('afilterea1');
 			}
-
 		});
+
+		var flightCount = $('div[id^="flight"]:visible').length;
+		// show flight count
+ 		$('#flightCount').text(flightCount);
+
 	}
 
 	// function to see if number is between two values

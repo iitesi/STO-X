@@ -114,8 +114,6 @@ function getUnusedTickets(userid, acctid) {
 ----------------------------------------------------------------------*/
 function filterAir(reset) {
 
- // console.clear();
-
 	var loopcnt = 0;
 	var classy = $("#ClassY:checked").val();
 	var classc = $("#ClassC:checked").val();
@@ -252,7 +250,7 @@ function filterAir(reset) {
 	}
 
 	// show flight count
- 	$('#flightCount').text(showCount + ' of ' + flightresults.length);
+ 	$('#flightCount').text(showCount);
 	$('.spinner').hide();
 	return false;
 } // ----------- end of function filterAir()------------------------------------
