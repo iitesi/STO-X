@@ -663,7 +663,8 @@
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()
-																						, Account = rc.Account ) />
+																						, Account = rc.Account
+																						, searchID = rc.searchID ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 					<cfset rc.message.addInfo('Your profile has been created.') />
