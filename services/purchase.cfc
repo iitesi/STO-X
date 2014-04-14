@@ -245,11 +245,19 @@
 								</cfif>
 
 								<cfif airSelected>
-									<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
+									<cfset local.urModSimultaneous = UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
 																	, Traveler = arguments.Traveler
 																	, Air = arguments.Air
 																	, Filter = arguments.Filter
 																	, version = arguments.version )>
+									<!--- If a simultaneous change occurred, run UniversalRecordModifyReq again --->
+									<cfif urModSimultaneous>
+										<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
+																	, Traveler = arguments.Traveler
+																	, Air = arguments.Air
+																	, Filter = arguments.Filter
+																	, version = arguments.version )>
+									</cfif>
 								</cfif>
 								
 								<cfif NOT processFileFinishing>
