@@ -229,8 +229,7 @@
 		<cfif arguments.Traveler.getFirstName() EQ ''>
 			<cfset local.error.fullname = ''>
 		</cfif>
-		<cfif (arguments.Traveler.getNoMiddleName() EQ 0 AND arguments.Traveler.getMiddleName() EQ '')
-		OR (arguments.Traveler.getNoMiddleName() EQ 1 AND arguments.Traveler.getMiddleName() NEQ '')>
+		<cfif arguments.Traveler.getNoMiddleName() EQ 0 AND arguments.Traveler.getMiddleName() EQ ''>
 			<cfset local.error.fullname = ''>
 		</cfif>
 		<cfif arguments.Traveler.getLastName() EQ ''>
