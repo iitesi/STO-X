@@ -97,12 +97,11 @@
 		</div>
 	</div>
 
-	<div id="orgUnits"> </div>
-
 	<div class="control-group">
 		<label class="control-label" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
 		<div class="controls">
 			<input type="text" name="redress" id="redress" class="input-medium">
+			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
 		</div>
 	</div>
 
@@ -118,8 +117,11 @@
 			<option value="GlobalEntry">Global Entry</option>
 			<option value="Sentri">SENTRI</option>
 			</select>
+			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
 		</div>
 	</div>
+
+	<div id="orgUnits"> </div>
 
 	<cfif rc.travelerNumber EQ 1>
 		
