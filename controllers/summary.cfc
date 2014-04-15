@@ -632,6 +632,9 @@
 			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
+			<cfif len(rc.Traveler.getMiddleName()) AND rc.Traveler.getNoMiddleName() EQ 1>
+				<cfset rc.Traveler.setNoMiddleName( 0 )>
+			</cfif>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
 			<cfset rc.errors = fw.getBeanFactory().getBean('Summary').error( Traveler = rc.Traveler
 																			, Air = rc.Air
@@ -660,7 +663,8 @@
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()
-																						, Account = rc.Account ) />
+																						, Account = rc.Account
+																						, searchID = rc.searchID ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 					<cfset rc.message.addInfo('Your profile has been created.') />

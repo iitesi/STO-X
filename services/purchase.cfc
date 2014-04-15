@@ -81,6 +81,7 @@
 						Command = MVP/
 						Command = MVBT/1M98//SHORTS
 						--->
+						<!--- STM-2961: Remove C:N command and change MVP/ to MVP/|2-200 --->
 						<cfset local.moveBARPARResponse = TerminalEntry.moveBARPAR( targetBranch = arguments.targetBranch
 																					, hostToken = arguments.hostToken
 																					, pcc = arguments.Traveler.getBAR()[1].PCC
@@ -94,12 +95,13 @@
 							Add auto ticketing remarks
 							Command = C:N:*SORT1 SORT2 SORT3 SORT4
 							--->
-							<cfset TerminalEntry.addStatmentInfo( targetBranch = arguments.targetBranch
+							<!--- STM-2961: Remove entire addStatmentInfo function --->
+							<!--- <cfset TerminalEntry.addStatmentInfo( targetBranch = arguments.targetBranch
 																	, hostToken = arguments.hostToken
 																	, statmentInformation = arguments.statmentInformation
 																	, par = arguments.Traveler.getPAR()
 																	, searchID = arguments.searchID
-																	, Traveler = arguments.Traveler )>
+																	, Traveler = arguments.Traveler )> --->
 							<!--- Short's Travel/Internal TMCs only --->
 							<cfif NOT arguments.Account.tmc.getIsExternal()>
 								<!---
@@ -164,7 +166,7 @@
 							If Southwest, change KK segments to HK before queue
 							Command = .IHK
 							--->
-							<!--- Per STM-2961: Moving this to after AirCreate and before File Finishing --->
+							<!--- STM-2961: Move .IHK to after AirCreate and before File Finishing --->
 							<!--- <cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
 								<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
 									<cfif carrier IS 'WN'>
@@ -179,6 +181,7 @@
 							Verify stored fare
 							Command = T:V or T:R
 							--->
+							<!--- STM-2961: Use T:V for all airlines, even Southwest --->
 							<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
 																									, hostToken = arguments.hostToken
 																									, searchID = arguments.searchID
@@ -242,11 +245,19 @@
 								</cfif>
 
 								<cfif airSelected>
-									<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
+									<cfset local.urModSimultaneous = UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
 																	, Traveler = arguments.Traveler
 																	, Air = arguments.Air
 																	, Filter = arguments.Filter
 																	, version = arguments.version )>
+									<!--- If a simultaneous change occurred, run UniversalRecordModifyReq again --->
+									<cfif urModSimultaneous>
+										<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
+																	, Traveler = arguments.Traveler
+																	, Air = arguments.Air
+																	, Filter = arguments.Filter
+																	, version = arguments.version )>
+									</cfif>
 								</cfif>
 								
 								<cfif NOT processFileFinishing>

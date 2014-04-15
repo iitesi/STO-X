@@ -316,6 +316,88 @@
 								<cfset version++>
 							</cfif>
 
+							<!--- If Southwest, change KK segments to HK before queue
+							Command = .IHK --->
+							<!--- STM-2961: Confirm the segments before File Finishing --->
+							<cfif Air.platingCarrier IS 'WN'>
+								<cfset local.originalNumSegments = arrayLen(Air.PricingSolution.getSegment()) />
+								<cfset local.responseNumSegments = 0 />
+								<cfset local.confirmSegmentsError = false />
+
+								<!--- Sleep for two seconds before starting this process --->
+								<cfset sleep(2000) />
+								<!--- <cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
+																						, Filter = rc.Filter
+																						, pccBooking = rc.Account.PCC_Booking
+																						, providerLocatorCode = providerLocatorCode )> --->
+
+								<!--- Display PNR --->
+								<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pnr = providerLocatorCode
+																										, searchID = rc.searchID )>
+
+								<cfif NOT displayPNRResponse.error>
+									<!--- Confirm segments --->
+									<cfset local.segmentResponse = fw.getBeanFactory().getBean('TerminalEntry').confirmSegments( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+
+									<cfif NOT segmentResponse.error>
+										<!--- Confirm that the number of segments returned is the same number of segments contained in the original request --->
+										<cfif arrayLen(segmentResponse.message)>
+											<cfloop array="#segmentResponse.message#" index="local.segmentIndex" item="local.segment">
+												<cfif isNumeric(left(trim(segment), 1))>
+													<cfset responseNumSegments++ />
+												</cfif>
+											</cfloop>
+										</cfif>
+									</cfif>
+								</cfif>
+
+								<cfif responseNumSegments NEQ originalNumSegments>
+									<cfset confirmSegmentsError = true />
+								<cfelse>
+									<!--- T:R --->
+									<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID
+																										, Air = Air
+																										, airSelected = airSelected
+																										, command = 'T:R' )>
+									<cfif NOT verifyStoredFareResponse.error>
+										<!--- Add received by STO.CONFIRMED.SEGMENTS line --->
+										<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, userID = rc.Filter.getUserID()
+																										, searchID = rc.searchID
+																										, receivedBy = 'STO.CONFIRMED.SEGMENTS' )>
+
+										<!--- E --->
+										<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID
+																										, command = 'E' )>
+										<!--- If error, E again --->
+										<cfif erRecordResponse.error>
+											<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID
+																										, command = 'E' )>
+											<cfif erRecordResponse.error>
+												<cfset confirmSegmentsError = true />
+											</cfif>
+										</cfif>
+									<cfelse>
+										<cfset confirmSegmentsError = true />
+									</cfif>
+
+									<cfif confirmSegmentsError>
+										<cfset arrayAppend( errorMessage, 'The fare for the flight you found is no longer available. Please select another flight.' )>
+										<cfset errorType = 'Air.confirmSegments' />							
+									</cfif>
+								</cfif>
+							</cfif>
 						</cfif>
 					</cfif>
 				</cfif>
