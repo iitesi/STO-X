@@ -5,6 +5,9 @@
 	<cfif cgi.http_host EQ "r.local">
 		<cfset local.secureURL = "http://" & cgi.http_host />
 		<cfset local.returnURL = "http://" & cgi.http_host />
+	<cfelseif cgi.local_host EQ "RailoQA">
+		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
+		<cfset local.returnURL = "https://" & cgi.http_host />
 	<cfelse>
 		<cfset local.secureURL = "https://europa.shortstravel.com" />
 		<cfset local.returnURL = "https://" & cgi.http_host />
