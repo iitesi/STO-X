@@ -401,7 +401,7 @@
 					<cfset arrayAppend( local.stTemp.Offices, duplicate( local.location ) ) />
 				</cfloop>
 			</cfif>
-
+			<cfset local.stTemp.loadTime = now() />
 			<cfset application.Accounts[arguments.AcctID] = local.stTemp>
 		</cfif>
 
