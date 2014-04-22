@@ -34,6 +34,7 @@
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 			<h3 id="addModalHeader">ENTER CREDIT CARD INFORMATION</h3>
+			<b>PLEASE NOTE:</b> If you create or save changes to a profile, you are authorizing Short's Travel to retain this credit card information for future transactions until the card expiration date. Short's Travel follows PCI Compliance guidelines to ensure credit card information security.
 		</div>
 		<cfoutput>
 			<div class="modal-body">
