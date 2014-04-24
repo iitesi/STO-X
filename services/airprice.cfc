@@ -53,6 +53,7 @@
 		<cfset local.stSegments = {}>
 		<cfset local.nTripKey = ''>
 		<cfset local.TotalFare = 0>
+		<cfset session.searches[arguments.SearchID].sUserMessage = '' />
 
 		<cfif arguments.nTrip EQ ''
 			AND NOT isStruct(arguments.stSelected)>
