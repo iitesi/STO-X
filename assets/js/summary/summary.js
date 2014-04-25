@@ -109,6 +109,22 @@ $(document).ready(function(){
 		});
 	});
 
+	// On change find the other traveler number's data
+	$( "#travelNumberType" ).on('change', function() {
+		$.ajax({
+			type: "POST",
+			url: "RemoteProxy.cfc?method=getUserTravelerNumber",
+			data: 	{
+						userID: $( "#userID" ).val()
+						, travelNumberType: $( "#travelNumberType" ).val()
+					},
+			dataType: "text",
+			success:function(travelerNumber) {
+				$( "#travelNumber" ).val(travelerNumber);
+			}
+		});
+	});
+
 	$("#createProfileDiv").on("click", function () { 
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {

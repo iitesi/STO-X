@@ -86,7 +86,9 @@ setApplication
 		<cfargument name="rc">
 
 		<!---Move the Account into the rc scope so it is always available.--->
-		<cfif StructKeyExists(application, 'Accounts') AND StructKeyExists(application.Accounts, arguments.rc.AcctID)>
+		<cfif StructKeyExists(application, 'Accounts')
+			AND StructKeyExists(application.Accounts, arguments.rc.AcctID)
+			AND dateDiff( 'n', application.Accounts[ arguments.rc.AcctID ].loadTime, now() ) LT 15>
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
 		<cfelse>

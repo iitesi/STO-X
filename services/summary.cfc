@@ -564,6 +564,8 @@
 
 		<cfif cgi.http_host EQ "r.local">
 			<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfelseif cgi.local_host EQ "RailoQA">
+			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfelse>
 			<cfset local.secureURL = "https://europa.shortstravel.com" />
 		</cfif>

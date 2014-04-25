@@ -47,6 +47,11 @@
 			<div id="hidefilterfromprint">
 				#View('air/filter')#
 			</div>
+
+			<cfif structKeyExists(session.searches[rc.SearchID], "sUserMessage") AND len(session.searches[rc.SearchID].sUserMessage)>
+				<div class="alert alert-error">ERROR: #session.searches[rc.SearchID].sUserMessage#</div>
+			</cfif>
+
 			<!--- Display selected badges (selected via schedule search) --->
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
