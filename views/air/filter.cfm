@@ -193,7 +193,7 @@
 				<!--- 11:37 AM Thursday, December 05, 2013 - Jim Priest - jpriest@shortstravel.com
 				All the templates need to be seriously refactored here. Using row-fluid here will make
 				the sliders smaller as the screen shrinks. Ideally they would stack vertically
-				but with skeleton+bootstrap+jqueryui something is overriding that --->
+				but with skeleton+bootstrap+jqueryui mess something is overriding that --->
 
 				<div class="row-fluid">
 					<div class="span12">
@@ -204,61 +204,71 @@
 								<cfcase value="RT">
 									<!-- SLIDERS -->
 									<div id="sliders">
-										<div id="takeoff">
-											<div class="sliderbox">
-												<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
-												<div class="departure-slider">
-													<div class="takeoff-range0"></div>
+										<div class="row-fluid">
+											<div class="span3">
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm dd")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+												</div>
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getArrivalDateTime(), "mmmm dd")# :: #rc.filter.getArrivalCity()# - #rc.filter.getDepartCity()#</h3>
 												</div>
 											</div>
-
-											<div class="sliderbox">
-												<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
-												<div class="departure-slider">
-													<div class="takeoff-range1"></div>
+											<div class="span3">
+												<div class="row-fluid">
+													<div class="slider departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+														<div class="takeoff-range0"></div>
+													</div>
+												</div>
+												<div class="row-fluid">
+													<div class="departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
+														<div class="takeoff-range1"></div>
+													</div>
 												</div>
 											</div>
-										</div>
-
-										<a href="##" class="showlanding">Show landing times</a>
-
-										<div id="landing">
-											<div class="sliderbox">
-												<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
-												<div class="arrival-slider">
-													<div class="landing-range0"></div>
+											<div class="span3 offset1">
+												<div class="row-fluid">
+													<div class="slider arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+														<div class="landing-range0"></div>
+													</div>
 												</div>
-											</div>
-
-											<div class="sliderbox">
-												<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
-												<div class="arrival-slider">
-													<div class="landing-range1"></div>
+												<div class="row-fluid">
+													<div class="arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
+														<div class="landing-range1"></div>
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</cfcase>
 
+<!--- ONE WAY --->
 								<cfcase value="OW">
 									<!-- SLIDERS -->
 									<div id="sliders">
-										<div id="takeoff">
-											<div class="sliderbox">
-												<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
-												<div class="departure-slider">
-													<div class="takeoff-range0"></div>
+										<div class="row-fluid">
+											<div class="span3">
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm d")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
 												</div>
 											</div>
-										</div>
-
-										<a href="##" class="showlanding">Show landing times</a>
-
-										<div id="landing">
-											<div class="sliderbox">
-												<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
-												<div class="arrival-slider">
-													<div class="landing-range0"></div>
+											<div class="span3">
+												<div class="row-fluid">
+													<div class="slider departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+														<div class="takeoff-range0"></div>
+													</div>
+												</div>
+											</div>
+											<div class="span3 offset1">
+												<div class="row-fluid">
+													<div class="slider arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+														<div class="landing-range0"></div>
+													</div>
 												</div>
 											</div>
 										</div>

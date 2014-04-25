@@ -1075,9 +1075,8 @@ tr.hotel-room td{
 .departure-slider > .ui-slider .ui-slider-range { background: #4883B3; }
 .ui-widget-content { background: #ccc; }
 
-
+.slider {height: 90px;}
 .sliderbox {width: 175px; margin: 0 1.5em; float: left;}
 .sliderbox span {font-size: 90%;}
-
-#landing, .hiddend0, .hiddend1, .hiddena0, .hiddena1 {display: none;}
+.hiddend0, .hiddend1, .hiddena0, .hiddena1 {display: none;}
 

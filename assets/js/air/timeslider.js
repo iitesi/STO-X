@@ -81,11 +81,6 @@ $(document).ready(function () {
 
 	}); // slider
 
-	$( ".showlanding" ).on( "click", function() {
-		$("#landing").show('slow');
-		$(this).hide();
-	});
-
 	function filterBlocks(departRange, arriveRange, id) {
 		departRange0 = $('.takeoff-range0').slider('values');
 		departRange1 = $('.takeoff-range1').slider('values');
