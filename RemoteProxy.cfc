@@ -102,6 +102,13 @@
 		<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
 	</cffunction>
 
+	<cffunction name="getUserTravelerNumber" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="userID" type="numeric" required="true"/>
+		<cfargument name="travelNumberType" type="string" required="true"/>
+
+		<cfreturn getBean( "UserService" ).getUserTravelerNumber( arguments.userId, arguments.travelNumberType) />
+	</cffunction>
+
     <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
 

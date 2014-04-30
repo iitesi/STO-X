@@ -5,6 +5,9 @@
 	<cfif cgi.http_host EQ "r.local">
 		<cfset local.secureURL = "http://" & cgi.http_host />
 		<cfset local.returnURL = "http://" & cgi.http_host />
+	<cfelseif cgi.local_host EQ "RailoQA">
+		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
+		<cfset local.returnURL = "https://" & cgi.http_host />
 	<cfelse>
 		<cfset local.secureURL = "https://europa.shortstravel.com" />
 		<cfset local.returnURL = "https://" & cgi.http_host />
@@ -31,6 +34,7 @@
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 			<h3 id="addModalHeader">ENTER CREDIT CARD INFORMATION</h3>
+			<b>PLEASE NOTE:</b> If you create or save changes to a profile, you are authorizing Short's Travel to retain this credit card information for future transactions until the card expiration date. Short's Travel follows PCI Compliance guidelines to ensure credit card information security.
 		</div>
 		<cfoutput>
 			<div class="modal-body">

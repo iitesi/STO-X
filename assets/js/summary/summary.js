@@ -109,6 +109,22 @@ $(document).ready(function(){
 		});
 	});
 
+	// On change find the other traveler number's data
+	$( "#travelNumberType" ).on('change', function() {
+		$.ajax({
+			type: "POST",
+			url: "RemoteProxy.cfc?method=getUserTravelerNumber",
+			data: 	{
+						userID: $( "#userID" ).val()
+						, travelNumberType: $( "#travelNumberType" ).val()
+					},
+			dataType: "text",
+			success:function(travelerNumber) {
+				$( "#travelNumber" ).val(travelerNumber);
+			}
+		});
+	});
+
 	$("#createProfileDiv").on("click", function () { 
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {
@@ -192,6 +208,9 @@ $(document).ready(function(){
 		$( "#day" ).val( birthdate.getUTCDate() );
 		$( "#year" ).val( birthdate.getYear()+1900 );
 		$( "#gender" ).val( traveler.gender );
+		$( "#redress" ).val( traveler.redress );
+		$( "#travelNumber" ).val( traveler.travelNumber );
+		$( "#travelNumberType" ).val( traveler.travelNumberType );
 
 		// If an unregistered FindIt guest
 		if (findit == 1 && $("#userID").val() == 0) {

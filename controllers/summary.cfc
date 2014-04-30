@@ -318,7 +318,10 @@
 									<cfset payment.setExpireDate(createDate(expirationYear, expirationMonth, expirationDay)) />
 									<cfset payment.setBTAID('') />
 									<cfset payment.setFOPID('-1') />
+									<cfset payment.setPCIID(0) />
+									<cfset payment.setFOPCode(parseFlightFOPResponse[1].cardType) />
 									<cfset payment.setFOPDescription('Personal Flight Credit Card') />
+									<cfset payment.setPaymentType('Profile') />
 									<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 								<!--- </cfif> --->
 							</cfif>
@@ -418,7 +421,9 @@
 										<cfset payment.setBTAID('') />
 										<cfset payment.setFOPID('-1') />
 										<cfset payment.setPCIID(local.hotelFOP.pciID) />
+										<cfset payment.setFOPCode(local.hotelFOP.cardType) />
 										<cfset payment.setFOPDescription('Personal Hotel Credit Card') />
+										<cfset payment.setPaymentType('Profile') />
 										<cfset arrayAppend(rc.traveler.getPayment(), payment) />
 									<cfelse>
 										<cfset arrayAppend( errorMessage, 'Could not display hotel form of payment.' )>
@@ -499,7 +504,6 @@
 			<!--- Keep track of the fopID's of any new air or hotel cards entered --->
 			<cfset local.originalAirFOPID = rc.Traveler.getBookingDetail().getAirFOPID() />
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="1" abort> --->
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
 																						, acctID = rc.Filter.getAcctID()
@@ -527,21 +531,20 @@
 			</cfif>
 			<cfset rc.Traveler.getBookingDetail().populateFromStruct( rc )>
 			<!--- If a new air or hotel credit card was entered, keep the fopID that was returned from the creditCards table --->
-			<cfif rc.Traveler.getBookingDetail().getNewAirCC()>
+			<cfif rc.Traveler.getBookingDetail().getNewAirCC() EQ 1>
 				<cfif len(local.originalAirFOPID) AND isNumeric(local.originalAirFOPID) AND local.originalAirFOPID NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setAirFOPID( local.originalAirFOPID ) />
 				<cfelseif rc.Traveler.getBookingDetail().getNewAirCCID() NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setAirFOPID( rc.Traveler.getBookingDetail().getNewAirCCID() ) />
 				</cfif>
 			</cfif>
-			<cfif rc.Traveler.getBookingDetail().getNewHotelCC()>
+			<cfif rc.Traveler.getBookingDetail().getNewHotelCC() EQ 1>
 				<cfif len(local.originalHotelFOPID) AND isNumeric(local.originalHotelFOPID) AND local.originalHotelFOPID NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( local.originalHotelFOPID ) />
 				<cfelseif rc.Traveler.getBookingDetail().getNewHotelCCID() NEQ 0>
 					<cfset rc.Traveler.getBookingDetail().setHotelFOPID( rc.Traveler.getBookingDetail().getNewHotelCCID() ) />
 				</cfif>
 			</cfif>
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="2" abort> --->
 			<cfif (structKeyExists(rc, "year") AND len(rc.year))
 				AND (structKeyExists(rc, "month") AND len(rc.month))
 				AND (structKeyExists(rc, "day") AND len(rc.day))>
@@ -629,8 +632,10 @@
 			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
 			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
+			<cfif len(rc.Traveler.getMiddleName()) AND rc.Traveler.getNoMiddleName() EQ 1>
+				<cfset rc.Traveler.setNoMiddleName( 0 )>
+			</cfif>
 			<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
-			<!--- <cfdump var="#rc.Traveler.getBookingDetail()#" label="3" abort> --->
 			<cfset rc.errors = fw.getBeanFactory().getBean('Summary').error( Traveler = rc.Traveler
 																			, Air = rc.Air
 																			, Hotel = rc.Hotel
@@ -658,7 +663,8 @@
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()
-																						, Account = rc.Account ) />
+																						, Account = rc.Account
+																						, searchID = rc.searchID ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
 					<cfset rc.message.addInfo('Your profile has been created.') />

@@ -229,8 +229,7 @@
 		<cfif arguments.Traveler.getFirstName() EQ ''>
 			<cfset local.error.fullname = ''>
 		</cfif>
-		<cfif (arguments.Traveler.getNoMiddleName() EQ 0 AND arguments.Traveler.getMiddleName() EQ '')
-		OR (arguments.Traveler.getNoMiddleName() EQ 1 AND arguments.Traveler.getMiddleName() NEQ '')>
+		<cfif arguments.Traveler.getNoMiddleName() EQ 0 AND arguments.Traveler.getMiddleName() EQ ''>
 			<cfset local.error.fullname = ''>
 		</cfif>
 		<cfif arguments.Traveler.getLastName() EQ ''>
@@ -255,6 +254,9 @@
 		</cfif>
 		<cfif arguments.Traveler.getGender() EQ ''>
 			<cfset local.error.gender = ''>
+		</cfif>
+		<cfif arguments.Traveler.getTravelNumber() NEQ '' AND arguments.Traveler.getTravelNumberType() EQ ''>
+			<cfset local.error.travelNumber = ''>
 		</cfif>
 
 		<!--- If a guest traveler has checked the checkbox to create a new profile --->
@@ -562,6 +564,8 @@
 
 		<cfif cgi.http_host EQ "r.local">
 			<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfelseif cgi.local_host EQ "RailoQA">
+			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfelse>
 			<cfset local.secureURL = "https://europa.shortstravel.com" />
 		</cfif>

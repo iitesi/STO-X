@@ -150,8 +150,12 @@
 								--->
 								<cfif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
 									<cfset local.stSeats['ExitRow'][local.nRow] = 1>
-								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
-									<cfset local.stSeats[local.nRow][local.sColumn][local.stCharacteristic.XMLAttributes.Value] = 1>
+								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'Preferential'>
+									<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'Preferential'>
+								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'RestrictedGeneral'>
+									<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'RBDRestriction'>
+								<!--- <cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
+									<cfset local.stSeats[local.nRow][local.sColumn][local.stCharacteristic.XMLAttributes.Value] = 1> --->
 								</cfif>
 							</cfloop>
 						<cfelseif local.stFacility.XMLAttributes.Type EQ 'Aisle'>
