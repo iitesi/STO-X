@@ -188,20 +188,22 @@
         <cfargument name="cfcname" type="string" required="true">
         <cfargument name="method" type="string" required="true">
         <cfargument name="args" type="struct" required="true">
-		<!---TODO: Figure out how to make this happen. Widget reporting cgi.http_referrer is an empty string--->
-		<!---
-		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD' AND NOT
-			(
-				findNoCase( "shortstravel.com", cgi.http_referrer ) OR
-				findNoCase( "shortstravelonline.com", cgi.http_referrer ) OR
-				findNoCase( "b-hive.com", cgi.http_referrer ) OR
-				findNoCase( "b-hives.com", cgi.http_referrer )
-			)>
 
-			<cfheader statusCode="403" statustext="Not Authorized" />
-			<cfreturn />
+		<cfif application.bf.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD'>
+
+			<cfif NOT (
+					findNoCase( "shortstravel.com", cgi.http_referer ) OR
+					findNoCase( "shortstravelonline.com", cgi.http_referer ) OR
+					findNoCase( "b-hive.com", cgi.http_referer ) OR
+					findNoCase( "b-hives.com", cgi.http_referer )
+				)>
+
+				<cfheader statusCode="403" statustext="Not Authorized" />
+				<cfreturn />
+			</cfif>
+
 		</cfif>
-		--->
+
 		<cfif NOT structKeyExists( cookie, "userId" ) OR  NOT structKeyExists( cookie, "acctId" ) OR NOT structKeyExists( cookie, "date" ) OR NOT structKeyExists( cookie, "token" )>
 			<cfset local.isAuthorized = false />
 		<cfelse>
