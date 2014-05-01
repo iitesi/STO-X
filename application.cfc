@@ -189,7 +189,7 @@
         <cfargument name="method" type="string" required="true">
         <cfargument name="args" type="struct" required="true">
 
-		<cfif application.bf.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD'>
+		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD'>
 
 			<cfif NOT (
 					findNoCase( "shortstravel.com", cgi.http_referer ) OR
