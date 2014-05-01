@@ -292,8 +292,8 @@ ul.tabs li a.active {
 }
 
 .filter .navbar-inner {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 .spinner {

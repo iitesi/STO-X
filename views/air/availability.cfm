@@ -84,6 +84,7 @@
 			var sortbyprice1bag = '';
 			var sortbyprice2bag = '';
 
+			// define for filtering
 			// flightresults is used in booking.js to filter flights
 			// here we loop over session searches and stuff all the flights avail in flightresults
 			var flightresults = [

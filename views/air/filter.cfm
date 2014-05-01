@@ -63,7 +63,14 @@ F = first
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
 							</cfif>
-							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Non-Stop <b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" id="nonstopbtn" data-stops="0" data-title="Non-stop" title="Non-stop flights">Non-stop</a></li>
+										<li><a href="#" id="nonstopbtn1" data-stops="1" data-title="1 Stop" title="Flights with one stop">1 Stop</a></li>
+										<li><a href="#" id="nonstopbtn2" data-stops="2" data-title="2+ Stops" title="Flights with two or more stops">2+ Stops</a></li>
+									</ul>
+								</li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
 						</ul>
@@ -172,6 +179,7 @@ F = first
 									</div>
 								</cfif>
 							</cfoutput>
+
 							<input type="hidden" id="NonStops" name="NonStops" value="0">
 							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
 							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">

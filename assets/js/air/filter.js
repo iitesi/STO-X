@@ -57,7 +57,8 @@ $(document).ready(function(){
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
-		$('.filterby, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
+		$('.filterby, #singlecarrierbtn, #inpolicybtn').parent().removeClass('active');
+		$('[id^=nonstopbtn]').parents().removeClass('active');
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
@@ -73,6 +74,37 @@ $(document).ready(function(){
 	$('.filterby').on('click', function() {
 		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1});
 	});
+
+	// non-stop dropdown menu
+	$('[id^=nonstopbtn]').on('click', function(e) {
+			var selectedOption = $(this).attr( 'data-title' );
+			var stops = $(this).attr( 'data-stops' );
+			var menuRoot = $( this ).parents( "li.dropdown" );
+
+			// set number of stops into hidden field so we can grab it
+			$('#NonStops').val( stops );
+
+			// Change dropdown title based on selection
+			$( "a.dropdown-toggle", menuRoot ).html( selectedOption  + ' <b class="caret"></b>' );
+			$( "a.dropdown-toggle", menuRoot ).attr( "data-value", selectedOption );
+
+			// remove any active class then reset it below
+			$('[id^=nonstopbtn]').parents().removeClass('active');
+
+			// set active button
+			if ($(this).is('[id^=nonstopbtn]')) {
+				$(this).parent('li').parents('li').eq(0).addClass('active');
+				$(this).parent().addClass('active');
+			} else {
+				$(this).parent().addClass('active');
+			}
+
+			// run filter
+			$('.spinner').show();
+			filterAirDelay.run();
+			e.preventDefault();
+	});
+
 
 // toggle active button state if filter is active
 	// Single Carrier (on/off)
@@ -97,20 +129,6 @@ $(document).ready(function(){
 		} else {
 	 		$('#InPolicy').val('0')
 	 		$("#inpolicybtn").parent().removeClass('active');
-		}
-		$('.spinner').show();
-		filterAirDelay.run();
-		return false;
-	});
-
-	// NonStops (on/off)
-	$('#nonstopbtn').on('click', function() {
-		if( $('#NonStops').val() == 0 ){
-	 		$('#NonStops').val('1')
-	 		$("#nonstopbtn").parent().addClass('active');
-		} else {
-	 		$('#NonStops').val('0')
-	 		$("#nonstopbtn").parent().removeClass('active');
 		}
 		$('.spinner').show();
 		filterAirDelay.run();
@@ -178,19 +196,19 @@ $(document).ready(function(){
 // SORTING
 //------------------------------------------------------------------------------
 	$('[id^=sortby]').on('click', function(e) {
-			// sort flights
-			sortAir( $(this).attr("id") );
-			// remove all active states
-			$('[id^=sortby]').parents().removeClass('active');
+		// sort flights
+		sortAir( $(this).attr("id") );
+		// remove all active states
+		$('[id^=sortby]').parents().removeClass('active');
 
-			// set active button
-			if ($(this).is('[id^=sortbyprice]')) {
-				$(this).parent('li').parents('li').eq(0).addClass('active');
-				$(this).parent().addClass('active');
-			} else {
-				$(this).parent().addClass('active');
-			}
-			e.preventDefault();
+		// set active button
+		if ($(this).is('[id^=sortbyprice]')) {
+			$(this).parent('li').parents('li').eq(0).addClass('active');
+			$(this).parent().addClass('active');
+		} else {
+			$(this).parent().addClass('active');
+		}
+		e.preventDefault();
 	});
 
 //------------------------------------------------------------------------------
