@@ -629,9 +629,9 @@
 				</cfif>
 			</cfloop>
 			<cfset rc.Traveler.setBirthdate( birthdate )>
-			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z]', '', 'ALL') )>
-			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z]', '', 'ALL') )>
-			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z]', '', 'ALL') )>
+			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z\s]', '', 'ALL') )>
+			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z\s]', '', 'ALL') )>
+			<cfset rc.Traveler.setLastName( REReplace(rc.Traveler.getLastName(), '[^0-9A-Za-z\s]', '', 'ALL') )>
 			<cfif len(rc.Traveler.getMiddleName()) AND rc.Traveler.getNoMiddleName() EQ 1>
 				<cfset rc.Traveler.setNoMiddleName( 0 )>
 			</cfif>

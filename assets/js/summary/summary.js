@@ -176,7 +176,7 @@ $(document).ready(function(){
 				$( "#saveProfileDiv" ).hide();
 			}
 			else {
-				$( "#firstName" ).prop('disabled', true);
+				// $( "#firstName" ).prop('disabled', true);
 				$( "#lastName" ).prop('disabled', true);
 				if (traveler.middleName != undefined && traveler.middleName.length >= 2) {
 					$( "#fullNameDiv" ).hide();
@@ -198,6 +198,10 @@ $(document).ready(function(){
 			$( "#firstName" ).prop('disabled', false);
 			$( "#lastName" ).prop('disabled', false);
 			$( "#saveProfileDiv" ).hide();
+		}
+		/* If the first name contains a space and the middle name is blank, show nameCheckDiv */
+		if (traveler.firstName.indexOf(' ') >= 0 && (traveler.middleName == undefined || traveler.middleName == '')) {
+			$( "#nameCheckDiv" ).show();
 		}
 		$( "#phoneNumber" ).val( traveler.phoneNumber );
 		$( "#wirelessPhone" ).val( traveler.wirelessPhone );

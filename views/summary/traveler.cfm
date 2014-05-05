@@ -34,6 +34,12 @@
 		</div>
 	</div>
 
+	<div id="nameCheckDiv" class="control-group hide">
+		<div class="controls blue bold">
+			<a rel="popover" data-original-title="Name Verification" data-content="We have detected a space in your first name and a blank middle name. Your middle name may be appearing as part of your first name. Please update your first and/or middle names, as needed, and check 'Save changes to profile' before confirming your purchase." href="##" />Please check your name!</a>
+		</div>
+	</div>
+
 	<div class="control-group #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
 		<label class="control-label" for="phoneNumber">Business Phone *</label>
 		<div class="controls">
