@@ -57,8 +57,12 @@ $(document).ready(function(){
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
+
+		console.log('reset');
 		$('.filterby, #singlecarrierbtn, #inpolicybtn').parent().removeClass('active');
 		$('[id^=nonstopbtn]').parents().removeClass('active');
+		$( "#stopdropdown" ).html( 'Stops <b class="caret"></b>' );
+		$( "#stopdropdown" ).attr( "data-value", '' );
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well

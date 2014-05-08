@@ -64,7 +64,7 @@ F = first
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
 							</cfif>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Non-Stop <b class="caret"></b></a>
+									<a href="#" id="stopdropdown" class="dropdown-toggle" data-toggle="dropdown">Stops <b class="caret"></b></a>
 									<ul class="dropdown-menu">
 										<li><a href="#" id="nonstopbtn" data-stops="0" data-title="Non-stop" title="Non-stop flights">Non-stop</a></li>
 										<li><a href="#" id="nonstopbtn1" data-stops="1" data-title="1 Stop" title="Flights with one stop">1 Stop</a></li>
