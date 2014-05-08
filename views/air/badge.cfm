@@ -8,6 +8,8 @@
 			<!--- create ribbon
 			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 			--->
+
+
 			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
 				<cfif stTrip.Carriers[1] EQ "WN">
 					<cfset ribbonClass = "ribbon-l-pref">
@@ -43,6 +45,9 @@
 						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif>
 			--->
+<p align="center">Stops: #stTrip.stops#</p>
+
+
 			<cfset flightnumbers = ''>
 			<cfloop collection="#stTrip.Groups#" item="Group" >
 				<cfset stGroup = stTrip.Groups[Group]>
@@ -125,7 +130,7 @@
 					</cfif>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
-						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')# 
+						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#
 										<font color="white">(#(bDisplayFare ? stSegment.Class : '')#)</font>
 										</td>
 						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
