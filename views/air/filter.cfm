@@ -180,7 +180,7 @@ F = first
 								</cfif>
 							</cfoutput>
 
-							<input type="hidden" id="NonStops" name="NonStops" value="0">
+							<input type="hidden" id="NonStops" name="NonStops" value="">
 							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
 							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
 							</div>

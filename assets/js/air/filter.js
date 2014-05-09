@@ -58,7 +58,6 @@ $(document).ready(function(){
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
 
-		console.log('reset');
 		$('.filterby, #singlecarrierbtn, #inpolicybtn').parent().removeClass('active');
 		$('[id^=nonstopbtn]').parents().removeClass('active');
 		$( "#stopdropdown" ).html( 'Stops <b class="caret"></b>' );
@@ -229,6 +228,10 @@ filterAir();
 // This throttles requests to filterAir() so if the person quickly clicks several
 // filters we don't fire filterAir() multiple times.
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/
+
+// 8:48 AM Friday, May 09, 2014 - Jim Priest - priest@thecrumb.com
+// look at replacing this with underscore.js
+// http://underscorejs.org/#throttle
 
 var filterAirDelay = new FunctionGuard(filterAir);
 var resetAirDelay = new FunctionGuard(filterAir, 500, null, 'true');

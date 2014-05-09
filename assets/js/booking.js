@@ -152,9 +152,9 @@ function filterAir(reset) {
 				}
 			}
 
-			// non-stops
+			// non-stops - show all by default (nonstops will be empty)
 			if(showFlight == true){
-				if( flight[7] != nonstops ){
+				if( nonstops.length > 0 && flight[7] != nonstops ){
 					showFlight = false;
 				}
 			}

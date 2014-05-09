@@ -40,13 +40,11 @@
 			<!--- display ribbon --->
 			<span class="#ribbonclass#"></span>
 
-			<!--- TODO: uncomment for debugging
+			<!--- TODO: uncomment for debugging - this will display on each badge!
 			<cfif IsLocalHost(cgi.local_addr)>
 						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif>
 			--->
-<p align="center">Stops: #stTrip.stops#</p>
-
 
 			<cfset flightnumbers = ''>
 			<cfloop collection="#stTrip.Groups#" item="Group" >
