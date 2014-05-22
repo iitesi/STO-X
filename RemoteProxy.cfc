@@ -184,7 +184,7 @@
 
     <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
-        <cfargument name="propertyId" type="numeric" required="true" />
+        <cfargument name="propertyId" type="string" required="true" />
         <cfargument name="callback" type="string" required="false" />
         <cfargument name="requery" type="boolean" required="false" default="false" />
 
@@ -202,7 +202,7 @@
     </cffunction>
 
 	<cffunction name="getHotelDetails" access="remote" output="false" returntype="any" returnformat="plain" hint="I get the extended details for a particular hotel">
-		<cfargument name="propertyId" type="numeric" requred="true" />
+		<cfargument name="propertyId" type="string" requred="true" />
 		<cfargument name="forceUpdate" type="boolean" required="false" default="false" />
 		<cfargument name="callback" type="string" required="false" />
 
