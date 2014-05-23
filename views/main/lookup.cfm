@@ -17,3 +17,6 @@
 	</cfcatch>
 	</cftry>
 </cfif>
+
+
+<cfdump var="#epochTotal#" label="EpochTotal"/>

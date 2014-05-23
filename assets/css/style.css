@@ -291,9 +291,25 @@ ul.tabs li a.active {
 	display: none;
 }
 
+.filtertimeselection {
+	display: none;
+	margin-top: 1em;
+	margin-bottom: 2em;
+	position: relative;
+	z-index: 1;
+	-webkit-box-shadow: 3px 3px 5px rgba(50, 50, 50, 0.2);
+	-moz-box-shadow:    3px 3px 5px rgba(50, 50, 50, 0.2);
+	box-shadow:         3px 3px 5px rgba(50, 50, 50, 0.2);
+}
+
 .filter .navbar-inner {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+/*adjust last value to tighten up filter bar button spacing but make sure to test in all browsers!*/
+.navbar .nav > li > a {
+	padding: 10px 12px;
 }
 
 .spinner {
@@ -1038,3 +1054,29 @@ tr.hotel-room td{
     text-align: left;
     border: 1px solid gray;
 }
+
+
+/*
+----------------------------------------------------------------------------------------------------------
+	AIR TIME SLIDERS
+----------------------------------------------------------------------------------------------------------
+*/
+
+.ui-slider .ui-slider-handle {
+		cursor: default;
+		height: 1.2em;
+		position: absolute;
+		width: .8em;
+		z-index: 2;
+}
+
+/*slider colors*/
+.arrival-slider > .ui-slider .ui-slider-range { background: #83B348; }
+.departure-slider > .ui-slider .ui-slider-range { background: #4883B3; }
+.ui-widget-content { background: #ccc; }
+
+.slider {height: 90px;}
+.sliderbox {width: 175px; margin: 0 1.5em; float: left;}
+.sliderbox span {font-size: 90%;}
+.hiddend0, .hiddend1, .hiddena0, .hiddena1 {display: none;}
+

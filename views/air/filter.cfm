@@ -1,27 +1,15 @@
-<!---
-AIR CODES
------------------------
-1 = refundable
-0 = non refundable
------------------------
-Y = economy
-C = business
-F = first
------------------------
-(X) = not selected
- --->
-
 <cfsilent>
 	<cfparam name="rc.filter" default="">
 	<cfparam name="rc.bRefundable" default="0">
+
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
 			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+			<script type='text/javascript' src='#application.assetURL#/js/air/timeslider.js'></script>
 		</cfoutput>
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
-
 
 <!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
@@ -63,6 +51,13 @@ F = first
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
 							</cfif>
+							<!--- 2:03 PM Wednesday, April 09, 2014 - Jim Priest - priest@thecrumb.com
+							only show sliders for one-way and round-trip
+							multi-city is going to take a re-write of the badge/filter/slider code
+							to accommodate all the permutations that would be possible with multi-city --->
+							<cfif rc.filter.getAirType() EQ "OW" OR rc.filter.getAirType() EQ "RT">
+								<li><a href="#" class="filterbytime" id="timebtn" title="Click to view/hide time filters">Time</a></li>
+							</cfif>
 							<li><a href="#" id="nonstopbtn" title="Click to view/hide non-stop flights">Non-stops</a></li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
@@ -71,17 +66,17 @@ F = first
 				</div>
 				<div>
 					<cfoutput>
-						<h4><span id="flightCount">#rc.totalflights# of #rc.totalflights#</span> flights displayed
+						<h4><span id="flightCount">#rc.totalflights#</span> of #rc.totalflights# flights displayed
 						 <span class="pull-right">
-						 	<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
-						 	<a href="##" class="removefilters"> <i class="icon-refresh"></i> Clear Filters</a>
+							<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
+							<a href="##" class="removefilters"> <i class="icon-refresh"></i> Clear Filters</a>
 						 </span>
 						</h4>
 					</cfoutput>
 				</div>
 
-				<!--- new filter well --->
-				<div class="well filterselection">
+				<!--- filter well for airline/class/fares --->
+				<div id="filterwell" class="well filterselection">
 					<div class="row">
 						<div class="span7">
 							<div class="row">
@@ -178,14 +173,124 @@ F = first
 							</div>
 						</div>
 					</div> <!--- row --->
-					<br><br>
-					<span class="pull-right">
-						<button type="button" class="closewell close" title="Close filters"><i class="icon-remove"></i></button>
-					</span>
-				</div> <!--- well filterselection --->
-			</div>
-		</div><!--- // class=sixteen columns --->
-	</div><!--- // class=filter --->
+					<br>
+					<div>
+						<span class="pull-right">
+							<button type="button" class="closefilterwell close" title="Close filters"><i class="icon-remove"></i></button>
+						</span>
+					</div>
+				</div> <!--- // well filterselection --->
+			</div> <!--- // filterbar --->
+
+			<!--- time sliders --->
+			<div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
+			<div id="sliderwell" class="well filtertimeselection">
+				<div>
+					<b>Times</b>
+					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
+				</div>
+
+				<!--- 11:37 AM Thursday, December 05, 2013 - Jim Priest - jpriest@shortstravel.com
+				All the templates need to be seriously refactored here. Using row-fluid here will make
+				the sliders smaller as the screen shrinks. Ideally they would stack vertically
+				but with skeleton+bootstrap+jqueryui mess something is overriding that --->
+
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+
+						<cfoutput>
+							<cfswitch expression="#rc.filter.getAirType()#">
+								<cfcase value="RT">
+									<!-- SLIDERS -->
+									<div id="sliders">
+										<div class="row-fluid">
+											<div class="span3">
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm dd")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+												</div>
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getArrivalDateTime(), "mmmm dd")# :: #rc.filter.getArrivalCity()# - #rc.filter.getDepartCity()#</h3>
+												</div>
+											</div>
+											<div class="span3">
+												<div class="row-fluid">
+													<div class="slider departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+														<div class="takeoff-range0"></div>
+													</div>
+												</div>
+												<div class="row-fluid">
+													<div class="departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
+														<div class="takeoff-range1"></div>
+													</div>
+												</div>
+											</div>
+											<div class="span3 offset1">
+												<div class="row-fluid">
+													<div class="slider arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+														<div class="landing-range0"></div>
+													</div>
+												</div>
+												<div class="row-fluid">
+													<div class="arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
+														<div class="landing-range1"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</cfcase>
+
+<!--- ONE WAY --->
+								<cfcase value="OW">
+									<!-- SLIDERS -->
+									<div id="sliders">
+										<div class="row-fluid">
+											<div class="span3">
+												<div class="row-fluid slider">
+													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm d")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+												</div>
+											</div>
+											<div class="span3">
+												<div class="row-fluid">
+													<div class="slider departure-slider">
+														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+														<div class="takeoff-range0"></div>
+													</div>
+												</div>
+											</div>
+											<div class="span3 offset1">
+												<div class="row-fluid">
+													<div class="slider arrival-slider">
+														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+														<div class="landing-range0"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</cfcase>
+							</cfswitch>
+						</cfoutput>
+
+
+						</div> <!--- // row --->
+					</div> <!--- // span12 --->
+				</div> <!--- // row --->
+				<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
+			</div> <!--- // filtertimeselection --->
+
+		</div><!--- // sixteen columns --->
+	</div><!--- // filter --->
+
+
+
+
+
 
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

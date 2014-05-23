@@ -37,11 +37,10 @@ $(document).ready(function(){
 
 //------------------------------------------------------------------------------
 // FILTER
+// 9:46 AM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+// This should all be redone in Angular.js :)
 //------------------------------------------------------------------------------
 
-	// 9:29 AM Tuesday, August 20, 2013 - Jim Priest - jpriest@shortstravel.com
-	// hide the filter bar with a loading message until the page has fully rendered
-	// RailoQA takes forever to render the page - this may not be an issue in prod
 	$('#filterbarloading').hide();
 	$('.airfilterbar').show();
 
@@ -49,19 +48,36 @@ $(document).ready(function(){
 		$(this).slideUp();
 	});
 
-	$('.closewell').on('click', function() {
-		$(this).parent().parent().slideUp();
+	$('.closefilterwell').on('click', function() {
+		$('#filterwell').slideUp();
+	});
+
+	$('.closesliderwell').on('click', function() {
+		$('#sliderwell').slideUp();
+		$("#timebtn").parent().toggleClass('active');
 	});
 
 	$('.removefilters').on('click', function() {
+
+		// reset time sliders and filtered and hidden badges
+		$(".takeoff-range0").slider("values", [0, 1440]);
+		$(".takeoff-range1").slider("values", [0, 1440]);
+		$(".landing-range0").slider("values", [0, 1440]);
+		$(".landing-range1").slider("values", [0, 1440]);
+
+		$('div[id^="flight"]').removeClass('hiddend0 hiddend1 hiddena0 hiddena1');
+		$('div[id^="flight"]').removeClass('dfiltered0 dfiltered1 afiltered0 afiltered1');
+
+
 		// reset checkboxes
 		$('.filterselection input[type=checkbox]').prop('checked',false);
 		// reset button states
-		$('.filterby, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
+		$('.filterby, .filterbytime, #singlecarrierbtn, #nonstopbtn, #inpolicybtn').parent().removeClass('active');
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+		$('.filtertimeselection').hide();
 		$('.spinner').show();
 
 		// reset sorting and filters
@@ -70,8 +86,19 @@ $(document).ready(function(){
 		return false;
 	});
 
+	// display airline/class/fare filter well
 	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1});
+		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 99});
+	});
+
+	// display time slider filter well
+	$('.filterbytime').on('click', function() {
+		$(".filtertimeselection").slideToggle().css({"position": "relative", "z-index": 98});
+		$("#timebtn").parent().toggleClass('active');
+		// if the other filter is open let's close it
+		if( $('.filterselection').is(':visible') ){
+			$(".filterselection").slideUp('fast');
+		}
 	});
 
 // toggle active button state if filter is active
@@ -193,10 +220,11 @@ $(document).ready(function(){
 			e.preventDefault();
 	});
 
-//------------------------------------------------------------------------------
-// Run the filterAir() over the initial values of the filter bar
-//------------------------------------------------------------------------------
-filterAir();
+	//------------------------------------------------------------------------------
+	// on initial page load, run the filterAir()
+	// over the initial values of the filter bar
+	//------------------------------------------------------------------------------
+	filterAir();
 
 }); // end of $(document).ready(function()
 
@@ -209,6 +237,8 @@ filterAir();
 // http://javascriptweblog.wordpress.com/2010/07/19/a-javascript-function-guard/
 
 var filterAirDelay = new FunctionGuard(filterAir);
+var sliderAirDelay = new FunctionGuard(filterAir, 500, null, 'slider');
+
 var resetAirDelay = new FunctionGuard(filterAir, 500, null, 'true');
 
 function FunctionGuard(fn, quietTime, context /*,fixed args*/) {

@@ -23,7 +23,7 @@
 		<cfoutput>
 			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" media="screen">
+			<link href="//code.jquery.com/ui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
 			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" media="screen">
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
@@ -52,12 +52,14 @@
 			</cfif>
 
 			<!--[if lt IE 9]>
-						<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+				<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
 			<script src="#application.assetURL#/js/bootstrap.min.js"></script>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script src="#application.assetURL#/js/booking.js"></script>
 		</cfoutput>
 	</head>

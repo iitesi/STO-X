@@ -114,11 +114,10 @@
 		<input type="hidden" name="nTrip" id="nTrip" value="">
 	</form>
 
-<!--- TODO - need to call default loading  --->
-#View('modal/popup')#
+	<!--- call default loading modal  --->
+	#View('modal/popup')#
 
 </cfoutput>
-
 
 
 <!--- AIR CODES

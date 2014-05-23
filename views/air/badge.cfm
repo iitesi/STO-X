@@ -3,8 +3,8 @@
 <cfset carrierList = "">
 <cfset thisSelectedLeg = "">
 
-<cfsavecontent variable="sBadge" trim="#true#">
 
+	<cfsavecontent variable="sBadge" trim="#true#">
 			<!--- create ribbon
 			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 			--->
@@ -90,8 +90,25 @@
 					<font color="white">#flightnumbers#</font>
 				</td>
 			</tr>
-			<cfloop collection="#stTrip.Groups#" item="Group" >
+			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfset stGroup = stTrip.Groups[Group]>
+
+				<!--- set times for badges, and get total times so we can set time sliders in filter --->
+				<cfset departureTime = TimeFormat(stGroup.DepartureTime, 'HH:mm')>
+				<cfset departureTime = (hour(departureTime)*60) + (minute(departureTime))>
+				<cfset arrivalTime = TimeFormat(stGroup.ArrivalTime, 'HH:mm')>
+				<cfset arrivalTime = (hour(arrivalTime)*60) + (minute(arrivalTime))>
+				<cfset "timeFilter.departureTime#group#" = departureTime>
+				<cfset "timeFilter.arrivalTime#group#" = arrivalTime>
+
+				<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
+				STM-2544 need to create a container of min/max times so we can use to set filters
+				See code in lowfare.cfm
+
+				<cfset arrayAppend(timeFilterTotal, departureTime)>
+				<cfset arrayAppend(timeFilterTotal, arrivalTime)> --->
+
+
 				<tr>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Origin].airport#">
@@ -253,10 +270,14 @@
 	</cfoutput>
 </cfsavecontent>
 
+
+<!--- set unique data-attributes for each badge for filtering by time --->
+<cfset dataString = "">
+<cfloop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex">
+	<cfset dataString = listAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"', ' ')>
+</cfloop>
+
 <!--- display badge --->
-
-<!--- page break not working in Chrome: <cfif nCount MOD 5 EQ 0>page</cfif> --->
-
 <cfoutput>
-	<div id="flight#nTripKey#" class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" #dataString# class="pull-left">#sBadge#</div>
 </cfoutput>

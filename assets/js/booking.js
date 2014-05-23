@@ -91,6 +91,9 @@ function getUnusedTickets(userid, acctid) {
 
 	******** Tread carefully - the code below is fragile! *************
 
+	"O, that way madness lies. Let me shun that." ~Shakespeare
+
+	*******************************************************************
 	FlightResults = ["-721584238", 1, 0, ["AA"], "0", 1, "Y", 0]
 
 	0	Token							23445611128 (appended with 'flight' in code as CSS id's shouldn't start with number)
@@ -110,8 +113,6 @@ function getUnusedTickets(userid, acctid) {
 	console.log('-------------------------------')
 ----------------------------------------------------------------------*/
 function filterAir(reset) {
-
- // console.clear();
 
 	var loopcnt = 0;
 	var classy = $("#ClassY:checked").val();
@@ -147,7 +148,9 @@ function filterAir(reset) {
 
 			// check in-policy, single carrier and non-stops
 			if(showFlight == true){
-				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) || (flight[7] != 0 && nonstops == 1) ){
+				if( (flight[1] == 0 && inpolicy == 1 )
+					|| (flight[2] == 1 && singlecarrier == 1 )
+					|| (flight[7] != 0 && nonstops == 1) ){
 					showFlight = false;
 				}
 			}
@@ -247,7 +250,7 @@ function filterAir(reset) {
 	}
 
 	// show flight count
- 	$('#flightCount').text(showCount + ' of ' + flightresults.length);
+ 	$('#flightCount').text(showCount);
 	$('.spinner').hide();
 	return false;
 } // ----------- end of function filterAir()------------------------------------
