@@ -302,7 +302,8 @@
 						</cfloop>
 						<cfset local.errorMessage = 'uAPI Faultcode Error: '&local.faultstring>
 						<cfif local.faultstring DOES NOT CONTAIN 'cannot retrieve TargetBranch information for'
-							AND local.faultstring NEQ 'NO AVAILABILITY FOR THIS REQUEST'>
+							AND local.faultstring NEQ 'NO AVAILABILITY FOR THIS REQUEST'
+							AND local.faultstring NEQ 'Transaction Error: AppErrorSeverityLevel/1'>
 							<cfset local.errorException = structNew('linked')>
 							<cfset local.errorException = {
 														searchID = arguments.Filter.getSearchID()
