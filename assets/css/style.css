@@ -266,7 +266,7 @@ ul.tabs li a.active {
 	position:relative;
 }
 #filter li:hover ul{ /* Display the dropdown on hover */
-	left:0; /* Bring back on-screen when needed */
+	left: 0; /* Bring back on-screen when needed */
 }
 
 .filter h4, .filter h4 a {
@@ -302,10 +302,14 @@ ul.tabs li a.active {
 	box-shadow:         3px 3px 5px rgba(50, 50, 50, 0.2);
 }
 
-.filter .navbar-inner {
+/* tighten up spacing so sort and filter bar don't wrap */
+.navbar-inner {
 	padding-left: 0;
 	padding-right: 0;
 }
+.navbar .nav {margin: 0;}
+.navbar .nav>li>a {padding: 10px 13px;}
+
 
 .spinner {
 	color: #045596;
@@ -800,23 +804,21 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     width: 50%;
 }
 
-    .hotel-name{
-        font-size: 13px;
-        font-weight: bold;
-        display: block;
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+.hotel-name{
+    font-size: 13px;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
-    .hotel-distance{
-        font-size: 11px;
-        display: block;
-        width: 100%;
-        margin: .3em 0 1.4em;
-    }
-
-
+.hotel-distance{
+    font-size: 11px;
+    display: block;
+    width: 100%;
+    margin: .3em 0 1.4em;
+}
 
 .hotel-pricing{
     display: block;
@@ -827,21 +829,21 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     vertical-align: bottom;
 }
 
-    .sold-out{
-        display: block;
-        color: red;
-        margin-top: 40px;
-    }
+.sold-out{
+    display: block;
+    color: red;
+    margin-top: 40px;
+}
 
-    .outofpolicy-wrapper{
-        height: 15px;
-    }
+.outofpolicy-wrapper{
+    height: 15px;
+}
 
-    .daily-rate{
-        display: block;
-        clear: both;
-        margin: 0.7em 0 .3em 0;
-    }
+.daily-rate{
+    display: block;
+    clear: both;
+    margin: 0.7em 0 .3em 0;
+}
 
 .hotel-panel{
     clear: both;
@@ -875,28 +877,28 @@ tr.hotel-room td{
     vertical-align: top;
     padding: 10px 5px 10px 5px;
 }
-    .room-description{
-        width: 65%;
-    }
 
-    .room-rate-code{
-        white-space: nowrap;
-        width: 15%;
-    }
+.room-description{
+    width: 65%;
+}
 
-    .room-rate{
-        white-space: nowrap;
-        width: 20%;
-    }
+.room-rate-code{
+    white-space: nowrap;
+    width: 15%;
+}
 
-    .odd{
-        background-color: #F0F0F0;
-    }
+.room-rate{
+    white-space: nowrap;
+    width: 20%;
+}
+
+.odd{
+    background-color: #F0F0F0;
+}
 
 #changeSearchWindow div.form-row{
     margin-bottom: 10px;
 }
-
 
 /*
 ----------------------------------------------------------------------------------------------------------
@@ -991,7 +993,6 @@ tr.hotel-room td{
 	overflow: auto;
 }
 
-
 /*
 ----------------------------------------------------------------------------------------------------------
 	DETAILS POPUP (details, bags, seats, email)
@@ -1012,9 +1013,7 @@ tr.hotel-room td{
 }
 
 #seats .popuplogo {padding: 1em 1em 0;}
-
 .media-heading h3 {margin-bottom: 0;}
-
 
 /*
 ----------------------------------------------------------------------------------------------------------
@@ -1050,7 +1049,6 @@ tr.hotel-room td{
     border: 1px solid gray;
 }
 
-
 /*
 ----------------------------------------------------------------------------------------------------------
 	AIR TIME SLIDERS
@@ -1074,4 +1072,3 @@ tr.hotel-room td{
 .sliderbox {width: 175px; margin: 0 1.5em; float: left;}
 .sliderbox span {font-size: 90%;}
 .hiddend0, .hiddend1, .hiddena0, .hiddena1 {display: none;}
-
