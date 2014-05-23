@@ -195,7 +195,6 @@
 		$(document).ready(function() {
 			$('.availableSeat').on('click', function() {
 				var seatSelected =  $(this).attr('id');
-				// console.log( seatSelected );
 				window.parent.GetValueFromChild( seatSelected );
 				$('##popupModal').modal('hide');
 				$(this).removeData('modal');

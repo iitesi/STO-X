@@ -89,6 +89,7 @@ function getUnusedTickets(userid, acctid) {
 /* ----------------------------------------------------------------------
  FILTER AIR
 
+	**** It is pitch black. You are likely to be eaten by a grue. *****
 	******** Tread carefully - the code below is fragile! *************
 
 	"O, that way madness lies. Let me shun that." ~Shakespeare
@@ -142,15 +143,19 @@ function filterAir(reset) {
 			var flight = flightresults[loopcnt];
 			showFlight = true;
 
-
 			// loop through and only check each subsequent filter if the previous
 			// filter didn't already hide it ( showflight=true )
 
-			// check in-policy, single carrier and non-stops
+			// check in-policy, single carrier
 			if(showFlight == true){
-				if( (flight[1] == 0 && inpolicy == 1 )
-					|| (flight[2] == 1 && singlecarrier == 1 )
-					|| (flight[7] != 0 && nonstops == 1) ){
+				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) ){
+					showFlight = false;
+				}
+			}
+
+			// non-stops - show all by default (nonstops will be empty)
+			if(showFlight == true){
+				if( nonstops.length > 0 && flight[7] != nonstops ){
 					showFlight = false;
 				}
 			}

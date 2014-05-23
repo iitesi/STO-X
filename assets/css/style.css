@@ -303,13 +303,8 @@ ul.tabs li a.active {
 }
 
 .filter .navbar-inner {
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-/*adjust last value to tighten up filter bar button spacing but make sure to test in all browsers!*/
-.navbar .nav > li > a {
-	padding: 10px 12px;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 .spinner {

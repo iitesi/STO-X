@@ -296,7 +296,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 							OR NOT local.airPricingSolution.XMLAttributes.StopOver>
 							<cfset local.stTrip.connections[local.airPricingSolution.XMLAttributes.SegmentIndex] = true>
 						</cfif> --->
-						
+
 						<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
 									fareCalc used for travelTech reporting only! Please do not remove.
 						<cfset local.stTrip.fareCalc = local.fareCalc>
