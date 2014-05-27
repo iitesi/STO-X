@@ -82,6 +82,7 @@
 						Command = MVBT/1M98//SHORTS
 						--->
 						<!--- STM-2961: Remove C:N command and change MVP/ to MVP/|2-200 --->
+						<!--- STM-3703: Change MVP/|2-200 to MVP/S/|2-200 --->
 						<cfset local.moveBARPARResponse = TerminalEntry.moveBARPAR( targetBranch = arguments.targetBranch
 																					, hostToken = arguments.hostToken
 																					, pcc = arguments.Traveler.getBAR()[1].PCC
