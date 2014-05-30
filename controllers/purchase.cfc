@@ -338,59 +338,121 @@
 																										, searchID = rc.searchID )>
 
 								<cfif NOT displayPNRResponse.error>
-									<!--- Confirm segments --->
-									<cfset local.segmentResponse = fw.getBeanFactory().getBean('TerminalEntry').confirmSegments( targetBranch = rc.Account.sBranch
+									<!--- STM-3845: Check the status of all segments before .IHK --->
+									<!--- Check segment statuses --->
+									<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 
-									<cfif NOT segmentResponse.error>
-										<!--- Confirm that the number of segments returned is the same number of segments contained in the original request --->
-										<cfif arrayLen(segmentResponse.message)>
-											<cfloop array="#segmentResponse.message#" index="local.segmentIndex" item="local.segment">
-												<cfif isNumeric(left(trim(segment), 1))>
-													<cfset responseNumSegments++ />
-												</cfif>
-											</cfloop>
-										</cfif>
-									</cfif>
-								</cfif>
+									<cfif isXML(checkSegmentStatusResponse)>
+										<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse) />
+										<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
 
-								<cfif responseNumSegments NEQ originalNumSegments>
-									<cfset confirmSegmentsError = true />
-								<cfelse>
-									<!--- T:R --->
-									<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
+										<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
+											<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
+												<cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
+												<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
+
+												<cfif local.segmentStatus NEQ 'KK'>
+													<cfif local.segmentStatus EQ 'UC'>
+														<cfset confirmSegmentsError = true />
+														<cfbreak />
+													<cfelseif local.segmentStatus EQ 'PN'>
+														<cfset sleep(2000) />
+
+														<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pnr = providerLocatorCode
+																										, searchID = rc.searchID )>
+														<cfif NOT displayPNRResponse.error>
+															<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
+																																, hostToken = hostToken
+																																, searchID = rc.searchID )>
+
+															<cfif isXML(checkSegmentStatusResponse)>
+																<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse) />
+																<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
+
+																<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
+																	<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
+																		<cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
+																		<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
+
+																		<cfif local.segmentStatus NEQ 'KK'>
+																			<cfset confirmSegmentsError = true />
+																			<cfbreak />
+																		</cfif>
+																	</cfif>
+																</cfloop>
+															</cfif>
+														</cfif>
+													</cfif>													
+												</cfif>
+											</cfif>
+										</cfloop>
+									<cfelse>
+										<cfset confirmSegmentsError = true />
+									</cfif>
+
+ 									<cfif NOT confirmSegmentsError>
+										<!--- Confirm segments --->
+										<cfset local.segmentResponse = fw.getBeanFactory().getBean('TerminalEntry').confirmSegments( targetBranch = rc.Account.sBranch
+																											, hostToken = hostToken
+																											, searchID = rc.searchID )>
+
+										<cfif NOT segmentResponse.error>
+											<!--- Confirm that the number of segments returned is the same number of segments contained in the original request --->
+											<cfif arrayLen(segmentResponse.message)>
+												<cfloop array="#segmentResponse.message#" index="local.segmentIndex" item="local.segment">
+													<cfif isNumeric(left(trim(segment), 1))>
+														<cfset responseNumSegments++ />
+													</cfif>
+												</cfloop>
+											</cfif>
+										</cfif>
+
+										<cfif responseNumSegments NEQ originalNumSegments>
+											<cfset confirmSegmentsError = true />
+	 									</cfif>
+ 									</cfif>
+
+									<cfif NOT confirmSegmentsError>
+										<!--- T:R --->
+										<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, Air = Air
 																										, airSelected = airSelected
 																										, command = 'T:R' )>
-									<cfif NOT verifyStoredFareResponse.error>
-										<!--- Add received by STO.CONFIRMED.SEGMENTS line --->
-										<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
+										<cfif NOT verifyStoredFareResponse.error>
+											<!--- Add received by STO.CONFIRMED.SEGMENTS line --->
+											<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, userID = rc.Filter.getUserID()
 																										, searchID = rc.searchID
 																										, receivedBy = 'STO.CONFIRMED.SEGMENTS' )>
 
-										<!--- E --->
-										<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
-																										, hostToken = hostToken
-																										, searchID = rc.searchID
-																										, command = 'E' )>
-										<!--- If error, E again --->
-										<cfif erRecordResponse.error>
+											<!--- E --->
 											<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, command = 'E' )>
+											<!--- If error, E again --->
 											<cfif erRecordResponse.error>
-												<cfset confirmSegmentsError = true />
+												<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID
+																										, command = 'E' )>
+												<cfif erRecordResponse.error>
+													<cfset confirmSegmentsError = true />
+												</cfif>
 											</cfif>
+										<cfelse>
+											<cfset confirmSegmentsError = true />
 										</cfif>
-									<cfelse>
-										<cfset confirmSegmentsError = true />
 									</cfif>
+								<cfelse>
+									<cfset confirmSegmentsError = true />
 								</cfif>
 
 								<cfif confirmSegmentsError>
