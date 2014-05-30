@@ -318,6 +318,10 @@
 
 <!--- Temporarily adding so I can see this request/response in the logs --->
 <cfset sleep(2000) />
+<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																			, hostToken = hostToken
+																			, pnr = providerLocatorCode
+																			, searchID = rc.searchID )>
 <cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																			, hostToken = hostToken
 																			, searchID = rc.searchID )>
