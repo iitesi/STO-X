@@ -391,11 +391,11 @@
 									<cfelse>
 										<cfset confirmSegmentsError = true />
 									</cfif>
+								</cfif>
 
-									<cfif confirmSegmentsError>
-										<cfset arrayAppend( errorMessage, 'The fare for the flight you found is no longer available. Please select another flight.' )>
-										<cfset errorType = 'Air.confirmSegments' />							
-									</cfif>
+								<cfif confirmSegmentsError>
+									<cfset arrayAppend( errorMessage, 'The fare for the flight you found is no longer available. Please select another flight.' )>
+									<cfset errorType = 'Air.confirmSegments' />							
 								</cfif>
 							</cfif>
 						</cfif>
