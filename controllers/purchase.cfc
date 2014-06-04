@@ -350,11 +350,12 @@
 
 										<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
 											<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
-												<cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
-												<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
+												<!--- <cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
+												<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) /> --->
+												<cfset local.segmentStatus = removeChars(trim(stTerminalText.XMLText), 1, 23) />
+												<cfset local.segmentStatus = removeChars(listfirst(segmentStatus, ' '), 3, 1) />
 
 												<cfif local.segmentStatus NEQ 'KK'>
-													<cfset emailToKamie = 'Not KK. local.segmentStatus is ' & local.segmentStatus />
 													<cfif local.segmentStatus EQ 'UC'>
 														<cfset confirmSegmentsError = true />
 														<cfbreak />
@@ -376,8 +377,10 @@
 
 																<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
 																	<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
-																		<cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
-																		<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
+																		<!--- <cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
+																		<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) /> --->
+																		<cfset local.segmentStatus = removeChars(trim(stTerminalText.XMLText), 1, 23) />
+																		<cfset local.segmentStatus = removeChars(listfirst(segmentStatus, ' '), 3, 1) />
 
 																		<cfif local.segmentStatus NEQ 'KK'>
 																			<cfset confirmSegmentsError = true />
@@ -393,15 +396,7 @@
 										</cfloop>
 									<cfelse>
 										<cfset confirmSegmentsError = true />
-										<cfset emailToKamie = 'Not XML' />
 									</cfif>
-
-									<cfmail to="kmyers@shortstravel.com" from="kmyers@shortstravel.com" subject="WN Reservation" type="html">
-										checkSegmentStatusResponse.message:
-										<cfdump var="#checkSegmentStatusResponse.message#">
-
-										#emailToKamie#
-									</cfmail>
 
  									<cfif NOT confirmSegmentsError>
 										<!--- Confirm segments --->
