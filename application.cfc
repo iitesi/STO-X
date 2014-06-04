@@ -69,19 +69,19 @@
 						<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
 
 						<cfif session.isAuthorized>
-							<cfcookie domain="#cgi.http_host#" name="userId" value="#request.context.userId#" />
-							<cfcookie domain="#cgi.http_host#" name="acctId" value="#request.context.acctId#" />
-							<cfcookie domain="#cgi.http_host#" name="date" value="#request.context.date#" />
-							<cfcookie domain="#cgi.http_host#" name="token" value="#request.context.token#" />
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="userId" value="#request.context.userId#" />
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="acctId" value="#request.context.acctId#" />
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
 
 							<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
 							<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
 
 							<cfif apiURL NEQ cgi.http_host>
-								<cfcookie domain="#apiURL#" name="userId" value="#request.context.userId#" />
-								<cfcookie domain="#apiURL#" name="acctId" value="#request.context.acctId#" />
-								<cfcookie domain="#apiURL#" name="date" value="#request.context.date#" />
-								<cfcookie domain="#apiURL#" name="token" value="#request.context.token#" />
+								<cfcookie domain="#apiURL#" secure="yes" name="userId" value="#request.context.userId#" />
+								<cfcookie domain="#apiURL#" secure="yes" name="acctId" value="#request.context.acctId#" />
+								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
+								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
 							</cfif>
 
 						</cfif>
