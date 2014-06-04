@@ -344,23 +344,13 @@
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 
-									<cfif isXML(checkSegmentStatusResponse.message)>
-										<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse.message) />
-										<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
-
-										<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
-											<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
-												<!--- <cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
-												<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) /> --->
-												<cfset local.segmentStatus = removeChars(trim(stTerminalText.XMLText), 1, 23) />
+									<cfif isArray(checkSegmentStatusResponse.message)>
+										<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
+											<cfif isNumeric(left(trim(stTerminalText), 1))>
+												<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 23) />
 												<cfset local.segmentStatus = removeChars(listfirst(segmentStatus, ' '), 3, 1) />
 
 												<cfif local.segmentStatus NEQ 'KK'>
-<cfdump var="#checkSegmentStatusResponse.message#" label="checkSegmentStatusResponse.message">
-<cfdump var="#local.stSegmentStatusResponse#" label="local.stSegmentStatusResponse">
-<cfdump var="#local.aSegmentStatusResponse#" label="local.aSegmentStatusResponse">
-<cfdump var="#trim(stTerminalText.XMLText)#" label="trim(stTerminalText.XMLText)">
-<cfdump var="#local.segmentStatus#" label="local.segmentStatus" abort>
 													<cfif local.segmentStatus EQ 'UC'>
 														<cfset confirmSegmentsError = true />
 														<cfbreak />
@@ -376,15 +366,10 @@
 																																, hostToken = hostToken
 																																, searchID = rc.searchID )>
 
-															<cfif isXML(checkSegmentStatusResponse.message)>
-																<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse.message) />
-																<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
-
-																<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
-																	<cfif isNumeric(left(trim(stTerminalText.XMLText), 1))>
-																		<!--- <cfset local.segmentStatus = listGetAt(trim(stTerminalText.XMLText), 5, ' ') />
-																		<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) /> --->
-																		<cfset local.segmentStatus = removeChars(trim(stTerminalText.XMLText), 1, 23) />
+															<cfif isArray(checkSegmentStatusResponse.message)>
+																<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
+																	<cfif isNumeric(left(trim(stTerminalText), 1))>
+																		<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 23) />
 																		<cfset local.segmentStatus = removeChars(listfirst(segmentStatus, ' '), 3, 1) />
 
 																		<cfif local.segmentStatus NEQ 'KK'>
@@ -401,8 +386,6 @@
 										</cfloop>
 									<cfelse>
 										<cfset confirmSegmentsError = true />
-										<cfdump var="#checkSegmentStatusResponse#" label="checkSegmentStatusResponse">
-										<cfdump var="#checkSegmentStatusResponse.message#" label="checkSegmentStatusResponse.message" abort>
 									</cfif>
 
  									<cfif NOT confirmSegmentsError>
