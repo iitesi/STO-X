@@ -354,6 +354,7 @@
 												<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
 
 												<cfif local.segmentStatus NEQ 'KK'>
+													<cfset emailToKamie = 'Not KK. local.segmentStatus is ' & local.segmentStatus />
 													<cfif local.segmentStatus EQ 'UC'>
 														<cfset confirmSegmentsError = true />
 														<cfbreak />
@@ -369,8 +370,8 @@
 																																, hostToken = hostToken
 																																, searchID = rc.searchID )>
 
-															<cfif isXML(checkSegmentStatusResponse)>
-																<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse) />
+															<cfif isXML(checkSegmentStatusResponse.message)>
+																<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse.message) />
 																<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
 
 																<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
@@ -392,7 +393,15 @@
 										</cfloop>
 									<cfelse>
 										<cfset confirmSegmentsError = true />
+										<cfset emailToKamie = 'Not XML' />
 									</cfif>
+
+									<cfmail to="kmyers@shortstravel.com" from="kmyers@shortstravel.com" subject="WN Reservation" type="html">
+										checkSegmentStatusResponse.message:
+										<cfdump var="#checkSegmentStatusResponse.message#">
+
+										#emailToKamie#
+									</cfmail>
 
  									<cfif NOT confirmSegmentsError>
 										<!--- Confirm segments --->
