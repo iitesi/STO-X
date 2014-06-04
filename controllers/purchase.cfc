@@ -344,8 +344,8 @@
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 
-									<cfif isXML(checkSegmentStatusResponse)>
-										<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse) />
+									<cfif isXML(checkSegmentStatusResponse.message)>
+										<cfset local.stSegmentStatusResponse = XMLParse(checkSegmentStatusResponse.message) />
 										<cfset local.aSegmentStatusResponse = stSegmentStatusResponse.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren[1].XMLChildren />
 
 										<cfloop array="#aSegmentStatusResponse#" index="local.stTerminalText">
