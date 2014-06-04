@@ -356,6 +356,11 @@
 												<cfset local.segmentStatus = removeChars(listfirst(segmentStatus, ' '), 3, 1) />
 
 												<cfif local.segmentStatus NEQ 'KK'>
+<cfdump var="#checkSegmentStatusResponse.message#" label="checkSegmentStatusResponse.message">
+<cfdump var="#local.stSegmentStatusResponse#" label="local.stSegmentStatusResponse">
+<cfdump var="#local.aSegmentStatusResponse#" label="local.aSegmentStatusResponse">
+<cfdump var="#trim(stTerminalText.XMLText)#" label="trim(stTerminalText.XMLText)">
+<cfdump var="#local.segmentStatus#" label="local.segmentStatus" abort>
 													<cfif local.segmentStatus EQ 'UC'>
 														<cfset confirmSegmentsError = true />
 														<cfbreak />
@@ -396,6 +401,8 @@
 										</cfloop>
 									<cfelse>
 										<cfset confirmSegmentsError = true />
+										<cfdump var="#checkSegmentStatusResponse#" label="checkSegmentStatusResponse">
+										<cfdump var="#checkSegmentStatusResponse.message#" label="checkSegmentStatusResponse.message" abort>
 									</cfif>
 
  									<cfif NOT confirmSegmentsError>
