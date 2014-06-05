@@ -50,6 +50,7 @@
 				<!--- LSU can charge to a different department cc which means the accountid needs to also change. --->
 				<cfif rc.Filter.getAcctID() EQ 255>
 					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
+					<cfset local.statmentInformation = fw.getBeanFactory().getBean('Summary').getLSUValueReportID( AccountID = Traveler.getAccountID() ) />
 				</cfif>
 
 				<!--- If new air or hotel credit card entered, make airFOPID or hotelFOPID EQ 0. --->
