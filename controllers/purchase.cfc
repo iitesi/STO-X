@@ -320,7 +320,7 @@
 							<!--- If Southwest, change KK segments to HK before queue
 							Command = .IHK --->
 							<!--- STM-2961: Confirm the segments before File Finishing --->
-							<cfif Air.platingCarrier IS 'WN'>
+							<cfif Air.platingCarrier IS 'WN' AND providerLocatorCode NEQ ''>
 								<cfset local.originalNumSegments = arrayLen(Air.PricingSolution.getSegment()) />
 								<cfset local.responseNumSegments = 0 />
 								<cfset local.confirmSegmentsError = false />
