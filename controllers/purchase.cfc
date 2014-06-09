@@ -358,6 +358,11 @@
 													<cfelseif local.segmentStatus EQ 'PN'>
 														<cfset sleep(2000) />
 
+														<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
+														<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, searchID = rc.searchID )>
+
 														<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, pnr = providerLocatorCode
