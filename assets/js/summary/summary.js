@@ -200,7 +200,7 @@ $(document).ready(function(){
 			$( "#saveProfileDiv" ).hide();
 		}
 		/* If the first name contains a space and the middle name is blank, show nameCheckDiv */
-		if (traveler.firstName.indexOf(' ') >= 0 && (traveler.middleName == undefined || traveler.middleName == '')) {
+		if (traveler.firstName != undefined && traveler.firstName.indexOf(' ') >= 0 && (traveler.middleName == undefined || traveler.middleName == '')) {
 			$( "#nameCheckDiv" ).show();
 		}
 		$( "#phoneNumber" ).val( traveler.phoneNumber );

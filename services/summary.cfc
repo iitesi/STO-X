@@ -74,7 +74,11 @@
 					, OU_Values
 				WHERE BTAs.BTA_ID = OU_BTAs.BTA_ID
 					AND OU_BTAs.Value_ID = OU_Values.Value_ID
-					AND OU_BTAs.BTA_ID = <cfqueryparam value="#replace(arguments.Traveler.getBookingDetail().getAirFOPID(), 'bta_', '')#" cfsqltype="cf_sql_integer">
+					AND OU_BTAs.BTA_ID = (
+						SELECT BTA_ID
+						FROM BTAs
+						WHERE fopID = <cfqueryparam value="#replace(arguments.Traveler.getBookingDetail().getAirFOPID(), 'bta_', '')#" cfsqltype="cf_sql_integer">
+					)
 					AND BTAs.Acct_ID = <cfqueryparam value="255" cfsqltype="cf_sql_integer">
 			</cfquery>
 			<cfif qAccountID.AccountID NEQ ''>
@@ -83,6 +87,22 @@
 		</cfif>
 
 		<cfreturn accountID>
+	</cffunction>
+
+	<cffunction name="getLSUValueReportID" output="false">
+		<cfargument name="AccountID">
+
+		<cfset local.statmentInformation = '' />
+		<cfquery name="local.qValueReport" datasource="#getCorporateProductionDSN()#">
+			SELECT Value_Report
+			FROM OU_Values
+			WHERE AccountID = <cfqueryparam value="#arguments.AccountID#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+		<cfif qValueReport.Value_Report NEQ ''>
+			<cfset statmentInformation = qValueReport.Value_Report />
+		</cfif>
+
+		<cfreturn statmentInformation />
 	</cffunction>
 
 	<cffunction name="getTXExceptionCodes" output="false">

@@ -313,7 +313,9 @@
 													, faultstring = local.faultstring
 													, request = xmlFormat(attributes.sMessage)
 													, response = xmlFormat(attributes.sResponse)  }>
-							<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode='Error' ) />
+							<cfif local.faultstring NEQ 'Transaction Error: AppErrorSeverityLevel/1'>
+								<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode='Error' ) />
+							</cfif>
 						</cfif>
 					</cfif>
 				</cfif>
