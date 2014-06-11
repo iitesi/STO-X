@@ -324,6 +324,7 @@
 								<cfset local.originalNumSegments = arrayLen(Air.PricingSolution.getSegment()) />
 								<cfset local.responseNumSegments = 0 />
 								<cfset local.confirmSegmentsError = false />
+								<cfset local.checkSegmentStatusAgain = false />
 
 								<!--- Sleep for two seconds before starting this process --->
 								<cfset sleep(2000) />
@@ -363,48 +364,56 @@
 												<cfif local.segmentStatus NEQ 'KK'>
 													<cfif local.segmentStatus EQ 'UC'>
 														<cfset confirmSegmentsError = true />
-														<cfbreak />
 													<cfelseif local.segmentStatus EQ 'PN'>
-														<cfset sleep(2000) />
-
-														<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
-														<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
-																										, hostToken = hostToken
-																										, searchID = rc.searchID )>
-
-														<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
-																										, hostToken = hostToken
-																										, pnr = providerLocatorCode
-																										, searchID = rc.searchID )>
-														<cfif NOT displayPNRResponse.error>
-															<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
-																																, hostToken = hostToken
-																																, searchID = rc.searchID )>
-
-															<cfif isArray(checkSegmentStatusResponse.message)>
-																<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
-																	<cfif isNumeric(left(trim(stTerminalText), 1))>
-																		<!--- Get rid of the first number and the "WN" text --->
-																		<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
-																		<!--- Now get the fourth item in the list --->
-																		<cfset local.segmentStatus = listGetAt(trim(segmentStatus), 4, ' ') />
-																		<!--- Trim off the number from the status --->
-																		<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
-
-																		<cfif local.segmentStatus NEQ 'KK'>
-																			<cfset confirmSegmentsError = true />
-																			<cfbreak />
-																		</cfif>
-																	</cfif>
-																</cfloop>
-															</cfif>
-														</cfif>
-													</cfif>													
+														<cfset checkSegmentStatusAgain = true />
+													</cfif>
+													<cfbreak />
 												</cfif>
 											</cfif>
 										</cfloop>
 									<cfelse>
 										<cfset confirmSegmentsError = true />
+									</cfif>
+
+									<cfif checkSegmentStatusAgain AND NOT confirmSegmentsError>
+										<cfset sleep(2000) />
+
+										<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
+										<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, searchID = rc.searchID )>
+
+										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																						, hostToken = hostToken
+																						, pnr = providerLocatorCode
+																						, searchID = rc.searchID )>
+										<cfif NOT displayPNRResponse.error>
+											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
+																												, hostToken = hostToken
+																												, searchID = rc.searchID )>
+
+											<cfif isArray(checkSegmentStatusResponse.message)>
+												<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
+													<cfif isNumeric(left(trim(stTerminalText), 1))>
+														<!--- Get rid of the first number and the "WN" text --->
+														<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
+														<!--- Now get the fourth item in the list --->
+														<cfset local.segmentStatus = listGetAt(trim(segmentStatus), 4, ' ') />
+														<!--- Trim off the number from the status --->
+														<cfset local.segmentStatus = removeChars(segmentStatus, 3, 1) />
+
+														<cfif local.segmentStatus NEQ 'KK'>
+															<cfset confirmSegmentsError = true />
+															<cfbreak />
+														</cfif>
+													</cfif>
+												</cfloop>
+											<cfelse>
+												<cfset confirmSegmentsError = true />
+											</cfif>
+										<cfelse>
+											<cfset confirmSegmentsError = true />
+										</cfif>
 									</cfif>
 
  									<cfif NOT confirmSegmentsError>
