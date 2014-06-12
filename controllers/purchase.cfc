@@ -538,6 +538,35 @@
 					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																							, response = hotelResponse )>
 
+					<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
+					<cfif Hotel.getSimultChgsError()>
+						<cfset Hotel.setError( false ) />
+						<cfset Hotel.setMessages( [] ) />
+						<cfset Hotel.setSimultChgsError( false ) />
+
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, hotelFOPID = local.hotelFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									)>
+
+						<!--- Parse sell results --->
+						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+																							, response = hotelResponse )>
+					</cfif>
+
 					<!--- Parse error --->
 					<cfif Hotel.getUniversalLocatorCode() EQ ''
 						OR Hotel.getError()>
