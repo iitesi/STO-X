@@ -6,7 +6,9 @@ $(document).ready(function(){
 	var travelerNumber = $("#travelerNumber").val();
 	var airSelected = $( "#airSelected" ).val();
 	var carriers = $( "#carriers" ).val();
+	if (carriers != '') {
 		carriers = $.parseJSON(carriers);
+	}
 	var hotelSelected = $( "#hotelSelected" ).val();
 	var chainCode = $( "#chainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
@@ -424,6 +426,14 @@ $(document).ready(function(){
 				}
 				if (traveler.payment[i].btaID !== '') {
 					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					if (acctID != 255) {
+						if (traveler.payment[i].btaAirUse == 'R') {
+							$( "#addAirCC" ).hide();
+						}
+						if (traveler.payment[i].btaHotelUse == 'R') {
+							$( "#addHotelCC" ).hide();
+						}
+					}
 				}
 				else if (traveler.payment[i].fopID !== '') {
 					if (traveler.payment[i].userID == traveler.userId) {
