@@ -424,11 +424,13 @@ $(document).ready(function(){
 				}
 				if (traveler.payment[i].btaID !== '') {
 					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
-					if (traveler.payment[i].btaAirUse == 'R') {
-						$( "#addAirCC" ).hide();
-					}
-					if (traveler.payment[i].btaHotelUse == 'R') {
-						$( "#addHotelCC" ).hide();
+					if (acctID != 255) {
+						if (traveler.payment[i].btaAirUse == 'R') {
+							$( "#addAirCC" ).hide();
+						}
+						if (traveler.payment[i].btaHotelUse == 'R') {
+							$( "#addHotelCC" ).hide();
+						}
 					}
 				}
 				else if (traveler.payment[i].fopID !== '') {
