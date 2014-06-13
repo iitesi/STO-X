@@ -383,6 +383,8 @@
 																						, hostToken = hostToken
 																						, searchID = rc.searchID )>
 
+										<cfset sleep(2000) />
+
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = providerLocatorCode
