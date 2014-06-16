@@ -353,48 +353,50 @@ $(document).ready(function(){
 	}
 
 	function createForm(orgunit) {
-		if (orgunit.OUUpdate != 0 || orgunit.valueID == '' || orgunit.valueReport == '') {
-			var inputName = orgunit.OUType + orgunit.OUPosition;
-			var div = '<div class="control-group'
-			if ($.inArray(inputName, errors.split(",")) >= 0) {
-				div += ' error';
-			}
-			div += '">';
-			div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
-			if (orgunit.OURequired == 1) {
-				div += ' *</label>';
-			} 
-			else {
-				div += '&nbsp;&nbsp;</label>';
-			}
-			div += '<div class="controls">';
-			if (orgunit.OUFreeform == 1) {
-				div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
-			}
-			else {
-				div += '<select name="' + inputName + '" id="' + inputName + '"';
-				div += '>';
-				div += '<option value="-1"></option>';
-					if (orgunit.ouValues.length) {
-						for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
-							div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
+		if (orgunit.OUDisplay == 1) {
+			if (orgunit.OUUpdate != 0 || orgunit.valueID == '' || orgunit.valueReport == '') {
+				var inputName = orgunit.OUType + orgunit.OUPosition;
+				var div = '<div class="control-group'
+				if ($.inArray(inputName, errors.split(",")) >= 0) {
+					div += ' error';
+				}
+				div += '">';
+				div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
+				if (orgunit.OURequired == 1) {
+					div += ' *</label>';
+				} 
+				else {
+					div += '&nbsp;&nbsp;</label>';
+				}
+				div += '<div class="controls">';
+				if (orgunit.OUFreeform == 1) {
+					div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
+				}
+				else {
+					div += '<select name="' + inputName + '" id="' + inputName + '"';
+					div += '>';
+					div += '<option value="-1"></option>';
+						if (orgunit.ouValues.length) {
+							for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
+								div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
+							}
 						}
+						else {
+							div += '<option value="' + orgunit.valueID + '">' + orgunit.valueDisplay + '</option>';
+						}
+					div += '</select>';
+				}
+				div += '</div>';
+				div += '</div>';
+				$( "#orgUnits" ).append( div );
+				if (orgunit.OUFreeform == 1) {
+					$( "#" + inputName ).val( orgunit.valueReport );
+				}
+				else {
+					$( "#" + inputName ).val( orgunit.valueID );
+					if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
+						$( "#" + inputName ).attr( "disabled", true );
 					}
-					else {
-						div += '<option value="' + orgunit.valueID + '">' + orgunit.valueDisplay + '</option>';
-					}
-				div += '</select>';
-			}
-			div += '</div>';
-			div += '</div>';
-			$( "#orgUnits" ).append( div );
-			if (orgunit.OUFreeform == 1) {
-				$( "#" + inputName ).val( orgunit.valueReport );
-			}
-			else {
-				$( "#" + inputName ).val( orgunit.valueID );
-				if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
-					$( "#" + inputName ).attr( "disabled", true );
 				}
 			}
 		}
