@@ -13,7 +13,9 @@
 						<div style="height:24px;"></div>
 
 						<cfloop array="#rc.Traveler[travelerIndex].getOrgUnit()#" index="orgUnitIndex" item="orgUnit">
-							<div><strong>#orgUnit.getOUName()#:</strong> #orgUnit.getValueDisplay()#</strong></div>
+							<cfif orgUnit.getOUDisplay() EQ 1>
+								<div><strong>#orgUnit.getOUName()#:</strong> #orgUnit.getValueDisplay()#</strong></div>
+							</cfif>
 						</cfloop>
 					</td>
 					<td valign="top">
