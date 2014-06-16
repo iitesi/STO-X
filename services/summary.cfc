@@ -318,33 +318,35 @@
 		</cfif>
 
 		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU">
-			<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
-			<cfif local.OU.getOURequired() EQ 1
-				AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
-					OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
-				<cfset local.error[field] = '' />
-			</cfif>
-			<cfif local.OU.getOUFreeform() EQ 1
-				AND local.OU.getOUPattern() NEQ ''
-				AND len(trim( local.OU.getValueReport() )) GT 0>
-				<cfset local.patternCharacter = ''>
-				<cfset local.stringCharacter = ''>
-
-				<cfloop from="1" to="#len(local.OU.getOUPattern())#" index="local.character">
-					<cfset local.patternCharacter = mid(local.OU.getOUPattern(), local.character, 1)>
-					<cfset local.stringCharacter = mid(local.OU.getValueReport(), local.character, 1)>
-					<cfif (isNumeric(local.patternCharacter) AND NOT isNumeric(local.stringCharacter))
-						OR (local.patternCharacter EQ 'A' AND REFind("[A-Za-z]", local.stringCharacter, 1) NEQ 1)
-						OR (local.patternCharacter EQ 'x' AND REFind("[^a-zA-Z0-9\s]", local.stringCharacter, 1) EQ 1)
-						OR (REFind("[^A-Za-z|^0-9]", local.patternCharacter, 1) EQ 1 AND local.patternCharacter NEQ local.stringCharacter)>
-						<cfset local.error[field] = '' />
-						<cfbreak>
-					</cfif>
-				</cfloop>
-				<cfif len(trim( local.OU.getValueReport() )) GT 0
-					AND (len(trim( local.OU.getValueReport() )) GT local.OU.getOUMax()
-					OR len(trim( local.OU.getValueReport() )) LT local.OU.getOUMin())>
+			<cfif local.OU.getOUDisplay() EQ 1>
+				<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
+				<cfif local.OU.getOURequired() EQ 1
+					AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
+						OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
 					<cfset local.error[field] = '' />
+				</cfif>
+				<cfif local.OU.getOUFreeform() EQ 1
+					AND local.OU.getOUPattern() NEQ ''
+					AND len(trim( local.OU.getValueReport() )) GT 0>
+					<cfset local.patternCharacter = ''>
+					<cfset local.stringCharacter = ''>
+
+					<cfloop from="1" to="#len(local.OU.getOUPattern())#" index="local.character">
+						<cfset local.patternCharacter = mid(local.OU.getOUPattern(), local.character, 1)>
+						<cfset local.stringCharacter = mid(local.OU.getValueReport(), local.character, 1)>
+						<cfif (isNumeric(local.patternCharacter) AND NOT isNumeric(local.stringCharacter))
+							OR (local.patternCharacter EQ 'A' AND REFind("[A-Za-z]", local.stringCharacter, 1) NEQ 1)
+							OR (local.patternCharacter EQ 'x' AND REFind("[^a-zA-Z0-9\s]", local.stringCharacter, 1) EQ 1)
+							OR (REFind("[^A-Za-z|^0-9]", local.patternCharacter, 1) EQ 1 AND local.patternCharacter NEQ local.stringCharacter)>
+							<cfset local.error[field] = '' />
+							<cfbreak>
+						</cfif>
+					</cfloop>
+					<cfif len(trim( local.OU.getValueReport() )) GT 0
+						AND (len(trim( local.OU.getValueReport() )) GT local.OU.getOUMax()
+						OR len(trim( local.OU.getValueReport() )) LT local.OU.getOUMin())>
+						<cfset local.error[field] = '' />
+					</cfif>
 				</cfif>
 			</cfif>
 		</cfloop>
