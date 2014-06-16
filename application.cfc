@@ -210,7 +210,8 @@
 			<cfset local.isAuthorized = application.fw.factory.getBean( "AuthorizationService" ).checkCredentials( cookie.userId, cookie.acctId, cookie.date, cookie.token )>
 		</cfif>
 
-		<cfif local.isAuthorized>
+		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() NEQ 'PROD'
+			OR local.isAuthorized>
 			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
 
 			<cfif NOT isSimpleValue( local.result )>
