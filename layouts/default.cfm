@@ -136,10 +136,15 @@
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
-							<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
-								<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() & '&token=#cookie.token#&date=#cookie.date#'/>
+							<cfif structKeyExists(cookie, 'token')
+								AND structKeyExists(cookie, 'token')>
+								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+									<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() & '&token=#cookie.token#&date=#cookie.date#'/>
+								<cfelse>
+									<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#cookie.token#&date=#cookie.date#' />
+								</cfif>
 							<cfelse>
-								<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#cookie.token#&date=#cookie.date#' />
+								<cfset frameSrc = ''>
 							</cfif>
 
 							<!--- button to open search in modal window --->

@@ -36,6 +36,8 @@
 			<cfelse>
 				<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#cookie.token#&date=#cookie.date#' />
 			</cfif>
+		<cfelse>
+			<cfset frameSrc = ''>
 		</cfif>
 
 		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="icon-search"></i> Change Search</a></h2>

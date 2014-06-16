@@ -613,21 +613,24 @@
 			</cfif>
 			<cfset local.inputName = ''>
 			<cfloop array="#rc.Traveler.getOrgUnit()#" item="local.orgUnit" index="local.orgUnitIndex">
-				<cfset local.inputName = orgUnit.getOUType() & orgUnit.getOUPosition()>
-				<cfif local.orgunit.getOUFreeform()>
-					<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueReport( rc[inputName] )>
-					<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueDisplay( rc[inputName] )>
-				<cfelse>
-					<cfif structKeyExists(rc, inputName)>
-						<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueID( rc[inputName] )>
-						<cfset local.qOUValue = fw.getBeanFactory().getBean('OrgUnitService').getOrgUnitValues( ouID = orgUnit.getOUID()
-																												, valueID = rc[inputname]
-																												, returnFormat = 'query' )>
-						<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueReport( qOUValue.Value_Report )>
-						<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueDisplay( qOUValue.Value_Display )>
+				<cfif orgUnit.getOUDisplay() EQ 1>
+					<cfset local.inputName = orgUnit.getOUType() & orgUnit.getOUPosition()>
+					<cfif local.orgunit.getOUFreeform()>
+						<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueReport( rc[inputName] )>
+						<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueDisplay( rc[inputName] )>
+					<cfelse>
+						<cfif structKeyExists(rc, inputName)>
+							<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueID( rc[inputName] )>
+							<cfset local.qOUValue = fw.getBeanFactory().getBean('OrgUnitService').getOrgUnitValues( ouID = orgUnit.getOUID()
+																													, valueID = rc[inputname]
+																													, returnFormat = 'query' )>
+							<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueReport( qOUValue.Value_Report )>
+							<cfset rc.Traveler.getOrgUnit()[local.orgUnitIndex].setValueDisplay( qOUValue.Value_Display )>
+						</cfif>
 					</cfif>
 				</cfif>
 			</cfloop>
+
 			<cfset rc.Traveler.setBirthdate( birthdate )>
 			<cfset rc.Traveler.setFirstName( REReplace(rc.Traveler.getFirstName(), '[^0-9A-Za-z\s]', '', 'ALL') )>
 			<cfset rc.Traveler.setMiddleName( REReplace(rc.Traveler.getMiddleName(), '[^0-9A-Za-z\s]', '', 'ALL') )>
