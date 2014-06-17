@@ -125,6 +125,13 @@
 							<cfset local.bRefundable = session.searches[rc.SearchID].RequestedRefundable />
 						</cfif>
 
+						<cfset local.bGovtRate = 0 />
+						<cfset local.sFaresIndicator = "PublicAndPrivateFares" />
+						<cfif Air.PTC EQ "GST">
+							<cfset local.bGovtRate = 1 />
+							<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
+						</cfif>
+
 						<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
@@ -135,7 +142,7 @@
 																							, sCabin = Air.Class
 																							, bRefundable = bRefundable
 																							, bRestricted = 0
-																							, sFaresIndicator = "PublicAndPrivateFares"
+																							, sFaresIndicator = sFaresIndicator
 																							, bAccountCodes = 1
 																							, nTrip = Air.nTrip
 																							, nCouldYou = 0
@@ -145,6 +152,7 @@
 																							, bIncludeCabin = 1
 																							, totalOnly = 0
 																							, bIncludeBookingCodes = 1
+																							, bGovtRate = bGovtRate
 																						)>						
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
