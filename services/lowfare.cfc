@@ -184,7 +184,7 @@
 												, airline = airline
 												, fareType = "PublicOrPrivateFares"
 												, accountCode = sPF
-												, bGovtRates = true )>
+												, bGovtRate = true )>
 			<cfset local.stThreads[local.sThreadName] = ''>
 		</cfif>
 
@@ -235,13 +235,13 @@
 		<cfargument name="airline" required="true">
 		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly" />
 		<cfargument name="accountCode" type="string" required="false" default="" />
-		<cfargument name="bGovtRates" required="false" default="false" />
+		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRates)>
-			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRates&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
+		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate)>
+			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
 			<cfset local[local.sThreadName] = {}>
 
 			<cfset local.bRefundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
@@ -267,10 +267,10 @@
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
 				accountCode="#arguments.accountCode#"
 				fareType="#arguments.fareType#"
-				bGovtRates="#arguments.bGovtRates#">
+				bGovtRate="#arguments.bGovtRate#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRates)>
+				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRate)>
 
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
@@ -361,7 +361,7 @@
 		<cfargument name="policy" required="true">
 		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly|PublicOrPrivateFares" />
 		<cfargument name="accountCode" type="string" required="false" default="" />
-		<cfargument name="bGovtRates" required="false" default="false" />
+		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<!--- grab leg query out of filter --->
@@ -562,7 +562,7 @@
 										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
 									</cfif>
 								</air:AirSearchModifiers>
-								<cfif arguments.bGovtRates>
+								<cfif arguments.bGovtRate>
 									<com:SearchPassenger Code="GST" PricePTCOnly="true">
 										<com:PersonalGeography>
 											<com:CityCode>DFW</com:CityCode>
