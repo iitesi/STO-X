@@ -14,14 +14,10 @@
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '') />
 
 		<cfif isStruct(rc.Vehicle)>
-			<cfif rc.Vehicle.getPickupLocationType() IS ''
-				OR rc.Vehicle.getPickupLocationType() IS 'Terminal'
-				OR rc.Vehicle.getPickupLocationType() IS 'Airport'
-				OR rc.Vehicle.getPickupLocationType() IS 'ShuttleOffAirport'>
-				<cfset rc.pickupLocation = rc.Filter.getCarPickupAirport() />
-			<cfelse>
+			<cfif rc.Vehicle.getPickUpLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getPickUpLocationID()>
 				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
 				<cfset local.locationKey = ''>
+				<cfset rc.pickupLocation = ''>
 				<cfloop array="#local.vehicleLocation#" index="local.locationIndex" item="local.location">
 					<cfif rc.Vehicle.getPickupLocationID() EQ location.vendorLocationID>
 						<cfset local.locationKey = local.locationIndex>
@@ -31,20 +27,19 @@
 				<cfset rc.pickupLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
 					& local.vehicleLocation[local.locationKey].street & ' ('
 					& local.vehicleLocation[local.locationKey].city & ')' />
+			<cfelse>
+				<cfset rc.pickupLocation = rc.Filter.getCarPickupAirport() />
+				<cfif rc.Vehicle.getPickUpLocationType() EQ 'ShuttleOffAirport'>
+					<cfset rc.pickupLocation = rc.pickupLocation & "<br />SHUTTLE OFF TERMINAL" />					
+				<cfelseif rc.Vehicle.getPickUpLocationType() EQ 'Terminal'>
+					<cfset rc.pickupLocation = rc.pickupLocation & "<br />ON TERMINAL" />					
+				</cfif>
 			</cfif>
 
-			<cfif rc.Vehicle.getDropoffLocationType() IS ''
-				OR rc.Vehicle.getDropoffLocationType() IS 'Terminal'
-				OR rc.Vehicle.getDropoffLocationType() IS 'Airport'
-				OR rc.Vehicle.getDropoffLocationType() IS 'ShuttleOffAirport'>
-				<cfif rc.Filter.getCarDropoffAirport() NEQ rc.Filter.getCarPickupAirport()>
-					<cfset rc.dropoffLocation = rc.Filter.getCarDropoffAirport() />
-				<cfelse>
-					<cfset rc.dropoffLocation = rc.pickupLocation />
-				</cfif>
-			<cfelse>
+			<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getDropOffLocationID()>
 				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
 				<cfset local.locationKey = ''>
+				<cfset rc.dropoffLocation = ''>
 				<cfloop array="#vehicleLocation#" index="local.locationIndex" item="local.location">
 					<cfif rc.Vehicle.getDropoffLocationID() EQ location.vendorLocationID>
 						<cfset local.locationKey = local.locationIndex>
@@ -54,6 +49,13 @@
 				<cfset rc.dropoffLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
 					& local.vehicleLocation[local.locationKey].street & ' ('
 					& local.vehicleLocation[local.locationKey].city & ')' />
+			<cfelse>
+				<cfset rc.dropoffLocation = rc.Filter.getCarDropoffAirport() />
+				<cfif rc.Vehicle.getDropOffLocationType() EQ 'ShuttleOffAirport'>
+					<cfset rc.dropoffLocation = rc.dropoffLocation & "<br />SHUTTLE OFF TERMINAL" />
+				<cfelseif rc.Vehicle.getDropOffLocationType() EQ 'Terminal'>
+					<cfset rc.dropoffLocation = rc.dropoffLocation & "<br />ON TERMINAL" />
+				</cfif>
 			</cfif>
 		</cfif>
 
