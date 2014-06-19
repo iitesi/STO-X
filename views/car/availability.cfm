@@ -22,7 +22,6 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="sVendor" id="sVendor" value="">
 			<input type="hidden" name="pickUpLocationKey" value="#rc.pickUpLocationKey#">
 			<input type="hidden" name="dropOffLocationKey" value="#rc.dropOffLocationKey#">
-		</form>
 
 		<!--- If no records can be retrieved from the initial search or change search form. --->
 		<div id="noSearchResults" class="hidden noresults">There were no cars found based on your search criteria. <a href="##displaySearchWindow" id="displayModal" data-toggle="modal" data-backdrop="static">CHANGE YOUR SEARCH</a> and try again.</div>
@@ -45,6 +44,9 @@ OR NOT rc.Filter.getAir()>
 							<span class="ribbon ribbon-r-pref"></span>
 						</cfif>
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
+						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
+							<div>Shuttle Off Terminal</div>
+						</cfif>
 					</div>
 					</td>
 				</cfloop>
@@ -114,6 +116,8 @@ OR NOT rc.Filter.getAir()>
 											<cfelse>
 												<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
 											</cfif>
+											<input type="hidden" name="pickUpLocationType" id="pickUpLocationType" value="#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#">
+											<input type="hidden" name="dropOffLocationType" id="dropOffLocationType" value="#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#">
 											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#thisRate#">
 										<cfelse>
 											<br />UNAVAILABLE
@@ -127,6 +131,7 @@ OR NOT rc.Filter.getAir()>
 				</cfif>
 			</cfloop>
 		</div>
+		</form>
 		
 	</cfoutput>
 <cfelse>

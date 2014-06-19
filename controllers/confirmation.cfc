@@ -16,7 +16,8 @@
 		<cfif isStruct(rc.Vehicle)>
 			<cfif rc.Vehicle.getPickupLocationType() IS ''
 				OR rc.Vehicle.getPickupLocationType() IS 'Terminal'
-				OR rc.Vehicle.getPickupLocationType() IS 'Airport'>
+				OR rc.Vehicle.getPickupLocationType() IS 'Airport'
+				OR rc.Vehicle.getPickupLocationType() IS 'ShuttleOffAirport'>
 				<cfset rc.pickupLocation = rc.Filter.getCarPickupAirport() />
 			<cfelse>
 				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
@@ -34,7 +35,8 @@
 
 			<cfif rc.Vehicle.getDropoffLocationType() IS ''
 				OR rc.Vehicle.getDropoffLocationType() IS 'Terminal'
-				OR rc.Vehicle.getDropoffLocationType() IS 'Airport'>
+				OR rc.Vehicle.getDropoffLocationType() IS 'Airport'
+				OR rc.Vehicle.getDropoffLocationType() IS 'ShuttleOffAirport'>
 				<cfif rc.Filter.getCarDropoffAirport() NEQ rc.Filter.getCarPickupAirport()>
 					<cfset rc.dropoffLocation = rc.Filter.getCarDropoffAirport() />
 				<cfelse>

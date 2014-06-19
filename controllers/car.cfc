@@ -34,15 +34,15 @@
 				<cfset local.vehicle.setPickUpLocationType( '#rc.pickUpLocation.locationType#' )>
 				<cfset local.vehicle.setPickUpLocationID( '#rc.pickUpLocation.vendorLocationID#' )>
 			<cfelse>
-				<cfset local.vehicle.setPickUpLocationType( 'Airport' )>
-				<cfset local.vehicle.setPickUpLocationID( 1 )>
+				<cfset local.vehicle.setPickUpLocationType( '#rc.pickUpLocationType#' )>
+				<cfset local.vehicle.setPickUpLocationID( '#rc.pickUpLocationKey#' )>
 			</cfif>
 			<cfif rc.dropOffLocationKey NEQ ''>
 				<cfset local.vehicle.setDropOffLocationType( '#rc.dropOffLocation.locationType#' )>
 				<cfset local.vehicle.setDropOffLocationID( '#rc.dropOffLocation.vendorLocationID#' )>
 			<cfelse>
-				<cfset local.vehicle.setDropOffLocationType( 'Airport' )>
-				<cfset local.vehicle.setDropOffLocationID( 1 )>
+				<cfset local.vehicle.setDropOffLocationType( '#rc.dropOffLocationType#' )>
+				<cfset local.vehicle.setDropOffLocationID( '#rc.dropOffLocationKey#' )>
 			</cfif>
 			<cfset local.vehicle.setVendorCode( rc.sVendor )>
 			<cfset local.vehicle = Vehicle.setVendorCode( rc.sVendor )>
