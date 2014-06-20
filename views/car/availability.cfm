@@ -86,8 +86,9 @@ OR NOT rc.Filter.getAir()>
 							</td>
 
 							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-								<td width="120">
-									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+								<td>
+									<div align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
 										<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 											<cfset buttonType="btn-primary" />
 											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
@@ -123,6 +124,7 @@ OR NOT rc.Filter.getAir()>
 										<cfelse>
 											<br />UNAVAILABLE
 										</cfif>
+									</div>
 									</div>
 								</td>
 							</cfloop>
