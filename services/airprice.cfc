@@ -27,7 +27,7 @@
 		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bRestricted" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicFaresOnly --->
+		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicOrPrivateFares, PublicFaresOnly, PrivateFaresOnly --->
 		<cfargument name="bAccountCodes" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nTrip" required="false" default="">
 		<cfargument name="nCouldYou" required="false" default="0">
@@ -39,6 +39,7 @@
 		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="totalOnly" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="fullAirPrice" required="false" default="1"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bGovtRate" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -79,7 +80,8 @@
 													, findIt = arguments.findIt
 													, bIncludeClass = arguments.bIncludeClass
 													, bIncludeCabin = arguments.bIncludeCabin
-													, bIncludeBookingCodes = arguments.bIncludeBookingCodes )>
+													, bIncludeBookingCodes = arguments.bIncludeBookingCodes
+													, bGovtRate = arguments.bGovtRate )>
 		<!--- Call the UAPI. --->
 		<cfset local.sResponse 	= getUAPI().callUAPI('AirService', local.sMessage, arguments.SearchID)>
 		<!--- <cfdump var="#sResponse#" abort> --->
@@ -158,7 +160,7 @@
 		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Y, C, F --->
 		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bRestricted" required="false" default="0"><!--- Options (one item) - 0, 1 --->
-		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicFaresOnly --->
+		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicOrPrivateFares, PublicFaresOnly, PrivateFaresOnly --->
 		<cfargument name="bAccountCodes" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="nCouldYou" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="stAccount" required="true">
@@ -166,6 +168,7 @@
 		<cfargument name="bIncludeClass" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeCabin" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bGovtRate" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
@@ -240,7 +243,15 @@
 									</air:PermittedCabins>
 								</cfif>
 							</air:AirPricingModifiers>
-							<com:SearchPassenger PricePTCOnly="false" Code="ADT"/>
+							<cfif arguments.bGovtRate>
+								<com:SearchPassenger Code="GST" PricePTCOnly="true">
+									<com:PersonalGeography>
+										<com:CityCode>DFW</com:CityCode>
+									</com:PersonalGeography>
+								</com:SearchPassenger>
+							<cfelse>
+								<com:SearchPassenger Code="ADT" PricePTCOnly="false" />
+							</cfif>
 							<cfif arguments.bIncludeBookingCodes>
 								<cfset local.nCount = 0 />
 								<air:AirPricingCommand>

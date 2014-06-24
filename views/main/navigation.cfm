@@ -19,13 +19,11 @@
 		<cfset showHotelTab = 1 />
 	</cfif>
 	<cfset showCarTab = yesNoFormat(carValue) />
-<cfelse>
 	<cfset showAirTab = (rc.Filter.getAir() IS TRUE ? 1 : 0) />
-	<cfset showHotelTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
-	<cfset showCarTab = ((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') ? 1 : 0) />
-	<!--- to do : remove these after 10/7 --->
-	<cfset showHotelTab = ((application.es.getCurrentEnvironment() EQ 'beta' AND rc.Filter.getAcctID() EQ 441) ? 0 : showHotelTab)>
-	<cfset showCarTab = ((application.es.getCurrentEnvironment() EQ 'beta' AND rc.Filter.getAcctID() EQ 441) ? 0 : showCarTab)>
+<cfelse>
+	<cfset showAirTab = ((rc.Filter.getAir() IS TRUE AND session.DepartmentPreferences.STOAir NEQ 0) ? 1 : 0) />
+	<cfset showHotelTab = (((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') AND session.DepartmentPreferences.STOHotel NEQ 0) ? 1 : 0) />
+	<cfset showCarTab = (((NOT rc.Filter.getAir() IS TRUE OR rc.Filter.getAirType() NEQ 'MD') AND session.DepartmentPreferences.STOCar NEQ 0) ? 1 : 0) />
 </cfif>
 </cfsilent>
 <cfoutput>

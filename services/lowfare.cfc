@@ -167,6 +167,27 @@
 			</cfloop>
 		</cfloop>
 
+		<!--- If State of Texas, get government rates --->
+		<!--- Elements specific to this request:
+			  SearchPassenger Code="GST" and PricePTCOnly="true"
+			  PersonalGeography - CityCode=DFW
+			  PublicorPrivateFares, ProhibitNonRefundablefares=false --->
+		<cfif arguments.Filter.getAcctID() EQ 235>
+			<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+												, sCabin = local.sCabin
+												, bRefundable = false
+												, sPriority = arguments.sPriority
+												, stPricing = arguments.stPricing
+												, Account = arguments.Account
+												, Policy = arguments.Policy
+												, BlackListedCarrierPairing = local.BlackListedCarrierPairing
+												, airline = airline
+												, fareType = "PublicOrPrivateFares"
+												, accountCode = sPF
+												, bGovtRate = true )>
+			<cfset local.stThreads[local.sThreadName] = ''>
+		</cfif>
+
 		<!--- Join only if threads where thrown out. --->
 		<cfif NOT StructIsEmpty(stThreads)
 			AND structKeyList(stThreads) NEQ ''
@@ -214,12 +235,13 @@
 		<cfargument name="airline" required="true">
 		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly" />
 		<cfargument name="accountCode" type="string" required="false" default="" />
+		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfset local.sThreadName = "">
 
 		<!--- Don't go back to the UAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline)>
-			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
+		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate)>
+			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
 			<cfset local[local.sThreadName] = {}>
 
 			<cfset local.bRefundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')><!--- false = non refundable - true = refundable --->
@@ -244,10 +266,11 @@
 				airline="#arguments.airline#"
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
 				accountCode="#arguments.accountCode#"
-				fareType="#arguments.fareType#">
+				fareType="#arguments.fareType#"
+				bGovtRate="#arguments.bGovtRate#">
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode)>
+				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRate)>
 
 				<!--- Call the UAPI. --->
 				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
@@ -336,8 +359,9 @@
 		<cfargument name="Account" required="false"	default="">
 		<cfargument name="airline" required="true">
 		<cfargument name="policy" required="true">
-		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly" />
+		<cfargument name="fareType" type="string" required="true" hint="PublicFaresOnly|PrivateFaresOnly|PublicOrPrivateFares" />
 		<cfargument name="accountCode" type="string" required="false" default="" />
+		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfif arguments.Filter.getAirType() EQ 'MD'>
 			<!--- grab leg query out of filter --->
@@ -538,7 +562,15 @@
 										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
 									</cfif>
 								</air:AirSearchModifiers>
-								<com:SearchPassenger Code="ADT" />
+								<cfif arguments.bGovtRate>
+									<com:SearchPassenger Code="GST" PricePTCOnly="true">
+										<com:PersonalGeography>
+											<com:CityCode>DFW</com:CityCode>
+										</com:PersonalGeography>
+									</com:SearchPassenger>
+								<cfelse>
+									<com:SearchPassenger Code="ADT" />
+								</cfif>
 								<air:AirPricingModifiers
 									ProhibitNonRefundableFares="#arguments.bRefundable#"
 									FaresIndicator="#arguments.fareType#"

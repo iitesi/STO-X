@@ -21,14 +21,24 @@
 			--->
 				<cfif rc.Air.privateFare AND rc.Air.preferred>
 					<cfif rc.Air.Carriers[1] EQ "WN">
-						<span class="ribbon ribbon-l-pref"></span>
+						<cfif rc.Air.PTC EQ "GST">
+							<span class="ribbon ribbon-l-pref-govt"></span>
+						<cfelse>
+							<span class="ribbon ribbon-l-pref"></span>
+						</cfif>
 					<cfelse>
 						<span class="ribbon ribbon-l-pref-cont"></span>
 					</cfif>
 				<cfelseif rc.Air.preferred>
-					<span class="ribbon ribbon-l-pref"></span>
+					<cfif rc.Air.PTC EQ "GST">
+						<span class="ribbon ribbon-l-pref-govt"></span>
+					<cfelse>
+						<span class="ribbon ribbon-l-pref"></span>
+					</cfif>
 				<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
 					<span class="ribbon ribbon-l-cont"></span>
+				<cfelseif rc.Air.PTC EQ "GST">
+					<span class="ribbon ribbon-l-govt"></span>
 				</cfif>
 
 				<h2>FLIGHT</h2>

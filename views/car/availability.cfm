@@ -22,6 +22,8 @@ OR NOT rc.Filter.getAir()>
 			<input type="hidden" name="sVendor" id="sVendor" value="">
 			<input type="hidden" name="pickUpLocationKey" value="#rc.pickUpLocationKey#">
 			<input type="hidden" name="dropOffLocationKey" value="#rc.dropOffLocationKey#">
+			<input type="hidden" name="pickUpLocationType" id="pickUpLocationType" value="">
+			<input type="hidden" name="dropOffLocationType" id="dropOffLocationType" value="">
 		</form>
 
 		<!--- If no records can be retrieved from the initial search or change search form. --->
@@ -45,6 +47,9 @@ OR NOT rc.Filter.getAir()>
 							<span class="ribbon ribbon-r-pref"></span>
 						</cfif>
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
+						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
+							<div>Shuttle Off Terminal</div>
+						</cfif>
 					</div>
 					</td>
 				</cfloop>
@@ -81,8 +86,9 @@ OR NOT rc.Filter.getAir()>
 							</td>
 
 							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-								<td width="120">
-									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+								<td>
+									<div align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+									<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
 										<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 											<cfset buttonType="btn-primary" />
 											<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
@@ -114,10 +120,11 @@ OR NOT rc.Filter.getAir()>
 											<cfelse>
 												<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
 											</cfif>
-											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#');" value="#thisRate#">
+											<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#');" value="#thisRate#">
 										<cfelse>
 											<br />UNAVAILABLE
 										</cfif>
+									</div>
 									</div>
 								</td>
 							</cfloop>
