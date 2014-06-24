@@ -89,12 +89,12 @@ $(document).ready(function(){
 				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
 					createForm(traveler.orgUnit[i]);
 				}
-				if (acctID == 348) {
+				/* if (acctID == 348) {
 					$( "#custom" ).trigger('change');
 					for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
 						$( "#" + traveler.orgUnit[i].OUType + traveler.orgUnit[i].OUPosition ).val( traveler.orgUnit[i].valueID );
 					}
-				}
+				} */
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
 					$( "#airSpinner" ).hide();
