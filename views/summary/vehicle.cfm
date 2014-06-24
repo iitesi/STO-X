@@ -124,19 +124,23 @@
 						</td>
 						<td valign="top">
 							DROP-OFF: #uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#<br />
-							<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getDropOffLocationID()>
-								<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
-								<cfset local.locationKey = ''>
-								<cfset local.dropoffLocation = ''>
-								<cfloop array="#vehicleLocation#" index="local.locationIndex" item="local.location">
-									<cfif rc.Vehicle.getDropoffLocationID() EQ location.vendorLocationID>
-										<cfset local.locationKey = local.locationIndex>
-										<cfbreak>
-									</cfif>
-								</cfloop>
-								<cfset dropoffLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
-									& local.vehicleLocation[local.locationKey].street & ' ('
-									& local.vehicleLocation[local.locationKey].city & ')' />
+							<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown'>
+								<cfif len(rc.Vehicle.getDropOffLocationID())>
+									<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
+									<cfset local.locationKey = ''>
+									<cfset local.dropoffLocation = ''>
+									<cfloop array="#vehicleLocation#" index="local.locationIndex" item="local.location">
+										<cfif rc.Vehicle.getDropoffLocationID() EQ location.vendorLocationID>
+											<cfset local.locationKey = local.locationIndex>
+											<cfbreak>
+										</cfif>
+									</cfloop>
+									<cfset dropoffLocation = application.stCarVendors[local.vehicleLocation[local.locationKey].vendorCode] & ' - '
+										& local.vehicleLocation[local.locationKey].street & ' ('
+										& local.vehicleLocation[local.locationKey].city & ')' />
+								<cfelse>
+									<cfset local.dropoffLocation = local.pickupLocation />
+								</cfif>
 								#dropoffLocation#
 							<cfelseif rc.Vehicle.getDropOffLocationType() EQ 'ShuttleOffAirport'>
 								#rc.Filter.getCarDropoffAirport()#<br />
