@@ -45,16 +45,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td width="6%"><strong>PICK-UP:</strong></td>
-						<td width="33%"><strong>#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#</strong></td>
-						<td width="8%"><strong>DROP-OFF:</strong></td>
-						<td><strong>#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#</strong></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><strong>#rc.pickupLocation#</strong></td>
-						<td></td>
-						<td><strong>#rc.dropoffLocation#</strong></td>
+						<td width="39%"><strong>
+							PICK-UP: #uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#<br />
+							#rc.pickupLocation#
+						</strong></td>
+						<td><strong>
+							DROP-OFF: #uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#<br />
+							#rc.dropoffLocation#
+						</strong></td>
 					</tr>
 				</table>
 			</td>
@@ -74,11 +72,11 @@
 								</cfif>
 							</td>
 							<cfif NOT rc.Vehicle.getPolicy()>
-									<td width="12%"><strong>OUT OF POLICY</strong></td>
-									<td width="28%">#ArrayToList(rc.Vehicle.getAPolicies())#</td>
+									<td width="12%" valign="top"><strong>OUT OF POLICY</strong></td>
+									<td width="28%" valign="top">#ArrayToList(rc.Vehicle.getAPolicies())#</td>
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode())>
-										<td width="8%"><strong>Reason</strong></td>
-										<td width="34%">
+										<td width="8%" valign="top"><strong>REASON</strong></td>
+										<td width="34%" valign="top">
 											<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getCarReasonCode()#">
 												<cfcase value="D">Required car vendor does not provide service at origination and/or destination</cfcase>
 												<cfcase value="S">Required car size sold out</cfcase>

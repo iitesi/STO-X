@@ -18,9 +18,11 @@ function submitLowFare (nTripKey) {
 /*
 	Submits the car.availability form.
 */
-function submitCarAvailability (sCategory, sVendor) {
+function submitCarAvailability (sCategory, sVendor, sPickUpLocationType, sDropOffLocationType) {
 	$("#sCategory").val(sCategory);
 	$("#sVendor").val(sVendor);
+	$("#pickUpLocationType").val(sPickUpLocationType);
+	$("#dropOffLocationType").val(sDropOffLocationType);
 	$("#carAvailabilityForm").submit();
 }
 /*

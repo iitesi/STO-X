@@ -380,6 +380,8 @@
 		<cfloop collection="#local.stCars#" item="local.sClassCategory">
 			<cfloop collection="#local.stCars[sClassCategory]#" item="local.sVendor">
 				<cfset local.stCarVendors[local.sVendor] = ''>
+				<cfset local.stCarVendors[local.sVendor] = StructNew()>
+				<cfset local.stCarVendors[local.sVendor].Location = local.stCars[sClassCategory][local.sVendor].Location>
 			</cfloop>
 		</cfloop>
 

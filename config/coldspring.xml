@@ -66,6 +66,7 @@
 		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
 		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
 		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
+		<constructor-arg name="userService"><ref bean="UserService" /></constructor-arg>
 	</bean>
 
 	<bean id="purchase" class="booking.services.purchase" >

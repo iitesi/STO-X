@@ -9,17 +9,26 @@
 			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 			--->
 
-
 			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
 				<cfif stTrip.Carriers[1] EQ "WN">
-					<cfset ribbonClass = "ribbon-l-pref">
+					<cfif stTrip.PTC EQ "GST">
+						<cfset ribbonClass = "ribbon-l-pref-govt">
+					<cfelse>
+						<cfset ribbonClass = "ribbon-l-pref">
+					</cfif>
 				<cfelse>
 					<cfset ribbonClass = "ribbon-l-pref-cont">
 				</cfif>
 			<cfelseif stTrip.preferred EQ 1>
-				<cfset ribbonClass = "ribbon-l-pref">
+				<cfif stTrip.PTC EQ "GST">
+					<cfset ribbonClass = "ribbon-l-pref-govt">
+				<cfelse>
+					<cfset ribbonClass = "ribbon-l-pref">
+				</cfif>
 			<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN">
 				<cfset ribbonClass = "ribbon-l-cont">
+			<cfelseif bDisplayFare AND stTrip.PTC EQ "GST">
+				<cfset ribbonClass = "ribbon-l-govt">
 			</cfif>
 
 			<!--- finally add default 'ribbon' class --->

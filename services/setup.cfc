@@ -8,6 +8,7 @@
 	<cfproperty name="searchService" />
 	<cfproperty name="searchWidgetURL" />
 	<cfproperty name="useLinkedDatabases" />
+	<cfproperty name="userService" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="assetURL" type="string" required="true" />
@@ -18,6 +19,7 @@
 		<cfargument name="searchService" />
 		<cfargument name="searchWidgetURL" type="string" required="true" />
 		<cfargument name="useLinkedDatabases" type="boolean" required="true" />
+		<cfargument name="userService" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -27,6 +29,7 @@
 		<cfset setSearchService( arguments.SearchService ) />
 		<cfset setSearchWidgetURL( arguments.searchWidgetURL ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
+		<cfset setUserService( arguments.userService ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -187,6 +190,7 @@
 			<cfset session.UserID = local.getSearch.User_ID>
 			<cfset session.AcctID = local.getSearch.Acct_ID>
 			<cfset session.PolicyID = local.getSearch.Policy_ID>
+			<cfset session.DepartmentPreferences = getUserService().getUserDepartment( session.UserID, session.AcctID ) />
 
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
 			<cfif NOT arguments.requery
