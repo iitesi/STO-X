@@ -48,10 +48,7 @@ $(document).ready(function(){
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
-					$( "#custom" ).trigger('change');
-					for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
-						$( "#" + traveler.orgUnit[i].OUType + traveler.orgUnit[i].OUPosition ).val( traveler.orgUnit[i].valueID );
-					}
+					populateDropDownValues(traveler.orgUnit);
 				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
@@ -90,10 +87,7 @@ $(document).ready(function(){
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
-					$( "#custom" ).trigger('change');
-					for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
-						$( "#" + traveler.orgUnit[i].OUType + traveler.orgUnit[i].OUPosition ).val( traveler.orgUnit[i].valueID );
-					}
+					populateDropDownValues(traveler.orgUnit);
 				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
@@ -680,138 +674,185 @@ $(document).ready(function(){
 	})
 
 	//NASCAR custom code for conditional logic for sort1/second org unit displayed/department number
-	if (acctID == 348) {
+	$( "#orgUnits" ).on('change', '#custom', function() {
+		changeSort1();
+	});
+	$( "#orgUnits" ).on('change', '#sort1', function() {
+		changeSort2();
+	});
+	$( "#orgUnits" ).on('change', '#sort2', function() {
+		changeSort3();
+	});
+	$( "#orgUnits" ).on('change', '#sort3', function() {
+		changeSort4();
+	});
 
-		$( "#orgUnits" ).on('change', '#custom', function() {
-			var custom = $( "#custom" ).val();
-			$.ajax({type:"POST",
-				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
-				data: 	{
-							  ouID : 400
-							, conditionalSort1 : custom
-						},
-				dataType: 'json',
-				success:function(values) {
-					var originalValue = $("#sort1").val();
-					$( "#sort1" ).html('');
-					$( "#sort1" ).append('<option value="0"></option>');
-					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort1" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
-					}
-					$( "#sort1" ).val( originalValue );
-					$( "#sort1" ).trigger( "change" );
+	function populateDropDownValues(orgUnits) {
+		var performCheck = true;
+		for( var i=0, l=orgUnits.length; i<l; i++ ) {
+			var orgUnitName = orgUnits[i].OUType + orgUnits[i].OUPosition;
+			var orgUnitID = orgUnits[i].valueID;
+			$( "#" + orgUnitName ).val( orgUnitID );
+			if (orgUnitID == '' && performCheck) {
+				checkOrgUnit(orgUnitName, orgUnitID);
+				performCheck = false;
+			}						
+		}
+	}
+
+	function checkOrgUnit(orgUnitName, orgUnitID) {
+		if (orgUnitID == '') {
+			if (orgUnitName == 'sort1') {
+				changeSort1();
+			}
+			else if (orgUnitName == 'sort2') {
+				changeSort2();
+			}
+			else if (orgUnitName == 'sort3') {
+				changeSort3();
+			}
+			else if (orgUnitName == 'sort4') {
+				changeSort4();
+			}
+		}
+	}
+
+	function changeSort1() {
+		var custom = $( "#custom" ).val();
+		var originalSort1Value = $("#sort1").val();
+		$.ajax({type:"POST",
+			url: 'RemoteProxy.cfc?method=getOrgUnitValues',
+			data: 	{
+						  ouID : 400
+						, conditionalSort1 : custom
+					},
+			dataType: 'json',
+			success:function(values) {
+				var originalSort1Value = $("#sort1").val();
+				$( "#sort1" ).html('');
+				$( "#sort1" ).append('<option value="0"></option>');
+				for( var i=0, l=values.length; i<l; i++ ) {
+					$( "#sort1" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 				}
-			});
-
-			$.ajax({type:"POST",
-				url: 'RemoteProxy.cfc?method=updateTravelerCompany',
-				data: 	{
-							  userID : $("#userID").val()
-							, acctID : acctID
-							, arrangerID : arrangerID
-							, searchID : searchID
-							, travelerNumber : travelerNumber
-							, valueID : custom
-							, vendor : vendor
-						},
-				dataType: 'json',
-				success:function(traveler) {
-					$( "#airSpinner" ).show();
-					$( "#hotelSpinner" ).show();
-					$( "#carSpinner" ).show();
-
-					if (airSelected == 'true') {
-						loadPayments(traveler, 'air');
-						$( "#airSpinner" ).hide();
-					}
-					if (hotelSelected == 'true') {
-						loadPayments(traveler, 'hotel');
-						$( "#hotelSpinner" ).hide();
-					}
-					if (vehicleSelected == 'true') {
-						loadCarPayments(traveler);
-						$( "#carSpinner" ).hide();
-					}
-				}
-			});
+			}
 		});
+		$( "#sort1" ).val( originalSort1Value );
+		if (originalSort1Value != '') {
+			changeSort2();
+		}
 
-		$( "#orgUnits" ).on('change', '#sort1', function() {
-			var custom = $( "#custom" ).val();
-			var sort1 = $( "#sort1" ).val();
-			$.ajax({type:"POST",
-				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
-				data: 	{
-							  ouID : 401
-							, conditionalSort1 : custom
-							, conditionalSort2 : sort1
-						},
-				dataType: 'json',
-				success:function(values) {
-					var originalValue = $("#sort2").val();
-					$( "#sort2" ).html('');
-					$( "#sort2" ).append('<option value="0"></option>');
-					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort2" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
-					}
-					$( "#sort2" ).val( originalValue );
-					$( "#sort2" ).trigger("change");
-				}
-			});
-		});
+		$.ajax({type:"POST",
+			url: 'RemoteProxy.cfc?method=updateTravelerCompany',
+			data: 	{
+						  userID : $("#userID").val()
+						, acctID : acctID
+						, arrangerID : arrangerID
+						, searchID : searchID
+						, travelerNumber : travelerNumber
+						, valueID : custom
+						, vendor : vendor
+					},
+			dataType: 'json',
+			success:function(traveler) {
+				$( "#airSpinner" ).show();
+				$( "#hotelSpinner" ).show();
+				$( "#carSpinner" ).show();
 
-		$( "#orgUnits" ).on('change', '#sort2', function() {
-			var custom = $( "#custom" ).val();
-			var sort1 = $( "#sort1" ).val();
-			var sort2 = $( "#sort2" ).val();
-			$.ajax({type:"POST",
-				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
-				data: 	{
-							  ouID : 402
-							, conditionalSort1 : custom
-							, conditionalSort2 : sort1
-							, conditionalSort3 : sort2
-						},
-				dataType: 'json',
-				success:function(values) {
-					var originalValue = $("#sort3").val();
-					$( "#sort3" ).html('');
-					$( "#sort3" ).append('<option value="0"></option>');
-					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort3" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
-					}
-					$( "#sort3" ).val( originalValue );
-					$( "#sort3" ).trigger("change");
+				if (airSelected == 'true') {
+					loadPayments(traveler, 'air');
+					$( "#airSpinner" ).hide();
 				}
-			});
+				if (hotelSelected == 'true') {
+					loadPayments(traveler, 'hotel');
+					$( "#hotelSpinner" ).hide();
+				}
+				if (vehicleSelected == 'true') {
+					loadCarPayments(traveler);
+					$( "#carSpinner" ).hide();
+				}
+			}
 		});
+	}
 
-		$( "#orgUnits" ).on('change', '#sort3', function() {
-			var custom = $( "#custom" ).val();
-			var sort1 = $( "#sort1" ).val();
-			var sort2 = $( "#sort2" ).val();
-			var sort3 = $( "#sort3" ).val();
-			$.ajax({type:"POST",
-				url: 'RemoteProxy.cfc?method=getOrgUnitValues',
-				data: 	{
-							  ouID : 403
-							, conditionalSort1 : custom
-							, conditionalSort2 : sort1
-							, conditionalSort3 : sort2
-							, conditionalSort4 : sort3
-						},
-				dataType: 'json',
-				success:function(values) {
-					var originalValue = $("#sort4").val();
-					$( "#sort4" ).html('');
-					$( "#sort4" ).append('<option value="0"></option>');
-					for( var i=0, l=values.length; i<l; i++ ) {
-						$( "#sort4" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
-					}
-					$( "#sort4" ).val( originalValue );
+	function changeSort2() {
+		var custom = $( "#custom" ).val();
+		var sort1 = $( "#sort1" ).val();
+		var originalSort2Value = $("#sort2").val();
+		$.ajax({type:"POST",
+			url: 'RemoteProxy.cfc?method=getOrgUnitValues',
+			data: 	{
+						  ouID : 401
+						, conditionalSort1 : custom
+						, conditionalSort2 : sort1
+					},
+			dataType: 'json',
+			success:function(values) {
+				$( "#sort2" ).html('');
+				$( "#sort2" ).append('<option value="0"></option>');
+				for( var i=0, l=values.length; i<l; i++ ) {
+					$( "#sort2" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
 				}
-			});
+			}
 		});
+		$( "#sort2" ).val( originalSort2Value );
+		if (originalSort2Value != '') {
+			changeSort3();
+		}
+	}
+
+	function changeSort3() {
+		var custom = $( "#custom" ).val();
+		var sort1 = $( "#sort1" ).val();
+		var sort2 = $( "#sort2" ).val();
+		var originalSort3Value = $("#sort3").val();
+		$.ajax({type:"POST",
+			url: 'RemoteProxy.cfc?method=getOrgUnitValues',
+			data: 	{
+						  ouID : 402
+						, conditionalSort1 : custom
+						, conditionalSort2 : sort1
+						, conditionalSort3 : sort2
+					},
+			dataType: 'json',
+			success:function(values) {
+				$( "#sort3" ).html('');
+				$( "#sort3" ).append('<option value="0"></option>');
+				for( var i=0, l=values.length; i<l; i++ ) {
+					$( "#sort3" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
+				}
+			}
+		});
+		$( "#sort3" ).val( originalSort3Value );
+		if (originalSort3Value != '') {
+			changeSort4();
+		}
+	}
+
+	function changeSort4() {
+		var custom = $( "#custom" ).val();
+		var sort1 = $( "#sort1" ).val();
+		var sort2 = $( "#sort2" ).val();
+		var sort3 = $( "#sort3" ).val();
+		var originalSort4Value = $("#sort4").val();
+		$.ajax({type:"POST",
+			url: 'RemoteProxy.cfc?method=getOrgUnitValues',
+			data: 	{
+						  ouID : 403
+						, conditionalSort1 : custom
+						, conditionalSort2 : sort1
+						, conditionalSort3 : sort2
+						, conditionalSort4 : sort3
+					},
+			dataType: 'json',
+			success:function(values) {
+				$( "#sort4" ).html('');
+				$( "#sort4" ).append('<option value="0"></option>');
+				for( var i=0, l=values.length; i<l; i++ ) {
+					$( "#sort4" ).append('<option value="' + values[i].valueID + '">' + values[i].valueDisplay + '</option>');
+				}
+			}
+		});
+		$( "#sort4" ).val( originalSort4Value );
 	}
 }); // end of jQuery document ready
 
