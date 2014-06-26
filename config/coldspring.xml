@@ -1,5 +1,14 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
+
+<!-- **************************************************************************
+*******************************************************************************
+NOTE: IF YOU MAKE ANY CHANGES IN THIS FILE PLEASE VERIFY THAT THE SAME CHANGES
+ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
+*******************************************************************************
+*******************************************************************************
+-->
+
 <beans>
 	<!-- Import the centralized environments.xml file -->
 	<import resource="/com/shortstravel/config/environment.xml" />
