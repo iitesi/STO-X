@@ -350,11 +350,17 @@ $(document).ready(function(){
 		if (orgunit.OUDisplay == 1) {
 			if (orgunit.OUUpdate != 0 || orgunit.valueID == '' || orgunit.valueReport == '') {
 				var inputName = orgunit.OUType + orgunit.OUPosition;
+
 				var div = '<div class="control-group'
 				if ($.inArray(inputName, errors.split(",")) >= 0) {
 					div += ' error';
 				}
 				div += '">';
+
+				if (orgunit.OUSTOVerbiage != '') {
+					div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
+				}
+
 				div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
 				if (orgunit.OURequired == 1) {
 					div += ' *</label>';
