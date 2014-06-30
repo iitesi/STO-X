@@ -320,11 +320,25 @@
 		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU">
 			<cfif local.OU.getOUDisplay() EQ 1>
 				<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
-				<cfif local.OU.getOURequired() EQ 1
+				<cfif 	(
+							( 	local.OU.getOURequired() EQ 1
+								AND local.OU.getOURequiredCBAOnly() EQ 0 
+							)
+							OR 
+							( 	local.OU.getOURequiredCBAOnly() EQ 1
+								AND (
+										( arguments.Traveler.getBookingDetail().getAirNeeded()
+										AND arguments.Traveler.getBookingDetail().getNewAirCC() EQ 0 )
+										OR ( arguments.Traveler.getBookingDetail().getHotelNeeded()
+										AND arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 0 )
+									)
+							)
+						)
 					AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
 						OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
 					<cfset local.error[field] = '' />
 				</cfif>
+
 				<cfif local.OU.getOUFreeform() EQ 1
 					AND local.OU.getOUPattern() NEQ ''
 					AND len(trim( local.OU.getValueReport() )) GT 0>
