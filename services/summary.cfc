@@ -328,9 +328,11 @@
 							( 	local.OU.getOURequiredCBAOnly() EQ 1
 								AND (
 										( arguments.Traveler.getBookingDetail().getAirNeeded()
-										AND arguments.Traveler.getBookingDetail().getNewAirCC() EQ 0 )
+										AND ( arguments.Traveler.getBookingDetail().getNewAirCC() EQ 0
+											AND arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop' ) )
 										OR ( arguments.Traveler.getBookingDetail().getHotelNeeded()
-										AND arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 0 )
+										AND ( arguments.Traveler.getBookingDetail().getNewHotelCC() EQ 0
+											AND arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop' ) )
 									)
 							)
 						)
