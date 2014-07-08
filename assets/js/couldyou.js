@@ -119,15 +119,28 @@ shortstravel.couldyou = {
 					requestedDate.dataLoaded = true;
 					requestedDate.total = shortstravel.couldyou.calculateDailyTotal( requestedDate );
 
-					if( requestedDate.air == "" || requestedDate.hotel == "" || requestedDate.vehicle == "" ){
+					pushFlight = false;
+					if (requestedDate.air == "" || (requestedDate.air != undefined && requestedDate.air["FAULTMESSAGE"] != undefined)) {
+						pushFlight = true;
+					}
+					pushHotel = false;
+					if (requestedDate.hotel == "") {
+						pushHotel = true;
+					}
+					pushVehicle = false;
+					if (requestedDate.vehicle == "") {
+						pushVehicle = true;
+					}
+
+					if( pushFlight || pushHotel || pushVehicle ){
 						var missingServices = [];
-						if( requestedDate.air == "" ){
+						if( pushFlight ){
 							missingServices.push( 'flight' );
 						}
-						if( requestedDate.hotel == "" ){
+						if( pushHotel ){
 							missingServices.push( 'hotel' );
 						}
-						if( requestedDate.vehicle == "" ){
+						if( pushVehicle ){
 							missingServices.push( 'car' );
 						}
 						requestedDate.message = missingServices.toString() + ' not available';
@@ -490,31 +503,35 @@ shortstravel.couldyou = {
 		if( typeof places != "number" ){
 			places = 0;
 		}
-		var roundedCost = ( Math.round( cost * (Math.pow(10,places)) ) / (Math.pow(10,places)) );
-		if( places != 0 ){
-			roundedCost = roundedCost.toFixed( places );
+		if (isNaN(cost)) {
+			return '-';
 		}
-
-		if( typeof shortstravel.itinerary.AIR == 'object' ){
-			return '$ ' + roundedCost;
-		} else {
-			if( typeof shortstravel.itinerary.HOTEL != 'undefined' ){
-				if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
-					return '$ ' + roundedCost;
-				} else {
-					return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].dailyRateCurrency;
-				}
-			}
-			if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){
-				if( shortstravel.itinerary.VEHICLE.currency == 'USD' ){
-					return '$ ' + roundedCost;
-				} else {
-					return roundedCost + shortstravel.itinerary.VEHICLE.currency;
-				}
+		else {
+			var roundedCost = ( Math.round( cost * (Math.pow(10,places)) ) / (Math.pow(10,places)) );
+			if( places != 0 ){
+				roundedCost = roundedCost.toFixed( places );
 			}
 
-		}
+			if( typeof shortstravel.itinerary.AIR == 'object' ){
+				return '$ ' + roundedCost;
+			} else {
+				if( typeof shortstravel.itinerary.HOTEL != 'undefined' ){
+					if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
+						return '$ ' + roundedCost;
+					} else {
+						return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].dailyRateCurrency;
+					}
+				}
+				if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){
+					if( shortstravel.itinerary.VEHICLE.currency == 'USD' ){
+						return '$ ' + roundedCost;
+					} else {
+						return roundedCost + shortstravel.itinerary.VEHICLE.currency;
+					}
+				}
 
+			}
+		}
 	},
 
 	continueToPurchase: function(){

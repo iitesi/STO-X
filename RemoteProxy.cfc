@@ -307,11 +307,10 @@
 				<cfif getBean( 'EnvironmentService' ).getEnableBugLog()>
 					 <cfset getBean('BugLogService').notifyService( message=cfcatch.Message, exception=cfcatch, severityCode='Fatal' ) />
 				<cfelse>
-					 <cfset super.onError( arguments.exception, arguments.eventName )>
+					 <!--- <cfset super.onError( arguments.exception, arguments.eventName )> --->
 				 </cfif>
 			</cfcatch>
 		</cftry>
-
 
 		<cfreturn cy />
 
