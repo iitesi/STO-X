@@ -612,6 +612,7 @@
 				, Location_Name AS city
 				, Airport_Name AS airport
 				, country_code as countryCode
+				, region_code as stateCode
 			FROM lu_Geography
 			WHERE Location_Type = 125
 			ORDER BY code
@@ -628,6 +629,7 @@
 			<cfset local.stTemp[local.qAirports.code].city = local.qAirports.city>
 			<cfset local.stTemp[local.qAirports.code].airport = local.qAirports.airport>
 			<cfset local.stTemp[local.qAirports.code].domestic = local.domestic>
+			<cfset local.stTemp[local.qAirports.code].stateCode = local.qAirports.stateCode>
 		</cfloop>
 
 		<cfset application.stAirports = local.stTemp>
