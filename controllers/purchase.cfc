@@ -305,9 +305,14 @@
 																							, response = airResponse )>
 
 							<!--- Parse error --->
-							<cfif Air.UniversalLocatorCode EQ ''
-								OR Air.error>
-								<cfset errorMessage = Air.messages>
+							<cfif (Air.UniversalLocatorCode EQ '')
+								OR Air.error
+								OR (Air.Total GT originalAirfare)>
+								<cfif Air.Total GT originalAirfare>
+									<cfset errorMessage = 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation. Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.'>
+								<cfelse>
+									<cfset errorMessage = Air.messages>
+								</cfif>
 								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
