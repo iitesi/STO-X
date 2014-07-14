@@ -93,7 +93,7 @@
 		<cfset args.hotelAvailable = calculateAvailability( arguments.trip, "hotel" ) />
 		<cfset args.vehicleAvailable = calculateAvailability( arguments.trip, "vehicle" ) />
 
-		<cfif args.airAvailable>
+		<cfif structKeyExists(arguments.trip, "air") AND args.airAvailable AND NOT structKeyExists(arguments.trip.air, "FAULTMESSAGE")>
 			<cfset args.airCost = arguments.trip.air[ listGetAt( structKeyList( arguments.trip.air ), 1 ) ].total  />
 		<cfelse>
 			<cfset args.airCost = 0  />
@@ -128,7 +128,7 @@
 
 	<cffunction name="calculateAvailability" access="public" output="false" returntype="boolean" hint="">
 		<cfargument name="trip" type="struct" required="true" />
-		<cfargument name="service" type="string" required="true" hint="air|hote|vehicle" />
+		<cfargument name="service" type="string" required="true" hint="air|hotel|vehicle" />
 
 		<cfset var availability = false />
 
@@ -140,7 +140,6 @@
 			<cfif structKeyExists( arguments.trip, "hotel" ) AND isObject( arguments.trip.hotel )>
 				<cfset availability = true />
 			</cfif>
-
 		<cfelseif arguments.service EQ "vehicle">
 			<cfif structKeyExists( arguments.trip, "vehicle" ) AND isObject( arguments.trip.vehicle )>
 				<cfset availability = true />

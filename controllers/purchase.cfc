@@ -288,6 +288,7 @@
 							<cfset Air.SupplierLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
+							<cfset Air.Total = 0>
 							<cfset Air.BookingTravelerSeats = [] />
 
 							<cfset Air.AirITNumber = '' />
@@ -305,9 +306,24 @@
 																							, response = airResponse )>
 
 							<!--- Parse error --->
-							<cfif Air.UniversalLocatorCode EQ ''
-								OR Air.error>
-								<cfset errorMessage = Air.messages>
+							<cfif (Air.UniversalLocatorCode EQ '')
+								OR Air.error
+								OR (Air.Total GT originalAirfare)>
+								<cfif Air.Total GT originalAirfare>
+									<cfif len(Air.UniversalLocatorCode)>
+										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																									, universalRecordLocatorCode = Air.UniversalLocatorCode
+																									, Filter = rc.Filter
+																									, Version = version )>
+										<cfif cancelResponse.status>
+											<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
+																									, urRecloc = Air.UniversalLocatorCode )>
+										</cfif>
+									</cfif>
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+								<cfelse>
+									<cfset errorMessage = Air.messages>
+								</cfif>
 								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
