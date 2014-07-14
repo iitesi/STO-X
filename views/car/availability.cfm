@@ -8,6 +8,19 @@ OR NOT rc.Filter.getAir()>
 			</cfoutput>
 		</div>
 	</div>
+	
+	<!--- SOLA/LSU --->
+	<cfif ( rc.acctID EQ 254
+		OR rc.acctID EQ 255 )
+		AND (( rc.Filter.getCarDropoffAirport() NEQ ''
+			AND structKeyExists( application.stAirports, rc.Filter.getCarDropoffAirport() )
+			AND application.stAirports[ rc.Filter.getCarDropoffAirport() ].stateCode EQ 'LA' )
+		OR  ( rc.Filter.getCarPickupAirport() NEQ ''
+			AND structKeyExists( application.stAirports, rc.Filter.getCarPickupAirport() )
+			AND application.stAirports[ rc.Filter.getCarPickupAirport() ].stateCode EQ 'LA' ))>
+		<div class="alert alert-info">Enterprise must be used for all in-state vehicle rentals.</div>
+	</cfif>
+
 	<div>
 		<cfoutput>
 			#view('car/search')#
