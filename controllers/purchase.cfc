@@ -120,19 +120,19 @@
 				<cfif airSelected
 					AND Traveler.getBookingDetail().getAirNeeded()>
 
-						<cfset local.bRefundable = 0 />
-						<cfif structKeyExists(session.searches[rc.SearchID], "RequestedRefundable")>
-							<cfset local.bRefundable = session.searches[rc.SearchID].RequestedRefundable />
-						</cfif>
+					<cfset local.bRefundable = 0 />
+					<cfif structKeyExists(session.searches[rc.SearchID], "RequestedRefundable")>
+						<cfset local.bRefundable = session.searches[rc.SearchID].RequestedRefundable />
+					</cfif>
 
-						<cfset local.bGovtRate = 0 />
-						<cfset local.sFaresIndicator = "PublicAndPrivateFares" />
-						<cfif Air.PTC EQ "GST">
-							<cfset local.bGovtRate = 1 />
-							<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
-						</cfif>
+					<cfset local.bGovtRate = 0 />
+					<cfset local.sFaresIndicator = "PublicAndPrivateFares" />
+					<cfif Air.PTC EQ "GST">
+						<cfset local.bGovtRate = 1 />
+						<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
+					</cfif>
 
-						<cfif NOT structKeyExists(Air, 'PricingSolution')
+					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
 						<cfset local.originalAirfare = Air.Total />
@@ -172,6 +172,9 @@
 						</cfif>
 
 						<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
+					</cfif>
+					
+					<cfif arrayIsEmpty(errorMessage)>
 						<!--- Do a lowest refundable air price before air create for U6 --->
 						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
@@ -235,9 +238,6 @@
 								<cfset Traveler.getBookingDetail().setAirLowestPublicFare(lowestPublicTrip[structKeyList(lowestPublicTrip)].Total) />
 							</cfif>
 						</cfif>
-					</cfif>
-
-					<cfif arrayIsEmpty(errorMessage)>
 
 						<cfif hostToken EQ ''>
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
