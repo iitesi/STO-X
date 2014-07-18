@@ -68,40 +68,42 @@
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
-		<label class="control-label" for="month">Birth Date *</label>
-		<div class="controls">
-			<select name="month" id="month" class="input-small">
-			<option value=""></option>
-			<cfloop from="1" to="12" index="i">
-				<option value="#i#">#MonthAsString(i)#</option>
-			</cfloop>
-			</select>
-			<select name="day" id="day" class="input-small">
-			<option value=""></option>
-			<cfloop from="1" to="31" index="i">
-				<option value="#i#">#i#</option>
-			</cfloop>
-			</select>
-			<select name="year" id="year" class="input-small">
-			<option value=""></option>
-			<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
-				<option value="#i#">#i#</option>
-			</cfloop>
-			</select>
+	<cfif rc.airSelected>
+		<div class="control-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
+			<label class="control-label" for="month">Birth Date *</label>
+			<div class="controls">
+				<select name="month" id="month" class="input-small">
+				<option value=""></option>
+				<cfloop from="1" to="12" index="i">
+					<option value="#i#">#MonthAsString(i)#</option>
+				</cfloop>
+				</select>
+				<select name="day" id="day" class="input-small">
+				<option value=""></option>
+				<cfloop from="1" to="31" index="i">
+					<option value="#i#">#i#</option>
+				</cfloop>
+				</select>
+				<select name="year" id="year" class="input-small">
+				<option value=""></option>
+				<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
+					<option value="#i#">#i#</option>
+				</cfloop>
+				</select>
+			</div>
 		</div>
-	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
-		<label class="control-label" for="gender">Gender *</label>
-		<div class="controls">
-			<select name="gender" id="gender">
-			<option value=""></option>
-			<option value="M">Male</option>
-			<option value="F">Female</option>
-			</select>
+		<div class="control-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
+			<label class="control-label" for="gender">Gender *</label>
+			<div class="controls">
+				<select name="gender" id="gender">
+				<option value=""></option>
+				<option value="M">Male</option>
+				<option value="F">Female</option>
+				</select>
+			</div>
 		</div>
-	</div>
+	</cfif>
 
 	<cfif rc.airSelected>
 		<div class="control-group">
