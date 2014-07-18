@@ -18,7 +18,7 @@ OR NOT rc.Filter.getAir()>
 		OR  ( rc.Filter.getCarPickupAirport() NEQ ''
 			AND structKeyExists( application.stAirports, rc.Filter.getCarPickupAirport() )
 			AND application.stAirports[ rc.Filter.getCarPickupAirport() ].stateCode EQ 'LA' ))>
-		<div class="alert alert-info">Enterprise must be used for all in-state vehicle rentals.</div>
+		<div class="alert alert-info">Enterprise mandated for all in-state vehicle rentals.</div>
 	</cfif>
 
 	<div>
