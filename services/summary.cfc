@@ -269,10 +269,11 @@
 				<cfset local.error.ccEmails = ''>
 			</cfif>
 		</cfloop>
-		<cfif NOT isDate(arguments.Traveler.getBirthdate())>
+		<!--- STM-4046: DOB and gender are only required for air reservations --->
+		<cfif arguments.Traveler.getBookingDetail().getAirNeeded() AND NOT isDate(arguments.Traveler.getBirthdate())>
 			<cfset local.error.birthdate = ''>
 		</cfif>
-		<cfif arguments.Traveler.getGender() EQ ''>
+		<cfif arguments.Traveler.getBookingDetail().getAirNeeded() AND arguments.Traveler.getGender() EQ ''>
 			<cfset local.error.gender = ''>
 		</cfif>
 		<cfif arguments.Traveler.getTravelNumber() NEQ '' AND arguments.Traveler.getTravelNumberType() EQ ''>
