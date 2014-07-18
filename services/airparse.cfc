@@ -377,7 +377,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.nStops = ''>
 		<cfset local.nTotalStops = ''>
 		<cfset local.nDuration = ''>
-		<cfset local.nOverrideGroup = 0>
+		<cfset local.nOverrideGroup = ''>
 		<!--- Loop through all the trips --->
 		<cfloop collection="#stTrips#" index="local.tripIndex" item="local.trip">
 			<cfset local.stGroups = StructNew('linked')>
@@ -385,15 +385,21 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.nDuration = 0>
 			<cfset local.nTotalStops = 0>
 			<cfloop collection="#trip.Segments#" index="local.segmentIndex" item="local.segment">
-				<cfset local.nOverrideGroup = local.segment.Group>
-				<cfset local.segment.Group = local.nOverrideGroup>
+				<cfif local.segment.Group NEQ local.nOverrideGroup>
+					<cfset local.nOverrideGroup = local.segment.Group />
+					<cfset local.firstSegment = true />
+				<cfelse>
+					<cfset local.firstSegment = false />
+				</cfif>
 				<cfif NOT structKeyExists(local.stGroups, local.nOverrideGroup)>
 					<cfset local.stGroups[local.nOverrideGroup].Segments = StructNew('linked')>
 					<cfset local.stGroups[local.nOverrideGroup].DepartureTime = local.segment.DepartureTime>
 					<cfset local.stGroups[local.nOverrideGroup].Origin = local.segment.Origin>
-					<cfset local.stGroups[local.nOverrideGroup].TravelTime = '#int(local.segment.TravelTime/60)#h #local.segment.TravelTime%60#m'>
-					<cfset local.nDuration = local.segment.TravelTime + local.nDuration>
 					<cfset local.nStops = -1>
+				</cfif>
+				<cfif local.firstSegment OR local.segment.TravelTime GT local.nDuration>
+					<cfset local.stGroups[local.nOverrideGroup].TravelTime = '#int(local.segment.TravelTime/60)#h #local.segment.TravelTime%60#m'>
+					<cfset local.nDuration = local.segment.TravelTime + local.nDuration>					
 				</cfif>
 				<cfset local.stGroups[local.nOverrideGroup].Segments[local.segmentIndex] = local.segment>
 				<cfset local.stGroups[local.nOverrideGroup].ArrivalTime = local.segment.ArrivalTime>
