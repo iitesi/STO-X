@@ -112,7 +112,7 @@ services.factory( "HotelService", function( $window, $http ){
 				if( typeof response.data.data.images != 'undefined' ){
 					Hotel.images = response.data.data.images;
 					if( Hotel.images.length ){
-						Hotel.selectedImage = Hotel.images[0].imageURL;
+						Hotel.selectedImage = Hotel.images[0].IMAGEURL;
 					} else {
 						Hotel.selectedImage = "";
 					}
