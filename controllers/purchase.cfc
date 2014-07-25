@@ -132,10 +132,11 @@
 						<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
 					</cfif>
 
+					<cfset local.originalAirfare = Air.Total />
+
 					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
-						<cfset local.originalAirfare = Air.Total />
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
