@@ -405,7 +405,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset totalTravelTime = removeChars(totalTravelTime, 1, 3) />
 					<cfset hours = listFirst(totalTravelTime, "H") />
 					<cfset minutes = listLast(totalTravelTime, "H") />
-					<cfset local.nDuration = ((dayhours + hours) * 60) + minutes />
+					<cfset local.nDuration = local.nDuration + (((dayhours + hours) * 60) + minutes) />
 					<cfset local.travelTime = (dayhours + hours) & "h " & minutes & "m" />
 				</cfif>
 				<cfset local.stGroups[local.nOverrideGroup].Segments[local.segmentIndex] = local.segment>
