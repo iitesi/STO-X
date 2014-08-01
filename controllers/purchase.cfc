@@ -761,6 +761,14 @@
 				</cfif>
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
+				<!--- For unknown reasons, occasionally a blank record locator goes all the way to the confirmation page --->
+				<cfif len(trim(universalLocatorCode))>
+					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode ) />
+				<cfelseif arrayIsEmpty(errorMessage)>
+					<cfset errorType = 'Misc' />
+					<cfset arrayAppend( errorMessage, 'The system encountered a connectivity issue. Please try again or contact us to complete your reservation.' ) />
+				</cfif>
+				
 				<cfif arrayIsEmpty(errorMessage)>
 
 					<!--- Short's Travel/Internal TMCs only --->
@@ -818,7 +826,6 @@
 																									, searchID = rc.searchID )>
 				</cfif>
 
-				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
