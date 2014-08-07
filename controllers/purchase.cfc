@@ -306,6 +306,41 @@
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )>
 
+							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
+							<cfif len(Air.UniversalLocatorCode) AND NOT Air.error AND (Air.Total GT originalAirfare)>
+								<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																									, universalRecordLocatorCode = Air.UniversalLocatorCode 
+																									, Filter = rc.Filter
+																									, Version = version )>
+
+								<cfif cancelResponse.status AND NOT len(cancelResponse.message)>
+									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Account = rc.Account
+																										, Air = Air
+																										, LowestAir = LowestAir
+																										, bRefundable = bRefundable
+																										, bPlatingCarrier = 0
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, cardNumber = local.cardNumber
+																										, profileFound = profileFound
+																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, airFOPID = local.airFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									 )>
+
+									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
+																							, response = airResponse )>
+								<cfelse>
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+								</cfif>
+							</cfif>
+
 							<!--- Parse error --->
 							<cfif (Air.UniversalLocatorCode EQ '')
 								OR Air.error
