@@ -307,7 +307,7 @@
 																							, response = airResponse )>
 
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
-							<cfif len(Air.UniversalLocatorCode) AND NOT Air.error AND (Air.Total GT originalAirfare)>
+							<cfif len(Air.UniversalLocatorCode) AND (Air.Total GT originalAirfare)>
 								<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode 
 																									, Filter = rc.Filter
