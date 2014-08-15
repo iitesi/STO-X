@@ -289,6 +289,7 @@
 							<cfset Air.SupplierLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
+							<cfset Air.BookingTravelerKey = ''>
 							<cfset Air.Total = 0>
 							<cfset Air.BookingTravelerSeats = [] />
 
