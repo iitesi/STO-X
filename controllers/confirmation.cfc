@@ -36,7 +36,7 @@
 				</cfif>
 			</cfif>
 
-			<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getDropOffLocationID()>
+			<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown' AND len(rc.Vehicle.getDropOffLocationID())>
 				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
 				<cfset local.locationKey = ''>
 				<cfset rc.dropoffLocation = ''>
