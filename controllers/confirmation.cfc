@@ -14,7 +14,7 @@
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '') />
 
 		<cfif isStruct(rc.Vehicle)>
-			<cfif rc.Vehicle.getPickUpLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getPickUpLocationID()>
+			<cfif rc.Vehicle.getPickUpLocationType() EQ 'CityCenterDowntown' AND len(rc.Vehicle.getPickUpLocationID())>
 				<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
 				<cfset local.locationKey = ''>
 				<cfset rc.pickupLocation = ''>
