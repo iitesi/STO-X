@@ -94,50 +94,53 @@
 
 			<cfset local.threadNames = ''>
 			<cfset local.stCars = ''>
-
 			<cfset local.CDNumbers = (structKeyExists(arguments.Policy.CDNumbers, arguments.Filter.getValueID()) ? arguments.Policy.CDNumbers[arguments.Filter.getValueID()] : (structKeyExists(arguments.Policy.CDNumbers, 0) ? arguments.Policy.CDNumbers[0] : []))>
 			<cfif isStruct(CDNumbers)
 				AND NOT structIsEmpty(CDNumbers)>
-				<cfset local.threadNames = 'corporateRates'>
-				<cfset local.corporateRates = ''>
-				<cfthread
-					name="corporateRates"
-					Filter="#arguments.Filter#"
-					Account="#arguments.Account#"
-					Policy="#arguments.Policy#"
-					nCouldYou="#arguments.nCouldYou#"
-					CDNumbers="#CDNumbers#"
-					sCarChain="#arguments.sCarChain#"
-					sCarType="#arguments.sCarType#"
-					pickUpLocation="#arguments.pickUpLocation#"
-					dropOffLocation="#arguments.dropOffLocation#">
-					<cfif arguments.nCouldYou EQ 0>
-						<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
-																			, Account = arguments.Account
-																			, pickUpLocation = arguments.pickUpLocation
-																			, dropOffLocation = arguments.dropOffLocation
-																			, corporateDiscount = CDNumbers) />
-					<cfelse>
-						<cfset local.response = VehicleAdapter.getVehicles(Filter = arguments.Filter
-																			, Account = arguments.Account
-																			, pickUpLocation = arguments.pickUpLocation
-																			, dropOffLocation = arguments.dropOffLocation
-																			, couldYou = arguments.nCouldYou
-																			, corporateDiscount = CDNumbers
-																			, carChain = arguments.sCarChain
-																			, carType = arguments.sCarType) />
-					</cfif>
-					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
-					<cfif len(arguments.sCarType)>
-						<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true, arguments.sCarType) />
-					<cfelse>
-						<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true) />
-					</cfif>
-					<cfif arguments.nCouldYou EQ 0>
-						<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-					</cfif>
-					<cfset thread.stCars = addJavascript(stCars)>
-				</cfthread>
+				<cfloop collection="#CDNumbers#" index="local.cdIndex" item="local.cdItem">
+					<cfset local.threadNames = listAppend(local.threadNames, 'corporateRates#local.cdIndex#')>
+					<cfset local.corporateRates = ''>
+					<cfset local.cdNumber = {}>
+					<cfset local.cdNumber[ local.cdIndex ] = local.cdItem>
+					<cfthread
+						name="corporateRates#local.cdIndex#"
+						Filter="#arguments.Filter#"
+						Account="#arguments.Account#"
+						Policy="#arguments.Policy#"
+						nCouldYou="#arguments.nCouldYou#"
+						cdNumber="#local.cdNumber#"
+						sCarChain="#arguments.sCarChain#"
+						sCarType="#arguments.sCarType#"
+						pickUpLocation="#arguments.pickUpLocation#"
+						dropOffLocation="#arguments.dropOffLocation#">
+						<cfif arguments.nCouldYou EQ 0>
+							<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																				, Account = arguments.Account
+																				, pickUpLocation = arguments.pickUpLocation
+																				, dropOffLocation = arguments.dropOffLocation
+																				, corporateDiscount = cdNumber ) />
+						<cfelse>
+							<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																				, Account = arguments.Account
+																				, pickUpLocation = arguments.pickUpLocation
+																				, dropOffLocation = arguments.dropOffLocation
+																				, couldYou = arguments.nCouldYou
+																				, corporateDiscount = cdNumber
+																				, carChain = arguments.sCarChain
+																				, carType = arguments.sCarType ) />
+						</cfif>
+						<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
+						<cfif len(arguments.sCarType)>
+							<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true, arguments.sCarType) />
+						<cfelse>
+							<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, true) />
+						</cfif>
+						<cfif arguments.nCouldYou EQ 0>
+							<cfset local.stCars = checkPolicy(stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+						</cfif>
+						<cfset thread.stCars = addJavascript(stCars)>
+					</cfthread>
+				</cfloop>
 			</cfif>
 
 			<cfset local.threadNames = listAppend(local.threadNames, 'publicRates')>
@@ -184,19 +187,21 @@
 				OR arguments.nFromHotel NEQ 0>
 
 				<cfthread action="join" name="#local.threadNames#" />
-
 				<cfset local.threadError = false>
 				<cfloop list="#local.threadNames#" index="local.thread">
 					<cfif NOT structKeyExists(cfthread[local.thread], 'stCars')>
 						<cfdump var="#cfthread[local.thread]#">
 						<cfset local.threadError = true>
 					</cfif>
+					<cfif structKeyExists(cfthread[local.thread], 'stCars')>
+						<cfset local.stCars = mergeCars( local.stCars, cfthread[local.thread].stCars  )>
+					</cfif>
+			
 				</cfloop>
 				<cfif local.threadError>
 					<cfabort>
 				</cfif>
 
-				<cfset local.stCars = mergeCars((structKeyExists(cfthread, 'corporateRates') AND structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset session.searches[SearchID].stCarVendors = getVendors(local.stCars, arguments.Account)>
 					<cfset session.searches[SearchID].stCarCategories = getCategories(local.stCars)>
@@ -204,7 +209,6 @@
 				<cfelse>
 					<cfset session.searches[SearchID].stCarsCouldYou = local.stCars>
 				</cfif>
-
 				<cfif arguments.nCouldYou NEQ 0>
 					<cfif structKeyExists(cfthread.corporateRates.stCars, arguments.sCarType)
 					AND structKeyExists(cfthread.corporateRates.stCars[arguments.sCarType], arguments.sCarChain)>
