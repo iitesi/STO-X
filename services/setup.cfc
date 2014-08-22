@@ -615,6 +615,16 @@
 				, region_code as stateCode
 			FROM lu_Geography
 			WHERE Location_Type = 125
+				AND Location_Code NOT IN (	SELECT AirportCode
+											FROM RAPT
+											WHERE AirportType IN (4,5,6,7,8,9) )
+											<!---	4 = Heliport, no club, scheduled service, 
+													5 = Bus station, 
+													6 = Train station, 
+													7 = Unknown - not explained in Travelports documentation
+													8 = Heliport, not scheduled, 
+													9 = Secondary, not scheduled 
+											--->
 			ORDER BY code
 		</cfquery>
 

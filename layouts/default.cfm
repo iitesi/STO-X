@@ -87,7 +87,7 @@
 												AND NOT structIsEmpty(rc.account)
 												AND rc.account.acct_ID NEQ 1
 												AND len(trim(rc.account.account_logo))
-												AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
+												AND FileExists("http://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
 												<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#" class="pull-right" />
 											</cfif>
 										</div>
@@ -106,7 +106,7 @@
 										AND NOT structIsEmpty(rc.account)
 										AND rc.account.acct_ID NEQ 1
 										AND len(trim(rc.account.account_logo))
-										AND FileExists("https://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
+										AND FileExists("http://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
 										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
 									<cfelse>
 										<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />

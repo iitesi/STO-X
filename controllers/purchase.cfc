@@ -132,10 +132,11 @@
 						<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
 					</cfif>
 
+					<cfset local.originalAirfare = Air.Total />
+
 					<cfif NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution)>
 
-						<cfset local.originalAirfare = Air.Total />
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
@@ -288,6 +289,7 @@
 							<cfset Air.SupplierLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
+							<cfset Air.BookingTravelerKey = ''>
 							<cfset Air.Total = 0>
 							<cfset Air.BookingTravelerSeats = [] />
 
@@ -304,6 +306,41 @@
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )>
+
+							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
+							<cfif len(Air.UniversalLocatorCode) AND (Air.Total GT originalAirfare)>
+								<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																									, universalRecordLocatorCode = Air.UniversalLocatorCode 
+																									, Filter = rc.Filter
+																									, Version = version )>
+
+								<cfif cancelResponse.status AND NOT len(cancelResponse.message)>
+									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Account = rc.Account
+																										, Air = Air
+																										, LowestAir = LowestAir
+																										, bRefundable = bRefundable
+																										, bPlatingCarrier = 0
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, cardNumber = local.cardNumber
+																										, profileFound = profileFound
+																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, airFOPID = local.airFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									 )>
+
+									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
+																							, response = airResponse )>
+								<cfelse>
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+								</cfif>
+							</cfif>
 
 							<!--- Parse error --->
 							<cfif (Air.UniversalLocatorCode EQ '')
@@ -760,6 +797,14 @@
 				</cfif>
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
+				<!--- For unknown reasons, occasionally a blank record locator goes all the way to the confirmation page --->
+				<cfif len(trim(universalLocatorCode))>
+					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode ) />
+				<cfelseif arrayIsEmpty(errorMessage)>
+					<cfset errorType = 'Misc' />
+					<cfset arrayAppend( errorMessage, 'The system encountered a connectivity issue. Please try again or contact us to complete your reservation.' ) />
+				</cfif>
+				
 				<cfif arrayIsEmpty(errorMessage)>
 
 					<!--- Short's Travel/Internal TMCs only --->
@@ -817,7 +862,6 @@
 																									, searchID = rc.searchID )>
 				</cfif>
 
-				<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode )>
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>

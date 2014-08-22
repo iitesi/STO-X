@@ -519,7 +519,7 @@ shortstravel.couldyou = {
 					if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
 						return '$ ' + roundedCost;
 					} else {
-						return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].dailyRateCurrency;
+						return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].totalForStayCurrency;
 					}
 				}
 				if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){

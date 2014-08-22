@@ -20,6 +20,10 @@
 			<cfset rc.dropOffLocation = ''>
 		</cfif>
 
+		<cfif (rc.acctID EQ 254 OR rc.acctID EQ 255) AND (NOT structKeyExists(application, 'stAirports') OR structIsEmpty(application.stAirports))>
+			<cfset fw.getBeanFactory().getBean('setup').setAirports() />
+		</cfif>
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 
 			<cfset rc.sPriority = 'HIGH'>

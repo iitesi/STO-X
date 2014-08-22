@@ -200,6 +200,17 @@
 				<cfloop array="#local.responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
 					<cfif local.airPricingSolution.XMLName EQ 'air:Journey'>
+						<cfloop array="#local.airPricingSolution#" index="local.journeyItem" item="local.journey">
+							<cfset local.totalTravelTime = local.airPricingSolution.XMLAttributes.TravelTime />
+						</cfloop>
+						<!--- TravelTime looks like "P1DT1H46M0S" --->
+						<cfset local.totalTravelTime = replaceNoCase(local.totalTravelTime, "P", "") />
+						<cfset local.totalTravelTime = replaceNoCase(local.totalTravelTime, "M0S", "") />
+						<cfset local.dayhours = left(local.totalTravelTime, 1) * 24 />
+						<cfset local.totalTravelTime = removeChars(local.totalTravelTime, 1, 3) />
+						<cfset local.hours = listFirst(local.totalTravelTime, "H") />
+						<cfset local.minutes = listLast(local.totalTravelTime, "H") />
+						<cfset local.totalTravelTime = (((local.dayhours + local.hours) * 60) + local.minutes) />
 
 						<cfloop array="#local.airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif local.journey.XMLName EQ 'air:AirSegmentRef'>
@@ -208,20 +219,17 @@
 								<cfloop array="#local.distinctFields#" index="local.field">
 									<cfset local.tripKey &= local.stTrip.Segments[local.journey.XMLAttributes.Key][local.field]>
 								</cfloop>
-
 							</cfif>
+							<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key].TravelTime = local.totalTravelTime />
 						</cfloop>
 
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
-
 						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.airPricingSolution.XMLAttributes.Key]) : {}>
 
 						<cfloop array="#local.distinctFields#" index="local.field">
 							<cfset local.tripKey &= local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key][local.field]>
 						</cfloop>
-
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirPricingInfo'>
-
 						<cfset local.sOverallClass = 'E'>
 						<cfset local.sPTC = ''>
 						<cfset local.nCount = 0>
@@ -248,13 +256,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 									<cfset local.bPrivateFare = true>
 								</cfif>
 
-
 							<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
 										fareCalc used for travelTech reporting only. Please do not remove.
 							<cfelseif airPricingSolution2.XMLName EQ 'air:FareCalc'>
 								<cfset local.fareCalc = airPricingSolution2.xmlText>
 							--->
-
 
 							<cfelseif local.airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
@@ -384,6 +390,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.aCarriers = {}>
 			<cfset local.nDuration = 0>
 			<cfset local.nTotalStops = 0>
+			<cfset local.travelTime = ''>
 			<cfloop collection="#trip.Segments#" index="local.segmentIndex" item="local.segment">
 				<cfif local.segment.Group NEQ local.nOverrideGroup>
 					<cfset local.nOverrideGroup = local.segment.Group />
@@ -398,12 +405,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset local.nStops = -1>
 				</cfif>
 				<cfif local.firstSegment OR local.segment.TravelTime GT local.nDuration>
-					<cfset local.stGroups[local.nOverrideGroup].TravelTime = '#int(local.segment.TravelTime/60)#h #local.segment.TravelTime%60#m'>
-					<cfset local.nDuration = local.segment.TravelTime + local.nDuration>					
+					<cfset local.nDuration = local.nDuration + local.segment.TravelTime />
+					<cfset local.travelTime = '#int(local.segment.TravelTime/60)#h #local.segment.TravelTime%60#m' />
 				</cfif>
 				<cfset local.stGroups[local.nOverrideGroup].Segments[local.segmentIndex] = local.segment>
 				<cfset local.stGroups[local.nOverrideGroup].ArrivalTime = local.segment.ArrivalTime>
 				<cfset local.stGroups[local.nOverrideGroup].Destination = local.segment.Destination>
+				<cfset local.stGroups[local.nOverrideGroup].TravelTime = local.travelTime>
 				<cfset local.aCarriers[local.segment.Carrier] = ''>
 				<cfset local.nStops++>
 				<cfset local.stGroups[local.nOverrideGroup].Stops = local.nStops>
