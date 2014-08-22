@@ -137,47 +137,52 @@
 		</cfquery>
 
 		<cfif isStruct(arguments.Air)>
-			<cfif local.qAgentSine.AccountID EQ ''>
-				<cfset local.feeType = 'ONLINE'>
+			<!--- If a FindIt reservation --->
+			<cfif arguments.Filter.getFindIt()>
+				<cfset local.feeType = 'FINDIT'>
 			<cfelse>
-				<cfset local.feeType = 'DOM'>
-			</cfif>
-
-			<cfset local.cities = {}>
-			<cfset local.segmentCount = 0>
-			<cfloop collection="#arguments.Air.Groups#" item="local.group" index="local.groupIndex">
-				<cfloop collection="#group.Segments#" item="local.segment" index="local.segmentIndex">
-					<cfset local.cities[local.segment.Origin] = ''>
-					<cfset local.cities[local.segment.Destination] = ''>
-					<cfset local.segmentCount++>
-				</cfloop>
-			</cfloop>
-
-			<cfquery name="local.qSearch" datasource="#getBookingDSN()#">
-				SELECT Country_Code
-				FROM lu_Geography
-				WHERE Location_Code IN (<cfqueryparam value="#structKeyList(cities)#" cfsqltype="cf_sql_varchar" list="true">)
-					AND Location_Type = <cfqueryparam value="125" cfsqltype="cf_sql_integer">
-			</cfquery>
-
-			<cfset local.intl = false>
-			<cfloop query="local.qSearch">
-				<cfif local.qSearch.Country_Code NEQ 'US'>
-					<cfset local.intl = true>
-					<cfif local.qAgentSine.AccountID NEQ ''>
-						<cfset local.feeType = 'INTL'>
-					</cfif>
+				<cfif local.qAgentSine.AccountID EQ ''>
+					<cfset local.feeType = 'ONLINE'>
+				<cfelse>
+					<cfset local.feeType = 'DOM'>
 				</cfif>
-			</cfloop>
 
-			<cfif (local.feeType EQ 'INTL' OR local.intl)
-				AND (ArrayLen(arguments.Air.Carriers) GT 1
-				OR arguments.Filter.getAirType() EQ 'MD'
-				OR local.segmentCount GT 6)>
-					<cfset local.fees.complex = true>
-					<cfif local.qAgentSine.AccountID NEQ ''>
-						<cfset local.feeType = 'INTLRD'>
+				<cfset local.cities = {}>
+				<cfset local.segmentCount = 0>
+				<cfloop collection="#arguments.Air.Groups#" item="local.group" index="local.groupIndex">
+					<cfloop collection="#group.Segments#" item="local.segment" index="local.segmentIndex">
+						<cfset local.cities[local.segment.Origin] = ''>
+						<cfset local.cities[local.segment.Destination] = ''>
+						<cfset local.segmentCount++>
+					</cfloop>
+				</cfloop>
+
+				<cfquery name="local.qSearch" datasource="#getBookingDSN()#">
+					SELECT Country_Code
+					FROM lu_Geography
+					WHERE Location_Code IN (<cfqueryparam value="#structKeyList(cities)#" cfsqltype="cf_sql_varchar" list="true">)
+						AND Location_Type = <cfqueryparam value="125" cfsqltype="cf_sql_integer">
+				</cfquery>
+
+				<cfset local.intl = false>
+				<cfloop query="local.qSearch">
+					<cfif local.qSearch.Country_Code NEQ 'US'>
+						<cfset local.intl = true>
+						<cfif local.qAgentSine.AccountID NEQ ''>
+							<cfset local.feeType = 'INTL'>
+						</cfif>
 					</cfif>
+				</cfloop>
+
+				<cfif (local.feeType EQ 'INTL' OR local.intl)
+					AND (ArrayLen(arguments.Air.Carriers) GT 1
+					OR arguments.Filter.getAirType() EQ 'MD'
+					OR local.segmentCount GT 6)>
+						<cfset local.fees.complex = true>
+						<cfif local.qAgentSine.AccountID NEQ ''>
+							<cfset local.feeType = 'INTLRD'>
+						</cfif>
+				</cfif>
 			</cfif>
 		<cfelse>
 			<cfif local.qAgentSine.AccountID EQ ''>
@@ -201,10 +206,14 @@
 				AND Fee_Type = <cfqueryparam value="#feeType#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 
-		<cfif local.qAgentSine.AccountID EQ ''>
-			<cfset local.auxFeeType = 'OAUX'>
+		<cfif arguments.Filter.getFindIt()>
+			<cfset local.auxFeeType = 'FINDIT'>
 		<cfelse>
-			<cfset local.auxFeeType = 'MAUX'>
+			<cfif local.qAgentSine.AccountID EQ ''>
+				<cfset local.auxFeeType = 'OAUX'>
+			<cfelse>
+				<cfset local.auxFeeType = 'MAUX'>
+			</cfif>
 		</cfif>
 
 		<cfif local.feeType NEQ local.auxFeeType>
