@@ -216,6 +216,16 @@
 																				, searchID = arguments.searchID )>
 								</cfif>
 
+								<cfif arguments.Account.Acct_ID EQ 441>
+									<!---
+									Queue place for iJet
+									--->
+									<cfset local.queueRecordResponse = UniversalAdapter.queuePlace( targetBranch = arguments.targetBranch
+																								, Filter = arguments.Filter
+																								, pccBooking = '138V'
+																								, providerLocatorCode = arguments.providerLocatorCode
+																								, queue = 85 )>
+								</cfif>
 								<!---
 								Determine appropriate queue
 								Command = QEP/1M98/34*CSR+161C/99*CNM
