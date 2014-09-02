@@ -492,7 +492,7 @@
 																											, searchID = rc.searchID )>
 
 										<cfif NOT segmentResponse.error>
-											<!--- Confirm that the number of segments returned is the same number of segments contained in the original request --->
+											<!--- Confirm that the number of segments returned is not less than the number of segments contained in the original request --->
 											<cfif arrayLen(segmentResponse.message)>
 												<cfloop array="#segmentResponse.message#" index="local.segmentIndex" item="local.segment">
 													<cfif isNumeric(left(trim(segment), 1))>
@@ -502,7 +502,7 @@
 											</cfif>
 										</cfif>
 
-										<cfif responseNumSegments NEQ originalNumSegments>
+										<cfif responseNumSegments LT originalNumSegments>
 											<cfset confirmSegmentsError = true />
 	 									</cfif>
  									</cfif>
