@@ -321,6 +321,7 @@
 										</air:PermittedCarriers>
 									<cfelse>
 										<air:ProhibitedCarriers>
+											<com:Carrier Code="3M"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="NK"/>
 											<com:Carrier Code="ZK"/>
