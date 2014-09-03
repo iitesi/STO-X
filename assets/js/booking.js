@@ -950,6 +950,7 @@ function getUser(userID) {
 			$( "#middleName" ).val( User.middleName );
 			$( "#noMiddleName" ).val( User.noMiddleName );
 			$( "#lastName" ).val( User.lastName );
+			$( "#suffix" ).val( User.suffix );
 			$( "#phoneNumber" ).val( User.phoneNumber );
 			$( "#wirelessPhone" ).val( User.wirelessPhone );
 			$( "#email" ).val( User.email );

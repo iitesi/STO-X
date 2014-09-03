@@ -26,6 +26,16 @@
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">
 			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
 			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-small">
+			<select name="suffix" id="suffix" class="input-mini">
+				<option value=""></option>
+				<option value="Jr">Jr</option>
+				<option value="Sr">Sr</option>
+				<option value="II">II</option>
+				<option value="III">III</option>
+				<option value="IV">IV</option>
+				<option value="V">V</option>
+				<option value="VI">VI</option>
+			</select>
 			<br>
 			<label class="checkbox">
 				<input type="checkbox" name="noMiddleName" id="noMiddleName" value="1">

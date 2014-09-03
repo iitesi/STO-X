@@ -172,6 +172,7 @@ $(document).ready(function(){
 			$( "#passwordConfirm" ).val( traveler.bookingDetail.password );
 		}
 		$( "#lastName" ).val( traveler.lastName );
+		$( "#suffix" ).val( traveler.suffix );
 		if ($( "#userID" ).val() != 0) {
 			if (finditOA) {
 				$( "#userIDDiv" ).hide();
