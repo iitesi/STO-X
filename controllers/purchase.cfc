@@ -342,7 +342,8 @@
 																									 )>
 
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )>
+																							, response = airResponse
+																							, runAgain = true )>
 								<cfelse>
 									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
 								</cfif>
