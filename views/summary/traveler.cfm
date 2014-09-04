@@ -11,7 +11,12 @@
 				<option value="0">GUEST TRAVELER</option>
 			</cfif>			
 			<cfloop query="rc.allTravelers">
-				<option value="#rc.allTravelers.User_ID#">#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#</option>
+				<cfif len(rc.allTravelers.Name_Suffix)>
+					<cfset travelerName = "#rc.allTravelers.Last_Name# #rc.allTravelers.Name_Suffix#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
+				<cfelse>
+					<cfset travelerName = "#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
+				</cfif>
+				<option value="#rc.allTravelers.User_ID#">#travelerName#</option>
 			</cfloop>
 			</select>
 			<span id="nameChange">
