@@ -422,8 +422,7 @@
 										" 4 WN1934N 07AUG HOUMSY KK1 820A 925A TH"
 										"><" --->
 										<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
-											<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText)
- EQ 0>
+											<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText) EQ 0>
 												<!--- Get rid of the first number and the "WN" text --->
 												<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
 												<!--- Now get the fourth item in the list --->
@@ -466,8 +465,7 @@
 
 											<cfif isArray(checkSegmentStatusResponse.message)>
 												<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
-													<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText)
- EQ 0>
+													<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText) EQ 0>
 														<!--- Get rid of the first number and the "WN" text --->
 														<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
 														<!--- Now get the fourth item in the list --->
