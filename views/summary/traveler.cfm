@@ -33,8 +33,8 @@
 			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-small">
 			<select name="suffix" id="suffix" class="input-mini">
 				<option value=""></option>
-				<option value="Jr">Jr</option>
-				<option value="Sr">Sr</option>
+				<option value="JR">JR</option>
+				<option value="SR">SR</option>
 				<option value="II">II</option>
 				<option value="III">III</option>
 				<option value="IV">IV</option>
