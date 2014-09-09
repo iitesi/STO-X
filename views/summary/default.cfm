@@ -1,12 +1,53 @@
+
+<!--- STM-4242 ===============================================================
+12:55 PM Tuesday, September 09, 2014 - Jim Priest - jpriest@shortstravel.com
+In order to show Accounts what they could be savings by implementing CouldYou,
+we want to run CouldYou searches on all STO accounts to get data for each
+account. For now, I only want this to run for 1 month (I want to turn off
+after 1 month in case we are seeing excess hits charges from Travelport) --->
+
+<cfparam name="rc.account.couldYou" default="0">
+<cfif rc.account.couldYou NEQ 1>
+	<cfsavecontent variable="localAssets">
+		<script src="/booking/assets/js/fullcalendar.min.js"></script>
+		<script src="/booking/assets/js/purl.js"></script>
+		<script src="/booking/assets/js/date.format.js"></script>
+		<script src="/booking/assets/js/couldyou.js"></script>
+		<script type="text/javascript">
+			<cfoutput>shortstravel.search = #serializeJSON( rc.Filter )#;</cfoutput>
+			<cfoutput>shortstravel.itinerary = #serializeJSON( session.searches[ rc.searchID ].stItinerary )#;</cfoutput>
+			shortstravel.itinerary.total = 0;
+			if( typeof shortstravel.itinerary.AIR != 'undefined' ){
+				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.AIR.TOTAL );
+			}
+			if( typeof shortstravel.itinerary.HOTEL != "undefined" ){
+				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+			}
+			if( typeof shortstravel.itinerary.VEHICLE != "undefined" ){
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.VEHICLE.estimatedTotalAmount );
+			}
+			shortstravel.itinerary.total = Math.round( shortstravel.itinerary.total );
+		</script>
+	</cfsavecontent>
+	<cfhtmlhead text="#localAssets#" />
+</cfif>
+
+<!--- // STM-4242 ======================================================= --->
+
+
+
+
+
 <!--- to do : move css once it is completed --->
 <style>
 .form-horizontal select, textarea, input {
 	padding: 0px;
 }
 </style>
+
 <cfoutput>
 	<div style="width:1000px;" id="summaryForm">
-		
+
 		<span style="float:right">
 			<cfif NOT rc.hotelSelected
 				AND rc.Filter.getAirType() NEQ 'MD'
@@ -50,7 +91,7 @@
 					</cfloop>
 					<cfif rc.travelerNumber NEQ 1>
 						<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#">
-							<span class="icon-large icon-remove-sign"></span> Remove Traveler ###rc.travelerNumber# 
+							<span class="icon-large icon-remove-sign"></span> Remove Traveler ###rc.travelerNumber#
 						</a>
 					</cfif>
 				</div>
@@ -113,7 +154,7 @@
 					#View('summary/buttons')#
 				</p>
 			</div>
-				
+
 			<script src="assets/js/summary/summary.js"></script>
 		</form>
 	</div>
