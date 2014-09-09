@@ -27,8 +27,11 @@ shortstravel.couldyou = {
 		dates.originalDepart = originalDepart;
 		dates.originalReturn = originalReturn;
 
+		// sets a 14 day window for couldyou search
+		// +/- 7 days
+
 		var preStart = new Date( dates.originalDepart );
-		preStart.setDate( preStart.getDate() - 7);
+		preStart.setDate( preStart.getDate() - 4);
 		preStart.setHours( 0,0,0,0 );
 		if( preStart.getTime() < new Date().getTime() ){
 			preStart = new Date();
@@ -48,7 +51,7 @@ shortstravel.couldyou = {
 		dates.postStart = postStart;
 
 		var postEnd = new Date( dates.originalDepart );
-		postEnd.setDate( postEnd.getDate() + 7);
+		postEnd.setDate( postEnd.getDate() + 4);
 		postEnd.setHours( 0,0,0,0 );
 		dates.postEnd = postEnd;
 
