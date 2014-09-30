@@ -11,7 +11,12 @@
 				<option value="0">GUEST TRAVELER</option>
 			</cfif>			
 			<cfloop query="rc.allTravelers">
-				<option value="#rc.allTravelers.User_ID#">#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#</option>
+				<cfif len(rc.allTravelers.Name_Suffix)>
+					<cfset travelerName = "#rc.allTravelers.Last_Name# #rc.allTravelers.Name_Suffix#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
+				<cfelse>
+					<cfset travelerName = "#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
+				</cfif>
+				<option value="#rc.allTravelers.User_ID#">#travelerName#</option>
 			</cfloop>
 			</select>
 			<span id="nameChange">
@@ -26,6 +31,16 @@
 			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">
 			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
 			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-small">
+			<select name="suffix" id="suffix" class="input-mini">
+				<option value=""></option>
+				<option value="JR">JR</option>
+				<option value="SR">SR</option>
+				<option value="II">II</option>
+				<option value="III">III</option>
+				<option value="IV">IV</option>
+				<option value="V">V</option>
+				<option value="VI">VI</option>
+			</select>
 			<br>
 			<label class="checkbox">
 				<input type="checkbox" name="noMiddleName" id="noMiddleName" value="1">

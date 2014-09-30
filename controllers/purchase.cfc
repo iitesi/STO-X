@@ -308,13 +308,19 @@
 																							, response = airResponse )>
 
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
-							<cfif len(Air.UniversalLocatorCode) AND (Air.Total GT originalAirfare)>
-								<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+							<cfif Air.Total GT originalAirfare>
+								<cfset local.runAgain = true />
+								<cfif len(Air.UniversalLocatorCode)>
+									<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode 
 																									, Filter = rc.Filter
 																									, Version = version )>
+									<cfif NOT cancelResponse.status>
+										<cfset local.runAgain = false />
+									</cfif>
+								</cfif>
 
-								<cfif cancelResponse.status AND NOT len(cancelResponse.message)>
+								<cfif runAgain>
 									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch 
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -336,7 +342,8 @@
 																									 )>
 
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )>
+																							, response = airResponse
+																							, runAgain = true )>
 								<cfelse>
 									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
 								</cfif>
@@ -410,11 +417,12 @@
 									<cfif isArray(checkSegmentStatusResponse.message)>
 										<!--- Sample response:
 										" 1 WN 36N 06AUG MSYATL KK1 815A 1245P WE"
-										" 2 WN 137N 07AUG ATLHOU KK1 635A 735A TH"
-										" 3 WN1934N 07AUG HOUMSY KK1 820A 925A TH"
+										" 2 ARNK"
+										" 3 WN 137N 07AUG ATLHOU KK1 635A 735A TH"
+										" 4 WN1934N 07AUG HOUMSY KK1 820A 925A TH"
 										"><" --->
 										<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
-											<cfif isNumeric(left(trim(stTerminalText), 1))>
+											<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText) EQ 0>
 												<!--- Get rid of the first number and the "WN" text --->
 												<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
 												<!--- Now get the fourth item in the list --->
@@ -457,7 +465,7 @@
 
 											<cfif isArray(checkSegmentStatusResponse.message)>
 												<cfloop array="#checkSegmentStatusResponse.message#" index="local.stTerminalText">
-													<cfif isNumeric(left(trim(stTerminalText), 1))>
+													<cfif isNumeric(left(trim(stTerminalText), 1)) AND findNoCase("ARNK", stTerminalText) EQ 0>
 														<!--- Get rid of the first number and the "WN" text --->
 														<cfset local.segmentStatus = removeChars(trim(stTerminalText), 1, 4) />
 														<!--- Now get the fourth item in the list --->
@@ -486,7 +494,7 @@
 																											, searchID = rc.searchID )>
 
 										<cfif NOT segmentResponse.error>
-											<!--- Confirm that the number of segments returned is the same number of segments contained in the original request --->
+											<!--- Confirm that the number of segments returned is not less than the number of segments contained in the original request --->
 											<cfif arrayLen(segmentResponse.message)>
 												<cfloop array="#segmentResponse.message#" index="local.segmentIndex" item="local.segment">
 													<cfif isNumeric(left(trim(segment), 1))>
@@ -496,7 +504,7 @@
 											</cfif>
 										</cfif>
 
-										<cfif responseNumSegments NEQ originalNumSegments>
+										<cfif responseNumSegments LT originalNumSegments>
 											<cfset confirmSegmentsError = true />
 	 									</cfif>
  									</cfif>

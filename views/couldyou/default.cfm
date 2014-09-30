@@ -50,9 +50,7 @@
 		<div class="row-fluid">
 			<div class="span32">
 				<div class="page-header">
-					<h1>Could you save within 14 days for this same trip?<br>
-						<!--- <small> We are finding an average of $<span id="dollarSavings">XXX.XX</span> in <span id="percentSavings">XX</span>% of searches</small> --->
-					</h1>
+					<h1>Could you save within 8 days for this same trip?</h1>
 					<p>Select a date below to save or continue to purchase</p>
 				</div>
 			</div>

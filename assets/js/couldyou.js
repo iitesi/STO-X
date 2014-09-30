@@ -27,8 +27,14 @@ shortstravel.couldyou = {
 		dates.originalDepart = originalDepart;
 		dates.originalReturn = originalReturn;
 
+		// STM-4242
+		// 1:09 PM Wednesday, September 10, 2014 - Jim Priest - jpriest@shortstravel.com
+		// temp set to 4 days (8) - should be set to 7 (14)
+		// sets a 14 day window for couldyou search
+		// +/- 7 days
+
 		var preStart = new Date( dates.originalDepart );
-		preStart.setDate( preStart.getDate() - 7);
+		preStart.setDate( preStart.getDate() - 4);
 		preStart.setHours( 0,0,0,0 );
 		if( preStart.getTime() < new Date().getTime() ){
 			preStart = new Date();
@@ -48,7 +54,7 @@ shortstravel.couldyou = {
 		dates.postStart = postStart;
 
 		var postEnd = new Date( dates.originalDepart );
-		postEnd.setDate( postEnd.getDate() + 7);
+		postEnd.setDate( postEnd.getDate() + 4);
 		postEnd.setHours( 0,0,0,0 );
 		dates.postEnd = postEnd;
 
@@ -60,7 +66,12 @@ shortstravel.couldyou = {
 		var dataStore = [];
 		var preTripOffsetDays = Math.floor( ( dates.preStart.getTime() - dates.originalDepart.getTime())/(1000*60*60*24) );
 
-		for( var i=preTripOffsetDays; i<=7; i++ ){
+		// STM-4242
+		// 1:09 PM Wednesday, September 10, 2014 - Jim Priest - jpriest@shortstravel.com
+		// temp set to 4 days (8) - should be set to 7 (14)
+		// sets a 14 day window for couldyou search
+		// +/- 7 days
+		for( var i=preTripOffsetDays; i<=4; i++ ){
 			var dayData = {};
 			var departureDate = new Date( dates.originalDepart );
 			departureDate.setHours( 0,0,0,0 );

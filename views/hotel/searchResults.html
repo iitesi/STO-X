@@ -51,7 +51,7 @@
                         <a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="icon-caret-down"></i></a>
                     </li>
 
-                    <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly">In Policy</a></li>
+                    <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly" ng-show="policy.POLICY_HOTELMAXRULE">In Policy</a></li>
                     <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
                 </ul>
             </div>
