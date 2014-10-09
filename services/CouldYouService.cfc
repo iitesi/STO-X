@@ -94,25 +94,40 @@
 		<cfset args.vehicleAvailable = calculateAvailability( arguments.trip, "vehicle" ) />
 
 		<cfif structKeyExists(arguments.trip, "air") AND args.airAvailable AND NOT structKeyExists(arguments.trip.air, "FAULTMESSAGE")>
-			<cfset args.airCost = arguments.trip.air[ listGetAt( structKeyList( arguments.trip.air ), 1 ) ].total  />
+			<cftry>
+				<cfset args.airCost = arguments.trip.air[ listGetAt( structKeyList( arguments.trip.air ), 1 ) ].total  />
+				<cfcatch>
+					<cfset args.airCost = 0  />
+				</cfcatch>
+			</cftry>
 		<cfelse>
 			<cfset args.airCost = 0  />
 		</cfif>
 
 		<cfif args.hotelAvailable>
-			<cfset var HotelRoom = arguments.trip.hotel.getRooms()[ 1 ] />
-			<cfif HotelRoom.getTotalForStay() NEQ 0>
-				<cfset args.hotelCost = HotelRoom.getTotalForStay() />
-			<cfelse>
-				<cfset var nights = dateDiff( 'd', arguments.trip.hotel.getDepartureDate(), arguments.trip.hotel.getReturnDate() ) />
-				<cfset args.hotelCost = arguments.trip.hotel.getRooms()[0].getDailyRate() * nights />
-			</cfif>
+			<cftry>
+				<cfset var HotelRoom = arguments.trip.hotel.getRooms()[ 1 ] />
+				<cfif HotelRoom.getTotalForStay() NEQ 0>
+					<cfset args.hotelCost = HotelRoom.getTotalForStay() />
+				<cfelse>
+					<cfset var nights = dateDiff( 'd', arguments.trip.hotel.getDepartureDate(), arguments.trip.hotel.getReturnDate() ) />
+					<cfset args.hotelCost = arguments.trip.hotel.getRooms()[0].getDailyRate() * nights />
+				</cfif>
+				<cfcatch>
+					<cfset args.hotelCost = 0  />
+				</cfcatch>
+			</cftry>
 		<cfelse>
 			<cfset args.hotelCost = 0 />
 		</cfif>
 
 		<cfif args.vehicleAvailable>
-			<cfset args.vehicleCost = arguments.trip.vehicle.getEstimatedTotalAmount() />
+			<cftry>
+				<cfset args.vehicleCost = arguments.trip.vehicle.getEstimatedTotalAmount() />
+				<cfcatch>
+					<cfset args.vehicleCost = 0  />
+				</cfcatch>
+			</cftry>
 		<cfelse>
 			<cfset args.vehicleCost = 0 />
 		</cfif>
