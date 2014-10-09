@@ -35,15 +35,21 @@
 			<!--- Move over the information into the stItinerary --->
 			<cfset local.vehicle = fw.getBeanFactory().getBean('VehicleAdapter').load( session.searches[rc.SearchID].stCars[rc.sCategory][rc.sVendor] )>
 			<cfif rc.pickUpLocationKey NEQ ''>
+				<cfset local.vehicle.setPickUpLocation( '#rc.pickUpLocation.location#' )>
 				<cfset local.vehicle.setPickUpLocationType( '#rc.pickUpLocation.locationType#' )>
 				<cfset local.vehicle.setPickUpLocationID( '#rc.pickUpLocation.vendorLocationID#' )>
+			<cfelseif rc.dropOffLocationKey NEQ ''>
+				<cfset local.vehicle.setPickUpLocation( '#rc.dropOffLocation.location#' )>
 			<cfelse>
 				<cfset local.vehicle.setPickUpLocationType( '#rc.pickUpLocationType#' )>
 				<cfset local.vehicle.setPickUpLocationID( '#rc.pickUpLocationKey#' )>
 			</cfif>
 			<cfif rc.dropOffLocationKey NEQ ''>
+				<cfset local.vehicle.setDropOffLocation( '#rc.dropOffLocation.location#' )>
 				<cfset local.vehicle.setDropOffLocationType( '#rc.dropOffLocation.locationType#' )>
 				<cfset local.vehicle.setDropOffLocationID( '#rc.dropOffLocation.vendorLocationID#' )>
+			<cfelseif rc.pickUpLocationKey NEQ ''>
+				<cfset local.vehicle.setDropOffLocation( '#rc.pickUpLocation.location#' )>
 			<cfelse>
 				<cfset local.vehicle.setDropOffLocationType( '#rc.dropOffLocationType#' )>
 				<cfset local.vehicle.setDropOffLocationID( '#rc.dropOffLocationKey#' )>
