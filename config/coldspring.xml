@@ -180,6 +180,14 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
 
+	<bean id="UnusedTicketManager" class="com.shortstravel.traveler.UnusedTicketManager">
+		<constructor-arg name="nonRefundableTicketsDSN"><bean factory-bean="EnvironmentService" factory-method="getNonRefundableTicketsDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="UnusedTicketService" class="com.shortstravel.traveler.UnusedTicketService">
+		<constructor-arg name="UnusedTicketManager"><ref bean="UnusedTicketManager" /></constructor-arg>
+	</bean>
+
 	<bean id="CouldYouService" class="booking.services.CouldYouService">
         <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
         <constructor-arg name="CouldYouManager"><ref bean="CouldYouManager" /></constructor-arg>
