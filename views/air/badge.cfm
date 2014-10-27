@@ -86,6 +86,10 @@
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
 							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
+						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
+							<br>
+							<span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stSegment.Carrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stSegment.Carrier]#" data-viewport="width:700px;" href="##" />UNUSED TKT AVAIL</span>
+						</cfif>
 					<cfelse>
 						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);" title="Click to select this flight.">
 					</cfif>
