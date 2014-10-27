@@ -150,7 +150,24 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							#View('summary/vehicle')#
 						</div>
 					</div>
-					#View('summary/tripsummary')#
+
+					<div style="wdith:1150px;">
+						<table width="1033px">
+							<tr>
+								<td valign="top" width="600">
+									<div>
+										#View('summary/unusedtickets')#
+									</div>
+								</td>
+								<td valign="top">
+									<div style="padding-left:20px;">
+										#View('summary/tripsummary')#
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+
 					#View('summary/buttons')#
 				</p>
 			</div>

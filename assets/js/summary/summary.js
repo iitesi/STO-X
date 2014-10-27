@@ -19,6 +19,7 @@ $(document).ready(function(){
 	var errors = $( "#errors" ).val();
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
+	var airAgentFee = parseFloat( $( "#airAgentFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
 	var findit = $("#findit").val();
 	var externalTMC = $("#externalTMC").val();
@@ -571,17 +572,27 @@ $(document).ready(function(){
 		if ( $( "#specialRequests" ).val() != '' && $( "#specialRequests" ).val() != undefined) {
 			fee = requestFee;
 		}
+		$( "#unusedtickeverbiage" ).hide();
+		if ( $('#unusedtickets').attr('checked') && $( "#unusedtickets" ).val() != undefined) {
+			fee = airAgentFee;
+			$( "#unusedtickeverbiage" ).show();
+		}
 		if (fee == 0) {
 			$( "#bookingFeeRow" ).hide();
 		}
 		else {
 			$( "#bookingFeeRow" ).show();
+			$( "#bookingFeeCol" ).html('$'+fee.toFixed(2))
 		}
 		total += fee;
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
 
 	$( "#specialRequests" ).focusout(function() {
+		recalculateTotal();
+	})
+
+	$( "#unusedtickets" ).click(function() {
 		recalculateTotal();
 	})
 

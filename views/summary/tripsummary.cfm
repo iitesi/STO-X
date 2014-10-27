@@ -94,6 +94,7 @@
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
 		<input type="hidden" name="airFeeType" value="#rc.fees.airFeeType#">
 		<input type="hidden" name="auxFeeType" value="#rc.fees.auxFeeType#">
+		<input type="hidden" name="airAgentFee" id="airAgentFee" value="#rc.fees.airAgentFee#">
 
 		<cfif tripCurrency EQ 'USD'>
 
@@ -101,11 +102,15 @@
 
 			<div class="row minlineheight" id="bookingTotalRow">
 				<div class="span4 blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="span1 blue" id="totalCol"><strong>#numberFormat(tripTotal, '$____.__')#</strong></div>
+				<div class="span1 blue" id="totalCol">
+					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
+				</div>
+			</div>
+			<div id="unusedtickeverbiage" class="blue right">
+				before unused ticket credit
 			</div>
 
 		</cfif>
-
 	</div>
 </cfoutput>
 <!--- <cfdump var="#rc.fees#" /> --->

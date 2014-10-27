@@ -127,6 +127,7 @@
 
 		<cfset local.fees = {}>
 		<cfset local.feeType = ''>
+		<cfset local.agentAirFee = ''>
 		<cfset local.fees.complex = false>
 
 		<!--- Determine if an agent is booking for the traveler --->
@@ -146,6 +147,7 @@
 				<cfelse>
 					<cfset local.feeType = 'DOM'>
 				</cfif>
+				<cfset local.agentAirFee = 'DOM'>
 
 				<cfset local.cities = {}>
 				<cfset local.segmentCount = 0>
@@ -170,6 +172,7 @@
 						<cfset local.intl = true>
 						<cfif local.qAgentSine.AccountID NEQ ''>
 							<cfset local.feeType = 'INTL'>
+							<cfset local.agentAirFee = 'INTL'>
 						</cfif>
 					</cfif>
 				</cfloop>
@@ -181,6 +184,7 @@
 						<cfset local.fees.complex = true>
 						<cfif local.qAgentSine.AccountID NEQ ''>
 							<cfset local.feeType = 'INTLRD'>
+							<cfset local.agentAirFee = 'INTLRD'>
 						</cfif>
 				</cfif>
 			</cfif>
@@ -214,6 +218,16 @@
 			<cfelse>
 				<cfset local.auxFeeType = 'MAUX'>
 			</cfif>
+		</cfif>
+
+		<cfif local.agentAirFee NEQ ''>
+			<cfquery name="local.qAgentAirFee" datasource="Corporate_Production">
+				SELECT IsNull(Fee_Amount, 0) AS Fee_Amount
+				FROM Account_Fees
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+					AND Fee_Type = <cfqueryparam value="#local.agentAirFee#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<cfset local.fees.airAgentFee = (local.qAgentAirFee.Fee_Amount NEQ '' ? local.qAgentAirFee.Fee_Amount : 0)>
 		</cfif>
 
 		<cfif local.feeType NEQ local.auxFeeType>
