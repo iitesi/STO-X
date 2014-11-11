@@ -110,6 +110,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
+			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air.platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getChainCode() : '')#">
 			<input type="hidden" name="vehicleSelected" id="vehicleSelected" value="#rc.vehicleSelected#">
@@ -155,8 +156,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						<table width="1033px">
 							<tr>
 								<td valign="top" width="600">
-									<div>
-										#View('summary/unusedtickets')#
+									<div class="alert alert-success hide" id="unusedTicketsDiv">
 									</div>
 								</td>
 								<td valign="top">

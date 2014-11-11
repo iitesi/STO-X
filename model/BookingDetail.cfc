@@ -71,6 +71,7 @@
 	<cfproperty name="udid113" />
 	<cfproperty name="universalLocatorCode" />
 	<cfproperty name="username" />
+	<cfproperty name="unusedTickets" />
 	<cfproperty name="version" />
 
 	<cffunction name="init" returntype="any" access="remote" output="false">
@@ -148,6 +149,7 @@
 		<cfset setUDID113( '' )>
 		<cfset setUniversalLocatorCode( '' )>
 		<cfset setUsername( '' )>
+		<cfset setUnusedTickets( '' )>
 		<cfset setVersion( 0 )>
 
 		<cfreturn this />

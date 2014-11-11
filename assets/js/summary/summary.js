@@ -5,6 +5,7 @@ $(document).ready(function(){
 	var valueID = $( "#valueID" ).val();
 	var travelerNumber = $("#travelerNumber").val();
 	var airSelected = $( "#airSelected" ).val();
+	var platingcarrier = $( "#platingcarrier" ).val();
 	var carriers = $( "#carriers" ).val();
 	if (carriers != '') {
 		carriers = $.parseJSON(carriers);
@@ -16,9 +17,11 @@ $(document).ready(function(){
 	var arrangerID = $( "#arrangerID" ).val();
 	var arrangerAdmin = $( "#arrangerAdmin" ).val();
 	var arrangerSTMEmployee = $( "#arrangerSTMEmployee" ).val();
+	var unusedtickets = $( "#unusedtickets" ).val();
 	var errors = $( "#errors" ).val();
 	var airFee = parseFloat( $( "#airFee" ).val() );
 	var auxFee = parseFloat( $( "#auxFee" ).val() );
+	var airAgentFee = parseFloat( $( "#airAgentFee" ).val() );
 	var airAgentFee = parseFloat( $( "#airAgentFee" ).val() );
 	var requestFee = parseFloat( $( "#requestFee" ).val() );
 	var findit = $("#findit").val();
@@ -56,6 +59,7 @@ $(document).ready(function(){
 				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
+					showUnusedTickets(traveler.unusedTicket, traveler.bookingDetail.unusedTickets);
 					$( "#airSpinner" ).hide();
 				}
 				if (hotelSelected == 'true') {
@@ -98,6 +102,7 @@ $(document).ready(function(){
 				}
 				if (airSelected == 'true') {
 					loadPayments(traveler, 'air');
+					showUnusedTickets(traveler.unusedTicket, traveler.bookingDetail.unusedTickets);
 					$( "#airSpinner" ).hide();
 				}
 				if (hotelSelected == 'true') {
@@ -111,7 +116,52 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	function showUnusedTickets(unusedTickets, selectedUnusedTickets) {
+		var unusedticketsHTML = '';
+		var displayUnusedTickets = 0;
 
+		for( var i=0, l=unusedTickets.length; i<l; i++ ) {
+			if ( platingcarrier == unusedTickets[i].carrier ) {
+				displayUnusedTickets = 1;
+			}	
+		}
+
+		if (displayUnusedTickets == 1) {
+			unusedticketsHTML += 'You have unused ticket credits on this airline.<br>';
+			unusedticketsHTML += '<small>Check below if you would like a Travel Consultant to review the airline\'s re-use rules to determine if your credit can be applied to this ticket.';
+			if (airAgentFee != 0){
+				unusedticketsHTML += 'A $'+airAgentFee.toFixed(2)+' Travel Consultant booking fee will apply.</small>';
+			}
+			unusedticketsHTML += '</small>';
+			unusedticketsHTML += '<font color="#000000"><table width="100%"><tr><td></td><td>Airline</td><td>Credit Value</td><td>Expires</td><td>Original Ticket Issued To</td></tr>';
+			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
+				if ( platingcarrier == unusedTickets[i].carrier ) {
+					var checked = '';
+					if (selectedUnusedTickets.indexOf(unusedTickets[i].id) >= 0) {
+						var checked = 'checked';
+					}					
+					var d = new Date(unusedTickets[i].expirationDate);
+					unusedticketsHTML += '<tr>'
+					unusedticketsHTML += '<td><input type="checkbox" name="unusedtickets" class="unusedtickets" id="unusedtickets'+unusedTickets[i].id+'" value="'+unusedTickets[i].id+'" '+checked+'></td>'
+					unusedticketsHTML += '<td>'+unusedTickets[i].carrierName+'</td>'
+					unusedticketsHTML += '<td>$'+unusedTickets[i].airfare.toFixed(2)+'</td>'
+					unusedticketsHTML += '<td>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</td>'
+					unusedticketsHTML += '<td>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</td>'
+					unusedticketsHTML += '</tr>'
+				}	
+			}
+			unusedticketsHTML += '</table></font>';
+			unusedticketsHTML += '<script type="text/javascript">$(".unusedtickets").on("click", function () { console.log($(".unusedtickets")) })</script>';
+
+			$( "#unusedTicketsDiv" ).show();
+			$( "#unusedTicketsDiv" ).html( unusedticketsHTML );
+		}
+		else {
+			$( "#unusedTicketsDiv" ).hide();
+			$( "#unusedTicketsDiv" ).html( '' );
+		}
+	}
 	// On change find the other traveler number's data
 	/* $( "#travelNumberType" ).on('change', function() {
 		$.ajax({
@@ -127,6 +177,16 @@ $(document).ready(function(){
 			}
 		});
 	}); */
+
+	$("#unusedTicketsDiv").on("click", function () { 
+		var $checkbox = $(this).find(':checkbox');
+		if ($checkbox.prop('checked')) {
+			console.log('checked')
+		}
+		else {
+			console.log('not')
+		}
+	});
 
 	$("#createProfileDiv").on("click", function () { 
 		var $checkbox = $(this).find(':checkbox');
@@ -573,7 +633,9 @@ $(document).ready(function(){
 			fee = requestFee;
 		}
 		$( "#unusedtickeverbiage" ).hide();
+console.log(airAgentFee)
 		if ( $('#unusedtickets').attr('checked') && $( "#unusedtickets" ).val() != undefined) {
+console.log('checked')
 			fee = airAgentFee;
 			$( "#unusedtickeverbiage" ).show();
 		}

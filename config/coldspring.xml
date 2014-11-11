@@ -110,6 +110,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="LoyaltyProgramService"><ref bean="LoyaltyProgramService" /></constructor-arg>
 		<constructor-arg name="OrgUnitService"><ref bean="OrgUnitService" /></constructor-arg>
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+		<constructor-arg name="UnusedTicketService"><ref bean="UnusedTicketService" /></constructor-arg>
 	</bean>
 
 	<bean id="AccountService" class="com.shortstravel.account.AccountService">

@@ -106,6 +106,7 @@
 		<cfif rc.travelerNumber EQ 1
 			AND (NOT structKeyExists(session.searches[rc.SearchID], 'travelers')
 			OR NOT structKeyExists(session.searches[rc.SearchID].travelers, rc.travelerNumber))>
+
 			<!--- Stand up the default profile into an object --->
 			<!--- If user is booking through Short's --->
 			<cfif internalTMC>
@@ -552,6 +553,7 @@
 			<cfelse>
 				<cfset local.birthDate = ''>
 			</cfif>
+			<!--- <cfdump var="#rc.Traveler.getBookingDetail().getUnusedTickets()#" /><cfabort /> --->
 			<cfif rc.airSelected>
 				<cfset local.airFound = false>
 				<cfloop array="#rc.Air.Carriers#" item="local.carrier">
