@@ -208,6 +208,7 @@
 															, subject = 'STO: Missing Car Vendor'
 															, body = emailHTML ) /> --->
 												</cfif>
+											</cfif>
 										</cfloop>
 									</select>
 								</cfif>
