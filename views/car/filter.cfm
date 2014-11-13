@@ -175,8 +175,17 @@
 										<cfif (rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city)
 											OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
 											OR (vehicleLocation.distance LTE 30)>
-											<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
-											</option>
+											<!--- If the car vendor exists in the zeus.booking.RCAR table --->
+											<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
+												<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+												</option>
+											<cfelse>
+												<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
+												<cfset application.fw.factory.getBean('EmailService').send( developer = false
+														, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+														, subject = 'STO: Missing Car Vendor'
+														, body = emailHTML ) />
+											</cfif>
 										</cfif>
 									</cfloop>
 								</select>
@@ -188,9 +197,17 @@
 											<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
 												OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
 												OR (vehicleLocation.distance LTE 30)>
-												<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
-												</option>
-											</cfif>
+												<!--- If the car vendor exists in the zeus.booking.RCAR table --->
+												<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
+													<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+													</option>
+												<cfelse>
+													<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
+													<cfset application.fw.factory.getBean('EmailService').send( developer = false
+															, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+															, subject = 'STO: Missing Car Vendor'
+															, body = emailHTML ) />
+												</cfif>
 										</cfloop>
 									</select>
 								</cfif>
