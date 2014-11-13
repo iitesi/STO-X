@@ -180,11 +180,11 @@
 												<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 												</option>
 											<cfelse>
-												<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
+												<!--- <cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 												<cfset application.fw.factory.getBean('EmailService').send( developer = false
 														, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
 														, subject = 'STO: Missing Car Vendor'
-														, body = emailHTML ) />
+														, body = emailHTML ) /> --->
 											</cfif>
 										</cfif>
 									</cfloop>
@@ -202,11 +202,11 @@
 													<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 													</option>
 												<cfelse>
-													<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
+													<!--- <cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 													<cfset application.fw.factory.getBean('EmailService').send( developer = false
 															, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
 															, subject = 'STO: Missing Car Vendor'
-															, body = emailHTML ) />
+															, body = emailHTML ) /> --->
 												</cfif>
 										</cfloop>
 									</select>

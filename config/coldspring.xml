@@ -231,5 +231,5 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="apikey"><value>2CF20630-DD24-491F-BA44314842183AFC</value></constructor-arg>
 	</bean>
 
-	<bean id="EmailService" class="com.shortstravel.email.emailService" />
+	<!-- <bean id="EmailService" class="com.shortstravel.email.emailService" /> -->
 </beans>
