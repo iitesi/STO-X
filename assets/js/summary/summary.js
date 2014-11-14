@@ -11,6 +11,7 @@ $(document).ready(function(){
 	}
 	var hotelSelected = $( "#hotelSelected" ).val();
 	var chainCode = $( "#chainCode" ).val();
+	var masterChainCode = $( "#masterChainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
 	var vendor = $( "#vendor" ).val();
 	var arrangerID = $( "#arrangerID" ).val();
@@ -311,7 +312,11 @@ $(document).ready(function(){
 			$( "#hotelFF" ).val( '' );
 			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
 				if (traveler.loyaltyProgram[i] !== null) {
-					if (traveler.loyaltyProgram[i].shortCode == chainCode && traveler.loyaltyProgram[i].custType == 'H') {
+					// Use the master chain loyalty number first
+					if (traveler.loyaltyProgram[i].shortCode == masterChainCode && traveler.loyaltyProgram[i].custType == 'H') {
+						$( "#hotelFF" ).val( traveler.loyaltyProgram[i].acctNum );
+					}
+					else if ($( "#hotelFF" ).val() == '' && traveler.loyaltyProgram[i].shortCode == chainCode && traveler.loyaltyProgram[i].custType == 'H') {
 						$( "#hotelFF" ).val( traveler.loyaltyProgram[i].acctNum );
 					}
 				}
