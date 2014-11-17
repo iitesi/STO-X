@@ -52,7 +52,7 @@
 										<cfelse>
 											CBA
 										</cfif></td>
-									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
+									<td>#dateFormat(Now(), 'mmm d, yyyy')#</td>
 									<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
 									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : airApproximateBase&' '&airCurrency)#</td>
 									<!--- <td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td> --->
@@ -154,7 +154,7 @@
 											#hotelCardType#... #right(hotelCardNumber, 4)#
 										</cfif>
 									</td>
-									<td>#dateFormat(Now(), 'mmmm dd, yyyy')#</td>
+									<td>#dateFormat(Now(), 'mmm d, yyyy')#</td>
 									<td align="right">#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</td>
 									<td align="right">&nbsp;</td>
 									<td align="right">#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</td>
@@ -171,6 +171,15 @@
 									</cfif>
 								</td>
 							</tr>
+							<cfif unusedTicketSelected>
+								<tr>
+									<td colspan="6" align="right">
+										<cfif displayTotal>
+											<span class="blue"><strong>before unused ticket credit</strong></span>
+										</cfif>
+									</td>
+								</tr>
+							</cfif>
 						</table>
 					</td>
 				</tr>

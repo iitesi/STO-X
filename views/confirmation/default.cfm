@@ -93,6 +93,16 @@
 						YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
 					</cfif>
 				</cfif>
+				<cfset unusedTicketSelected = false>
+				<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
+					<cfif rc.Traveler[travelerIndex].getBookingDetail().getUnusedTickets() NEQ ''>
+						<cfset unusedTicketSelected = true>
+					</cfif>
+				</cfloop>
+				<cfif unusedTicketSelected>
+					<br><br>
+					A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET.  YOUR CONFIRMATION EMAIL WILL REFLECT THE       NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
+				</cfif>
 			</div>
 		</div>
 	</cfoutput>

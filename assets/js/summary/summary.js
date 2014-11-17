@@ -152,7 +152,6 @@ $(document).ready(function(){
 				}	
 			}
 			unusedticketsHTML += '</table></font>';
-			unusedticketsHTML += '<script type="text/javascript">$(".unusedtickets").on("click", function () { console.log($(".unusedtickets")) })</script>';
 
 			$( "#unusedTicketsDiv" ).show();
 			$( "#unusedTicketsDiv" ).html( unusedticketsHTML );
@@ -177,16 +176,6 @@ $(document).ready(function(){
 			}
 		});
 	}); */
-
-	$("#unusedTicketsDiv").on("click", function () { 
-		var $checkbox = $(this).find(':checkbox');
-		if ($checkbox.prop('checked')) {
-			console.log('checked')
-		}
-		else {
-			console.log('not')
-		}
-	});
 
 	$("#createProfileDiv").on("click", function () { 
 		var $checkbox = $(this).find(':checkbox');
@@ -632,13 +621,16 @@ $(document).ready(function(){
 		if ( $( "#specialRequests" ).val() != '' && $( "#specialRequests" ).val() != undefined) {
 			fee = requestFee;
 		}
+
 		$( "#unusedtickeverbiage" ).hide();
-console.log(airAgentFee)
-		if ( $('#unusedtickets').attr('checked') && $( "#unusedtickets" ).val() != undefined) {
-console.log('checked')
-			fee = airAgentFee;
-			$( "#unusedtickeverbiage" ).show();
-		}
+		var unusedTicketsChecked = 0;
+		$( ".unusedtickets" ).each(function () {
+			if (this.checked) {
+				$( "#unusedtickeverbiage" ).show();
+				fee = airAgentFee;
+			}
+		});
+
 		if (fee == 0) {
 			$( "#bookingFeeRow" ).hide();
 		}
@@ -647,8 +639,13 @@ console.log('checked')
 			$( "#bookingFeeCol" ).html('$'+fee.toFixed(2))
 		}
 		total += fee;
+		$( "#bookingFee" ).val( fee );
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
+
+	$("#unusedTicketsDiv").on("click", function () { 
+		recalculateTotal();
+	});
 
 	$( "#specialRequests" ).focusout(function() {
 		recalculateTotal();
