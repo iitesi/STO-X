@@ -162,14 +162,12 @@
 		</cftry>
 
 		<cfset local.errorException = structNew('linked')>
-		<cfset local.errorException = {
-									acctID = local.acctID
-								, userID = local.userID
-								, username = local.username
-								, department = local.department
-								, searchID = local.searchID
-								, exception = arguments.exception
-								} >
+		<cfset local.errorException = {	acctID = local.acctID
+										, userID = local.userID
+										, username = local.username
+										, department = local.department
+										, searchID = local.searchID
+										, exception = arguments.exception } >
 
 		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 			 <!--- <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Fatal' ) /> --->
