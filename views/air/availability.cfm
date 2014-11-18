@@ -5,9 +5,9 @@
 	<cfset variables.minheight = 200>
 	<cfset variables.nDisplayGroup = rc.Group>
 	<cfif variables.nLegs EQ 2>
-		<cfset variables.minheight = 200>
-	<cfelseif variables.nLegs GT 2>
 		<cfset variables.minheight = 250>
+	<cfelseif variables.nLegs GT 2>
+		<cfset variables.minheight = 300>
 	</cfif>
 </cfsilent>
 
