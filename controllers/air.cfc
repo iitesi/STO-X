@@ -22,6 +22,7 @@
 							<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
 								<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
 									Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
+									Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
 									Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
 									Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
 									Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
@@ -35,7 +36,7 @@
 				<cfset session.searches[rc.searchID].unusedtickets = [] />
 			</cfif>
 		</cfif>
-		
+
 		<cfif structKeyExists(arguments.rc, "airlines")
 			AND arguments.rc.airlines EQ 1>
 			<cfset rc.filter.setAirlines("")>
