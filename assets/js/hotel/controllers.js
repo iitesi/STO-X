@@ -571,6 +571,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		//Initialization for the change search modal window
 		$("btn-group button.btn").on( "click", function(event){ event.preventDefault() });
 		var calendarStartDate = dateFormat( new Date(), "mm/dd/yyyy", true );
+		$("#hotel-in-date" ).val( dateFormat( $scope.search.checkInDate, "mmm dd, yyyy", true ) );
+		$("#hotel-out-date" ).val( dateFormat( $scope.search.checkOutDate, "mmm dd, yyyy", true ) );
+
 		$("#start-calendar-wrapper" ).datepicker({
 			startDate: calendarStartDate
 			})
