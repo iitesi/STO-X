@@ -134,7 +134,7 @@ $(document).ready(function(){
 				unusedticketsHTML += 'A $'+airAgentFee.toFixed(2)+' Travel Consultant booking fee will apply.</small>';
 			}
 			unusedticketsHTML += '</small>';
-			unusedticketsHTML += '<font color="#000000"><table width="100%"><tr><td></td><td>Airline</td><td>Credit Value</td><td>Expires</td><td>Original Ticket Issued To</td></tr>';
+			unusedticketsHTML += '<font color="#000000"><table width="100%"><tr><td></td><td><small>Airline</small></td><td><small>Credit Value</small></td><td><small>Expires</small></td><td><small>Original Ticket Issued To</small></td></tr>';
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
@@ -144,10 +144,10 @@ $(document).ready(function(){
 					var d = new Date(unusedTickets[i].expirationDate);
 					unusedticketsHTML += '<tr>'
 					unusedticketsHTML += '<td><input type="checkbox" name="unusedtickets" class="unusedtickets" id="unusedtickets'+unusedTickets[i].id+'" value="'+unusedTickets[i].id+'" '+checked+'></td>'
-					unusedticketsHTML += '<td>'+unusedTickets[i].carrierName+'</td>'
-					unusedticketsHTML += '<td>$'+unusedTickets[i].airfare.toFixed(2)+'</td>'
-					unusedticketsHTML += '<td>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</td>'
-					unusedticketsHTML += '<td>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</td>'
+					unusedticketsHTML += '<td><small>'+unusedTickets[i].carrierName+'</small></td>'
+					unusedticketsHTML += '<td><small>$'+unusedTickets[i].airfare.toFixed(2)+'</small></td>'
+					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
+					unusedticketsHTML += '<td><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
 					unusedticketsHTML += '</tr>'
 				}	
 			}
