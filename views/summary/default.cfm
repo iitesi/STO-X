@@ -155,7 +155,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					<div style="wdith:1150px;">
 						<table width="1033px">
 							<tr>
-								<td valign="top" width="600">
+								<td valign="top" width="575">
 									<div class="alert alert-success hide" id="unusedTicketsDiv">
 									</div>
 								</td>
