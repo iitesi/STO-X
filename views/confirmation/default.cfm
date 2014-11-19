@@ -66,6 +66,12 @@
 
 		<div>
 			<div id="reservationMessage" class="alert alert-success" style="width:920px;">
+				<cfset unusedTicketSelected = false>
+				<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
+					<cfif rc.Traveler[travelerIndex].getBookingDetail().getUnusedTickets() NEQ ''>
+						<cfset unusedTicketSelected = true>
+					</cfif>
+				</cfloop>
 				<!--- If at least one pre-trip traveler. --->
 				<cfif showPreTripText>
 					<cfif listLen(preTripApprovalList) GT 1 OR showNoPreTripText>
@@ -77,7 +83,8 @@
 						WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
 						YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
 					</cfif>
-					<cfif showNoPreTripText>
+					<cfif showNoPreTripText
+						OR unusedTicketSelected>
 						<br /><br />
 					</cfif>
 				</cfif>
@@ -92,15 +99,11 @@
 						WE HAVE CREATED YOUR RESERVATION.<br />
 						YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
 					</cfif>
-				</cfif>
-				<cfset unusedTicketSelected = false>
-				<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
-					<cfif rc.Traveler[travelerIndex].getBookingDetail().getUnusedTickets() NEQ ''>
-						<cfset unusedTicketSelected = true>
+					<cfif unusedTicketSelected>
+						<br /><br />
 					</cfif>
-				</cfloop>
+				</cfif>
 				<cfif unusedTicketSelected>
-					<br><br>
 					A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET.  YOUR CONFIRMATION EMAIL WILL REFLECT THE       NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
 				</cfif>
 			</div>
