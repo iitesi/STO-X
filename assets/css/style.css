@@ -139,6 +139,10 @@ a:hover {
     color: #2E76CF;
 }
 
+.red {
+    color: red;
+}
+
 body {
 	background-image:url(../img/slider-wrap-bg.png);
 }
