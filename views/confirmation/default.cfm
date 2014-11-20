@@ -66,10 +66,10 @@
 
 		<div>
 			<div id="reservationMessage" class="alert alert-success" style="width:920px;">
-				<cfset unusedTicketSelected = false>
+				<cfset variables.unusedTicketSelected = false>
 				<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 					<cfif rc.Traveler[travelerIndex].getBookingDetail().getUnusedTickets() NEQ ''>
-						<cfset unusedTicketSelected = true>
+						<cfset variables.unusedTicketSelected = true>
 					</cfif>
 				</cfloop>
 				<!--- If at least one pre-trip traveler. --->
