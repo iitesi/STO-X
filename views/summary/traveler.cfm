@@ -135,6 +135,9 @@
 				<input type="text" name="travelNumber" id="travelNumber" class="input-medium">
 				<input type="hidden" name="travelNumberType" id="travelNumberType" value="TrustedTraveler">
 				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
+				<cfif len(rc.KTLinks)>
+					&nbsp;<div style="display: inline-table;">#rc.KTLinks#</div>
+				</cfif>
 			</div>
 		</div>
 	</cfif>
