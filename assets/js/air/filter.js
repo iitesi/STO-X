@@ -55,6 +55,7 @@ $(document).ready(function(){
 	$('.closesliderwell').on('click', function() {
 		$('#sliderwell').slideUp();
 		$("#timebtn").parent().toggleClass('active');
+		// $("#flightbtn").parent().toggleClass('active');
 	});
 
 	$('.removefilters').on('click', function() {
@@ -81,6 +82,7 @@ $(document).ready(function(){
 		// hide filter well
 		$('.filterselection').hide();
 		$('.filtertimeselection').hide();
+		// $('.filterflightselection').hide();
 		$('.spinner').show();
 
 		// reset sorting and filters
@@ -103,6 +105,16 @@ $(document).ready(function(){
 			$(".filterselection").slideUp('fast');
 		}
 	});
+
+	// display flight number slider filter well
+	/* $('.filterbyflight').on('click', function() {
+		$(".filterflightselection").slideToggle().css({"position": "relative", "z-index": 98});
+		$("#flightbtn").parent().toggleClass('active');
+		// if the other filter is open let's close it
+		if( $('.filterselection').is(':visible') ){
+			$(".filterselection").slideUp('fast');
+		}
+	}); */
 
 	// non-stop dropdown menu
 	$('[id^=nonstopbtn]').on('click', function(e) {

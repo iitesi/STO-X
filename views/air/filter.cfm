@@ -59,6 +59,7 @@
 							<cfif rc.filter.getAirType() EQ "OW" OR rc.filter.getAirType() EQ "RT">
 								<li><a href="#" class="filterbytime" id="timebtn" title="Click to view/hide time filters">Time</a></li>
 							</cfif>
+							<!--- <li><a href="#" class="filterbyflight" id="flightbtn" title="Click to view/hide flight number filters">Flight Number</a></li> --->
 							<li class="dropdown">
 								<a href="#" id="stopdropdown" class="dropdown-toggle" data-toggle="dropdown">Stops <b class="caret"></b></a>
 								<ul class="dropdown-menu">
@@ -293,12 +294,30 @@
 				<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
 			</div> <!--- // filtertimeselection --->
 
+			<!--- flight number slider --->
+			<!--- <div class="clearfix"><!--- prevent filterbar from overlapping time filters ---></div>
+			<div id="sliderwell" class="well filterflightselection">
+				<div>
+					<b>Flight Number</b>
+					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button> --->
+					        <!--- <div class="well" ng-show="filtersVisible.vendorName">
+					            <div class="row">
+					                <div class="span4">
+					                    <form class="form-inline">
+					                        <input type="text" ng-model="propertyNameFilterValue"> <button ng-click="filterHotels()" class="btn btn-primary">Search</button>
+					                    </form>
+					                </div>
+					                <span class="pull-right">
+					                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="icon-remove"></i></button>
+					                </span>
+					             </div>
+					        </div> --->
+
+				<!--- </div>
+			</div> --->
+
 		</div><!--- // sixteen columns --->
 	</div><!--- // filter --->
-
-
-
-
 
 
 <!-- Modal -->
