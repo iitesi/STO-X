@@ -369,6 +369,19 @@
 				<cfset ArrayAppend(local.stTemp[local.sType], local.qPreferred.Vendor_ID)>
 			</cfloop>
 
+			<cfquery name="local.qPreferredHotelProperties" datasource="#getCorporateProductionDSN()#">
+				SELECT Acct_ID, Property_ID
+				FROM Accounts_PropertyIDs
+				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
+			</cfquery>
+
+			<cfset local.stTemp.aPreferredHotelProperties = []>
+
+			<cfloop query="qPreferredHotelProperties">
+				<cfset local.sType = 'aPreferredHotelProperties'>
+				<cfset ArrayAppend(local.stTemp[local.sType], local.qPreferredHotelProperties.Property_ID)>
+			</cfloop>
+
 			<cfquery name="local.qAirITNumbers" datasource="#getCorporateProductionDSN()#">
 				SELECT Carrier, IT_Number
 				FROM Airline_ITNumbers

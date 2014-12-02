@@ -51,9 +51,13 @@
 					<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 						<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 							<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''>
-								<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
-									<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
-								</a>
+								<cfif Traveler.getBookingDetail().getAirNeeded() AND rc.Air.Carriers[1] EQ "WN">
+									Email onlinesupport@shortstravel.com to cancel this Southwest reservation
+								<cfelse>
+									<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
+										<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
+									</a>
+								</cfif>
 							</cfif>
 						</cfloop>
 					</cfif>

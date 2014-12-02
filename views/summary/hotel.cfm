@@ -148,6 +148,10 @@
 						</a>
 					</span>
 
+					<cfif rc.Hotel.getRooms()[1].getDepositRequired()>
+						<span class="small red bold"><br />This rate requires payment at time of booking.</span>
+					</cfif>
+
 				</td>
 			<tr>
 

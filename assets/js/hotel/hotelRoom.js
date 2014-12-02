@@ -3,6 +3,7 @@ function HotelRoom(){
 	this.dailyRate = 0;
 	this.dailyRateCurrency = '';
 	this.description = '';
+	this.depositRequired = false;
 	this.isCorporateRate = false;
 	this.isGovernmentRate = false;
 	this.rateChange = '';
