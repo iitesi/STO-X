@@ -253,6 +253,48 @@
 		<cfreturn local.fees />
 	</cffunction>
 
+	<cffunction name="setKTLinks" access="public" output="false">
+		<cfargument name="Air" required="true" default="" />
+
+		<cfset local.KTLinks = '' />
+		<cfset local.KTAirports = {} />
+		<cfset local.KTAirports[1] = '' />
+		<cfset local.KTAirports[2] = '' />
+		<cfset local.KTAirports[3] = '' />
+
+		<!--- Loop through all air segments --->
+		<cfloop collection="#arguments.Air.Groups#" index="local.groupIndex" item="local.group">
+			<cfset counter = 1 />
+			<cfloop collection="#group.segments#" index="local.segmentStructIndex" item="local.segmentStruct">
+				<!--- If the departure airport in any group is a designated TSA Precheck airport AND the departing airline is a designated TSA Precheck airline --->
+				<cfif counter EQ 1 AND listFindNoCase(application.stKTPrograms[1].airports, segmentStruct.origin) AND listFindNoCase(application.stKTPrograms[1].airlines, segmentStruct.carrier)>
+					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />				
+				</cfif>
+				<!--- If an international flight --->
+				<cfif (application.stAirports[segmentStruct.destination].countryCode IS 'US' AND application.stAirports[segmentStruct.origin].countryCode IS NOT 'US')
+					OR (application.stAirports[segmentStruct.destination].countryCode IS NOT 'US' AND application.stAirports[segmentStruct.origin].countryCode IS 'US')>
+					<!--- If an international flight and any arrival airport (including connections) is a designated Global Entry airport --->
+					<cfif listFindNoCase(application.stKTPrograms[2].airports, segmentStruct.destination)>
+						<cfset local.KTAirports[2] = listAppend(local.KTAirports[2], segmentStruct.destination) />
+					</cfif>
+					<!--- If an international flight and any arrival airport (including connections) is a designated NEXUS airport --->
+					<cfif listFindNoCase(application.stKTPrograms[3].airports, segmentStruct.destination)>
+						<cfset local.KTAirports[3] = listAppend(local.KTAirports[3], segmentStruct.destination) />
+					</cfif>
+				</cfif>
+				<cfset counter++ />
+			</cfloop>
+		</cfloop>
+
+		<cfloop from="1" to="3" index="local.airportList">
+			<cfif len(local.KTAirports[local.airportList])>
+				<cfset local.KTLinks = local.KTLinks & "<a href='#application.stKTPrograms[local.airportList].programLink#' target='_blank'>#application.stKTPrograms[local.airportList].programName#</a> is available at: #local.KTAirports[local.airportList]#<br />" />
+			</cfif>
+		</cfloop>
+
+		<cfreturn local.KTLinks />
+	</cffunction>
+
 	<cffunction name="error" output="false">
 		<cfargument name="Traveler" required="true">
 		<cfargument name="Air" required="false" default="">

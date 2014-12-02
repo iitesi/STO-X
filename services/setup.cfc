@@ -653,9 +653,53 @@
 			<cfset local.stTemp[local.qAirports.code].airport = local.qAirports.airport>
 			<cfset local.stTemp[local.qAirports.code].domestic = local.domestic>
 			<cfset local.stTemp[local.qAirports.code].stateCode = local.qAirports.stateCode>
+			<cfset local.stTemp[local.qAirports.code].countryCode = local.qAirports.countryCode>
 		</cfloop>
 
 		<cfset application.stAirports = local.stTemp>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setKTPrograms" output="false" returntype="void">
+		<cfquery name="local.qKTPrograms" datasource="#getCorporateProductionDSN()#">
+			SELECT ProgramID, ProgramName, ProgramLink
+			FROM KT_Programs
+			ORDER BY ProgramID
+		</cfquery>
+
+		<cfset local.stTemp = {} />
+
+		<cfloop query="local.qKTPrograms">
+			<cfset local.stTemp[local.qKTPrograms.ProgramID].programName = local.qKTPrograms.ProgramName />
+			<cfset local.stTemp[local.qKTPrograms.ProgramID].programLink = local.qKTPrograms.ProgramLink />
+			<cfset local.stTemp[local.qKTPrograms.ProgramID].airports = "" />
+			<cfset local.stTemp[local.qKTPrograms.ProgramID].airlines = "" />
+
+			<cfquery name="local.qKTAirports" datasource="#getCorporateProductionDSN()#">
+				SELECT AirportCode
+				FROM KT_Airports
+				WHERE ProgramID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qKTPrograms.ProgramID#" />
+				ORDER BY AirportCode
+			</cfquery>
+
+			<cfif qKTAirports.recordCount>
+				<cfset local.stTemp[local.qKTPrograms.ProgramID].airports = valueList(qKTAirports.AirportCode) />
+			</cfif>
+
+			<cfquery name="local.qKTAirlines" datasource="#getCorporateProductionDSN()#">
+				SELECT CarrierCode
+				FROM KT_Airlines
+				WHERE ProgramID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qKTPrograms.ProgramID#" />
+				ORDER BY CarrierCode
+			</cfquery>
+
+			<cfif qKTAirlines.recordCount>
+				<cfset local.stTemp[local.qKTPrograms.ProgramID].airlines = valueList(qKTAirlines.CarrierCode) />
+			</cfif>
+		</cfloop>
+
+		<cfset application.stKTPrograms = local.stTemp />
 
 		<cfreturn />
 	</cffunction>

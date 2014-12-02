@@ -14,7 +14,7 @@
 <cfoutput>
 
 	#view('air/unusedtickets')#
-
+	
 	<div class="page-header">
 		<cfif rc.filter.getAirType() IS "MD">
 			<h1>#rc.Filter.getAirHeading()#</h1>

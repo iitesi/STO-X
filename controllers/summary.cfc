@@ -87,6 +87,7 @@
 																			, acctID = rc.Filter.getAcctID()
 																			, Air = rc.Air
 																			, Filter = rc.Filter)>
+		<cfset rc.KTLinks = fw.getBeanFactory().getBean('Summary').setKTLinks(Air = rc.Air)>
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
