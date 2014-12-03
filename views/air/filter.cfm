@@ -75,7 +75,7 @@
 				</div>
 				<div>
 					<cfoutput>
-						<h4><span id="flightCount">#rc.totalflights#</span> of #rc.totalflights# flights displayed
+						<h4><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights displayed
 						 <span class="pull-right">
 							<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
 							<a href="##" class="removefilters"> <i class="icon-refresh"></i> Clear Filters</a>

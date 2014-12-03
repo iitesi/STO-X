@@ -258,6 +258,9 @@ function filterAir(reset) {
 
 	// show flight count
  	$('#flightCount').text(showCount);
+ 	if (parseInt($('#flightCount').text()) > parseInt($('#flightCount2').text())) {
+ 		$('#flightCount2').text(showCount);
+ 	}
 	$('.spinner').hide();
 	return false;
 } // ----------- end of function filterAir()------------------------------------
