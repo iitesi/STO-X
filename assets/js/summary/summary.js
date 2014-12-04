@@ -128,6 +128,8 @@ $(document).ready(function(){
 			}	
 		}
 
+		$( "#unusedtickeverbiage" ).hide();
+
 		if (displayUnusedTickets == 1) {
 			unusedticketsHTML += 'You have unused ticket credits on this airline.<br>';
 			unusedticketsHTML += '<small>Check below if you would like a Travel Consultant to review the airline\'s re-use rules to determine if your credit can be applied to this ticket.';
@@ -136,6 +138,10 @@ $(document).ready(function(){
 			}
 			unusedticketsHTML += '</small>';
 			unusedticketsHTML += '<font color="#000000"><table width="100%"><tr><td></td><td><small>Airline</small></td><td><small>Credit Value</small></td><td><small>Expires</small></td><td><small>Original Ticket Issued To</small></td></tr>';
+			unusedticketsHTML += '<tr>'
+			unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked></td>'
+			unusedticketsHTML += '<td colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
+			unusedticketsHTML += '</tr>'			
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
@@ -144,7 +150,7 @@ $(document).ready(function(){
 					}					
 					var d = new Date(unusedTickets[i].expirationDate);
 					unusedticketsHTML += '<tr>'
-					unusedticketsHTML += '<td><input type="checkbox" name="unusedtickets" class="unusedtickets" id="unusedtickets'+unusedTickets[i].id+'" value="'+unusedTickets[i].id+'" '+checked+'></td>'
+					unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
 					unusedticketsHTML += '<td><small>'+unusedTickets[i].carrierName+'</small></td>'
 					unusedticketsHTML += '<td><small>$'+unusedTickets[i].airfare.toFixed(2)+'</small></td>'
 					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
@@ -159,7 +165,7 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#unusedTicketsDiv" ).hide();
-			$( "#unusedTicketsDiv" ).html( '' );
+			$( "#unusedTicketsDiv" ).html( '<input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked>' );
 		}
 	}
 	// On change find the other traveler number's data
@@ -628,13 +634,10 @@ $(document).ready(function(){
 		}
 
 		$( "#unusedtickeverbiage" ).hide();
-		var unusedTicketsChecked = 0;
-		$( ".unusedtickets" ).each(function () {
-			if (this.checked) {
-				$( "#unusedtickeverbiage" ).show();
-				fee = airAgentFee;
-			}
-		});
+		if ($( "input[name=unusedtickets]:checked" ).val() != 0) {
+			$( "#unusedtickeverbiage" ).show();
+			fee = airAgentFee;
+		}	
 
 		if (fee == 0) {
 			$( "#bookingFeeRow" ).hide();
