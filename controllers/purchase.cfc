@@ -557,108 +557,6 @@
 					</cfif>
 				</cfif>
 
-				<!--- Sell Hotel --->
-				 <cfif hotelSelected
-					AND Traveler.getBookingDetail().getHotelNeeded()
-					AND arrayIsEmpty(errorMessage)>
-					<!--- Sell hotel --->
-					<cfset local.hotelFOPID = Traveler.getBookingDetail().getHotelFOPID() />
-					<!--- If the hotel form of payment details were copied from air --->
-					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
-						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
-					</cfif>
-
-					<!--- Get last 4 digits of hotel payment card and card type for confirmation page --->
-					<cfif NOT len(Traveler.getBookingDetail().getHotelCCNumber())>
-						<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
-							<cfif Payment.getHotelUse()
-								AND ((Payment.getBTAID() NEQ ''
-									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'bta_'&Payment.getPCIID())
-								OR (Payment.getFOPID() NEQ ''
-									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_'&Payment.getPCIID())
-								OR (Payment.getFOPID() NEQ ''
-									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
-								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
-								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
-							</cfif>
-						</cfloop>
-					</cfif>
-
-					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
-																										, bookingPCC = rc.Account.PCC_Booking
-																										, Traveler = Traveler
-																										, Profile = Profile
-																										, Hotel = Hotel
-																										, Filter = rc.Filter
-																										, statmentInformation = statmentInformation
-																										, udids = udids
-																										, providerLocatorCode = providerLocatorCode
-																										, universalLocatorCode = universalLocatorCode
-																										, version = version
-																										, profileFound = profileFound
-																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
-																										, hotelFOPID = local.hotelFOPID
-																										, datetimestamp = local.datetimestamp
-																										, token = local.token
-																									)>
-
-					<cfset Hotel.setProviderLocatorCode('')>
-					<cfset Hotel.setUniversalLocatorCode('')>
-
-					<!--- Parse sell results --->
-					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
-																							, response = hotelResponse )>
-
-					<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
-					<cfif Hotel.getSimultChgsError()>
-						<cfset Hotel.setError( false ) />
-						<cfset Hotel.setMessages( [] ) />
-						<cfset Hotel.setSimultChgsError( false ) />
-
-						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
-																										, bookingPCC = rc.Account.PCC_Booking
-																										, Traveler = Traveler
-																										, Profile = Profile
-																										, Hotel = Hotel
-																										, Filter = rc.Filter
-																										, statmentInformation = statmentInformation
-																										, udids = udids
-																										, providerLocatorCode = providerLocatorCode
-																										, universalLocatorCode = universalLocatorCode
-																										, version = version
-																										, profileFound = profileFound
-																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
-																										, hotelFOPID = local.hotelFOPID
-																										, datetimestamp = local.datetimestamp
-																										, token = local.token
-																									)>
-
-						<!--- Parse sell results --->
-						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
-																							, response = hotelResponse )>
-					</cfif>
-
-					<!--- Parse error --->
-					<cfif Hotel.getUniversalLocatorCode() EQ ''
-						OR Hotel.getError()>
-						<cfset errorMessage = Hotel.getMessages()>
-						<cfset errorType = 'Hotel'>
-						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
-					<cfelse>
-						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
-					</cfif>
-
-					<!--- Update session with new Hotel record --->
-					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
-					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
-					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
-					<!--- Update universal version --->
-					<cfif providerLocatorCode NEQ ''>
-						<cfset version++>
-					</cfif>
-					
-				</cfif>
-
 				<!--- Sell Vehicle --->
 				<cfif vehicleSelected
 					AND Traveler.getBookingDetail().getCarNeeded()
@@ -802,6 +700,108 @@
 					</cfif>
 					<!--- Update session with new Vehicle record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
+				</cfif>
+
+				<!--- Sell Hotel --->
+				 <cfif hotelSelected
+					AND Traveler.getBookingDetail().getHotelNeeded()
+					AND arrayIsEmpty(errorMessage)>
+					<!--- Sell hotel --->
+					<cfset local.hotelFOPID = Traveler.getBookingDetail().getHotelFOPID() />
+					<!--- If the hotel form of payment details were copied from air --->
+					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
+						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
+					</cfif>
+
+					<!--- Get last 4 digits of hotel payment card and card type for confirmation page --->
+					<cfif NOT len(Traveler.getBookingDetail().getHotelCCNumber())>
+						<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.Payment">
+							<cfif Payment.getHotelUse()
+								AND ((Payment.getBTAID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'bta_'&Payment.getPCIID())
+								OR (Payment.getFOPID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_'&Payment.getPCIID())
+								OR (Payment.getFOPID() NEQ ''
+									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
+								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
+								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
+							</cfif>
+						</cfloop>
+					</cfif>
+
+					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, hotelFOPID = local.hotelFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									)>
+
+					<cfset Hotel.setProviderLocatorCode('')>
+					<cfset Hotel.setUniversalLocatorCode('')>
+
+					<!--- Parse sell results --->
+					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+																							, response = hotelResponse )>
+
+					<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
+					<cfif Hotel.getSimultChgsError()>
+						<cfset Hotel.setError( false ) />
+						<cfset Hotel.setMessages( [] ) />
+						<cfset Hotel.setSimultChgsError( false ) />
+
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch 
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, hotelFOPID = local.hotelFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									)>
+
+						<!--- Parse sell results --->
+						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+																							, response = hotelResponse )>
+					</cfif>
+
+					<!--- Parse error --->
+					<cfif Hotel.getUniversalLocatorCode() EQ ''
+						OR Hotel.getError()>
+						<cfset errorMessage = Hotel.getMessages()>
+						<cfset errorType = 'Hotel'>
+						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
+					<cfelse>
+						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
+					</cfif>
+
+					<!--- Update session with new Hotel record --->
+					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
+					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
+					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
+					<!--- Update universal version --->
+					<cfif providerLocatorCode NEQ ''>
+						<cfset version++>
+					</cfif>
+					
 				</cfif>
 				<cfset Traveler.getBookingDetail().setReservationCode(providerLocatorCode) />
 
