@@ -94,7 +94,11 @@
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
 		<input type="hidden" name="airFeeType" value="#rc.fees.airFeeType#">
 		<input type="hidden" name="auxFeeType" value="#rc.fees.auxFeeType#">
-		<input type="hidden" name="airAgentFee" id="airAgentFee" value="#rc.fees.airAgentFee#">
+		<cfif structKeyExists(rc.fees, "airAgentFee")>
+			<input type="hidden" name="airAgentFee" id="airAgentFee" value="#rc.fees.airAgentFee#">
+		<cfelse>
+			<input type="hidden" name="airAgentFee" id="airAgentFee" value="0">
+		</cfif>
 
 		<cfif tripCurrency EQ 'USD'>
 
