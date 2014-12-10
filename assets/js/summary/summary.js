@@ -634,10 +634,10 @@ $(document).ready(function(){
 		}
 
 		$( "#unusedtickeverbiage" ).hide();
-		if ($( "input[name=unusedtickets]:checked" ).val() != 0) {
+		if ($( "input[name=unusedtickets]:checked" ).val() != undefined && $( "input[name=unusedtickets]:checked" ).val() != 0) {
 			$( "#unusedtickeverbiage" ).show();
 			fee = airAgentFee;
-		}	
+		}
 
 		if (fee == 0) {
 			$( "#bookingFeeRow" ).hide();
