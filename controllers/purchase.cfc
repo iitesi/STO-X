@@ -353,7 +353,7 @@
 							<cfif (Air.UniversalLocatorCode EQ '')
 								OR Air.error
 								OR (Air.Total GT originalAirfare)>
-								<cfif Air.Total GT originalAirfare>
+								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
 									<cfif len(Air.UniversalLocatorCode)>
 										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode
