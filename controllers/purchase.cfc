@@ -474,14 +474,18 @@
  									</cfif>
 
 									<cfif NOT confirmSegmentsError>
-										<!--- T:R --->
-										<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
+										<!--- Only need to T:R if a fare was stored --->
+										<cfif Air.Total NEQ 0>
+											<!--- T:R --->
+											<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, Air = Air
 																										, airSelected = airSelected
 																										, command = 'T:R' )>
-										<cfif NOT verifyStoredFareResponse.error>
+										</cfif>
+
+										<cfif Air.Total EQ 0 OR NOT verifyStoredFareResponse.error>
 											<!--- Add received by STO.CONFIRMED.SEGMENTS line --->
 											<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
