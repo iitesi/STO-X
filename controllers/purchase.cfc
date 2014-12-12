@@ -349,46 +349,10 @@
 								</cfif>
 							</cfif>
 
-							<!--- Parse error --->
-							<cfif (Air.UniversalLocatorCode EQ '')
-								OR Air.error
-								OR (Air.Total GT originalAirfare)>
-								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
-									<cfif len(Air.UniversalLocatorCode)>
-										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
-																									, universalRecordLocatorCode = Air.UniversalLocatorCode
-																									, Filter = rc.Filter
-																									, Version = version )>
-										<cfif cancelResponse.status>
-											<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
-																									, urRecloc = Air.UniversalLocatorCode )>
-										</cfif>
-									</cfif>
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
-								<cfelse>
-									<cfset errorMessage = Air.messages>
-								</cfif>
-								<cfset errorType = 'Air'>
-								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
-								<cfset Traveler.getBookingDetail().setSeats( '' )>
-							<cfelse>
-								<cfset universalLocatorCode = Air.UniversalLocatorCode>
-							</cfif>
-
-							<!--- Update session with new Air record --->
-							<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
-							<cfset providerLocatorCode = Air.ProviderLocatorCode>
-							<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
-							<cfset Traveler.getBookingDetail().setSeats(Air.BookingTravelerSeats) />
-							<!--- Update universal version --->
-							<cfif providerLocatorCode NEQ ''>
-								<cfset version++>
-							</cfif>
-
 							<!--- If Southwest, change KK segments to HK before queue
 							Command = .IHK --->
 							<!--- STM-2961: Confirm the segments before File Finishing --->
-							<cfif Air.platingCarrier IS 'WN' AND providerLocatorCode NEQ ''>
+							<cfif Air.platingCarrier IS 'WN' AND len(Air.ProviderLocatorCode)>
 								<cfset local.originalNumSegments = arrayLen(Air.PricingSolution.getSegment()) />
 								<cfset local.responseNumSegments = 0 />
 								<cfset local.confirmSegmentsError = false />
@@ -399,12 +363,12 @@
 								<!--- <cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
 																						, Filter = rc.Filter
 																						, pccBooking = rc.Account.PCC_Booking
-																						, providerLocatorCode = providerLocatorCode )> --->
+																						, providerLocatorCode = Air.ProviderLocatorCode )> --->
 
 								<!--- Display PNR --->
 								<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
-																										, pnr = providerLocatorCode
+																										, pnr = Air.ProviderLocatorCode
 																										, searchID = rc.searchID )>
 
 								<cfif NOT displayPNRResponse.error>
@@ -456,7 +420,7 @@
 
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
-																						, pnr = providerLocatorCode
+																						, pnr = Air.ProviderLocatorCode
 																						, searchID = rc.searchID )>
 										<cfif NOT displayPNRResponse.error>
 											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
@@ -552,6 +516,42 @@
 									<cfset arrayAppend( errorMessage, 'The fare for the flight you found is no longer available. Please select another flight.' )>
 									<cfset errorType = 'Air.confirmSegments' />							
 								</cfif>
+							</cfif>
+
+							<!--- Parse error --->
+							<cfif (Air.UniversalLocatorCode EQ '')
+								OR Air.error
+								OR (Air.Total GT originalAirfare)>
+								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
+									<cfif len(Air.UniversalLocatorCode)>
+										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																									, universalRecordLocatorCode = Air.UniversalLocatorCode
+																									, Filter = rc.Filter
+																									, Version = version )>
+										<cfif cancelResponse.status>
+											<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
+																									, urRecloc = Air.UniversalLocatorCode )>
+										</cfif>
+									</cfif>
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+								<cfelse>
+									<cfset errorMessage = Air.messages>
+								</cfif>
+								<cfset errorType = 'Air'>
+								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
+								<cfset Traveler.getBookingDetail().setSeats( '' )>
+							<cfelse>
+								<cfset universalLocatorCode = Air.UniversalLocatorCode>
+							</cfif>
+
+							<!--- Update session with new Air record --->
+							<cfset session.searches[rc.SearchID].stItinerary.Air = Air>
+							<cfset providerLocatorCode = Air.ProviderLocatorCode>
+							<cfset Traveler.getBookingDetail().setAirConfirmation(Air.SupplierLocatorCode) />
+							<cfset Traveler.getBookingDetail().setSeats(Air.BookingTravelerSeats) />
+							<!--- Update universal version --->
+							<cfif providerLocatorCode NEQ ''>
+								<cfset version++>
 							</cfif>
 						</cfif>
 					</cfif>
