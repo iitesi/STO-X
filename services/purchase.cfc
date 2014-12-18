@@ -314,7 +314,7 @@
 
 			<cfset application.fw.factory.getBean('BugLogService').notifyService( message = cfcatch.message
 																				, exception = local.errorException
-																				, severityCode = 'Fatal' ) />
+																				, severityCode = 'Error' ) />
 		</cfcatch>
 		</cftry>
 

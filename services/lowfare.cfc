@@ -337,7 +337,11 @@
 													, request = xmlFormat(attributes.sMessage)
 													, response = xmlFormat(attributes.sResponse)  }>
 							<cfif local.faultstring DOES NOT CONTAIN 'Transaction Error: AppErrorSeverityLevel/1'>
-								<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode='Error' ) />
+								<cfset severityLevel = "Error" />
+								<cfif findNoCase('UNABLE TO FARE QUOTE', local.faultstring)>
+									<cfset severityLevel = "Info" />
+								</cfif>
+								<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode=severityLevel ) />
 							</cfif>
 						</cfif>
 					</cfif>
