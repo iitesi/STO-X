@@ -15,7 +15,20 @@
 				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.AIR.TOTAL );
 			}
 			if( typeof shortstravel.itinerary.HOTEL != "undefined" ){
-				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+				if (shortstravel.itinerary.HOTEL.Rooms[0].totalForStay != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+				}
+				else if (shortstravel.itinerary.HOTEL.Rooms[0].baseRate != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].baseRate );
+				}
+				else {
+					checkInDate = new Date(shortstravel.search.checkInDate);
+					checkOutDate = new Date(shortstravel.search.checkOutDate);
+					dateDiff = (checkOutDate.getTime() - checkInDate.getTime());
+					numNights = (dateDiff / (1000*60*60*24));
+					hotelTotal = parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].dailyRate ) * numNights;
+					shortstravel.itinerary.total += hotelTotal;
+				}
 			}
 			if( typeof shortstravel.itinerary.VEHICLE != "undefined" ){
 					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.VEHICLE.estimatedTotalAmount );
