@@ -89,13 +89,18 @@
 						</cfif>
 						<cfif rc.hotelSelected>
 
+							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 							<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 								<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
 								<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
 								<cfset hotelText = 'Including taxes'>
-							<cfelse>
+							<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
 								<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
 								<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+								<cfset hotelText = 'Quoted at check-in'>
+							<cfelse>
+								<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+								<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
 								<cfset hotelText = 'Quoted at check-in'>
 							</cfif>
 

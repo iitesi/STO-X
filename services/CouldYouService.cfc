@@ -57,8 +57,8 @@
 			<cfif HotelRoom.getTotalForStay() NEQ 0>
 				<cfset args.hotelCost = HotelRoom.getTotalForStay() />
 			<cfelse>
-				<cfset var nights = dateDiff( 'd', arguments.trip.hotel.getDepartureDate(), arguments.trip.hotel.getReturnDate() ) />
-				<cfset args.hotelCost = arguments.trip.hotel.getRooms()[0].getDailyRate() * nights />
+				<cfset var nights = dateDiff( 'd', Search.getCheckInDate(), Search.getCheckOutDate() ) />
+				<cfset args.hotelCost = arguments.trip.hotel.getRooms()[1].getDailyRate() * nights />
 			</cfif>
 		<cfelse>
 			<cfset args.hotelCost = 0 />
@@ -110,8 +110,8 @@
 				<cfif HotelRoom.getTotalForStay() NEQ 0>
 					<cfset args.hotelCost = HotelRoom.getTotalForStay() />
 				<cfelse>
-					<cfset var nights = dateDiff( 'd', arguments.trip.hotel.getDepartureDate(), arguments.trip.hotel.getReturnDate() ) />
-					<cfset args.hotelCost = arguments.trip.hotel.getRooms()[0].getDailyRate() * nights />
+					<cfset var nights = dateDiff( 'd', Search.getCheckInDate(), Search.getCheckOutDate() ) />
+					<cfset args.hotelCost = arguments.trip.hotel.getRooms()[1].getDailyRate() * nights />
 				</cfif>
 				<cfcatch>
 					<cfset args.hotelCost = 0  />
