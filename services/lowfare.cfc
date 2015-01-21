@@ -213,6 +213,7 @@
 					this prevents thread name error - http://cfmlblog.adamcameron.me/2013/02/thread-longevity-weirdness.html
 					<cfset structdelete(cfthread,"#structKeyList(stThreads)#")>
 		--->
+		<!--- <cfdump var="#session.searches[arguments.Filter.getSearchID()].stTrips#" abort> --->
 
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
