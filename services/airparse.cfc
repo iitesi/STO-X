@@ -84,7 +84,11 @@
 					<cfset local.travelTime = 0>
 					<cfloop array="#arguments.stResponse[1].xmlChildren#" index="local.key2">
 						<cfif StructKeyExists(local.key2.xmlAttributes, "Key") AND local.key2.xmlAttributes.key EQ local.detailKey>
-							<cfset local.travelTime = local.key2.xmlAttributes.travelTime>
+							<cfif structKeyExists(local.key2.xmlAttributes, "travelTime")>
+								<cfset local.travelTime = local.key2.xmlAttributes.travelTime>
+							<cfelseif structKeyExists(local.key2.xmlAttributes, "flightTime")>
+								<cfset local.travelTime = local.key2.xmlAttributes.flightTime>
+							</cfif>
 						</cfif>
 					</cfloop>
 
