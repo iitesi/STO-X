@@ -19,10 +19,10 @@
 		<cfargument name="nTripID" required="true">
 		<cfargument name="nSegment"	required="false" default="">
 		<cfargument name="group" required="false" default="">
-		<cfargument name="sCabin" required="false" default="Y">
+		<cfargument name="sClass" required="false" default="Y">
 		<cfargument name="stAccount" required="false" default="#application.Accounts[session.AcctID]#">
 
-		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.searchID, arguments.nTripID, arguments.nSegment, 'Y', arguments.Group)>
+		<cfset local.sMessage = prepareSoapHeader(arguments.stAccount, arguments.searchID, arguments.nTripID, arguments.nSegment, arguments.sClass, arguments.Group)>
 		<cfset local.sResponse = getUAPI().callUAPI('AirService', local.sMessage, arguments.searchID)>
 		<cfset local.stResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 		<cfset local.stSeats = parseSeats(local.stResponse)>
@@ -36,7 +36,7 @@
 		<cfargument name="SearchID" 	required="true">
 		<cfargument name="nTripID" 		required="true">
 		<cfargument name="nSegment" 	required="false"	default="">
-		<cfargument name="sCabin" 		required="false"	default="Y"><!--- Options (one item) - Y, C, F --->
+		<cfargument name="sClass" 		required="false"	default="Y">
 		<cfargument name="Group" 		required="false"	default="">
 
 		<cfset local.stSegment = {} />
@@ -98,7 +98,7 @@
 									ProviderCode="1V"
 									Group="#local.stSegment.Group#">
 								</air:AirSegment>
-								<air:BookingCode Code="Y" />
+								<air:BookingCode Code="#arguments.sClass#" />
 							</air:SeatMapReq>
 						</soapenv:Body>
 					</soapenv:Envelope>
