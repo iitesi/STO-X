@@ -87,7 +87,7 @@
 						WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
 						YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.<br />
 					</cfif>
-					<cfif rc.airSelected AND structKeyExists(Air, "LatestTicketingTime") AND isDate(Air.LatestTicketingTime)>
+					<cfif rc.airSelected AND structKeyExists(rc.Air, "LatestTicketingTime") AND isDate(rc.Air.LatestTicketingTime)>
 						<cfif rc.Filter.getAcctID() NEQ 272>
 							<cfset hourDue = 20 />
 							<cfset minuteDue = 00 />
@@ -95,7 +95,7 @@
 							<cfset hourDue = 23 />
 							<cfset minuteDue = 59 />
 						</cfif>
-						<cfset responseDueBy = createDateTime(year(Air.LatestTicketingTime), month(Air.LatestTicketingTime), day(Air.LatestTicketingTime), hourDue, minuteDue, 00) />
+						<cfset responseDueBy = createDateTime(year(rc.Air.LatestTicketingTime), month(rc.Air.LatestTicketingTime), day(rc.Air.LatestTicketingTime), hourDue, minuteDue, 00) />
 					<cfelse>
 						<cfset responseDueBy = dateAdd('h', 23, now()) />
 					</cfif>
