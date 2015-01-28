@@ -12,7 +12,7 @@
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
-				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID())>
+				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID()) OR (Traveler.getUserID() EQ 0 AND Traveler.getBookingDetail().getSaveProfile())>
 					<cfset Traveler.setUserID(rc.filter.getUserID()) />
 				</cfif>
 				<!--- Looks odd, but this is used to compare differences between their profile and what information
