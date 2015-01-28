@@ -164,7 +164,7 @@
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
 								<cfset nFirstSeg = nSegment>
-								<cfset sClass = stSegment.Class />
+								<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
 							</cfif>
 						</td>
 					</tr>
