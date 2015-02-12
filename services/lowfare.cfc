@@ -563,9 +563,9 @@
 										</air:ProhibitedCarriers>
 									</cfif>
 									<cfif arguments.fareType EQ "PrivateFaresOnly">
-										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="true"/>
+										<air:FlightType MaxStops="1" MaxConnections="2" RequireSingleCarrier="true"/>
 									<cfelse>
-										<air:FlightType MaxStops="1" MaxConnections="1" RequireSingleCarrier="false"/>
+										<air:FlightType MaxStops="1" MaxConnections="2" RequireSingleCarrier="false"/>
 									</cfif>
 								</air:AirSearchModifiers>
 								<cfif arguments.bGovtRate>
