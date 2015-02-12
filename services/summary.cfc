@@ -220,6 +220,7 @@
 			</cfif>
 		</cfif>
 
+		<cfset local.fees.airAgentFee = 0>
 		<cfif local.agentAirFee NEQ ''>
 			<cfquery name="local.qAgentAirFee" datasource="Corporate_Production">
 				SELECT IsNull(Fee_Amount, 0) AS Fee_Amount

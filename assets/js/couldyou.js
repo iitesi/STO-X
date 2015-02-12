@@ -525,12 +525,13 @@ shortstravel.couldyou = {
 
 			if( typeof shortstravel.itinerary.AIR == 'object' ){
 				return '$ ' + roundedCost;
-			} else {
+			}
+			else {
 				if( typeof shortstravel.itinerary.HOTEL != 'undefined' ){
 					if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
 						return '$ ' + roundedCost;
 					} else {
-						return roundedCost + shortstravel.itinerary.HOTEL.rooms[0].totalForStayCurrency;
+						return roundedCost + shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency;
 					}
 				}
 				if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){
@@ -540,7 +541,6 @@ shortstravel.couldyou = {
 						return roundedCost + shortstravel.itinerary.VEHICLE.currency;
 					}
 				}
-
 			}
 		}
 	},

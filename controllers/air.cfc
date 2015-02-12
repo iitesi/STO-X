@@ -154,51 +154,51 @@
 	<cffunction name="popup" output="false" hint="I get details, seats, bags and for modal popup for each badge.">
 		<cfargument name="rc">
 
-				<!--- seatmap --->
-				<cfset rc.sCabin = 'Y'>
-				<cfset rc.nTripID = arguments.rc.nTripID>
-				<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		<!--- seatmap --->
+		<cfset rc.nTripID = arguments.rc.nTripID>
+		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 
-				<!---details: do nothing --->
+		<!---details: do nothing --->
 
-				<!--- baggage --->
-				<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
+		<!--- baggage --->
+		<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
 
-				<!--- email --->
-				<cfset local.userID = session.userID>
-				<cfset rc.qUser = variables.general.getUser( local.userID )>
-				<cfset local.userID = session.filters[arguments.rc.searchID].getProfileID()>
-				<cfset rc.qProfile = variables.general.getUser( local.userID )>
+		<!--- email --->
+		<cfset local.userID = session.userID>
+		<cfset rc.qUser = variables.general.getUser( local.userID )>
+		<cfset local.userID = session.filters[arguments.rc.searchID].getProfileID()>
+		<cfset rc.qProfile = variables.general.getUser( local.userID )>
 
-				<!--- TO DO: Update this logic once a flag is built into the system.  Also update the
-				code above to pull from the com object verses the general service. --->
-				<cfif rc.qUser.First_Name EQ 'STODefaultUser'>
-					<cfset rc.qUser = variables.general.getUser( 0 )>
-					<cfset rc.qProfile = variables.general.getUser( 0 )>
-				</cfif>
+		<!--- TO DO: Update this logic once a flag is built into the system.  Also update the
+		code above to pull from the com object verses the general service. --->
+		<cfif rc.qUser.First_Name EQ 'STODefaultUser'>
+			<cfset rc.qUser = variables.general.getUser( 0 )>
+			<cfset rc.qProfile = variables.general.getUser( 0 )>
+		</cfif>
 
-				<cfset variables.fw.setLayout("popup")>
+		<cfset variables.fw.setLayout("popup")>
+
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="summarypopup" output="false" hint="I get seat map for modal popup for summary page.">
 		<cfargument name="rc">
 
-				<cfset rc.sCabin = 'Y'>
-				<cfset rc.nTripID = arguments.rc.nTripID>
-				<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		<cfset rc.nTripID = arguments.rc.nTripID>
+		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
+		<cfset variables.fw.setLayout("popup")>
 
-				<cfset variables.fw.setLayout("popup")>
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="seatmap" output="false" hint="I get data to make a seat map.">
 		<cfargument name="rc">
-		<cfset rc.sCabin = 'Y'>
+
 		<cfset rc.nTripID = arguments.rc.nTripID>
 		<cfset rc.nSegment = arguments.rc.nSegment>
 		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
 		<cfset request.layout = false>
+
 		<cfreturn />
 	</cffunction>
 

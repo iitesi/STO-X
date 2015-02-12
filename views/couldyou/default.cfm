@@ -15,7 +15,20 @@
 				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.AIR.TOTAL );
 			}
 			if( typeof shortstravel.itinerary.HOTEL != "undefined" ){
-				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+				if (shortstravel.itinerary.HOTEL.Rooms[0].totalForStay != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+				}
+				else if (shortstravel.itinerary.HOTEL.Rooms[0].baseRate != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].baseRate );
+				}
+				else {
+					checkInDate = new Date(shortstravel.search.checkInDate);
+					checkOutDate = new Date(shortstravel.search.checkOutDate);
+					dateDiff = (checkOutDate.getTime() - checkInDate.getTime());
+					numNights = (dateDiff / (1000*60*60*24));
+					hotelTotal = parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].dailyRate ) * numNights;
+					shortstravel.itinerary.total += hotelTotal;
+				}
 			}
 			if( typeof shortstravel.itinerary.VEHICLE != "undefined" ){
 					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.VEHICLE.estimatedTotalAmount );
@@ -89,13 +102,18 @@
 						</cfif>
 						<cfif rc.hotelSelected>
 
+							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 							<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 								<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
 								<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
 								<cfset hotelText = 'Including taxes'>
-							<cfelse>
+							<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
 								<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
 								<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+								<cfset hotelText = 'Quoted at check-in'>
+							<cfelse>
+								<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+								<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
 								<cfset hotelText = 'Quoted at check-in'>
 							</cfif>
 

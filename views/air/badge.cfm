@@ -164,6 +164,7 @@
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
 								<cfset nFirstSeg = nSegment>
+								<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
 							</cfif>
 						</td>
 					</tr>
@@ -188,7 +189,7 @@
 						<span class="divider">/</span>
 					</a>
 					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-						<a href="?action=air.popup&sDetails=seatmap&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+						<a href="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 							Seats
 							<span class="divider">/</span>
 						</a>

@@ -213,6 +213,7 @@
 					this prevents thread name error - http://cfmlblog.adamcameron.me/2013/02/thread-longevity-weirdness.html
 					<cfset structdelete(cfthread,"#structKeyList(stThreads)#")>
 		--->
+		<!--- <cfdump var="#session.searches[arguments.Filter.getSearchID()].stTrips#" abort> --->
 
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
@@ -337,7 +338,11 @@
 													, request = xmlFormat(attributes.sMessage)
 													, response = xmlFormat(attributes.sResponse)  }>
 							<cfif local.faultstring DOES NOT CONTAIN 'Transaction Error: AppErrorSeverityLevel/1'>
-								<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode='Error' ) />
+								<cfset severityLevel = "Error" />
+								<cfif findNoCase('UNABLE TO FARE QUOTE', local.faultstring)>
+									<cfset severityLevel = "Info" />
+								</cfif>
+								<cfset application.fw.factory.getBean('BugLogService').notifyService( message=local.errorMessage, exception=errorException, severityCode=severityLevel ) />
 							</cfif>
 						</cfif>
 					</cfif>

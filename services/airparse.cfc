@@ -84,7 +84,15 @@
 					<cfset local.travelTime = 0>
 					<cfloop array="#arguments.stResponse[1].xmlChildren#" index="local.key2">
 						<cfif StructKeyExists(local.key2.xmlAttributes, "Key") AND local.key2.xmlAttributes.key EQ local.detailKey>
-							<cfset local.travelTime = local.key2.xmlAttributes.travelTime>
+							<cftry>
+								<cfif structKeyExists(local.key2.xmlAttributes, "TravelTime")>
+									<cfset local.travelTime = local.key2.xmlAttributes.travelTime>
+								<cfelseif structKeyExists(local.key2.xmlAttributes, "FlightTime")>
+									<cfset local.travelTime = local.key2.xmlAttributes.flightTime>
+								</cfif>
+								<cfcatch type="any">
+								</cfcatch>
+							</cftry>
 						</cfif>
 					</cfloop>
 
@@ -328,19 +336,24 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
 
-				<cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
+				<cfif NOT structKeyExists(local.stCombinedTrips, local.sTripKey) OR
+					(structKeyExists(local.stCombinedTrips, local.sTripKey) AND
+						((((structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare') AND arguments.stTrips2[local.sTripKey].privateFare)
+							OR (structKeyExists(arguments.stTrips2[local.sTripKey], 'PTC') AND arguments.stTrips2[local.sTripKey].PTC EQ 'GST'))
+							AND arguments.stTrips2[local.sTripKey].Total LTE local.stCombinedTrips[local.sTripKey].Total)
+						OR (arguments.stTrips2[local.sTripKey].Total LT local.stCombinedTrips[local.sTripKey].Total)))>
+				<!--- <cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
 						AND (structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 							AND arguments.stTrips2[local.sTripKey].privateFare )
 						OR (structKeyExists(arguments.stTrips2[local.sTripKey], 'PTC')
 							AND arguments.stTrips2[local.sTripKey].PTC EQ 'GST'))
-					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)>
+					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)> --->
 				<!--- <cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
 					AND structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 					AND arguments.stTrips2[local.sTripKey].privateFare )
 					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)> --->
 
 					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
-
 				</cfif>
 
 			</cfloop>

@@ -675,6 +675,7 @@
 																						, searchID = rc.searchID ) />
 					<cfset rc.Filter.setUserID(newUserID) />
 					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].setUserID(newUserID) />
+					<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber].getBookingDetail().setSaveProfile(true) />
 					<cfset rc.message.addInfo('Your profile has been created.') />
 				</cfif>
 			<cfelse>

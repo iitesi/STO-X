@@ -82,11 +82,24 @@
 						#replace(preTripApprovalList, ",", ", ", "all")#:<br />
 					</cfif>
 					<cfif structKeyExists(rc.Account, "ConfirmationMessage_Required") AND len(rc.Account.ConfirmationMessage_Required)>
-						#paragraphFormat(rc.Account.ConfirmationMessage_Required)#
+						#paragraphFormat(rc.Account.ConfirmationMessage_Required)#<br />
 					<cfelse>
 						WE HAVE CREATED YOUR RESERVATION AND EMAILED YOUR TRAVEL MANAGER FOR APPROVAL.<br />
-						YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.
+						YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.<br />
 					</cfif>
+					<cfif rc.airSelected AND structKeyExists(rc.Air, "LatestTicketingTime") AND isDate(rc.Air.LatestTicketingTime)>
+						<cfif rc.Filter.getAcctID() NEQ 272>
+							<cfset hourDue = 20 />
+							<cfset minuteDue = 00 />
+						<cfelse>
+							<cfset hourDue = 23 />
+							<cfset minuteDue = 59 />
+						</cfif>
+						<cfset responseDueBy = createDateTime(year(rc.Air.LatestTicketingTime), month(rc.Air.LatestTicketingTime), day(rc.Air.LatestTicketingTime), hourDue, minuteDue, 00) />
+					<cfelse>
+						<cfset responseDueBy = dateAdd('h', 23, now()) />
+					</cfif>
+					PLEASE NOTE A MANAGER RESPONSE IS DUE BY #timeFormat(responseDueBy, 'htt')# CENTRAL TIME ON #uCase(dateFormat(responseDueBy, 'mmmm d'))#.
 					<cfif showNoPreTripText
 						OR unusedTicketSelected>
 						<br /><br />
