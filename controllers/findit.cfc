@@ -36,8 +36,8 @@
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
 																					, Account = rc.Account
 																					, Policy = rc.Policy
-																					, sCabin = rc.class
-																					, bRefundable = rc.ref
+																					, sCabin = ( structKeyExists( rc, 'class') ? rc.class : 'Y' )
+																					, bRefundable = ( structKeyExists( rc, 'ref') ? rc.ref : 0 )
 																					, nTrip = ''
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0
