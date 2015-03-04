@@ -816,6 +816,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.bActive = local.policyResults.active>
 			</cfif>
 
+			<!--- F9 Time --->
+			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart )>
+			<cfif local.policyResults.message NEQ ''>
+				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+				<cfset local.bActive = local.policyResults.active>
+			</cfif>
+
 			<cfif local.bActive EQ 1>
 				<cfset local.stTrips[local.nTripKey].Policy = (ArrayIsEmpty(local.aPolicy) ? 1 : 0)>
 				<cfset local.stTrips[local.nTripKey].aPolicies = local.aPolicy>
@@ -989,6 +996,26 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<!--- Departure time is too close to current time. --->
 		<cfif DateDiff('h', Now(), arguments.depart) LTE 2>
 			<cfset local.policy.message = 'Departure time is within 2 hours'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyF9Time" output="false" hint="I check the policy.">
+		<cfargument name="depart" required="true">
+		<cfargument name="carriers" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<cfset local.carriers = arrayToList(arguments.carriers)>
+		<!--- Departure time is too close to current time. --->
+		<cfif dateDiff('h', now(), arguments.depart) LTE 24
+			AND local.carriers CONTAINS 'F9'>
+			<cfset local.policy.message = 'Frontier departure time is within 24 hours'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
 		</cfif>
