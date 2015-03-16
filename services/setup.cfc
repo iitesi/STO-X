@@ -487,6 +487,7 @@
 			, Policy_ComplexFee
 			, BookIt_MonthFee
 			, BookIt_TransFee
+			, Policy_FindItChangeAir
 			, Policy_AllowRequests
 			, Policy_AirApproval
 			, Policy_HotelApproval

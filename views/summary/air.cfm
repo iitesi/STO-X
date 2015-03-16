@@ -8,7 +8,7 @@
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">
 
 		<cfif NOT rc.filter.getFindIt()
-			OR rc.policy.getFindItChangeAir()>
+			OR rc.policy.Policy_FindItChangeAir>
 			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
 		</cfif>
 
