@@ -7,7 +7,10 @@
 
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">
 
-		<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
+		<cfif NOT rc.filter.getFindIt()
+			OR rc.policy.getFindItChangeAir()>
+			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
+		</cfif>
 
 		<table width="1000">
 		<tr>
