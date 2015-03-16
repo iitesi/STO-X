@@ -817,7 +817,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfif>
 
 			<!--- F9 Time --->
-			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart )>
+			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart
+													, carriers = local.stTrip.Carriers )>
 			<cfif local.policyResults.message NEQ ''>
 				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
 				<cfset local.bActive = local.policyResults.active>
