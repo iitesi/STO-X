@@ -18,6 +18,7 @@ function Hotel(){
     	transportation: ""
     };
     this.policy = false;
+    this.preferredProperty = false;
     this.preferredVendor = false;
     this.rooms = [];
     this.roomsRequested = false;

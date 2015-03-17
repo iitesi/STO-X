@@ -13,23 +13,31 @@
 				<td></td>
 				
 				<td valign="top">
-					
-					<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
-						AND rc.Hotel.getPreferredVendor()>
-						<span class="ribbon ribbon-l-pref-cont"></span>
-					<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()
-						AND rc.Hotel.getPreferredVendor()>
-						<span class="ribbon ribbon-l-pref-govt"></span>
-					<cfelseif rc.Hotel.getPreferredVendor()>
-						<span class="ribbon ribbon-l-pref"></span>
-					<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()>
-						<span class="ribbon ribbon-l-govt"></span>
-					<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
-						<span class="ribbon ribbon-l-cont"></span>
+					<!--- If DHL --->
+					<cfif rc.Filter.getAcctID() EQ 497 OR rc.Filter.getAcctID() EQ 499>
+						<cfif rc.Hotel.getPreferredProperty()>
+							<span class="ribbon ribbon-l-DHL-prefprop"></span>
+						<cfelseif rc.Hotel.getPreferredVendor()>
+							<span class="ribbon ribbon-l-DHL-prefvendor"></span>
+						</cfif>
+					<!--- If any other account --->
+					<cfelse>
+						<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
+							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+							<span class="ribbon ribbon-l-pref-cont"></span>
+						<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()
+							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+							<span class="ribbon ribbon-l-pref-govt"></span>
+						<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
+							<span class="ribbon ribbon-l-pref"></span>
+						<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()>
+							<span class="ribbon ribbon-l-govt"></span>
+						<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
+							<span class="ribbon ribbon-l-cont"></span>
+						</cfif>
 					</cfif>
 
 					<h2>HOTEL</h2>
-
 				</td>
 
 				<td colspan="3">

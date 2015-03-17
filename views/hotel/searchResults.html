@@ -147,12 +147,16 @@
                     <div ng-show="searchCompleted && filteredHotels.length" >
 
                         <div ng-repeat="item in visibleHotels" class="badge hotel">
-                            <!--Ribbon overlays-->
-                            <span class="ribbon ribbon-r-pref" ng-show="item.hotel.preferredVendor && !item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate()"></span>
-                            <span class="ribbon ribbon-r-cont" ng-show="!item.hotel.preferredVendor && item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate()"></span>
-                            <span class="ribbon ribbon-r-pref-govt" ng-show="item.hotel.preferredVendor && item.hotel.hasGovernmentRate()"></span>
-                            <span class="ribbon ribbon-r-pref-cont" ng-show="item.hotel.preferredVendor && item.hotel.hasCorporateRate()"></span>
-                            <span class="ribbon ribbon-r-govt" ng-show="!item.hotel.preferredVendor && item.hotel.hasGovernmentRate()"></span>
+                            <!--Ribbon overlays for DHL-->
+                            <span class="ribbon ribbon-r-DHL-prefprop" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredProperty"></span>
+                            <span class="ribbon ribbon-r-DHL-prefvendor" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredVendor && !item.hotel.preferredProperty"></span>
+
+                            <!--Ribbon overlays for all other accounts-->
+                            <span class="ribbon ribbon-r-pref" ng-show="(item.hotel.preferredProperty || item.hotel.preferredVendor) && !item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
+                            <span class="ribbon ribbon-r-cont" ng-show="!item.hotel.preferredProperty && !item.hotel.preferredVendor && item.hotel.hasCorporateRate() && !item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
+                            <span class="ribbon ribbon-r-pref-govt" ng-show="(item.hotel.preferredProperty || item.hotel.preferredVendor) && item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
+                            <span class="ribbon ribbon-r-pref-cont" ng-show="(item.hotel.preferredProperty || item.hotel.preferredVendor) && item.hotel.hasCorporateRate() && search.acctID != 497 && search.acctID != 499"></span>
+                            <span class="ribbon ribbon-r-govt" ng-show="!item.hotel.preferredProperty && !item.hotel.preferredVendor && item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
 
                             <div class="signature-image">
                                 <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">

@@ -970,6 +970,26 @@ tr.hotel-room td{
 	background: url(../img/ribbon/ribbon-r-pref-govt.png) no-repeat;
 	right: 0;
 }
+.ribbon-l-DHL-prefprop {
+	background: url(../img/ribbon/ribbon-r-DHL-prefprop.png) no-repeat;
+	width: 102px;
+	left: 0;
+}
+.ribbon-r-DHL-prefprop {
+	background: url(../img/ribbon/ribbon-r-DHL-prefprop.png) no-repeat;
+	width: 102px;
+	right: 0;
+}
+.ribbon-l-DHL-prefvendor {
+	background: url(../img/ribbon/ribbon-r-DHL-prefvendor.png) no-repeat;
+	width: 35px;
+	left: 0;
+}
+.ribbon-r-DHL-prefvendor {
+	background: url(../img/ribbon/ribbon-r-DHL-prefvendor.png) no-repeat;
+	width: 35px;
+	right: 0;
+}
 
 /*
 ----------------------------------------------------------------------------------------------------------
