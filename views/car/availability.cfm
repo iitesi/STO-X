@@ -124,8 +124,13 @@ OR NOT rc.Filter.getAir()>
 												<cfset buttonType="btn-success" />
 											</cfif>
 											<!--- If corporate/contracted rate --->
-											<cfif stRate.Corporate>
+											<cfif stRate.Corporate
+												AND rc.Filter.getAcctID() NEQ 497
+												AND rc.Filter.getAcctID() NEQ 499>
 												<span class="ribbon ribbon-r-cont-small"></span>
+												<!--- CONTRACTED --->
+											<cfelseif stRate.Corporate>
+												<img src="assets/img/clients/dhlPreferred.png">
 												<!--- CONTRACTED --->
 											</cfif><br />
 											<cfif stRate.Currency IS 'USD'>
