@@ -99,6 +99,9 @@
 					<cfelse>
 						<cfset responseDueBy = dateAdd('h', 23, now()) />
 					</cfif>
+					<cfif arrayFind(rc.Air.Carriers, 'F9')>
+						<cfset responseDueBy = dateAdd('h', 4, now()) />
+					</cfif>
 					PLEASE NOTE A MANAGER RESPONSE IS DUE BY #timeFormat(responseDueBy, 'htt')# CENTRAL TIME ON #uCase(dateFormat(responseDueBy, 'mmmm d'))#.
 					<cfif showNoPreTripText
 						OR unusedTicketSelected>

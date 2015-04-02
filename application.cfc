@@ -1,4 +1,3 @@
-
 <cfcomponent extends="org.corfield.framework">
 
 	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
@@ -32,6 +31,7 @@
 		usingSubsystems = false
 	}>
 
+
 	<cffunction name="setupApplication">
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
 				.init( defaultProperties = { currentServerName=cgi.http_host }) />
@@ -42,6 +42,7 @@
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
 	</cffunction>
 
+
 	<cffunction name="setupSession">
 		<cfset session.searches = {}>
 		<cfset session.filters = {}>
@@ -49,16 +50,14 @@
 		<cfset controller( 'setup.setAccount' )>
 	</cffunction>
 
-	<cffunction name="setupRequest">
 
+	<cffunction name="setupRequest">
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
 			AND request.context.action NEQ 'main.notfound'
 			AND request.context.action NEQ 'logout.default'>
 			<cfset var action = ListFirst(request.context.action, '.')>
-
 			<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
-
 		<cfelse>
 			<cfif NOT findNoCase( ".cfc", cgi.script_name )>
 				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
@@ -107,9 +106,11 @@
 		</cfif>
 	</cffunction>
 
+
 	<cffunction name="onMissingView" hint="I handle missing views.">
 		<cfreturn view( "main/notfound" )>
 	</cffunction>
+
 
 	<cffunction name="onError" returnType="void">
 		<cfargument name="Exception" required=true/>
@@ -179,55 +180,43 @@
 		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
 			<cfdump var="#local.errorException#" />
 		</cfif>
-
 	</cffunction>
 
+
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">
-        <cfargument name="cfcname" type="string" required="true">
-        <cfargument name="method" type="string" required="true">
-        <cfargument name="args" type="struct" required="true">
+		<cfargument name="cfcname" type="string" required="true">
+		<cfargument name="method" type="string" required="true">
+		<cfargument name="args" type="struct" required="true">
 
-		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'PROD'>
-
+		<!--- if we are in production - lets check to see where the request is coming from
+					if its not one of our servers we'll end things with a 403  --->
+		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'prod'>
 			<cfif NOT (
 					findNoCase( "shortstravel.com", cgi.http_referer ) OR
 					findNoCase( "shortstravelonline.com", cgi.http_referer ) OR
 					findNoCase( "b-hive.com", cgi.http_referer ) OR
 					findNoCase( "b-hives.com", cgi.http_referer )
 				)>
-
 				<cfheader statusCode="403" statustext="Not Authorized" />
 				<cfreturn />
 			</cfif>
-
 		</cfif>
 
-		<cfif NOT structKeyExists( cookie, "userId" ) OR  NOT structKeyExists( cookie, "acctId" ) OR NOT structKeyExists( cookie, "date" ) OR NOT structKeyExists( cookie, "token" )>
-			<cfset local.isAuthorized = false />
-		<cfelse>
-			<cfset local.isAuthorized = application.fw.factory.getBean( "AuthorizationService" ).checkCredentials( cookie.userId, cookie.acctId, cookie.date, cookie.token )>
-		</cfif>
-
-		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() NEQ 'PROD'
-			OR local.isAuthorized>
+		<!--- then we can check if our session.isAuthorized is already set
+				  this should have been set in the original request from search
+				  again, if this isn't present we'll abort with a 403 --->
+		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ true>
 			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
-
 			<cfif NOT isSimpleValue( local.result )>
 				<cfset local.result = serializeJSON( local.result ) />
 			</cfif>
-
 			<cfif isJSON( local.result )>
 				<cfset local.responseMimeType = "application/json" />
 			<cfelse>
 				<cfset local.responseMimeType = "application/javascript" />
 			</cfif>
-
 			<cfset local.binaryResponse = toBinary(toBase64( local.result )) />
-
-			<!---<cfheader name="content-length" value="#arrayLen( local.binaryResponse )#" />--->
-
 			<cfcontent type="#local.responseMimeType#" variable="#local.binaryResponse#" />
-
 		<cfelse>
 			<cfheader statusCode="403" statustext="Not Authorized" />
 		</cfif>

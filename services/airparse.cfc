@@ -336,19 +336,24 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfif IsStruct(local.stCombinedTrips) AND IsStruct(arguments.stTrips2)>
 			<cfloop collection="#arguments.stTrips2#" item="local.sTripKey">
 
-				<cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
+				<cfif NOT structKeyExists(local.stCombinedTrips, local.sTripKey) OR
+					(structKeyExists(local.stCombinedTrips, local.sTripKey) AND
+						((((structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare') AND arguments.stTrips2[local.sTripKey].privateFare)
+							OR (structKeyExists(arguments.stTrips2[local.sTripKey], 'PTC') AND arguments.stTrips2[local.sTripKey].PTC EQ 'GST'))
+							AND arguments.stTrips2[local.sTripKey].Total LTE local.stCombinedTrips[local.sTripKey].Total)
+						OR (arguments.stTrips2[local.sTripKey].Total LT local.stCombinedTrips[local.sTripKey].Total)))>
+				<!--- <cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
 						AND (structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 							AND arguments.stTrips2[local.sTripKey].privateFare )
 						OR (structKeyExists(arguments.stTrips2[local.sTripKey], 'PTC')
 							AND arguments.stTrips2[local.sTripKey].PTC EQ 'GST'))
-					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)>
+					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)> --->
 				<!--- <cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
 					AND structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 					AND arguments.stTrips2[local.sTripKey].privateFare )
 					OR NOT structKeyExists(local.stCombinedTrips, local.sTripKey)> --->
 
 					<cfset local.stCombinedTrips[local.sTripKey] = structCopy(arguments.stTrips2[local.sTripKey])>
-
 				</cfif>
 
 			</cfloop>
@@ -755,73 +760,70 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.bActive = 1>
 
 			<cfif arguments.sType EQ 'Fare'>
-				<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
-				<cfif arguments.Policy.Policy_AirLowRule EQ 1
-				AND IsNumeric(arguments.Policy.Policy_AirLowPad)
-				AND local.stTrip.Total GT local.nLowFare>
-					<cfset ArrayAppend(local.aPolicy, 'Not the lowest fare')>
-					<cfif arguments.Policy.Policy_AirLowDisp EQ 1>
-						<cfset local.bActive = 0>
-					</cfif>
+				<!--- Low fare --->
+				<cfset local.policyResults = policyLowFare( Policy = arguments.Policy
+															, total = local.stTrip.Total
+															, lowestfare = local.nLowFare )>
+				<cfif local.policyResults.message NEQ ''>
+					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+					<cfset local.bActive = local.policyResults.active>
 				</cfif>
-
-				<!--- Out of policy if the total fare is over the maximum allowed fare. --->
-				<cfif arguments.Policy.Policy_AirMaxRule EQ 1
-				AND IsNumeric(arguments.Policy.Policy_AirMaxTotal)
-				AND local.stTrip.Total GT arguments.Policy.Policy_AirMaxTotal>
-					<cfset ArrayAppend(local.aPolicy, 'Fare greater than #DollarFormat(arguments.Policy.Policy_AirMaxTotal)#')>
-					<cfif arguments.Policy.Policy_AirMaxDisp EQ 1>
-						<cfset local.bActive = 0>
-					</cfif>
+				<!--- Max fare --->
+				<cfset local.policyResults = policyMaxFare( Policy = arguments.Policy
+															, total = local.stTrip.Total )>
+				<cfif local.policyResults.message NEQ ''>
+					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+					<cfset local.bActive = local.policyResults.active>
 				</cfif>
-
-				<!--- Don't display when non refundable --->
-				<cfif arguments.Policy.Policy_AirRefRule EQ 1
-				AND arguments.Policy.Policy_AirRefDisp EQ 1
-				AND local.stTrip.Ref EQ 0>
-					<cfset ArrayAppend(local.aPolicy, 'Hide non refundable fares')>
-					<cfset local.bActive = 0>
+				<!--- Non refundable / Refundable --->
+				<cfset local.policyResults = policyRefundable( Policy = arguments.Policy
+																, refundable = local.stTrip.Ref )>
+				<cfif local.policyResults.message NEQ ''>
+					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+					<cfset local.bActive = local.policyResults.active>
 				</cfif>
-
-				<!--- Don't display when refundable --->
-				<cfif arguments.Policy.Policy_AirNonRefRule EQ 1
-				AND arguments.Policy.Policy_AirNonRefDisp EQ 1
-				AND local.stTrip.Ref EQ 1>
-					<cfset ArrayAppend(local.aPolicy, 'Hide refundable fares')>
-					<cfset local.bActive = 0>
-				</cfif>
-
-				<!--- Remove first refundable fares --->
-				<cfif local.stTrip.Class EQ 'F'
-				AND local.stTrip.Ref EQ 1>
-					<cfset ArrayAppend(local.aPolicy, 'Hide UP fares')>
-					<cfset local.bActive = 0>
+				<!--- UP fares --->
+				<cfset local.policyResults = policyUpFares( Policy = arguments.Policy
+															, refundable = local.stTrip.Ref
+															, class = local.stTrip.Class )>
+				<cfif local.policyResults.message NEQ ''>
+					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+					<cfset local.bActive = local.policyResults.active>
 				</cfif>
 			</cfif>
 
-			<!--- Out of policy if they cannot book non preferred carriers. --->
-			<cfif arguments.Policy.Policy_AirPrefRule EQ 1
-			AND local.stTrip.Preferred EQ 0>
-				<cfset ArrayAppend(local.aPolicy, 'Not a preferred carrier')>
-				<cfif arguments.Policy.Policy_AirPrefDisp EQ 1>
-					<cfset local.bActive = 0>
-				</cfif>
+			<!--- Non preferred --->
+			<cfset local.policyResults = policyNonPreferred( Policy = arguments.Policy
+															, preferred = local.stTrip.Preferred )>
+			<cfif local.policyResults.message NEQ ''>
+				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+				<cfset local.bActive = local.policyResults.active>
 			</cfif>
 
-			<!--- Out of policy if the carrier is blacklisted (still shows though). --->
-			<cfif local.bBlacklisted>
-				<cfloop array="#local.stTrip.Carriers#" item="local.sCarrier">
-					<cfif ArrayFindNoCase(arguments.Account.aNonPolicyAir, local.sCarrier)>
-						<cfset ArrayAppend(local.aPolicy, 'Out of policy carrier')>
-					</cfif>
-				</cfloop>
+			<!--- Non preferred --->
+			<cfset local.policyResults = policyBlacklisted( Policy = arguments.Policy
+															, carriers = local.stTrip.Carriers
+															, blacklisted = local.bBlacklisted )>
+			<cfif local.policyResults.message NEQ ''>
+				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+				<cfset local.bActive = local.policyResults.active>
 			</cfif>
 
-			<!--- Departure time is too close to current time. --->
-			<cfif DateDiff('h', Now(), local.stTrip.Depart) LTE 2>
-				<cfset ArrayAppend(aPolicy, 'Departure time is within 2 hours')>
-				<cfset local.bActive = 0>
+			<!--- Time --->
+			<cfset local.policyResults = policyTime( depart = local.stTrip.Depart )>
+			<cfif local.policyResults.message NEQ ''>
+				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+				<cfset local.bActive = local.policyResults.active>
 			</cfif>
+
+			<!--- F9 Time --->
+			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart
+													, carriers = local.stTrip.Carriers )>
+			<cfif local.policyResults.message NEQ ''>
+				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+				<cfset local.bActive = local.policyResults.active>
+			</cfif>
+
 			<cfif local.bActive EQ 1>
 				<cfset local.stTrips[local.nTripKey].Policy = (ArrayIsEmpty(local.aPolicy) ? 1 : 0)>
 				<cfset local.stTrips[local.nTripKey].aPolicies = local.aPolicy>
@@ -849,6 +851,201 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfif>
 
 		<cfreturn local.stTrips/>
+	</cffunction>
+
+	<cffunction name="policyLowFare" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="total" required="true">
+		<cfargument name="lowestfare" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
+		<cfif arguments.Policy.Policy_AirLowRule EQ 1
+			AND isNumeric(arguments.Policy.Policy_AirLowPad)
+			AND arguments.total GT arguments.lowestfare>
+			<cfset local.policy.message = 'Not the lowest fare'>
+			<cfset local.policy.policy = 0>
+			<cfif arguments.Policy.Policy_AirLowDisp EQ 1>
+				<cfset local.policy.active = 0>
+			</cfif>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyMaxFare" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="total" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Out of policy if the total fare is over the maximum allowed fare. --->
+		<cfif arguments.Policy.Policy_AirMaxRule EQ 1
+			AND isNumeric(arguments.Policy.Policy_AirMaxTotal)
+			AND arguments.total GT arguments.Policy.Policy_AirMaxTotal>
+			<cfset local.policy.message = 'Fare greater than #DollarFormat(arguments.Policy.Policy_AirMaxTotal)#'>
+			<cfset local.policy.policy = 0>
+			<cfif arguments.Policy.Policy_AirMaxDisp EQ 1>
+				<cfset local.policy.active = 0>
+			</cfif>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyRefundable" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="refundable" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Don't display when non refundable / refundable --->
+		<cfif arguments.Policy.Policy_AirRefRule EQ 1
+			AND arguments.Policy.Policy_AirRefDisp EQ 1
+			AND arguments.refundable EQ 0>
+			<cfset local.policy.message = 'Hide non refundable fares'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		<cfelseif arguments.Policy.Policy_AirNonRefRule EQ 1
+			AND arguments.Policy.Policy_AirNonRefDisp EQ 1
+			AND arguments.refundable EQ 1>
+			<cfset local.policy.message = 'Hide refundable fares'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyUpFares" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="refundable" required="true">
+		<cfargument name="class" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Remove first refundable fares --->
+		<cfif arguments.class EQ 'F'
+			AND arguments.refundable EQ 1>
+			<cfset local.policy.message = 'Hide UP fares'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyNonPreferred" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="preferred" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Out of policy if they cannot book non preferred carriers. --->
+		<cfif arguments.Policy.Policy_AirPrefRule EQ 1
+			AND arguments.preferred EQ 0>
+			<cfset local.policy.message = 'Not a preferred carrier'>
+			<cfset local.policy.policy = 0>
+			<cfif arguments.Policy.Policy_AirPrefDisp EQ 1>
+				<cfset local.policy.active = 0>
+			</cfif>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyBlacklisted" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="carriers" required="true">
+		<cfargument name="blacklisted" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Out of policy if the carrier is blacklisted (still shows though). --->
+		<cfif arguments.blacklisted>
+			<cfloop array="#arguments.carriers#" item="local.sCarrier">
+				<cfif arrayFindNoCase(arguments.Account.aNonPolicyAir, local.sCarrier)>
+					<cfset local.policy.message = 'Out of policy carrier'>
+					<cfset local.policy.policy = 0>
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyTime" output="false" hint="I check the policy.">
+		<cfargument name="depart" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Departure time is too close to current time. --->
+		<cfif DateDiff('h', Now(), arguments.depart) LTE 2>
+			<cfset local.policy.message = 'Departure time is within 2 hours'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyF9Time" output="false" hint="I check the policy.">
+		<cfargument name="depart" required="true">
+		<cfargument name="carriers" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<cfset local.carriers = arrayToList(arguments.carriers)>
+		<!--- Departure time is too close to current time. --->
+		<cfif dateDiff('h', now(), arguments.depart) LTE 24
+			AND local.carriers CONTAINS 'F9'>
+			<cfset local.policy.message = 'Frontier departure time is within 24 hours'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
+	</cffunction>
+
+	<cffunction name="policyClass" output="false" hint="I check the policy.">
+		<cfargument name="Policy" required="true">
+		<cfargument name="class" required="true">
+
+		<cfset local.policy.message = ''>
+		<cfset local.policy.active = 1>
+		<cfset local.policy.policy = 1>
+
+		<!--- Check to see if the traveler has access to first or businss class. --->
+		<cfif NOT arguments.Policy.Policy_AirBusinessClass
+			AND arguments.class EQ 'C'>
+			<cfset local.policy.message = 'Cannot book business class'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		<cfelseif arguments.Policy.Policy_AirFirstClass
+			AND arguments.class EQ 'F'>
+			<cfset local.policy.message = 'Cannot book first class'>
+			<cfset local.policy.policy = 0>
+			<cfset local.policy.active = 0>
+		</cfif>
+
+		<cfreturn local.policy />
 	</cffunction>
 
 	<cffunction name="sortByPreferred" output="false" hint="I take the price sorts and weight the preferred carriers.">

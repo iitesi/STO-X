@@ -25,24 +25,24 @@
 		<cfset local.stSelected[1].Groups = structNew("linked")>
 		<cfset local.stSelected[2].Groups = structNew("linked")>
 		<cfset local.stSelected[3].Groups = structNew("linked")>
+
 		<cfloop from="0" to="#arrayLen(structKeyArray(local.trip.Groups))-1#" index="local.index">
 			<cfset local.stSelected[local.index].Groups[0].segments = structNew("linked")>
-			<cfloop array="#structSort(local.trip.Groups[local.index].segments, 'text', 'asc', 'departureTime')#" index="local.segmentIndex" item="local.segment">
-				<cfset local.stSelected[local.index].Groups[0].segments[local.segment] = local.trip.Groups[local.index].segments[local.segment]>
+			<cfloop collection="#local.trip.Groups[local.index].segments#" index="local.segmentIndex" item="local.segment">
+				<cfset local.stSelected[local.index].Groups[0].segments[local.segmentIndex] = local.segment>
 			</cfloop>
 		</cfloop>
 
 		<cfset local.pricedTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.SearchID
 																					, Account = rc.Account
 																					, Policy = rc.Policy
-																					, sCabin = 'Y'
-																					, bRefundable = 0
+																					, sCabin = ( structKeyExists( rc, 'class') ? rc.class : 'Y' )
+																					, bRefundable = ( structKeyExists( rc, 'ref') ? rc.ref : 0 )
 																					, nTrip = ''
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0
 																					, stSelected = stSelected
 																					, findIt = 1)>
-
 		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
 		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
 
