@@ -21,8 +21,8 @@
 				<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
 				<cfset local.airSelected = (structKeyExists(itinerary, 'Air') ? true : false)>
 				<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')>
-				<cfset local.hotelSelected = (structKeyExists(itinerary, 'Hotel') ? true : false)>
-				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
+				<cfset local.hotelSelected = (structKeyExists(itinerary, 'HotelNew') ? true : false)>
+				<cfset local.Hotel = (structKeyExists(itinerary, 'HotelNew') ? itinerary.HotelNew : '')>
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<cfset local.specialCarReservation = false />
