@@ -40,10 +40,10 @@
 					</li>
 					<li class="divider"></li>
 					<li>
-						<a href="http://railoqa/log.cfm?searchID=#rc.searchID#&top=5" target="_blank">View Top 2 Logs</a>
+						<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=5" target="_blank">View Top 2 Logs</a>
 					</li>
 					<li>
-						<a href="http://railoqa/log.cfm?searchID=#rc.searchID#&top=10" target="_blank">View Top 10 Logs</a>
+						<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=10" target="_blank">View Top 10 Logs</a>
 					</li>
 					<li class="divider"></li>
 					<li>
