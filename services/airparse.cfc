@@ -340,8 +340,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					(structKeyExists(local.stCombinedTrips, local.sTripKey) AND
 						((((structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare') AND arguments.stTrips2[local.sTripKey].privateFare)
 							OR (structKeyExists(arguments.stTrips2[local.sTripKey], 'PTC') AND arguments.stTrips2[local.sTripKey].PTC EQ 'GST'))
-							AND arguments.stTrips2[local.sTripKey].Total LTE local.stCombinedTrips[local.sTripKey].Total)
-						OR (arguments.stTrips2[local.sTripKey].Total LT local.stCombinedTrips[local.sTripKey].Total)))>
+							AND (structKeyExists(arguments.stTrips2[local.sTripKey], "Total") AND arguments.stTrips2[local.sTripKey].Total LTE local.stCombinedTrips[local.sTripKey].Total))
+						OR (structKeyExists(arguments.stTrips2[local.sTripKey], "Total") AND arguments.stTrips2[local.sTripKey].Total LT local.stCombinedTrips[local.sTripKey].Total)))>
 				<!--- <cfif ( structKeyExists(local.stCombinedTrips, local.sTripKey)
 						AND (structKeyExists(arguments.stTrips2[local.sTripKey], 'privateFare')
 							AND arguments.stTrips2[local.sTripKey].privateFare )
