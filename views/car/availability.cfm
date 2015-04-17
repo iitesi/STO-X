@@ -20,6 +20,9 @@ OR NOT rc.Filter.getAir()>
 			AND application.stAirports[ rc.Filter.getCarPickupAirport() ].stateCode EQ 'LA' ))>
 		<div class="alert alert-info">Enterprise mandated for all in-state vehicle rentals.</div>
 	</cfif>
+	<cfif ( rc.acctID EQ 469>
+		<div class="alert alert-info"><b>IMPORTANT:</b> If requesting an <b>Enterprise car delivery</b> prior to 9:00am local time, please contact the Enterprise location with your confirmation number and request a <b>"Quick Start"</b> delivery, the Enterprise location will deliver the car to the Grange location the evening prior and leave the keys with Security.</div>
+	</cfif>
 
 	<div>
 		<cfoutput>
