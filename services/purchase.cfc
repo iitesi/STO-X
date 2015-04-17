@@ -189,7 +189,13 @@
 																									, Air = arguments.Air
 																									, airSelected = airSelected )>
 
-							<cfif NOT verifyStoredFareResponse.error>
+							<cfset local.agentErrorQueue = false />
+							<!--- STM-5329: Bypassing an "ERROR 2308 - NO STORED FARES EXIST" response for Frontier --->
+							<cfif verifyStoredFareResponse.error AND carrier IS 'F9' AND findNoCase("NO STORED FARES EXIST", verifyStoredFareResponse.message)>
+								<cfset local.agentErrorQueue = true />
+							</cfif>
+
+							<cfif NOT verifyStoredFareResponse.error OR agentErrorQueue>
 								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
 									<!--- 
 									If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
@@ -234,6 +240,7 @@
 																							, hostToken = arguments.hostToken
 																							, bookingPCC = arguments.pccBooking
 																							, searchID = arguments.searchID
+																							, agentError = agentErrorQueue
 																							, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
 																							, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
 																							, developer = arguments.developer
