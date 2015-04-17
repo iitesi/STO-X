@@ -16,6 +16,10 @@
 			</cfcatch>
 		</cftry>
 
+		<cfif structKeyExists( rc.itinerary, "HotelNew" )>
+			<cfset rc.itinerary.Hotel = rc.itinerary.HotelNew />
+		</cfif>
+
 		<!---Redirect if not all specified services are selected--->
 		<cfif arguments.rc.Filter.getAir() AND NOT structKeyExists( rc.itinerary, "Air" ) >
 			<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.Filter.getSearchID()#')>
@@ -37,8 +41,6 @@
 			<cfset rc.startDate = arguments.rc.Filter.getCarPickupDateTime() />
 			<cfset rc.endDate = arguments.rc.Filter.getCarDropOffDateTime() />
 		</cfif>
-
-
 
 		<!---Check to see if currency values are all the same...if not, redirect to summary--->
 		<cfset var currencies = arrayNew(1) />
@@ -179,7 +181,7 @@
 
 
 				<!---Update the stItinerary--->
-				<cfset session.searches[ rc.searchId ].stItinerary.hotel = newHotel />
+				<cfset session.searches[ rc.searchId ].stItinerary.hotelNew = newHotel />
 
 				<cfset variables.bf.getBean( "HotelService" ).getRoomRateRules( searchId=arguments.rc.searchId,
 																				propertyId=newHotel.getPropertyID(),
@@ -232,12 +234,8 @@
 				</cfcatch>
 			</cftry>
 
-
 			<!---Save the updated search object to the database--->
 			<cfset fw.getBeanFactory().getBean('SearchService').save( argumentCollection = newVals ) />
-
-
-
 		</cfif>
 
 		<!---Set lowest trip cost found by CouldYou--->

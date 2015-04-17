@@ -845,7 +845,7 @@
 					</cfif>
 
 					<!--- Update session with new Hotel record --->
-					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
+					<cfset session.searches[rc.SearchID].stItinerary.HotelNew = Hotel>
 					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
 					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Update universal version --->
@@ -964,7 +964,7 @@
 						OR find('INVALID GUARANTEE INDICATOR', errorList)
 						OR find('DEPOSIT REQ', errorList)
 						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList))>
-						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
+						<cfset session.searches[rc.searchID].stItinerary.HotelNew.getRooms()[1].setDepositRequired( true )>
 					</cfif>
 					<cfset rc.message.addError(errorList)>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>

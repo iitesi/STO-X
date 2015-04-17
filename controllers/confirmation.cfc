@@ -7,8 +7,8 @@
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false) />
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '') />
 
-		<cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'Hotel') ? true : false) />
-		<cfset rc.Hotel = (structKeyExists(rc.itinerary, 'Hotel') ? rc.itinerary.Hotel : '') />
+		<cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'HotelNew') ? true : false) />
+		<cfset rc.Hotel = (structKeyExists(rc.itinerary, 'HotelNew') ? rc.itinerary.HotelNew : '') />
 
 		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false) />
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '') />
