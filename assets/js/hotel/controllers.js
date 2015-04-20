@@ -625,7 +625,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
 							+ '&totalForStay=' + Room.totalForStay
-							+ '&isInPolicy=' + Room.isInPolicy;
+							+ '&isInPolicy=' + Room.isInPolicy
+							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;
 	}
 
 

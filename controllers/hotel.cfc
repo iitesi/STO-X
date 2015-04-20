@@ -24,7 +24,8 @@
 												 propertyId=arguments.rc.propertyId,
 												 ratePlanType=arguments.rc.ratePlanType,
 												 totalForStay=arguments.rc.totalForStay,
-												 isInPolicy=arguments.rc.isInPolicy ) />
+												 isInPolicy=arguments.rc.isInPolicy,
+												 outOfPolicyMessage=arguments.rc.outOfPolicyMessage ) />
 
 		<cfset local.HotelService.getRoomRateRules( searchId=arguments.rc.searchId,
 												 	propertyId=arguments.rc.propertyId,
@@ -77,9 +78,6 @@
 		<cfset variables.bf.getBean( "SearchService" ).save( searchID=arguments.rc.searchId, hotel=false ) />
 		<cfif structKeyExists( session.searches[ arguments.rc.searchId ].stItinerary, "Hotel" )>
 			<cfset structDelete( session.searches[ arguments.rc.searchId ].stItinerary, "Hotel" ) />
-		</cfif>
-		<cfif structKeyExists( session.searches[ arguments.rc.searchId ].stItinerary, "HotelNew" )>
-			<cfset structDelete( session.searches[ arguments.rc.searchId ].stItinerary, "HotelNew" ) />
 		</cfif>
 		<cfif structKeyExists( session.searches[ arguments.rc.searchId ], "Hotels" )>
 			<cfset session.searches[ arguments.rc.searchId ].Hotels = arrayNew( 1 ) />

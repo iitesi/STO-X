@@ -20,6 +20,7 @@ function Hotel(){
     this.policy = false;
     this.preferredProperty = false;
     this.preferredVendor = false;
+    this.outOfPolicyVendor = false;
     this.rooms = [];
     this.roomsRequested = false;
     this.roomsReturned = false;

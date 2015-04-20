@@ -86,7 +86,8 @@ services.factory( "HotelService", function( $window, $http ){
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
 					hr.dailyRate = Math.round( hr.dailyRate );
-					hr.setInPolicy( policy );
+					hr.setInPolicy( policy, Hotel.outOfPolicyVendor );
+					hr.setOutOfPolicyMessage( hr.isInPolicy, Hotel.outOfPolicyVendor );
 					rooms.push( hr );
 				}
 				Hotel.roomsReturned = true;

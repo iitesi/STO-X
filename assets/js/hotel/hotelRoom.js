@@ -11,6 +11,7 @@ function HotelRoom(){
 	this.totalForStayCurrency = '';
 	this.totalIncludesMessage = '';
 	this.isInPolicy = true;
+	this.outOfPolicyMessage = '';
 	this.ratePlanType = '';
 	this.baseRate = 0;
 	this.baseRateCurrency = '';
@@ -25,14 +26,25 @@ HotelRoom.prototype.populate = function( obj ){
     }
 }
 
-HotelRoom.prototype.setInPolicy = function( policy ){
+HotelRoom.prototype.setInPolicy = function( policy, outOfPolicyVendor ){
 	var inPolicy = true;
 
-	if( policy.POLICY_HOTELMAXRULE == '1' ){
-		if( this.dailyRate > policy.POLICY_HOTELMAXRATE ){
-			inPolicy = false;
-		}
+	if( outOfPolicyVendor == true || (policy.POLICY_HOTELMAXRULE == '1' && this.dailyRate > policy.POLICY_HOTELMAXRATE)){
+		inPolicy = false;
 	}
 
 	this.isInPolicy = inPolicy;
+}
+
+HotelRoom.prototype.setOutOfPolicyMessage = function( isInPolicy, outOfPolicyVendor ){
+	var outOfPolicyMessage = "";
+
+	if( outOfPolicyVendor == true ){
+		outOfPolicyMessage = "Out of policy vendor"
+	}
+	else if( isInPolicy == false ){
+		outOfPolicyMessage = "Maximum daily rate exceeded"
+	}
+
+	this.outOfPolicyMessage = outOfPolicyMessage;
 }

@@ -192,7 +192,7 @@
                                 <span class="room-details-wrapper" ng-show="item.hotel.hasRoomsAvailable()">
 
                                     <div class="outofpolicy-wrapper">
-                                        <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+                                        <span ng-show="!item.hotel.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
                                     </div>
                                     <span class="large blue bold daily-rate" >
                                         <span ng-show="item.hotel.rooms[0].totalForStayCurrency == 'USD' || item.hotel.rooms[0].dailyRateCurrency == 'USD'">$</span>{{item.hotel.findLowestRoomRate()}}<span ng-hide="item.hotel.rooms[0].totalForStayCurrency == 'USD' || item.hotel.rooms[0].dailyRateCurrency == 'USD'"> {{item.hotel.rooms[0].totalForStayCurrency}}</span>
@@ -320,7 +320,7 @@
                                                 &nbsp;
                                             </td>
                                             <td class="room-rate">
-                                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="Maximum nightly rate exceeded">OUT OF POLICY<br></span>
+                                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
                                                 <button style="width: 75%"
                                                     ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': room.isInPolicy}"
                                                     ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">

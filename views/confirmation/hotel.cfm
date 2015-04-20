@@ -83,7 +83,7 @@
 							</td>
 							<cfif NOT rc.Hotel.getRooms()[1].getIsInPolicy()>
 									<td width="12%"><strong>OUT OF POLICY</strong></td>
-									<td width="28%">Over maximum daily rate</td>
+									<td width="28%">#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#</td>
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
 										<td width="8%"><strong>Reason</strong></td>
 										<td>

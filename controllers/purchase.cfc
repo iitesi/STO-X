@@ -21,8 +21,8 @@
 				<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
 				<cfset local.airSelected = (structKeyExists(itinerary, 'Air') ? true : false)>
 				<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')>
-				<cfset local.hotelSelected = (structKeyExists(itinerary, 'HotelNew') ? true : false)>
-				<cfset local.Hotel = (structKeyExists(itinerary, 'HotelNew') ? itinerary.HotelNew : '')>
+				<cfset local.hotelSelected = (structKeyExists(itinerary, 'Hotel') ? true : false)>
+				<cfset local.Hotel = (structKeyExists(itinerary, 'Hotel') ? itinerary.Hotel : '')>
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<cfset local.specialCarReservation = false />
@@ -845,7 +845,7 @@
 					</cfif>
 
 					<!--- Update session with new Hotel record --->
-					<cfset session.searches[rc.SearchID].stItinerary.HotelNew = Hotel>
+					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
 					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
 					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Update universal version --->
@@ -964,7 +964,7 @@
 						OR find('INVALID GUARANTEE INDICATOR', errorList)
 						OR find('DEPOSIT REQ', errorList)
 						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList))>
-						<cfset session.searches[rc.searchID].stItinerary.HotelNew.getRooms()[1].setDepositRequired( true )>
+						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
 					</cfif>
 					<cfset rc.message.addError(errorList)>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>

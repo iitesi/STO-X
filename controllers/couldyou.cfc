@@ -16,8 +16,8 @@
 			</cfcatch>
 		</cftry>
 
-		<cfif structKeyExists( rc.itinerary, "HotelNew" )>
-			<cfset rc.itinerary.Hotel = rc.itinerary.HotelNew />
+		<cfif structKeyExists( rc.itinerary, "Hotel" )>
+			<cfset rc.itinerary.Hotel = rc.itinerary.Hotel />
 		</cfif>
 
 		<!---Redirect if not all specified services are selected--->
@@ -181,7 +181,7 @@
 
 
 				<!---Update the stItinerary--->
-				<cfset session.searches[ rc.searchId ].stItinerary.hotelNew = newHotel />
+				<cfset session.searches[ rc.searchId ].stItinerary.hotel = newHotel />
 
 				<cfset variables.bf.getBean( "HotelService" ).getRoomRateRules( searchId=arguments.rc.searchId,
 																				propertyId=newHotel.getPropertyID(),

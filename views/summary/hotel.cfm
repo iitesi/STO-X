@@ -42,7 +42,7 @@
 
 				<td colspan="3">
 					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
-					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="Over maximum daily rate" style="float:left; width:114px;">OUT OF POLICY *</span>')#
+					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
 
 					<!--- All accounts when out of policy --->
 					<cfif rc.showAll 
