@@ -16,9 +16,9 @@
 			</cfcatch>
 		</cftry>
 
-		<cfif structKeyExists( rc.itinerary, "Hotel" )>
-			<cfset rc.itinerary.Hotel = rc.itinerary.Hotel />
-		</cfif>
+		<!--- <cfif structKeyExists( rc.itinerary, "Hotel" )>
+			<cfset rc.itinerary.Hotel = duplicate(rc.itinerary.Hotel) />
+		</cfif> --->
 
 		<!---Redirect if not all specified services are selected--->
 		<cfif arguments.rc.Filter.getAir() AND NOT structKeyExists( rc.itinerary, "Air" ) >
