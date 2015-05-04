@@ -7,7 +7,8 @@ account. For now, I only want this to run for 1 month (I want to turn off
 after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 <cfparam name="rc.account.couldYou" default="0">
-<cfif rc.account.couldYou NEQ 1>
+<!--- Seeing if removing CouldYou for University of Washington will speed things up on the summary page. --->
+<cfif rc.account.couldYou NEQ 1 AND rc.account.acct_ID NEQ 500>
 	<cfsavecontent variable="localAssets">
 		<script src="/booking/assets/js/fullcalendar.min.js"></script>
 		<script src="/booking/assets/js/purl.js"></script>
@@ -33,10 +34,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 </cfif>
 
 <!--- // STM-4242 ======================================================= --->
-
-
-
-
 
 <!--- to do : move css once it is completed --->
 <style>
