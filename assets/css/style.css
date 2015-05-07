@@ -990,6 +990,22 @@ tr.hotel-room td{
 	width: 35px;
 	right: 0;
 }
+.ribbon-l-disc {
+	background: url(../img/ribbon/ribbon-l-disc.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-disc {
+	background: url(../img/ribbon/ribbon-r-disc.png) no-repeat;
+	right: 0;
+}
+.ribbon-l-pref-disc {
+	background: url(../img/ribbon/ribbon-l-pref-disc.png) no-repeat;
+	left: 0;
+}
+.ribbon-r-pref-disc {
+	background: url(../img/ribbon/ribbon-r-pref-disc.png) no-repeat;
+	right: 0;
+}
 
 /*
 ----------------------------------------------------------------------------------------------------------

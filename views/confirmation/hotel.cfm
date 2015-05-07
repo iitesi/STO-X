@@ -12,6 +12,16 @@
 								<cfelseif rc.Hotel.getPreferredVendor()>
 									<span class="ribbon ribbon-l-DHL-prefvendor"></span>
 								</cfif>
+							<!--- if NASCAR --->
+							<cfelseif rc.Filter.getAcctID() EQ 348> 
+								<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+									<span class="ribbon ribbon-l-pref-disc"></span>								
+								<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
+									<span class="ribbon ribbon-l-pref"></span>
+								<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
+									<span class="ribbon ribbon-l-disc"></span>
+								</cfif>
 							<!--- If any other account --->
 							<cfelse>
 								<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
