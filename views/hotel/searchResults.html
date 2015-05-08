@@ -318,7 +318,8 @@
                                                 <span ng-show="room.depositRequired" class="small red bold"><br />This rate requires payment at time of booking.</span>
                                             </td>
                                             <td class="room-rate-code">
-                                                <span ng-show="room.isCorporateRate" class="small blue bold">CONTRACTED</span>
+                                                <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
+                                                <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
                                                 <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
                                                 &nbsp;
                                             </td>
