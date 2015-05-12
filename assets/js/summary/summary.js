@@ -35,7 +35,7 @@ $(document).ready(function(){
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
-	$( "#hotelWhereStayingDiv" ).hide();
+	// $( "#hotelWhereStayingDiv" ).hide();
 	getTraveler();
 
 	// Get traveler from session and populate the form
@@ -195,7 +195,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#hotelNotBooked").on("change", function() {
+	/* $("#hotelNotBooked").on("change", function() {
 		var hotelReason = $("#hotelNotBooked").val();
 		if (hotelReason == 'H' || hotelReason == 'I' || hotelReason == 'J') {
 			$("#hotelWhereStayingDiv").show();
@@ -203,7 +203,7 @@ $(document).ready(function(){
 		else {
 			$("#hotelWhereStayingDiv").hide();
 		}
-	});
+	}); */
 
 	function loadTraveler(traveler, loadMethod) {
 		$( "#createProfileDiv" ).hide();
@@ -422,13 +422,13 @@ $(document).ready(function(){
 			$( "#carNeeded" ).attr( 'checked', false );
 		}
 
-		if (acctID == 348 && (airSelected == 'true' || vehicleSelected == 'true')) {
+		/* if (acctID == 348 && (airSelected == 'true' || vehicleSelected == 'true')) {
 			$( "#hotelNotBooked" ).val( traveler.bookingDetail.hotelNotBooked );
 			if ($( "#hotelNotBooked" ).val() != '' && $( "#hotelNotBooked" ).val() != 'K' ) {
 				$( "#hotelWhereStayingDiv" ).show();
 				$( "#hotelWhereStaying" ).val( traveler.bookingDetail.hotelWhereStaying );
 			}
-		}
+		} */
 		recalculateTotal();
 
 	}
