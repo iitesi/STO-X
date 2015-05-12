@@ -296,7 +296,7 @@
 		<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
 			<label class="control-label" for="hotelWhereStaying">Where Staying *</label>
 			<div class="controls">
-				<input type="text" name="hotelWhereStaying" id="hotelWhereStaying">
+				<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
 			</div>
 		</div>
 	</cfif>
