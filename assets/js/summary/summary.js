@@ -35,6 +35,7 @@ $(document).ready(function(){
 
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
+	$( "#hotelWhereStayingDiv" ).hide();
 	getTraveler();
 
 	// Get traveler from session and populate the form
@@ -191,6 +192,16 @@ $(document).ready(function(){
 		}
 		else {
 			$("#usernameDiv").hide();
+		}
+	});
+
+	$("#hotelNotBooked").on("change", function() {
+		var hotelReason = $("#hotelNotBooked").val();
+		if (hotelReason == 'H' || hotelReason == 'I' || hotelReason == 'J') {
+			$("#hotelWhereStayingDiv").show();
+		}
+		else {
+			$("#hotelWhereStayingDiv").hide();
 		}
 	});
 
@@ -409,6 +420,14 @@ $(document).ready(function(){
 		}
 		else {
 			$( "#carNeeded" ).attr( 'checked', false );
+		}
+
+		if (acctID == 348 && (airSelected == 'true' || vehicleSelected == 'true')) {
+			$( "#hotelNotBooked" ).val( traveler.bookingDetail.hotelNotBooked );
+			if ($( "#hotelNotBooked" ).val() != '' && $( "#hotelNotBooked" ).val() != 'K' ) {
+				$( "#hotelWhereStayingDiv" ).show();
+				$( "#hotelWhereStaying" ).val( traveler.bookingDetail.hotelWhereStaying );
+			}
 		}
 		recalculateTotal();
 

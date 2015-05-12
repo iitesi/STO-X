@@ -495,7 +495,22 @@
 				<!--- To Do: Pass variables in --->
 
 				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
-				<cfif arguments.Policy.Policy_HotelNotBooking EQ 1
+				<!--- If NASCAR --->
+				<cfif arguments.acctID EQ 348>
+					<cfif (isStruct(arguments.Air)
+							AND NOT structIsEmpty(arguments.Air)
+							AND dateDiff('d', arguments.Filter.getDepartDateTime(), arguments.Filter.getArrivalDateTime()) GTE 1)
+						OR (isStruct(arguments.Vehicle)
+							AND NOT structIsEmpty(arguments.Vehicle)
+							AND dateDiff('d', arguments.Filter.getCarPickUpDateTime(), arguments.Filter.getCarDropOffDateTime()) GTE 1)>
+						<cfif arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
+							<cfset local.error.hotelNotBooked = ''>
+						<cfelseif arguments.Traveler.getBookingDetail().getHotelNotBooked() NEQ 'K'
+							AND arguments.Traveler.getBookingDetail().getHotelWhereStaying() EQ ''>
+							<cfset local.error.hotelWhereStaying = ''>
+						</cfif>
+					</cfif>
+				<cfelseif arguments.Policy.Policy_HotelNotBooking EQ 1
 					AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
 					AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
 					AND arguments.Filter.getAirType() EQ 'RT'>
