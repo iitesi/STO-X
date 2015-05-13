@@ -496,17 +496,15 @@
 
 				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
 				<!--- If NASCAR --->
-				<!--- <cfif arguments.acctID EQ 348
-					AND isStruct(arguments.Air)
-					AND NOT structIsEmpty(arguments.Air)
+				<cfif arguments.acctID EQ 348
 					AND dateDiff('d', arguments.Filter.getDepartDateTime(), arguments.Filter.getArrivalDateTime()) GTE 1>
 					<cfif arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
 						<cfset local.error.hotelNotBooked = ''>
 					<cfelseif arguments.Traveler.getBookingDetail().getHotelNotBooked() NEQ 'K'
 						AND arguments.Traveler.getBookingDetail().getHotelWhereStaying() EQ ''>
 						<cfset local.error.hotelWhereStaying = ''>
-					</cfif> --->
-				<cfif arguments.Policy.Policy_HotelNotBooking EQ 1
+					</cfif>
+				<cfelseif arguments.Policy.Policy_HotelNotBooking EQ 1
 					AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
 					AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
 					AND arguments.Filter.getAirType() EQ 'RT'>
@@ -585,9 +583,7 @@
 				</cfif>
 
 				<!--- If NASCAR --->
-				<!--- <cfif arguments.acctID EQ 348
-					AND isStruct(arguments.Vehicle)
-					AND NOT structIsEmpty(arguments.Vehicle)
+				<cfif arguments.acctID EQ 348
 					AND dateDiff('d', arguments.Filter.getCarPickUpDateTime(), arguments.Filter.getCarDropOffDateTime()) GTE 1>
 					<cfif arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
 						<cfset local.error.hotelNotBooked = ''>
@@ -595,14 +591,13 @@
 						AND arguments.Traveler.getBookingDetail().getHotelWhereStaying() EQ ''>
 						<cfset local.error.hotelWhereStaying = ''>
 					</cfif>
-				</cfif> --->
+				</cfif>
 
 				<cfif arguments.acctID EQ 235>
 					<cfif arguments.Traveler.getBookingDetail().getUDID111() EQ ''>
 						<cfset local.error.udid111 = ''>
 					</cfif>
 				</cfif>
-
 			</cfif>
 		</cfif>
 

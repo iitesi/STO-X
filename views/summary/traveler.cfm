@@ -252,11 +252,11 @@
 		</div>
 	</div>
 
-    <cfif rc.airSelected
+    <!--- <cfif rc.airSelected
         AND rc.Filter.getAirType() EQ 'RT'
         AND rc.Policy.Policy_HotelNotBooking EQ 1
-		AND NOT rc.hotelSelected>
-	<!--- <cfif (rc.acctID NEQ 348 
+		AND NOT rc.hotelSelected> --->
+	<cfif (rc.acctID NEQ 348 
 			AND rc.airSelected
 			AND rc.Filter.getAirType() EQ 'RT'
 			AND rc.Policy.Policy_HotelNotBooking EQ 1
@@ -268,14 +268,14 @@
 					AND dateDiff('d', rc.Filter.getCarPickUpDateTime(), rc.Filter.getCarDropOffDateTime()) GTE 1)
 			)
 		)
-		AND NOT rc.hotelSelected> --->
+		AND NOT rc.hotelSelected>
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
 			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
 			<div class="controls">
 				<select name="hotelNotBooked" id="hotelNotBooked">
 					<option value=""></option>
 					<!--- If not NASCAR, display the reasons that have always been displayed --->
-					<!--- <cfif rc.acctID NEQ 348> --->
+					<cfif rc.acctID NEQ 348>
 						<option value="A">I will book my hotel later</option>
 						<option value="B">I am attending a conference with pre-arranged hotel</option>
 						<option value="C">I have a negotiated rate that is not available online</option>
@@ -284,25 +284,25 @@
 						<option value="F">I will be staying with family/friends</option>
 						<option value="G">I do not need a hotel for this trip </option>
 					<!--- If NASCAR, display the new reasons for NASCAR --->
-					<!--- <cfelse>
+					<cfelse>
 						<option value="H">Staying in a pre-arranged room block</option>
 						<option value="I">Reservation already made</option>
 						<option value="J">Staying with family/friends (business travel)</option>
 						<option value="K">Leisure (non-business travel)</option>
-					</cfif> --->
+					</cfif>
 				</select>
 			</div>
 		</div>
 	</cfif>
 
 	<!--- If NASCAR --->
-	<!--- <cfif rc.acctID EQ 348>
+	<cfif rc.acctID EQ 348>
 		<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
 			<label class="control-label" for="hotelWhereStaying">Where Staying *</label>
 			<div class="controls">
 				<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
 			</div>
 		</div>
-	</cfif> --->
+	</cfif>
 					
 </cfoutput>
