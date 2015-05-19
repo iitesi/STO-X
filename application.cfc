@@ -82,7 +82,8 @@
 								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
 								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
 							</cfif>
-
+							<cfset session.cookieDate = request.context.date />
+							<cfset session.cookieToken = request.context.token />
 						</cfif>
 
 					</cfif>

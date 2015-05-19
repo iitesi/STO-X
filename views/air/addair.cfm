@@ -11,9 +11,9 @@
 	</cfsavecontent>
 	<cfhtmlhead text="#filterHeader#" />
 	<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
-		<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#cookie.token#&date=#cookie.date#' />
+		<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
 	<cfelse>
-		<cfset frameSrc = application.searchWidgetURL & "?acctid=#session.acctID#&userID=#session.userID#&token=#cookie.token#&date=#cookie.date#"/>
+		<cfset frameSrc = application.searchWidgetURL & "?acctid=#session.acctID#&userID=#session.userID#&token=#session.cookieToken#&date=#session.cookieDate#"/>
 	</cfif>
 </cfsilent>
 <div class="container">
