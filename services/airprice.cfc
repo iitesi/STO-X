@@ -170,7 +170,7 @@
 		<cfargument name="bIncludeBookingCodes" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bGovtRate" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
-		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 0 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
+		<cfset local.ProhibitNonRefundableFares = (arguments.bRefundable EQ 1 ? 'false' : 'true')><!--- false = non refundable - true = refundable --->
 		<cfset local.ProhibitRestrictedFares = (arguments.bRestricted EQ 0 OR arguments.findIt EQ 1 ? 'false' : 'true')><!--- false = unrestricted - true = restricted --->
 		<cfset local.aCabins = ListToArray(arguments.sCabin)>
 
