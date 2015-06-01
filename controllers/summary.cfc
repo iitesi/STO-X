@@ -492,6 +492,73 @@
 			<cfset rc.Traveler.getBookingDetail().setCarNeeded( (rc.vehicleSelected ? 1 : 0) )>
 		</cfif>
 
+		<!--- STM-5497: If the user selected a refundable fare, ensure this really is a refundable fare --->
+		<cfif rc.airSelected AND structKeyExists(session.searches[rc.searchID], "RequestedRefundable") AND session.searches[rc.searchID].RequestedRefundable>
+			<cfset local.bGovtRate = 0 />
+			<cfset local.sFaresIndicator = "PublicAndPrivateFares" />
+			<cfif rc.Air.PTC EQ "GST">
+				<cfset local.bGovtRate = 1 />
+				<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
+			</cfif>
+
+			<cfset local.originalAirfare = rc.Air.Total />
+
+			<!--- Do the first AirPrice call with bRefundable = 1 --->
+			<cfset local.airPriceCheck = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																					, Account = rc.Account
+																					, Policy = rc.Policy
+																					, sCabin = rc.Air.Class
+																					, bRefundable = 1
+																					, bRestricted = 0
+																					, sFaresIndicator = sFaresIndicator
+																					, bAccountCodes = 1
+																					, nTrip = rc.Air.nTrip
+																					, nCouldYou = 0
+																					, bSaveAirPrice = 1
+																					, findIt = rc.Filter.getFindIt()
+																					, bIncludeClass = 1
+																					, bIncludeCabin = 1
+																					, totalOnly = 0
+																					, bIncludeBookingCodes = 1
+																					, bGovtRate = bGovtRate
+																				)>
+			<!--- If the first AirPrice call resulted in an error message, do a second AirPrice call with bRefundable = 0 --->
+			<cfif structIsEmpty(airPriceCheck) OR structKeyExists(airPriceCheck, 'faultMessage')>
+				<cfset local.airPriceCheck2 = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
+																					, Account = rc.Account
+																					, Policy = rc.Policy
+																					, sCabin = rc.Air.Class
+																					, bRefundable = 0
+																					, bRestricted = 0
+																					, sFaresIndicator = sFaresIndicator
+																					, bAccountCodes = 1
+																					, nTrip = rc.Air.nTrip
+																					, nCouldYou = 0
+																					, bSaveAirPrice = 1
+																					, findIt = rc.Filter.getFindIt()
+																					, bIncludeClass = 1
+																					, bIncludeCabin = 1
+																					, totalOnly = 0
+																					, bIncludeBookingCodes = 1
+																					, bGovtRate = bGovtRate
+																				)>
+				<!--- If the second AirPrice call still results in an error message, display it --->
+				<cfif structIsEmpty(airPriceCheck2) OR structKeyExists(airPriceCheck2, 'faultMessage')>
+					<cfset rc.message.addError('Fare type selected is unavailable for pricing.') />
+				<!--- Else if the trip really is non-refundable, alert the traveler --->
+				<cfelseif airPriceCheck2[structKeyList(airPriceCheck2)].Total EQ originalAirfare>
+					<cfset session.searches[rc.SearchID].RequestedRefundable = 0 />
+					<!--- <cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
+					<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 /> --->
+					<cfset session.searches[rc.searchID].stItinerary.Air.PassedRefCheck = 1 />
+					<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
+				</cfif>
+			<cfelse>
+				<cfset session.searches[rc.searchID].stItinerary.Air.PassedRefCheck = 1 />
+			</cfif>
+			<cfset rc.Air = session.searches[rc.searchID].stItinerary.Air />
+		</cfif>
+
 		<!---
 		FORM SELECTED
 		--->

@@ -134,8 +134,9 @@
 
 					<cfset local.originalAirfare = Air.Total />
 
-					<cfif NOT structKeyExists(Air, 'PricingSolution')
-						OR NOT isObject(Air.PricingSolution)>
+					<cfif (NOT structKeyExists(Air, 'PricingSolution')
+						OR NOT isObject(Air.PricingSolution))
+						AND NOT structKeyExists(Air, 'PassedRefCheck')>
 
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
@@ -154,7 +155,7 @@
 																							, totalOnly = 0
 																							, bIncludeBookingCodes = 1
 																							, bGovtRate = bGovtRate
-																						)>						
+																						)>
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
