@@ -54,6 +54,7 @@
 
 		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
 		<cfset session.searches[arguments.SearchID].RequestedRefundable = session.searches[arguments.SearchID].stItinerary.Air.RequestedRefundable />
+		<cfset session.searches[arguments.SearchID].PassedRefCheck = 0 />
 		<!--- Loop through the searches structure and delete all other searches --->
 		<cfloop collection="#session.searches#" index="local.nKey">
 			<cfif IsNumeric(local.nKey) AND local.nKey NEQ arguments.SearchID>

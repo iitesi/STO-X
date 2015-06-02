@@ -136,7 +136,7 @@
 
 					<cfif (NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution))
-						AND NOT structKeyExists(Air, 'PassedRefCheck')>
+						AND session.searches[rc.SearchID].PassedRefCheck EQ 0>
 
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
