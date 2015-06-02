@@ -548,8 +548,8 @@
 				<!--- Else if the trip really is non-refundable, alert the traveler --->
 				<cfelseif airPriceCheck2[structKeyList(airPriceCheck2)].Total EQ originalAirfare>
 					<cfset session.searches[rc.SearchID].RequestedRefundable = 0 />
-					<!--- <cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
-					<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 /> --->
+					<cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
+					<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 />
 					<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
 					<cfset local.trip = airPriceCheck2 />
 					<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
