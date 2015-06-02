@@ -4,7 +4,11 @@
 	<cfoutput query="messages" group="type">
 		<cfset typeClass="alert-success" />
 		<cfif type IS "error">
-			<cfset typeClass="alert-error" />
+			<cfif message IS "The rules for this fare have changed - this fare is nonrefundable.">
+				<cfset typeClass="alert-error alert-error-larger" />
+			<cfelse>
+				<cfset typeClass="alert-error" />
+			</cfif>
 		</cfif>
 
 		<div id="usermessage" class="alert #typeClass#">
