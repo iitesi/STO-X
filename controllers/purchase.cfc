@@ -172,9 +172,8 @@
 							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
 							<cfset errorType = 'Air.airPrice'>
 						</cfif>
-
-						<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
 					</cfif>
+					<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
 					
 					<cfif arrayIsEmpty(errorMessage)>
 						<!--- Do a lowest refundable air price before air create for U6 --->

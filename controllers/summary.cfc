@@ -551,11 +551,24 @@
 					<!--- <cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
 					<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 /> --->
 					<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
+					<cfset local.trip = airPriceCheck2 />
 					<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
 				</cfif>
 			<cfelse>
 				<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
+				<cfset local.trip = airPriceCheck />
 			</cfif>
+
+			<cfif session.searches[rc.searchID].PassedRefCheck>
+				<cfset local.nTrip = rc.Air.nTrip>
+				<cfset local.aPolicies = rc.Air.aPolicies>
+				<cfset local.policy = rc.Air.policy>
+				<cfset session.searches[rc.searchID].stItinerary.Air = trip[structKeyList(trip)]>
+				<cfset session.searches[rc.searchID].stItinerary.Air.nTrip = nTrip>
+				<cfset session.searches[rc.searchID].stItinerary.Air.aPolicies = aPolicies>
+				<cfset session.searches[rc.searchID].stItinerary.Air.policy = policy>
+			</cfif>
+
 			<cfset rc.Air = session.searches[rc.searchID].stItinerary.Air />
 		</cfif>
 
