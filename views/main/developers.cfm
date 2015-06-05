@@ -38,6 +38,9 @@
 					<li>
 						<a href="index.cfm?#cgi.query_string#&reload=true">Reload Application</a>
 					</li>
+					<li>
+						<a href="index.cfm?#cgi.query_string#&reinit=true">Reset Application Vars</a>
+					</li>
 					<li class="divider"></li>
 					<li>
 						<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=5" target="_blank">View Top 2 Logs</a>

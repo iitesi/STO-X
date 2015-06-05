@@ -52,6 +52,11 @@
 
 
 	<cffunction name="setupRequest">
+		<cfif isDefined("url.reinit")>
+			<cfset ApplicationStop()>
+			<cflocation url="index.cfm" addtoken="false">
+		</cfif>
+
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
 			AND request.context.action NEQ 'main.notfound'
