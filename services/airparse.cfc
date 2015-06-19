@@ -18,42 +18,42 @@
 		<cfargument name="Account"	required="true">
 		<cfargument name="Policy"	required="true">
 
-		<cfif NOT structIsEmpty(session.searches[SearchID].stTrips)>
+		<cfif NOT structIsEmpty(session.searches[arguments.SearchID].stTrips)>
 			<!--- Check low fare. --->
-			<cfset session.searches[SearchID].stTrips = addTotalBagFare(session.searches[SearchID].stTrips)>
+			<cfset session.searches[arguments.SearchID].stTrips = addTotalBagFare(session.searches[arguments.SearchID].stTrips)>
 
 			<!--- Update the results that are available. --->
-			<cfset session.searches[SearchID].stLowFareDetails.stResults = findResults(session.searches[arguments.SearchID].stTrips)>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = findResults(session.searches[arguments.SearchID].stTrips)>
 
 			<!--- Get list of all carriers returned. --->
-			<cfset session.searches[SearchID].stLowFareDetails.aCarriers = getCarriers(session.searches[arguments.SearchID].stTrips)>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = getCarriers(session.searches[arguments.SearchID].stTrips)>
 
 			<!--- Run policy on all the results --->
-			<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-			<cfset session.searches[SearchID].stTrips = checkPolicy( session.searches[arguments.SearchID].stTrips
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+			<cfset session.searches[arguments.SearchID].stTrips = checkPolicy( session.searches[arguments.SearchID].stTrips
 																	, arguments.SearchID
-																	, session.searches[SearchID].stLowFareDetails.aSortFare[1]
+																	, session.searches[arguments.SearchID].stLowFareDetails.aSortFare[1]
 																	, 'Fare'
 																	, arguments.Account
 																	, arguments.Policy)>
 
 			<!--- Create javascript structure per trip. --->
-			<cfset session.searches[SearchID].stTrips = addJavascript(session.searches[SearchID].stTrips)><!--- Policy needs to be checked prior --->
+			<cfset session.searches[arguments.SearchID].stTrips = addJavascript(session.searches[arguments.SearchID].stTrips)><!--- Policy needs to be checked prior --->
 
 			<!--- Sort the results --->
-			<cfset session.searches[SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
-			<cfset session.searches[SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
-			<cfset session.searches[SearchID].stLowFareDetails.aSortDuration = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortDuration = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
 
 			<!--- price, price + 1 bag, price + 2 bags --->
-			<cfset session.searches[SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
-			<cfset session.searches[SearchID].stLowFareDetails.aSortBag = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
-			<cfset session.searches[SearchID].stLowFareDetails.aSortBag2 = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortFare = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Total')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortBag = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortBag2 = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'TotalBag2')>
 
 			<!--- Prices with preferred carriers taken into account --->
-			<cfset session.searches[SearchID].stLowFareDetails.aSortFarePreferred = sortByPreferred("aSortFare", arguments.SearchID) />
-			<cfset session.searches[SearchID].stLowFareDetails.aSortBagPreferred = sortByPreferred("aSortBag", arguments.SearchID) />
-			<cfset session.searches[SearchID].stLowFareDetails.aSortBag2Preferred = sortByPreferred("aSortBag2", arguments.SearchID) />
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortFarePreferred = sortByPreferred("aSortFare", arguments.SearchID) />
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortBagPreferred = sortByPreferred("aSortBag", arguments.SearchID) />
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortBag2Preferred = sortByPreferred("aSortBag2", arguments.SearchID) />
 		</cfif>
 
 		<cfreturn >
@@ -1051,28 +1051,37 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="sortByPreferred" output="false" hint="I take the price sorts and weight the preferred carriers.">
 		<cfargument name="StructToSort" required="true" />
 		<cfargument name="SearchID" required="true" />
+		<cfscript>
+		local.aSortArray = session.searches[arguments.SearchID].stLowFareDetails[arguments.StructToSort];
+		local.aPreferredSort = [];
+		local.sortQuery = QueryNew("nTripKey, total, preferred", "varchar, numeric, bit");
+		local.newRow = QueryAddRow(local.sortQuery, arrayLen(local.aSortArray));
+		local.queryCounter = 1;
 
-		<cfset local.aSortArray = "session.searches[" & arguments.SearchID & "].stLowFareDetails." & arguments.StructToSort />
-		<cfset local.aPreferredSort = [] />
-		<cfset local.sortQuery = QueryNew("nTripKey, total, preferred", "varchar, numeric, bit") />
-		<cfset local.newRow = QueryAddRow(local.sortQuery, arrayLen(Evaluate(local.aSortArray))) />
-		<cfset local.queryCounter = 1 />
+		loop array="#local.aSortArray#" index="local.nTripKey" {
+			if(NOT structKeyExists(session.searches[arguments.SearchID].stLowFareDetails.stPriced, local.nTripKey)) {
+				local.stTrip = session.searches[arguments.SearchID].stTrips[local.nTripKey];
 
-		<cfloop array="#evaluate(local.aSortArray)#" index="local.nTripKey">
-			<cfif NOT structKeyExists(session.searches[SearchID].stLowFareDetails.stPriced, local.nTripKey)>
-				<cfset local.stTrip = session.searches[SearchID].stTrips[local.nTripKey] />
+				querySetCell(sortQuery, "nTripKey", local.nTripKey, local.queryCounter);
+				querySetCell(sortQuery, "total", local.stTrip.total, local.queryCounter);
+				querySetCell(sortQuery, "preferred", local.stTrip.preferred, local.queryCounter);
+				local.queryCounter++;
+			}
+		}
 
-				<cfset local.temp = querySetCell(local.sortQuery, "nTripKey", local.nTripKey, local.queryCounter) />
-				<cfset local.temp = querySetCell(local.sortQuery, "total", local.stTrip.total, local.queryCounter) />
-				<cfset local.temp = querySetCell(local.sortQuery, "preferred", local.stTrip.preferred, local.queryCounter) />
-				<cfset local.queryCounter++ />
-			</cfif>
-		</cfloop>
+		// sort and remove columns
+		sortQuery.sort("total,preferred","asc,desc");
+		sortQuery.deleteColumn("total");
+		sortQuery.deleteColumn("preferred");
+		local.preferredSort=sortQuery;
+		</cfscript>
+		<!--- replaced slow QoQ with code above
 		<cfquery name="local.preferredSort" dbtype="query">
 			SELECT nTripKey
 			FROM sortQuery
 			ORDER BY total ASC, preferred DESC
-		</cfquery>
+		</cfquery> --->
+		
 
 		<cfif local.preferredSort.recordCount>
 			<cfset local.aPreferredSort = listToArray(valueList(local.preferredSort.nTripKey)) />
