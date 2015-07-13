@@ -1,49 +1,44 @@
 <cfparam name="variables.minheight" default="50"/>
 <cfset ribbonClass = "">
-<cfset carrierList = "">
+<cfset carrierList = []>
 <cfset thisSelectedLeg = "">
-
-
 	<cfsavecontent variable="sBadge" trim="#true#">
-			<!--- create ribbon
+	<cfscript>
+		/* create ribbon
 			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
-			--->
+		*/
 
-			<cfif bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1>
-				<cfif stTrip.Carriers[1] EQ "WN">
-					<cfif structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST">
-						<cfset ribbonClass = "ribbon-l-pref-govt">
-					<cfelse>
-						<cfset ribbonClass = "ribbon-l-pref">
-					</cfif>
-				<cfelse>
-					<cfset ribbonClass = "ribbon-l-pref-cont">
-				</cfif>
-			<cfelseif stTrip.preferred EQ 1>
-				<cfif structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST">
-					<cfset ribbonClass = "ribbon-l-pref-govt">
-				<cfelse>
-					<cfset ribbonClass = "ribbon-l-pref">
-				</cfif>
-			<cfelseif bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN">
-				<cfset ribbonClass = "ribbon-l-cont">
-			<cfelseif bDisplayFare AND (structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")>
-				<cfset ribbonClass = "ribbon-l-govt">
-			</cfif>
+		if(bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1) {
+			if(stTrip.Carriers[1] EQ "WN") {
+				if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST") 
+					ribbonClass = "ribbon-l-pref-govt";
+				else
+					ribbonClass = "ribbon-l-pref";
+			}
+			else ribbonClass = "ribbon-l-pref-cont";
+		}
+		else if(stTrip.preferred EQ 1) {
+			if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")
+				ribbonClass = "ribbon-l-pref-govt";
+			else
+				ribbonClass = "ribbon-l-pref";
+		}
+		else if(bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN") 
+			ribbonClass = "ribbon-l-cont";
+		else if(bDisplayFare AND (structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")) 
+			ribbonClass = "ribbon-l-govt";
 
-			<!--- finally add default 'ribbon' class --->
-			<cfif Len(ribbonClass)>
-				<cfset ribbonClass = "ribbon " & ribbonClass>
-			</cfif>
+		// finally add default 'ribbon' class 
+		if(Len(ribbonClass))
+			ribbonClass = "ribbon " & ribbonClass;
 
-			<cfif len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")>
-				<cfset bSelected = false />
-				<cfset thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey />
-				<cfif nTripKey EQ thisSelectedLeg>
-					<cfset bSelected = true />
-				</cfif>
-			</cfif>
-
+		if(len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")){
+			bSelected = false;
+			thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey;
+			if(nTripKey EQ thisSelectedLeg)
+				bSelected = true;
+		}
+	</cfscript>
 	<cfoutput>
 		<div class="screenbadge badge">
 			<!--- display ribbon --->
@@ -54,16 +49,16 @@
 						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif>
 			--->
-
-			<cfset flightnumbers = ''>
-			<cfloop collection="#stTrip.Groups#" item="Group" >
-				<cfset stGroup = stTrip.Groups[Group]>
-				<cfloop collection="#stGroup.Segments#" item="nSegment" >
-					<cfset stSegment = stGroup.Segments[nSegment]>
-					<cfset flightnumbers = listAppend(flightnumbers, stGroup.Segments[nSegment].flightNumber)>
-				</cfloop>
-			</cfloop>
-
+			<cfscript>	
+			flightnumbers = [];
+			loop collection="#stTrip.Groups#" item="Group" {
+				stGroup = stTrip.Groups[Group];
+				loop collection="#stGroup.Segments#" item="nSegment" {
+					//stSegment = stGroup.Segments[nSegment];
+					arrayAppend(flightnumbers, stGroup.Segments[nSegment].flightNumber);
+				}
+			}
+			</cfscript>
 			<table height="#variables.minheight#" width="100%" border="0">
 			<tr align="center">
 				<td width="50%" colspan="2">
@@ -101,28 +96,27 @@
 			</cfif>
 			<tr>
 				<td colspan="4">&nbsp;
-					<font color="white">#flightnumbers#</font>
+					<font color="white">#flightnumbers.toList()#</font>
 				</td>
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group">
-				<cfset stGroup = stTrip.Groups[Group]>
+				<cfscript>
+				stGroup = stTrip.Groups[Group];
 
-				<!--- set times for badges, and get total times so we can set time sliders in filter --->
-				<cfset departureTime = TimeFormat(stGroup.DepartureTime, 'HH:mm')>
-				<cfset departureTime = (hour(departureTime)*60) + (minute(departureTime))>
-				<cfset arrivalTime = TimeFormat(stGroup.ArrivalTime, 'HH:mm')>
-				<cfset arrivalTime = (hour(arrivalTime)*60) + (minute(arrivalTime))>
-				<cfset "timeFilter.departureTime#group#" = departureTime>
-				<cfset "timeFilter.arrivalTime#group#" = arrivalTime>
+				// set times for badges, and get total times so we can set time sliders in filter
+				departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
+				arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
+				timeFilter["departureTime#group#"] = departureTime;
+				timeFilter["arrivalTime#group#"] = arrivalTime;
 
+				</cfscript>
 				<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
 				STM-2544 need to create a container of min/max times so we can use to set filters
 				See code in lowfare.cfm
 
 				<cfset arrayAppend(timeFilterTotal, departureTime)>
-				<cfset arrayAppend(timeFilterTotal, arrivalTime)> --->
-
-
+				<cfset arrayAppend(timeFilterTotal, arrivalTime)>
+ 				--->
 				<tr>
 					<td>&nbsp;</td>
 					<td title="#application.stAirports[stGroup.Origin].airport#">
@@ -147,19 +141,21 @@
 					</td>
 				</tr>
 				<cfset nCnt = 0>
-				<cfset segmentCount = arrayLen(structKeyArray(stGroup.Segments))>
+				<cfset segmentCount = structCount(stGroup.Segments)>
 				<cfloop collection="#stGroup.Segments#" item="nSegment" >
-					<cfset nCnt++>
-					<cfset stSegment = stGroup.Segments[nSegment]>
-					<cfif NOT listFind(carrierList, stSegment.Carrier)>
-						<cfset carrierList = ListAppend(carrierList, stSegment.Carrier)>
-					</cfif>
+					<cfscript>
+					nCnt++;
+					stSegment = stGroup.Segments[nSegment];
+					if(NOT arrayFind(carrierList, stSegment.Carrier))
+						arrayAppend(carrierList, stSegment.Carrier);
+					</cfscript>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#
 										<font color="white">(#(bDisplayFare ? stSegment.Class : '')#)</font>
 										</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#"><cfif 
+						nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
@@ -176,7 +172,7 @@
 
 			<!--- set bag fee into var so we can display in a tooltip below --->
 			<cfsavecontent variable="tooltip">
-				<cfloop list="#carrierList#" index="carrier">
+				<cfloop array="#carrierList#" item="carrier">
 					#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='icon-suitcase'></i>&nbsp;<i class='icon-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
 				</cfloop>
 			</cfsavecontent>
@@ -244,7 +240,7 @@
 								<tr>
 									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-									<td valign="top"class="flighttext" nowrap>#(nCnt EQ 1 AND segmentCount NEQ 1 ? 'to <span>#stSegment.Destination#</span>' : '')#</td>
+									<td valign="top"class="flighttext" nowrap><cfif nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
 									<td valign="top"class="flighttext">
 										<cfif nCnt EQ 1>
 											#stGroup.TravelTime#
@@ -287,12 +283,14 @@
 
 
 <!--- set unique data-attributes for each badge for filtering by time --->
-<cfset dataString = "">
-<cfloop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex">
-	<cfset dataString = listAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"', ' ')>
-</cfloop>
+<cfscript>
+dataString = [];
+loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
+	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
+}	
+</cfscript>
 
 <!--- display badge --->
 <cfoutput>
-	<div id="flight#nTripKey#" #dataString# class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" #dataString.toList(' ')# class="pull-left">#sBadge#</div>
 </cfoutput>

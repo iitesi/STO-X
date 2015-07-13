@@ -3,6 +3,7 @@
 	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
 	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
 	<cfset this.sessionManagement = true>
+	<cfset this.sessionStorage="sessionCache">
 	<cfset this.applicationManagement = true>
 
 	<cfset variables.framework = {
