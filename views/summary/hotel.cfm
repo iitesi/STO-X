@@ -11,7 +11,7 @@
 			<tr>
 
 				<td></td>
-				
+
 				<td valign="top">
 					<!--- If DHL --->
 					<cfif rc.Filter.getAcctID() EQ 497 OR rc.Filter.getAcctID() EQ 499>
@@ -21,10 +21,10 @@
 							<span class="ribbon ribbon-l-DHL-prefvendor"></span>
 						</cfif>
 					<!--- if NASCAR --->
-					<cfelseif rc.Filter.getAcctID() EQ 348> 
+					<cfelseif rc.Filter.getAcctID() EQ 348>
 						<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
 							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
-							<span class="ribbon ribbon-l-pref-disc"></span>								
+							<span class="ribbon ribbon-l-pref-disc"></span>
 						<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
 							<span class="ribbon ribbon-l-pref"></span>
 						<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
@@ -55,7 +55,7 @@
 					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
 
 					<!--- All accounts when out of policy --->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
 						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
@@ -70,7 +70,7 @@
 					</cfif>
 
 					<!--- State of Texas --->
-					<cfif rc.showAll 
+					<cfif rc.showAll
 						OR rc.Filter.getAcctID() EQ 235>
 						<div class="#(structKeyExists(rc.errors, 'udid112') ? 'error' : '')#">
 							<span style="float:left; width:114px;">STATE OF TEXAS *</span>
@@ -90,7 +90,7 @@
 			<tr>
 
 				<td width="50"></td>
-				
+
 				<td valign="top" width="120">
 					<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
 						<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
@@ -115,7 +115,7 @@
 						CHECK-IN:
 						#uCase(dateFormat(rc.Filter.getCheckInDate(), 'mmm d'))#
 						&nbsp;&nbsp;&nbsp;
-						CHECK-OUT: 
+						CHECK-OUT:
 						#uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
 						<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 						(#nights# NIGHT<cfif nights GT 1>S</cfif>)
@@ -159,7 +159,7 @@
 							Hotel policies are not available at this time.
 						</cfif>
 					</cfsavecontent>
-		
+
 					<span class="blue bold">
 						<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 							Hotel payment and cancellation policy
@@ -174,19 +174,24 @@
 			<tr>
 
 			<tr>
-				<td colspan="5"><br></td>		
+				<td colspan="5"><br></td>
 			</tr>
 
 			<tr>
 
 				<td></td>
 				<td></td>
-				
+
 				<td colspan="3">
-
-					#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
-					<input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium">
-
+					<table>
+					<tr><td>#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##</td>
+					<td><input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium"></td>
+					</tr>
+					<tr>
+					<td>HOTEL SPECIAL REQUESTS:</td>
+					<td><textarea name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="input-large"></textArea></td>
+					</tr>
+					</table>
 				</td>
 
 			</tr>
