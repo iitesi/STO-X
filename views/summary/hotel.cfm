@@ -180,18 +180,13 @@
 			<tr>
 
 				<td></td>
-				<td></td>
 
-				<td colspan="3">
-					<table>
-					<tr><td>#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##</td>
-					<td><input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium"></td>
-					</tr>
-					<tr>
-					<td>HOTEL SPECIAL REQUESTS:</td>
-					<td><textarea name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="input-large"></textArea></td>
-					</tr>
-					</table>
+				<td colspan="4">
+                    #uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
+                    <input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium">
+                    &nbsp;&nbsp;&nbsp;
+					HOTEL SPECIAL REQUESTS
+					<input type="text" name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="input-large">
 				</td>
 
 			</tr>
