@@ -45,6 +45,7 @@
 	<cfproperty name="hotelCCYear" />
 	<cfproperty name="hotelConfirmation" />
 	<cfproperty name="hotelFF" />
+	<cfproperty name="hotelSpecialRequests" />
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="hotelWhereStaying" />
@@ -124,6 +125,7 @@
 		<cfset setHotelCCYear( '' )>
 		<cfset setHotelConfirmation( '' )>
 		<cfset setHotelFF( '' )>
+		<cfset setHotelSpecialRequests( '' )>
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setHotelWhereStaying( '' )>

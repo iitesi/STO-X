@@ -375,7 +375,7 @@ $(document).ready(function(){
 			}
 			$( "#hotelReasonCode" ).val( traveler.bookingDetail.hotelReasonCode );
 			$( "#udid112" ).val( traveler.bookingDetail.udid112 );
-
+			$( "#hotelSpecialRequests" ).val( traveler.bookingDetail.hotelSpecialRequests );
 			$( "#hotelFF" ).val( '' );
 			for( var i=0, l=traveler.loyaltyProgram.length; i<l; i++ ) {
 				if (traveler.loyaltyProgram[i] !== null) {
