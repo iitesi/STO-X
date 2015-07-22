@@ -315,12 +315,14 @@
                                         <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
                                             <td class="room-description">
                                                 {{room.description}}
-                                                <span ng-show="room.depositRequired" class="small red bold"><br />This rate requires payment at time of booking.</span>
+                                                <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
+                                                <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
                                             </td>
                                             <td class="room-rate-code">
                                                 <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
                                                 <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
                                                 <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
+                                                <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
                                                 &nbsp;
                                             </td>
                                             <td class="room-rate">

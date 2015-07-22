@@ -167,7 +167,11 @@
 					</span>
 
 					<cfif rc.Hotel.getRooms()[1].getDepositRequired()>
-						<span class="small red bold"><br />This rate requires payment at time of booking.</span>
+						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
+							<span class="small red bold"><br />This rate requires payment at time of booking.</span>
+						<cfelse>
+							<span class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
+						</cfif>
 					</cfif>
 
 				</td>

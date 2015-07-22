@@ -1,23 +1,24 @@
 function HotelRoom(){
 
+	this.apiSource = '';
+	this.baseRate = 0;
+	this.baseRateCurrency = '';
+	this.corporateDiscountID = '';
 	this.dailyRate = 0;
 	this.dailyRateCurrency = '';
-	this.description = '';
 	this.depositRequired = false;
+	this.description = '';
 	this.isCorporateRate = false;
 	this.isGovernmentRate = false;
+	this.isInPolicy = true;
+	this.outOfPolicyMessage = '';
 	this.rateChange = '';
+	this.ratePlanType = '';
+	this.tax = 0;
+	this.taxCurrency = '';
 	this.totalForStay = 0;
 	this.totalForStayCurrency = '';
 	this.totalIncludesMessage = '';
-	this.isInPolicy = true;
-	this.outOfPolicyMessage = '';
-	this.ratePlanType = '';
-	this.baseRate = 0;
-	this.baseRateCurrency = '';
-	this.tax = 0;
-	this.taxCurrency = '';
-	this.corporateDiscountID = '';
 }
 
 HotelRoom.prototype.populate = function( obj ){
