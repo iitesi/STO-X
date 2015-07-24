@@ -624,6 +624,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
+							+ '&ppnBundle=' + Room.ppnBundle
 							+ '&totalForStay=' + Room.totalForStay
 							+ '&isInPolicy=' + Room.isInPolicy
 							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;
