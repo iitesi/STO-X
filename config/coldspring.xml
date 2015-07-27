@@ -39,7 +39,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
-	<bean id="PPNHotelAdapter" class="com.priceline.HotelAdapter">
+	<bean id="PPNHotelAdapter" class="com.priceline.ppnHotelAdapter">
 		<constructor-arg name="PPNAPI"><ref bean="PPNAPI" /></constructor-arg>
 	</bean>
 

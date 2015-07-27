@@ -780,7 +780,19 @@
 						</cfloop>
 					</cfif>
 
-					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
+					<!--- If a Priceline hotel --->
+					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('PPNHotelAdapter').book( Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, hotelFOPID = local.hotelFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									)>
+					<!--- If a Travelport hotel --->
+					<cfelse>
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -797,6 +809,7 @@
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									)>
+					</cfif>
 
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
