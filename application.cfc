@@ -53,6 +53,11 @@
 
 
 	<cffunction name="setupRequest">
+		<!--- <cfif isDefined("url.reinit")>
+			<cfset ApplicationStop()>
+			<cflocation url="index.cfm" addtoken="false">
+		</cfif> --->
+
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
 			AND request.context.action NEQ 'main.notfound'
@@ -83,7 +88,8 @@
 								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
 								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
 							</cfif>
-
+							<cfset session.cookieDate = request.context.date />
+							<cfset session.cookieToken = request.context.token />
 						</cfif>
 
 					</cfif>

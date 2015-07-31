@@ -173,6 +173,12 @@ body {
 	line-height: 160%;
 }
 
+.alert-error-larger {
+	font-size: 15px;
+	font-weight: bold;
+	line-height: 160%;
+}
+
 .confirm-header {
 	font-size: 18px;
 	font-weight: bold;
