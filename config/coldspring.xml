@@ -63,6 +63,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
 	</bean>
 
+	<bean id="PassiveAdapter" class="com.travelport.PassiveAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
+	</bean>
+
 	<bean id="UniversalAdapter" class="com.travelport.UniversalAdapter">
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
