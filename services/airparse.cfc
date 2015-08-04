@@ -865,7 +865,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<!--- Out of policy if the fare plus the padding is greater than the lowest available fare. --->
 		<cfif arguments.Policy.Policy_AirLowRule EQ 1
 			AND isNumeric(arguments.Policy.Policy_AirLowPad)
-			AND arguments.total GT arguments.lowestfare>
+			AND arguments.total GT (arguments.lowestfare + arguments.Policy.Policy_AirLowPad)>
 			<cfset local.policy.message = 'Not the lowest fare'>
 			<cfset local.policy.policy = 0>
 			<cfif arguments.Policy.Policy_AirLowDisp EQ 1>
