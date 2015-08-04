@@ -263,6 +263,7 @@
 		)
 		OR (rc.acctID EQ 348
 			AND ((rc.airSelected
+					AND isDate(rc.Filter.getArrivalDateTime())
 					AND dateDiff('d', rc.Filter.getDepartDateTime(), rc.Filter.getArrivalDateTime()) GTE 1)
 				OR (rc.vehicleSelected
 					AND dateDiff('d', rc.Filter.getCarPickUpDateTime(), rc.Filter.getCarDropOffDateTime()) GTE 1)
