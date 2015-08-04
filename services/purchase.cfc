@@ -182,18 +182,36 @@
 							Verify stored fare
 							Command = T:V or T:R
 							--->
-							<!--- STM-2961: Use T:V for all airlines, even Southwest --->
-							<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
+							<cfset local.runTV = true />
+							<cfif arguments.airSelected AND structKeyExists(arguments.Air, 'Carriers')>
+								<cfloop array="#arguments.Air.Carriers#" index="local.carrierIndex" item="local.carrier">
+									<cfif carrier IS 'F9'>
+										<cfset local.runTV = false />
+									</cfif>
+								</cfloop>
+							</cfif>
+							<!--- STM-5766: Use T:V for all airlines, except Frontier --->
+							<cfif runTV>
+								<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
 																									, hostToken = arguments.hostToken
 																									, searchID = arguments.searchID
 																									, Air = arguments.Air
 																									, airSelected = airSelected )>
+							<!--- Add ATFQ for Frontier --->
+							<cfelse>
+								<cfset TerminalEntry.addATFQ( targetBranch = arguments.targetBranch
+																, hostToken = arguments.hostToken
+																, userID = arguments.Filter.getUserID()
+																, searchID = arguments.searchID )>
+								<cfset local.verifyStoredFareResponse = {} />
+								<cfset verifyStoredFareResponse.error = false />
+							</cfif>
 
 							<cfset local.agentErrorQueue = false />
 							<!--- STM-5329: Bypassing an "ERROR 2308 - NO STORED FARES EXIST" response for Frontier --->
-							<cfif verifyStoredFareResponse.error AND carrier IS 'F9' AND findNoCase("NO STORED FARES EXIST", verifyStoredFareResponse.message)>
+							<!--- <cfif verifyStoredFareResponse.error AND carrier IS 'F9' AND findNoCase("NO STORED FARES EXIST", verifyStoredFareResponse.message)>
 								<cfset local.agentErrorQueue = true />
-							</cfif>
+							</cfif> --->
 
 							<cfif NOT verifyStoredFareResponse.error OR agentErrorQueue>
 								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
