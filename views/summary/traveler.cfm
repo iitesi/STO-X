@@ -294,16 +294,14 @@
 				</select>
 			</div>
 		</div>
-	</cfif>
-
-	<!--- If NASCAR --->
-	<cfif rc.acctID EQ 348>
-		<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
-			<label class="control-label" for="hotelWhereStaying">Where will you be staying? *</label>
-			<div class="controls">
-				<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
+		<!--- If NASCAR --->
+		<cfif rc.acctID EQ 348>
+			<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
+				<label class="control-label" for="hotelWhereStaying">Where will you be staying? *</label>
+				<div class="controls">
+					<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
+				</div>
 			</div>
-		</div>
+		</cfif>
 	</cfif>
-					
 </cfoutput>
