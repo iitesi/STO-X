@@ -256,20 +256,23 @@
         AND rc.Filter.getAirType() EQ 'RT'
         AND rc.Policy.Policy_HotelNotBooking EQ 1
 		AND NOT rc.hotelSelected> --->
-	<cfif (rc.acctID NEQ 348 
-			AND rc.airSelected
-			AND rc.Filter.getAirType() EQ 'RT'
-			AND rc.Policy.Policy_HotelNotBooking EQ 1
-		)
-		OR (rc.acctID EQ 348
-			AND ((rc.airSelected
-					AND isDate(rc.Filter.getArrivalDateTime())
-					AND dateDiff('d', rc.Filter.getDepartDateTime(), rc.Filter.getArrivalDateTime()) GTE 1)
-				OR (rc.vehicleSelected
-					AND dateDiff('d', rc.Filter.getCarPickUpDateTime(), rc.Filter.getCarDropOffDateTime()) GTE 1)
-			)
-		)
-		AND NOT rc.hotelSelected>
+	<cfset overnightStay = false />
+	<!--- If NASCAR --->
+	<cfif rc.acctID EQ 348>
+		<cfif (rc.airSelected
+				AND isDate(rc.Filter.getArrivalDateTime())
+				AND dateDiff('d', rc.Filter.getDepartDateTime(), rc.Filter.getArrivalDateTime()) GTE 1)
+			OR (rc.vehicleSelected
+				AND dateDiff('d', rc.Filter.getCarPickUpDateTime(), rc.Filter.getCarDropOffDateTime()) GTE 1)>
+			<cfset overnightStay = true />
+		</cfif>
+	<cfelseif rc.airSelected
+		AND rc.Filter.getAirType() EQ 'RT'
+		AND rc.Policy.Policy_HotelNotBooking EQ 1>
+		<cfset overnightStay = true />
+	</cfif>
+
+	<cfif overnightStay AND NOT rc.hotelSelected>
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
 			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
 			<div class="controls">
