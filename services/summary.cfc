@@ -496,21 +496,21 @@
 
 				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
 				<!--- If NASCAR --->
-				<cfif arguments.acctID EQ 348
-					AND isDate(arguments.Filter.getArrivalDateTime())
-					AND dateDiff('d', arguments.Filter.getDepartDateTime(), arguments.Filter.getArrivalDateTime()) GTE 1
-					AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0>
-					<cfif arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
+				<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0>
+					<cfif arguments.acctID EQ 348
+						AND isDate(arguments.Filter.getArrivalDateTime())
+						AND dateDiff('d', arguments.Filter.getDepartDateTime(), arguments.Filter.getArrivalDateTime()) GTE 1>
+						<cfif arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''>
+							<cfset local.error.hotelNotBooked = ''>
+						<cfelseif arguments.Traveler.getBookingDetail().getHotelNotBooked() NEQ 'K'
+							AND arguments.Traveler.getBookingDetail().getHotelWhereStaying() EQ ''>
+							<cfset local.error.hotelWhereStaying = ''>
+						</cfif>
+					<cfelseif arguments.Policy.Policy_HotelNotBooking EQ 1
+						AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
+						AND arguments.Filter.getAirType() EQ 'RT'>
 						<cfset local.error.hotelNotBooked = ''>
-					<cfelseif arguments.Traveler.getBookingDetail().getHotelNotBooked() NEQ 'K'
-						AND arguments.Traveler.getBookingDetail().getHotelWhereStaying() EQ ''>
-						<cfset local.error.hotelWhereStaying = ''>
 					</cfif>
-				<cfelseif arguments.Policy.Policy_HotelNotBooking EQ 1
-					AND arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0
-					AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
-					AND arguments.Filter.getAirType() EQ 'RT'>
-					<cfset local.error.hotelNotBooked = ''>
 				</cfif>
 				<cfif NOT inPolicy
 					AND arguments.Policy.Policy_AirReasonCode EQ 1>
