@@ -21,8 +21,8 @@
 			<div id="removeAirCC" class="hide">
 				<label class="control-label" for="removeAirCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="air" data-id="#rc.Traveler.getBookingDetail().getAirFOPID()#"></label>
 			</div>
-			<input type="hidden" name="newAirCC" id="newAirCC" />			
-			<input type="hidden" name="newAirCCID" id="newAirCCID" />			
+			<input type="hidden" name="newAirCC" id="newAirCC" />
+			<input type="hidden" name="newAirCCID" id="newAirCCID" />
 		</div>
 
 		<div id="airManual" class="hide">
@@ -104,7 +104,7 @@
 
 	<cfif rc.hotelSelected>
 		<div id="hotelPayment">
-			
+
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
 			<div class="controls" id="hotelFOPIDDiv">
@@ -122,7 +122,7 @@
 				<label class="control-label" for="removeHotelCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel" data-id="#rc.Traveler.getBookingDetail().getHotelFOPID()#"></label>
 			</div>
 			<input type="hidden" name="newHotelCC" id="newHotelCC" />
-			<input type="hidden" name="newHotelCCID" id="newHotelCCID" />			
+			<input type="hidden" name="newHotelCCID" id="newHotelCCID" />
 		</div>
 
 		<div id="hotelManual" class="hide">
@@ -185,11 +185,32 @@
 				Hotel policies are not available at this time.
 			</cfif>
 		</cfsavecontent>
-
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
-				Hotel payment and cancellation policy  
+			<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
+				Hotel payment and cancellation policy
 			</a>
+		</span>
+		<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+			<div class="searchContainer">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+					<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+					You have selected a web rate. Please read and accept the terms of this rate.
+					<cfelse>
+					Hotel Payment and Cancellation Policy
+					</cfif>
+					</h3>
+				</div>
+				<div class="modal-body">
+					<div id="addModalBody">
+						<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+						#view( 'summary/hotelcancellationpolicy' )#
+						<cfelse>
+						#hotelPolicies#
+						</cfif>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		</div>
@@ -197,7 +218,7 @@
 
 	<cfif rc.vehicleSelected>
 		<div id="carPayment">
-		
+
 		<div class="control-group">
 			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls">

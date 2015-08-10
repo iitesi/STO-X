@@ -19,7 +19,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.currentPage = 1;
-	$scope.filterItems.resultsPerPage = 20;
+	$scope.filterItems.resultsPerPage = 15;
 	$scope.filterItems.vendors = [];
 	$scope.filterItems.amenities = [];
 	$scope.filterItems.ratings = [
@@ -192,9 +192,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		if ( selectedRatings > 0 ){
-			$scope.filtersApplied.ratings = true;
+			$scope.filtersApplied.rating = true;
 		} else {
-			$scope.filtersApplied.ratings = false;
+			$scope.filtersApplied.rating = false;
 		}
 
 

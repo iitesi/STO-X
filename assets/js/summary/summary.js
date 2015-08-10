@@ -942,14 +942,39 @@ function GetValueFromChild(selectedSegmentSeat) {
  	scrollTo('airDiv');
  }
 
-$( "#purchaseButton" ).on("click", function (e) {
+function formValidated(){
+	if ($("#pricelineAgreeTerms").length)
+		if(!$("#pricelineAgreeTerms").prop("checked")){
+			alert("You must first read and agree to all terms.");
+			$("#pricelineAgreeTerms").focus();
+			$("#agreeToTermsError").show();
+			return false;		
+		}
+	
+	return true;
+}
+
+function setPurchaseButtons(){
 	$( "#travelerButton" ).attr('disabled', 'disabled');
 	$( "#purchaseButton" ).val("Purchasing Reservation...");
 	$( "#purchaseButton" ).attr('disabled', 'disabled');
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
-	$( "#purchaseForm" ).submit();
+}
+
+$( "#purchaseButton" ).on("click", function (e) {	
+	//$( "#purchaseForm" ).submit();
 });
+
+$("#purchaseForm").submit(function(e){
+	if(formValidated()){
+		setPurchaseButtons();
+		return;
+	}
+	else		
+		e.preventDefault();
+});
+
 
 $(".displayPaymentModal").click(function() {
 	var formData = $("#purchaseForm").serialize();

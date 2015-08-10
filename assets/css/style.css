@@ -491,6 +491,9 @@ ul.tabs li a.active {
 .details {
 	border:1px solid #CCCCCC;
 }
+.notShown{
+	display:none;
+}
 .details td {
 	padding:4px;
 }

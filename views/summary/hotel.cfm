@@ -2,9 +2,6 @@
 
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
-
-		<!--- <div class="carrow" style="padding:0 0 15px 0;"> --->
-
 		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
 
 			<table width="1000">
@@ -161,7 +158,7 @@
 					</cfsavecontent>
 
 					<span class="blue bold">
-						<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
+						<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
 							Hotel payment and cancellation policy
 						</a>
 					</span>
@@ -186,18 +183,68 @@
 				<td></td>
 
 				<td colspan="4">
-                    #uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
+                    <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
+					#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
                     <input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium">
                     &nbsp;&nbsp;&nbsp;
+					<cfelse>
+					<input type="hidden" name="hotelFF" id="hotelFF">
+					</cfif>
 					HOTEL SPECIAL REQUESTS
 					<input type="text" name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="input-large">
 				</td>
 
 			</tr>
+			<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+			<tr>
+			<td colspan="5">
+			&nbsp;&nbsp;&nbsp;
+			<h2>You have selected a web rate. Please read and accept the terms of this rate below.</h2>
+			<p>
+			<span class="bold preferred">Rate Description</span><br>
+			#rc.Hotel.getRooms()[1].getPPNRateDescription()#
+			</p>
+			<p>
+			<span class="bold preferred">Pre-Pay Policy and Room Charge Disclosure</span><br>
+			#rc.Hotel.getRooms()[1].getDepositPolicy()#
+			</p>
+			<p>
+			<span class="bold preferred">Cancellation Policy</span><br>
+			#rc.Hotel.getRooms()[1].getCancellationPolicy()#
+			</p>
+			<p>
+			<span class="bold preferred">Guarantee Policy</span><br>
+			#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+			</p>
+			<p>
+			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
+			</p>
+			</tr>
+			</cfif>
 			</table>
-		<!--- </div> --->
+			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+				<div class="searchContainer">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+						You have selected a web rate. Please read and accept the terms of this rate.
+						<cfelse>
+						Hotel Payment and Cancellation Policy
+						</cfif>
+						</h3>
+					</div>
+					<div class="modal-body">
+						<div id="addModalBody">
+							<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+							#view( 'summary/hotelcancellationpolicy' )#
+							<cfelse>
+							#hotelPolicies#
+							</cfif>
+						</div>
+					</div>
+				</div>
+			</div>
 
 	</cfif>
-
 </cfoutput>
 <!--- <cfdump var="#rc.Hotel#"> --->
