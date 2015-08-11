@@ -188,6 +188,8 @@
                     <input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium">
                     &nbsp;&nbsp;&nbsp;
 					<cfelse>
+					Frequent guest numbers cannot be applied to web rate reservations.
+					&nbsp;&nbsp;&nbsp;
 					<input type="hidden" name="hotelFF" id="hotelFF">
 					</cfif>
 					HOTEL SPECIAL REQUESTS
@@ -199,23 +201,31 @@
 			<tr>
 			<td colspan="5">
 			&nbsp;&nbsp;&nbsp;
-			<h2>You have selected a web rate. Please read and accept the terms of this rate below.</h2>
+			<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
 			<p>
-			<span class="bold preferred">Rate Description</span><br>
+			<span class="bold">Rate Description</span><br>
 			#rc.Hotel.getRooms()[1].getPPNRateDescription()#
 			</p>
+			</cfif>
+			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
 			<p>
-			<span class="bold preferred">Pre-Pay Policy and Room Charge Disclosure</span><br>
+			<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
 			#rc.Hotel.getRooms()[1].getDepositPolicy()#
 			</p>
+			</cfif>
+			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
 			<p>
-			<span class="bold preferred">Cancellation Policy</span><br>
+			<span class="bold">Cancellation Policy</span><br>
 			#rc.Hotel.getRooms()[1].getCancellationPolicy()#
 			</p>
+			</cfif>
+			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
 			<p>
-			<span class="bold preferred">Guarantee Policy</span><br>
+			<span class="bold">Guarantee Policy</span><br>
 			#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
 			</p>
+			</cfif>
 			<p>
 			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
 			</p>
@@ -224,7 +234,7 @@
 			</table>
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
 				<div class="searchContainer">
-					<div class="modal-header">
+					<div class="modal-header popover-content">
 						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 						You have selected a web rate. Please read and accept the terms of this rate.
@@ -233,7 +243,7 @@
 						</cfif>
 						</h3>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body popover-content">
 						<div id="addModalBody">
 							<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 							#view( 'summary/hotelcancellationpolicy' )#
