@@ -1067,7 +1067,7 @@
 
 		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
 
-		<cfif isQuery(invoice) AND invoice.recordCount>
+		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
 			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
 			<cfset local.Filter = deserializeJSON(invoice.filter) />
 			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
@@ -1076,16 +1076,28 @@
 		<!--- recloc = getBookingDetail().getReservationCode()
 		urrecloc = getBookingDetail().getUniversalLocatorCode() --->
 
+			<!--- Cancel the Priceline reservation --->
 			<!--- <cfset cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
 																							, Filter = Filter )>
 			<cfif cancelResponse.status> --->
+				<!--- Retrieve the universal record --->
 				<cfset retrieveResponse = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
 																									, urLocatorCode = invoice.urRecloc
 																									, searchID = invoice.searchID
 																									, acctID = Filter.acctID
 																									, userID = invoice.userID )>
 
-				<cfdump var="#retrieveResponse#" abort>
+				<!--- Cancel the passive segment --->
+				<cfset cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																									, urLocatorCode = invoice.urRecloc
+																									, providerLocatorCode = invoice.recloc
+																									, passiveLocatorCode = invoice.passiveRecloc
+																									, passiveSegmentRef = invoice.passiveSegmentRef
+																									, searchID = invoice.searchID
+																									, acctID = Filter.acctID
+																									, userID = invoice.userID )>
+
+				<!--- Modify the universal record --->
 
 				<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
 
