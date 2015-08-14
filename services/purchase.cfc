@@ -332,10 +332,27 @@
 		<cfargument name="Traveler" required="true">
 		<cfargument name="itinerary" required="true">
 		<cfargument name="Filter" required="true">
+		<cfargument name="Account" required="true">
+
+		<cfset local.hotelSource = "" />
+		<cfset local.passiveLocatorCode = "" />
+		<cfset local.passiveSegmentRef = "" />
+		<!--- If a hotel room was purchased --->
+		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() AND structKeyExists(arguments.itinerary, 'Hotel')>
+			<!--- If it was a Priceline hotel room --->
+			<cfif len(arguments.itinerary.Hotel.getPPNTripID())>
+				<cfset local.hotelSource = "Priceline" />
+				<cfset local.passiveLocatorCode = arguments.itinerary.Hotel.getPassiveLocatorCode() />
+				<cfset local.passiveSegmentRef = arguments.itinerary.Hotel.getPassiveSegmentRef() />
+			<!--- If it was a Travelport hotel room --->
+			<cfelse>
+				<cfset local.hotelSource = "Travelport" />
+			</cfif>
+		</cfif>
 
 		<cfquery datasource="#getBookingDSN()#">
-			INSERT INTO Invoices
-				( searchID
+			INSERT INTO Invoices (
+				  searchID
 				, recloc
 				, urRecloc
 				, firstName
@@ -353,9 +370,14 @@
 				, filter
 				, traveler
 				, bookingDetail
-				, unusedTickets )
-			VALUES
-				( <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
+				, unusedTickets
+				, hotelSource
+				, targetBranch
+				, passiveRecloc
+				, passiveSegmentRef
+			)
+			VALUES (
+				  <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
 				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getUniversalLocatorCode()#" cfsqltype="cf_sql_varchar" >
 				, <cfqueryparam value="#arguments.Traveler.getFirstName()#" cfsqltype="cf_sql_varchar" >
@@ -363,9 +385,9 @@
 				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getAirNeeded()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Air') ? serializeJSON(arguments.itinerary.Air) : '')#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getCarNeeded()#" cfsqltype="cf_sql_integer" >
-				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Hotel') ? serializeJSON(arguments.itinerary.Hotel) : '')#" cfsqltype="cf_sql_longvarchar" >
-				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getHotelNeeded()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Vehicle') ? serializeJSON(arguments.itinerary.Vehicle) : '')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getHotelNeeded()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Hotel') ? serializeJSON(arguments.itinerary.Hotel) : '')#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
 				, <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
@@ -373,10 +395,43 @@
 				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
 				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
-				, <cfqueryparam value="#left(arguments.Traveler.getBookingDetail().getUnusedTickets(), 50)#" cfsqltype="cf_sql_varchar" > )
+				, <cfqueryparam value="#left(arguments.Traveler.getBookingDetail().getUnusedTickets(), 50)#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.hotelSource#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Account.sBranch#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
+			)
 		</cfquery>
 
 		<cfreturn />
+	</cffunction>
+
+	<cffunction name="retrieveInvoice" output="false">
+		<cfargument name="invoiceID" type="numeric" required="true" />
+
+		<cfquery name="getInvoice" datasource="#getBookingDSN()#">
+			SELECT searchID
+				 , recloc
+				 , urRecloc
+				 , firstName
+				 , lastName
+				 , hotelSelection
+				 , userID
+				 , profileID
+				 , valueID
+				 , policyID
+				 , filter
+				 , traveler
+				 , bookingDetail
+				 , hotelSource
+				 , targetBranch
+				 , passiveRecloc
+				 , passiveSegmentRef
+			FROM Invoices
+			WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
+		</cfquery>
+
+		<cfreturn getInvoice />
 	</cffunction>
 
 	<cffunction name="cancelInvoice" output="false">

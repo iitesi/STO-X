@@ -782,6 +782,8 @@
 
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
+					<cfset Hotel.setPassiveLocatorCode('')>
+					<cfset Hotel.setPassiveSegmentRef('')>
 
 					<!--- If a Priceline hotel --->
 					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
@@ -794,11 +796,10 @@
 																										, token = local.token
 																									)>
 
-						<!--- Parse sell results --->
+						<!--- Parse book results --->
 						<cfset Hotel = fw.getBeanFactory().getBean('PPNHotelAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = hotelResponse )>
 
-						<!--- Parse sell results --->
 						<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)
@@ -818,7 +819,11 @@
 																										, token = local.token
 																									)>
 
-						<cfdump var="#passiveResponse#" label="controllers/purchase.cfc" abort>
+						<!--- Parse passive create results --->
+						<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
+																									, response = passiveResponse )>
+
+						<cfdump var="#Hotel#" label="controllers/purchase.cfc" abort>
 					<!--- If a Travelport hotel --->
 					<cfelse>
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
@@ -978,7 +983,8 @@
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
 																					, itinerary = itinerary
-																					, Filter = rc.Filter )>
+																					, Filter = rc.Filter
+																					, Account = rc.Account )>
 
 				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).databaseErrors( errorMessage = errorMessage
@@ -1050,6 +1056,49 @@
 		</cfif>
 
 		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')>
+
+	</cffunction>
+
+	<cffunction name="cancelPPN" output="false">
+		<cfargument name="rc" />
+
+		<cfset local.cancelResponse.status = false />
+		<cfset cancelResponse.message = "" />
+
+		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
+
+		<cfif isQuery(invoice) AND invoice.recordCount>
+			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
+			<cfset local.Filter = deserializeJSON(invoice.filter) />
+			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
+			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
+
+		<!--- recloc = getBookingDetail().getReservationCode()
+		urrecloc = getBookingDetail().getUniversalLocatorCode() --->
+
+			<!--- <cfset cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+																							, Filter = Filter )>
+			<cfif cancelResponse.status> --->
+				<cfset retrieveResponse = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
+																									, urLocatorCode = invoice.urRecloc
+																									, searchID = invoice.searchID
+																									, acctID = Filter.acctID
+																									, userID = invoice.userID )>
+
+				<cfdump var="#retrieveResponse#" abort>
+
+				<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
+
+				<!--- <cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																				, urRecloc = invoice.urRecloc ) /> --->
+			<!--- </cfif> --->
+
+			<cfif cancelResponse.message NEQ "">
+				<cfset rc.message.addError(cancelResponse.message) />
+			</cfif>
+		</cfif>
+
+		<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')> --->
 
 	</cffunction>
 
