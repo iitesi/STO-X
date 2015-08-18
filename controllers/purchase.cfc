@@ -784,6 +784,7 @@
 					<cfset Hotel.setUniversalLocatorCode('')>
 					<cfset Hotel.setPassiveLocatorCode('')>
 					<cfset Hotel.setPassiveSegmentRef('')>
+					<cfset Hotel.setProviderReservationInfoRef('')>
 
 					<!--- If a Priceline hotel --->
 					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
@@ -1063,7 +1064,7 @@
 		<cfargument name="rc" />
 
 		<cfset local.cancelResponse.status = false />
-		<cfset cancelResponse.message = "" />
+		<cfset local.cancelResponse.message = "" />
 
 		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
 
@@ -1073,41 +1074,54 @@
 			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
 			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
 
-		<!--- recloc = getBookingDetail().getReservationCode()
-		urrecloc = getBookingDetail().getUniversalLocatorCode() --->
-
 			<!--- Cancel the Priceline reservation --->
-			<!--- <cfset cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+			<!--- <cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
 																							, Filter = Filter )>
 			<cfif cancelResponse.status> --->
-				<!--- Retrieve the universal record --->
-				<cfset retrieveResponse = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
+				<!--- Retrieve the universal record version --->
+				<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
 																									, urLocatorCode = invoice.urRecloc
 																									, searchID = invoice.searchID
 																									, acctID = Filter.acctID
 																									, userID = invoice.userID )>
 
-				<!--- Cancel the passive segment --->
-				<cfset cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
-																									, urLocatorCode = invoice.urRecloc
-																									, providerLocatorCode = invoice.recloc
-																									, passiveLocatorCode = invoice.passiveRecloc
-																									, passiveSegmentRef = invoice.passiveSegmentRef
-																									, searchID = invoice.searchID
-																									, acctID = Filter.acctID
-																									, userID = invoice.userID )>
+				<cfif isNumeric(local.urVersion)>
+					<!--- Cancel the passive segment --->
+					<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																													, urLocatorCode = invoice.urRecloc
+																													, providerLocatorCode = invoice.recloc
+																													, passiveLocatorCode = invoice.passiveRecloc
+																													, passiveSegmentRef = invoice.passiveSegmentRef
+																													, version = local.urVersion
+																													, searchID = invoice.searchID
+																													, acctID = Filter.acctID
+																													, userID = invoice.userID )>
 
-				<!--- Modify the universal record --->
+					<!--- Modify the universal record --->
+					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																											, urLocatorCode = invoice.urRecloc
+																											, providerLocatorCode = invoice.recloc
+																											, providerReservationInfoRef = invoice.providerReservationInfoRef
+																											, ppnTripID = Hotel.ppnTripID
+																											, version = local.urVersion
+																											, searchID = invoice.searchID
+																											, acctID = Filter.acctID
+																											, userID = invoice.userID )>
 
-				<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
+					<!--- Invoice service fee --->
 
-				<!--- <cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																				, urRecloc = invoice.urRecloc ) /> --->
+					<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
+
+					<!--- <cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																					, urRecloc = invoice.urRecloc ) /> --->
+				</cfif>
 			<!--- </cfif> --->
 
 			<cfif cancelResponse.message NEQ "">
 				<cfset rc.message.addError(cancelResponse.message) />
 			</cfif>
+		<cfelse>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
 		</cfif>
 
 		<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')> --->

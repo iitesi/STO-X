@@ -337,6 +337,7 @@
 		<cfset local.hotelSource = "" />
 		<cfset local.passiveLocatorCode = "" />
 		<cfset local.passiveSegmentRef = "" />
+		<cfset local.providerReservationInfoRef = "" />
 		<!--- If a hotel room was purchased --->
 		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() AND structKeyExists(arguments.itinerary, 'Hotel')>
 			<!--- If it was a Priceline hotel room --->
@@ -344,6 +345,7 @@
 				<cfset local.hotelSource = "Priceline" />
 				<cfset local.passiveLocatorCode = arguments.itinerary.Hotel.getPassiveLocatorCode() />
 				<cfset local.passiveSegmentRef = arguments.itinerary.Hotel.getPassiveSegmentRef() />
+				<cfset local.providerReservationInfoRef = arguments.itinerary.Hotel.getProviderReservationInfoRef() />
 			<!--- If it was a Travelport hotel room --->
 			<cfelse>
 				<cfset local.hotelSource = "Travelport" />
@@ -375,6 +377,7 @@
 				, targetBranch
 				, passiveRecloc
 				, passiveSegmentRef
+				, providerReservationInfoRef
 			)
 			VALUES (
 				  <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
@@ -400,6 +403,7 @@
 				, <cfqueryparam value="#arguments.Account.sBranch#" cfsqltype="cf_sql_varchar" >
 				, <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
 				, <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
 			)
 		</cfquery>
 
@@ -427,6 +431,7 @@
 				 , targetBranch
 				 , passiveRecloc
 				 , passiveSegmentRef
+				 , providerReservationInfoRef
 			FROM Invoices
 			WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
 		</cfquery>
