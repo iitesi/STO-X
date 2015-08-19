@@ -823,8 +823,6 @@
 						<!--- Parse passive create results --->
 						<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = passiveResponse )>
-
-						<cfdump var="#Hotel#" label="controllers/purchase.cfc" abort>
 					<!--- If a Travelport hotel --->
 					<cfelse>
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
@@ -1075,9 +1073,9 @@
 			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
 
 			<!--- Cancel the Priceline reservation --->
-			<!--- <cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+			<cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
 																							, Filter = Filter )>
-			<cfif cancelResponse.status> --->
+			<cfif cancelResponse.status>
 				<!--- Retrieve the universal record version --->
 				<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
 																									, urLocatorCode = invoice.urRecloc
@@ -1108,14 +1106,33 @@
 																											, acctID = Filter.acctID
 																											, userID = invoice.userID )>
 
-					<!--- Invoice service fee --->
+					<!--- Get agent touch fee --->
+					<cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
+
+					<!--- Open terminal session --->
+					<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
+																										, searchID = invoice.searchID )>
+
+					<cfif hostToken EQ ''>
+						<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+						<cfset errorType = 'TerminalEntry.openSession'>
+					<cfelse>
+						<!--- Invoice service fee --->
+						<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
+																														, hostToken = hostToken
+																														, searchID = invoice.searchID )>
+
+						<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
+																						, hostToken = hostToken
+																						, searchID = invoice.searchID )>
+					</cfif>
 
 					<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
 
-					<!--- <cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																					, urRecloc = invoice.urRecloc ) /> --->
+					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																					, urRecloc = invoice.urRecloc ) />
 				</cfif>
-			<!--- </cfif> --->
+			</cfif>
 
 			<cfif cancelResponse.message NEQ "">
 				<cfset rc.message.addError(cancelResponse.message) />
