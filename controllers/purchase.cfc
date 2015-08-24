@@ -1074,7 +1074,7 @@
 
 			<!--- Cancel the Priceline reservation --->
 			<cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
-																							, Filter = Filter )>
+																								, Filter = Filter )>
 			<cfif cancelResponse.status>
 				<!--- Retrieve the universal record version --->
 				<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
@@ -1094,6 +1094,9 @@
 																													, searchID = invoice.searchID
 																													, acctID = Filter.acctID
 																													, userID = invoice.userID )>
+
+					<!--- If an error from the above:
+					The hotel was cancelled with Priceline, but the PNR could not be updated. Please manually cancel the PNR, issue the fee, and regenerate the VI. --->
 
 					<!--- Modify the universal record --->
 					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
