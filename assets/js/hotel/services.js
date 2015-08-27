@@ -42,8 +42,8 @@ services.factory( "SearchService", function( $http ){
 			.then( function(response) { return response.data });
 	}
 
-	SearchService.doSearch = function( searchId, requery ) {
-		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&requery=" + requery )
+	SearchService.doSearch = function( searchId, propertyId, requery, finditRequest ) {
+		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&propertyId=" + propertyId + "&requery=" + requery + "&finditRequest=" + finditRequest)
 			.then( function(response) {
 				var result = {};
 				result.hotels = [];

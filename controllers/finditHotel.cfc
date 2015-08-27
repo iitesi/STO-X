@@ -20,22 +20,15 @@
 
 		<cfif getTrip.recordCount AND isJSON(local.getTrip.ResultsJSON)>
 			<cfset local.trip = deserializeJSON(local.getTrip.ResultsJSON) />
+			<!--- roomSelected can be lowestPrePaidTravelportRoom, lowestPrePaidPricelineRoom, lowestNonPrePaidTravelportRoom, or lowestNonPrePaidPricelineRoom --->
+			<cfset local.roomSelected = rc.roomSelected />
+			<cfset local.room = trip["#roomSelected#"] />
 
-		<cfdump var="#trip#" abort>
-
-			<cfset local.room = trip.rooms[1] />
-
-			<cfset fw.getBeanFactory().getBean('Hotel').select( searchID = rc.searchID
-																, propertyID = rc.propertyID
-																, ratePlanType = room.ratePlanType
-																, ppnBundle = room.ppnBundle
-																, totalForStay = room.totalForStay
-																, isInPolicy = room.isInPolicy
-																, outOfPolicyMessage = room.outOfPolicyMessage
-																, findIt = 1) />
+			<!--- Parameters must be "SearchID" and "PropertyID" to process properly in the AngularJS code --->
+			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#") />
 		<cfelse>
-			<cfset rc.message.addError("The hotel room from FindIt is no longer available.") />
-			<cfset variables.fw.redirect("hotel.search?searchID=#rc.searchID#") />
+			<cfset rc.message.addError("We could not find the requested hotel. Here are other properties that are close to the requested location.") />
+			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#") />
 		</cfif>
 
 	</cffunction>

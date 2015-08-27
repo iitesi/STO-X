@@ -202,6 +202,7 @@
                                     </span>
 
                                     <button
+                                        id="item.hotel.PropertyId"
                                         ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
                                         ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                         <span ng-show="showRooms">HIDE ROOMS</span>
@@ -308,7 +309,7 @@
 
                             </div>
 
-                            <div class="hotel-panel" ng-show="showRooms">
+                            <div class="hotel-panel" ng-show="showRooms || item.hotel.PropertyId == '36468'">
 
                                 <table width="100%">
                                     <tbody>

@@ -3,6 +3,13 @@ var controllers = angular.module('app.controllers',[]);
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
+	$scope.propertyId = $.url().param( 'PropertyID' );
+	if (!!$scope.propertyId) {
+		$scope.finditRequest = true;
+	}
+	else {
+		$scope.finditRequest = false;
+	}
 	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
@@ -63,6 +70,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 						});
 					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
 					$scope.loadPolicy( $scope.search.policyID );
+					if (!!$scope.propertyId) {
+						/* angular.element('#36468').trigger('click'); */
+					}
 				} else {
 					$scope.errors = result.errors;
 				}
@@ -116,7 +126,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.getSearchResults = function( requery ){
-		SearchService.doSearch( $scope.searchId, requery )
+		SearchService.doSearch( $scope.searchId, $scope.propertyId, requery, $scope.finditRequest )
 			.then( function(result){
 				$scope.hotels = result.hotels;
 				$scope.filteredHotels = result.hotels;

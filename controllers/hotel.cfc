@@ -10,7 +10,9 @@
 		<cfargument name="rc">
 
 		<cfset arguments.rc.nFromHotel = 1 />
-		<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+		<cfif NOT structKeyExists(arguments.rc, "propertyID")>
+			<cfset fw.getBeanFactory().getBean('car').doAvailability(argumentcollection=arguments.rc)>
+		</cfif>
 
 		<cfset arguments.rc.shortsAPIURL = fw.getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
 		<cfreturn />
