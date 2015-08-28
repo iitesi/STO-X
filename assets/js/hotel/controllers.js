@@ -72,7 +72,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
 					$scope.loadPolicy( $scope.search.policyID );
 					if (!!$scope.propertyId) {
-						/* angular.element('#36468').trigger('click'); */
+						setTimeout(function() {
+							$('#'+$scope.propertyId).trigger('click');
+						}, 3500);
 					}
 				} else {
 					$scope.errors = result.errors;
