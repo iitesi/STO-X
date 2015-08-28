@@ -333,6 +333,7 @@
                                                     ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
                                                     <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                                 </button>
+                                                <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
                                             </td>
                                         </tr>
                                     </tbody>

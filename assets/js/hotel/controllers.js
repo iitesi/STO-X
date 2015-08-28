@@ -11,6 +11,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$scope.finditRequest = false;
 	}
 	$scope.ratePlanType = $.url().param( 'RatePlanType' );
+	$scope.dailyRate = $.url().param( 'DailyRate' );
 	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
@@ -150,7 +151,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery )
+			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.propertyId, $scope.ratePlanType, $scope.dailyRate, $scope.policy, requery )
 				.then( function(result){
 					if( !$scope.hotelFilter( result ) ){
 						$scope.filterHotels();
