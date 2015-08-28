@@ -23,9 +23,10 @@
 			<!--- roomSelected can be lowestPrePaidTravelportRoom, lowestPrePaidPricelineRoom, lowestNonPrePaidTravelportRoom, or lowestNonPrePaidPricelineRoom --->
 			<cfset local.roomSelected = rc.roomSelected />
 			<cfset local.room = trip["#roomSelected#"] />
+			<cfset local.ratePlanType = local.room.ratePlanType />
 
-			<!--- Parameters must be "SearchID" and "PropertyID" to process properly in the AngularJS code --->
-			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#") />
+			<!--- Parameters must be "SearchID", "PropertyID", and "RatePlanType" to process properly in the AngularJS code --->
+			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#") />
 		<cfelse>
 			<cfset rc.message.addError("We could not find the requested hotel. Here are other properties that are close to the requested location.") />
 			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#") />

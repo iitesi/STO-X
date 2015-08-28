@@ -10,6 +10,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	else {
 		$scope.finditRequest = false;
 	}
+	$scope.ratePlanType = $.url().param( 'RatePlanType' );
 	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
