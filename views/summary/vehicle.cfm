@@ -162,7 +162,7 @@
 				<td width="200" valign="top">
 
 					<span class="blue bold large">
-						#(rc.Vehicle.getCurrency() EQ 'USD' ? DollarFormat(rc.Vehicle.getEstimatedTotalAmount()) : rc.Vehicle.getEstimatedTotalAmount()&' '&rc.Vehicle.getCurrency())#<br>
+						#(rc.Vehicle.getCurrency() EQ 'USD' ? DollarFormat(rc.Vehicle.getEstimatedTotalAmount()) : numberFormat(rc.Vehicle.getEstimatedTotalAmount(), '____.__')&' '&rc.Vehicle.getCurrency())#<br>
 					</span>
 
 					Estimated Total<br>

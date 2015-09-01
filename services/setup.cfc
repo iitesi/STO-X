@@ -477,6 +477,7 @@
 			, Policy_HotelMaxRate
 			, Policy_HotelPrefRule
 			, Policy_HotelPrefDisp
+			, Policy_HotelInPolicyDisp
 			, Policy_HotelNotBooking
 			, Policy_AirFee
 			, Policy_AirIntFee
