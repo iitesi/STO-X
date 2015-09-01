@@ -54,10 +54,10 @@
 										</cfif></td>
 									<td>#dateFormat(Now(), 'mmm d, yyyy')#</td>
 									<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : airApproximateBase&' '&airCurrency)#</td>
+									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : numberFormat(airApproximateBase, '____.__')&' '&airCurrency)#</td>
 									<!--- <td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td> --->
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : airTaxes&' '&airCurrency)#</td>
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : airTotal&' '&airCurrency)#</td>
+									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : numberFormat(airTaxes, '____.__')&' '&airCurrency)#</td>
+									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : numberFormat(airTotal, '____.__')&' '&airCurrency)#</td>
 									<cfset totalAmount = totalAmount + airTotal />
 								</tr>
 								<cfset whichCurrency = airCurrency />
@@ -97,11 +97,11 @@
 									<td>AT CHECK-OUT</td>
 									<td align="right">
 										<cfif len(hotelBase)>
-											#(hotelCurrency EQ 'USD' ? DollarFormat(hotelBase) : hotelBase&' '&hotelCurrency)#
+											#(hotelCurrency EQ 'USD' ? DollarFormat(hotelBase) : numberFormat(hotelBase, '____.__')&' '&hotelCurrency)#
 										</cfif>
 									</td>
 									<td align="right">#hotelTaxes#</td>
-									<td align="right">#(hotelCurrency EQ 'USD' ? DollarFormat(hotelTotal) : hotelTotal&' '&hotelCurrency)#</td>
+									<td align="right">#(hotelCurrency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&hotelCurrency)#</td>
 									<cfset totalAmount = totalAmount + hotelTotal />
 								</tr>
 								<cfif rc.airSelected AND (hotelCurrency NEQ airCurrency)>
@@ -121,16 +121,16 @@
 									<td>PRESENT AT PICK-UP</td>
 									<td>AT DROP-OFF</td>
 									<td align="right">
-										#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : vehicleBase&' '&vehicleCurrency)#
+										#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : numberFormat(vehicleBase, '____.__')&' '&vehicleCurrency)#
 										<cfset vehicleTotal = vehicleBase />
 										<cfif NOT vehicleDropOffChargesIncluded AND vehicleDropOffCharge NEQ 0>
-											&nbsp;(+ #(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleDropOffCharge) : vehicleDropOffCharge&' '&vehicleCurrency)# drop-off charge)
+											&nbsp;(+ #(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleDropOffCharge) : numberFormat(vehicleDropOffCharge, '____.__')&' '&vehicleCurrency)# drop-off charge)
 											<cfset vehicleTotal = vehicleTotal + vehicleDropOffCharge />
 										</cfif>
 									</td>
 									<td align="right">QUOTED AT PICK-UP</td>
 									<cfset totalText = "Estimated Total" />
-									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleTotal) : vehicleTotal&' '&vehicleCurrency)#</td>
+									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleTotal) : numberFormat(vehicleTotal, '____.__')&' '&vehicleCurrency)#</td>
 									<cfset totalAmount = totalAmount + vehicleTotal />
 								</tr>
 								<cfif (rc.airSelected AND (vehicleCurrency NEQ airCurrency)) OR (rc.hotelSelected AND (vehicleCurrency NEQ hotelCurrency))>
@@ -167,7 +167,7 @@
 								<td align="right"><span class="blue"><strong>#totalText#</strong></span></td>
 								<td align="right">
 									<cfif displayTotal>
-										<span class="blue"><strong>#(whichCurrency EQ 'USD' ? DollarFormat(totalAmount) : totalAmount&' '&whichCurrency)#</strong></span>
+										<span class="blue"><strong>#(whichCurrency EQ 'USD' ? DollarFormat(totalAmount) : numberFormat(totalAmount, '____.__')&' '&whichCurrency)#</strong></span>
 									</cfif>
 								</td>
 							</tr>

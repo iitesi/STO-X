@@ -139,7 +139,7 @@
 					</cfif>
 
 					<span class="blue bold large">
-						#(currency EQ 'USD' ? DollarFormat(hotelTotal) : hotelTotal&' '&currency)#<br>
+						#(currency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&currency)#<br>
 					</span>
 
 					#hotelText#<br>

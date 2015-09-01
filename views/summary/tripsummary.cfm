@@ -61,7 +61,7 @@
 				<div class="span1">Hotel</div>
 				<div class="span1"></div>
 				<div class="span2">#hotelText#</div>
-				<div class="span1" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : hotelTotal&' '&currency)#</div>
+				<div class="span1" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
 
@@ -79,7 +79,7 @@
 				<div class="span1">Car</div>
 				<div class="span1"></div>
 				<div class="span2">Quoted at pick-up</div>
-				<div class="span1" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : vehicleTotal&' '&currency)#</div>
+				<div class="span1" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="carTotal" value="#vehicleTotal#">
 
