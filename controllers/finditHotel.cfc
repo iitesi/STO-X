@@ -20,14 +20,19 @@
 
 		<cfif getTrip.recordCount AND isJSON(local.getTrip.ResultsJSON)>
 			<cfset local.trip = deserializeJSON(local.getTrip.ResultsJSON) />
-			<!--- roomSelected can be lowestPrePaidTravelportRoom, lowestPrePaidPricelineRoom, lowestNonPrePaidTravelportRoom, or lowestNonPrePaidPricelineRoom --->
-			<cfset local.roomSelected = rc.roomSelected />
-			<cfset local.room = trip["#roomSelected#"] />
-			<cfset local.ratePlanType = local.room.ratePlanType />
-			<cfset local.dailyRate = local.room.dailyRate />
+			<cfif structKeyExists(rc, "roomSelected")>
+				<!--- roomSelected can be lowestPrePaidTravelportRoom, lowestPrePaidPricelineRoom, lowestNonPrePaidTravelportRoom, or lowestNonPrePaidPricelineRoom --->
+				<cfset local.roomSelected = rc.roomSelected />
+				<cfset local.room = trip["#roomSelected#"] />
+				<cfset local.ratePlanType = local.room.ratePlanType />
+				<cfset local.dailyRate = local.room.dailyRate />
 
-			<!--- Parameters must be "SearchID", "PropertyID", and "RatePlanType" to process properly in the AngularJS code --->
-			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#&DailyRate=#local.dailyRate#") />
+				<!--- Parameters must be "SearchID", "PropertyID", and "RatePlanType" to process properly in the AngularJS code --->
+				<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#&DailyRate=#local.dailyRate#") />
+			<cfelse>
+				<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#") />
+			</cfif>
+
 		<cfelse>
 			<cfset rc.message.addError("We could not find the requested hotel. Here are other properties that are close to the requested location.") />
 			<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#") />
