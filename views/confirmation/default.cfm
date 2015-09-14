@@ -58,7 +58,7 @@
 										<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
 									</a>
 									<br />
-									<cfif application.es.getCurrentEnvironment() EQ 'QA'>
+									<!--- <cfif application.es.getCurrentEnvironment() EQ 'QA'>
 										<cfset bookingDS = "bookingQA" />
 									<cfelse>
 										<cfset bookingDS = "booking" />
@@ -70,7 +70,7 @@
 									</cfquery>
 									<a href="#buildURL('purchase.cancelPPN?searchID=#rc.searchID#&invoiceID=#getInvoiceID.invoiceID#')#">
 										<span class="icon-large icon-remove-circle"></span> Cancel Priceline Reservation
-									</a>
+									</a> --->
 								</cfif>
 							</cfif>
 						</cfloop>
