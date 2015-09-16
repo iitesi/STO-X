@@ -450,7 +450,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.stTrips/>
 	</cffunction>
 
-	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="removeBlackListedCarrierPairings" output="false" hint="I add remove trips with blacklisted carrier combinations.">
 		<cfargument name="trips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
@@ -481,6 +481,33 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<!--- delete the blacklisted flights from stTrips --->
+		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
+			<cfset StructDelete(local.trips, local.tripIndex)>
+		</cfloop>
+
+		<cfreturn local.trips/>
+	</cffunction>
+
+	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carriers.">
+		<cfargument name="trips" required="true">
+		<cfargument name="blackListedCarriers" required="true">
+
+		<cfset local.trips = arguments.trips>
+		<cfset local.deleteTripIndex = "">
+
+		<cfif len(arguments.blackListedCarriers)>
+			<!--- Loop through all the trips --->
+			<cfloop collection="#local.trips#" index="local.tripIndex" item="local.trip">
+				<cfloop array="#local.trip.carriers#" index="local.carrier">
+					<cfif listFindNoCase(arguments.blackListedCarriers, local.carrier)>
+						<cfset local.deleteTripIndex = listAppend(local.deleteTripIndex, local.tripIndex) />
+						<cfbreak>
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfif>
 
 		<!--- delete the blacklisted flights from stTrips --->
 		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
