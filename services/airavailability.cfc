@@ -71,11 +71,33 @@
 
 		<cfset local.sThreadName = "">
 
-		<!--- Don't go back to the getUAPI if we already got the data. --->
+		<!--- Checking to see if a carrier, if selected, has any blacklisted pairings --->
+		<cfset local.blackListedCarrierPairing = application.blackListedCarrierPairing />
+		<cfset local.selectedCarriers = "" />
+		<cfset local.blackListedCarriers = "" />
+
+		<cfif structKeyExists(session.searches, arguments.Filter.getSearchID()) AND structKeyExists(session.searches[arguments.Filter.getSearchID()], "stSelected")>
+			<cfloop collection="#session.searches[arguments.Filter.getSearchID()].stSelected#" item="local.group" index="local.groupIndex">
+				<cfif isStruct(local.group) AND NOT structIsEmpty(local.group) AND structKeyExists(local.group, "platingCarrier")>
+					<cfset local.selectedCarriers = listAppend(local.selectedCarriers, local.group.platingCarrier) />
+				</cfif>
+			</cfloop>
+			
+			<cfloop list="#local.selectedCarriers#" index="local.carrier">
+				<cfloop collection="#local.blackListedCarrierPairing#" item="local.pairing" index="local.pairingIndex">
+					<cfif listFindNoCase(local.selectedCarriers, local.pairing[1])>
+						<cfset local.blackListedCarriers = listAppend(local.blackListedCarriers, local.pairing[2]) />
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfif>
+
+		<!--- Don't go back to the getUAPI if we already got the data UNLESS we now have to exclude blacklisted carrier pairings. --->
 		<cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()], 'stAvailDetails')
 			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails, 'stGroups')
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)>
+			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)
+			OR len(local.blackListedCarriers)>
 
 			<cfset local.sThreadName = 'Group'&arguments.Group>
 			<cfset local[local.sThreadName] = {}>
@@ -90,7 +112,8 @@
 				Filter="#arguments.Filter#"
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
-				Policy="#arguments.Policy#">
+				Policy="#arguments.Policy#"
+				BlackListedCarriers="#local.blackListedCarriers#">
 
  				<cfset attributes.sNextRef = 'ROUNDONE'>
 				<cfset attributes.nCount = 0>
@@ -146,6 +169,8 @@
 					<!--- Merge information into the current session structures. --->
 					<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], attributes.stAvailTrips)>
 				</cfloop>
+				<!--- Remove all blackListed carriers that may have been added during this and previous calls --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().removeBlackListedCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], arguments.BlackListedCarriers)>
 
 				<!--- Add list of available carriers per leg --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>

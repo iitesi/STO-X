@@ -290,12 +290,12 @@
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
-					<!--- Remove BlackListed Carriers --->
+					<!--- Remove Multiple Connections --->
 					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
 
-					<!--- Remove BlackListed Carriers --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarriers( trips = attributes.stTrips
-																						, blackListedCarriers = arguments.blackListedCarrierPairing )>
+					<!--- Remove BlackListed Carrier Pairings --->
+					<cfset attributes.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = attributes.stTrips
+																							, blackListedCarriers = arguments.blackListedCarrierPairing )>
 
 					<!--- Remove Private Fares --->
 					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
