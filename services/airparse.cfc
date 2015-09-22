@@ -450,7 +450,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.stTrips/>
 	</cffunction>
 
-	<cffunction name="removeBlackListedCarrierPairings" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="removeBlackListedCarrierPairings" output="false" hint="I remove trips with blacklisted carrier combinations.">
 		<cfargument name="trips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
@@ -490,7 +490,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.trips/>
 	</cffunction>
 
-	<cffunction name="removeBlackListedCarriers" output="false" hint="I add remove trips with blacklisted carriers.">
+	<cffunction name="removeBlackListedCarriers" output="false" hint="I remove trips with blacklisted carriers.">
 		<cfargument name="trips" required="true">
 		<cfargument name="blackListedCarriers" required="true">
 
@@ -511,13 +511,15 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<!--- delete the blacklisted flights from stTrips --->
 		<cfloop list="#local.deleteTripIndex#" item="local.tripIndex">
-			<cfset StructDelete(local.trips, local.tripIndex)>
+			<cfif structKeyExists(local.trips, local.tripIndex)>
+				<cfset structDelete(local.trips, local.tripIndex)>
+			</cfif>
 		</cfloop>
 
 		<cfreturn local.trips/>
 	</cffunction>
 
-	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="removeMultiCarrierPrivateFares" output="false" hint="I remove trips with blacklisted carrier combinations.">
 		<cfargument name="trips" required="true">
 
 		<cfset local.deleteTripIndex = ''>
@@ -536,7 +538,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn arguments.trips/>
 	</cffunction>
 
-	<cffunction name="removeMultiConnections" output="false" hint="I add remove trips with blacklisted carrier combinations.">
+	<cffunction name="removeMultiConnections" output="false" hint="I remove trips with blacklisted carrier combinations.">
 		<cfargument name="trips" required="true">
 
 		<cfset local.trashSegmentCount = ''>
