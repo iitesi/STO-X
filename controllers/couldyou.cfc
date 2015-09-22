@@ -185,7 +185,8 @@
 
 				<cfset variables.bf.getBean( "HotelService" ).getRoomRateRules( searchId=arguments.rc.searchId,
 																				propertyId=newHotel.getPropertyID(),
-																				ratePlanType=newHotel.getRooms()[1].getRatePlanType() ) />
+																				ratePlanType=newHotel.getRooms()[1].getRatePlanType(),
+																				ppnBundle=newHotel.getRooms()[1].getPPNBundle() ) />
 
 			</cfif>
 
