@@ -12,10 +12,11 @@
 		<cfargument name="rc">
 
 		<cfquery name="local.getTrip" datasource="#variables.bookingDSN#">
-			SELECT ResultsJSON
+			SELECT TOP 1 ResultsJSON
 			FROM FindItOptions_Hotel
 			WHERE SearchID = <cfqueryparam value="#rc.searchID#" cfsqltype="cf_sql_numeric" />
 				AND PropertyID = <cfqueryparam value="#rc.propertyID#" cfsqltype="cf_sql_varchar" />
+			ORDER BY ID DESC
 		</cfquery>
 
 		<cfif getTrip.recordCount AND isJSON(local.getTrip.ResultsJSON)>
