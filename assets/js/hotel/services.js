@@ -86,6 +86,7 @@ services.factory( "HotelService", function( $window, $http ){
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
 					hr.dailyRate = Math.round( hr.dailyRate );
+					finditRate = Math.round( finditRate );
 					if (Hotel.PropertyId == finditHotel) {
 						if (hr.ratePlanType == finditRatePlan) {
 							if (hr.dailyRate > finditRate) {
