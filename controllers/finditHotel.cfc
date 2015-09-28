@@ -28,8 +28,18 @@
 				<cfset local.ratePlanType = local.room.ratePlanType />
 				<cfset local.dailyRate = local.room.dailyRate />
 
+				<cfset local.selectedHotel = new com.shortstravel.hotel.Hotel() />
+				<cfset local.selectedHotel.populateFromStruct( local.trip.hotelObject ) />
+				<cfset local.selectedHotelRoom = new com.shortstravel.hotel.HotelRoom() />
+				<cfset local.selectedHotelRoom.populateFromStruct( local.room ) />
+				<cfset session.searches[rc.searchID].stItinerary.Hotel = local.selectedHotel />
+				<cfset session.searches[rc.searchID].stItinerary.Hotel.setRooms( arrayNew(1) ) />
+				<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Hotel.getRooms(), local.selectedHotelRoom) />
+
 				<!--- Parameters must be "SearchID", "PropertyID", and "RatePlanType" to process properly in the AngularJS code --->
-				<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#&DailyRate=#local.dailyRate#") />
+				<!--- <cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#&DailyRate=#local.dailyRate#") /> --->
+				<!--- Originally was sending user to hotel results page and preselecting the room; now sending straight to summary page --->
+				<cfset variables.fw.redirect("summary?SearchID=#rc.searchID#") />
 			<cfelse>
 				<cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#") />
 			</cfif>
