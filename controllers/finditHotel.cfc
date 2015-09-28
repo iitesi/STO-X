@@ -36,6 +36,11 @@
 				<cfset session.searches[rc.searchID].stItinerary.Hotel.setRooms( arrayNew(1) ) />
 				<cfset arrayAppend(session.searches[rc.searchID].stItinerary.Hotel.getRooms(), local.selectedHotelRoom) />
 
+				<cfset variables.bf.getBean( "HotelService" ).getRoomRateRules( searchId=rc.searchID,
+																			 	propertyId=rc.propertyID,
+																			 	ratePlanType=local.ratePlanType,
+																			 	ppnBundle=local.selectedHotelRoom.getPPNBundle() ) />
+
 				<!--- Parameters must be "SearchID", "PropertyID", and "RatePlanType" to process properly in the AngularJS code --->
 				<!--- <cfset variables.fw.redirect("hotel.search?SearchID=#rc.searchID#&PropertyID=#rc.propertyID#&RatePlanType=#local.ratePlanType#&DailyRate=#local.dailyRate#") /> --->
 				<!--- Originally was sending user to hotel results page and preselecting the room; now sending straight to summary page --->
