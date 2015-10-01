@@ -56,7 +56,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<cfif NOT rc.vehicleSelected
 				AND rc.Filter.getAirType() NEQ 'MD'
-				AND len(rc.Filter.getCarPickupAirport)
+				AND len(rc.Filter.getCarPickupAirport())
 				AND session.DepartmentPreferences.STOCar NEQ 0>
 				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
 					<span class="icon-large icon-plus"></span> Add Car
