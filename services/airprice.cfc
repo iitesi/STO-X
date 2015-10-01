@@ -244,13 +244,13 @@
 								</cfif>
 							</air:AirPricingModifiers>
 							<cfif arguments.bGovtRate>
-								<com:SearchPassenger Code="GST" PricePTCOnly="true">
+								<com:SearchPassenger Code="GST" PricePTCOnly="true" Key="1">
 									<com:PersonalGeography>
 										<com:CityCode>DFW</com:CityCode>
 									</com:PersonalGeography>
 								</com:SearchPassenger>
 							<cfelse>
-								<com:SearchPassenger Code="ADT" PricePTCOnly="false" />
+								<com:SearchPassenger Code="ADT" PricePTCOnly="false" Key="1" />
 							</cfif>
 							<cfif arguments.bIncludeBookingCodes>
 								<cfset local.nCount = 0 />

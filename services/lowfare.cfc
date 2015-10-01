@@ -443,7 +443,7 @@
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
 													<cfloop array="#aCabins#" index="local.sCabin">
-														<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+														<com:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 													</cfloop>
 												</air:PermittedCabins>
 											</cfif>
@@ -597,9 +597,9 @@
 										</air:AccountCodes>
 									</cfif>
 								</air:AirPricingModifiers>
-								<com:PointOfSale
+								<!--- <com:PointOfSale
 									ProviderCode="1V"
-									PseudoCityCode="1M98" />
+									PseudoCityCode="1M98" /> --->
 							</air:LowFareSearchReq>
 						<cfelse>
 							<air:RetrieveLowFareSearchReq

@@ -359,7 +359,7 @@
 								<air:AirPricingModifiers ProhibitNonRefundableFares="#bProhibitNonRefundableFares#" FaresIndicator="PublicAndPrivateFares" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								</air:AirPricingModifiers>
 								--->
-								<com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" />
+								<!--- <com:PointOfSale ProviderCode="1V" PseudoCityCode="1M98" /> --->
 							</cfif>
 						</air:AvailabilitySearchReq>
 					</soapenv:Body>
