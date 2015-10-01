@@ -185,33 +185,34 @@
 				Hotel policies are not available at this time.
 			</cfif>
 		</cfsavecontent>
-		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
-				Hotel payment and cancellation policy
-			</a>
-		</span>
-		<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
-			<div class="searchContainer">
-				<div class="modal-header popover-content">
-					<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-					<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-					You have selected a web rate. Please read and accept the terms of this rate.
-					<cfelse>
-					Hotel Payment and Cancellation Policy
-					</cfif>
-					</h3>
-				</div>
-				<div class="modal-body popover-content">
-					<div id="addModalBody">
-						<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-						#view( 'summary/hotelcancellationpolicy' )#
-						<cfelse>
-						#hotelPolicies#
-						</cfif>
+		<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+			<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+				<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
+					Hotel payment and cancellation policy
+				</a>
+			</span>
+			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+				<div class="searchContainer">
+					<div class="modal-header popover-content">
+						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<h3 id="addModalHeader">
+							You have selected a web rate. Please read and accept the terms of this rate.
+						</h3>
+					</div>
+					<div class="modal-body popover-content">
+						<div id="addModalBody">
+							#view( 'summary/hotelcancellationpolicy' )#
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		<cfelse>
+			<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
+					Hotel payment and cancellation policy  
+				</a>
+			</div>
+		</cfif>
 
 		</div>
 	</cfif>
