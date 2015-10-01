@@ -487,7 +487,7 @@
 											<cfif NOT arrayIsEmpty(aCabins)>
 												<air:PermittedCabins>
 													<cfloop array="#aCabins#" index="local.sCabin">
-														<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+														<com:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 													</cfloop>
 												</air:PermittedCabins>
 											</cfif>
@@ -525,7 +525,7 @@
 												<cfif NOT arrayIsEmpty(aCabins)>
 													<air:PermittedCabins>
 														<cfloop array="#aCabins#" index="local.sCabin">
-															<air:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
+															<com:CabinClass Type="#(ListFind('Y,C,F', sCabin) ? (sCabin EQ 'Y' ? 'Economy' : (sCabin EQ 'C' ? 'Business' : 'First')) : sCabin)#" />
 														</cfloop>
 													</air:PermittedCabins>
 												</cfif>
