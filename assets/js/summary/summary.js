@@ -954,6 +954,22 @@ function formValidated(){
 	return true;
 }
 
+$("input[type=submit]").click(function() {
+	var buttonValue = $(this).attr("value");
+	if (buttonValue == 'CONFIRM PURCHASE') {
+		if(formValidated()){
+			setPurchaseButtons();
+			return;
+		}
+		else		
+			e.preventDefault();
+	}
+	else {
+		$("#triggerButton").val(buttonValue);
+		return;
+	}
+});
+
 function setPurchaseButtons(){
 	$( "#travelerButton" ).attr('disabled', 'disabled');
 	$( "#purchaseButton" ).val("Purchasing Reservation...");
@@ -961,20 +977,6 @@ function setPurchaseButtons(){
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
 }
-
-$( "#purchaseButton" ).on("click", function (e) {	
-	//$( "#purchaseForm" ).submit();
-});
-
-$("#purchaseForm").submit(function(e){
-	if(formValidated()){
-		setPurchaseButtons();
-		return;
-	}
-	else		
-		e.preventDefault();
-});
-
 
 $(".displayPaymentModal").click(function() {
 	var formData = $("#purchaseForm").serialize();
