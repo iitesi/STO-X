@@ -149,7 +149,7 @@
 			Was: common_v15_0:NextResultReference
 			Should be: common_v19_0:NextResultReference --->
 
-			<cfif local.aNextResultReference.XMLName EQ 'common_v19_0:NextResultReference'>
+			<cfif local.aNextResultReference.XMLName EQ 'common_v33_0:NextResultReference'>
 				<cfset local.sNextRef = local.aNextResultReference.XMLText>
 			</cfif>
 		</cfloop>

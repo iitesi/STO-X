@@ -82,8 +82,8 @@
 						<soapenv:Body>
 							<air:SeatMapReq
 								TargetBranch="#arguments.stAccount.sBranch#"
-								xmlns:air="http://www.travelport.com/schema/air_v22_0"
-								xmlns:com="http://www.travelport.com/schema/common_v19_0">
+								xmlns:air="http://www.travelport.com/schema/air_v33_0"
+								xmlns:com="http://www.travelport.com/schema/common_v33_0">
 								<!--- TODO: Don't understand why the below isn't working. Try to fix at a later date. --->
 								<!--- xmlns:air="#getUAPISchemas().air#"
 								xmlns:com="#getUAPISchemas().common#"> --->
