@@ -166,11 +166,19 @@
 						</cfif>
 					</cfsavecontent>
 
-					<span class="blue bold">
-						<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
-							Hotel payment and cancellation policy
-						</a>
-					</span>
+					<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+						<span class="blue bold">
+							<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
+								Hotel payment and cancellation policy
+							</a>
+						</span>
+					<cfelse>
+						<span class="blue bold">
+							<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
+								Hotel payment and cancellation policy
+							</a>
+						</span>
+					</cfif>
 
 					<cfif rc.Hotel.getRooms()[1].getDepositRequired()>
 						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
