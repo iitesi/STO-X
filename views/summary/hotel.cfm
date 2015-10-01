@@ -135,6 +135,15 @@
 						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
 					</cfif>
 
+					<cfif rc.Filter.getFindIt() EQ 1>
+						<cfset dailyRateCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>						
+						<span class="blue bold large">
+							#(dailyRateCurrency EQ 'USD' ? DollarFormat(hotelDailyRate) : numberFormat(hotelDailyRate, '____.__')&' '&dailyRateCurrency)#<br />
+						</span>
+						Average nightly rate<br />
+					</cfif>
+
 					<span class="blue bold large">
 						#(currency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&currency)#<br>
 					</span>
