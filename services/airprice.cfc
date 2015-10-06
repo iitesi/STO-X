@@ -238,7 +238,7 @@
 								<cfif NOT arguments.bIncludeCabin>
 									<air:PermittedCabins>
 										<cfloop array="#local.aCabins#" index="local.sCabin">
-											<air:CabinClass Type="#(ListFind('Y,C,F', local.sCabin) ? (local.sCabin EQ 'Y' ? 'Economy' : (local.sCabin EQ 'C' ? 'Business' : 'First')) : local.sCabin)#" />
+											<com:CabinClass Type="#(ListFind('Y,C,F', local.sCabin) ? (local.sCabin EQ 'Y' ? 'Economy' : (local.sCabin EQ 'C' ? 'Business' : 'First')) : local.sCabin)#" />
 										</cfloop>
 									</air:PermittedCabins>
 								</cfif>

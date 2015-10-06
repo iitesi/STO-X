@@ -165,21 +165,18 @@
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
 		<cfset local.sTripKey = ''>
-		<cfset local.nCount = 0>
-		<cfset local.sSegmentKey = 0>
-		<cfset local.sIndex = ''>
 		<cfset local.distinctFields = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
 		<cfset local.changePenalty = 0>
 		<!---
 		Custom code for air pricing to move the 'air:AirPriceResult' up a node to work with the current parsing code.
         --->
-		<cfloop array="#arguments.response#" index="local.stAirPricingSolution">
+		<!--- <cfloop array="#arguments.response#" index="local.stAirPricingSolution">
 			<cfif local.stAirPricingSolution.XMLName EQ 'air:AirPriceResult'>
 				<cfloop array="#local.stAirPricingSolution.XMLChildren#" index="local.test">
 					<cfset ArrayAppend(arguments.response, local.test)>
 				</cfloop>
 			</cfif>
-		</cfloop>
+		</cfloop> --->
 
 		<!---
 		Create a quick struct containing the private fare information
@@ -193,7 +190,120 @@
 			</cfif>
 		</cfloop>
 
-		<cfloop array="#arguments.response#" index="local.stAirPricingSolution" item="local.responseNode">
+		<cfloop array="#arguments.response#" index="local.stAirPricePointList" item="local.pricePointList">
+			<cfif local.pricePointList.XMLName EQ 'air:AirPricePointList'>
+				<cfloop array="#local.pricePointList.XMLChildren#" index="local.stAirPricePoint" item="local.pricePoint">
+					<cfset local.bPrivateFare = false>
+					<cfloop array="#local.pricePoint.XMLChildren#" index="local.stAirPricingInfo" item="local.pricingInfo">
+						<cfset local.sOverallClass = 'E'>
+						<cfset local.sPTC = ''>
+						<cfset local.refundable = false>
+						<cfset local.changePenalty = 0>
+<!---
+MULTI CARRIER AND PF
+GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
+--->
+						<cfloop array="#pricingInfo.XMLChildren#" index="local.pricingInfo2">
+							<cfif local.pricingInfo2.XMLName EQ 'air:PassengerType'>
+								<!--- Passenger type codes --->
+								<cfset local.sPTC = local.pricingInfo2.XMLAttributes.Code>
+							<cfelseif local.pricingInfo2.XMLName EQ 'air:FareInfoRef'>
+								<!--- Private fares 1/0 --->
+								<cfif fare[local.pricingInfo2.XMLAttributes.Key].PrivateFare>
+									<cfset local.bPrivateFare = true>
+								</cfif>
+							<cfelseif local.pricingInfo2.XMLName EQ 'air:FareInfo'>
+								<!--- Private fares 1/0 --->
+								<cfif structKeyExists(local.pricingInfo2.XMLAttributes, 'PrivateFare')
+									AND local.pricingInfo2.XMLAttributes.PrivateFare NEQ ''>
+									<cfset local.bPrivateFare = true>
+								</cfif>
+
+							<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
+										fareCalc used for travelTech reporting only. Please do not remove.
+							<cfelseif pricingInfo2.XMLName EQ 'air:FareCalc'>
+								<cfset local.fareCalc = pricingInfo2.xmlText>
+							--->
+
+							<cfelseif local.pricingInfo2.XMLName EQ 'air:ChangePenalty'>
+								<!--- Refundable or non refundable --->
+								<cfloop array="#local.pricingInfo2.XMLChildren#" index="local.stFare">
+									<cfif local.changePenalty LTE replace(local.stFare.XMLText, 'USD', '')>
+										<cfset local.changePenalty = replace(local.stFare.XMLText, 'USD', '')>
+									</cfif>
+								</cfloop>
+							<cfelseif local.pricingInfo2.XMLName EQ 'air:FlightOptionsList'>
+								<cfset local.legOptions = [] />
+								<cfloop array="#local.pricingInfo2.XMLChildren#" item="local.flightOptionsList" index="local.optionIndex">
+									<!--- Each air:FlightOption is a leg and each air:Option within is an option for that leg --->
+									<cfset local.legOptions[local.optionIndex] = [] />
+									<cfloop array="#local.flightOptionsList.XMLChildren#" item="local.flightOption" index="local.optionIndex2">
+										<cfset local.legOptions[local.optionIndex][local.optionIndex2] = {} />
+										<cfset local.totalTravelTime = local.flightOption.XMLAttributes.TravelTime />
+										<!--- TravelTime looks like "P1DT1H46M0S" --->
+										<cfset local.totalTravelTime = replaceNoCase(local.totalTravelTime, "P", "") />
+										<cfset local.totalTravelTime = replaceNoCase(local.totalTravelTime, "M0S", "") />
+										<cfset local.dayhours = left(local.totalTravelTime, 1) * 24 />
+										<cfset local.totalTravelTime = removeChars(local.totalTravelTime, 1, 3) />
+										<cfset local.hours = listFirst(local.totalTravelTime, "H") />
+										<cfset local.minutes = listLast(local.totalTravelTime, "H") />
+										<cfset local.totalTravelTime = (((local.dayhours + local.hours) * 60) + local.minutes) />
+
+										<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments = [] />
+										<cfloop array="#local.flightOption.XMLChildren#" item="local.airOption" index="local.airIndex">
+											<cfif local.airOption.XMLName EQ 'air:BookingInfo'>
+												<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments[local.airIndex] = structKeyExists(arguments.stSegments, local.airOption.XMLAttributes.SegmentRef) ? structCopy(arguments.stSegments[local.airOption.XMLAttributes.SegmentRef]) : {}>
+												<!--- Pricing cabin class --->
+												<cfset local.sClass = (StructKeyExists(local.airOption.XMLAttributes, 'CabinClass') ? local.airOption.XMLAttributes.CabinClass : 'Economy')>
+												<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments[local.airIndex].Class = local.airOption.XMLAttributes.BookingCode />
+												<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments[local.airIndex].Cabin = local.sClass />
+												<cfif local.sClass EQ 'First'>
+													<cfset local.sOverallClass = 'F'>
+												<cfelseif local.sOverallClass NEQ 'F' AND local.sClass EQ 'Business'>
+													<cfset local.sOverallClass = 'C'>
+												<cfelseif local.sOverallClass NEQ 'F' AND local.sOverallClass NEQ 'C'>
+													<cfset local.sOverallClass = 'Y'>
+												</cfif>
+											</cfif>
+										</cfloop>
+									</cfloop>
+									<cfset local.numLegs = local.optionIndex />
+								</cfloop>
+							</cfif>
+						</cfloop>
+					</cfloop>
+
+							<cfdump var="#local.legOptions#" abort>
+
+					<cfset local.stTrip = {} />
+					<cfloop array="#local.legOptions#" item="local.legOption" index="local.legIndex">
+						<cfloop array="#local.legOption#" item="local.segment" index="local.segmentIndex">
+							<cfset local.stTrip.Key = local.pricingInfo.XMLAttributes.Key>
+							<cfset local.stTrip.Base = Mid(local.pricingInfo.XMLAttributes.BasePrice, 4)>
+							<cfset local.stTrip.ApproximateBase = Mid(local.pricingInfo.XMLAttributes.ApproximateBasePrice, 4)>
+							<cfset local.stTrip.Total = Mid(local.pricingInfo.XMLAttributes.TotalPrice, 4)>
+							<cfset local.stTrip.Taxes = Mid(local.pricingInfo.XMLAttributes.Taxes, 4)>
+							<cfset local.stTrip.PrivateFare = local.bPrivateFare>
+							<cfset local.stTrip.PTC = local.sPTC>
+							<cfset local.stTrip.Class = local.sOverallClass>
+							<cfset local.refundable = (structKeyExists(pricingInfo.XMLAttributes, 'Refundable') AND pricingInfo.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
+							<cfset local.stTrip.Ref = local.refundable>
+							<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
+							<cfset local.stTrip.changePenalty = changePenalty>
+							<cfset local.sTripKey = getUAPI().hashNumeric( local.stTrip.Key&local.sOverallClass&refundable )>
+							<cfset local.segmentKey = local.segment.Segments[local.segmentIndex].Key />
+							<cfset local.stTrip.Segments[local.segmentKey] = structCopy(local.segment.Segments[local.segmentIndex]) />
+							<cfset local.stTrip.Segments[local.segmentKey].TravelTime = local.totalTravelTime />
+						</cfloop>
+						<cfset local.stTrips[local.sTripKey] = local.stTrip>
+					</cfloop>
+				</cfloop>
+			</cfif>
+		</cfloop>
+		<cfdump var="#local.stTrips#" abort>
+
+		<!--- Old air price parsing below. Keeping because of the Traveltech section that will need to be reworked into above code --->
+		<!--- <cfloop array="#arguments.response#" index="local.stAirPricingSolution" item="local.responseNode">
 
 			<cfif local.responseNode.XMLName EQ 'air:AirPricingSolution'>
 
@@ -317,14 +427,14 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						--->
 
 					</cfif>
-				</cfloop>
+				</cfloop> --->
 
-				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
+				<!--- <cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
 			</cfif>
-		</cfloop>
+		</cfloop> --->
 
-		<cfreturn  local.stTrips/>
+		<cfreturn local.stTrips />
 	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
