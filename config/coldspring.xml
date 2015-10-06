@@ -26,10 +26,21 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 	</bean>
 
+	<bean id="PPNAPI" class="com.priceline.ppnAPI">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="ppnURL"><bean factory-bean="EnvironmentService" factory-method="getPPNURL" /></constructor-arg>
+		<constructor-arg name="ppnRefID"><bean factory-bean="EnvironmentService" factory-method="getPPNRefID" /></constructor-arg>
+		<constructor-arg name="ppnAPIKey"><bean factory-bean="EnvironmentService" factory-method="getPPNAPIKey" /></constructor-arg>
+	</bean>
+
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
+
+	<bean id="PPNHotelAdapter" class="com.priceline.ppnHotelAdapter">
+		<constructor-arg name="PPNAPI"><ref bean="PPNAPI" /></constructor-arg>
 	</bean>
 
 	<bean id="TerminalEntry" class="com.travelport.TerminalEntry">
@@ -50,6 +61,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
+	</bean>
+
+	<bean id="PassiveAdapter" class="com.travelport.PassiveAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
 	</bean>
 
 	<bean id="UniversalAdapter" class="com.travelport.UniversalAdapter">
@@ -158,6 +175,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
 		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
 		<constructor-arg name="HotelAdapter"><ref bean="HotelAdapter" /></constructor-arg>
+		<constructor-arg name="PPNHotelAdapter"><ref bean="PPNHotelAdapter" /></constructor-arg>
 	</bean>
 
 	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">

@@ -42,8 +42,8 @@ services.factory( "SearchService", function( $http ){
 			.then( function(response) { return response.data });
 	}
 
-	SearchService.doSearch = function( searchId, requery ) {
-		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&requery=" + requery )
+	SearchService.doSearch = function( searchId, propertyId, requery, finditRequest ) {
+		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&propertyId=" + propertyId + "&requery=" + requery + "&finditRequest=" + finditRequest)
 			.then( function(response) {
 				var result = {};
 				result.hotels = [];
@@ -75,7 +75,7 @@ services.factory( "SearchService", function( $http ){
 services.factory( "HotelService", function( $window, $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
-	HotelService.getHotelRates = function( searchId, Hotel, policy, requery ) {
+	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery ) {
 		Hotel.roomsRequested = true;
 		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
 		return $http.get( url )
@@ -86,6 +86,17 @@ services.factory( "HotelService", function( $window, $http ){
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
 					hr.dailyRate = Math.round( hr.dailyRate );
+					finditRate = Math.round( finditRate );
+					if (Hotel.PropertyId == finditHotel) {
+						if (hr.ratePlanType == finditRatePlan) {
+							if (hr.dailyRate > finditRate) {
+								hr.finditMessage = 'Higher Rate!';
+							}
+							else if (hr.dailyRate < finditRate) {
+								hr.finditMessage = 'Lower Rate!';
+							}
+						}
+					}
 					hr.setInPolicy( policy, Hotel.outOfPolicyVendor );
 					hr.setOutOfPolicyMessage( hr.isInPolicy, Hotel.outOfPolicyVendor );
 					rooms.push( hr );

@@ -780,39 +780,30 @@
 						</cfloop>
 					</cfif>
 
-					<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
-																										, bookingPCC = rc.Account.PCC_Booking
-																										, Traveler = Traveler
+					<cfset Hotel.setProviderLocatorCode('')>
+					<cfset Hotel.setUniversalLocatorCode('')>
+					<cfset Hotel.setPassiveLocatorCode('')>
+					<cfset Hotel.setPassiveSegmentRef('')>
+					<cfset Hotel.setProviderReservationInfoRef('')>
+
+					<!--- If a Priceline hotel --->
+					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('PPNHotelAdapter').book( Traveler = Traveler
 																										, Profile = Profile
 																										, Hotel = Hotel
 																										, Filter = rc.Filter
-																										, statmentInformation = statmentInformation
-																										, udids = udids
-																										, providerLocatorCode = providerLocatorCode
-																										, universalLocatorCode = universalLocatorCode
-																										, version = version
-																										, profileFound = profileFound
-																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, hotelFOPID = local.hotelFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									)>
 
-					<cfset Hotel.setProviderLocatorCode('')>
-					<cfset Hotel.setUniversalLocatorCode('')>
+						<!--- Parse book results --->
+						<cfset Hotel = fw.getBeanFactory().getBean('PPNHotelAdapter').parseHotelRsp( Hotel = Hotel
+																									, response = hotelResponse )>
 
-					<!--- Parse sell results --->
-					<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
-																							, response = hotelResponse )>
-
-					<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
-					<cfif Hotel.getSimultChgsError()>
-						<cfset Hotel.setError( false ) />
-						<cfset Hotel.setMessages( [] ) />
-						<cfset Hotel.setSimultChgsError( false ) />
-
-						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
+						<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
+																										, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)
 																										, Traveler = Traveler
 																										, Profile = Profile
 																										, Hotel = Hotel
@@ -829,9 +820,60 @@
 																										, token = local.token
 																									)>
 
+						<!--- Parse passive create results --->
+						<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
+																									, response = passiveResponse )>
+					<!--- If a Travelport hotel --->
+					<cfelse>
+						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
+																										, bookingPCC = rc.Account.PCC_Booking
+																										, Traveler = Traveler
+																										, Profile = Profile
+																										, Hotel = Hotel
+																										, Filter = rc.Filter
+																										, statmentInformation = statmentInformation
+																										, udids = udids
+																										, providerLocatorCode = providerLocatorCode
+																										, universalLocatorCode = universalLocatorCode
+																										, version = version
+																										, profileFound = profileFound
+																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																										, hotelFOPID = local.hotelFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
+																									)>
 						<!--- Parse sell results --->
 						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
-																							, response = hotelResponse )>
+																								, response = hotelResponse )>
+
+						<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
+						<cfif Hotel.getSimultChgsError()>
+							<cfset Hotel.setError( false ) />
+							<cfset Hotel.setMessages( [] ) />
+							<cfset Hotel.setSimultChgsError( false ) />
+
+							<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
+																											, bookingPCC = rc.Account.PCC_Booking
+																											, Traveler = Traveler
+																											, Profile = Profile
+																											, Hotel = Hotel
+																											, Filter = rc.Filter
+																											, statmentInformation = statmentInformation
+																											, udids = udids
+																											, providerLocatorCode = providerLocatorCode
+																											, universalLocatorCode = universalLocatorCode
+																											, version = version
+																											, profileFound = profileFound
+																											, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																											, hotelFOPID = local.hotelFOPID
+																											, datetimestamp = local.datetimestamp
+																											, token = local.token
+																										)>
+
+							<!--- Parse sell results --->
+							<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
+																									, response = hotelResponse )>
+						</cfif>
 					</cfif>
 
 					<!--- Parse error --->
@@ -940,7 +982,8 @@
 
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
 																					, itinerary = itinerary
-																					, Filter = rc.Filter )>
+																					, Filter = rc.Filter
+																					, Account = rc.Account )>
 
 				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).databaseErrors( errorMessage = errorMessage
@@ -1012,6 +1055,96 @@
 		</cfif>
 
 		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')>
+
+	</cffunction>
+
+	<cffunction name="cancelPPN" output="false">
+		<cfargument name="rc" />
+
+		<cfset local.cancelResponse.status = false />
+		<cfset local.cancelResponse.message = "" />
+
+		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
+
+		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
+			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
+			<cfset local.Filter = deserializeJSON(invoice.filter) />
+			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
+			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
+
+			<!--- Cancel the Priceline reservation --->
+			<cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+																								, Filter = Filter )>
+			<cfif cancelResponse.status>
+				<!--- Retrieve the universal record version --->
+				<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
+																									, urLocatorCode = invoice.urRecloc
+																									, searchID = invoice.searchID
+																									, acctID = Filter.acctID
+																									, userID = invoice.userID )>
+
+				<cfif isNumeric(local.urVersion)>
+					<!--- Cancel the passive segment --->
+					<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																													, urLocatorCode = invoice.urRecloc
+																													, providerLocatorCode = invoice.recloc
+																													, passiveLocatorCode = invoice.passiveRecloc
+																													, passiveSegmentRef = invoice.passiveSegmentRef
+																													, version = local.urVersion
+																													, searchID = invoice.searchID
+																													, acctID = Filter.acctID
+																													, userID = invoice.userID )>
+
+					<!--- If an error from the above:
+					The hotel was cancelled with Priceline, but the PNR could not be updated. Please manually cancel the PNR, issue the fee, and regenerate the VI. --->
+
+					<!--- Modify the universal record --->
+					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																											, urLocatorCode = invoice.urRecloc
+																											, providerLocatorCode = invoice.recloc
+																											, providerReservationInfoRef = invoice.providerReservationInfoRef
+																											, ppnTripID = Hotel.ppnTripID
+																											, version = local.urVersion
+																											, searchID = invoice.searchID
+																											, acctID = Filter.acctID
+																											, userID = invoice.userID )>
+
+					<!--- Get agent touch fee --->
+					<cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
+
+					<!--- Open terminal session --->
+					<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
+																										, searchID = invoice.searchID )>
+
+					<cfif hostToken EQ ''>
+						<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+						<cfset errorType = 'TerminalEntry.openSession'>
+					<cfelse>
+						<!--- Invoice service fee --->
+						<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
+																														, hostToken = hostToken
+																														, searchID = invoice.searchID )>
+
+						<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
+																						, hostToken = hostToken
+																						, searchID = invoice.searchID )>
+					</cfif>
+
+					<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
+
+					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																					, urRecloc = invoice.urRecloc ) />
+				</cfif>
+			</cfif>
+
+			<cfif cancelResponse.message NEQ "">
+				<cfset rc.message.addError(cancelResponse.message) />
+			</cfif>
+		<cfelse>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
+		</cfif>
+
+		<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')> --->
 
 	</cffunction>
 

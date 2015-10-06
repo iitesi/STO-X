@@ -1061,13 +1061,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.policy.active = 1>
 		<cfset local.policy.policy = 1>
 
-		<!--- Check to see if the traveler has access to first or businss class. --->
+		<!--- Check to see if the traveler has access to first or business class. --->
 		<cfif NOT arguments.Policy.Policy_AirBusinessClass
 			AND arguments.class EQ 'C'>
 			<cfset local.policy.message = 'Cannot book business class'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
-		<cfelseif arguments.Policy.Policy_AirFirstClass
+		<cfelseif NOT arguments.Policy.Policy_AirFirstClass
 			AND arguments.class EQ 'F'>
 			<cfset local.policy.message = 'Cannot book first class'>
 			<cfset local.policy.policy = 0>
@@ -1110,7 +1110,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			FROM sortQuery
 			ORDER BY total ASC, preferred DESC
 		</cfquery> --->
-		
+
 
 		<cfif local.preferredSort.recordCount>
 			<cfset local.aPreferredSort = listToArray(valueList(local.preferredSort.nTripKey)) />
