@@ -250,6 +250,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 										<cfset local.totalTravelTime = (((local.dayhours + local.hours) * 60) + local.minutes) />
 
 										<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments = [] />
+										<cfset local.legOptions[local.optionIndex][local.optionIndex2].OptionKey = local.flightOption.XMLAttributes.Key />
 										<cfloop array="#local.flightOption.XMLChildren#" item="local.airOption" index="local.airIndex">
 											<cfif local.airOption.XMLName EQ 'air:BookingInfo'>
 												<cfset local.legOptions[local.optionIndex][local.optionIndex2].Segments[local.airIndex] = structKeyExists(arguments.stSegments, local.airOption.XMLAttributes.SegmentRef) ? structCopy(arguments.stSegments[local.airOption.XMLAttributes.SegmentRef]) : {}>
@@ -273,34 +274,63 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						</cfloop>
 					</cfloop>
 
-							<cfdump var="#local.legOptions#" abort>
-
 					<cfset local.stTrip = {} />
-					<cfloop array="#local.legOptions#" item="local.legOption" index="local.legIndex">
-						<cfloop array="#local.legOption#" item="local.segment" index="local.segmentIndex">
-							<cfset local.stTrip.Key = local.pricingInfo.XMLAttributes.Key>
-							<cfset local.stTrip.Base = Mid(local.pricingInfo.XMLAttributes.BasePrice, 4)>
-							<cfset local.stTrip.ApproximateBase = Mid(local.pricingInfo.XMLAttributes.ApproximateBasePrice, 4)>
-							<cfset local.stTrip.Total = Mid(local.pricingInfo.XMLAttributes.TotalPrice, 4)>
-							<cfset local.stTrip.Taxes = Mid(local.pricingInfo.XMLAttributes.Taxes, 4)>
-							<cfset local.stTrip.PrivateFare = local.bPrivateFare>
-							<cfset local.stTrip.PTC = local.sPTC>
-							<cfset local.stTrip.Class = local.sOverallClass>
-							<cfset local.refundable = (structKeyExists(pricingInfo.XMLAttributes, 'Refundable') AND pricingInfo.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
-							<cfset local.stTrip.Ref = local.refundable>
-							<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
-							<cfset local.stTrip.changePenalty = changePenalty>
-							<cfset local.sTripKey = getUAPI().hashNumeric( local.stTrip.Key&local.sOverallClass&refundable )>
-							<cfset local.segmentKey = local.segment.Segments[local.segmentIndex].Key />
-							<cfset local.stTrip.Segments[local.segmentKey] = structCopy(local.segment.Segments[local.segmentIndex]) />
-							<cfset local.stTrip.Segments[local.segmentKey].TravelTime = local.totalTravelTime />
+					<cfset local.stTrip.Base = Mid(local.pricingInfo.XMLAttributes.BasePrice, 4)>
+					<cfset local.stTrip.ApproximateBase = Mid(local.pricingInfo.XMLAttributes.ApproximateBasePrice, 4)>
+					<cfset local.stTrip.Total = Mid(local.pricingInfo.XMLAttributes.TotalPrice, 4)>
+					<cfset local.stTrip.Taxes = Mid(local.pricingInfo.XMLAttributes.Taxes, 4)>
+					<cfset local.stTrip.PrivateFare = local.bPrivateFare>
+					<cfset local.stTrip.PTC = local.sPTC>
+					<cfset local.stTrip.Class = local.sOverallClass>
+					<cfset local.refundable = (structKeyExists(pricingInfo.XMLAttributes, 'Refundable') AND pricingInfo.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
+					<cfset local.stTrip.Ref = local.refundable>
+					<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
+					<cfset local.stTrip.changePenalty = changePenalty>
+					<cfset local.stTrip.Segments = structNew('linked') />
+					<!--- Looping through the first leg of the journey --->
+					<cfloop array="#local.legOptions[1]#" item="local.legOption1" index="local.legIndex1">
+						<cfset local.optionKey = local.legOption1.OptionKey />
+						<cfif structKeyExists(local, "legSegmentKeys1") AND len(local.legSegmentKeys1)>
+							<cfloop list="#local.legSegmentKeys1#" index="local.key">
+								<cfset structDelete(local.stTrip.Segments, "#local.key#") />
+							</cfloop>
+						</cfif>
+						<cfset local.legSegmentKeys1 = "" />
+						<!--- Looping through each of the options for the first leg --->
+						<cfloop array="#local.legOption1.Segments#" item="local.segment1" index="local.segmentIndex1">
+							<cfset local.segmentKey1 = local.segment1.Key />
+							<!--- Get all of the segments for this option --->
+							<cfset local.stTrip.Segments[local.segmentKey1] = structCopy(local.segment1) />
+							<cfset local.stTrip.Segments[local.segmentKey1].TravelTime = local.totalTravelTime />
+							<cfset local.legSegmentKeys1 = listAppend(local.legSegmentKeys1, local.segmentKey1) />
 						</cfloop>
-						<cfset local.stTrips[local.sTripKey] = local.stTrip>
+						<cfif arrayLen(local.legOptions) GT 1>
+							<!--- Looping through the second leg of the journey --->
+							<cfloop array="#local.legOptions[2]#" item="local.legOption2" index="local.legIndex2">
+								<cfset local.optionKey2 = listAppend(local.optionKey, local.legOption2.OptionKey, ":") />
+								<cfif structKeyExists(local, "legSegmentKeys2") AND len(local.legSegmentKeys2)>
+									<cfloop list="#local.legSegmentKeys2#" index="local.key">
+										<cfset structDelete(local.stTrip.Segments, "#local.key#") />
+									</cfloop>
+								</cfif>
+								<cfset local.legSegmentKeys2 = "" />
+								<!--- Looping through each of the options --->
+								<cfloop array="#local.legOption2.Segments#" item="local.segment2" index="local.segmentIndex2">
+									<cfset local.segmentKey2 = local.segment2.Key />
+									<cfset local.stTrip.Segments[local.segmentKey2] = structCopy(local.segment2) />
+									<cfset local.stTrip.Segments[local.segmentKey2].TravelTime = local.totalTravelTime />
+									<cfset local.legSegmentKeys2 = listAppend(local.legSegmentKeys2, local.segmentKey2) />
+								</cfloop>
+								<cfset local.sTripKey = getUAPI().hashNumeric(local.optionKey2&local.sOverallClass&refundable)>
+							</cfloop>
+						<cfelse>
+							<cfset local.sTripKey = getUAPI().hashNumeric(local.optionKey&local.sOverallClass&refundable)>
+						</cfif>
 					</cfloop>
+					<cfset local.stTrips[local.sTripKey] = local.stTrip>
 				</cfloop>
 			</cfif>
 		</cfloop>
-		<cfdump var="#local.stTrips#" abort>
 
 		<!--- Old air price parsing below. Keeping because of the Traveltech section that will need to be reworked into above code --->
 		<!--- <cfloop array="#arguments.response#" index="local.stAirPricingSolution" item="local.responseNode">

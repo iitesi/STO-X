@@ -81,9 +81,10 @@
 					<soapenv:Header/>
 						<soapenv:Body>
 							<air:SeatMapReq
-								TargetBranch="#arguments.stAccount.sBranch#"
 								xmlns:air="http://www.travelport.com/schema/air_v33_0"
-								xmlns:com="http://www.travelport.com/schema/common_v33_0">
+								xmlns:com="http://www.travelport.com/schema/common_v33_0"
+								TargetBranch="#arguments.stAccount.sBranch#"
+								ReturnSeatPricing="false">
 								<!--- TODO: Don't understand why the below isn't working. Try to fix at a later date. --->
 								<!--- xmlns:air="#getUAPISchemas().air#"
 								xmlns:com="#getUAPISchemas().common#"> --->
@@ -96,9 +97,10 @@
 									Destination="#local.stSegment.Destination#"
 									DepartureTime="#DateFormat(local.stSegment.DepartureTime, 'yyyy-mm-dd')#T#TimeFormat(local.stSegment.DepartureTime, 'HH:mm')#:00"
 									ProviderCode="1V"
-									Group="#local.stSegment.Group#">
+									Group="#local.stSegment.Group#"
+									ClassOfService="#arguments.sClass#">
 								</air:AirSegment>
-								<air:BookingCode Code="#arguments.sClass#" />
+								<!--- <air:BookingCode Code="#arguments.sClass#" /> --->
 							</air:SeatMapReq>
 						</soapenv:Body>
 					</soapenv:Envelope>
@@ -118,53 +120,56 @@
 		<cfset local.nRow = ''>
 		<cfset local.sColumn = ''>
 
-		<cfloop array="#arguments.stResponse#" index="local.stRow">
-			<cfif local.stRow.XMLName EQ 'air:Row'>
-				<cfloop array="#local.stRow.XMLChildren#" index="local.stFacility">
-
-					<cfif local.stFacility.XMLName EQ 'air:Facility'>
-						<!---
-						Seat Types: Seat, Aisle, Open, Unknown
-						--->
-						<cfif local.stFacility.XMLAttributes.Type EQ 'Seat'>
-							<cfset local.nRow = GetToken(local.stFacility.XMLAttributes.SeatCode, 1, '-')>
-							<cfset local.sColumn = GetToken(local.stFacility.XMLAttributes.SeatCode, 2, '-')>
-							<!---
-							Seat Availabilities: 	Available, Occupied, Reserved, AdvancedBoardingPass, InterlineCheckin, Codeshare,
-							Protected, PartnerAirline, AdvSeatSelection, Blocked, Extra, RBDRestriction, Group,	NoSeat
-							--->
-							<cfset local.stSeats['Columns'][local.sColumn] = ''>
-							<cfif structKeyExists(local.stFacility.XMLAttributes, "Availability")>
-								<cfset local.stSeats[local.nRow][local.sColumn].Avail = local.stFacility.XMLAttributes.Availability>
-							<cfelse>
-								<cfset local.stSeats[local.nRow][local.sColumn].Avail = "NoSeat">
-							</cfif>
-							<cfloop array="#stFacility.XMLChildren#" index="local.stCharacteristic">
+		<cfloop array="#arguments.stResponse#" index="local.stRows">
+			<cfif local.stRows.XMLName EQ 'air:Rows'>
+				<cfloop array="#local.stRows.XMLChildren#" index="local.stRow">
+					<cfif local.stRow.XMLName EQ 'air:Row'>
+						<cfloop array="#local.stRow.XMLChildren#" index="local.stFacility">
+							<cfif local.stFacility.XMLName EQ 'air:Facility'>
 								<!---
-								Seat Characteristics
-								ExitRow, Wing, Left, Right, Forward, Rear, UpperDeck, LowerDeck, DesignatedRBD, ExtraLegRoom,
-								BufferRow, RowDoesNotExist, SeatRestrictionsApply, MovieScreen, Aisle, PaidGeneralSeat,
-								RearGalley, NearToiletBulkhead, Window, RestrictedRecline, PreferentialRestrictedGeneral,
-								LegRest, NoSeat, Middle, RBDSpecific, Bassinet, Blocked, Handicapped, BufferZone,
-								ElectronicConnection
+								Seat Types: Seat, Aisle, Open, Unknown
 								--->
-								<cfif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
-									<cfset local.stSeats['ExitRow'][local.nRow] = 1>
-								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'Preferential'>
-									<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'Preferential'>
-								<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'RestrictedGeneral'>
-									<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'RBDRestriction'>
-								<!--- <cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
-									<cfset local.stSeats[local.nRow][local.sColumn][local.stCharacteristic.XMLAttributes.Value] = 1> --->
+								<cfif local.stFacility.XMLAttributes.Type EQ 'Seat'>
+									<cfset local.nRow = GetToken(local.stFacility.XMLAttributes.SeatCode, 1, '-')>
+									<cfset local.sColumn = GetToken(local.stFacility.XMLAttributes.SeatCode, 2, '-')>
+									<!---
+									Seat Availabilities: 	Available, Occupied, Reserved, AdvancedBoardingPass, InterlineCheckin, Codeshare,
+									Protected, PartnerAirline, AdvSeatSelection, Blocked, Extra, RBDRestriction, Group,	NoSeat
+									--->
+									<cfset local.stSeats['Columns'][local.sColumn] = ''>
+									<cfif structKeyExists(local.stFacility.XMLAttributes, "Availability")>
+										<cfset local.stSeats[local.nRow][local.sColumn].Avail = local.stFacility.XMLAttributes.Availability>
+									<cfelse>
+										<cfset local.stSeats[local.nRow][local.sColumn].Avail = "NoSeat">
+									</cfif>
+									<cfloop array="#stFacility.XMLChildren#" index="local.stCharacteristic">
+										<!---
+										Seat Characteristics
+										ExitRow, Wing, Left, Right, Forward, Rear, UpperDeck, LowerDeck, DesignatedRBD, ExtraLegRoom,
+										BufferRow, RowDoesNotExist, SeatRestrictionsApply, MovieScreen, Aisle, PaidGeneralSeat,
+										RearGalley, NearToiletBulkhead, Window, RestrictedRecline, PreferentialRestrictedGeneral,
+										LegRest, NoSeat, Middle, RBDSpecific, Bassinet, Blocked, Handicapped, BufferZone,
+										ElectronicConnection
+										--->
+										<cfif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
+											<cfset local.stSeats['ExitRow'][local.nRow] = 1>
+										<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'Preferential'>
+											<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'Preferential'>
+										<cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'RestrictedGeneral'>
+											<cfset local.stSeats[local.nRow][local.sColumn].Avail = 'RBDRestriction'>
+										<!--- <cfelseif local.stCharacteristic.XMLAttributes.Value EQ 'ExitRow'>
+											<cfset local.stSeats[local.nRow][local.sColumn][local.stCharacteristic.XMLAttributes.Value] = 1> --->
+										</cfif>
+									</cfloop>
+								<cfelseif local.stFacility.XMLAttributes.Type EQ 'Aisle'>
+									<cfset local.stSeats['Aisle'][local.sColumn] = 1>
 								</cfif>
-							</cfloop>
-						<cfelseif local.stFacility.XMLAttributes.Type EQ 'Aisle'>
-							<cfset local.stSeats['Aisle'][local.sColumn] = 1>
-						</cfif>
+							</cfif>
+						</cfloop>
 					</cfif>
 				</cfloop>
-			<cfelseif local.stRow.XMLName EQ 'FaultString'>
-				<cfset local.stSeats.Error = local.stRow.XMLText>
+			<cfelseif local.stRows.XMLName EQ 'FaultString'>
+				<cfset local.stSeats.Error = local.stRows.XMLText>
 			</cfif>
 		</cfloop>
 
