@@ -284,9 +284,9 @@
 					<!--- Parse the segments. --->
 					<cfset attributes.stSegments = getAirParse().parseSegments( stResponse = attributes.aResponse )>
 					<!--- Parse the trips. --->
-					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
-																		, stSegments = attributes.stSegments
-																		, bRefundable = arguments.bRefundable )>
+					<cfset attributes.stTrips = getAirParse().parseLowfareTrips( response = attributes.aResponse
+																				, stSegments = attributes.stSegments
+																				, bRefundable = arguments.bRefundable )>
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
