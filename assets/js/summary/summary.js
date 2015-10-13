@@ -954,6 +954,10 @@ function formValidated(){
 	return true;
 }
 
+$("#popupModal").on("hidden", function() {
+	$(this).removeData("modal");
+});
+
 $( "#purchaseButton" ).on("click", function (e) {
 	if(formValidated()){
 		$( "#travelerButton" ).attr('disabled', 'disabled');
