@@ -159,18 +159,30 @@
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
-						<cfelseif NOT structKeyExists(trip, 'faultMessage')
-							AND trip[structKeyList(trip)].Total LTE originalAirfare>
-							<cfset local.nTrip = Air.nTrip>
-							<cfset local.aPolicies = Air.aPolicies>
-							<cfset local.policy = Air.policy>
-							<cfset Air = trip[structKeyList(trip)]>
-							<cfset Air.nTrip = nTrip>
-							<cfset Air.aPolicies = aPolicies>
-							<cfset Air.policy = policy>
-						<cfelse>
-							<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
-							<cfset errorType = 'Air.airPrice'>
+						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
+							<cfset local.doAirPrice.Total = 0 />
+							<cfset local.tripKey = 0 />
+							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
+								<cfif ((trip[local.thisTrip].Class EQ Air.Class) AND
+									(trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+									(trip[local.thisTrip].Ref EQ Air.Ref))>
+									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
+									<cfset local.tripKey = local.thisTrip />
+								</cfif>
+							</cfloop>
+
+							<cfif local.doAirPrice.Total NEQ 0 AND (local.doAirPrice.Total LTE originalAirfare)>
+								<cfset local.nTrip = Air.nTrip>
+								<cfset local.aPolicies = Air.aPolicies>
+								<cfset local.policy = Air.policy>
+								<cfset Air = trip[local.tripKey]>
+								<cfset Air.nTrip = nTrip>
+								<cfset Air.aPolicies = aPolicies>
+								<cfset Air.policy = policy>
+							<cfelse>
+								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
+								<cfset errorType = 'Air.airPrice'>
+							</cfif>
 						</cfif>
 					</cfif>
 					<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />
