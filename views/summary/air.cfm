@@ -210,6 +210,10 @@
 					</a>
 				</span>
 
+				<span class="red bold">
+					TICKET NOT YET ISSUED.<br />AIRFARE QUOTED IN ITINERARY IS NOT GUARANTEED UNTIL TICKETS ARE ISSUED.
+				</span>
+
 			</td>
 		</tr>
 

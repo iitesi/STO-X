@@ -3,6 +3,15 @@ var controllers = angular.module('app.controllers',[]);
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
+	$scope.propertyId = $.url().param( 'PropertyID' );
+	if (!!$scope.propertyId) {
+		$scope.finditRequest = true;
+	}
+	else {
+		$scope.finditRequest = false;
+	}
+	$scope.ratePlanType = $.url().param( 'RatePlanType' );
+	$scope.dailyRate = $.url().param( 'DailyRate' );
 	$scope.hidePage = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
@@ -19,7 +28,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.currentPage = 1;
-	$scope.filterItems.resultsPerPage = 20;
+	$scope.filterItems.resultsPerPage = 15;
 	$scope.filterItems.vendors = [];
 	$scope.filterItems.amenities = [];
 	$scope.filterItems.ratings = [
@@ -63,6 +72,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 						});
 					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
 					$scope.loadPolicy( $scope.search.policyID );
+					if (!!$scope.propertyId) {
+						setTimeout(function() {
+							$('#'+$scope.propertyId).trigger('click');
+						}, 3500);
+					}
 				} else {
 					$scope.errors = result.errors;
 				}
@@ -116,7 +130,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.getSearchResults = function( requery ){
-		SearchService.doSearch( $scope.searchId, requery )
+		SearchService.doSearch( $scope.searchId, $scope.propertyId, requery, $scope.finditRequest )
 			.then( function(result){
 				$scope.hotels = result.hotels;
 				$scope.filteredHotels = result.hotels;
@@ -137,7 +151,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.policy, requery )
+			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.propertyId, $scope.ratePlanType, $scope.dailyRate, $scope.policy, requery )
 				.then( function(result){
 					if( !$scope.hotelFilter( result ) ){
 						$scope.filterHotels();
@@ -192,9 +206,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		}
 
 		if ( selectedRatings > 0 ){
-			$scope.filtersApplied.ratings = true;
+			$scope.filtersApplied.rating = true;
 		} else {
-			$scope.filtersApplied.ratings = false;
+			$scope.filtersApplied.rating = false;
 		}
 
 
@@ -624,6 +638,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
+							+ '&ppnBundle=' + Room.ppnBundle
 							+ '&totalForStay=' + Room.totalForStay
 							+ '&isInPolicy=' + Room.isInPolicy
 							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;

@@ -57,6 +57,20 @@
 									<a href="#buildURL('purchase.cancel?searchID=#rc.searchID#')#">
 										<span class="icon-large icon-remove-circle"></span> Cancel Reservation #Traveler.getBookingDetail().getUniversalLocatorCode()#
 									</a>
+									<br />
+									<!--- <cfif application.es.getCurrentEnvironment() EQ 'QA'>
+										<cfset bookingDS = "bookingQA" />
+									<cfelse>
+										<cfset bookingDS = "booking" />
+									</cfif>
+									<cfquery name="getInvoiceID" datasource="#bookingDS#">
+										SELECT MAX(invoiceID) AS invoiceID
+										FROM Invoices
+										WHERE userID = #rc.Filter.getUserID()#
+									</cfquery>
+									<a href="#buildURL('purchase.cancelPPN?searchID=#rc.searchID#&invoiceID=#getInvoiceID.invoiceID#')#">
+										<span class="icon-large icon-remove-circle"></span> Cancel Priceline Reservation
+									</a> --->
 								</cfif>
 							</cfif>
 						</cfloop>
@@ -124,8 +138,10 @@
 					</cfif>
 				</cfif>
 				<cfif unusedTicketSelected>
-					A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET.  YOUR CONFIRMATION EMAIL WILL REFLECT THE       NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
+					A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET. YOUR CONFIRMATION EMAIL WILL REFLECT THE NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
 				</cfif>
+				FARES ARE NOT GUARANTEED UNTIL TICKETS ARE ISSUED AND ARE SUBJECT TO CHANGE WITHOUT NOTICE.<br /><br />
+				<span class="red bold">PLEASE DO NOT HIT THE BACK BUTTON. CLICK <a href="#application.sPortalURL#">HERE</a> IF YOU WISH TO MAKE ANOTHER RESERVATION.</span><br />
 			</div>
 		</div>
 	</cfoutput>

@@ -942,14 +942,58 @@ function GetValueFromChild(selectedSegmentSeat) {
  	scrollTo('airDiv');
  }
 
+function formValidated(){
+	if ($("#pricelineAgreeTerms").length)
+		if(!$("#pricelineAgreeTerms").prop("checked")){
+			alert("You must first read and agree to all terms.");
+			$("#pricelineAgreeTerms").focus();
+			$("#agreeToTermsError").show();
+			return false;		
+		}
+	
+	return true;
+}
+
+$("#popupModal").on("hidden", function() {
+	$(this).removeData("modal");
+});
+
 $( "#purchaseButton" ).on("click", function (e) {
+	if(formValidated()){
+		$( "#travelerButton" ).attr('disabled', 'disabled');
+		$( "#purchaseButton" ).val("Purchasing Reservation...");
+		$( "#purchaseButton" ).attr('disabled', 'disabled');
+		$( "#triggerButton" ).val("CONFIRM PURCHASE");
+		$( "#triggerButton" ).removeAttr('disabled');
+		$( "#purchaseForm" ).submit();
+	}
+	else
+		e.preventDefault();
+});
+
+/* $("input[type=submit]").click(function() {
+	var buttonValue = $(this).attr("value");
+	if (buttonValue == 'CONFIRM PURCHASE') {
+		if(formValidated()){
+			setPurchaseButtons();
+			return;
+		}
+		else		
+			e.preventDefault();
+	}
+	else {
+		$("#triggerButton").val(buttonValue);
+		return;
+	}
+});
+
+function setPurchaseButtons(){
 	$( "#travelerButton" ).attr('disabled', 'disabled');
 	$( "#purchaseButton" ).val("Purchasing Reservation...");
 	$( "#purchaseButton" ).attr('disabled', 'disabled');
 	$( "#triggerButton" ).val("CONFIRM PURCHASE");
 	$( "#triggerButton" ).removeAttr('disabled');
-	$( "#purchaseForm" ).submit();
-});
+} */
 
 $(".displayPaymentModal").click(function() {
 	var formData = $("#purchaseForm").serialize();

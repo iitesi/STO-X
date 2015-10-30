@@ -176,7 +176,9 @@
 
     <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
+        <cfargument name="propertyId" type="string" required="false" default="" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
+        <cfargument name="finditRequest" type="boolean" required="false" default="false" />
 
         <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 
