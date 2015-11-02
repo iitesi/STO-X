@@ -161,6 +161,7 @@
 		<cfargument name="response" required="true">
 		<cfargument name="stSegments" required="true">
 		<cfargument name="bRefundable" required="false" default="false">
+		<cfargument name="bFirstPrice" required="false" default="false">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -321,6 +322,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
 				<cfset local.stTrips[local.sTripKey] = local.stTrip>
+				<cfif arguments.bFirstPrice>
+					<cfbreak />
+				</cfif>
 			</cfif>
 		</cfloop>
 

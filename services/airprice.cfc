@@ -40,6 +40,7 @@
 		<cfargument name="totalOnly" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="fullAirPrice" required="false" default="1"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bGovtRate" required="false" default="0"><!--- Options (one item) - 0, 1 --->
+		<cfargument name="bFirstPrice" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 
 		<cfset local.stSegment = {}>
 		<cfset local.sMessage = ''>
@@ -103,7 +104,7 @@
 
 		<cfif NOT StructIsEmpty(local.stSegments)>
 			<!--- Parse the trips. --->
-			<cfset local.stTrips = AirParse.parseTrips(local.aResponse, local.stSegments)>
+			<cfset local.stTrips = AirParse.parseTrips(response = local.aResponse, stSegments = local.stSegments, bFirstPrice = arguments.bFirstPrice)>
 			<cfif arguments.fullAirPrice>
 				<!--- Add group node --->
 				<cfset local.stTrips = AirParse.addGroups(local.stTrips)>

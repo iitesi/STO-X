@@ -155,6 +155,7 @@
 																							, totalOnly = 0
 																							, bIncludeBookingCodes = 1
 																							, bGovtRate = bGovtRate
+																							, bFirstPrice = 1
 																						)>
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
