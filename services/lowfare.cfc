@@ -284,9 +284,9 @@
 					<!--- Parse the segments. --->
 					<cfset attributes.stSegments = getAirParse().parseSegments( stResponse = attributes.aResponse )>
 					<!--- Parse the trips. --->
-					<cfset attributes.stTrips = getAirParse().parseLowfareTrips( response = attributes.aResponse
-																				, stSegments = attributes.stSegments
-																				, bRefundable = arguments.bRefundable )>
+					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
+																		, stSegments = attributes.stSegments
+																		, bRefundable = arguments.bRefundable )>
 					<!--- Add group node --->
 					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
 
@@ -401,9 +401,11 @@
 					<soapenv:Header/>
 					<soapenv:Body>
 						<cfif arguments.sLowFareSearchID EQ ''>
-							<air:LowFareSearchReq TargetBranch="#targetBranch#"
+							<air:LowFareSearchReq
 								xmlns:air="#getUAPISchemas().air#"
-								xmlns:com="#getUAPISchemas().common#">
+								xmlns:com="#getUAPISchemas().common#"
+								TargetBranch="#targetBranch#"
+								SolutionResult="true">
 								<com:BillingPointOfSaleInfo OriginApplication="UAPI" />
 
 								<!--- For one way and first leg of rounttrip we get depart info --->

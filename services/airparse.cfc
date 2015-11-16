@@ -331,7 +331,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn  local.stTrips/>
 	</cffunction>
 
-	<cffunction name="parseLowfareTrips" output="false" hint="I take response and segments and parse lowfare trip data.">
+	<!--- Below was created because of different results initially being returned with the uAPI version upgrade; keeping in case we have to account for such parsing in the future. --->
+	<!--- <cffunction name="parseLowfareTrips" output="false" hint="I take response and segments and parse lowfare trip data.">
 		<cfargument name="response" required="true">
 		<cfargument name="stSegments" required="true">
 		<cfargument name="bRefundable" required="false" default="false">
@@ -507,7 +508,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		</cfloop>
 
 		<cfreturn local.stTrips />
-	</cffunction>
+	</cffunction> --->
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
 		<cfargument name="stTrips1" required="true">
