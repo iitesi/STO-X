@@ -113,7 +113,7 @@
 					<cfelse>
 						<cfset responseDueBy = dateAdd('h', 23, now()) />
 					</cfif>
-					<cfif arrayFind(rc.Air.Carriers, 'F9')>
+					<cfif rc.airSelected AND structKeyExists(rc.Air, "Carriers") AND arrayFind(rc.Air.Carriers, 'F9')>
 						<cfset responseDueBy = dateAdd('h', 4, now()) />
 					</cfif>
 					PLEASE NOTE A MANAGER RESPONSE IS DUE BY #timeFormat(responseDueBy, 'htt')# CENTRAL TIME ON #uCase(dateFormat(responseDueBy, 'mmmm d'))#.
