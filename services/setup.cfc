@@ -494,6 +494,9 @@
 			, Policy_AirApproval
 			, Policy_HotelApproval
 			, Policy_CarApproval
+			, Policy_FindItHotelPrefProp
+			, Policy_FindItHotelPrefPropMiles
+			, Policy_FindItHotelStarRating
 			FROM Account_Policies
 			WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
 			AND Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
