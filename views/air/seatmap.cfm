@@ -136,8 +136,12 @@
 									<tr>
 										<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
 											<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
-											<cfif rc.action EQ 'air.summarypopup' AND rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-												<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+											<cfif rc.action EQ 'air.summarypopup'>
+												<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+													<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+												<cfelseif rc.stSeats[nRow][sColumn].Avail EQ 'Preferential'>
+													<a href="##" style="display: block;" class="preferredSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+												</cfif>
 											</cfif>
 										</td>
 									</tr>
@@ -184,6 +188,18 @@
 					<td class="paddingright">No Seat</td>
 				</tr>
 				</table>
+
+				<table id="confirmPreferredTable" class="hide">
+					<tr>
+						<td>
+							<br />
+							<h3>You have selected a preferred seat. Please make sure your frequent flyer status qualifies you for this preferred seat.</h3>
+							<h3 class="red bold">If you do not qualify for this seat, we cannot guarantee that a seat will be assigned to you.</h3>
+							<input type="hidden" id="preferredSeatID" value="">
+							<input type="button" id="confirmSeat" class="btn btn-primary" value="CONTINUE WITH PREFERRED SEAT">
+						</td>
+					</tr>
+				</table>
 			<cfelseif isStruct(rc.stSeats) AND structKeyExists(rc.stSeats, "Error")>
 				<div id="seatcontent"><p>#rc.stSeats.Error#</p></div>
 			<cfelse>
@@ -196,6 +212,19 @@
 		$(document).ready(function() {
 			$('.availableSeat').on('click', function() {
 				var seatSelected =  $(this).attr('id');
+				window.parent.GetValueFromChild( seatSelected );
+				$('##popupModal').modal('hide');
+				$(this).removeData('modal');
+			});
+
+			$('.preferredSeat').on('click', function() {
+				var preferredSeatSelected =  $(this).attr('id');
+				$('##confirmPreferredTable').show();
+				$('##preferredSeatID').val(preferredSeatSelected);
+			});
+
+			$('##confirmSeat').on('click', function() {
+				var seatSelected =  $('##preferredSeatID').val();
 				window.parent.GetValueFromChild( seatSelected );
 				$('##popupModal').modal('hide');
 				$(this).removeData('modal');
