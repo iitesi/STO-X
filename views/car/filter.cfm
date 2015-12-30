@@ -219,7 +219,7 @@
 			</form>
 		</cfoutput>
 		<div class="filter">
-			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfoutput>
+			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfif></cfoutput>
 		</div>
 		<div class="row well filterselection">
 			<cfoutput>

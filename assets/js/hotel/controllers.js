@@ -13,6 +13,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.ratePlanType = $.url().param( 'RatePlanType' );
 	$scope.dailyRate = $.url().param( 'DailyRate' );
 	$scope.hidePage = false;
+	$scope.hideHotelContinueLink = false;
 	$scope.searchCompleted = false;
 	$scope.totalProperties = 0;
 	$scope.search = {};
@@ -76,6 +77,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 						setTimeout(function() {
 							$('#'+$scope.propertyId).trigger('click');
 						}, 3500);
+					}
+					if ($scope.search.air == 0 && $scope.search.car == 0) {
+						$scope.hideHotelContinueLink = true;
 					}
 				} else {
 					$scope.errors = result.errors;
