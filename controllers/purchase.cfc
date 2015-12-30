@@ -606,6 +606,7 @@
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
 							<cfelse>
 								<cfset universalLocatorCode = Air.UniversalLocatorCode>
+								<cfset Traveler.getBookingDetail().setSeatAssignmentNeeded( Air.seatAssignmentNeeded )>
 							</cfif>
 
 							<!--- Update session with new Air record --->

@@ -30,6 +30,7 @@
 
 				<cfset local.selectedHotel = new com.shortstravel.hotel.Hotel() />
 				<cfset local.selectedHotel.populateFromStruct( local.trip.hotelObject ) />
+				<cfset local.selectedHotel.setSignatureImage( local.trip.image ) />
 				<cfset local.selectedHotelRoom = new com.shortstravel.hotel.HotelRoom() />
 				<cfset local.selectedHotelRoom.populateFromStruct( local.room ) />
 				<cfset session.searches[rc.searchID].stItinerary.Hotel = local.selectedHotel />

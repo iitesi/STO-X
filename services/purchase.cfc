@@ -261,6 +261,7 @@
 																							, agentError = agentErrorQueue
 																							, approvalNeeded = arguments.Traveler.getBookingDetail().getApprovalNeeded()
 																							, specialRequests = arguments.Traveler.getBookingDetail().getSpecialRequests()
+																							, seatAssignmentNeeded = arguments.Traveler.getBookingDetail().getSeatAssignmentNeeded()
 																							, developer = arguments.developer
 																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation()
 																							, unusedTickets = (arguments.Traveler.getBookingDetail().getUnusedTickets() EQ '' ? false : true )
