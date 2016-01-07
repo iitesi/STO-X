@@ -251,7 +251,8 @@
 					"2B7B" = "P1642776",
 					"155O" = "P1647862",
 					"2F6K" = "P1936040",
-					"2F9E" = "P2300146"
+					"2F9E" = "P2300146",
+					"2C9N" = "P1951364"
 				}>
 			<!--- <cfelse>
 				<cfset local.Branches = {
@@ -638,12 +639,12 @@
 				AND Location_Code NOT IN (	SELECT AirportCode
 											FROM RAPT
 											WHERE AirportType IN (4,5,6,7,8,9) )
-											<!---	4 = Heliport, no club, scheduled service, 
-													5 = Bus station, 
-													6 = Train station, 
+											<!---	4 = Heliport, no club, scheduled service,
+													5 = Bus station,
+													6 = Train station,
 													7 = Unknown - not explained in Travelports documentation
-													8 = Heliport, not scheduled, 
-													9 = Secondary, not scheduled 
+													8 = Heliport, not scheduled,
+													9 = Secondary, not scheduled
 											--->
 			ORDER BY code
 		</cfquery>
