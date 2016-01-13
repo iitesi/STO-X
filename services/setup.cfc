@@ -305,6 +305,7 @@
 				, Error_Email
 				, ConfirmationMessage_NotRequired
 				, ConfirmationMessage_Required
+				, QueueToCompleat
 				, (SELECT SecurityCode
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS SecurityCode
