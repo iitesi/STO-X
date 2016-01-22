@@ -76,8 +76,78 @@ $(document).ready(function(){
 		});
 	}
 
+	//FH-119
+	//display/select similar trip and add reservation to existing PNR
+	redrawSimilarTrips('NONE');
+	$(".unselectSimilarTrip").on('click', function() {
+		unselectSimilarTrip();
+	});
+
+	function addSimilarTripClickEvents(){
+		$(".similarTrip").on('click', function() {
+			if($(this).hasClass('similarTripSelected')){
+				unselectSimilarTrip();
+			} else {
+				unselectSimilarTrip();
+				selectSimilarTrip($(this));
+			}
+		});
+	}
+	function selectSimilarTrip(elem){
+		var pnrID = elem.attr('pnr');
+		elem.addClass('similarTripSelected');
+		$('input[name=PNRHdrID]').val(pnrID);
+		$('#activeTrip'+pnrID).show();
+	}
+	function unselectSimilarTrip(){
+		$('#similarTrips').children('.similarTrip').each(function () {
+			$(this).removeClass('similarTripSelected');
+			$('#activeTrip'+$(this).attr('pnr')).hide();
+		});
+		$('input[name=PNRHdrID]').val(0);
+	}
+	function redrawSimilarTrips(uID){
+		if(uID == 'NONE')
+			var url = 'RemoteProxy.cfc?method=getSimilarTrips&searchID='+searchID;
+		else
+			var url = 'RemoteProxy.cfc?method=getSimilarTrips&searchID='+searchID+'&userID='+uID;
+		$.ajax({type:"GET",
+			url: url,
+			dataType: 'json',
+			success:function(data) {
+				if(Object.keys(data).length > 0){
+					var stHTML = '';
+					$.each(data, function(key,value) {
+						stHTML = stHTML+createSimilarTripDiv(value);
+					});
+					$("#similarTrips").fadeOut(500,function(){
+						$('#similarTrips').html(stHTML);
+						addSimilarTripClickEvents();
+						$("#similarTrips").fadeIn(800);
+						$("#similarTripDiv").fadeIn(300);
+					});
+				} else {
+					$("#similarTripDiv").fadeOut(300);
+				}
+			}
+		});
+	}
+	function createSimilarTripDiv(elem){
+		if(airSelected)
+			var type = 'flight';
+		else
+			var type = 'hotel';
+		var test = '<div class="similarTrip" pnr="'+elem.PNRID+'">';
+		test = test+'<table cellpadding="3"><tr><td rowspan=2 width="55" class="dateString" valign="middle">'+elem.FORMATTEDDATE+'</td><td class="pnrInfo" valign="top">'+elem.PNRINFO+'</td></tr></table>';
+		test = test+'<span class="activeTrip hideElement" id="activeTrip'+elem.PNRID+'">*Your '+type+' will be added to this reservation*</span>';
+	  test = test+'<br style="clear:both;" /></div>';
+		return test;
+	}
+	//End FH-119
+
 	// On change find the other traveler's data
 	$( "#userID" ).on('change', function() {
+		$('#searchWindow').modal('show');
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
 		$( "#carSpinner" ).show();
@@ -115,10 +185,12 @@ $(document).ready(function(){
 					loadCarPayments(traveler);
 					$( "#carSpinner" ).hide();
 				}
+				redrawSimilarTrips($( "#userID" ).val());
+				$('#searchWindow').modal('hide');
 			}
 		});
 	});
-	
+
 	function showUnusedTickets(unusedTickets, selectedUnusedTickets) {
 		var unusedticketsHTML = '';
 		var displayUnusedTickets = 0;
@@ -126,7 +198,7 @@ $(document).ready(function(){
 		for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 			if ( platingcarrier == unusedTickets[i].carrier ) {
 				displayUnusedTickets = 1;
-			}	
+			}
 		}
 
 		$( "#unusedtickeverbiage" ).hide();
@@ -142,13 +214,13 @@ $(document).ready(function(){
 			unusedticketsHTML += '<tr>'
 			unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked></td>'
 			unusedticketsHTML += '<td colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
-			unusedticketsHTML += '</tr>'			
+			unusedticketsHTML += '</tr>'
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
 					if (selectedUnusedTickets.indexOf(unusedTickets[i].id) >= 0) {
 						var checked = 'checked';
-					}					
+					}
 					var d = new Date(unusedTickets[i].expirationDate);
 					unusedticketsHTML += '<tr>'
 					unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
@@ -157,7 +229,7 @@ $(document).ready(function(){
 					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
 					unusedticketsHTML += '<td><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
 					unusedticketsHTML += '</tr>'
-				}	
+				}
 			}
 			unusedticketsHTML += '</table></font>';
 
@@ -185,7 +257,7 @@ $(document).ready(function(){
 		});
 	}); */
 
-	$("#createProfileDiv").on("click", function () { 
+	$("#createProfileDiv").on("click", function () {
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {
 			$("#usernameDiv").show();
@@ -254,7 +326,7 @@ $(document).ready(function(){
 				}
 				else {
 					$( "#fullNameDiv" ).show();
-				}				
+				}
 			}
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
@@ -451,7 +523,7 @@ $(document).ready(function(){
 				div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
 				if (orgunit.OURequired == 1) {
 					div += ' *</label>';
-				} 
+				}
 				else {
 					div += '&nbsp;&nbsp;</label>';
 				}
@@ -670,7 +742,7 @@ $(document).ready(function(){
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
 
-	$("#unusedTicketsDiv").on("click", function () { 
+	$("#unusedTicketsDiv").on("click", function () {
 		recalculateTotal();
 	});
 
@@ -948,9 +1020,9 @@ function formValidated(){
 			alert("You must first read and agree to all terms.");
 			$("#pricelineAgreeTerms").focus();
 			$("#agreeToTermsError").show();
-			return false;		
+			return false;
 		}
-	
+
 	return true;
 }
 
@@ -978,7 +1050,7 @@ $( "#purchaseButton" ).on("click", function (e) {
 			setPurchaseButtons();
 			return;
 		}
-		else		
+		else
 			e.preventDefault();
 	}
 	else {

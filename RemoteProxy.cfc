@@ -339,7 +339,7 @@
 			</cfcatch>
 		</cftry>
 	</cffunction>
-	
+
 	<cffunction name="updateTravelerCompany" access="remote" output="false" returntype="any" returnformat="json" hint="I update a particular traveler whose company has been changed on the summary page and associated payments">
 		<cfargument name="userID" required="true" type="numeric" />
 		<cfargument name="acctID" required="true" type="numeric" />
@@ -431,6 +431,23 @@
 			<cfreturn serializeJSON( result ) />
 		</cfif>
 
+	</cffunction>
+
+	<cffunction name="getSimilarTrips" output="false" access="remote" returntype="any" returnFormat="plain"  >
+
+		<cftry>
+			<cfset var search = getBean( "SearchService" ).load( request.context.searchId ) />
+			<cfif StructKeyExists(request.context,'userID')>
+				<cfset var similarTrips = getBean('Summary').getSimilarTrips(search,getBean('PNRService'),request.context.userID)>
+			<cfelse>
+				<cfset var similarTrips = getBean('Summary').getSimilarTrips(search,getBean('PNRService'))>
+			</cfif>
+		<cfcatch type="any">
+			<cfreturn '#CFCATCH.message#'>
+		</cfcatch>
+		</cftry>
+
+		<cfreturn SerializeJSON(similarTrips)>
 	</cffunction>
 
 	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">

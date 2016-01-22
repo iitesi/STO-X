@@ -269,7 +269,7 @@
 			<cfloop collection="#group.segments#" index="local.segmentStructIndex" item="local.segmentStruct">
 				<!--- If the departure airport in any group is a designated TSA Precheck airport AND the departing airline is a designated TSA Precheck airline --->
 				<cfif counter EQ 1 AND listFindNoCase(application.stKTPrograms[1].airports, segmentStruct.origin) AND listFindNoCase(application.stKTPrograms[1].airlines, segmentStruct.carrier)>
-					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />				
+					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />
 				</cfif>
 				<!--- If an international flight --->
 				<cfif (application.stAirports[segmentStruct.destination].countryCode IS 'US' AND application.stAirports[segmentStruct.origin].countryCode IS NOT 'US')
@@ -389,9 +389,9 @@
 				<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
 				<cfif 	(
 							( 	local.OU.getOURequired() EQ 1
-								AND local.OU.getOURequiredCBAOnly() EQ 0 
+								AND local.OU.getOURequiredCBAOnly() EQ 0
 							)
-							OR 
+							OR
 							( 	local.OU.getOURequiredCBAOnly() EQ 1
 								AND (
 										( arguments.Traveler.getBookingDetail().getAirNeeded()
@@ -859,4 +859,105 @@
 		<cfreturn session.searches[newFormData.searchID].travelers[newFormData.travelerNumber] />
 	</cffunction>
 
+	<cffunction name="getSimilarTrips" output="false">
+		<cfargument name="filter" required="true">
+		<cfargument name="PNRService" required="true">
+		<cfargument name="userID" required="false">
+
+		<cfset var PNRType = "A,C,H,AC,AH,ACH,CH">
+		<cfset var tripStruct = StructNew()>
+		<cfif arguments.filter.getAir()>
+			<cfset PNRType = "C,H,CH">
+			<cfset startDate = DateAdd('d',-1,arguments.Filter.getDepartDateTime())>
+			<cfset endDate = DateAdd('d',1,arguments.Filter.getArrivalDateTime())>
+		<cfelse>
+			<cfset startDate = DateAdd('d',-1,arguments.Filter.getCheckInDate())>
+			<cfset endDate = DateAdd('d',1,arguments.Filter.getCheckOutDate())>
+		</cfif>
+
+		<cfif StructKeyExists(arguments,'userID')>
+				<cfset uID = arguments.userID>
+		<cfelse>
+				<cfset uID = arguments.Filter.getUserID()>
+		</cfif>
+		<!---GUEST TRAVELERS DO NOT DISPLAY SIMILAR TRIPS--->
+		<cfif uID EQ 0>
+			<cfreturn tripStruct>
+		</cfif>
+		<!--- <cfset var similarTrips = arguments.PNRService.getSimilarTrips( userID=67441
+																, startDate = startDate
+																, endDate = endDate
+																, PNRType = PNRType ) /> --->
+
+
+		<cfset var similarTrips = arguments.PNRService.getSimilarTrips( userID = uID
+																, startDate = startDate
+																, endDate = endDate
+																, PNRType = PNRType ) />
+
+		<cfset var ctr = 1>
+		<cfoutput query="similarTrips">
+			<cfset var found = false>
+			<cfloop collection="#tripStruct#" item="ts">
+				<cfif tripStruct[ts].PNRID EQ PNRHdrID>
+					<cfset tripStruct[ts].arrivalCity = ArvCity>
+					<cfset tripStruct[ts].endMonth = DateFormat(endDate,'mmm')>
+					<cfset tripStruct[ts].endDay = DateFormat(endDate,'dd')>
+					<cfset found = true>
+				</cfif>
+			</cfloop>
+			<cfif !found>
+					<cfset tripStruct["#ctr#"] = StructNew()>
+					<cfset tripStruct["#ctr#"].PNRID = PNRHdrID>
+					<cfset tripStruct["#ctr#"].services = services>
+					<cfset tripStruct["#ctr#"].startMonth = DateFormat(startDate,'mmm')>
+					<cfset tripStruct["#ctr#"].startDay = DateFormat(startDate,'dd')>
+					<cfset tripStruct["#ctr#"].endMonth = DateFormat(endDate,'mmm')>
+					<cfset tripStruct["#ctr#"].endDay = DateFormat(endDate,'dd')>
+					<cfset tripStruct["#ctr#"].order = ctr>
+					<cfif FindNoCase('A',services)>
+						<cfset tripStruct["#ctr#"].departCity = DepCity>
+						<cfset tripStruct["#ctr#"].arrivalCity = ArvCity>
+					</cfif>
+					<cfif FindNoCase('H',services)>
+						<cfset tripStruct["#ctr#"].hotelCity = cityName>
+						<cfset tripStruct["#ctr#"].hotelName = hotelName>
+					</cfif>
+					<cfif FindNoCase('C',services)>
+						<cfset tripStruct["#ctr#"].carReservation = reservationName>
+						<cfset tripStruct["#ctr#"].carReservation = pickUpCode>
+					</cfif>
+					<cfset ctr = ctr + 1>
+			</cfif>
+		</cfoutput>
+		<cfloop collection="#tripStruct#" item="ts">
+			<cfset var pnrInfo = ''>
+			<cfset tripStruct[ts].formattedDate = formatDateString(tripStruct[ts].startMonth,tripStruct[ts].startDay,tripStruct[ts].endMonth,tripStruct[ts].endDay)>
+			<cfif FindNoCase('A',tripStruct[ts].services)><cfset pnrInfo = 'Flight from #tripStruct[ts].departCity# to #tripStruct[ts].arrivalCity#<br>'></cfif>
+			<cfif FindNoCase('H',tripStruct[ts].services)><cfset pnrInfo = pnrInfo&'Hotel Reservation at #tripStruct[ts].hotelName#<br>'></cfif>
+			<cfif FindNoCase('C',tripStruct[ts].services)><cfset pnrInfo = pnrInfo&'Car Reservation at #tripStruct[ts].pickUpCode#<br>For #tripStruct[ts].reservationName#<br>'></cfif>
+			<cfset tripStruct[ts].pnrInfo = pnrInfo>
+		</cfloop>
+		<cfreturn tripStruct>
+
+	</cffunction>
+
+	<cffunction name="formatDateString" output="false">
+	  <cfargument name="startMonth" required="true">
+	  <cfargument name="startDay" required="true">
+	  <cfargument name="endMonth" required="true">
+	  <cfargument name="endDay" required="true">
+	  <cfset var returnDate = ''>
+	  <cfif startMonth EQ endMonth>
+	    <cfset returnDate = startMonth&'<br/>'>
+			<cfif startDay EQ endDay>
+				<cfset returnDate = returnDate&startDay>
+			<cfelse>
+				<cfset returnDate = returnDate&startDay&'-'&endDay>
+			</cfif>
+	  <cfelse>
+	    <cfset returnDate = startMonth&' '&startDay&'-<br/>'&endMonth&' '&endDay>
+	  </cfif>
+	  <cfreturn returnDate>
+	</cffunction>
 </cfcomponent>

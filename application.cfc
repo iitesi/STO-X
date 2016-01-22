@@ -214,6 +214,9 @@
 				  again, if this isn't present we'll abort with a 403 --->
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ true>
 			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
+			<cfif IsNull(local.result)>
+				<cfset local.result = ArrayNew(1)>
+			</cfif>
 			<cfif NOT isSimpleValue( local.result )>
 				<cfset local.result = serializeJSON( local.result ) />
 			</cfif>

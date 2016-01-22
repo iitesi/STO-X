@@ -33,6 +33,18 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="ppnAPIKey"><bean factory-bean="EnvironmentService" factory-method="getPPNAPIKey" /></constructor-arg>
 	</bean>
 
+	<bean id="PNRService" class="com.shortstravel.pnrs.PNRService">
+		<constructor-arg name="PNRManager"><ref bean="PNRManager" /></constructor-arg>
+		<constructor-arg name="AccountService"><ref bean="AccountService" /></constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
+	</bean>
+
+	<bean id="PNRManager" class="com.shortstravel.pnrs.PNRManager">
+			<constructor-arg name="ReportingDSN"><bean factory-bean="EnvironmentService" factory-method="getReportingDSN" /></constructor-arg>
+			<constructor-arg name="CompleatDSN"><bean factory-bean="EnvironmentService" factory-method="getCompleatDSN" /></constructor-arg>
+	</bean>
+
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
