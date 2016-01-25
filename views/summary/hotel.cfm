@@ -255,6 +255,10 @@
 			</p>
 			</cfif>
 			<p>
+			<span class="darkBold">Add Age Restriction Disclosure</span><br>
+			The reservation holder must be 21 years of age or older.
+			</p>
+			<p>
 			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="darkBold">I have read and agree to abide by the priceline.com <a rel="popover" href="javascript:$('##displayPricelineTermsAndConditions').modal('show');" />terms and conditions</a> and <a rel="popover" href="javascript:$('##displayPricelinePrivacyPolicy').modal('show');" />privacy policy</a></span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
 			</p>
 			</tr>
