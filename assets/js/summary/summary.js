@@ -36,7 +36,9 @@ $(document).ready(function(){
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
 	$( "#hotelWhereStayingDiv" ).hide();
+	$('#searchWindow').modal('show');
 	getTraveler();
+	$('#searchWindow').modal('hide');
 
 	// Get traveler from session and populate the form
 	function getTraveler() {
@@ -127,6 +129,7 @@ $(document).ready(function(){
 						$("#similarTripDiv").fadeIn(300);
 					});
 				} else {
+					$('input[name=PNRHdrID]').val(0);
 					$("#similarTripDiv").fadeOut(300);
 				}
 			}

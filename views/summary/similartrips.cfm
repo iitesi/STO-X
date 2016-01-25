@@ -49,7 +49,6 @@
 <div id="similarTrips">
 </div>	<br style="clear:both;" />
 <a class="unselectSimilarTrip">Unselect Trip</a>
-<input type="hidden" name="PNRHdrID" value="0">
 </cfoutput>
 <cfsilent>
 <cffunction name="formatDateString" output="false">

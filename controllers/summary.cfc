@@ -572,6 +572,9 @@
 			<cfset rc.Air = session.searches[rc.searchID].stItinerary.Air />
 		</cfif>
 
+		<!--- <cfif rc.Filter.getFindIt()>
+			<cfset var similarTrips = fw.getBeanFactory().getBean('Summary').getSimilarTrips(rc.Filter,fw.getBeanFactory().getBean('PNRService'))>
+		</cfif> --->
 		<!---
 		FORM SELECTED
 		--->
