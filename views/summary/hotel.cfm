@@ -147,7 +147,7 @@
 
 					<cfif rc.Filter.getFindIt() EQ 1>
 						<cfset dailyRateCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
-						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>						
+						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>
 						<span class="blue bold large">
 							#(dailyRateCurrency EQ 'USD' ? DollarFormat(hotelDailyRate) : numberFormat(hotelDailyRate, '____.__')&' '&dailyRateCurrency)#<br />
 						</span>
@@ -228,33 +228,38 @@
 			<tr>
 			<td colspan="5">
 			&nbsp;&nbsp;&nbsp;
-			<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+			<div class="darkBold preferred">You have selected a web rate. Please read and accept the terms of this rate below.</div>
+			<br>
 			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
 			<p>
-			<span class="bold">Rate Description</span><br>
+			<span class="darkBold">Rate Description</span><br>
 			#rc.Hotel.getRooms()[1].getPPNRateDescription()#
 			</p>
 			</cfif>
 			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
 			<p>
-			<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
+			<span class="darkBold">Pre-Pay Policy and Room Charge Disclosure</span><br>
 			#rc.Hotel.getRooms()[1].getDepositPolicy()#
 			</p>
 			</cfif>
 			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
 			<p>
-			<span class="bold">Cancellation Policy</span><br>
+			<span class="darkBold">Cancellation Policy</span><br>
 			#rc.Hotel.getRooms()[1].getCancellationPolicy()#
 			</p>
 			</cfif>
 			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
 			<p>
-			<span class="bold">Guarantee Policy</span><br>
+			<span class="darkBold">Guarantee Policy</span><br>
 			#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
 			</p>
 			</cfif>
 			<p>
-			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
+			<span class="darkBold">Add Age Restriction Disclosure</span><br>
+			The reservation holder must be 21 years of age or older.
+			</p>
+			<p>
+			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="darkBold">I have read and agree to abide by the priceline.com <a rel="popover" href="javascript:$('##displayPricelineTermsAndConditions').modal('show');" />terms and conditions</a> and <a rel="popover" href="javascript:$('##displayPricelinePrivacyPolicy').modal('show');" />privacy policy</a></span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
 			</p>
 			</tr>
 			</cfif>
@@ -277,6 +282,36 @@
 							<cfelse>
 							#hotelPolicies#
 							</cfif>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="displayPricelineTermsAndConditions" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+				<div class="searchContainer">
+					<div class="modal-header popover-content">
+						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<h3 id="addModalHeader">
+						Short&##39;s Travel Management Web Site Terms &amp; Conditions
+						</h3>
+					</div>
+					<div class="modal-body popover-content">
+						<div id="addModalBody">
+							#view( 'summary/priceline_terms' )#
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="displayPricelinePrivacyPolicy" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+				<div class="searchContainer">
+					<div class="modal-header popover-content">
+						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<h3 id="addModalHeader">
+						Privacy Policy
+						</h3>
+					</div>
+					<div class="modal-body popover-content">
+						<div id="addModalBody">
+							#view( 'summary/priceline_privacy' )#
 						</div>
 					</div>
 				</div>

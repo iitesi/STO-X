@@ -466,6 +466,10 @@ ul.tabs li a.active {
 .bold {
 	font-weight:bold;
 }
+.darkBold {
+	font-weight:bold;
+	font-family:Arial;
+}
 .large {
 	font-size:20px;
 	text-transform:uppercase;
