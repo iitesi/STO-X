@@ -32,6 +32,7 @@
 		</cfif>
 
 		<!--- get the current segment --->
+		<cfset rc.nSegment = replace(rc.nSegment, " ", "+", "ALL") />
 		<cfset currentSegment = structFindKey(stGroups,rc.nSegment)[1].value>
 
 		<!--- get how many segments there are in this trip --->
