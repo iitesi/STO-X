@@ -431,6 +431,12 @@ ul.tabs li a.active {
 	min-height:70px;
 	clear:both;
 }
+
+.tripSummary{
+		width: 540px;
+		margin: 10px 5px !important;
+}
+
 .fulldiv {
 	clear:both;
 	min-width:1000px;
