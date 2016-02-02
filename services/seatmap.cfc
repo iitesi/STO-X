@@ -47,6 +47,7 @@
 					<cfbreak>
 				</cfloop>
 			<cfelse>
+				<cfset arguments.nSegment = replace(arguments.nSegment, " ", "+", "ALL") />
 				<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups#" index="local.Group">
 					<cfloop collection="#session.searches[arguments.SearchID].stTrips[arguments.nTripID].Groups[Group].Segments#" index="local.nSegment">
 						<cfif arguments.nSegment EQ local.nSegment>
@@ -63,6 +64,7 @@
 					<cfbreak>
 				</cfloop>
 			<cfelse>
+				<cfset arguments.nSegment = replace(arguments.nSegment, " ", "+", "ALL") />
 				<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups#" index="local.Group">
 					<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[Group].Segments#" index="local.nSegment">
 						<cfif arguments.nSegment EQ local.nSegment>
