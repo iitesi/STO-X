@@ -262,6 +262,8 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="FindItDSN"><bean factory-bean="EnvironmentService" factory-method="getFindItDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 	</bean>
 
 	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
