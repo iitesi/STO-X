@@ -129,7 +129,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							</div>
 						</div>
 					</cfif>
-					<input type="hidden" name="PNRHdrID" value="0">
+					<input type="hidden" name="recLoc" value="">
 					<div class="summarydiv" style="background-color: ##FFF;width:1000px;">
 						<span style="float:right;">* denotes required fields</span>
 						<table width="1000">

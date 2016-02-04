@@ -96,17 +96,17 @@ $(document).ready(function(){
 		});
 	}
 	function selectSimilarTrip(elem){
-		var pnrID = elem.attr('pnr');
+		var recLoc = elem.attr('pnr');
 		elem.addClass('similarTripSelected');
-		$('input[name=PNRHdrID]').val(pnrID);
-		$('#activeTrip'+pnrID).show();
+		$('input[name=recLoc]').val(recLoc);
+		$('#activeTrip'+recLoc).show();
 	}
 	function unselectSimilarTrip(){
 		$('#similarTrips').children('.similarTrip').each(function () {
 			$(this).removeClass('similarTripSelected');
 			$('#activeTrip'+$(this).attr('pnr')).hide();
 		});
-		$('input[name=PNRHdrID]').val(0);
+		$('input[name=recLoc]').val('');
 	}
 	function redrawSimilarTrips(uID){
 		if(uID == 'NONE')
@@ -129,7 +129,7 @@ $(document).ready(function(){
 						$("#similarTripDiv").fadeIn(300);
 					});
 				} else {
-					$('input[name=PNRHdrID]').val(0);
+					$('input[name=recLoc]').val('');
 					$("#similarTripDiv").fadeOut(300);
 				}
 			}
@@ -140,9 +140,9 @@ $(document).ready(function(){
 			var type = 'flight';
 		else
 			var type = 'hotel';
-		var test = '<div class="similarTrip" pnr="'+elem.PNRID+'">';
+		var test = '<div class="similarTrip" pnr="'+elem.RECLOC+'">';
 		test = test+'<table cellpadding="3"><tr><td rowspan=2 width="55" class="dateString" valign="middle">'+elem.FORMATTEDDATE+'</td><td class="pnrInfo" valign="top">'+elem.PNRINFO+'</td></tr></table>';
-		test = test+'<span class="activeTrip hideElement" id="activeTrip'+elem.PNRID+'">*Your '+type+' will be added to this reservation*</span>';
+		test = test+'<span class="activeTrip hideElement" id="activeTrip'+elem.RECLOC+'">*Your '+type+' will be added to this reservation*</span>';
 	  test = test+'<br style="clear:both;" /></div>';
 		return test;
 	}

@@ -7,10 +7,20 @@
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-			<cfif arrayIsEmpty(errorMessage)
-				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
+			<cfif arrayIsEmpty(errorMessage) AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
+				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
+				<cfset local.version = -1>
+				<!--- If a similar trip has been selected --->
+				<cfif structKeyExists(rc, "recLoc") AND len(rc.recLoc)>
+					<cfset local.providerLocatorCode = rc.recLoc />
+					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
+					<cfif len(local.universalLocatorCode)>
+						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
+																										  , urLocatorCode = local.universalLocatorCode ) />
+					</cfif>
+				</cfif>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
 				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID()) OR (Traveler.getUserID() EQ 0 AND Traveler.getBookingDetail().getSaveProfile())>
 					<cfset Traveler.setUserID(rc.filter.getUserID()) />
@@ -26,8 +36,6 @@
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<cfset local.specialCarReservation = false />
-				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
-				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
 					<cfset Traveler.setHomeAirport('STO')>
 				</cfif>

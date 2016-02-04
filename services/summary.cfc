@@ -899,7 +899,7 @@
 		<cfoutput query="similarTrips">
 			<cfset var found = false>
 			<cfloop collection="#tripStruct#" item="ts">
-				<cfif tripStruct[ts].PNRID EQ PNRHdrID>
+				<cfif tripStruct[ts].recLoc EQ recLoc>
 					<cfset tripStruct[ts].arrivalCity = ArvCity>
 					<cfset tripStruct[ts].endMonth = DateFormat(endDate,'mmm')>
 					<cfset tripStruct[ts].endDay = DateFormat(endDate,'dd')>
@@ -908,7 +908,7 @@
 			</cfloop>
 			<cfif !found>
 					<cfset tripStruct["#ctr#"] = StructNew()>
-					<cfset tripStruct["#ctr#"].PNRID = PNRHdrID>
+					<cfset tripStruct["#ctr#"].recLoc = recLoc>
 					<cfset tripStruct["#ctr#"].services = services>
 					<cfset tripStruct["#ctr#"].startMonth = DateFormat(startDate,'mmm')>
 					<cfset tripStruct["#ctr#"].startDay = DateFormat(startDate,'dd')>

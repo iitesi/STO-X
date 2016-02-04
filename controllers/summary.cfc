@@ -750,7 +750,11 @@
 					</cfif>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
 				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
-					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
+					<cfset pnrString = "" />
+					<cfif structKeyExists(rc, "recLoc") AND len(rc.recLoc)>
+						<cfset pnrString = "&recLoc=#rc.recLoc#" />
+					</cfif>
+					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID##pnrString#')>
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()
