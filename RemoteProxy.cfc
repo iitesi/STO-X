@@ -179,6 +179,7 @@
         <cfargument name="propertyId" type="string" required="false" default="" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
         <cfargument name="finditRequest" type="boolean" required="false" default="false" />
+		<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
 
         <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 
@@ -189,6 +190,7 @@
         <cfargument name="propertyId" type="string" required="true" />
         <cfargument name="callback" type="string" required="false" />
         <cfargument name="requery" type="boolean" required="false" default="false" />
+		<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
 
 		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
 		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">

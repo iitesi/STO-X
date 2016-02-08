@@ -42,8 +42,8 @@ services.factory( "SearchService", function( $http ){
 			.then( function(response) { return response.data });
 	}
 
-	SearchService.doSearch = function( searchId, propertyId, requery, finditRequest ) {
-		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&propertyId=" + propertyId + "&requery=" + requery + "&finditRequest=" + finditRequest)
+	SearchService.doSearch = function( searchId, propertyId, requery, finditRequest, checkPriceline ) {
+		return $http.get( "/booking/RemoteProxy.cfc?method=getHotelSearchResults&searchId=" + searchId + "&propertyId=" + propertyId + "&requery=" + requery + "&finditRequest=" + finditRequest + "&checkPriceline=" + checkPriceline)
 			.then( function(response) {
 				var result = {};
 				result.hotels = [];
@@ -75,9 +75,9 @@ services.factory( "SearchService", function( $http ){
 services.factory( "HotelService", function( $window, $http ){
 	var HotelService = function(data) { angular.extend(this, data); };
 
-	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery ) {
+	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery, checkPriceline ) {
 		Hotel.roomsRequested = true;
-		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
+		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery + '&checkPriceline=' + checkPriceline;
 		return $http.get( url )
 			.then( function( response ){
 				var rooms = [];
