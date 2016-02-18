@@ -43,7 +43,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 	$scope.propertyNameFilterValue = ''; //This is outside the $scope.filterItems so that it doesn't get run on every keypress in the search box
-	
+
 	$scope.filtersApplied = {
 		vendors: false,
 		amenities: false,
@@ -52,14 +52,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		inPolicy: false,
 		noSoldOut: false
 	}
-	
+
 	$scope.filtersVisible = {
 		vendors: false,
 		amenities: false,
 		vendorName: false,
 		rating: false
 	}
-	
+
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
@@ -252,9 +252,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 			if( !Hotel.extendedDataRequested ){
 				var datapoints = [];
-				if( Hotel.StarRating == 0 ){
-					datapoints.push( 'rating' );
-				}
+				datapoints.push( 'rating' );
+				datapoints.push( 'info' );
 				if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
 					datapoints.push( 'signatureImage' );
 				}
@@ -353,15 +352,22 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.loadExtendedHotelData = function( Hotel ){
-
 		if( !Hotel.details.loaded ){
-			HotelService.getExtendedData( $scope.searchId, Hotel );
+			var datapoints = [];
+			datapoints.push( 'rating' );
+			datapoints.push( 'info' );
+			if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
+				datapoints.push( 'signatureImage' );
+			}
+			HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );
 		}
+	}
 
+	$scope.loadHotelPhotos = function( Hotel ){
+			HotelService.getHotelPhotos( $scope.searchId, Hotel );
 	}
 
 	$scope.setFilterVisibility = function( filterName ){
-
 		for ( var prop in $scope.filtersVisible ) {
 			if( prop == filterName ){
 				$scope.filtersVisible[ prop ] = !$scope.filtersVisible[ prop ];
@@ -369,7 +375,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.filtersVisible[ prop ] = false;
 			}
 		}
-
 	}
 
 	$scope.clearFilters = function(){
@@ -773,4 +778,3 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$('.continue-link').attr( 'href', '/booking/index.cfm?action=hotel.skip&searchId=' + $scope.searchId );
 
 });
-

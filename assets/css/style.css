@@ -874,13 +874,16 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 .hotel-panel .dl-horizontal dt{
-    width: 70px;
-    margin-bottom: .3em;
+    font-weight:bold;
+		font-family:Arial;
+		text-align: left;		
+		float:none;
+		margin:.3em 0;
 }
 
 .hotel-panel .dl-horizontal dd{
-    margin-left: 90px;
-    margin-bottom: .5em;
+  	float:none;
+    margin:0 0 .5em 0;
 }
 
 .rating{

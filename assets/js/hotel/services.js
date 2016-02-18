@@ -134,6 +134,17 @@ services.factory( "HotelService", function( $window, $http ){
 					Hotel.SignatureImage = response.data.data.signatureImage;
 				}
 
+				if( typeof response.data.data.amenityList != 'undefined' ){
+					Hotel.createAmenityList();
+				}
+
+				if( typeof response.data.data.addressFlag != 'undefined' ){
+					Hotel.Address = response.data.data.address_street ;
+					Hotel.City = response.data.data.address_city ;
+					Hotel.State = response.data.data.address_state ;
+					Hotel.Zip = response.data.data.address_zip ;
+				}
+
 				if( typeof response.data.data.description != 'undefined' ){
 					Hotel.details.loaded = true;
 					Hotel.details.description = response.data.data.description;
@@ -147,9 +158,34 @@ services.factory( "HotelService", function( $window, $http ){
 					Hotel.details.recreation = response.data.data.recreation;
 					Hotel.details.services =  response.data.data.services;
 					Hotel.details.transportation = response.data.data.transportation;
+					Hotel.details.pricelineMatched = response.data.data.pricelineMatched;
+					Hotel.details.neighborhood = response.data.data.neighborhood;
+					Hotel.details.roomCount = response.data.data.roomCount;
 				}
 			})
 	}
 
+	HotelService.getHotelPhotos = function( searchId, Hotel ){
+		Hotel.extendedDataRequested = true;
+		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		remoteURL = remoteURL + '&datapoints=images';
+
+		return $http.jsonp( remoteURL  )
+			.then( function( response ){
+				if( typeof response.data.data.images != 'undefined' ){
+					Hotel.images = response.data.data.images;
+					if( Hotel.images.length ){
+						Hotel.selectedImage = Hotel.images[0].IMAGEURL;
+					} else {
+						Hotel.selectedImage = "";
+					}
+					Hotel.imagesLoaded = true;
+				}
+				if( typeof response.data.data.signatureImage != 'undefined' ){
+					Hotel.SignatureImage = response.data.data.signatureImage;
+					Hotel.imagesLoaded = true;
+				}
+			})
+	}
 	return HotelService;
 })
