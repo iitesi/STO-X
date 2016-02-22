@@ -61,6 +61,7 @@
 	<cfproperty name="reservationCode" />
 	<cfproperty name="saveProfile" />
 	<cfproperty name="seatAssignmentNeeded" />
+	<cfproperty name="similarTripSelected" />
 	<cfproperty name="specialCarReservation" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="specialNeeds" />
@@ -143,6 +144,7 @@
 		<cfset setSaveProfile( false )>
 		<cfset setSeatAssignmentNeeded( false )>
 		<cfset setSeats( [] )>
+		<cfset setSimilarTripSelected( false )>
 		<cfset setSpecialCarReservation( '' )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setSpecialNeeds( '' )>

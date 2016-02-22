@@ -14,11 +14,17 @@
 				<cfset local.version = -1>
 				<!--- If a similar trip has been selected --->
 				<cfif structKeyExists(rc, "recLoc") AND len(rc.recLoc)>
+					<cfset Traveler.getBookingDetail().setSimilarTripSelected( true )>
 					<cfset local.providerLocatorCode = rc.recLoc />
+					<!--- <cfset local.providerLocatorCode = "J8G1KA" /> --->
 					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
+					<cfif NOT len(local.universalLocatorCode)>
+						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
+																													, locatorCode = local.providerLocatorCode ) />						
+					</cfif>
 					<cfif len(local.universalLocatorCode)>
 						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
-																										  , urLocatorCode = local.universalLocatorCode ) />
+																										 , urLocatorCode = local.universalLocatorCode ) />
 					</cfif>
 				</cfif>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
@@ -911,14 +917,14 @@
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
 					<cfelse>
 						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
+						<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
+						<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					</cfif>
 
 					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
-					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
-					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Update universal version --->
-					<cfif providerLocatorCode NEQ ''>
+					<cfif Hotel.getProviderLocatorCode() NEQ ''>
 						<cfset version++>
 					</cfif>
 
