@@ -50,7 +50,8 @@
 		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''
-					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
+					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()
+					AND NOT Traveler.getBookingDetail().getSimilarTripSelected()>
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode()
 																					, Filter = rc.Filter )>
