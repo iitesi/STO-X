@@ -187,5 +187,20 @@ services.factory( "HotelService", function( $window, $http ){
 				}
 			})
 	}
+
+	HotelService.getRoomRateRules = function( searchId, Hotel, Room ){
+		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getRoomRateRules&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId + '&ratePlanType=' + Room.ratePlanType + '&ppnBundle=' + Room.ppnBundle + '&isRemote=1';
+		return $http.jsonp( remoteURL  )
+			.then( function( response ){
+				if( typeof response.data.data.CANCELLATION != 'undefined' ){
+					Room.cancellationMessage = response.data.data.CANCELLATION;
+					Room.cancellationMessageLoaded = true;
+					$('#cancellationPolicyLoading').hide();
+					$('#cancellationPolicyCopy').html(Room.cancellationMessage);
+					$('#cancellationPolicyCopy').show();
+				}
+			})
+	}
+
 	return HotelService;
 })

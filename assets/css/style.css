@@ -876,7 +876,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .hotel-panel .dl-horizontal dt{
     font-weight:bold;
 		font-family:Arial;
-		text-align: left;		
+		text-align: left;
 		float:none;
 		margin:.3em 0;
 }
@@ -894,16 +894,23 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     border: none;
 }
 
-tr.hotel-room{
+.hotel-room{
     width: 100%;
     border: none;
+		padding: 8px 0;
 }
 
-tr.hotel-room td{
+.hotel-room table tr td{
     vertical-align: top;
-    padding: 10px 5px 10px 5px;
+    padding: 0 5px;
 }
 
+.promoTag{
+	text-align: right;
+	padding:0 38px 3px 0 !important;
+	color:#2E76CF;
+	font-size: 10px;
+}
 .room-description{
     width: 65%;
 }

@@ -320,34 +320,37 @@
                             </div>
 
                             <div class="hotel-panel" ng-show="showRooms">
-
+                              <div ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
                                 <table width="100%">
-                                    <tbody>
-                                        <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
-                                            <td class="room-description">
-                                                {{room.description}}
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
-                                            </td>
-                                            <td class="room-rate-code">
-                                                <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
-                                                <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
-                                                <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
-                                                <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
-                                                &nbsp;
-                                            </td>
-                                            <td class="room-rate">
-                                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
-                                                <button style="width: 75%"
-                                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
-                                                    ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                                    <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
-                                                </button>
-                                                <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                  <tr ng-show="room.promo.length">
+                                    <td colspan="3" class="promoTag">{{room.promo}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="room-description">
+                                        {{room.description}}
+                                        <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
+                                        <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
+                                    </td>
+                                    <td class="room-rate-code">
+                                        <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
+                                        <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
+                                        <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
+                                        <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
+                                        &nbsp;
+                                    </td>
+                                    <td class="room-rate">
+                                        <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
+                                        <button style="width: 75%"
+                                            ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
+                                            ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
+                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
+                                        </button>
+                                        <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
+                                    </td>
+                                  </tr>
+                                  <tr><td colspan="3"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></td></tr>
                                 </table>
+                              </div>
                             </div>
 
                         </div>
@@ -393,6 +396,20 @@
         <p>
             Tip: Double click on the map to update your search with hotels available in other areas of the city.
         </p>
+    </div>
+</div>
+
+<!-- Modal for cancellation policy -->
+<div id="cancellationWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myCancellationWindow" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+      <h4 id="cancellationPolicyHeader">Cancellation Policy</h4>
+    </div>
+    <div id="cancellationPolicyBody" class="modal-body form">
+      <div id="cancellationPolicyLoading" style="text-align: center">
+        <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+      </div>
+      <div id="cancellationPolicyCopy"></div>
     </div>
 </div>
 

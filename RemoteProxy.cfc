@@ -174,7 +174,7 @@
 
 	</cffunction>
 
-    <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
+  <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
         <cfargument name="searchId" type="numeric" required="true"/>
         <cfargument name="propertyId" type="string" required="false" default="" />
 		<cfargument name="requery" type="boolean" required="false" default="false" />
@@ -183,13 +183,13 @@
 
         <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 
-    </cffunction>
+  </cffunction>
 
-    <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
-        <cfargument name="searchId" type="numeric" required="true"/>
-        <cfargument name="propertyId" type="string" required="true" />
-        <cfargument name="callback" type="string" required="false" />
-        <cfargument name="requery" type="boolean" required="false" default="false" />
+  <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
+    <cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="true" />
+    <cfargument name="callback" type="string" required="false" />
+    <cfargument name="requery" type="boolean" required="false" default="false" />
 		<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
 
 		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
@@ -203,7 +203,7 @@
 			<cfreturn serializeJSON( Rooms ) />
 		</cfif>
 
-    </cffunction>
+  </cffunction>
 
 	<cffunction name="getHotelDetails" access="remote" output="false" returntype="any" returnformat="plain" hint="I get the extended details for a particular hotel">
 		<cfargument name="propertyId" type="string" requred="true" />
@@ -234,8 +234,31 @@
 
 	</cffunction>
 
-    <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
-        <cfargument name="accountId" type="numeric" required="true" />
+	<cffunction name="getRoomRateRules" returntype="any" access="remote" returnformat="plain" output="false" hint="">
+		<cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="true" />
+    <cfargument name="ratePlanType" type="string" required="true" />
+    <cfargument name="ppnBundle" type="string" required="true" />
+		<cfargument name="callback" type="string" required="false" />
+    <cfargument name="isRemote" type="boolean" required="false" default="true" />
+
+		<cfset var result = new com.shortstravel.RemoteResponse() />
+		<cfset result.setData(getBean( "HotelService" ).getRoomRateRules( argumentCollection=arguments )) />
+
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
+				<cfoutput>#arguments.callback#(# LTRIM(RTRIM(serializeJSON( result )))#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn serializeJSON( result ) />
+		</cfif>
+
+  </cffunction>
+
+  <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
+    <cfargument name="accountId" type="numeric" required="true" />
 
 		<cfif NOT structKeyExists( application.accounts, arguments.accountId )>
 			<cfreturn getBean( "setup" ).setAccount( AcctID = arguments.accountId ) />
@@ -243,7 +266,7 @@
 			<cfreturn application.accounts[ arguments.accountId ] />
 		</cfif>
 
-    </cffunction>
+  </cffunction>
 
 	<cffunction name="getPolicy" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular account policy">
 		<cfargument name="policyId" type="numeric" required="true" />

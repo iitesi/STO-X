@@ -367,6 +367,20 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			HotelService.getHotelPhotos( $scope.searchId, Hotel );
 	}
 
+	$scope.showCancellationPolicy = function(Hotel, Room){
+		$('#cancellationPolicyCopy').html('');
+		$('#cancellationWindow').modal('show');
+		if(Room.cancellationMessageLoaded == false){
+			$('#cancellationPolicyLoading').show();
+			HotelService.getRoomRateRules($scope.searchId,Hotel, Room);
+		} else {
+			var cMessage = '<span>'+Room.cancellationMessage+'</span>';
+			$('#cancellationPolicyCopy').html(cMessage);
+			$('#cancellationPolicyLoading').hide();
+			$('#cancellationPolicyCopy').show();
+		}
+	}
+
 	$scope.setFilterVisibility = function( filterName ){
 		for ( var prop in $scope.filtersVisible ) {
 			if( prop == filterName ){
@@ -587,6 +601,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$('#changeSearchWindow').modal('show');
 	}
 
+	$scope.showCancellationWindow = function(){
+		$('#cancellationWindow').modal('show');
+	}
 	$scope.configureChangeSearchForm = function(){
 
 		//Now that we have the search data, we're going to set the search parameters into the change search form
@@ -653,7 +670,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 							+ '&isInPolicy=' + Room.isInPolicy
 							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;
 	}
-
 
 	$scope.initializeMap = function( lat, lon ){
 
