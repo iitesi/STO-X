@@ -28,6 +28,7 @@
 		<cfargument name="Filter">
 		<cfargument name="lowestCarRate">
 		<cfargument name="Air">
+		<cfargument name="Hotel">
 		<cfargument name="statmentInformation">
 		<cfargument name="developer">
 		<cfargument name="version">
@@ -42,6 +43,13 @@
 
 			<cfset local.count = 0>
 			<cfset local.processFileFinishing = true>
+
+			<!--- If HotelCreate did not return the cancellation policy in an associated remark --->
+			<cfset local.addHotelCancellation = false />
+			<cfif arguments.hotelSelected AND len(arguments.Hotel.getSellMessage())>
+				<cfset local.addHotelCancellation = true />
+			</cfif>
+
 			<cfloop condition="count LT 2 AND processFileFinishing">
 				<cfset count++>
 				<!--- 
@@ -282,10 +290,11 @@
 									<cfset processFileFinishing = false>
 								</cfif>
 
-								<cfif airSelected>
+								<cfif airSelected OR addHotelCancellation>
 									<cfset local.urModSimultaneous = UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
 																	, Traveler = arguments.Traveler
 																	, Air = arguments.Air
+																	, Hotel = arguments.Hotel
 																	, Filter = arguments.Filter
 																	, version = arguments.version )>
 									<!--- If a simultaneous change occurred, run UniversalRecordModifyReq again --->
@@ -293,6 +302,7 @@
 										<cfset UniversalAdapter.addTSA( targetBranch = arguments.targetBranch
 																	, Traveler = arguments.Traveler
 																	, Air = arguments.Air
+																	, Hotel = arguments.Hotel
 																	, Filter = arguments.Filter
 																	, version = arguments.version )>
 									</cfif>
