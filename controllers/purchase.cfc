@@ -959,6 +959,7 @@
 						Filter="#rc.Filter#"
 						lowestCarRate="#(structKeyExists(session.searches[rc.searchID], 'lowestCarRate') ? session.searches[rc.searchID].lowestCarRate : 0)#"
 						Air="#Air#"
+						Hotel="#Hotel#"
 						statmentInformation="#statmentInformation#"
 						developer="#(listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)#"
 						version="#version#"
@@ -976,6 +977,7 @@
 																					, Filter = arguments.Filter
 																					, lowestCarRate = arguments.lowestCarRate
 																					, Air = arguments.Air
+																					, Hotel = arguments.Hotel
 																					, statmentInformation = arguments.statmentInformation
 																					, developer =  arguments.developer
 																					, version = arguments.version
