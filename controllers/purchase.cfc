@@ -26,6 +26,8 @@
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<cfset local.specialCarReservation = false />
+				<!--- <cfdump var="#local.itinerary#" label="local.itinerary">
+				<cfabort> --->
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
@@ -64,7 +66,8 @@
 				<!--- Determine if pre trip approval is needed. --->
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
 																								, Filter = rc.Filter
-																								, Traveler = Traveler )>
+																								, Traveler = Traveler
+																								, Itinerary = local.itinerary )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 

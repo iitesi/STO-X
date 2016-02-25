@@ -3,7 +3,7 @@
 	<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.datetimestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.datetimestamp, 'HH:mm:ss')#" />
 	<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 	<cfif cgi.http_host EQ "r.local">
-		<cfset local.secureURL = "http://" & cgi.http_host />
+		<cfset local.secureURL = "http://europaqa.shortstravel.com" />
 		<cfset local.returnURL = "http://" & cgi.http_host />
 	<cfelseif cgi.local_host EQ "Beta">
 		<cfset local.secureURL = "http://europaqa.shortstravel.com" />
