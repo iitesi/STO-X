@@ -70,7 +70,9 @@
 																								, Itinerary = local.itinerary )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
-
+				<!--- <cfdump var="#local.approval#" label="local.approval">
+				<cfdump var="#traveler.getbookingDetail()#" label="traveler.getbookingDetail">
+				<cfabort> --->
 				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->
 				<cfif airSelected
 					AND (rc.Filter.getAcctID() EQ 254

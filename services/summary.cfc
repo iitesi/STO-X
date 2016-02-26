@@ -614,6 +614,7 @@
 		<cfargument name="Itinerary" required="true">
 
 		<cfset local.approval = {}>
+		<cfset local.approval.approvalNeeded = false>
 		<cfset local.approval.approvalNeededAir = false>
 		<cfset local.approval.approvalNeededHotel = false>
 		<cfset local.approval.approvalNeededCar = false>
@@ -627,7 +628,8 @@
 		<cfdump var="#local.approval.approvalNeededCar#" label="local.approval.approvalNeededCar">
 		<cfabort> --->
 
-		<cfif local.approval.approvalNeeded>
+		<cfif local.approval.approvalNeededAir OR local.approval.approvalNeededHotel OR local.approval.approvalNeededCar>
+			<cfset local.approval.approvalNeeded = true>
 			<cfset local.qTravelApprovers = ''>
 			<cfif arguments.Filter.getAcctID() NEQ 350>
 				<cfif arguments.Traveler.getAccountID() NEQ ''>
@@ -677,8 +679,37 @@
 				AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1)>
 				<cfset local.approvalNeeded = true>
 			</cfif>
+			<!--- refundable fare --->
+			<cfif arguments.Itinerary.air.ref EQ 1 AND arguments.policy.Policy_ApprovalAirRef EQ 1>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international advance purchase rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlAdvRule EQ 1
+				AND DateCompare(DateFormat(Now(), "mm/dd/yyyy"), DateAdd("d", -arguments.policy.Policy_ApprovalAirIntlAdvDays, DateFormat(arguments.filter.getdepartDateTime(), "mm/dd/yyyy"))) EQ 1>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international maximum airfare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlMaxRule EQ 1
+				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirIntlMaxTotal>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- domestic maximum airfare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomMaxRule EQ 1
+				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirDomMaxTotal>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international logical flight rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlLogicalRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirIntlLogicalTotal + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- domestic logical flight rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomLogicalRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirDomLogicalTotal + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+				<cfset local.approvalNeeded = true>
+			</cfif>
 		</cfif>
-	 	
+
 	 	<cfreturn local.approvalNeeded>
 	</cffunction>
 
