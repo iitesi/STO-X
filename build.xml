@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="sto" basedir="." default="info">
 
-	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
-	<target name="info">
-		<echo message="Here's how you use this build file (coming soon)" />
-	</target>
+  <target name="info">
+    <echo message="Here's how you use this build file (coming soon)" />
+  </target>
 
 	<target name="init">
 		<property name="application.name" value="sto" />
@@ -13,7 +13,7 @@
         <tstamp>
             <format property="timestamp" pattern="yyyy-MM-dd_HH-mm-ss"/>
         </tstamp>
-        <property name="build.log.dir" location="c:/_deploylogs"/>
+        <property name="build.log.dir" location="${user.home}/deploylogs"/>
         <mkdir dir="${build.log.dir}"/>
         <property name="build.log.filename" value="build_${ant.project.name}_${timestamp}.log"/>
         <record name="${build.log.dir}/${build.log.filename}" loglevel="verbose" append="false"/>
