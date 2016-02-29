@@ -698,14 +698,14 @@
 				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirDomMaxTotal>
 				<cfset local.approvalNeeded = true>
 			</cfif>
-			<!--- international logical flight rule --->
-			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlLogicalRule EQ 1
-				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirIntlLogicalTotal + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+			<!--- international low fare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlLowFareRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirIntlLowFarePad + arguments.Traveler.getBookingDetail().getAirLowestFare())>
 				<cfset local.approvalNeeded = true>
 			</cfif>
-			<!--- domestic logical flight rule --->
-			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomLogicalRule EQ 1
-				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirDomLogicalTotal + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+			<!--- domestic low fare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomLowFareRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirDomLowFarePad + arguments.Traveler.getBookingDetail().getAirLowestFare())>
 				<cfset local.approvalNeeded = true>
 			</cfif>
 		</cfif>
