@@ -93,6 +93,8 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
 		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
 		<constructor-arg name="userService"><ref bean="UserService" /></constructor-arg>
+		<constructor-arg name="PolicyService"><ref bean="PolicyService" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
 	<bean id="purchase" class="booking.services.purchase" >
@@ -155,6 +157,10 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 
 	<bean id="PolicyManager" class="com.shortstravel.account.PolicyManager">
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="PolicyService" class="com.shortstravel.account.PolicyService">
+		<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
 	</bean>
 
 	<bean id="SearchService" class="com.shortstravel.search.SearchService">

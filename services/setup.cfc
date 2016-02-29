@@ -9,6 +9,8 @@
 	<cfproperty name="searchWidgetURL" />
 	<cfproperty name="useLinkedDatabases" />
 	<cfproperty name="userService" />
+	<cfproperty name="PolicyService" />
+	<cfproperty name="PaymentService" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="assetURL" type="string" required="true" />
@@ -20,6 +22,8 @@
 		<cfargument name="searchWidgetURL" type="string" required="true" />
 		<cfargument name="useLinkedDatabases" type="boolean" required="true" />
 		<cfargument name="userService" />
+		<cfargument name="PolicyService" />
+		<cfargument name="PaymentService" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -30,6 +34,8 @@
 		<cfset setSearchWidgetURL( arguments.searchWidgetURL ) />
 		<cfset setUseLinkedDatabases( arguments.useLinkedDatabases ) />
 		<cfset setUserService( arguments.userService ) />
+		<cfset setPolicyService( arguments.PolicyService ) />
+		<cfset setPaymentService( arguments.PaymentService ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -189,7 +195,7 @@
 			<!---Set session variables--->
 			<cfset session.UserID = local.getSearch.User_ID>
 			<cfset session.AcctID = local.getSearch.Acct_ID>
-			<cfset session.PolicyID = local.getSearch.Policy_ID>
+			<cfset session.policyID = local.getSearch.Policy_ID>
 			<cfset session.DepartmentPreferences = getUserService().getUserDepartment( session.UserID, session.AcctID ) />
 
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
@@ -431,103 +437,26 @@
 	</cffunction>
 
 	<cffunction name="setPolicy" output="false">
-		<cfargument name="PolicyID">
+		<cfargument name="policyID">
 
 		<cfset local.stTemp = {}>
-		<cfif arguments.PolicyID NEQ 0>
+		<cfif arguments.policyID NEQ 0>
 			<!---Lazy loading, adds policies to the application scope as needed.--->
-			<cfquery name="local.qPolicy" datasource="#getCorporateProductionDSN()#">
-			SELECT Policy_ID
-			, Acct_ID
-			, Policy_Include
-			, Policy_Approval
-			, Policy_Window
-			, Policy_AirReasonCode
-			, Policy_AirLostSavings
-			,	Policy_AirFirstClass
-			, Policy_AirBusinessClass
-			, Policy_AirLowRule
-			, Policy_AirLowDisp
-			, Policy_AirLowPad
-			,	Policy_AirMaxRule
-			, Policy_AirMaxDisp
-			, Policy_AirMaxTotal
-			, Policy_AirPrefRule
-			, Policy_AirPrefDisp
-			, Policy_AirAdvRule
-			,	Policy_AirAdvDisp
-			, Policy_AirAdv
-			, Policy_AirRefRule
-			, Policy_AirRefDisp
-			, Policy_AirNonRefRule
-			, Policy_AirNonRefDisp
-			,	Policy_FindIt
-			, Policy_FindItDays
-			, Policy_FindItDiff
-			, Policy_FindItFee
-			, Policy_CarReasonCode
-			, Policy_CarMaxRule
-			, Policy_CarMaxDisp
-			, Policy_CarMaxRate
-			, Policy_CarPrefRule
-			, Policy_CarPrefDisp
-			, Policy_CarTypeRule
-			, Policy_CarTypeDisp
-			, Policy_CarOnlyRates
-			, Policy_HotelReasonCode
-			, Policy_HotelMaxRule
-			, Policy_HotelMaxDisp
-			, Policy_HotelMaxRate
-			, Policy_HotelPrefRule
-			, Policy_HotelPrefDisp
-			, Policy_HotelInPolicyDisp
-			, Policy_HotelNotBooking
-			, Policy_AirFee
-			, Policy_AirIntFee
-			, Policy_NonAirFee
-			, Policy_SpecialRequestFee
-			, Policy_AgentAirFee
-			, Policy_AgentAirIntFee
-			, Policy_AgentNonAirFee
-			, Policy_ComplexFee
-			, BookIt_MonthFee
-			, BookIt_TransFee
-			, Policy_FindItChangeAir
-			, Policy_AllowRequests
-			, Policy_AirApproval
-			, Policy_HotelApproval
-			, Policy_CarApproval
-			, Policy_FindItHotelPrefProp
-			, Policy_FindItHotelPrefPropMiles
-			, Policy_FindItHotelStarRating
-			FROM Account_Policies
-			WHERE Active = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-			AND Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
-			</cfquery>
-
+			<cfset local.qPolicy = PolicyService.loadQuery(arguments.policyID)>
 			<cfset local.stTemp = {}>
 			<cfloop list="#qPolicy.ColumnList#" index="local.sCol">
 				<cfset local.stTemp[local.sCol] = local.qPolicy[local.sCol]>
 			</cfloop>
 
-			<cfquery name="local.qPreferredCarSizes" datasource="#getCorporateProductionDSN()#">
-				SELECT Car_Size
-
-					, Policy_ID
-				FROM Policy_CarSizes
-				WHERE Policy_ID = <cfqueryparam value="#arguments.PolicyID#" cfsqltype="cf_sql_integer">
-			</cfquery>
-
+			<!---Get Preferred Car Sizes--->
+			<cfset local.qPreferredCarSizes = PolicyService.getCarPreferredCarSizes(arguments.policyID)>
 			<cfset local.stTemp.aCarSizes = []>
 			<cfloop query="qPreferredCarSizes">
 				<cfset ArrayAppend(local.stTemp.aCarSizes, local.qPreferredCarSizes.Car_Size)>
 			</cfloop>
 
-			<cfquery name="local.qCDNumbers" datasource="#getCorporateProductionDSN()#">
-			SELECT IsNull(Value_ID, '0') AS Value_ID, Vendor_Code, CD_Number, DB_Number, DB_Type
-			FROM CD_Numbers
-			WHERE Acct_ID = <cfqueryparam value="#local.qPolicy.Acct_ID#" cfsqltype="cf_sql_numeric" />
-			</cfquery>
+			<!--- Get Car Payments --->
+			<cfset local.qCDNumbers = PaymentService.getCarPayments(acctID=local.qPolicy.Acct_ID,returnType='query',userID=0,vendor='')>
 			<cfset local.stTemp.CDNumbers = {}>
 			<cfloop query="qCDNumbers">
 				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].CD = local.qCDNumbers.CD_Number>
@@ -535,7 +464,9 @@
 				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].DBType = local.qCDNumbers.DB_Type>
 			</cfloop>
 
-			<cfset application.Policies[arguments.PolicyID] = local.stTemp>
+
+
+			<cfset application.Policies[arguments.policyID] = local.stTemp>
 		</cfif>
 
 		<cfreturn local.stTemp/>

@@ -611,38 +611,25 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="Filter" required="true">
 		<cfargument name="Traveler" required="true">
+		<cfargument name="Itinerary" required="true">
 
 		<cfset local.approval = {}>
 		<cfset local.approval.approvalNeeded = false>
+		<cfset local.approval.approvalNeededAir = false>
+		<cfset local.approval.approvalNeededHotel = false>
+		<cfset local.approval.approvalNeededCar = false>
 		<cfset local.approval.approvers = ''>
+		<cfset local.approval.approvalNeededAir = determineAirApproval(arguments.Policy, arguments.Filter, arguments.Traveler, arguments.Itinerary)>
+		<cfset local.approval.approvalNeededHotel = determineHotelApproval(arguments.Policy, arguments.Filter, arguments.Traveler)>
+		<cfset local.approval.approvalNeededCar = determineCarApproval(arguments.Policy, arguments.Filter, arguments.Traveler)>
 
-		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()
-			AND arguments.Policy.Policy_AirApproval EQ 1
-			AND (arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop_'
-			AND arguments.Traveler.getBookingDetail().getAirFOPID() NEQ 0
-			AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1)>
+		<!--- <cfdump var="#local.approval.approvalNeededAir#" label="local.approval.approvalNeededAir">
+		<cfdump var="#local.approval.approvalNeededHotel#" label="local.approval.approvalNeededHotel">
+		<cfdump var="#local.approval.approvalNeededCar#" label="local.approval.approvalNeededCar">
+		<cfabort> --->
+
+		<cfif local.approval.approvalNeededAir OR local.approval.approvalNeededHotel OR local.approval.approvalNeededCar>
 			<cfset local.approval.approvalNeeded = true>
-		</cfif>
-
-		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded()
-			AND arguments.Policy.Policy_HotelApproval EQ 1
-			AND (arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop_'
-			AND arguments.Traveler.getBookingDetail().getHotelFOPID() NEQ 0
-			AND arguments.Traveler.getBookingDetail().getNewHotelCC() NEQ 1)>
-			<cfset local.approval.approvalNeeded = true>
-		</cfif>
-
-		<cfif arguments.Traveler.getBookingDetail().getCarNeeded()
-			AND arguments.Policy.Policy_CarApproval EQ 1
-			AND (arguments.Traveler.getBookingDetail().getCarFOPID() DOES NOT CONTAIN 'fop_'
-			AND arguments.Traveler.getBookingDetail().getCarFOPID() NEQ 0)>
-			<cfset local.approval.approvalNeeded = true>
-			<!--- <cfif arguments.CarCC_Type EQ 1>Direct Bill car
-				<cfset local.approval = 'Y'>
-			</cfif> --->
-		</cfif>
-
-		<cfif local.approval.approvalNeeded>
 			<cfset local.qTravelApprovers = ''>
 			<cfif arguments.Filter.getAcctID() NEQ 350>
 				<cfif arguments.Traveler.getAccountID() NEQ ''>
@@ -676,6 +663,96 @@
 		<cfreturn local.approval>
 	</cffunction>
 
+	<cffunction name="determineAirApproval" output="false">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Traveler" required="true">
+		<cfargument name="Itinerary" required="true">
+
+		<cfset local.approvalNeeded = false>
+
+		<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
+			<!--- central bill card --->
+			<cfif arguments.Policy.Policy_AirApproval EQ 1
+				AND (arguments.Traveler.getBookingDetail().getAirFOPID() DOES NOT CONTAIN 'fop_'
+				AND arguments.Traveler.getBookingDetail().getAirFOPID() NEQ 0
+				AND arguments.Traveler.getBookingDetail().getNewAirCC() NEQ 1)>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- refundable fare --->
+			<cfif arguments.Itinerary.air.ref EQ 1 AND arguments.policy.Policy_ApprovalAirRef EQ 1>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international advance purchase rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlAdvRule EQ 1
+				AND DateCompare(DateFormat(Now(), "mm/dd/yyyy"), DateAdd("d", -arguments.policy.Policy_ApprovalAirIntlAdvDays, DateFormat(arguments.filter.getdepartDateTime(), "mm/dd/yyyy"))) EQ 1>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international maximum airfare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlMaxRule EQ 1
+				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirIntlMaxTotal>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- domestic maximum airfare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomMaxRule EQ 1
+				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirDomMaxTotal>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- international low fare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ false AND arguments.policy.Policy_ApprovalAirIntlLowFareRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirIntlLowFarePad + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+			<!--- domestic low fare rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomLowFareRule EQ 1
+				AND arguments.Itinerary.air.total GT (arguments.policy.Policy_ApprovalAirDomLowFarePad + arguments.Traveler.getBookingDetail().getAirLowestFare())>
+				<cfset local.approvalNeeded = true>
+			</cfif>
+		</cfif>
+
+	 	<cfreturn local.approvalNeeded>
+	</cffunction>
+
+	<cffunction name="determineHotelApproval" output="false">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Traveler" required="true">
+
+		<cfset local.approvalNeeded = false>
+
+		<cfif arguments.Traveler.getBookingDetail().getHotelNeeded()
+			AND ((arguments.Policy.Policy_HotelApproval EQ 1
+			AND (arguments.Traveler.getBookingDetail().getHotelFOPID() DOES NOT CONTAIN 'fop_'
+			AND arguments.Traveler.getBookingDetail().getHotelFOPID() NEQ 0
+			AND arguments.Traveler.getBookingDetail().getNewHotelCC() NEQ 1))
+			OR arguments.Policy.Policy_HotelApproval EQ 2)>
+			<cfset local.approvalNeeded = true>
+		</cfif>
+	 	
+	 	<cfreturn local.approvalNeeded>
+	</cffunction>
+
+	<cffunction name="determineCarApproval" output="false">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Traveler" required="true">
+
+		<cfset local.approvalNeeded = false>
+
+		<cfif arguments.Traveler.getBookingDetail().getCarNeeded()
+			AND ((arguments.Policy.Policy_CarApproval EQ 1
+			AND (arguments.Traveler.getBookingDetail().getCarFOPID() DOES NOT CONTAIN 'fop_'
+			AND arguments.Traveler.getBookingDetail().getCarFOPID() NEQ 0))
+			OR arguments.Policy.Policy_CarApproval EQ 2)>
+			<cfset local.approvalNeeded = true>
+			<!--- <cfif arguments.CarCC_Type EQ 1>Direct Bill car
+				<cfset local.approval = 'Y'>
+			</cfif> --->
+		</cfif>
+	 	
+	 	<cfreturn local.approvalNeeded>
+	</cffunction>
+
 	<cffunction name="updateTraveler" output="false">
         <cfargument name="datetimestamp" required="true" />
         <cfargument name="token" required="true" />
@@ -690,7 +767,7 @@
 		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
 
 		<cfif cgi.http_host EQ "r.local">
-			<cfset local.secureURL = "http://" & cgi.http_host />
+			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
 		<cfelseif cgi.local_host EQ "Beta">
 			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
 		<cfelseif cgi.local_host EQ "RailoQA">
