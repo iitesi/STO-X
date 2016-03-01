@@ -145,6 +145,13 @@
 						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
 					</cfif>
 
+					<cfif len(rc.Hotel.getRooms()[1].getPromo())>
+						<span class="blue bold">
+							#rc.Hotel.getRooms()[1].getPromo()#
+						</span>
+						<br />
+					</cfif>
+
 					<cfif rc.Filter.getFindIt() EQ 1>
 						<cfset dailyRateCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
 						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>
