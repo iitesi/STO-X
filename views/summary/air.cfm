@@ -203,7 +203,7 @@
 				</span>
 
 				Total including taxes and refunds<br>
-				#(session.searches[rc.SearchID].RequestedRefundable ? 'Refundable' : 'No Refunds')#<br>
+				#(rc.air.ref ? 'Refundable' : 'No Refunds')#<br>
 				<span class="blue bold">
 					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
 						Flight change/cancellation policy
