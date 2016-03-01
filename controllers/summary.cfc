@@ -545,7 +545,6 @@
 				<!--- If the second AirPrice call still results in an error message, display it --->
 
 				<cfif structIsEmpty(airPriceCheck2) OR structKeyExists(airPriceCheck2, 'faultMessage')>
-					<cfdump var="#airPriceCheck2#" abort>
 					<cfset rc.message.addError('Fare type selected is unavailable for pricing.') />
 					<cfset session.searches[rc.searchID].PassedRefCheck = 0 />
 				<cfelse>

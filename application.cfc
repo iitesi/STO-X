@@ -61,6 +61,8 @@
 		<cfif (NOT structKeyExists(request.context, 'SearchID')
 			OR NOT isNumeric(request.context.searchID))
 			AND request.context.action NEQ 'main.notfound'
+			AND request.context.action NEQ 'setup.resetPolicy'
+			AND request.context.action NEQ 'setup.setPolicy'
 			AND request.context.action NEQ 'logout.default'>
 			<cfset var action = ListFirst(request.context.action, '.')>
 			<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
