@@ -544,17 +544,22 @@
 																					, bGovtRate = bGovtRate
 																				)>
 				<!--- If the second AirPrice call still results in an error message, display it --->
+
 				<cfif structIsEmpty(airPriceCheck2) OR structKeyExists(airPriceCheck2, 'faultMessage')>
 					<cfset rc.message.addError('Fare type selected is unavailable for pricing.') />
 					<cfset session.searches[rc.searchID].PassedRefCheck = 0 />
-				<!--- Else if the trip really is non-refundable, alert the traveler --->
-				<cfelseif airPriceCheck2[structKeyList(airPriceCheck2)].Total EQ originalAirfare>
-					<cfset session.searches[rc.SearchID].RequestedRefundable = 0 />
-					<cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
-					<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 />
-					<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
-					<cfset local.trip = airPriceCheck2 />
-					<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
+				<cfelse>
+					<cfloop list="#structKeyList(airPriceCheck2)#" index="item">
+						<cfif airPriceCheck2[item].Total EQ originalAirfare>
+							<!--- Else if the trip really is non-refundable, alert the traveler --->
+							<cfset session.searches[rc.SearchID].RequestedRefundable = 0 />
+							<cfset session.searches[rc.searchID].stItinerary.Air.Ref = 0 />
+							<cfset session.searches[rc.searchID].stItinerary.Air.RequestedRefundable = 0 />
+							<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
+							<cfset local.trip = airPriceCheck2 />
+							<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
+						</cfif>
+					</cfloop>
 				</cfif>
 			<cfelse>
 				<cfset session.searches[rc.searchID].PassedRefCheck = 1 />

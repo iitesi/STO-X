@@ -58,3 +58,7 @@
     </ul>
     </div>
 </cfif>
+
+<cfif StructKeyExists(rc,'debugPolicy') AND rc.debugPolicy>
+  <cfdump var="#rc.policy#" />
+</cfif>
