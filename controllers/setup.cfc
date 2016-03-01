@@ -141,6 +141,17 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="resetPolicy" output="false">
+		<cfargument name="rc">
+		<cfparam name="rc.debugPolicy" value="false" />
+		<!--- doublecheck the policyID is set --->
+		<cfif NOT structKeyExists(rc, "policyID")>
+			<cfset rc.policyID = arguments.rc.filter.getPolicyID()>
+		</cfif>
+		<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
+		<cfset variables.fw.setView('main.policy')/>
+	</cffunction>
+
 	<cffunction name="setGroup" output="false">
 		<cfargument name="rc">
 
