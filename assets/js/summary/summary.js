@@ -36,12 +36,13 @@ $(document).ready(function(){
 	$( "#createProfileDiv" ).hide();
 	$( "#usernameDiv" ).hide();
 	$( "#hotelWhereStayingDiv" ).hide();
-	$('#searchWindow').modal('show');
+
 	getTraveler();
-	$('#searchWindow').modal('hide');
+
 
 	// Get traveler from session and populate the form
 	function getTraveler() {
+		$('#searchWindow').modal('show');
 		$.ajax({type:"POST",
 			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{

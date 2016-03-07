@@ -78,8 +78,7 @@
 				<!--- Determine if pre trip approval is needed. --->
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
 																								, Filter = rc.Filter
-																								, Traveler = Traveler
-																								, Itinerary = local.itinerary )>
+																								, Traveler = Traveler )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 
