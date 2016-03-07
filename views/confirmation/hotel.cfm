@@ -72,8 +72,9 @@
 							#uCase(rc.Hotel.getAddress())#, #uCase(rc.Hotel.getCity())#, #uCase(rc.Hotel.getState())# #uCase(rc.Hotel.getZip())# #uCase(rc.Hotel.getCountry())#<br />
 							HOTEL PHONE NUMBER: #rc.Hotel.getPhone()#
 						</td>
-						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND rc.Hotel.getRooms()[1].getIsCancellable()>
-							<td><span style="padding:25px;"><a href="" style="color:red;">CANCEL THIS RESERVATION</a></span>
+						<!--- <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND rc.Hotel.getRooms()[1].getIsCancellable()> --->
+						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+							<td><span style="padding:20px;"><a href="#buildURL('purchase.cancelPPN?searchID=#rc.searchID#&invoiceID=#rc.Traveler[1].getBookingDetail().getInvoiceID()#')#" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
 						<cfelse>
 							<td>&nbsp;</td>
 						</cfif>

@@ -416,7 +416,7 @@
 					AND userID = <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" >
 			</cfquery>
 		<cfelse>
-			<cfquery datasource="#getBookingDSN()#">
+			<cfquery datasource="#getBookingDSN()#" result="local.invoice">
 				INSERT INTO Invoices (
 					  searchID
 					, recloc
@@ -470,6 +470,8 @@
 					, <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
 				)
 			</cfquery>
+
+			<cfset arguments.Traveler.getBookingDetail().setInvoiceID(local.invoice.IDENTITYCOL) />
 		</cfif>
 
 		<cfreturn />

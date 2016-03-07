@@ -49,6 +49,7 @@
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="hotelWhereStaying" />
+	<cfproperty name="invoiceID" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
@@ -131,6 +132,7 @@
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setHotelWhereStaying( '' )>
+		<cfset setInvoiceID( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setNameChange( false )>
 		<cfset setNewAirCC( 0 )>
