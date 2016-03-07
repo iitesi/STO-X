@@ -807,6 +807,7 @@
 									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
 								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
 								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
+								<cfset Traveler.getBookingDetail().setHotelCCName(Payment.getFopDescription()) />
 							</cfif>
 						</cfloop>
 					</cfif>

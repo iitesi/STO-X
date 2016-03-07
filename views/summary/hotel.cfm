@@ -104,7 +104,7 @@
 					</cfif>
 				</td>
 
-				<td width="630">
+				<td valign="top" width="630">
 
 					<strong>
 						#rc.Hotel.getPropertyName()#<br>
