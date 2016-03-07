@@ -43,8 +43,15 @@
 																					, bSaveAirPrice = 0
 																					, stSelected = stSelected
 																					, findIt = 1)>
-		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
-		<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
+		<cftry>
+			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
+			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
+		<cfcatch type="any">
+			<!---Something went wrong - STM-6420 fix--->
+			<cfset rc.message.addError('There was an error trying to select the flight.  Try selecting manually.')>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
+		</cfcatch>
+		</cftry>
 
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 
