@@ -3,6 +3,9 @@
 		<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 			<cfset pricelineHotelBooked = false />
 			<cfset pricelineSeparateFees = false />
+			<cfif structKeyExists(rc, "hotelCancelled") AND rc.hotelCancelled>
+				<cfset rc.Traveler[travelerIndex].getBookingDetail().setHotelNeeded(false) />
+			</cfif>
 			<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded() AND rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
 				<cfset pricelineHotelBooked = true />
 				<cfif (len(rc.Hotel.getRooms()[1].getProcessingFee()) AND rc.Hotel.getRooms()[1].getProcessingFee() NEQ "0.00") OR (len(rc.Hotel.getRooms()[1].getInsuranceFee()) AND rc.Hotel.getRooms()[1].getInsuranceFee() NEQ "0.00")>

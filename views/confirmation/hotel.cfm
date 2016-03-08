@@ -74,7 +74,19 @@
 						</td>
 						<!--- <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND rc.Hotel.getRooms()[1].getIsCancellable()> --->
 						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
-							<td><span style="padding:20px;"><a href="#buildURL('purchase.cancelPPN?searchID=#rc.searchID#&invoiceID=#rc.Traveler[1].getBookingDetail().getInvoiceID()#')#" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
+							<script src="#application.assetURL#/js/bootbox.min.js"></script>
+							<script type="text/javascript">
+								$(document).ready(function() {
+									$("##confirmHotelCancellation").click(function(){
+										bootbox.confirm("<h1 style='color:red;'>Hotel Cancellation</h1>You are about to cancel this hotel reservation. This action cannot be undone. Is this what you want to do?", function(result) {
+											if (result == true) {
+												window.location = "#buildURL('purchase.cancelPPN?searchID=" + #rc.searchID# + "&invoiceID=" + #rc.Traveler[1].getBookingDetail().getInvoiceID()# + "')#";
+											}
+										});
+									});
+								});
+							</script>
+							<td><span style="padding:20px;"><a href="##" id="confirmHotelCancellation" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
 						<cfelse>
 							<td>&nbsp;</td>
 						</cfif>

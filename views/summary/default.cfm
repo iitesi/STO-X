@@ -67,6 +67,11 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 		<h1>Purchase Reservation</h1>
 
+		<!--- For manual cancellations --->
+		<!--- <a href="#buildURL('purchase.cancel?searchID=444927')#">
+			<span class="icon-large icon-remove-circle"></span> Cancel Reservation
+		</a> --->
+
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>

@@ -1097,6 +1097,35 @@
 
 	</cffunction>
 
+	<!--- For manual cancellations --->
+	<!--- <cffunction name="cancel" output="false">
+		<cfargument name="rc">
+
+		<cfset local.cancelResponse.status = false>
+		<cfset cancelResponse.message = ''>
+
+		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																						, universalRecordLocatorCode = "JYVW7V"
+																						, Filter = rc.Filter
+																						, Version = "0" )>
+		<cfif cancelResponse.status>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
+
+
+			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "444927"
+																		, urRecloc = "JYVW7V" )>
+
+			<!--- <cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )> --->
+
+		</cfif>
+		<cfif cancelResponse.message NEQ ''>
+			<cfset rc.message.addError(cancelResponse.message)>
+		</cfif>
+
+		<cfset variables.fw.redirect('confirmation?searchID=444927&cancelled=#cancelResponse.status#')>
+
+	</cffunction> --->
+
 	<cffunction name="cancelPPN" output="false">
 		<cfargument name="rc" />
 
@@ -1134,6 +1163,8 @@
 																													, acctID = Filter.acctID
 																													, userID = invoice.userID )>
 
+					<cfset local.urVersion++ />
+
 					<!--- If an error from the above:
 					The hotel was cancelled with Priceline, but the PNR could not be updated. Please manually cancel the PNR, issue the fee, and regenerate the VI. --->
 
@@ -1143,6 +1174,7 @@
 																											, providerLocatorCode = invoice.recloc
 																											, providerReservationInfoRef = invoice.providerReservationInfoRef
 																											, ppnTripID = Hotel.ppnTripID
+																											, username = Filter.username
 																											, version = local.urVersion
 																											, searchID = invoice.searchID
 																											, acctID = Filter.acctID
@@ -1170,10 +1202,12 @@
 																						, searchID = invoice.searchID )>
 					</cfif> --->
 
-					<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
+					<!--- <cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") /> --->
 
 					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
 																					, urRecloc = invoice.urRecloc ) />
+
+					<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
 				</cfif>
 			</cfif>
 		<cfelse>
@@ -1184,7 +1218,7 @@
 			<cfset rc.message.addError(cancelResponse.message) />
 		</cfif>
 
-		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')>
+		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&hotelCancelled=#cancelResponse.status#')>
 
 	</cffunction>
 
