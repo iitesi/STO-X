@@ -273,6 +273,7 @@
 																							, developer = arguments.developer
 																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation()
 																							, unusedTickets = (arguments.Traveler.getBookingDetail().getUnusedTickets() EQ '' ? false : true )
+																							, similarTripSelected = arguments.Traveler.getBookingDetail().getSimilarTripSelected()
 																							, Air = arguments.Air
 																							, airSelected = airSelected
 																							, Account = arguments.Account )>
