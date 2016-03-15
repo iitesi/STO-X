@@ -42,7 +42,7 @@ $(document).ready(function(){
 
 	// Get traveler from session and populate the form
 	function getTraveler() {
-		$('#searchWindow').modal('show');
+		// $('#searchWindow').modal('show');
 		$.ajax({type:"POST",
 			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{
