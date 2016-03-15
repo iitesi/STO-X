@@ -914,8 +914,7 @@
 					</cfif>
 
 					<!--- Parse error --->
-					<cfif Hotel.getUniversalLocatorCode() EQ ''
-						OR Hotel.getError()>
+					<cfif Hotel.getUniversalLocatorCode() EQ '' OR Hotel.getError()>
 						<cfset errorMessage = Hotel.getMessages()>
 						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
@@ -1105,15 +1104,15 @@
 		<cfset cancelResponse.message = ''>
 
 		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
-																						, universalRecordLocatorCode = "JYVW7V"
+																						, universalRecordLocatorCode = "R01ELR"
 																						, Filter = rc.Filter
 																						, Version = "0" )>
 		<cfif cancelResponse.status>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
 
 
-			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "444927"
-																		, urRecloc = "JYVW7V" )>
+			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "444925"
+																		, urRecloc = "R01ELR" )>
 
 			<!--- <cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )> --->
 
@@ -1122,7 +1121,7 @@
 			<cfset rc.message.addError(cancelResponse.message)>
 		</cfif>
 
-		<cfset variables.fw.redirect('confirmation?searchID=444927&cancelled=#cancelResponse.status#')>
+		<cfset variables.fw.redirect('confirmation?searchID=444925&cancelled=#cancelResponse.status#')>
 
 	</cffunction> --->
 
@@ -1131,6 +1130,7 @@
 
 		<cfset local.cancelResponse.status = false />
 		<cfset local.cancelResponse.message = "" />
+		<cfset local.assistanceNeeded = false />
 
 		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
 
@@ -1163,55 +1163,68 @@
 																													, acctID = Filter.acctID
 																													, userID = invoice.userID )>
 
-					<cfset local.urVersion++ />
+					<cfif cancelPassiveResponse.status>
+						<cfset local.urVersion++ />
 
-					<!--- If an error from the above:
-					The hotel was cancelled with Priceline, but the PNR could not be updated. Please manually cancel the PNR, issue the fee, and regenerate the VI. --->
+						<!--- Modify the universal record --->
+						<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																												, urLocatorCode = invoice.urRecloc
+																												, providerLocatorCode = invoice.recloc
+																												, providerReservationInfoRef = invoice.providerReservationInfoRef
+																												, ppnTripID = Hotel.ppnTripID
+																												, username = Filter.username
+																												, version = local.urVersion
+																												, searchID = invoice.searchID
+																												, acctID = Filter.acctID
+																												, userID = invoice.userID )>
 
-					<!--- Modify the universal record --->
-					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
-																											, urLocatorCode = invoice.urRecloc
-																											, providerLocatorCode = invoice.recloc
-																											, providerReservationInfoRef = invoice.providerReservationInfoRef
-																											, ppnTripID = Hotel.ppnTripID
-																											, username = Filter.username
-																											, version = local.urVersion
-																											, searchID = invoice.searchID
-																											, acctID = Filter.acctID
-																											, userID = invoice.userID )>
+						<!--- Per FH-22: The invoice cancellation fee functionality is no longer needed right now --->
+						<!--- Get agent touch fee --->
+						<!--- <cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
 
-					<!--- Per FH-22: The invoice cancellation fee functionality is no longer needed right now --->
-					<!--- Get agent touch fee --->
-					<!--- <cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
+						<!--- Open terminal session --->
+						<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
+																											, searchID = invoice.searchID )>
 
-					<!--- Open terminal session --->
-					<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
-																										, searchID = invoice.searchID )>
+						<cfif hostToken EQ ''>
+							<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+							<cfset errorType = 'TerminalEntry.openSession'>
+						<cfelse>
+							<!--- Invoice service fee --->
+							<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
+																															, hostToken = hostToken
+																															, searchID = invoice.searchID )>
 
-					<cfif hostToken EQ ''>
-						<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
-						<cfset errorType = 'TerminalEntry.openSession'>
+							<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
+																							, hostToken = hostToken
+																							, searchID = invoice.searchID )>
+						</cfif> --->
+
+						<!--- <cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") /> --->
+
+						<cfif modifyURResponse.status>
+							<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+								<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																							, urRecloc = invoice.urRecloc ) />
+
+								<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
+							</cfif>
+						<cfelse>
+							<cfset assistanceNeeded = true />
+						</cfif>
 					<cfelse>
-						<!--- Invoice service fee --->
-						<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
-																														, hostToken = hostToken
-																														, searchID = invoice.searchID )>
-
-						<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
-																						, hostToken = hostToken
-																						, searchID = invoice.searchID )>
-					</cfif> --->
-
-					<!--- <cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") /> --->
-
-					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																					, urRecloc = invoice.urRecloc ) />
-
-					<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
+						<cfset assistanceNeeded = true />
+					</cfif>
+				<cfelse>
+					<cfset assistanceNeeded = true />
 				</cfif>
 			</cfif>
 		<cfelse>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
+		</cfif>
+
+		<cfif assistanceNeeded>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "The hotel reservation was cancelled, but the PNR could not be updated.") />
 		</cfif>
 
 		<cfif cancelResponse.message NEQ "">
