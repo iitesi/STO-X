@@ -212,7 +212,7 @@
 		</cfif>
 
 		<!--- If trying to cancel a Priceline hotel reservation from the portal --->
-		<cfif structKeyExists(arguments.args, "invoiceID") AND NOT session.isAuthorized>
+		<cfif structKeyExists(arguments.args, "invoiceID") AND (NOT structKeyExists(session, "isAuthorized") OR NOT session.isAuthorized)>
 			<cfset session.isAuthorized = false />
 
 			<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
