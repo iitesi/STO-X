@@ -490,4 +490,117 @@
 		 </cfif>
 
 	</cffunction>
+
+	<cffunction name="retrievePPN" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="searchID" type="numeric" required="true" />
+	    <cfargument name="invoiceID" type="string" required="true" />
+		<cfargument name="callback" type="string" required="false" />
+
+	    <cfset local.hotel = {} />
+		<cfset local.invoice = getBean("Purchase").retrieveInvoice( invoiceID = arguments.invoiceID ) />
+
+		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
+			<cfset local.hotel = invoice.hotelSelection />
+		</cfif>
+
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
+				<cfoutput>#arguments.callback#(#hotel#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn hotel />
+		</cfif>
+	</cffunction>
+
+	<cffunction name="cancelPPN" returntype="any" access="remote" output="false" hint="" returnformat="json">
+		<cfargument name="searchID" type="numeric" required="true"/>
+	    <cfargument name="invoiceID" type="string" required="true"/>
+		<cfargument name="callback" type="string" required="false" />
+
+		<cfset local.cancelResponse.status = false />
+		<cfset local.cancelResponse.message = "" />
+		<cfset local.assistanceNeeded = false />
+
+		<cfset local.invoice = getBean("Purchase").retrieveInvoice( invoiceID = arguments.invoiceID ) />
+
+		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
+			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
+			<cfset local.Filter = deserializeJSON(invoice.filter) />
+			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
+			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
+
+			<!--- Cancel the Priceline reservation --->
+			<cfset local.cancelResponse = getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+																			, Filter = Filter )>
+
+			<cfif cancelResponse.status>
+				<!--- Retrieve the universal record version --->
+				<cfset local.urVersion = getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
+																				, urLocatorCode = invoice.urRecloc
+																				, searchID = invoice.searchID
+																				, acctID = Filter.acctID
+																				, userID = invoice.userID )>
+
+				<cfif isNumeric(local.urVersion)>
+					<!--- Cancel the passive segment --->
+					<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																													, urLocatorCode = invoice.urRecloc
+																													, providerLocatorCode = invoice.recloc
+																													, passiveLocatorCode = invoice.passiveRecloc
+																													, passiveSegmentRef = invoice.passiveSegmentRef
+																													, version = local.urVersion
+																													, searchID = invoice.searchID
+																													, acctID = Filter.acctID
+																													, userID = invoice.userID )>
+
+					<cfif cancelPassiveResponse.status>
+						<cfset local.urVersion++ />
+
+						<!--- Modify the universal record --->
+						<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																												, urLocatorCode = invoice.urRecloc
+																												, providerLocatorCode = invoice.recloc
+																												, providerReservationInfoRef = invoice.providerReservationInfoRef
+																												, ppnTripID = Hotel.ppnTripID
+																												, username = Filter.username
+																												, version = local.urVersion
+																												, searchID = invoice.searchID
+																												, acctID = Filter.acctID
+																												, userID = invoice.userID )>
+
+						<cfif modifyURResponse.status>
+							<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+								<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																							, urRecloc = invoice.urRecloc ) />
+							</cfif>
+						<cfelse>
+							<cfset assistanceNeeded = true />
+						</cfif>
+					<cfelse>
+						<cfset assistanceNeeded = true />
+					</cfif>
+				<cfelse>
+					<cfset assistanceNeeded = true />
+				</cfif>
+			</cfif>
+		<cfelse>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
+		</cfif>
+
+		<cfif assistanceNeeded>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "The hotel reservation was cancelled, but the PNR could not be updated.") />
+		</cfif>
+
+		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+			<cfcontent type="application/javascript" />
+			<cfsavecontent variable="local.callbackFunction">
+				<cfoutput>#arguments.callback#(#serializeJSON( cancelResponse )#)</cfoutput>
+			</cfsavecontent>
+			<cfreturn callbackFunction />
+		<cfelse>
+			<cfreturn serializeJSON( cancelResponse ) />
+		</cfif>
+	</cffunction>
 </cfcomponent>
