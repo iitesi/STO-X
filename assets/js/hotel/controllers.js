@@ -662,14 +662,27 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.selectRoom = function( Hotel, Room ){
+		var ppnBundle = "";
+		if (Room.ppnBundle != "")
+			ppnBundle = Room.ppnBundle.replaceAll('%','xxx');
 		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
-							+ '&ppnBundle=' + Room.ppnBundle
+							+ '&ppnBundle=' + ppnBundle
 							+ '&totalForStay=' + Room.totalForStay
 							+ '&isInPolicy=' + Room.isInPolicy
 							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;
 	}
+
+	String.prototype.replaceAll = function(search, replace) {
+	    //if replace is not sent, return original string otherwise it will
+	    //replace search string with 'undefined'.
+	    if (replace === undefined) {
+	        return this.toString();
+	    }
+
+	    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+	};
 
 	$scope.initializeMap = function( lat, lon ){
 

@@ -19,11 +19,13 @@
 	<cffunction name="select" output="false">
 		<cfargument name="rc" />
 
+		<cfset local.ppnBundle = replace(arguments.rc.ppnBundle, "xxx", "%", "ALL") />
+
 		<cfset local.HotelService = variables.bf.getBean( "HotelService" ) />
 		<cfset local.success = local.HotelService.selectRoom( searchId=arguments.rc.searchId,
 												 propertyId=arguments.rc.propertyId,
 												 ratePlanType=arguments.rc.ratePlanType,
-												 ppnBundle=arguments.rc.ppnBundle,
+												 ppnBundle=ppnBundle,
 												 totalForStay=arguments.rc.totalForStay,
 												 isInPolicy=arguments.rc.isInPolicy,
 												 outOfPolicyMessage=arguments.rc.outOfPolicyMessage ) />
@@ -31,7 +33,7 @@
 		<cfset local.HotelService.getRoomRateRules( searchId=arguments.rc.searchId,
 												 	propertyId=arguments.rc.propertyId,
 												 	ratePlanType=arguments.rc.ratePlanType,
-												 	ppnBundle=arguments.rc.ppnBundle ) />
+												 	ppnBundle=ppnBundle ) />
 		<cfif NOT arguments.rc.Filter.getHotel()>
 			<cfset arguments.rc.Filter.setHotel( true ) />
 			<cfset variables.bf.getBean( "SearchService" ).save( searchID=arguments.rc.searchId, hotel=true ) />
