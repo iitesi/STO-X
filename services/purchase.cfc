@@ -385,7 +385,22 @@
 			</cfif>
 		</cfif>
 
+		<cfset local.updateInvoice = false />
 		<cfif arguments.Traveler.getBookingDetail().getSimilarTripSelected()>
+			<!--- Only STO/FindIt reservations are stored in the booking.Invoices table --->
+			<cfquery name="getInvoice" datasource="#getBookingDSN()#">
+				SELECT invoiceID
+				FROM Invoices
+				WHERE recloc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" />
+					AND userID = <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" />
+			</cfquery>
+
+			<cfif getInvoice.recordCount>
+				<cfset local.updateInvoice = true />
+			</cfif>
+		</cfif>
+
+		<cfif updateInvoice>
 			<cfquery datasource="#getBookingDSN()#">
 				UPDATE Invoices
 				SET   recloc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
@@ -416,9 +431,10 @@
 					, passiveRecloc = <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
 					, passiveSegmentRef = <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
 					, providerReservationInfoRef = <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
-				WHERE searchID = <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
-					AND userID = <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" >
+				WHERE invoiceID = <cfqueryparam value="#getInvoice.invoiceID#" cfsqltype="cf_sql_integer" >
 			</cfquery>
+
+			<cfset arguments.Traveler.getBookingDetail().setInvoiceID(getInvoice.invoiceID) />
 		<cfelse>
 			<cfquery datasource="#getBookingDSN()#" result="local.invoice">
 				INSERT INTO Invoices (
