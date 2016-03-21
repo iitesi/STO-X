@@ -113,6 +113,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
 		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="virtualInvoiceDSN"><bean factory-bean="EnvironmentService" factory-method="getVirtualInvoiceDSN" /></constructor-arg>
 	</bean>
 
 	<bean id="Summary" class="booking.services.summary">

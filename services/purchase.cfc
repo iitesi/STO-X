@@ -2,15 +2,18 @@
 	<cfproperty name="TerminalEntry"/>
 	<cfproperty name="UniversalAdapter"/>
 	<cfproperty name="bookingDSN"/>
+	<cfproperty name="virtualInvoiceDSN"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="TerminalEntry" requred="true" />
 		<cfargument name="UniversalAdapter" requred="true" />
 		<cfargument name="bookingDSN" requred="true" />
+		<cfargument name="virtualInvoiceDSN" requred="true" />
 
 		<cfset setTerminalEntry( arguments.TerminalEntry ) />
 		<cfset setUniversalAdapter( arguments.UniversalAdapter ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
+		<cfset setVirtualInvoiceDSN( arguments.virtualInvoiceDSN ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -487,6 +490,8 @@
 				 , urRecloc
 				 , firstName
 				 , lastName
+				 , air
+				 , car
 				 , hotelSelection
 				 , userID
 				 , profileID
@@ -517,6 +522,40 @@
 			WHERE searchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_integer" >
 				AND urRecloc = <cfqueryparam value="#arguments.urRecloc#" cfsqltype="cf_sql_varchar" >
 		</cfquery>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="regenerateVI" output="false">
+		<cfargument name="recLoc" required="true">
+
+		<cfquery name="getVI" datasource="#getVirtualInvoiceDSN()#">
+			SELECT TOP 1 ID, AccountNumber, ID_GUID, BranchNumber
+			FROM InvoiceArchive
+			WHERE RecordLocator = <cfqueryparam value="#arguments.recLoc#" cfsqltype="cf_sql_varchar" />
+			ORDER BY VI_Timestamp DESC
+		</cfquery>
+
+		<cfif getVI.recordCount>
+			<cfset timestamp = DateAdd('d', -1, Now()) />
+
+			<cfquery datasource="#getVirtualInvoiceDSN()#">
+				INSERT INTO RUN_VI (
+					  RLoc
+					, AccountID
+					, Time_Stamp
+					, Archive_ID
+					, BranchID
+				)
+				VALUES (
+					  <cfqueryparam value="#arguments.recLoc#" cfsqltype="cf_sql_varchar" />
+					, <cfqueryparam value="#getVI.AccountNumber#" cfsqltype="cf_sql_varchar" />
+					, <cfqueryparam value="#timestamp#" cfsqltype="cf_sql_timestamp" />
+					, <cfqueryparam value="#getVI.ID_GUID#" cfsqltype="cf_sql_varchar" />
+					, <cfqueryparam value="#getVI.BranchNumber#" cfsqltype="cf_sql_varchar" />
+				)
+			</cfquery>
+		</cfif>
 
 		<cfreturn />
 	</cffunction>

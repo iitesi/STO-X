@@ -1002,7 +1002,7 @@
 					</cfif>
 					<cfif FindNoCase('C',services)>
 						<cfset tripStruct["#ctr#"].carReservation = reservationName>
-						<cfset tripStruct["#ctr#"].carReservation = pickUpCode>
+						<cfset tripStruct["#ctr#"].pickUpCode = pickUpCode>
 					</cfif>
 					<cfset ctr = ctr + 1>
 			</cfif>
@@ -1012,7 +1012,7 @@
 			<cfset tripStruct[ts].formattedDate = formatDateString(tripStruct[ts].startMonth,tripStruct[ts].startDay,tripStruct[ts].endMonth,tripStruct[ts].endDay)>
 			<cfif FindNoCase('A',tripStruct[ts].services)><cfset pnrInfo = 'Flight from #tripStruct[ts].departCity# to #tripStruct[ts].arrivalCity#<br>'></cfif>
 			<cfif FindNoCase('H',tripStruct[ts].services)><cfset pnrInfo = pnrInfo&'Hotel Reservation at #tripStruct[ts].hotelName#<br>'></cfif>
-			<cfif FindNoCase('C',tripStruct[ts].services)><cfset pnrInfo = pnrInfo&'Car Reservation at #tripStruct[ts].pickUpCode#<br>For #tripStruct[ts].reservationName#<br>'></cfif>
+			<cfif FindNoCase('C',tripStruct[ts].services)><cfset pnrInfo = pnrInfo&'Car Reservation at #tripStruct[ts].pickUpCode#<br>For #tripStruct[ts].carReservation#<br>'></cfif>
 			<cfset tripStruct[ts].pnrInfo = pnrInfo>
 		</cfloop>
 		<cfreturn tripStruct>

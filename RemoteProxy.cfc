@@ -545,35 +545,35 @@
 
 				<cfif isNumeric(local.urVersion)>
 					<!--- Cancel the passive segment --->
-					<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
-																													, urLocatorCode = invoice.urRecloc
-																													, providerLocatorCode = invoice.recloc
-																													, passiveLocatorCode = invoice.passiveRecloc
-																													, passiveSegmentRef = invoice.passiveSegmentRef
-																													, version = local.urVersion
-																													, searchID = invoice.searchID
-																													, acctID = Filter.acctID
-																													, userID = invoice.userID )>
+					<cfset local.cancelPassiveResponse = getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																								, urLocatorCode = invoice.urRecloc
+																								, providerLocatorCode = invoice.recloc
+																								, passiveLocatorCode = invoice.passiveRecloc
+																								, passiveSegmentRef = invoice.passiveSegmentRef
+																								, version = local.urVersion
+																								, searchID = invoice.searchID
+																								, acctID = Filter.acctID
+																								, userID = invoice.userID )>
 
 					<cfif cancelPassiveResponse.status>
 						<cfset local.urVersion++ />
 
 						<!--- Modify the universal record --->
-						<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
-																												, urLocatorCode = invoice.urRecloc
-																												, providerLocatorCode = invoice.recloc
-																												, providerReservationInfoRef = invoice.providerReservationInfoRef
-																												, ppnTripID = Hotel.ppnTripID
-																												, username = Filter.username
-																												, version = local.urVersion
-																												, searchID = invoice.searchID
-																												, acctID = Filter.acctID
-																												, userID = invoice.userID )>
+						<cfset local.modifyURResponse = getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																							, urLocatorCode = invoice.urRecloc
+																							, providerLocatorCode = invoice.recloc
+																							, providerReservationInfoRef = invoice.providerReservationInfoRef
+																							, ppnTripID = Hotel.ppnTripID
+																							, username = Filter.username
+																							, version = local.urVersion
+																							, searchID = invoice.searchID
+																							, acctID = Filter.acctID
+																							, userID = invoice.userID )>
 
 						<cfif modifyURResponse.status>
 							<cfif invoice.air EQ 0 AND invoice.car EQ 0>
-								<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																							, urRecloc = invoice.urRecloc ) />
+								<cfset getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																		, urRecloc = invoice.urRecloc ) />
 							</cfif>
 						<cfelse>
 							<cfset assistanceNeeded = true />
@@ -602,5 +602,14 @@
 		<cfelse>
 			<cfreturn serializeJSON( cancelResponse ) />
 		</cfif>
+	</cffunction>
+
+	<cffunction name="regenerateVI" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	    <cfargument name="recLoc" type="string" required="true" />
+		<cfargument name="callback" type="string" required="false" />
+
+		<cfset getBean("Purchase").regenerateVI( recLoc = arguments.recLoc ) />
+
+		<cfreturn />
 	</cffunction>
 </cfcomponent>
