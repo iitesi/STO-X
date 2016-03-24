@@ -1163,7 +1163,7 @@
 		<cfset local.cancelResponse.message = "" />
 		<cfset local.assistanceNeeded = false />
 
-		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
+		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( searchID = arguments.rc.searchID ) />
 
 		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
 			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />

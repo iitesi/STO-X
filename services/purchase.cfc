@@ -499,7 +499,8 @@
 	</cffunction>
 
 	<cffunction name="retrieveInvoice" output="false">
-		<cfargument name="invoiceID" type="numeric" required="true" />
+		<cfargument name="invoiceID" type="numeric" required="false" />
+		<cfargument name="searchID" type="numeric" required="false" />
 
 		<cfquery name="getInvoice" datasource="#getBookingDSN()#">
 			SELECT searchID
@@ -523,7 +524,11 @@
 				 , passiveSegmentRef
 				 , providerReservationInfoRef
 			FROM Invoices
-			WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
+			<cfif len(arguments.invoiceID)>
+				WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
+			<cfelse>
+				WHERE searchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_integer" />
+			</cfif>
 		</cfquery>
 
 		<cfreturn getInvoice />
