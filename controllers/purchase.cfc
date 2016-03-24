@@ -1104,15 +1104,15 @@
 		<cfset cancelResponse.message = ''>
 
 		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
-																						, universalRecordLocatorCode = "R01ELR"
+																						, universalRecordLocatorCode = "LRNBUQ"
 																						, Filter = rc.Filter
 																						, Version = "0" )>
 		<cfif cancelResponse.status>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
 
 
-			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "444925"
-																		, urRecloc = "R01ELR" )>
+			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "451998"
+																		, urRecloc = "LRNBUQ" )>
 
 			<!--- <cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )> --->
 
@@ -1121,7 +1121,38 @@
 			<cfset rc.message.addError(cancelResponse.message)>
 		</cfif>
 
-		<cfset variables.fw.redirect('confirmation?searchID=444925&cancelled=#cancelResponse.status#')>
+		<cfset variables.fw.redirect('confirmation?searchID=451998&cancelled=#cancelResponse.status#')>
+
+	</cffunction> --->
+
+	<!--- <cffunction name="cancelPPN" output="false">
+		<cfargument name="rc" />
+
+		<cfset local.cancelResponse.status = false />
+		<cfset local.cancelResponse.message = "" />
+		<cfset local.assistanceNeeded = false />
+
+		<!--- Retrieve the universal record version --->
+		<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = "P1601405"
+																							, urLocatorCode = "ASFF83"
+																							, searchID = "453111"
+																							, acctID = "1"
+																							, userID = "443" )>
+
+		<cfif isNumeric(local.urVersion)>
+			<!--- Cancel the passive segment --->
+			<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = "P1601405"
+																											, urLocatorCode = "ASFF83"
+																											, providerLocatorCode = "KCR63Q"
+																											, passiveLocatorCode = "JU20DE"
+																											, passiveSegmentRef = "jHXhw2HmTASCmcgXZqLZ6A=="
+																											, version = local.urVersion
+																											, searchID = "453111"
+																											, acctID = "1"
+																											, userID = "443" )>
+		</cfif>
+
+		<cfset variables.fw.redirect('confirmation?searchID=453729&hotelCancelled=true')>
 
 	</cffunction> --->
 
@@ -1139,6 +1170,16 @@
 			<cfset local.Filter = deserializeJSON(invoice.filter) />
 			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
 			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
+
+			<!--- Four possible cancellation scenarios after an invoice is retrieved
+			1. getCancel successful, PassiveCancelReq successful, UniversalRecordModifyReq successful
+				User gets success message, no additional queueing needed
+			2. getCancel successful, PassiveCancelReq successful, UniversalRecordModifyReq unsuccessful
+				User gets success message, no additional queueing needed
+			3. getCancel successful, PassiveCancelReq unsuccessful, UniversalRecordModifyReq unsuccessful
+				User gets success message, queue to 34*CQC
+			4. getCancel unsuccessful, PassiveCancelReq unsuccessful, UniversalRecordModifyReq unsuccessful
+				User gets failed message --->
 
 			<!--- Cancel the Priceline reservation --->
 			<cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
@@ -1171,6 +1212,7 @@
 																												, urLocatorCode = invoice.urRecloc
 																												, providerLocatorCode = invoice.recloc
 																												, providerReservationInfoRef = invoice.providerReservationInfoRef
+																												, categoryType = "A"
 																												, ppnTripID = Hotel.ppnTripID
 																												, username = Filter.username
 																												, version = local.urVersion
@@ -1202,29 +1244,54 @@
 
 						<!--- <cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") /> --->
 
-						<cfif modifyURResponse.status>
-							<cfif invoice.air EQ 0 AND invoice.car EQ 0>
-								<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																							, urRecloc = invoice.urRecloc ) />
-
-								<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
-							</cfif>
-						<cfelse>
+						<!--- <cfif NOT modifyURResponse.status>
 							<cfset assistanceNeeded = true />
-						</cfif>
+						</cfif> --->
 					<cfelse>
 						<cfset assistanceNeeded = true />
 					</cfif>
 				<cfelse>
 					<cfset assistanceNeeded = true />
 				</cfif>
+
+				<cfif assistanceNeeded>
+					<!--- Modify the universal record --->
+					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																											, urLocatorCode = invoice.urRecloc
+																											, providerLocatorCode = invoice.recloc
+																											, providerReservationInfoRef = invoice.providerReservationInfoRef
+																											, categoryType = "Q"
+																											, ppnTripID = Hotel.ppnTripID
+																											, username = Filter.username
+																											, version = local.urVersion
+																											, searchID = invoice.searchID
+																											, acctID = Filter.acctID
+																											, userID = invoice.userID )>
+					<!--- Queue to 34*CQC --->
+					<cfif modifyURResponse.status>
+						<cfset local.account = fw.getBeanFactory().getBean("AccountService").load( accountID = Filter.acctID
+																								, returnType = "query" )>
+						<cfset local.pccBooking = account.PCC_Booking />
+						<cfset fw.getBeanFactory().getBean("UniversalAdapter").queuePlace( targetBranch = invoice.targetBranch
+																							, Filter = Filter
+																							, pccBooking = local.pccBooking
+																							, providerLocatorCode = invoice.recloc
+																							, queue = "34"
+																							, category = "QC" )>
+					</cfif>
+				</cfif>
+
+				<!--- The reservation has been successfully cancelled with Priceline; cancel the invoice --->
+				<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																				, urRecloc = invoice.urRecloc ) />
+				</cfif>
+
+				<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
+				<cfset session.searches[invoice.searchID].Travelers[1].getBookingDetail().setBookingFee(0) />
 			</cfif>
 		<cfelse>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
-		</cfif>
-
-		<cfif assistanceNeeded>
-			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "The hotel reservation was cancelled, but the PNR could not be updated.") />
 		</cfif>
 
 		<cfif cancelResponse.message NEQ "">

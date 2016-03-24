@@ -563,6 +563,7 @@
 																							, urLocatorCode = invoice.urRecloc
 																							, providerLocatorCode = invoice.recloc
 																							, providerReservationInfoRef = invoice.providerReservationInfoRef
+																							, categoryType = "A"
 																							, ppnTripID = Hotel.ppnTripID
 																							, username = Filter.username
 																							, version = local.urVersion

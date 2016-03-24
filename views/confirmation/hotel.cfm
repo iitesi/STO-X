@@ -86,7 +86,7 @@
 									});
 								});
 							</script>
-							<td><span style="padding:20px;"><a href="##" id="confirmHotelCancellation" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
+							<td><span style="padding:20px;"><a href="#buildURL('purchase.cancelPPN?searchID=#rc.searchID#')#" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
 						<cfelse>
 							<td>&nbsp;</td>
 						</cfif>

@@ -68,7 +68,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		<h1>Purchase Reservation</h1>
 
 		<!--- For manual cancellations --->
-		<!--- <a href="#buildURL('purchase.cancel?searchID=444927')#">
+		<!--- <a href="#buildURL('purchase.cancel?searchID=451998')#">
 			<span class="icon-large icon-remove-circle"></span> Cancel Reservation
 		</a> --->
 
@@ -127,13 +127,13 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<div id="traveler" class="tab_content">
 				<p>
-					<cfif rc.Filter.getFindIt()>
+					<!--- <cfif rc.Filter.getFindIt()> --->
 						<div class="summarydiv hideElement" id="similarTripDiv" style="background-color: ##FFF;width:1000px;">
 							<div id="similarTripsDiv" class="clearfix">
 								#View('summary/similartrips')#
 							</div>
 						</div>
-					</cfif>
+					<!--- </cfif> --->
 					<input type="hidden" name="recLoc" value="">
 					<div class="summarydiv" style="background-color: ##FFF;width:1000px;">
 						<span style="float:right;">* denotes required fields</span>
@@ -192,7 +192,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			    </div>
 			</div>
-			<script src="assets/js/summary/summary.js?rs=101415"></script>
+			<script src="assets/js/summary/summary.js?rs=031516"></script>
 		</form>
 	</div>
 

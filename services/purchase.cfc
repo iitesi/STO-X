@@ -431,6 +431,7 @@
 					, passiveRecloc = <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
 					, passiveSegmentRef = <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
 					, providerReservationInfoRef = <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
+					, active = <cfqueryparam value="1" cfsqltype="cf_sql_bit" >
 				WHERE invoiceID = <cfqueryparam value="#getInvoice.invoiceID#" cfsqltype="cf_sql_integer" >
 			</cfquery>
 
