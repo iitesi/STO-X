@@ -570,28 +570,48 @@
 																							, searchID = invoice.searchID
 																							, acctID = Filter.acctID
 																							, userID = invoice.userID )>
-
-						<cfif modifyURResponse.status>
-							<cfif invoice.air EQ 0 AND invoice.car EQ 0>
-								<cfset getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																		, urRecloc = invoice.urRecloc ) />
-							</cfif>
-						<cfelse>
-							<cfset assistanceNeeded = true />
-						</cfif>
 					<cfelse>
 						<cfset assistanceNeeded = true />
 					</cfif>
 				<cfelse>
 					<cfset assistanceNeeded = true />
 				</cfif>
+
+				<cfif assistanceNeeded>
+					<!--- Modify the universal record --->
+					<cfset local.modifyURResponse = getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																						, urLocatorCode = invoice.urRecloc
+																						, providerLocatorCode = invoice.recloc
+																						, providerReservationInfoRef = invoice.providerReservationInfoRef
+																						, categoryType = "Q"
+																						, ppnTripID = Hotel.ppnTripID
+																						, username = Filter.username
+																						, version = local.urVersion
+																						, searchID = invoice.searchID
+																						, acctID = Filter.acctID
+																						, userID = invoice.userID )>
+					<!--- Queue to 34*CQC --->
+					<cfif modifyURResponse.status>
+						<cfset local.account = getBean("AccountService").load( accountID = Filter.acctID
+																				, returnType = "query" )>
+						<cfset local.pccBooking = account.PCC_Booking />
+						<cfset getBean("UniversalAdapter").queuePlace( targetBranch = invoice.targetBranch
+																		, Filter = Filter
+																		, pccBooking = local.pccBooking
+																		, providerLocatorCode = invoice.recloc
+																		, queue = "34"
+																		, category = "QC" )>
+					</cfif>
+				</cfif>
+
+				<!--- The reservation has been successfully cancelled with Priceline; cancel the invoice --->
+				<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+					<cfset getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+															, urRecloc = invoice.urRecloc ) />
+				</cfif>
 			</cfif>
 		<cfelse>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
-		</cfif>
-
-		<cfif assistanceNeeded>
-			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "The hotel reservation was cancelled, but the PNR could not be updated.") />
 		</cfif>
 
 		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">

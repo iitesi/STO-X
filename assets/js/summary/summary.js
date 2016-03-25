@@ -137,9 +137,9 @@ $(document).ready(function(){
 		});
 	}
 	function createSimilarTripDiv(elem){
-		if(airSelected)
+		/* if(airSelected)
 			var type = 'flight';
-		else
+		else */
 			var type = 'hotel';
 		var test = '<div class="similarTrip" pnr="'+elem.RECLOC+'">';
 		test = test+'<table cellpadding="3"><tr><td rowspan=2 width="55" class="dateString" valign="middle">'+elem.FORMATTEDDATE+'</td><td class="pnrInfo" valign="top">'+elem.PNRINFO+'</td></tr></table>';
