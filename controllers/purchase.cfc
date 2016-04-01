@@ -69,6 +69,7 @@
 																								, Traveler = Traveler
 																								, Itinerary = local.itinerary )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededReasons( approval.approvalNeededReasons )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 				<!--- <cfdump var="#local.approval#" label="local.approval">
 				<cfdump var="#traveler.getbookingDetail()#" label="traveler.getbookingDetail">
