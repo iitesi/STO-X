@@ -81,6 +81,7 @@
 																								, Traveler = Traveler
 																								, Itinerary = local.itinerary )>
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededReasons( approval.approvalNeededReasons )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
 
 				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->

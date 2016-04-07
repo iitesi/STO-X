@@ -2,6 +2,7 @@
 
 	<cfproperty name="agent" />
 	<cfproperty name="approvalNeeded" />
+	<cfproperty name="approvalNeededReasons" />
 	<cfproperty name="approvers" />
 	<cfproperty name="airNeeded" />
 	<cfproperty name="airBillingAddress" />
@@ -83,6 +84,7 @@
 
 		<cfset setAgent( '' )>
 		<cfset setApprovalNeeded( false )>
+		<cfset setApprovalNeededReasons( arrayNew(1) )>
 		<cfset setApprovers( '' )>
 		<cfset setAirNeeded( false )>
 		<cfset setAirBillingAddress( '' )>
