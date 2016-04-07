@@ -37,12 +37,17 @@
 																					, Account = rc.Account
 																					, Policy = rc.Policy
 																					, sCabin = ( structKeyExists( rc, 'class') ? rc.class : 'Y' )
-																					, bRefundable = ( structKeyExists( rc, 'ref') ? rc.ref : 0 )
+																					<!--- , bRefundable = ( structKeyExists( rc, 'ref') ? rc.ref : 0 ) --->
+																					, bRefundable = 0
 																					, nTrip = ''
 																					, nCouldYou = 0
 																					, bSaveAirPrice = 0
+																					, bIncludeClass = 1
+																					, bIncludeCabin = 1
+																					, bIncludeBookingCodes = 1
 																					, stSelected = stSelected
-																					, findIt = 1)>
+																					, findIt = 1
+																					, bFirstPrice = 1)>
 		<cftry>
 			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
 			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
