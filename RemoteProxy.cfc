@@ -154,6 +154,7 @@
 		<cftry>
 
 			<cfset var Search = getBean( "SearchService" ).save( argumentCollection = arguments ) />
+			<cfset var Filter = getBean("setup").setFilter(searchID = arguments.searchID, requery = true) />
 
 			<cfif isNumeric( Search.getSearchID() ) AND Search.getSearchID() > 0>
 				<cfset result.setData( Search ) />
