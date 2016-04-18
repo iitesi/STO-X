@@ -728,7 +728,7 @@
 			OR arguments.Policy.Policy_HotelApproval EQ 2)>
 			<cfset arrayAppend(arguments.approvalNeededReasons, 'HOTEL PRE-TRIP APPROVAL')>
 		</cfif>
-	 	
+
 	</cffunction>
 
 	<cffunction name="determineCarApprovalReasons" output="false">
@@ -768,7 +768,7 @@
 		<cfif cgi.http_host EQ "r.local">
 			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
 		<cfelseif cgi.local_host EQ "Beta">
-			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
+			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfelseif cgi.local_host EQ "RailoQA">
 			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfelse>
