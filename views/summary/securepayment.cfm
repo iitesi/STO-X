@@ -7,7 +7,7 @@
 		<cfset local.returnURL = "http://" & cgi.http_host />
 	<cfelseif cgi.local_host EQ "Beta">
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
-		<cfset local.returnURL = "http://" & cgi.http_host />
+		<cfset local.returnURL = "https://" & cgi.http_host />
 	<cfelseif cgi.local_host EQ "RailoQA">
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfset local.returnURL = "https://" & cgi.http_host />
