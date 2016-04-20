@@ -1120,13 +1120,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<!--- Don't display when non refundable / refundable --->
 		<cfif arguments.Policy.Policy_AirRefRule EQ 1
-			AND arguments.Policy.Policy_AirRefDisp EQ 1
+			AND (arguments.Policy.Policy_AirRefDisp EQ 1 OR arguments.Policy.Policy_AirNonRefRule EQ 0)
 			AND arguments.refundable EQ 0>
 			<cfset local.policy.message = 'Hide non refundable fares'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
 		<cfelseif arguments.Policy.Policy_AirNonRefRule EQ 1
-			AND arguments.Policy.Policy_AirNonRefDisp EQ 1
+			AND (arguments.Policy.Policy_AirNonRefDisp EQ 1 OR arguments.Policy.Policy_AirRefRule EQ 0)
 			AND arguments.refundable EQ 1>
 			<cfset local.policy.message = 'Hide refundable fares'>
 			<cfset local.policy.policy = 0>
