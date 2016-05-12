@@ -36,15 +36,21 @@
 						OR (NOT rc.Vehicle.getPolicy()
 						AND rc.Policy.Policy_CarReasonCode EQ 1)>
 						<select name="carReasonCode" id="carReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'carReasonCode') ? 'error' : '')#">
-						<option value="">Select Reason for Booking Outside Policy</option>
-						<option value="D">Required car vendor does not provide service at origination and/or destination</option>
-						<option value="S">Required car size sold out</option>
-						<option value="V">Required car vendor sold out</option>
-						<option value="M">Required a larger car size due to additional travelers/equipment</option>
-						<option value="C">Preferred vendor rate was higher than another company</option>
-						<option value="L">Leisure Rental (paying for it themselves)</option>
-						</select> <br><br>
+							<option value="">Select Reason for Booking Outside Policy</option>
+							<cfloop query="rc.qOutOfPolicy_Car">
+								<option value="#rc.qOutOfPolicy_Car.VehicleSavingsCode#">#rc.qOutOfPolicy_Car.Description#</option>
+							</cfloop>
+<!---
+							<option value="D">Required car vendor does not provide service at origination and/or destination</option>
+							<option value="S">Required car size sold out</option>
+							<option value="V">Required car vendor sold out</option>
+							<option value="M">Required a larger car size due to additional travelers/equipment</option>
+							<option value="C">Preferred vendor rate was higher than another company</option>
+							<option value="L">Leisure Rental (paying for it themselves)</option>
+--->
+						</select>
 
+						<br><br>
 					</cfif>
 
 					<!--- STATE OF TEXAS --->

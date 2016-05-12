@@ -49,6 +49,72 @@
 		<cfreturn qOutOfPolicy>
 	</cffunction>
 
+	<!--- getOutOfPolicy_Hotel --->
+	<cffunction name="getOutOfPolicy_Hotel" output="false" returntype="query">
+		<cfargument name="acctID" required="true" type="numeric">
+		<cfargument name="tmcID" required="false" type="numeric" default="1">
+
+		<cfquery name="local.qOutOfPolicy_Hotel" datasource="Corporate_Production">
+			SELECT
+				HotelSavingsCode,
+				Description
+			FROM
+				HotelSavingsCode
+			WHERE
+				(STO = 1)
+				<!--- Short's/Internal TMC --->
+				<cfif listFind('1,2', arguments.tmcID)>
+					AND (TMCID = 1)
+					<!--- NASCAR --->
+					<cfif arguments.acctID EQ 348>
+						AND (Acct_ID = 348)
+					<cfelse>
+						AND Acct_ID IS NULL
+					</cfif>
+				<!--- External TMC --->
+				<cfelse>
+					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+				</cfif>
+			ORDER BY
+				HotelSavingsCode
+		</cfquery>
+
+		<cfreturn local.qOutOfPolicy_Hotel>
+	</cffunction>
+
+	<!--- getOutOfPolicy_Car --->
+	<cffunction name="getOutOfPolicy_Car" output="false" returntype="query">
+		<cfargument name="acctID" required="true" type="numeric">
+		<cfargument name="tmcID" required="false" type="numeric" default="1">
+
+		<cfquery name="local.qOutOfPolicy_Car" datasource="Corporate_Production">
+			SELECT
+				VehicleSavingsCode,
+				Description
+			FROM
+				VehicleSavingsCode
+			WHERE
+				(STO = 1)
+				<!--- Short's/Internal TMC --->
+				<cfif listFind('1,2', arguments.tmcID)>
+					AND (TMCID = 1)
+					<!--- NASCAR --->
+					<cfif arguments.acctID EQ 348>
+						AND (Acct_ID = 348)
+					<cfelse>
+						AND Acct_ID IS NULL
+					</cfif>
+				<!--- External TMC --->
+				<cfelse>
+					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+				</cfif>
+			ORDER BY
+				VehicleSavingsCode
+		</cfquery>
+
+		<cfreturn local.qOutOfPolicy_Car>
+	</cffunction>
+
 	<cffunction name="getStates" output="false">
 
 		<cfquery name="local.qStates" datasource="#getBookingDSN()#" cachedwithin="#CreateTimeSpan(30,0,0,0)#">
