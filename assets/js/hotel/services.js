@@ -99,7 +99,9 @@ services.factory( "HotelService", function( $window, $http ){
 					}
 					hr.setInPolicy( policy, Hotel.outOfPolicyVendor );
 					hr.setOutOfPolicyMessage( hr.isInPolicy, Hotel.outOfPolicyVendor );
-					rooms.push( hr );
+					if (hr.displayRoom) {
+						rooms.push( hr );
+					}
 				}
 				Hotel.roomsReturned = true;
 				Hotel.rooms = rooms;

@@ -29,12 +29,17 @@ HotelRoom.prototype.populate = function( obj ){
 
 HotelRoom.prototype.setInPolicy = function( policy, outOfPolicyVendor ){
 	var inPolicy = true;
+	var displayRoom = true;
 
 	if( outOfPolicyVendor == true || (policy.POLICY_HOTELMAXRULE == '1' && this.dailyRate > policy.POLICY_HOTELMAXRATE)){
 		inPolicy = false;
+		if (policy.POLICY_HOTELMAXRULE == '1' && this.dailyRate > policy.POLICY_HOTELMAXRATE && policy.POLICY_HOTELMAXDISP == '1') {
+			displayRoom = false;
+		}
 	}
 
 	this.isInPolicy = inPolicy;
+	this.displayRoom = displayRoom;
 }
 
 HotelRoom.prototype.setOutOfPolicyMessage = function( isInPolicy, outOfPolicyVendor ){
