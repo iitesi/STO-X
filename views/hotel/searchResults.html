@@ -191,7 +191,7 @@
                                 <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
 
                                 <span class="medium red bold sold-out" ng-show="item.hotel.isSoldOut()">SOLD OUT</span>
-
+                                <span class="medium red bold sold-out" ng-show="item.hotel.noInPolicyRooms()">OUT OF POLICY</span>
                                 <span class="room-details-wrapper" ng-show="item.hotel.hasRoomsAvailable()">
 
                                     <div class="outofpolicy-wrapper">

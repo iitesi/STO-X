@@ -203,11 +203,18 @@
 							</cfif>
 							<!--- STM-5766: Use T:V for all airlines, except Frontier --->
 							<cfif runTV>
+								<!--- If an American government rate --->
+								<cfif arguments.airSelected AND (structKeyExists(arguments.Air, "PTC") AND arguments.Air.PTC EQ "GST") AND (structKeyExists(arguments.Air, "PlatingCarrier") AND arguments.Air.PlatingCarrier EQ "AA")>
+									<cfset local.command = "T:R" />
+								<cfelse>
+									<cfset local.command = "T:V" />
+								</cfif>
 								<cfset local.verifyStoredFareResponse = TerminalEntry.verifyStoredFare( targetBranch = arguments.targetBranch
 																									, hostToken = arguments.hostToken
 																									, searchID = arguments.searchID
 																									, Air = arguments.Air
-																									, airSelected = airSelected )>
+																									, airSelected = airSelected
+																									, command = local.command )>
 							<!--- Add ATFQ for Frontier --->
 							<cfelse>
 								<cfset TerminalEntry.addATFQ( targetBranch = arguments.targetBranch

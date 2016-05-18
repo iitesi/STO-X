@@ -27,6 +27,7 @@ function Hotel(){
     this.rooms = [];
     this.roomsRequested = false;
     this.roomsReturned = false;
+    this.allRoomsOutOfPolicy = false;
     this.images = [];
     this.imagesLoaded = false;
     this.isGovernmentRate = false;
@@ -124,7 +125,16 @@ Hotel.prototype.findLowestRoomRate = function(){
 
 Hotel.prototype.isSoldOut = function(){
 
-	if( this.findLowestRoomRate() == 0 && this.roomsReturned ){
+	if( this.findLowestRoomRate() == 0 && this.roomsReturned && !this.noInPolicyRooms()){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+Hotel.prototype.noInPolicyRooms = function(){
+
+	if(this.allRoomsOutOfPolicy){
 		return true;
 	} else {
 		return false;
@@ -133,8 +143,8 @@ Hotel.prototype.isSoldOut = function(){
 
 Hotel.prototype.hasRoomsAvailable = function(){
 
-	if( !this.isSoldOut() && this.roomsReturned ){
-		return true;
+	if( !this.isSoldOut() && this.roomsReturned && !this.noInPolicyRooms()){
+		return true
 	} else {
 		return false;
 	}
