@@ -77,12 +77,13 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery ) {
 		Hotel.roomsRequested = true;
-		Hotel.allRoomsOutOfPolicy = true;
 		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
 		return $http.get( url )
 			.then( function( response ){
 				var rooms = [];
-
+				//We only want to check things if rooms are returned (not sold out)
+				if(response.data.length > 0)
+					Hotel.allRoomsOutOfPolicy = true;					
 				for (var i = 0; i < response.data.length; i++) {
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
