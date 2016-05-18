@@ -81,7 +81,9 @@ services.factory( "HotelService", function( $window, $http ){
 		return $http.get( url )
 			.then( function( response ){
 				var rooms = [];
-
+				//We only want to check things if rooms are returned (not sold out)
+				if(response.data.length > 0)
+					Hotel.allRoomsOutOfPolicy = true;					
 				for (var i = 0; i < response.data.length; i++) {
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
@@ -99,7 +101,10 @@ services.factory( "HotelService", function( $window, $http ){
 					}
 					hr.setInPolicy( policy, Hotel.outOfPolicyVendor );
 					hr.setOutOfPolicyMessage( hr.isInPolicy, Hotel.outOfPolicyVendor );
-					rooms.push( hr );
+					if (hr.displayRoom) {
+						rooms.push( hr );
+						Hotel.allRoomsOutOfPolicy = false;
+					}
 				}
 				Hotel.roomsReturned = true;
 				Hotel.rooms = rooms;
