@@ -77,6 +77,7 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery ) {
 		Hotel.roomsRequested = true;
+		Hotel.allRoomsOutOfPolicy = true;
 		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
 		return $http.get( url )
 			.then( function( response ){
@@ -101,6 +102,7 @@ services.factory( "HotelService", function( $window, $http ){
 					hr.setOutOfPolicyMessage( hr.isInPolicy, Hotel.outOfPolicyVendor );
 					if (hr.displayRoom) {
 						rooms.push( hr );
+						Hotel.allRoomsOutOfPolicy = false;
 					}
 				}
 				Hotel.roomsReturned = true;
