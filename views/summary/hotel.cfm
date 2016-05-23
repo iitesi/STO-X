@@ -121,9 +121,15 @@
 					<strong>
 						CHECK-IN:
 						#uCase(dateFormat(rc.Filter.getCheckInDate(), 'mmm d'))#
+						<cfif len(rc.Hotel.getRooms()[1].getCheckInTime())>
+							&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckInTime(), "h:mm tt")#&nbsp;
+						</cfif>
 						&nbsp;&nbsp;&nbsp;
 						CHECK-OUT:
 						#uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
+						<cfif len(rc.Hotel.getRooms()[1].getCheckOutTime())>
+							&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckOutTime(), "h:mm tt")#&nbsp;
+						</cfif>
 						<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 						(#nights# NIGHT<cfif nights GT 1>S</cfif>)
 					</strong>

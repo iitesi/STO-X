@@ -105,12 +105,22 @@
 					<tr>
 						<td>&nbsp;</td>
 						<td width="18%">
-							<strong>CHECK-IN: #uCase(dateFormat(rc.Filter.getCheckInDate(), formatToUse))#</strong>
+							<strong>
+								CHECK-IN: #uCase(dateFormat(rc.Filter.getCheckInDate(), formatToUse))#
+								<cfif len(rc.Hotel.getRooms()[1].getCheckInTime())>
+									&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckInTime(), "h:mm tt")#&nbsp;
+								</cfif>
+							</strong>
 						</td>
 						<td colspan="2">
-							<strong>CHECK-OUT: #uCase(DateFormat(rc.Filter.getCheckOutDate(), formatToUse))#
-							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
-							(#nights# NIGHT<cfif nights GT 1>S</cfif>)</strong>
+							<strong>
+								CHECK-OUT: #uCase(DateFormat(rc.Filter.getCheckOutDate(), formatToUse))#
+								<cfif len(rc.Hotel.getRooms()[1].getCheckOutTime())>
+									&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckOutTime(), "h:mm tt")#&nbsp;
+								</cfif>
+								<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
+								(#nights# NIGHT<cfif nights GT 1>S</cfif>)
+							</strong>
 						</td>
 					</tr>
 				</table>
