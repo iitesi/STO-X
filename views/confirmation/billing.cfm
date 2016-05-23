@@ -8,7 +8,7 @@
 			</cfif>
 			<cfif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded() AND rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
 				<cfset pricelineHotelBooked = true />
-				<cfif (len(rc.Hotel.getRooms()[1].getProcessingFee()) AND rc.Hotel.getRooms()[1].getProcessingFee() NEQ "0.00") OR (len(rc.Hotel.getRooms()[1].getInsuranceFee()) AND rc.Hotel.getRooms()[1].getInsuranceFee() NEQ "0.00")>
+				<cfif (len(rc.Hotel.getRooms()[1].getProcessingFee()) AND rc.Hotel.getRooms()[1].getProcessingFee() NEQ "0.00") OR (len(rc.Hotel.getRooms()[1].getInsuranceFee()) AND rc.Hotel.getRooms()[1].getInsuranceFee() NEQ "0.00") OR (len(rc.Hotel.getRooms()[1].getPropertyFee()) AND rc.Hotel.getRooms()[1].getPropertyFee() NEQ "0.00")>
 					<cfset pricelineSeparateFees = true />
 				</cfif>
 			</cfif>
@@ -162,7 +162,7 @@
 											#hotelText#
 										</td>
 										<cfif pricelineSeparateFees>
-											<cfset hotelFees = rc.Hotel.getRooms()[1].getProcessingFee() + rc.Hotel.getRooms()[1].getInsuranceFee() />
+											<cfset hotelFees = rc.Hotel.getRooms()[1].getProcessingFee() + rc.Hotel.getRooms()[1].getInsuranceFee() + rc.Hotel.getRooms()[1].getPropertyFee() />
 											<td valign="top" align="right">
 												#(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? DollarFormat(hotelFees) : numberFormat(hotelFees, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())#
 											</td>

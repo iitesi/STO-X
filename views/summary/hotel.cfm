@@ -268,7 +268,7 @@
 			</p>
 			</cfif>
 			<p>
-			<span class="darkBold">Add Age Restriction Disclosure</span><br>
+			<span class="darkBold">Age Restriction Disclosure</span><br>
 			The reservation holder must be 21 years of age or older.
 			</p>
 			<p>
