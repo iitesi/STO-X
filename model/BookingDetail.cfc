@@ -4,6 +4,9 @@
 	<cfproperty name="approvalNeeded" />
 	<cfproperty name="approvalNeededReasons" />
 	<cfproperty name="approvers" />
+	<cfproperty name="approvalNeededAir" />
+	<cfproperty name="approvalNeededHotel" />
+	<cfproperty name="approvalNeededCar" />
 	<cfproperty name="airNeeded" />
 	<cfproperty name="airBillingAddress" />
 	<cfproperty name="airBillingCity" />
