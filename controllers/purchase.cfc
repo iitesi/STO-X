@@ -1290,6 +1290,11 @@
 
 				<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
 				<cfset session.searches[invoice.searchID].Travelers[1].getBookingDetail().setBookingFee(0) />
+
+				<!--- Send the traveler a cancellation email --->
+				<cfset fw.getBeanFactory().getBean("Email").cancelEmail( email = Traveler.email
+																		, ppnTripID = Hotel.ppnTripID
+																		, propertyName = Hotel.propertyName )>
 			</cfif>
 		<cfelse>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
