@@ -62,11 +62,11 @@
 					<ul class="nav navbar-nav navbar-right">
 						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="icon-refresh"></i> Clear Filters</a></li>
 					</ul>
+					<p class="navbar-text navbar-right filter ng-binding">
+						<span ng-show="filtersApplied()" class="ng-binding" style="display: none;">541 of </span>541 total properties
+					</p>
 				</div> <!-- /#navbar-collapse-2-->
             </div>
-        </div>
-        <div class="filter">
-            <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties
         </div>
 
         <div class="well" ng-show="filtersVisible.vendors">
@@ -129,29 +129,24 @@
     </div>
 </div>
 
-<!--Pagination and Continue without Hotel Row-->
-<div class="container">
-    <div class="row-fluid">
-        <div class="span6">
-            <div class="pull-right">
-                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-                <span ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            </div>
-        </div>
-
-        <div class="span6">
-            <span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
-        </div>
-    </div>
-</div>
 
 <!--Hotel Results and Map Row-->
 <div class="container">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="span6" >
-                <div style="height: 500px; overflow-x: hidden; overflow-y: auto;" class="hotel-results">
+    <div class="row">
+		<div class="col-md-6 col-md-push-6 hotel-result-column">
+			<div><span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span></div>
+			<div class="span6" id="mapDiv" style="height: 500px;"></div>
+		</div>
+        <div class="col-md-6 col-md-pull-6 hotel-result-column">
+			<nav>
+				<ul class="pagination">
+					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
+					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
+					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
+				</ul>
+			</nav>
+		
+            <div style="height: 500px; overflow-x: hidden; overflow-y: auto;" class="hotel-results">
 
                     <div ng-show="searchCompleted && filteredHotels.length" >
 
@@ -370,8 +365,8 @@
                         <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
                     </div>
                 </div>
-            </div>
-            <div class="span6" id="mapDiv" style="height: 500px;"></div>
+            
+            
         </div>
     </div>
 </div>

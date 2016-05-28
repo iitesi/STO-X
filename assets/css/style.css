@@ -1191,3 +1191,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		z-index: 100;
 	}
 }
+
+.hotel-result-column {
+	margin-top: 1em;
+}
+
+.pagination {
+	margin-top:0px;
+	margin-bottom: 0px;
+}
