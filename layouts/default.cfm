@@ -60,6 +60,7 @@
 			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="#application.assetURL#/js/responsive-paginate.js"></script>
 			<script src="#application.assetURL#/js/booking.js"></script>
 		</cfoutput>
 	</head>
