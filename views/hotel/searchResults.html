@@ -61,7 +61,7 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li><p class="navbar-text filter ng-binding"><span ng-show="filtersApplied()" class="ng-binding" style="display: none;">541 of </span>541 total<span class="hideFirst"> properties</span></p></li>
-						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="icon-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
+						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="fa fa-icon"></i><span class="hideFirst"> Clear Filters</span></a></li>
 					</ul>	
 				</div> <!-- /#navbar-collapse-2-->
             </div>
@@ -148,7 +148,7 @@
 
                     <div ng-show="searchCompleted && filteredHotels.length" >
 
-                        <div ng-repeat="item in visibleHotels" class="badge hotel">
+                        <div ng-repeat="item in visibleHotels" class="row hotelrowbadge hotel">
                             <!--Ribbon overlays for DHL-->
                             <span class="ribbon ribbon-r-DHL-prefprop" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredProperty"></span>
                             <span class="ribbon ribbon-r-DHL-prefvendor" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredVendor && !item.hotel.preferredProperty"></span>
@@ -163,11 +163,11 @@
                             <span class="ribbon ribbon-r-pref-cont" ng-show="(item.hotel.preferredProperty || item.hotel.preferredVendor) && item.hotel.hasCorporateRate() && search.acctID != 497 && search.acctID != 499 && search.acctID != 348"></span>
                             <span class="ribbon ribbon-r-govt" ng-show="!item.hotel.preferredProperty && !item.hotel.preferredVendor && item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
 
-                            <div class="signature-image">
-                                <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
+                            <div class="col-md-2 col-xs-3 signature-image">
+                                <img class="img-responsive" ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
                             </div>
 
-                            <div class="hotel-info">
+                            <div class="hotel-info col-lg-7 col-md-9">
                                 <div class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</div>
                                 <div class="hotel-distance">
                                     {{item.hotel.distance}} miles
@@ -179,16 +179,16 @@
                                         <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>
                                     </span>
                                 </div>
-                                <div class="btn-group hotel-detail-buttons">
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
-                                    <button ng-click="loadHotelPhotos(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
+                                <div class="btn-group btn-group-xs hotel-detail-buttons">
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showHotelDetails}"><span class="glyphicon glyphicon-info-sign"></span> <span class="hideOnPhones">Details</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAreaDetails}"><i class="fa fa-map" aria-hidden="true"></i> <span class="hideOnPhones">Area</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAmenities}"><i class="fa fa-hotel" aria-hidden="true"></i> <span class="hideOnPhones">Amenities</span></button>
+                                    <button ng-click="loadHotelPhotos(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones">Photos</span></button>
                                 </div>
 
                             </div>
 
-                            <div class="hotel-pricing">
+                            <div class="hotel-pricing col-lg-3 col-xs-12 pull-right">
 
                                 <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
 
@@ -205,7 +205,7 @@
 
                                     <button
                                         id="{{item.hotel.PropertyId}}"
-                                        ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
+                                        ng-class="{'btn': true, 'btn-default': true, 'btn-primary': item.hotel.isInPolicy}"
                                         ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                         <span ng-show="showRooms">HIDE ROOMS</span>
                                         <span ng-show="!showRooms">SHOW ROOMS</span>

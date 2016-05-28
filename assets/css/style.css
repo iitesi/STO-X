@@ -415,6 +415,17 @@ ul.tabs li a.active {
 	text-shadow: none;
 }
 
+.hotelrowbadge {
+	background-color: #FFF;
+	padding: 10px;
+	margin:0px;
+	float:left;
+	position: relative;
+	width: 280px;
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	color: #211922;
+}
+
 .badge .carrierimg {
 	padding-bottom: 5px;
 }
@@ -805,26 +816,25 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 */
 
 .hotel {
-	width: 93%;
+	width: 98%;
 	margin-bottom: 5px;
 	white-space: normal;
 }
 
 .signature-image{
-    width: 20%;
-    min-width: 100px;
-    height: 70px;
-    overflow: hidden;
-    display: block;
+	display: block;
     float: left;
-    margin-right: .7em;
+    padding-right: 0px;
+	max-height: 100px;
+    overflow-y: hidden;
 }
 
 .hotel-info{
     display: block;
     float: left;
     clear: none;
-    width: 50%;
+    text-align:left;
+	padding-right: 0px;
 }
 
 .hotel-name{
@@ -847,7 +857,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: block;
     float: left;
     clear: right;
-    width: 24%;
     text-align: center;
     vertical-align: bottom;
 }
@@ -856,10 +865,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: block;
     color: red;
     margin-top: 40px;
-}
-
-.outofpolicy-wrapper{
-    height: 15px;
 }
 
 .daily-rate{
@@ -1192,6 +1197,17 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
+@media (max-width: 1199px) { 
+	.hotel .daily-rate{ 
+		display: inline-block;
+	}
+	
+	.hotel .hotel-pricing .btn {
+		margin-left:1em;
+		margin-top: -6px;
+	}
+}
+
 .hotel-result-column {
 	margin-top: 1em;
 }
@@ -1248,3 +1264,27 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
+@media (max-width: 475px) { 	
+	.hideOnPhones {
+		display:none;
+	}
+}
+
+@media (max-width: 960px) and (max-width: 1199) { 	
+	.hotel .hideOnPhones {
+		display:none;
+	}
+}
+
+
+@media (max-width: 991px) and (min-width: 650px) {
+.hotel-pricing {
+	width:25% !important;
+	margin-top: -62px;
+}	}
+
+
+@media (max-width: 1199px) and (min-width: 479px) {
+.hotel-pricing {
+	margin-top: 0px;
+}	}
