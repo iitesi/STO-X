@@ -1200,3 +1200,51 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-top:0px;
 	margin-bottom: 0px;
 }
+
+@media (max-width: 1200px) {
+	.filterby .hideFirst {
+		display:none;
+	}
+}
+
+@media (min-width: 991px) {
+	.hotel-results {
+		height: 460px; 
+		overflow-x: hidden; 
+		overflow-y: auto;
+	}
+}
+
+@media (max-width: 990px) {
+    .filterby .navbar-header {
+        float: none;
+    }
+    .filterby .navbar-toggle {
+        display: block;
+		padding-right: 12px;
+		padding-left: 12px;
+    }
+    .filterby .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .filterby .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .filterby .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .filterby .navbar-nav>li {
+        float: none;
+    }
+    .filterby .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+	
+	.hotel {
+		width: 100%;
+	}
+}
+
