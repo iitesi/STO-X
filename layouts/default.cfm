@@ -69,16 +69,8 @@
 
 
 				<div id="header-top">
-					<nav class="navbar navbar-inverse">
-						<div class="container-fluid">
-							<!-- Brand and toggle get grouped for better mobile display -->
-							<div class="navbar-header">
-							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-								<span class="sr-only">Toggle navigation</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							  </button>
+					<div class="container">
+						<div class="sixteen columns">
 							<cfoutput>
 
 
@@ -105,9 +97,9 @@
 							<cfelse>
 
 								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
-									<a class="navbar-brand" id="mainlogo" href="#rc.filter.getSiteUrl()#" title="Home">
+									<a href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
-									<a class="navbar-brand" id="mainlogo" href="#application.sPortalURL#" title="Home">
+									<a href="#application.sPortalURL#" title="Home">
 								</cfif>
 									<cfif structKeyExists(rc, "account")
 										AND isStruct(rc.account)
@@ -120,13 +112,13 @@
 										<img src="assets/img/clients/STO-Logo.gif" alt="Short's Travel Management" />
 									</cfif>
 								</a>
-								</div> <!-- // navbar-header -->
+
 							</cfif>
 
 							#View('main/navigation')#
 
 							</cfoutput>
-						
+						</div> <!--- // sixteen columns --->
 							<cfif structKeyExists(rc, 'filter')
 								AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
 								<div id="onbehalfof">
@@ -138,8 +130,7 @@
 									</cfif>
 								</div>
 							</cfif>
-					  </div><!-- /.container-fluid -->
-					</nav>
+					</div> <!--- // container --->
 				</div> <!--- // header-top --->
 
 				<div id="header-bottom">
