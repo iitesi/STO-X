@@ -321,39 +321,39 @@
 
                             </div>
 
-                            <div class="hotel-panel" ng-show="showRooms">
-                              <div ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
-                                <table width="100%">
-                                  <tr ng-show="room.promo.length">
-                                    <td colspan="3" class="promoTag">{{room.promo}}</td>
-                                  </tr>
-                                  <tr>
-                                    <td class="room-description">
+                            <div class="hotel-panel container-fluid" ng-show="showRooms">
+                              <div ng-repeat="room in item.hotel.rooms" ng-class="{'row': true, 'hotel-room': true, 'odd': $index%2 == 0}">
+                                
+                                  <div class="col-xs-12" ng-show="room.promo.length">
+                                    <div class="promoTag">{{room.promo}}</div>
+                                  </div>
+
+                                    <div class="room-description col-sm-7 col-xs-12">
                                         {{room.description}}
                                         <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
                                         <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
-                                    </td>
-                                    <td class="room-rate-code">
+                                    </div>
+                                    <div class="room-rate-code col-sm-2 col-xs-6 v-center">
                                         <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
                                         <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
                                         <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
                                         <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
                                         &nbsp;
-                                    </td>
-                                    <td class="room-rate">
+                                    </div>
+                                    <div class="room-rate col-sm-3 col-xs-6">
                                         <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
-                                        <button style="width: 75%"
+                                        <button style="width: 100%"
                                             ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
                                             ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
                                             <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                         </button>
                                         <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
-                                    </td>
-                                  </tr>
-                                  <tr><td colspan="3"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></td></tr>
-                                </table>
-                              </div>
-                            </div>
+                                    </div>
+                                  
+                                  <div class="col-xs-12"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></div>
+                                </div> <!-- /.row -->
+                              </div> <!-- /showRooms -->
+                            </div> <!-- /.hotel -->
 
                         </div>
 

@@ -917,17 +917,20 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	font-size: 10px;
 }
 .room-description{
-    width: 65%;
+   
 }
 
 .room-rate-code{
     white-space: nowrap;
-    width: 15%;
+    text-align: center;
+    padding-left: 0px;
 }
 
 .room-rate{
     white-space: nowrap;
-    width: 20%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+    text-align: center;
 }
 
 .odd{
@@ -1278,13 +1281,20 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 
 @media (max-width: 991px) and (min-width: 650px) {
-.hotel-pricing {
-	width:25% !important;
-	margin-top: -62px;
-}	}
+	.hotel-pricing {
+		width:25% !important;
+		margin-top: -62px;
+	}	
+}
 
 
 @media (max-width: 1199px) and (min-width: 479px) {
-.hotel-pricing {
-	margin-top: 0px;
-}	}
+	.hotel-pricing {
+		margin-top: 0px;
+	}	
+}
+
+.v-center {
+  position: relative;
+  transform: translateY(50%);
+}
