@@ -783,6 +783,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .page-header h2 {
 	line-height: 0;
+	display: inline-block;
 }
 
 .newsearch {
@@ -1223,6 +1224,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-bottom: 0px;
 }
 
+.pagination.bottom {
+	margin-top:3px;
+}
+
 @media (max-width: 1200px) {
 	.filterby .hideFirst {
 		display:none;
@@ -1231,7 +1236,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 @media (min-width: 991px) {
 	.hotel-results {
-		height: 460px; 
+		height: 425px; 
 		overflow-x: hidden; 
 		overflow-y: auto;
 	}

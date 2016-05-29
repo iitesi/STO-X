@@ -361,28 +361,18 @@
                         <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
                     </div>
                 </div>
-            
+            <nav>
+				<ul class="pagination bottom">
+					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
+					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
+					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
+				</ul>
+			</nav>
             
         </div>
     </div>
 </div>
 
-<!--Bottom row under search results and map-->
-<div class="container">
-    <div class="row-fluid">
-        <div class="span6">
-            <div class="pull-right">
-                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-                <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            </div>
-        </div>
-
-        <div class="span6">
-            <span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
-        </div>
-    </div>
-</div>
 </div>
 <!-- Modal window to be displayed while search is occurring. -->
 <div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
