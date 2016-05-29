@@ -1250,6 +1250,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     .filterby .navbar-collapse.collapse {
         display: none!important;
     }
+	.filterby .navbar-collapse.collapse.in {
+        display: block!important;
+    }
     .filterby .navbar-nav {
         float: none!important;
         margin: 7.5px -15px;

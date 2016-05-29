@@ -43,17 +43,17 @@
                 <div class="collapse navbar-collapse" id="navbar-collapse-2">
 					<ul class="nav navbar-nav">
 						<li ng-class="{'active': filtersApplied.vendorName }">
-							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendorName' )" >Hotel Name <i class="icon-caret-down"></i></a>
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendorName' )" >Hotel Name <i class="fa fa-caret-down"></i></a>
 						</li>
 						<li ng-class="{'active': filtersApplied.vendors }">
-							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendors' )" >Hotel Chain <i class="icon-caret-down"></i></a>
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendors' )" >Hotel Chain <i class="fa fa-caret-down"></i></a>
 						</li>
 
 						<li ng-class="{'active': filtersApplied.amenities }">
-							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'amenities' )" >Amenities <i class="icon-caret-down"></i></a>
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'amenities' )" >Amenities <i class="fa fa-caret-down"></i></a>
 						</li>
 						<li ng-class="{'active': filtersApplied.rating }">
-							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="icon-caret-down"></i></a>
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="fa fa-caret-down"></i></a>
 						</li>
 
 						<li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly" ng-show="policy.POLICY_HOTELMAXRULE">In Policy</a></li>
@@ -61,7 +61,7 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li><p class="navbar-text filter ng-binding"><span ng-show="filtersApplied()" class="ng-binding" style="display: none;">541 of </span>541 total<span class="hideFirst"> properties</span></p></li>
-						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="fa fa-icon"></i><span class="hideFirst"> Clear Filters</span></a></li>
+						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
 					</ul>	
 				</div> <!-- /#navbar-collapse-2-->
             </div>
