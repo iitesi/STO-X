@@ -18,12 +18,11 @@
 <!--Page title row-->
 <div class="container">
     <div class="row-fluid">
-        <div class="span12">
             <div class="page-header">
                 <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
-                <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="icon-search"></i> Change Search</a></h2>
+                <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="fa fa-search"></i> Change Search</a></h2>
+				<span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
             </div>
-        </div>
     </div>
 </div>
 
@@ -132,7 +131,6 @@
 <div class="container">
     <div class="row">
 		<div class="col-md-6 col-md-push-6 hotel-result-column">
-			<div><span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span></div>
 			<div class="span6" id="mapDiv" style="height: 500px;"></div>
 		</div>
         <div class="col-md-6 col-md-pull-6 hotel-result-column">

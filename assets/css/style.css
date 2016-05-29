@@ -726,6 +726,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 #main-content .page-header h1 {
 	text-transform: uppercase;
 	margin-bottom: -18px;
+	display:block
 }
 
 @media (max-width: 640px) {
@@ -734,6 +735,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 	#main-content .page-header h1 small {
 		font-size: 12px;
+		white-space:nowrap;
 	}
 }
 
@@ -743,6 +745,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 	#main-content .page-header h1 small {
 		font-size: 14px;
+		white-space:nowrap;
 	}
 	#main-content .filterbar {
 		float: left;
