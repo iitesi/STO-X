@@ -514,7 +514,7 @@ $(document).ready(function(){
 			if (orgunit.OUUpdate != 0 || orgunit.valueID == '' || orgunit.valueReport == '') {
 				var inputName = orgunit.OUType + orgunit.OUPosition;
 
-				var div = '<div class="control-group'
+				var div = '<div class="form-group'
 				if ($.inArray(inputName, errors.split(",")) >= 0) {
 					div += ' error';
 				}
@@ -524,19 +524,19 @@ $(document).ready(function(){
 					div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
 				}
 
-				div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
+				div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
 				if (orgunit.OURequired == 1) {
 					div += ' *</label>';
 				}
 				else {
 					div += '&nbsp;&nbsp;</label>';
 				}
-				div += '<div class="controls">';
+				div += '<div class="col-sm-8 col-xs-12">';
 				if (orgunit.OUFreeform == 1) {
-					div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
+					div += '<input class="form-control" type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
 				}
 				else {
-					div += '<select name="' + inputName + '" id="' + inputName + '"';
+					div += '<select class="form-control" name="' + inputName + '" id="' + inputName + '"';
 					div += '>';
 					div += '<option value="-1"></option>';
 						if (orgunit.ouValues.length) {
