@@ -2,7 +2,7 @@
 
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
-		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
+		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-remove"></a></div><br>
 
 			<table width="1000">
 			<tr>
@@ -280,7 +280,7 @@
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
 				<div class="searchContainer">
 					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 						You have selected a web rate. Please read and accept the terms of this rate.
 						<cfelse>
@@ -302,7 +302,7 @@
 			<div id="displayPricelineTermsAndConditions" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
 				<div class="searchContainer">
 					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 						<h3 id="addModalHeader">
 						Short&##39;s Travel Management Web Site Terms &amp; Conditions
 						</h3>
@@ -317,7 +317,7 @@
 			<div id="displayPricelinePrivacyPolicy" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
 				<div class="searchContainer">
 					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 						<h3 id="addModalHeader">
 						Privacy Policy
 						</h3>

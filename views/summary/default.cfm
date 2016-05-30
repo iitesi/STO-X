@@ -51,7 +51,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 				AND rc.Filter.getAirType() NEQ 'MD'
 				AND session.DepartmentPreferences.STOHotel NEQ 0>
 				<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#">
-					<span class="icon-large icon-plus"></span> Add Hotel
+					<span class="fa fa-lg fa-plus"></span> Add Hotel
 				</a>&nbsp;&nbsp;&nbsp;&nbsp;
 			</cfif>
 
@@ -60,7 +60,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 				AND len(rc.Filter.getCarPickupAirport())
 				AND session.DepartmentPreferences.STOCar NEQ 0>
 				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
-					<span class="icon-large icon-plus"></span> Add Car
+					<span class="fa fa-lg fa-plus"></span> Add Car
 				</a>
 			</cfif>
 		</span>
@@ -69,7 +69,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 		<!--- For manual cancellations --->
 		<!--- <a href="#buildURL('purchase.cancel?searchID=451998')#">
-			<span class="icon-large icon-remove-circle"></span> Cancel Reservation
+			<span class="fa fa-lg fa-remove"></span> Cancel Reservation
 		</a> --->
 
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
@@ -95,7 +95,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					</cfloop>
 					<cfif rc.travelerNumber NEQ 1>
 						<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#">
-							<span class="icon-large icon-remove-sign"></span> Remove Traveler ###rc.travelerNumber#
+							<span class="fa fa-lg fa-remove"></span> Remove Traveler ###rc.travelerNumber#
 						</a>
 					</cfif>
 				</div>
@@ -186,7 +186,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			</div>
 			<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
 			    <div class="modal-header">
-			        <h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> Loading User</h4>
+			        <h4 id="myModalHeader"><i class="fa-spinner fa fa-spin"></i> Loading User</h4>
 			    </div>
 			    <div id="myModalBody" class="modal-body">
 

@@ -160,7 +160,7 @@
 							<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
-								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="icon-search"></i></a>
+								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="fa fa-search"></i></a>
 								</cfoutput>
 							</div>
 							<cfoutput>#View('modal/search')#</cfoutput>
@@ -220,8 +220,8 @@
 
  		<div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
+		<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+		<h3><i class="fa fa-plane"></i> FLIGHT DETAILS</h3>
 	</div>
 	<div class="modal-body">
 	</div>

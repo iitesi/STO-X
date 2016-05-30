@@ -8,7 +8,7 @@
 		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
-				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>
+				<i id="airSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="airFOPID" id="airFOPID">
 				</select>
 			</div>
@@ -108,7 +108,7 @@
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
 			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
 			<div class="controls" id="hotelFOPIDDiv">
-				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
+				<i id="hotelSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="hotelFOPID" id="hotelFOPID">
 				</select>
 			</div>
@@ -194,7 +194,7 @@
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
 				<div class="searchContainer">
 					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 						<h3 id="addModalHeader">
 							You have selected a web rate. Please read and accept the terms of this rate.
 						</h3>
@@ -223,7 +223,7 @@
 		<div class="control-group">
 			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls">
-				<i id="carSpinner" class="blue icon icon-spin icon-spinner"></i>
+				<i id="carSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="carFOPID" id="carFOPID">
 				</select>
 			</div>
