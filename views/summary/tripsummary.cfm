@@ -44,7 +44,7 @@
 			<cfset hotelText = 'Quoted at check-in'>
 		</cfif>
   </cfif>
-	<div class="carrow tripSummary" style="padding:15px; float:right;">
+	<div class="tripSummary" style="">
 
 		<div class="row minlineheight" style="float:right;">
 			<div class="span1"></div>

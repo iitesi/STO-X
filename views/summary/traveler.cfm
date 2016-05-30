@@ -20,7 +20,7 @@
 			</cfloop>
 			</select>
 			<span id="nameChange">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
 			</span>
 		</div>
 	</div>
@@ -51,7 +51,7 @@
 
 	<div id="nameCheckDiv" class="control-group hide">
 		<div class="controls blue bold">
-			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Name Verification" data-content="We have detected a space in your first name and a blank middle name. Your middle name may be appearing as part of your first name. Please update your first and/or middle names, as needed, and check 'Save changes to profile' before confirming your purchase." href="##"></a> <span style="color:red">Please check your name!</span>
+			<a rel="popover" class="blue fa fa-lg fa-info-cicrl" data-original-title="Name Verification" data-content="We have detected a space in your first name and a blank middle name. Your middle name may be appearing as part of your first name. Please update your first and/or middle names, as needed, and check 'Save changes to profile' before confirming your purchase." href="##"></a> <span style="color:red">Please check your name!</span>
 		</div>
 	</div>
 
@@ -125,7 +125,7 @@
 			<label class="control-label" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
 			<div class="controls">
 				<input type="text" name="redress" id="redress" class="input-medium">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
 			</div>
 		</div>
 
@@ -134,7 +134,7 @@
 			<div class="controls">
 				<input type="text" name="travelNumber" id="travelNumber" class="input-medium">
 				<input type="hidden" name="travelNumberType" id="travelNumberType" value="TrustedTraveler">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
 				<cfif len(rc.KTLinks)>
 					&nbsp;<div style="display: inline-table;">#rc.KTLinks#</div>
 				</cfif>
@@ -234,7 +234,7 @@
 			<label class="control-label" for="password">Password</label>
 			<div class="controls">
 				<input type="password" name="password" id="password" />
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
 			</div>
 		</div>
 

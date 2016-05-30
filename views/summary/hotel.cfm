@@ -4,7 +4,7 @@
 		<br class="clearfix">
 		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-remove"></a></div><br>
 
-			<table width="1000">
+			<table>
 			<tr>
 
 				<td></td>
@@ -104,7 +104,7 @@
 					</cfif>
 				</td>
 
-				<td valign="top" width="630">
+				<td >
 
 					<strong>
 						#rc.Hotel.getPropertyName()#<br>

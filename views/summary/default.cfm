@@ -44,7 +44,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 </style>
 
 <cfoutput>
-	<div style="width:1000px;" id="summaryForm">
+	<div id="summaryForm">
 
 		<span style="float:right">
 			<cfif NOT rc.hotelSelected
@@ -135,25 +135,19 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						</div>
 					<!--- </cfif> --->
 					<input type="hidden" name="recLoc" value="">
-					<div class="summarydiv" style="background-color: ##FFF;width:1000px;">
-						<span style="float:right;">* denotes required fields</span>
-						<table width="1000">
-							<tr>
-								<td valign="top">
-									<div id="travelerForm">
-										#View('summary/traveler')#
-									</div>
-								</td>
-								<td valign="top">
-									<div id="paymentForm" style="padding-left:20px;">
-										#view( 'summary/payment' )#
-									</div>
-								</td>
-							</tr>
-						</table>
+					<div class="summarydiv container-fluid" >
+						<div class="row">
+						<!-- <span style="float:right;">* denotes required fields</span> -->
+							<div id="travelerForm" class="col-md-6">
+								#View('summary/traveler')#
+							</div>
+							<div id="paymentForm" class="col-md-6">
+								#view( 'summary/payment' )#
+							</div>
+						</div>
 					</div>
 
-					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+					<div class="summarydiv container-fluid">
 						<div id="airDiv" class="clearfix">
 							#View('summary/air')#
 						</div>
@@ -165,20 +159,18 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						</div>
 					</div>
 
-					<div style="wdith:1150px;">
-						<table width="1033px">
-							<tr>
-								<td valign="top" width="575">
-									<div class="alert alert-success hide" id="unusedTicketsDiv">
-									</div>
-								</td>
-								<td valign="top">
-									<div style="padding-left:20px;">
-										#View('summary/tripsummary')#
-									</div>
-								</td>
-							</tr>
-						</table>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-6 col-xs-12" >
+								<div class="alert alert-success hide" id="unusedTicketsDiv">
+								</div>
+							</div>
+							<div class="summarydiv col-md-6 col-xs-12" >
+								<div>
+									#View('summary/tripsummary')#
+								</div>
+							</div>
+						</div>
 					</div>
 
 					#View('summary/buttons')#
