@@ -1312,7 +1312,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}	
 }
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
 	.navbar-brand img {
 		max-width: 200px;
 	}
