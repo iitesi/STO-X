@@ -105,20 +105,20 @@
 	<cfif rc.hotelSelected>
 		<div id="hotelPayment">
 
-		<div class="control-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
-			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
-			<div class="controls" id="hotelFOPIDDiv">
+		<div class="form-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
+			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
+			<div class="col-sm-8 col-xs-12" id="hotelFOPIDDiv">
 				<i id="hotelSpinner" class="blue fa fa-spin fa-spinner"></i>
-				<select name="hotelFOPID" id="hotelFOPID">
+				<select class="form-control" name="hotelFOPID" id="hotelFOPID">
 				</select>
 			</div>
 		</div>
 
-		<div id="hotelNewCard" class="control-group">
-			<div id="addHotelCC">
+		<div id="hotelNewCard" class="form-group">
+			<div id="addHotelCC" class="col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="addHotelCC"><input type="button" name="displayPaymentModal" class="btn btn-primary displayPaymentModal" value="ENTER NEW CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel"></label>
 			</div>
-			<div id="removeHotelCC" class="hide">
+			<div id="removeHotelCC" class="hide col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="removeHotelCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel" data-id="#rc.Traveler.getBookingDetail().getHotelFOPID()#"></label>
 			</div>
 			<input type="hidden" name="newHotelCC" id="newHotelCC" />

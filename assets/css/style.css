@@ -470,6 +470,10 @@ ul.tabs li a.active {
 	padding-right: 1em;
     font-size: 12px;
 }
+.summarydiv .form-control {
+	width: 90%;
+	display: inline-block;
+} 
 .tripsummary-detail {
 	padding-left: 10px;
 }
@@ -1308,6 +1312,11 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}	
 }
 
+@media (max-width: 360px) {
+	.navbar-brand img {
+		max-width: 200px;
+	}
+}
 
 @media (max-width: 1199px) and (min-width: 479px) {
 	.hotel-pricing {
@@ -1318,9 +1327,4 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .v-center {
   position: relative;
   transform: translateY(50%);
-}
-
-#travelerForm .form-control {
-	width: 90%;
-	display: inline-block;
 }
