@@ -137,7 +137,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					<input type="hidden" name="recLoc" value="">
 					<div class="summarydiv container-fluid" >
 						<div class="row">
-						<!-- <span style="float:right;">* denotes required fields</span> -->
+						 <span class="disclaimer">* denotes required fields</span> 
 							<div id="travelerForm" class="col-md-6">
 								#View('summary/traveler')#
 							</div>
