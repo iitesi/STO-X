@@ -25,27 +25,45 @@
 		</div>
 	</div>
 
-	<div id="fullNameDiv" class="form-group #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
-		<label class="control-label col-sm-4 col-xs-12" for="firstName">Full Name *</label>
-		<div class="col-sm-8 col-xs-12">
-			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="form-control">
-			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="form-control">
-			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="form-control">
-			<select name="suffix" id="suffix" class="form-control">
-				<option value=""></option>
-				<option value="JR">JR</option>
-				<option value="SR">SR</option>
-				<option value="II">II</option>
-				<option value="III">III</option>
-				<option value="IV">IV</option>
-				<option value="V">V</option>
-				<option value="VI">VI</option>
-			</select>
-			<br>
-			<label class="checkbox">
-				<input type="checkbox" class="form-control" name="noMiddleName" id="noMiddleName" value="1">
-				No Middle Name
-			</label>
+	<div id="fullNameDiv" class=" #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="firstName">First Name *</label>
+			<div class="col-sm-8 col-xs-12">
+				<input type="text" name="firstName" id="firstName"  class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="middleName">Middle Name</label>
+			<div class="col-sm-3 col-xs-12">
+				<input type="text" name="middleName" id="middleName" class="form-control">
+			</div>
+			<div class="checkbox col-sm-5">
+				<label>
+					<input type="checkbox"  name="noMiddleName" id="noMiddleName" value="1">
+					No Middle Name
+				</label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="lastName">Last Name *</label>
+			<div class="col-sm-8 col-xs-12">
+				<input type="text" name="lastName" id="lastName" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="suffix">Suffix</label>
+			<div class="col-sm-3 col-xs-6">
+				<select name="suffix" id="suffix" class="form-control">
+					<option value=""></option>
+					<option value="JR">JR</option>
+					<option value="SR">SR</option>
+					<option value="II">II</option>
+					<option value="III">III</option>
+					<option value="IV">IV</option>
+					<option value="V">V</option>
+					<option value="VI">VI</option>
+				</select>
+			</div>
 		</div>
 	</div>
 
