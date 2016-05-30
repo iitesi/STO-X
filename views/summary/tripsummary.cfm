@@ -40,7 +40,7 @@
 			<cfset hotelText = 'Quoted at check-in'>
 		</cfif>
   </cfif>
-	<div class="tripSummary" >
+	<div class="tripSummary purchase-summary" >
 
 		<div class="row" >
 			<div class="col-xs-offset-3 col-xs-3"><strong>Base Rate</strong></div>

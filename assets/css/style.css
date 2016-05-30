@@ -480,7 +480,10 @@ ul.tabs li a.active {
 .loyalty {
 	margin-top: 1em;
 }
-
+.purchase-summary {
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
 .background {
 	background-color: #E3EEF4;
 }

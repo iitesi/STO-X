@@ -1,14 +1,12 @@
 <cfoutput>
-	<br clear="all">
-	<table align="right">
-	<tr>
-		<td>
+	<div class="row">
+		<div class="col-lg-offset-8 col-lg-2 col-sm-3 col-sm-offset-6 text-right">
 			<input type="submit" name="trigger" id="travelerButton" class="btn" value="ADD A TRAVELER">
-		</td>
-		<td style="padding-left:20px;">
+		</div>
+		<br class="visible-xs">
+		<div class="col-lg-2 col-sm-3 text-right">
 			<input type="submit" name="trigger" id="purchaseButton" class="btn btn-primary" value="CONFIRM PURCHASE">
 			<input type="hidden" name="trigger" id="triggerButton" value="" disabled>
-		</td>
-	</tr>
-	</table>
+		</div> <!-- /.col -->
+	</div> <!-- /.row -->
 </cfoutput>
