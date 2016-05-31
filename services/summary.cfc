@@ -62,22 +62,55 @@
 				HotelSavingsCode
 			WHERE
 				(STO = 1)
-				<!--- Short's/Internal TMC --->
-				<cfif listFind('1,2', arguments.tmcID)>
+				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
 					AND (TMCID = 1)
-					<!--- NASCAR --->
-					<cfif arguments.acctID EQ 348>
-						AND (Acct_ID = 348)
-					<cfelse>
-						AND Acct_ID IS NULL
-					</cfif>
-				<!--- External TMC --->
+					AND (acct_ID IS NULL)
 				<cfelse>
 					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
 				</cfif>
 			ORDER BY
 				HotelSavingsCode
 		</cfquery>
+
+		<cfquery name="getCustom" datasource="Corporate_Production">
+			SELECT
+				HotelSavingsCode,
+				Description
+			FROM
+				HotelSavingsCode
+			WHERE
+				(STO = 1)
+				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
+					AND (TMCID = 1)
+					AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
+				<cfelse>
+					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+				</cfif>
+			ORDER BY
+				HotelSavingsCode
+		</cfquery>
+
+		<cfif getCustom.recordCount>
+			<cfquery name="local.qOutOfPolicy_Hotel" dbtype="query">
+				SELECT
+					HotelSavingsCode,
+					Description
+				FROM
+					local.qOutOfPolicy_Hotel
+				WHERE
+					(HotelSavingsCode NOT IN (#quotedValueList(getCustom.HotelSavingsCode)#))
+
+				UNION
+
+				SELECT
+					HotelSavingsCode,
+					Description
+				FROM
+					getCustom
+				ORDER BY
+					HotelSavingsCode
+			</cfquery>
+		</cfif>
 
 		<cfreturn local.qOutOfPolicy_Hotel>
 	</cffunction>
@@ -95,22 +128,55 @@
 				VehicleSavingsCode
 			WHERE
 				(STO = 1)
-				<!--- Short's/Internal TMC --->
-				<cfif listFind('1,2', arguments.tmcID)>
+				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
 					AND (TMCID = 1)
-					<!--- NASCAR --->
-					<cfif arguments.acctID EQ 348>
-						AND (Acct_ID = 348)
-					<cfelse>
-						AND Acct_ID IS NULL
-					</cfif>
-				<!--- External TMC --->
+					AND (acct_ID IS NULL)
 				<cfelse>
 					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
 				</cfif>
 			ORDER BY
 				VehicleSavingsCode
 		</cfquery>
+
+		<cfquery name="getCustom" datasource="Corporate_Production">
+			SELECT
+				VehicleSavingsCode,
+				Description
+			FROM
+				VehicleSavingsCode
+			WHERE
+				(STO = 1)
+				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
+					AND (TMCID = 1)
+					AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
+				<cfelse>
+					AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+				</cfif>
+			ORDER BY
+				VehicleSavingsCode
+		</cfquery>
+
+		<cfif getCustom.recordCount>
+			<cfquery name="local.qOutOfPolicy_Car" dbtype="query">
+				SELECT
+					VehicleSavingsCode,
+					Description
+				FROM
+					local.qOutOfPolicy_Car
+				WHERE
+					(VehicleSavingsCode NOT IN (#quotedValueList(getCustom.VehicleSavingsCode)#))
+
+				UNION
+
+				SELECT
+					VehicleSavingsCode,
+					Description
+				FROM
+					getCustom
+				ORDER BY
+					VehicleSavingsCode
+			</cfquery>
+		</cfif>
 
 		<cfreturn local.qOutOfPolicy_Car>
 	</cffunction>
