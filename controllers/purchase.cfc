@@ -71,6 +71,9 @@
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovalNeededReasons( approval.approvalNeededReasons )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededAir( approval.approvalNeededAir )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededCar( approval.approvalNeededCar )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededHotel( approval.approvalNeededHotel )>
 				<!--- <cfdump var="#local.approval#" label="local.approval">
 				<cfdump var="#traveler.getbookingDetail()#" label="traveler.getbookingDetail">
 				<cfabort> --->
