@@ -149,7 +149,7 @@
 						<td colspan="6">
 							Your Priceline hotel Trip ID <strong>#arguments.ppnTripID#</strong> for <strong>#arguments.propertyName#</strong> has been cancelled in its entirety. Any air and/or car segments that may have been a part of this reservation remain intact.
 							<br><br>
-							Please contact <a mailto="onlinesupport@shortstravel.com">onlinesupport@shortstravel.com</a> if you are need of further assistance.
+							Please contact Short's Online Support at <a mailto="onlinesupport@shortstravel.com">onlinesupport@shortstravel.com</a> or Short's Travel at (888) 625-0209 if you are in need of further assistance.
 							<br><br>
 						</td>
 					</tr>

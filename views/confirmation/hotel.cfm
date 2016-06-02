@@ -71,6 +71,9 @@
 						<td colspan="2">
 							#uCase(rc.Hotel.getAddress())#, #uCase(rc.Hotel.getCity())#, #uCase(rc.Hotel.getState())# #uCase(rc.Hotel.getZip())# #uCase(rc.Hotel.getCountry())#<br />
 							HOTEL PHONE NUMBER: #rc.Hotel.getPhone()#
+							<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+								<br />SHORT'S TRAVEL PHONE NUMBER: (888) 625-0209
+							</cfif>
 						</td>
 						<!--- <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND rc.Hotel.getRooms()[1].getIsCancellable()> --->
 						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
@@ -104,7 +107,7 @@
 					</cfif>
 					<tr>
 						<td>&nbsp;</td>
-						<td width="18%">
+						<td width="25%">
 							<strong>
 								CHECK-IN: #uCase(dateFormat(rc.Filter.getCheckInDate(), formatToUse))#
 								<cfif len(rc.Hotel.getRooms()[1].getCheckInTime())>
