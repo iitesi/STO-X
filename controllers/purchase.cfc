@@ -83,6 +83,9 @@
 				<cfset Traveler.getBookingDetail().setApprovalNeeded( approval.approvalNeeded )>
 				<cfset Traveler.getBookingDetail().setApprovalNeededReasons( approval.approvalNeededReasons )>
 				<cfset Traveler.getBookingDetail().setApprovers( approval.approvers )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededAir( approval.approvalNeededAir )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededCar( approval.approvalNeededCar )>
+				<cfset Traveler.getBookingDetail().setApprovalNeededHotel( approval.approvalNeededHotel )>
 
 				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->
 				<cfif airSelected
