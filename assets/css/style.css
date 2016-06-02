@@ -923,7 +923,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .hotel-room{
     width: 100%;
     border: none;
-		padding: 8px 0;
+	padding: 8px 0;
+	margin-left: 0px;
 }
 
 .hotel-room table tr td{

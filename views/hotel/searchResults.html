@@ -203,7 +203,7 @@
 
                                     <button
                                         id="{{item.hotel.PropertyId}}"
-                                        ng-class="{'btn': true, 'btn-default': true, 'btn-primary': item.hotel.isInPolicy}"
+                                        ng-class="{'btn': true, 'btn-sm' : true, 'btn-default': true, 'btn-primary': item.hotel.isInPolicy}"
                                         ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                         <span ng-show="showRooms">HIDE ROOMS</span>
                                         <span ng-show="!showRooms">SHOW ROOMS</span>
@@ -357,19 +357,19 @@
 
                     </div>
 
-                    <div ng-show="searchCompleted && !filteredHotels.length">
-                        <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
-                    </div>
-                </div>
-            <nav>
+			<div ng-show="searchCompleted && !filteredHotels.length">
+				<p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
+			</div>
+                
+			<nav>
 				<ul class="pagination bottom">
 					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
 					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
 			</nav>
+		</div>
             
-        </div>
     </div>
 </div>
 
