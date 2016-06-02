@@ -375,18 +375,22 @@
 
 </div>
 <!-- Modal window to be displayed while search is occurring. -->
-<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
-    <div class="modal-header">
-        <h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
-    </div>
-    <div id="myModalBody" class="modal-body">
-        <p>
-            We are finding hotels closest to {{search.hotelHeading}} for {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
-        </p>
-        <p>
-            Tip: Double click on the map to update your search with hotels available in other areas of the city.
-        </p>
-    </div>
+<div id="searchWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+			</div>
+			<div id="myModalBody" class="modal-body">
+				<p>
+					We are finding hotels closest to {{search.hotelHeading}} for {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
+				</p>
+				<p>
+					Tip: Double click on the map to update your search with hotels available in other areas of the city.
+				</p>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal for cancellation policy -->
