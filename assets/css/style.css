@@ -813,7 +813,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 ----------------------------------------------------------------------------------------------------------
 */
 
-.legs {margin: 0;padding-bottom: 1em;}
+.legs {margin: 0;padding-bottom: 1em;white-space:nowrap;}
 
 .legbtn {
 	margin-right: 1em;
@@ -1297,6 +1297,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 @media (max-width: 475px) { 	
 	.hideOnPhones {
+		display:none;
+	}
+}
+
+@media (min-width: 476px) { 	
+	.showOnPhones {
 		display:none;
 	}
 }

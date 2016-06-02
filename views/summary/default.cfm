@@ -92,6 +92,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#">
 								#count#. Traveler</a>
 						</cfif> --->
+						<p class="showOnPhones"></p>
 					</cfloop>
 					<cfif rc.travelerNumber NEQ 1>
 						<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#">
