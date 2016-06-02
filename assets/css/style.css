@@ -864,7 +864,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: block;
     width: 100%;
     overflow: hidden;
-    white-space: nowrap;
 }
 
 .hotel-distance{
