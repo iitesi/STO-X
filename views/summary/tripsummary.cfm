@@ -134,9 +134,9 @@
 
 		</cfif>
 
-		<div class="row #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow" style="float:right;">
-			<div class="col-xs-6">Booking Fee</div>
-			<div class="col-xs-6" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+		<div class="row text-right #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow" >
+			<div class="col-xs-8">Booking Fee</div>
+			<div class="col-xs-4" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
 		</div>
 		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
@@ -148,7 +148,7 @@
 
 			<cfset tripTotal = tripTotal + rc.fees.fee>
 
-			<div class="row" id="bookingTotalRow" class="text-right">
+			<div class="row text-right" id="bookingTotalRow">
 				<cfif rc.hotelSelected>
 					<cfset numSpan = 6 />
 				<cfelse>
