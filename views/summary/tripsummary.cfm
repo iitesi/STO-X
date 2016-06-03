@@ -81,7 +81,7 @@
 			<div id="hotelTotalRow" class="text-right">
 				<div class="row" >
 					<div class="col-xs-8 text-right"><strong>Hotel Base Rate</strong></div>
-					<div class="col-xs-4">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)# <span style="font-size:8px;">avg per night</span></div>
+					<div class="col-xs-4">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)# <span class="pernightmsg">avg per night</span></div>
 				</div>
 				<div class="row" >
 					<div class="col-xs-8 text-right">

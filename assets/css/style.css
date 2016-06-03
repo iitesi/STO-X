@@ -455,6 +455,11 @@ ul.tabs li a.active {
 	margin-top: 0.5em;
 }
 
+.pernightmsg {
+	font-size:8px;
+	white-space:nowrap;
+}
+
 .fulldiv {
 	clear:both;
 	min-width:1000px;
