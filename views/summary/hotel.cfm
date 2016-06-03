@@ -53,25 +53,28 @@
 					<cfif rc.showAll
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
-						<select name="hotelReasonCode" id="hotelReasonCode" class="form-control #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
-							<option value="">Select Reason for Booking Out of Policy</option>
-							<!--- University of Washington --->
-							<cfif rc.Filter.getAcctID() EQ 500>
-								<option value="A">In policy (use also when no sleep is needed)</option>
-								<option value="B">Attending conference/convention</option>
-								<option value="C">Non-preferred hotel had lower rate</option>
-								<option value="D">Preferred room type, chain or location</option>
-								<option value="M">Recommended hotel</option>
-								<option value="P">Preferred property/city sold out</option>
-								<option value="R">Preferred room rate sold out</option>
-							<cfelse>
-								<option value="P">Required property sold out</option>
-								<option value="R">Required room rate sold out</option>
-								<option value="C">Required property was higher than another property</option>
-								<option value="L">Leisure Rental (paying for it themselves)</option>
-								<option value="B">I am booking a blacklisted hotel</option>
-							</cfif>
-						</select> </div>
+						<div class="col-sm-8 col-xs-12">
+							<select name="hotelReasonCode" id="hotelReasonCode" class="form-control #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
+								<option value="">Select Reason for Booking Out of Policy</option>
+								<!--- University of Washington --->
+								<cfif rc.Filter.getAcctID() EQ 500>
+									<option value="A">In policy (use also when no sleep is needed)</option>
+									<option value="B">Attending conference/convention</option>
+									<option value="C">Non-preferred hotel had lower rate</option>
+									<option value="D">Preferred room type, chain or location</option>
+									<option value="M">Recommended hotel</option>
+									<option value="P">Preferred property/city sold out</option>
+									<option value="R">Preferred room rate sold out</option>
+								<cfelse>
+									<option value="P">Required property sold out</option>
+									<option value="R">Required room rate sold out</option>
+									<option value="C">Required property was higher than another property</option>
+									<option value="L">Leisure Rental (paying for it themselves)</option>
+									<option value="B">I am booking a blacklisted hotel</option>
+								</cfif>
+							</select> 
+						</div>
+						</div>
 					</cfif>
 
 					<!--- State of Texas --->
