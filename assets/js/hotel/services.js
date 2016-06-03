@@ -116,7 +116,7 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getExtendedData = function( searchId, Hotel, datapoints ){
 		Hotel.extendedDataRequested = true;
-		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		if ( typeof datapoints != 'undefined' ){
 			remoteURL = remoteURL + '&datapoints=' + datapoints;
 		}
@@ -172,7 +172,7 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getHotelPhotos = function( searchId, Hotel ){
 		Hotel.extendedDataRequested = true;
-		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		remoteURL = remoteURL + '&datapoints=images';
 
 		return $http.jsonp( remoteURL  )
@@ -194,7 +194,7 @@ services.factory( "HotelService", function( $window, $http ){
 	}
 
 	HotelService.getRoomRateRules = function( searchId, Hotel, Room ){
-		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getRoomRateRules&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId + '&ratePlanType=' + Room.ratePlanType + '&ppnBundle=' + Room.ppnBundle + '&isRemote=1';
+		var remoteURL = "/booking/RemoteProxy.cfc?method=getRoomRateRules&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId + '&ratePlanType=' + Room.ratePlanType + '&ppnBundle=' + Room.ppnBundle + '&isRemote=1';
 		return $http.jsonp( remoteURL  )
 			.then( function( response ){
 				if( typeof response.data.data.CANCELLATION != 'undefined' ){
