@@ -80,11 +80,11 @@
 		<cfif rc.hotelSelected>
 			<div id="hotelTotalRow" class="text-right">
 				<div class="row" >
-					<div class="col-xs-6 text-right"><strong>Base Rate</strong></div>
-					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)# <span style="font-size:8px;">avg per night</span></div>
+					<div class="col-xs-8 text-right"><strong>Hotel Base Rate</strong></div>
+					<div class="col-xs-4">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)# <span style="font-size:8px;">avg per night</span></div>
 				</div>
 				<div class="row" >
-					<div class="col-xs-6 text-right">
+					<div class="col-xs-8 text-right">
 						<strong>
 						<cfif rc.hotelSelected AND rc.Hotel.getRooms()[1].getTotalForStay() GT 0 AND UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 							<a rel="popover" href="javascript:$('##displayTaxesAndFees').modal('show');" />Taxes and Fees</a>
@@ -93,15 +93,15 @@
 						</cfif>
 						</strong>
 					</div>
-					<div class="col-xs-6">#hotelText#</div>
+					<div class="col-xs-4">#hotelText#</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-6 text-right"><strong>Room Subtotal for #nights# night(s)</strong></div>
-					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
+					<div class="col-xs-8 text-right"><strong>Room Subtotal for #nights# night(s)</strong></div>
+					<div class="col-xs-4">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 				</div>
 				<div class="row total">
-					<div class="col-xs-6"><strong>Total Hotel Charges</strong></div>
-					<div class="col-xs-6" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
+					<div class="col-xs-8"><strong>Total Hotel Charges</strong></div>
+					<div class="col-xs-4" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
 						<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE" AND rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
 							<br><span style="font-size:8px;">estimated total <br>+ applicable taxes</span>
 						</cfif>
@@ -154,8 +154,8 @@
 				<cfelse>
 					<cfset numSpan = 4 />
 				</cfif>
-				<div class="col-xs-6 span#numSpan# blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="col-xs-6 blue" id="totalCol">
+				<div class="col-xs-8 span#numSpan# blue"><strong>Trip cost for current traveler</strong></div>
+				<div class="col-xs-4 blue" id="totalCol">
 					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
 				</div>
 			</div>
