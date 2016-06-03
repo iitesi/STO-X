@@ -41,9 +41,9 @@
 		</cfif>
   </cfif>
 	<div class="tripSummary purchase-summary" >
-
+<!--
 		<div class="row" >
-			<div class="col-xs-offset-3 col-xs-3"><strong>Base Rate</strong></div>
+			<div class="col-xs-3"><strong>Base Rate</strong></div>
 			<div class="col-xs-3">
 				<strong>
 				<cfif rc.hotelSelected AND rc.Hotel.getRooms()[1].getTotalForStay() GT 0 AND UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
@@ -56,7 +56,7 @@
 			<cfif rc.hotelSelected><div class="span2"><strong>Room Subtotal<br>for #nights# night(s)</strong></div></cfif>
 			<div class="col-xs-3"><strong>Total Charges</strong></div>
 		</div>
-
+-->
 		<cfset tripTotal = 0>
 		<cfset tripCurrency = 'USD'>
 
@@ -78,15 +78,35 @@
 
 		</cfif>
 		<cfif rc.hotelSelected>
-			<div class="row" id="hotelTotalRow">
-				<div class="col-xs-3">Hotel</div>
-				<div class="col-xs-3">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)#<br><span style="font-size:8px;">avg per night</span></div>
-				<div class="col-xs-3">#hotelText#</div>
-				<div class="col-xs-1">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
-				<div class="col-xs-2" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
-					<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE" AND rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
-						<br><span style="font-size:8px;">estimated total <br>+ applicable taxes</span>
-					</cfif>
+			<div id="hotelTotalRow">
+				<div class="col-xs-12">Hotel</div>
+				<div class="row" >
+					<div class="col-xs-6"><strong>Base Rate</strong></div>
+					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)#<br><span style="font-size:8px;">avg per night</span></div>
+				</div>
+				<div class="row" >
+					<div class="col-xs-6">
+						<strong>
+						<cfif rc.hotelSelected AND rc.Hotel.getRooms()[1].getTotalForStay() GT 0 AND UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+							<a rel="popover" href="javascript:$('##displayTaxesAndFees').modal('show');" />Taxes and Fees</a>
+						<cfelse>
+							Taxes and Fees
+						</cfif>
+						</strong>
+					</div>
+					<div class="col-xs-6">#hotelText#</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6"><strong>Room Subtotal<br>for #nights# night(s)</strong></div>
+					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6"><strong>Total Hotel Charges</strong></div>
+					<div class="col-xs-6" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
+						<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE" AND rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
+							<br><span style="font-size:8px;">estimated total <br>+ applicable taxes</span>
+						</cfif>
+					</div>
 				</div>
 			</div>
 			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
@@ -116,11 +136,8 @@
 		</cfif>
 
 		<div class="row #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow" style="float:right;">
-			<div class="col-xs-3">Booking Fee</div>
-			<div class="col-xs-3"></div>
-			<div class="col-xs-3"></div>
-			<cfif rc.hotelSelected><div class="span2"></div></cfif>
-			<div class="col-xs-3" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+			<div class="col-xs-6">Booking Fee</div>
+			<div class="col-xs-6" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
 		</div>
 		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
