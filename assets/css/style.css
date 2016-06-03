@@ -444,8 +444,15 @@ ul.tabs li a.active {
 }
 
 .tripSummary{
-		width: 540px;
 		margin: 10px 5px !important;
+}
+
+.row.total {
+	border-top: 1px solid #bbb;
+}
+
+#bookingTotalRow {
+	margin-top: 0.5em;
 }
 
 .fulldiv {

@@ -78,14 +78,13 @@
 
 		</cfif>
 		<cfif rc.hotelSelected>
-			<div id="hotelTotalRow">
-				<div class="col-xs-12">Hotel</div>
+			<div id="hotelTotalRow" class="text-right">
 				<div class="row" >
-					<div class="col-xs-6"><strong>Base Rate</strong></div>
-					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)#<br><span style="font-size:8px;">avg per night</span></div>
+					<div class="col-xs-6 text-right"><strong>Base Rate</strong></div>
+					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)# <span style="font-size:8px;">avg per night</span></div>
 				</div>
 				<div class="row" >
-					<div class="col-xs-6">
+					<div class="col-xs-6 text-right">
 						<strong>
 						<cfif rc.hotelSelected AND rc.Hotel.getRooms()[1].getTotalForStay() GT 0 AND UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 							<a rel="popover" href="javascript:$('##displayTaxesAndFees').modal('show');" />Taxes and Fees</a>
@@ -97,10 +96,10 @@
 					<div class="col-xs-6">#hotelText#</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-6"><strong>Room Subtotal<br>for #nights# night(s)</strong></div>
+					<div class="col-xs-6 text-right"><strong>Room Subtotal for #nights# night(s)</strong></div>
 					<div class="col-xs-6">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 				</div>
-				<div class="row">
+				<div class="row total">
 					<div class="col-xs-6"><strong>Total Hotel Charges</strong></div>
 					<div class="col-xs-6" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
 						<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE" AND rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
@@ -149,14 +148,14 @@
 
 			<cfset tripTotal = tripTotal + rc.fees.fee>
 
-			<div class="row" id="bookingTotalRow" style="float:right;">
+			<div class="row" id="bookingTotalRow" class="text-right">
 				<cfif rc.hotelSelected>
 					<cfset numSpan = 6 />
 				<cfelse>
 					<cfset numSpan = 4 />
 				</cfif>
-				<div class="col-xs-9 span#numSpan# blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="col-xs-3 blue" id="totalCol">
+				<div class="col-xs-6 span#numSpan# blue"><strong>Trip cost for current traveler</strong></div>
+				<div class="col-xs-6 blue" id="totalCol">
 					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
 				</div>
 			</div>
