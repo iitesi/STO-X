@@ -47,13 +47,13 @@
 				<div class="row">
 						<div class="col-xs-12">
 					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
-					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
+					#(isInPolicy ? '' : '<div class="form-group"><label rel="tooltip" for="hotelReasonCode" class="col-sm-4 col-xs-12 outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#"><strong>OUT OF POLICY *</strong></span>')#
 
 					<!--- All accounts when out of policy --->
 					<cfif rc.showAll
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
-						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
+						<select name="hotelReasonCode" id="hotelReasonCode" class="form-control #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 							<option value="">Select Reason for Booking Out of Policy</option>
 							<!--- University of Washington --->
 							<cfif rc.Filter.getAcctID() EQ 500>
@@ -71,7 +71,7 @@
 								<option value="L">Leisure Rental (paying for it themselves)</option>
 								<option value="B">I am booking a blacklisted hotel</option>
 							</cfif>
-						</select> <br><br>
+						</select> </div>
 					</cfif>
 
 					<!--- State of Texas --->
