@@ -26,11 +26,11 @@
 			<link href="//code.jquery.com/ui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
 			
 			<!--[if IE 7]>
-				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
+				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
-			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
+			<link href="assets/css/layout.css" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css" rel="stylesheet" media="screen">
+			<link href="assets/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 			<!--- override header colors for TMC so their light logos will display properly --->
@@ -58,11 +58,11 @@
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 			<script src="https://use.fontawesome.com/4ba3a7fb90.js"></script>
-			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
+			<script src="assets/js/jquery.plugins.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-			<script type="text/javascript" charset="UTF-8" src="#application.assetURL#/js/responsive-paginate.js"></script>
-			<script src="#application.assetURL#/js/booking.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
+			<script src="assets/js/booking.js"></script>
 		</cfoutput>
 	</head>
 	<body>
