@@ -298,32 +298,36 @@
 					</div>
 				<!--</div>-->
 			</div>
-			<div id="displayPricelineTermsAndConditions" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
-				<div class="searchContainer">
-					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
-						<h3 id="addModalHeader">
-						Short&##39;s Travel Management Web Site Terms &amp; Conditions
-						</h3>
-					</div>
-					<div class="modal-body popover-content">
-						<div id="addModalBody">
-							#view( 'summary/priceline_terms' )#
+			<div id="displayPricelineTermsAndConditions" class="modal searchForm fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="searchContainer modal-content">
+						<div class="modal-header popover-content">
+							<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+							<h3 id="addModalHeader">
+							Short&##39;s Travel Management Web Site Terms &amp; Conditions
+							</h3>
+						</div>
+						<div class="modal-body popover-content">
+							<div id="addModalBody">
+								#view( 'summary/priceline_terms' )#
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div id="displayPricelinePrivacyPolicy" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
-				<div class="searchContainer">
-					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
-						<h3 id="addModalHeader">
-						Privacy Policy
-						</h3>
-					</div>
-					<div class="modal-body popover-content">
-						<div id="addModalBody">
-							#view( 'summary/priceline_privacy' )#
+			<div id="displayPricelinePrivacyPolicy" class="modal searchForm fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="searchContainer modal-content">
+						<div class="modal-header popover-content">
+							<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+							<h3 id="addModalHeader">
+							Privacy Policy
+							</h3>
+						</div>
+						<div class="modal-body popover-content">
+							<div id="addModalBody">
+								#view( 'summary/priceline_privacy' )#
+							</div>
 						</div>
 					</div>
 				</div>
