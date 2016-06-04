@@ -1303,6 +1303,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
         padding-bottom: 10px;
     }
 	
+	.filterby .navbar-text {
+       float: none; 
+       margin-right: 0px; 
+       margin-left: 0px
+	}
+	
 	.hotel {
 		width: 100%;
 	}
