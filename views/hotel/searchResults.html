@@ -421,7 +421,7 @@
 			<div id="changeSearchWindowBody" class="modal-body form">
 			<div class="form-group">
 				<div class="col-sm-6">
-					<div class="btn-group-xs" >
+					<div class="btn-group btn-group-xs" >
 						<button class="btn btn-default" >in {{search.hotelRadius}} miles of  </button>
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 						<ul class="dropdown-menu">
@@ -435,8 +435,9 @@
 						</ul>
 					</div>
 				</div>
+				<p class="visible-xs clearfix"></p>
 				<div class="col-sm-6">
-					<div class="btn-group btn-group-xs" id="hotel-search-type" data-toggle="buttons-radio" style="float: right;">
+					<div class="btn-group btn-group-xs" id="hotel-search-type" data-toggle="buttons-radio">
 						<button id="hotel-search-airport" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': search.hotelSearch=='airport'}" ng-click="search.hotelSearch='airport'">Airport</button>
 						<button id="hotel-search-address" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': search.hotelSearch=='address'}" ng-click="search.hotelSearch='address'">Address</button>
 						<button id="hotel-search-location" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': search.hotelSearch=='office'}" ng-click="search.hotelSearch='office'" ng-show="account.OFFICES.length">Offices/Venues</button>
@@ -530,7 +531,7 @@
 				<div class="col-sm-6">
 					<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
 					<br />
-					<div id="end-calendar-wrapper" </div>
+					<div id="end-calendar-wrapper"> </div>
 				</div>
 			</div>
 
