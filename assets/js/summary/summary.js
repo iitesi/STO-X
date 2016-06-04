@@ -142,7 +142,7 @@ $(document).ready(function(){
 		else */
 			var type = 'hotel';
 		var test = '<div class="similarTrip panel" pnr="'+elem.RECLOC+'">';
-		test = test+'<div class="panel-body"><div class="row"><div class="col-xs-3">"'+elem.FORMATTEDDATE+'</div><div class="pnrInfo col-xs-9">'+elem.PNRINFO+'</div></div>';
+		test = test+'<div class="panel-body"><div class="row"><div class="col-xs-3">'+elem.FORMATTEDDATE+'</div><div class="pnrInfo col-xs-9">'+elem.PNRINFO+'</div></div>';
 		test = test+'<span class="activeTrip hideElement" id="activeTrip'+elem.RECLOC+'">*Your '+type+' will be added to this reservation*</span>';
 	    test = test+'</div>';
 		return test;
