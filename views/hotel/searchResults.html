@@ -137,7 +137,7 @@
 			<nav>
 				<ul class="pagination">
 					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
-					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
+					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
 			</nav>
