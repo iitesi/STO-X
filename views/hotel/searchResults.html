@@ -508,21 +508,22 @@
 					</div>
 				</div>
 				-->
-				
-				<div class="col-sm-6" id="hotel-date-wrapper">
-					<div class="form-group">
-						<label class="control-label">Check-in Date</label>
-						<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+				<div class="row">
+					<div class="col-sm-6" id="hotel-date-wrapper">
+						<div class="form-group">
+							<label class="control-label">Check-in Date</label>
+							<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+						</div>
+						<div id="start-calendar-wrapper" class="calender-wrapper"></div>
 					</div>
-					<div id="start-calendar-wrapper" class="calender-wrapper"></div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label">Check-out Date</label>
+							<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+						</div>
+						<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
+					</div>
 				</div>
-				<div class="col-sm-6">
-				<div class="form-group">
-					<label class="control-label">Check-out Date</label>
-					<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
-				</div>
-				<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
-			</div>
 			</div>
 			<div class="modal-footer">
 				<a href="javascript:void(0)" id="btnFormSubmit" class="btn btn-primary pull-right" ng-click="updateSearch()" type="submit" data-toggle="modal">Search</a>
