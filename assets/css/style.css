@@ -1258,7 +1258,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-top:3px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1200px) and (min-width: 991px) {
 	.filterby .hideFirst {
 		display:none;
 	}
