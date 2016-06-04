@@ -418,7 +418,7 @@
 			<div class="modal-header">
 				<h4 id="changeSearchWindowHeader">Change Your Hotel Search</h4>
 			</div>
-			<div id="changeSearchWindowBody" class="modal-body form">
+			<div id="changeSearchWindowBody" class="modal-body form form-horizontal">
 				<div class="form-group">
 					<div class="col-sm-6">
 						<div class="btn-group btn-group-xs" >
@@ -455,25 +455,26 @@
 				<div class="form-group" id="hotel-address-wrapper"  ng-show="search.hotelSearch=='address'">
 					<label for="hotel-address" class="col-sm-3 control-label">Address</label>
 					<div class="col-sm-9">
-						<input id="hotel-address" name="hotel-address" autocomplete="off" type="text" class="form-control" placeholder="address" ng-model="search.hotelAddress" maxlength="100">
+						<input id="hotel-address" name="hotel-address" autocomplete="off" type="text" class="form-control" placeholder="" ng-model="search.hotelAddress" maxlength="100">
 					</div>
 				</div>
 
 				<div class="form-group" id="hotel-city-state-wrapper"  ng-show="search.hotelSearch=='address'">
-					<label for="hotel-city" class="col-sm-offset-3 col-sm-1 control-label">City</label>
+					<label for="hotel-city" class="col-sm-offset-2 col-sm-1 control-label">City</label>
 					<div class="col-md-3 col-sm-2">
 						<input id="hotel-city" name="hotel-city" ng-model="search.hotelCity" type="text" class="form-control" placeholder="" maxlength="50">
 					</div>
 					<p class="visible-xs clearfix"></p>
 					<label for="hotel-state" class="col-sm-1 col-xs-12 control-label">State</label>
-					<div class="col-md-1 col-sm-2 col-xs-4">
+					<div class="col-md-2 col-sm-3 col-xs-4">
 						<input id="hotel-state" name="hotel-state" ng-model="search.hotelState" type="text" class="form-control" placeholder="" maxlength="2">
 					</div>
 					<p class="visible-xs clearfix"></p>
 					<label for="hotel-zip" class="col-sm-1 col-xs-12 control-label">Zip</label>
 					<div class="col-sm-2 col-xs-5">
-						<input id="hotel-zip" name="hotel-zip" type="text" ng-model="search.hotelZip" class="form-control" placeholder="zip" maxlength="10">
+						<input id="hotel-zip" name="hotel-zip" type="text" ng-model="search.hotelZip" class="form-control" placeholder="" maxlength="10">
 					</div> 
+					<p class="visible-xs clearfix"></p>
 				</div>
 
 				<div class="form-group" id="hotel-office-wrapper" ng-show="search.hotelSearch=='office' && account.OFFICES.length">
@@ -508,20 +509,22 @@
 					</div>
 				</div>
 				-->
-				<div class="row">
-					<div class="col-sm-6" id="hotel-date-wrapper">
-						<div class="form-group">
-							<label class="control-label">Check-in Date</label>
-							<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-5" id="hotel-date-wrapper">
+							<div class="form-group">
+								<label class="control-label">Check-in Date</label>
+								<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+							</div>
+							<div id="start-calendar-wrapper" class="calender-wrapper"></div>
 						</div>
-						<div id="start-calendar-wrapper" class="calender-wrapper"></div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-group">
-							<label class="control-label">Check-out Date</label>
-							<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+						<div class="col-sm-offset-2 col-sm-5">
+							<div class="form-group">
+								<label class="control-label">Check-out Date</label>
+								<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+							</div>
+							<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
 						</div>
-						<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
 					</div>
 				</div>
 			</div>
