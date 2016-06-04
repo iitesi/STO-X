@@ -474,6 +474,7 @@ ul.tabs li a.active {
 	min-height:70px;
 	border:4px solid #FFF;
 	margin-bottom: 1em;
+	background-color: #fff;
 }
 .summarydiv .disclaimer {
 	display: block;
