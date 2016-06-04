@@ -1361,3 +1361,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	display:block;
 	margin: 0 auto;
 }
+.office-button {
+	min-width: 60%;
+}
