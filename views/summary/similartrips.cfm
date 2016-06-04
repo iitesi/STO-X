@@ -3,13 +3,9 @@
   margin-top:10px;
 }
 .similarTrip{
-	width:290px;
-	height:70px;
-	padding:3px;
+	
 	border:1px silver solid;
 	border-radius: 5px;
-	float:left;
-	margin-right:5px;
   cursor:pointer;
 }
 .similarTrip .dateString{
