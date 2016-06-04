@@ -276,8 +276,8 @@
 			</tr>
 			</cfif>
 			
-			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
-				<div class="searchContainer">
+			<div id="displayHotelCancellationPolicy" class="modal searchForm fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+			<!--<div class="searchContainer">-->
 					<div class="modal-header popover-content">
 						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
@@ -296,7 +296,7 @@
 							</cfif>
 						</div>
 					</div>
-				</div>
+				<!--</div>-->
 			</div>
 			<div id="displayPricelineTermsAndConditions" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
 				<div class="searchContainer">

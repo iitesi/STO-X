@@ -59,7 +59,7 @@
 						<li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><p class="navbar-text filter ng-binding"><span ng-show="filtersApplied()" class="ng-binding" style="display: none;">541 of </span>541 total<span class="hideFirst"> properties</span></p></li>
+						<li><p class="navbar-text filter ng-binding"><span ng-show="filtersApplied()" class="ng-binding" style="display: none;">{{filteredHotels.length}} of </span>{{hotels.length}} total<span class="hideFirst"> properties</span></p></li>
 						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
 					</ul>	
 				</div> <!-- /#navbar-collapse-2-->

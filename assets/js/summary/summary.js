@@ -141,10 +141,10 @@ $(document).ready(function(){
 			var type = 'flight';
 		else */
 			var type = 'hotel';
-		var test = '<div class="similarTrip" pnr="'+elem.RECLOC+'">';
-		test = test+'<table cellpadding="3"><tr><td rowspan=2 width="55" class="dateString" valign="middle">'+elem.FORMATTEDDATE+'</td><td class="pnrInfo" valign="top">'+elem.PNRINFO+'</td></tr></table>';
+		var test = '<div class="similarTrip panel" pnr="'+elem.RECLOC+'">';
+		test = test+'<div class="panel-body"><div class="row"><div class="col-xs-3">"'+elem.FORMATTEDDATE+'</div><div class="pnrInfo col-xs-9">'+elem.PNRINFO+'</div></div>';
 		test = test+'<span class="activeTrip hideElement" id="activeTrip'+elem.RECLOC+'">*Your '+type+' will be added to this reservation*</span>';
-	  test = test+'<br style="clear:both;" /></div>';
+	    test = test+'</div>';
 		return test;
 	}
 	//End FH-119

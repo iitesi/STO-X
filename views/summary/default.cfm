@@ -129,7 +129,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<div id="traveler" class="tab_content">
 				<p>
 					<!--- <cfif rc.Filter.getFindIt()> --->
-						<div class="summarydiv hideElement" id="similarTripDiv" style="background-color: ##FFF;width:1000px;">
 							<div id="similarTripsDiv" class="clearfix">
 								#View('summary/similartrips')#
 							</div>
