@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <div class="well container" ng-show="filtersVisible.vendors">
+        <div class="well container-fluid" ng-show="filtersVisible.vendors">
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="vendor in filterItems.vendors">
                     <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</label>
@@ -78,7 +78,7 @@
              </div>
         </div>
 
-        <div class="well container" ng-show="filtersVisible.vendorName">
+        <div class="well container-fluid" ng-show="filtersVisible.vendorName">
             <div class="row">
                 <div class="">
                     <form class="form-inline">
@@ -91,7 +91,7 @@
              </div>
         </div>
 
-        <div class="well container" ng-show="filtersVisible.amenities">
+        <div class="well container-fluid" ng-show="filtersVisible.amenities">
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="amenity in filterItems.amenities">
                     <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
@@ -103,7 +103,7 @@
             </div>
         </div>
 
-        <div class="well container" ng-show="filtersVisible.rating">
+        <div class="well container-fluid" ng-show="filtersVisible.rating">
             <div class="row">
                 <div class="col-md-2 col-sm-4 col-xs-12" ng-repeat="item in filterItems.ratings">
                     <label><input type="checkbox" value="{{item.rating}}" ng-model="item.checked">
