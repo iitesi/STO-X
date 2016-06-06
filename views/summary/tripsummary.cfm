@@ -166,7 +166,7 @@
 		</cfif>
 	</div>
 </cfoutput>
-<div id="displayTaxesAndFees" class="modal searchForm fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+<div id="displayTaxesAndFees" class="modal searchForm fade"  tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="searchContainer modal-content">
 			<div class="modal-header popover-content">
