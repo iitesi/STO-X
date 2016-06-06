@@ -277,26 +277,28 @@
 			</cfif>
 			
 			<div id="displayHotelCancellationPolicy" class="modal searchForm fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
-			<!--<div class="searchContainer">-->
-					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
-						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-						You have selected a web rate. Please read and accept the terms of this rate.
-						<cfelse>
-						Hotel Payment and Cancellation Policy
-						</cfif>
-						</h3>
-					</div>
-					<div class="modal-body popover-content">
-						<div id="addModalBody">
-							<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-							#view( 'summary/hotelcancellationpolicy' )#
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header popover-content">
+							<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+							<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+							You have selected a web rate. Please read and accept the terms of this rate.
 							<cfelse>
-							#hotelPolicies#
+							Hotel Payment and Cancellation Policy
 							</cfif>
+							</h3>
+						</div>
+						<div class="modal-body popover-content">
+							<div id="addModalBody">
+								<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+								#view( 'summary/hotelcancellationpolicy' )#
+								<cfelse>
+								#hotelPolicies#
+								</cfif>
+							</div>
 						</div>
 					</div>
-				<!--</div>-->
+				</div>
 			</div>
 			<div id="displayPricelineTermsAndConditions" class="modal searchForm fade" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
 				<div class="modal-dialog">

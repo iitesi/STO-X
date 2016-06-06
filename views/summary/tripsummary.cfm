@@ -166,29 +166,31 @@
 		</cfif>
 	</div>
 </cfoutput>
-<div id="displayTaxesAndFees" class="modal searchForm hide fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
-	<div class="searchContainer">
-		<div class="modal-header popover-content">
-			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-			<h3 id="addModalHeader">
-			Taxes and Fees
-			</h3>
-		</div>
-		<div class="modal-body popover-content">
-			<div id="addModalBody">
-				<h3>Charges for Taxes and Fees</h3>
-				<p>
-					In connection with facilitating your hotel transaction, the charge to your debit or credit card will include a charge for Taxes and Fees. This charge includes an estimated amount to recover the amount we pay to the hotel in connection with your reservation for taxes owed by the hotel including, without limitation, sales and use tax, occupancy tax, room tax, excise tax, value added tax and/or other similar taxes.  In certain locations, the tax amount may also include government imposed service fees or other fees not paid directly to the taxing authorities but required by law to be collected by the hotel. The amount paid to the hotel in connection with your reservation for taxes may vary from the amount we estimate and include in the charge to you. The balance of the charge for Taxes and Fees is a fee we retain as part of the compensation for our services and to cover the costs of your reservation, including, for example, customer service costs. The charge for Taxes and Fees varies based on a number of factors including, without limitation, the amount we pay the hotel and the location of the hotel where you will be staying, and may include profit that we retain.
-				</p>
-				<p>
-					Except as described below, we are not the vendor collecting and remitting taxes to the applicable taxing authorities. Our hotel suppliers, as vendors, include all applicable taxes in the amount billed to us and we pay over such amounts directly to the vendors. We are not a co-vendor associated with the vendor with whom we book or reserve our customer's travel arrangements. Taxability and the appropriate tax rate and the type of applicable taxes vary greatly by location.
-				</p>
-				<p>
-					For transactions involving hotels located within certain jurisdictions, the charge to your debit or credit card for Taxes and Fees includes a payment of tax that we are required to collect and remit to the jurisdiction for tax owed on amounts we retain as compensation for our services.
-				</p>
-				<p>
-					Please note that we are unable to facilitate a rebate of Canadian Goods and Services Tax ("GST") for customers booking Canadian hotel accommodations utilizing our services.
-				</p>
+<div id="displayTaxesAndFees" class="modal searchForm fade" style="width:650px !important" tabindex="-1" role="dialog" aria-labelledby="displayPricelineTermsAndConditions" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="searchContainer modal-content">
+			<div class="modal-header popover-content">
+				<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+				<h3 id="addModalHeader">
+				Taxes and Fees
+				</h3>
+			</div>
+			<div class="modal-body popover-content">
+				<div id="addModalBody">
+					<h3>Charges for Taxes and Fees</h3>
+					<p>
+						In connection with facilitating your hotel transaction, the charge to your debit or credit card will include a charge for Taxes and Fees. This charge includes an estimated amount to recover the amount we pay to the hotel in connection with your reservation for taxes owed by the hotel including, without limitation, sales and use tax, occupancy tax, room tax, excise tax, value added tax and/or other similar taxes.  In certain locations, the tax amount may also include government imposed service fees or other fees not paid directly to the taxing authorities but required by law to be collected by the hotel. The amount paid to the hotel in connection with your reservation for taxes may vary from the amount we estimate and include in the charge to you. The balance of the charge for Taxes and Fees is a fee we retain as part of the compensation for our services and to cover the costs of your reservation, including, for example, customer service costs. The charge for Taxes and Fees varies based on a number of factors including, without limitation, the amount we pay the hotel and the location of the hotel where you will be staying, and may include profit that we retain.
+					</p>
+					<p>
+						Except as described below, we are not the vendor collecting and remitting taxes to the applicable taxing authorities. Our hotel suppliers, as vendors, include all applicable taxes in the amount billed to us and we pay over such amounts directly to the vendors. We are not a co-vendor associated with the vendor with whom we book or reserve our customer's travel arrangements. Taxability and the appropriate tax rate and the type of applicable taxes vary greatly by location.
+					</p>
+					<p>
+						For transactions involving hotels located within certain jurisdictions, the charge to your debit or credit card for Taxes and Fees includes a payment of tax that we are required to collect and remit to the jurisdiction for tax owed on amounts we retain as compensation for our services.
+					</p>
+					<p>
+						Please note that we are unable to facilitate a rebate of Canadian Goods and Services Tax ("GST") for customers booking Canadian hotel accommodations utilizing our services.
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

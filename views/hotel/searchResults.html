@@ -338,10 +338,10 @@
                                         <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
                                         &nbsp;
                                     </div>
-                                    <div class="room-rate col-sm-3 col-xs-6">
+                                    <div class="room-rate col-sm-3 col-xs-12">
                                         <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
-                                        <button style="width: 100%"
-                                            ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
+                                        <button 
+                                            ng-class="{'btn': true, 'btn-default': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
                                             ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
                                             <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                         </button>
