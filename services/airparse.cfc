@@ -963,7 +963,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.bActive = 1>
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyAir) GT 0 ? 1 : 0)>
 		<cfif arguments.sType EQ 'Fare'>
-			<cfset local.nLowFare = local.stTrips[arguments.nLowFareTripKey].Total+arguments.Policy.Policy_AirLowPad>
+			<cfset local.nLowFare = local.stTrips[arguments.nLowFareTripKey].Total>
 		</cfif>
 
 		<cfloop collection="#local.stTrips#" item="local.nTripKey">
