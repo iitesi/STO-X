@@ -604,10 +604,10 @@
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
-																						, acctID = rc.Filter.getAcctID()
-																						, valueID = rc.Filter.getValueID()
-																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+					, acctID = rc.Filter.getAcctID()
+					, valueID = rc.Filter.getValueID()
+					, arrangerID = rc.Filter.getUserID()
+					, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
 				<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 				<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 				<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>

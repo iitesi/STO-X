@@ -97,7 +97,9 @@
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
 										<td width="8%"><strong>Reason</strong></td>
 										<td>
+											#rc.Traveler[local.travelerIndex].getBookingDetail().hotelReasonDescription#
 											<!--- University of Washington --->
+<!---
 											<cfif rc.Filter.getAcctID() EQ 500>
 												<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#">
 													<cfcase value="A">In policy (use also when no sleep is needed)</cfcase>
@@ -117,6 +119,7 @@
 													<cfcase value="B">I am booking a blacklisted hotel</cfcase>
 												</cfswitch>
 											</cfif>
+--->
 										</td>
 									<cfelse>
 										<td width="8%"></td>
