@@ -70,7 +70,11 @@
 				<cfset arrayAppend(rc.airTravelers, local.travelerIndex) />
 				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode())>
 					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().airReasonDescription = fw.getBeanFactory().getBean('confirmation').getOOPReason( fareSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getAirReasonCode(), acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() ) />
+				</cfif>
+				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getHotelReasonCode())>
 					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().hotelReasonDescription = fw.getBeanFactory().getBean('confirmation').getOutOfPolicy_Hotel( hotelSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getHotelReasonCode(), acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() ) />
+				</cfif>
+				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getCarReasonCode())>
 					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().carReasonDescription = fw.getBeanFactory().getBean('confirmation').getOutOfPolicy_Car( vehicleSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getVehicleReasonCode(), acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() ) />
 				</cfif>
 			</cfif>
