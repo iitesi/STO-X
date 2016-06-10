@@ -32,7 +32,7 @@
 	</cffunction>
 
 	<!--- getOutOfPolicy_Hotel --->
-	<cffunction name="getOutOfPolicy_Hotel" output="false" returntype="query">
+	<cffunction name="getOutOfPolicy_Hotel" output="true" returntype="string">
 		<cfargument name="hotelSavingsCode" type="string" required="true">
 		<cfargument name="acctID" required="true" type="numeric">
 		<cfargument name="tmcID" required="false" type="numeric" default="1">
@@ -72,11 +72,11 @@
 			</cfquery>
 		</cfif>
 
-		<cfreturn local.qOutOfPolicy_Hotel>
+		<cfreturn local.qOutOfPolicy_Hotel.Description>
 	</cffunction>
 
 	<!--- getOutOfPolicy_Car --->
-	<cffunction name="getOutOfPolicy_Car" output="false" returntype="query">
+	<cffunction name="getOutOfPolicy_Car" output="false" returntype="string">
 		<cfargument name="vehicleSavingsCode" type="string" required="true">
 		<cfargument name="acctID" required="true" type="numeric">
 		<cfargument name="tmcID" required="false" type="numeric" default="1">
@@ -115,6 +115,6 @@
 			</cfquery>
 		</cfif>
 
-		<cfreturn local.qOutOfPolicy_Car>
+		<cfreturn local.qOutOfPolicy_Car.Description>
 	</cffunction>
 </cfcomponent>
