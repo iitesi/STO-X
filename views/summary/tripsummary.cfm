@@ -23,12 +23,16 @@
 			<cfset hotelText = 'Including taxes'>
 				<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 					<cfset hotelTaxes = rc.Hotel.getRooms()[1].getTax() />
-					<cfset hotelFees = rc.Hotel.getRooms()[1].getProcessingFee() + rc.Hotel.getRooms()[1].getInsuranceFee() + rc.Hotel.getRooms()[1].getPropertyFee() />
+					<cfset hotelFees = rc.Hotel.getRooms()[1].getProcessingFee() + rc.Hotel.getRooms()[1].getInsuranceFee() />
+					<cfset resortFee = rc.Hotel.getRooms()[1].getPropertyFee() />
+					<cfset feeText = "" />
 					<cfif hotelFees NEQ 0>
-						<cfset hotelText = #(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(hotelTaxes, '$____.__') : numberFormat(hotelTaxes, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())#&' taxes<br />'&(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(hotelFees, '$____.__') : numberFormat(hotelFees, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())&' fees' />
-					<cfelse>
-						<cfset hotelText = #(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(hotelTaxes, '$____.__') : numberFormat(hotelTaxes, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())# />
+						<cfset feeText = '<br />'&(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(hotelFees, '$____.__') : numberFormat(hotelFees, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())&' fees' />
 					</cfif>
+					<cfif resortFee NEQ 0>
+						<cfset feeText = feeText&'<br />'&(rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(resortFee, '$____.__') : numberFormat(resortFee, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())&' resort fee' />
+					</cfif>
+					<cfset hotelText = (rc.Hotel.getRooms()[1].getTaxCurrency() EQ 'USD' ? numberFormat(hotelTaxes, '$____.__') : numberFormat(hotelTaxes, '____.__')&' '&rc.Hotel.getRooms()[1].getTaxCurrency())&' taxes'&feeText />
 					<cfif rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
 						<cfset hotelText = hotelText & '<br/><span style="font-size:8px;">may apply</span>'>
 					</cfif>
