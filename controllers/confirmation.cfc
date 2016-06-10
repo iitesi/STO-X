@@ -88,7 +88,7 @@
 				<cfset arrayAppend(rc.vehicleTravelers, local.travelerIndex) />
 				<cfif len(rc.Traveler[local.travelerIndex].getBookingDetail().getCarReasonCode())>
 					<cfset rc.Traveler[local.travelerIndex].getBookingDetail().carReasonDescription = fw.getBeanFactory().getBean('confirmation').getOutOfPolicy_Car(
-						vehicleSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getVehicleReasonCode(),
+						vehicleSavingsCode = rc.Traveler[local.travelerIndex].getBookingDetail().getCarReasonCode(),
 						acctID = rc.Filter.getAcctID(),
 						tmcID = rc.Account.tmc.getTMCID()
 					)/>
