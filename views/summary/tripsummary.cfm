@@ -18,6 +18,7 @@
 		<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 			<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 			<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+			<cfset hotelBase = rc.Hotel.getRooms()[1].getDailyRate()*nights />
 			<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
 			<cfset hotelText = 'Including taxes'>
 				<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
@@ -35,11 +36,13 @@
 		<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
 			<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 			<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+			<cfset hotelBase = rc.Hotel.getRooms()[1].getDailyRate()*nights />
 			<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
 			<cfset hotelText = 'Quoted at check-in'>
 		<cfelse>
 			<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 			<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+			<cfset hotelBase = rc.Hotel.getRooms()[1].getDailyRate()*nights />
 			<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
 			<cfset hotelText = 'Quoted at check-in'>
 		</cfif>
@@ -48,8 +51,8 @@
 
 		<div class="row minlineheight" style="float:right;">
 			<div class="span1"></div>
-			<div class="span1"><strong>Base Rate</strong></div>
-			<div class="span2">
+			<div class="span1" align="right"><strong>Base Rate</strong></div>
+			<div class="span2" align="right">
 				<strong>
 				<cfif rc.hotelSelected AND rc.Hotel.getRooms()[1].getTotalForStay() GT 0 AND UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 					<a rel="popover" href="javascript:$('##displayTaxesAndFees').modal('show');" />Taxes and Fees</a>
@@ -58,8 +61,8 @@
 				</cfif>
 				</strong>
 			</div>
-			<cfif rc.hotelSelected><div class="span2"><strong>Room Subtotal<br>for #nights# night(s)</strong></div></cfif>
-			<div class="span1"><strong>Total Charges</strong></div>
+			<cfif rc.hotelSelected><div class="span2" align="right"><strong>Room Subtotal<br>for #nights# night(s)</strong></div></cfif>
+			<div class="span1" align="right"><strong>Total Charges</strong></div>
 		</div>
 
 		<cfset tripTotal = 0>
@@ -68,13 +71,13 @@
 		<cfif rc.airSelected>
 
 			<div class="row minlineheight" id="airTotalRow" style="float:right;">
-				<div class="span1">Flight</div>
+				<div class="span1" align="right">Flight</div>
 				<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
-				<div class="span1">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
+				<div class="span1" align="right">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
 				<!--- <div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div> --->
-				<div class="span2">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
+				<div class="span2" align="right">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
 				<cfif rc.hotelSelected><div class="span2"></div></cfif>
-				<div class="span1" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+				<div class="span1" id="airTotalCol" align="right">#numberFormat(rc.Air.Total, '$____.__')#</div>
 			</div>
 			<input type="hidden" id="airTotal" value="#rc.Air.Total#">
 
@@ -84,11 +87,11 @@
 		</cfif>
 		<cfif rc.hotelSelected>
 			<div class="row minlineheight" id="hotelTotalRow" style="float:right;">
-				<div class="span1">Hotel</div>
-				<div class="span1">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)#<br><span style="font-size:8px;">avg per night</span></div>
-				<div class="span2">#hotelText#</div>
-				<div class="span2">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
-				<div class="span1" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
+				<div class="span1" align="right">Hotel</div>
+				<div class="span1" align="right">#(currency EQ 'USD' ? numberFormat(baseHotelRate, '$____.__') : numberFormat(baseHotelRate, '____.__')&' '&currency)#<br><span style="font-size:8px;">avg per night</span></div>
+				<div class="span2" align="right">#hotelText#</div>
+				<div class="span2" align="right">#(currency EQ 'USD' ? numberFormat(hotelBase, '$____.__') : numberFormat(hotelBase, '____.__')&' '&currency)#</div>
+				<div class="span1" id="hotelTotalCol" align="right">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#
 					<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE" AND rc.Hotel.getRooms()[1].getRatePlanType() NEQ 'MER'>
 						<br><span style="font-size:8px;">estimated total <br>+ applicable taxes</span>
 					</cfif>
@@ -107,11 +110,11 @@
 			<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
 
 			<div class="row minlineheight" id="carTotalRow" style="float:right;">
-				<div class="span1">Car</div>
+				<div class="span1" align="right">Car</div>
 				<div class="span1"></div>
-				<div class="span2">Quoted at pick-up</div>
+				<div class="span2" align="right">Quoted at pick-up</div>
 				<cfif rc.hotelSelected><div class="span2"></div></cfif>
-				<div class="span1" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
+				<div class="span1" id="carTotalCol" align="right">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="carTotal" value="#vehicleTotal#">
 
@@ -121,11 +124,11 @@
 		</cfif>
 
 		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow" style="float:right;">
-			<div class="span1">Booking Fee</div>
+			<div class="span1" align="right">Booking Fee</div>
 			<div class="span1"></div>
 			<div class="span2"></div>
 			<cfif rc.hotelSelected><div class="span2"></div></cfif>
-			<div class="span1" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+			<div class="span1" id="bookingFeeCol" align="right">#numberFormat(rc.fees.fee, '$____.__')#</div>
 		</div>
 		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
@@ -143,12 +146,12 @@
 				<cfelse>
 					<cfset numSpan = 4 />
 				</cfif>
-				<div class="span#numSpan# blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="span1 blue" id="totalCol">
+				<div class="span#numSpan# blue" align="right"><strong>Trip cost for current traveler</strong></div>
+				<div class="span1 blue" id="totalCol" align="right">
 					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
 				</div>
 			</div>
-			<div id="unusedtickeverbiage" class="blue right">
+			<div id="unusedtickeverbiage" class="blue right" align="right">
 				before unused ticket credit
 			</div>
 
