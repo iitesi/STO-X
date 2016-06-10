@@ -45,7 +45,7 @@
 				HotelSavingsCode
 			WHERE
 				(STO = 1)
-				AND (hotelSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fareSavingsCode#">)
+				AND (hotelSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.hotelSavingsCode#">)
 				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
 					AND (TMCID = 1)
 					AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
@@ -94,6 +94,7 @@
 				VehicleSavingsCode
 			WHERE
 				(STO = 1)
+				AND (vehicleSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vehicleSavingsCode#">)
 				<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
 					AND (TMCID = 1)
 					AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
