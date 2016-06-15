@@ -90,17 +90,21 @@
 		<cfset rc.vehicleSelected = (structKeyExists(rc.itinerary, 'Vehicle') ? true : false)>
 		<cfset rc.Vehicle = (structKeyExists(rc.itinerary, 'Vehicle') ? rc.itinerary.Vehicle : '')>
 
-		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( userID = rc.Filter.getUserID()
-																								, acctID = rc.Filter.getAcctID() )>
-		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID()
-																						, tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( userID = rc.Filter.getUserID(), acctID = rc.Filter.getAcctID() )>
+
+		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.qOutOfPolicy_Car = fw.getBeanFactory().getBean('Summary').getOutOfPolicy_Car( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.qOutOfPolicy_Hotel = fw.getBeanFactory().getBean('Summary').getOutOfPolicy_Hotel( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+
 		<cfset rc.qStates = fw.getBeanFactory().getBean('Summary').getStates()>
 		<cfset rc.qTXExceptionCodes = fw.getBeanFactory().getBean('Summary').getTXExceptionCodes()>
-		<cfset rc.fees = fw.getBeanFactory().getBean('Summary').determineFees(userID = rc.Filter.getUserID()
-																			, acctID = rc.Filter.getAcctID()
-																			, Air = rc.Air
-																			, Filter = rc.Filter)>
 
+		<cfset rc.fees = fw.getBeanFactory().getBean('Summary').determineFees(
+			userID = rc.Filter.getUserID(),
+			acctID = rc.Filter.getAcctID(),
+			Air = rc.Air,
+			Filter = rc.Filter
+		)>
 
 		<cfreturn />
 	</cffunction>
