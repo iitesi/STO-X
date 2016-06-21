@@ -528,7 +528,14 @@ $(document).ready(function(){
 					if (traveler.payment[i].userID == traveler.userId) {
 						personalCardOnFile = 1
 					}
-					$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					var todaysDate = new Date();
+					var expirationDate = new Date(traveler.payment[i].expireDate);
+					if (expirationDate < todaysDate) {
+						$( "#" + typeOfService + "FOPID" ).append('<option class="red" value="fop_' + traveler.payment[i].pciID + '">*EXPIRED!* - ' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					}
+					else {
+						$( "#" + typeOfService + "FOPID" ).append('<option value="fop_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
+					}
 				}
 			}
 		}
