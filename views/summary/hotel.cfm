@@ -57,6 +57,10 @@
 						AND rc.Policy.Policy_HotelReasonCode)>
 						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 							<option value="">Select Reason for Booking Out of Policy</option>
+							<cfloop query="rc.qOutOfPolicy_Hotel">
+								<option value="#rc.qOutOfPolicy_Hotel.HotelSavingsCode#">#rc.qOutOfPolicy_Hotel.Description#</option>
+							</cfloop>
+<!---
 							<!--- University of Washington --->
 							<cfif rc.Filter.getAcctID() EQ 500>
 								<option value="A">In policy (use also when no sleep is needed)</option>
@@ -73,6 +77,7 @@
 								<option value="L">Leisure Rental (paying for it themselves)</option>
 								<option value="B">I am booking a blacklisted hotel</option>
 							</cfif>
+--->
 						</select> <br><br>
 					</cfif>
 

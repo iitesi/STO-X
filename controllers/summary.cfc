@@ -80,8 +80,10 @@
 
 		<cfset rc.allTravelers = fw.getBeanFactory().getBean('UserService').getAuthorizedTravelers( userID = rc.Filter.getUserID()
 																								, acctID = rc.Filter.getAcctID() )>
-		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID()
-																						, tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.qOutOfPolicy = fw.getBeanFactory().getBean('Summary').getOutOfPolicy( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.qOutOfPolicy_Car = fw.getBeanFactory().getBean('Summary').getOutOfPolicy_Car( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+		<cfset rc.qOutOfPolicy_Hotel = fw.getBeanFactory().getBean('Summary').getOutOfPolicy_Hotel( acctID = rc.Filter.getAcctID(), tmcID = rc.Account.tmc.getTMCID() )>
+
 		<cfset rc.qStates = fw.getBeanFactory().getBean('Summary').getStates()>
 		<cfset rc.qTXExceptionCodes = fw.getBeanFactory().getBean('Summary').getTXExceptionCodes()>
 		<cfset rc.fees = fw.getBeanFactory().getBean('Summary').determineFees(userID = rc.Filter.getUserID()
@@ -606,10 +608,10 @@
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
-																						, acctID = rc.Filter.getAcctID()
-																						, valueID = rc.Filter.getValueID()
-																						, arrangerID = rc.Filter.getUserID()
-																						, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+					, acctID = rc.Filter.getAcctID()
+					, valueID = rc.Filter.getValueID()
+					, arrangerID = rc.Filter.getUserID()
+					, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
 				<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 				<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 				<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>

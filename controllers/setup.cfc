@@ -130,13 +130,17 @@ setApplication
 
 		<!---	Move the Policy into the rc scope so it is always available.
 					Lazy loading, adds policies to the application scope as needed.--->
+
+		<!---not using cached version STM-6824
 		<cfif StructKeyExists(application, 'Policies')
 			AND structKeyExists(arguments.rc, 'PolicyID')
 			AND StructKeyExists(application.Policies, rc.PolicyID)>
 			<cfset rc.Policy = application.Policies[rc.PolicyID]>
 		<cfelse>
 			<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
-		</cfif>
+		</cfif>--->
+
+		<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
 
 		<cfreturn />
 	</cffunction>
