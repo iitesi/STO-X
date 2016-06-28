@@ -147,29 +147,8 @@
 									<td valign="top" width="12%"><strong>OUT OF POLICY</strong></td>
 									<td valign="top" width="28%">#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#</td>
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
-										<td valign="top" width="8%"><strong>Reason</strong></td>
-										<td valign="top">
-											<!--- University of Washington --->
-											<cfif rc.Filter.getAcctID() EQ 500>
-												<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#">
-													<cfcase value="A">In policy (use also when no sleep is needed)</cfcase>
-													<cfcase value="B">Attending conference/convention</cfcase>
-													<cfcase value="C">Non-preferred hotel had lower rate</cfcase>
-													<cfcase value="D">Preferred room type, chain or location</cfcase>
-													<cfcase value="M">Recommended hotel</cfcase>
-													<cfcase value="P">Preferred property/city sold out</cfcase>
-													<cfcase value="R">Preferred room rate sold out</cfcase>
-												</cfswitch>
-											<cfelse>
-												<cfswitch expression="#rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode()#">
-													<cfcase value="P">Required property sold out</cfcase>
-													<cfcase value="R">Required room rate sold out</cfcase>
-													<cfcase value="C">Required property was higher than another property</cfcase>
-													<cfcase value="L">Leisure Rental (paying for it themselves)</cfcase>
-													<cfcase value="B">I am booking a blacklisted hotel</cfcase>
-												</cfswitch>
-											</cfif>
-										</td>
+										<td width="8%"><strong>Reason</strong></td>
+										<td>#rc.Traveler[local.travelerIndex].getBookingDetail().hotelReasonDescription#</td>
 									<cfelse>
 										<td width="8%"></td>
 										<td></td>

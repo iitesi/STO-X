@@ -109,13 +109,8 @@
 							YOU WILL RECEIVE AN EMAIL CONFIRMATION ONCE YOUR MANAGER HAS APPROVED.<br />
 						</cfif>
 						<cfif rc.airSelected AND structKeyExists(rc.Air, "LatestTicketingTime") AND isDate(rc.Air.LatestTicketingTime)>
-							<cfif rc.Filter.getAcctID() NEQ 272>
-								<cfset hourDue = 20 />
-								<cfset minuteDue = 00 />
-							<cfelse>
-								<cfset hourDue = 23 />
-								<cfset minuteDue = 59 />
-							</cfif>
+							<cfset hourDue = 23 />
+							<cfset minuteDue = 59 />
 							<cfset responseDueBy = createDateTime(year(rc.Air.LatestTicketingTime), month(rc.Air.LatestTicketingTime), day(rc.Air.LatestTicketingTime), hourDue, minuteDue, 00) />
 						<cfelse>
 							<cfset responseDueBy = dateAdd('h', 23, now()) />
@@ -134,23 +129,29 @@
 						<cfif listLen(noPreTripApprovalList) GT 1 OR showPreTripText>
 							#replace(noPreTripApprovalList, ",", ", ", "all")#:<br />
 						</cfif>
-						<cfif structKeyExists(rc.Account, "ConfirmationMessage_NotRequired") AND len(rc.Account.ConfirmationMessage_NotRequired)>
-							#paragraphFormat(rc.Account.ConfirmationMessage_NotRequired)#
-						<cfelse>
-							WE HAVE CREATED YOUR RESERVATION.<br />
-							YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
+						<!--- If at least one no pre-trip traveler. --->
+						<cfif showNoPreTripText>
+							<cfif listLen(noPreTripApprovalList) GT 1 OR showPreTripText>
+								#replace(noPreTripApprovalList, ",", ", ", "all")#:<br />
+							</cfif>
+							<cfif structKeyExists(rc.Account, "ConfirmationMessage_NotRequired") AND len(rc.Account.ConfirmationMessage_NotRequired)>
+								#paragraphFormat(rc.Account.ConfirmationMessage_NotRequired)#
+							<cfelse>
+								WE HAVE CREATED YOUR RESERVATION.<br />
+								YOU WILL RECEIVE AN EMAIL CONFIRMATION WITHIN 24 HOURS.
+							</cfif>
+							<cfif unusedTicketSelected>
+								<br /><br />
+							</cfif>
 						</cfif>
 						<cfif unusedTicketSelected>
-							<br /><br />
+							A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET. YOUR CONFIRMATION EMAIL WILL REFLECT THE NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
 						</cfif>
+						<cfif rc.airSelected>
+							FARES ARE NOT GUARANTEED UNTIL TICKETS ARE ISSUED AND ARE SUBJECT TO CHANGE WITHOUT NOTICE.<br /><br />
+						</cfif>
+						<span class="red bold">PLEASE DO NOT HIT THE BACK BUTTON. CLICK <a href="#application.sPortalURL#">HERE</a> IF YOU WISH TO MAKE ANOTHER RESERVATION.</span><br />
 					</cfif>
-					<cfif unusedTicketSelected>
-						A TRAVEL CONSULTANT WILL REVIEW THE AIRLINE'S RULES TO DETERMINE IF YOUR UNUSED TICKET CREDIT CAN BE APPLIED TO THIS TICKET. YOUR CONFIRMATION EMAIL WILL REFLECT THE NEW TICKET AMOUNT IF CREDIT CAN BE APPLIED. 
-					</cfif>
-					<cfif rc.airSelected>
-						FARES ARE NOT GUARANTEED UNTIL TICKETS ARE ISSUED AND ARE SUBJECT TO CHANGE WITHOUT NOTICE.<br /><br />
-					</cfif>
-					<span class="red bold">PLEASE DO NOT HIT THE BACK BUTTON. CLICK <a href="#application.sPortalURL#">HERE</a> IF YOU WISH TO MAKE ANOTHER RESERVATION.</span><br />
 				</cfif>
 			</div>
 		</div>

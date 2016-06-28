@@ -30,4 +30,91 @@
 
 		<cfreturn qOutOfPolicy.Description />
 	</cffunction>
+
+	<!--- getOutOfPolicy_Hotel --->
+	<cffunction name="getOutOfPolicy_Hotel" output="true" returntype="string">
+		<cfargument name="hotelSavingsCode" type="string" required="true">
+		<cfargument name="acctID" required="true" type="numeric">
+		<cfargument name="tmcID" required="false" type="numeric" default="1">
+
+		<cfquery name="local.qOutOfPolicy_Hotel" datasource="Corporate_Production">
+			SELECT
+				HotelSavingsCode,
+				Description
+			FROM
+				HotelSavingsCode
+			WHERE
+				(STO = 1)
+				AND (hotelSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.hotelSavingsCode#">)
+				AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
+			ORDER BY
+				HotelSavingsCode
+		</cfquery>
+
+		<cfif not local.qOutOfPolicy_Hotel.recordCount>
+			<cfquery name="local.qOutOfPolicy_Hotel" datasource="Corporate_Production">
+				SELECT
+					HotelSavingsCode,
+					Description
+				FROM
+					HotelSavingsCode
+				WHERE
+					(STO = 1)
+					AND (hotelSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.hotelSavingsCode#">)
+					<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
+						AND (TMCID = 1)
+						AND (acct_ID IS NULL)
+					<cfelse>
+						AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+					</cfif>
+				ORDER BY
+					HotelSavingsCode
+			</cfquery>
+		</cfif>
+
+		<cfreturn local.qOutOfPolicy_Hotel.Description>
+	</cffunction>
+
+	<!--- getOutOfPolicy_Car --->
+	<cffunction name="getOutOfPolicy_Car" output="false" returntype="string">
+		<cfargument name="vehicleSavingsCode" type="string" required="true">
+		<cfargument name="acctID" required="true" type="numeric">
+		<cfargument name="tmcID" required="false" type="numeric" default="1">
+
+		<cfquery name="local.qOutOfPolicy_Car" datasource="Corporate_Production">
+			SELECT
+				VehicleSavingsCode,
+				Description
+			FROM
+				VehicleSavingsCode
+			WHERE
+				(STO = 1)
+				AND (vehicleSavingsCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vehicleSavingsCode#">)
+				AND (acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.acctID#">)
+			ORDER BY
+				VehicleSavingsCode
+		</cfquery>
+
+		<cfif not local.qOutOfPolicy_Car.recordCount>
+			<cfquery name="local.qOutOfPolicy_Car" datasource="Corporate_Production">
+				SELECT
+					VehicleSavingsCode,
+					Description
+				FROM
+					VehicleSavingsCode
+				WHERE
+					(STO = 1)
+					<cfif arguments.tmcID eq 1 or arguments.tmcID eq 2>
+						AND (TMCID = 1)
+						AND (acct_ID IS NULL)
+					<cfelse>
+						AND (TMCID = <cfqueryparam value="#arguments.tmcID#" cfsqltype="cf_sql_integer">)
+					</cfif>
+				ORDER BY
+					VehicleSavingsCode
+			</cfquery>
+		</cfif>
+
+		<cfreturn local.qOutOfPolicy_Car.Description>
+	</cffunction>
 </cfcomponent>
