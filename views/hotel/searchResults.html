@@ -329,7 +329,7 @@
                                     <td class="room-description">
                                         {{room.description}}
                                         <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
-                                        <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
+                                        <span ng-show="room.depositRequired == 1 && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
                                     </td>
                                     <td class="room-rate-code">
                                         <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
