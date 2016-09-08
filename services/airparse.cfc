@@ -1053,8 +1053,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			AND local.nTripKey NEQ ''>
 			<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
 			<cfset local.bAllInactive = 0>
-			<cfif arguments.Policy.Policy_AirAdvRule EQ 1
-			AND DateDiff('d', local.stTrips[local.nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
+			<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND structKeyExists(local.stTrips, local.nTripKey)
+				AND DateDiff('d', local.stTrips[local.nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
 				<cfset local.bAllInactive = 1>
 				<cfif arguments.Policy.Policy_AirAdvDisp EQ 1>
 					<cfset local.stTrips = {}>
