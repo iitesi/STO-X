@@ -1273,7 +1273,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<!--- Get the greater flight time of the 2 --->
 			<cfset local.fligtTimeMinusLayovers = max(local.fligtTimeMinusLayovers1,local.fligtTimeMinusLayovers2)>
 			<cfif local.fligtTimeMinusLayovers lt arguments.Policy.Policy_AirBusinessClass_Hours>
-				<cfset local.policy.message = "Flight time is less that #local.fligtTimeMinusLayovers# hours"/>
+				<cfset local.policy.message = "Flight time is less than #local.fligtTimeMinusLayovers# hours"/>
 				<cfset local.policy.policy = 1/>
 				<cfset local.policy.active = 1/>
 			</cfif>
