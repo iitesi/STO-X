@@ -431,6 +431,12 @@ ul.tabs li a.active {
 	min-height:70px;
 	clear:both;
 }
+
+.tripSummary{
+		width: 540px;
+		margin: 10px 5px !important;
+}
+
 .fulldiv {
 	clear:both;
 	min-width:1000px;
@@ -465,6 +471,10 @@ ul.tabs li a.active {
 }
 .bold {
 	font-weight:bold;
+}
+.darkBold {
+	font-weight:bold;
+	font-family:Arial;
 }
 .large {
 	font-size:20px;
@@ -864,13 +874,16 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 .hotel-panel .dl-horizontal dt{
-    width: 70px;
-    margin-bottom: .3em;
+    font-weight:bold;
+		font-family:Arial;
+		text-align: left;
+		float:none;
+		margin:.3em 0;
 }
 
 .hotel-panel .dl-horizontal dd{
-    margin-left: 90px;
-    margin-bottom: .5em;
+  	float:none;
+    margin:0 0 .5em 0;
 }
 
 .rating{
@@ -881,16 +894,23 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     border: none;
 }
 
-tr.hotel-room{
+.hotel-room{
     width: 100%;
     border: none;
+		padding: 8px 0;
 }
 
-tr.hotel-room td{
+.hotel-room table tr td{
     vertical-align: top;
-    padding: 10px 5px 10px 5px;
+    padding: 0 5px;
 }
 
+.promoTag{
+	text-align: right;
+	padding:0 38px 3px 0 !important;
+	color:#2E76CF;
+	font-size: 10px;
+}
 .room-description{
     width: 65%;
 }

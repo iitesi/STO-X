@@ -40,6 +40,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 .form-horizontal select, textarea, input {
 	padding: 0px;
 }
+.hideElement{display:none;}
 </style>
 
 <cfoutput>
@@ -65,6 +66,11 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		</span>
 
 		<h1>Purchase Reservation</h1>
+
+		<!--- For manual cancellations --->
+		<!--- <a href="#buildURL('purchase.cancel?searchID=451998')#">
+			<span class="icon-large icon-remove-circle"></span> Cancel Reservation
+		</a> --->
 
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
 
@@ -121,7 +127,15 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+					<!--- <cfif rc.Filter.getFindIt()> --->
+						<div class="summarydiv hideElement" id="similarTripDiv" style="background-color: ##FFF;width:1000px;">
+							<div id="similarTripsDiv" class="clearfix">
+								#View('summary/similartrips')#
+							</div>
+						</div>
+					<!--- </cfif> --->
+					<input type="hidden" name="recLoc" value="">
+					<div class="summarydiv" style="background-color: ##FFF;width:1000px;">
 						<span style="float:right;">* denotes required fields</span>
 						<table width="1000">
 							<tr>
@@ -170,8 +184,15 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					#View('summary/buttons')#
 				</p>
 			</div>
+			<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+			    <div class="modal-header">
+			        <h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> Loading User</h4>
+			    </div>
+			    <div id="myModalBody" class="modal-body">
 
-			<script src="assets/js/summary/summary.js?rs=101415"></script>
+			    </div>
+			</div>
+			<script src="assets/js/summary/summary.js?rs=031516"></script>
 		</form>
 	</div>
 

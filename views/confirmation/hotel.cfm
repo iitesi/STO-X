@@ -39,7 +39,7 @@
 								</cfif>
 							</cfif>
 						</td>
-						<td colspan="3">
+						<td colspan="4">
 							<h2>HOTEL</h2>
 						</td>
 					</tr>
@@ -50,28 +50,80 @@
 								<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
 							</cfif>
 						</td>
-						<td <!--- width="200" ---> colspan="2">
+						<td width="2%">&nbsp;</td>
+						<td width="50%" colspan="2">
 							<strong>#uCase(rc.Hotel.getPropertyName())#</strong>
 						</td>
+						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+							<td>
+								<span class="blue bold">
+									<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
+										Hotel payment and cancellation policy
+									</a>
+								</span>
+							</td>
+						<cfelse>
+							<td>&nbsp;</td>
+						</cfif>
 					</tr>
 					<tr>
+						<td>&nbsp;</td>
 						<td colspan="2">
-							#uCase(rc.Hotel.getAddress())#, #uCase(rc.Hotel.getCity())#, #uCase(rc.Hotel.getState())# #uCase(rc.Hotel.getZip())# #uCase(rc.Hotel.getCountry())#
+							#uCase(rc.Hotel.getAddress())#, #uCase(rc.Hotel.getCity())#, #uCase(rc.Hotel.getState())# #uCase(rc.Hotel.getZip())# #uCase(rc.Hotel.getCountry())#<br />
+							HOTEL PHONE NUMBER: #rc.Hotel.getPhone()#
+							<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+								<br />SHORT'S TRAVEL PHONE NUMBER: (888) 625-0209
+							</cfif>
 						</td>
+						<!--- <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND rc.Hotel.getRooms()[1].getIsCancellable()> --->
+						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+							<script src="#application.assetURL#/js/bootbox.min.js"></script>
+							<script type="text/javascript">
+								$(document).ready(function() {
+									$("##confirmHotelCancellation").click(function(){
+										bootbox.confirm("<h1 style='color:red;'>Hotel Cancellation</h1>You are about to cancel this hotel reservation. This action cannot be undone. Is this what you want to do?", function(result) {
+											if (result == true) {
+												window.location = "#buildURL('purchase.cancelPPN?searchID=" + #rc.searchID# + "&invoiceID=" + #rc.Traveler[1].getBookingDetail().getInvoiceID()# + "')#";
+											}
+										});
+									});
+								});
+							</script>
+							<td><span style="padding:20px;"><a href="##" id="confirmHotelCancellation" style="color:red;"><span class="icon-large icon-remove-circle"></span> CANCEL THIS RESERVATION</a></span>
+						<cfelse>
+							<td>&nbsp;</td>
+						</cfif>
 					</tr>
 					<tr>
-						<td colspan="2">
+						<td>&nbsp;</td>
+						<td colspan="3">
 							#uCase(rc.Hotel.getRooms()[1].getDescription())#
 						</td>
 					</tr>
+					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+						<cfset formatToUse = "dddd mmm d" />
+					<cfelse>
+						<cfset formatToUse = "mmm d" />
+					</cfif>
 					<tr>
-						<td width="18%">
-							<strong>CHECK-IN: #uCase(dateFormat(rc.Filter.getCheckInDate(), 'mmm d'))#</strong>
+						<td>&nbsp;</td>
+						<td width="25%">
+							<strong>
+								CHECK-IN: #uCase(dateFormat(rc.Filter.getCheckInDate(), formatToUse))#
+								<cfif len(rc.Hotel.getRooms()[1].getCheckInTime())>
+									&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckInTime(), "h:mm tt")#&nbsp;
+								</cfif>
+							</strong>
 						</td>
-						<td>
-							<strong>CHECK-OUT: #uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
-							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
-							(#nights# NIGHT<cfif nights GT 1>S</cfif>)</strong>
+						<td colspan="2">
+							<strong>
+								CHECK-OUT: #uCase(DateFormat(rc.Filter.getCheckOutDate(), formatToUse))#
+								<cfif len(rc.Hotel.getRooms()[1].getCheckOutTime())>
+									&nbsp;#timeFormat(rc.Hotel.getRooms()[1].getCheckOutTime(), "h:mm tt")#&nbsp;
+								</cfif>
+								<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
+								(#nights# NIGHT<cfif nights GT 1>S</cfif>)
+							</strong>
 						</td>
 					</tr>
 				</table>
@@ -92,8 +144,8 @@
 								</cfif>
 							</td>
 							<cfif NOT rc.Hotel.getRooms()[1].getIsInPolicy()>
-									<td width="12%"><strong>OUT OF POLICY</strong></td>
-									<td width="28%">#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#</td>
+									<td valign="top" width="12%"><strong>OUT OF POLICY</strong></td>
+									<td valign="top" width="28%">#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#</td>
 									<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelReasonCode())>
 										<td width="8%"><strong>Reason</strong></td>
 										<td>#rc.Traveler[local.travelerIndex].getBookingDetail().hotelReasonDescription#</td>
@@ -105,11 +157,17 @@
 								<tr>
 									<td colspan="2"></td>						
 							</cfif>
-							<td width="12%"><span class="blue"><strong>Hotel Confirmation</strong></span></td>
-							<td width="28%"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getHotelConfirmation()#</strong></span></td>
+							<td valign="top" width="12%"><span class="blue"><strong>Hotel Confirmation</strong></span></td>
+							<td valign="top" width="28%"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getHotelConfirmation()#</strong></span></td>
 							<cfif len(rc.Traveler[travelerIndex].getBookingDetail().getHotelFF())>
-								<td width="8%"><strong>Loyalty ##</strong></td>
-								<td>#rc.Traveler[travelerIndex].getBookingDetail().getHotelFF()#</td>
+								<td valign="top" width="8%"><strong>Loyalty ##</strong></td>
+								<td valign="top">
+									<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
+										#rc.Traveler[travelerIndex].getBookingDetail().getHotelFF()#
+									<cfelse>
+										Frequent guest numbers cannot be applied to web rate reservations.
+									</cfif>
+								</td>
 							<cfelse>
 								<td width="8%"></td>
 								<td></td>
@@ -128,4 +186,17 @@
 			</tr>
 		</cfloop>
 	</table>
+	<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+		<div class="searchContainer">
+			<div class="modal-header popover-content">
+				<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+				<h3 id="addModalHeader">Hotel Payment and Cancellation Policy</h3>
+			</div>
+			<div class="modal-body popover-content">
+				<div id="addModalBody">
+					#view("summary/hotelcancellationpolicy")#
+				</div>
+			</div>
+		</div>
+	</div>
 </cfoutput>

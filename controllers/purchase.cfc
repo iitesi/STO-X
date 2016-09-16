@@ -7,10 +7,26 @@
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
-			<cfif arrayIsEmpty(errorMessage)
-				AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
+			<cfif arrayIsEmpty(errorMessage) AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
+				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
+				<cfset local.version = -1>
+				<!--- If a similar trip has been selected --->
+				<cfif structKeyExists(rc, "recLoc") AND len(rc.recLoc)>
+					<cfset Traveler.getBookingDetail().setSimilarTripSelected( true )>
+					<cfset local.providerLocatorCode = rc.recLoc />
+					<!--- <cfset local.providerLocatorCode = "J8G1KA" /> --->
+					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
+					<cfif NOT len(local.universalLocatorCode)>
+						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
+																													, locatorCode = local.providerLocatorCode ) />						
+					</cfif>
+					<cfif len(local.universalLocatorCode)>
+						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
+																										 , urLocatorCode = local.universalLocatorCode ) />
+					</cfif>
+				</cfif>
 				<!--- Based on the "The parameter userID to function loadBasicUser is required but was not passed in." error that was being generated on occasion, checking first to see if the userID has a value. --->
 				<cfif NOT len(Traveler.getUserID()) OR NOT isNumeric(Traveler.getUserID()) OR (Traveler.getUserID() EQ 0 AND Traveler.getBookingDetail().getSaveProfile())>
 					<cfset Traveler.setUserID(rc.filter.getUserID()) />
@@ -26,10 +42,6 @@
 				<cfset local.vehicleSelected = (structKeyExists(itinerary, 'Vehicle') ? true : false)>
 				<cfset local.Vehicle = (structKeyExists(itinerary, 'Vehicle') ? itinerary.Vehicle : '')>
 				<cfset local.specialCarReservation = false />
-				<!--- <cfdump var="#local.itinerary#" label="local.itinerary">
-				<cfabort> --->
-				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
-				<cfset local.version = -1>
 				<cfif Traveler.getHomeAirport() EQ ''>
 					<cfset Traveler.setHomeAirport('STO')>
 				</cfif>
@@ -74,9 +86,7 @@
 				<cfset Traveler.getBookingDetail().setApprovalNeededAir( approval.approvalNeededAir )>
 				<cfset Traveler.getBookingDetail().setApprovalNeededCar( approval.approvalNeededCar )>
 				<cfset Traveler.getBookingDetail().setApprovalNeededHotel( approval.approvalNeededHotel )>
-				<!--- <cfdump var="#local.approval#" label="local.approval">
-				<cfdump var="#traveler.getbookingDetail()#" label="traveler.getbookingDetail">
-				<cfabort> --->
+
 				<!--- Custom code for State of LA and LSU to book WN in another PCC/target branch --->
 				<cfif airSelected
 					AND (rc.Filter.getAcctID() EQ 254
@@ -801,6 +811,7 @@
 									AND Traveler.getBookingDetail().getHotelFOPID() EQ 'fop_-1'))>
 								<cfset Traveler.getBookingDetail().setHotelCCNumber(Payment.getAcctNum()) />
 								<cfset Traveler.getBookingDetail().setHotelCCType(Payment.getFopCode()) />
+								<cfset Traveler.getBookingDetail().setHotelCCName(Payment.getFopDescription()) />
 							</cfif>
 						</cfloop>
 					</cfif>
@@ -826,29 +837,31 @@
 						<cfset Hotel = fw.getBeanFactory().getBean('PPNHotelAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = hotelResponse )>
 
-						<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
-																										, bookingPCC = rc.Account.PCC_Booking
-																										, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)
-																										, Traveler = Traveler
-																										, Profile = Profile
-																										, Account = rc.Account
-																										, Hotel = Hotel
-																										, Filter = rc.Filter
-																										, statmentInformation = statmentInformation
-																										, udids = udids
-																										, providerLocatorCode = providerLocatorCode
-																										, universalLocatorCode = universalLocatorCode
-																										, version = version
-																										, profileFound = profileFound
-																										, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
-																										, hotelFOPID = local.hotelFOPID
-																										, datetimestamp = local.datetimestamp
-																										, token = local.token
-																									)>
+						<cfif NOT Hotel.getError()>
+							<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
+																											, bookingPCC = rc.Account.PCC_Booking
+																											, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)
+																											, Traveler = Traveler
+																											, Profile = Profile
+																											, Account = rc.Account
+																											, Hotel = Hotel
+																											, Filter = rc.Filter
+																											, statmentInformation = statmentInformation
+																											, udids = udids
+																											, providerLocatorCode = providerLocatorCode
+																											, universalLocatorCode = universalLocatorCode
+																											, version = version
+																											, profileFound = profileFound
+																											, developer = (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
+																											, hotelFOPID = local.hotelFOPID
+																											, datetimestamp = local.datetimestamp
+																											, token = local.token
+																										)>
 
-						<!--- Parse passive create results --->
-						<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
-																									, response = passiveResponse )>
+							<!--- Parse passive create results --->
+							<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
+																										, response = passiveResponse )>
+						</cfif>
 					<!--- If a Travelport hotel --->
 					<cfelse>
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
@@ -905,21 +918,20 @@
 					</cfif>
 
 					<!--- Parse error --->
-					<cfif Hotel.getUniversalLocatorCode() EQ ''
-						OR Hotel.getError()>
+					<cfif Hotel.getUniversalLocatorCode() EQ '' OR Hotel.getError()>
 						<cfset errorMessage = Hotel.getMessages()>
 						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
 					<cfelse>
 						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
+						<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
+						<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					</cfif>
 
 					<!--- Update session with new Hotel record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Hotel = Hotel>
-					<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
-					<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					<!--- Update universal version --->
-					<cfif providerLocatorCode NEQ ''>
+					<cfif Hotel.getProviderLocatorCode() NEQ ''>
 						<cfset version++>
 					</cfif>
 
@@ -1088,19 +1100,90 @@
 
 	</cffunction>
 
+	<!--- For manual cancellations --->
+	<!--- <cffunction name="cancel" output="false">
+		<cfargument name="rc">
+
+		<cfset local.cancelResponse.status = false>
+		<cfset cancelResponse.message = ''>
+
+		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
+																						, universalRecordLocatorCode = "LRNBUQ"
+																						, Filter = rc.Filter
+																						, Version = "0" )>
+		<cfif cancelResponse.status>
+			<cfset cancelResponse.message = listPrepend(cancelResponse.message, 'Reservation has successfully been cancelled.')>
+
+
+			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = "451998"
+																		, urRecloc = "LRNBUQ" )>
+
+			<!--- <cfset Traveler.getBookingDetail().setUniversalLocatorCode( '' )> --->
+
+		</cfif>
+		<cfif cancelResponse.message NEQ ''>
+			<cfset rc.message.addError(cancelResponse.message)>
+		</cfif>
+
+		<cfset variables.fw.redirect('confirmation?searchID=451998&cancelled=#cancelResponse.status#')>
+
+	</cffunction> --->
+
+	<!--- <cffunction name="cancelPPN" output="false">
+		<cfargument name="rc" />
+
+		<cfset local.cancelResponse.status = false />
+		<cfset local.cancelResponse.message = "" />
+		<cfset local.assistanceNeeded = false />
+
+		<!--- Retrieve the universal record version --->
+		<cfset local.urVersion = fw.getBeanFactory().getBean("UniversalAdapter").retrieveUR( targetBranch = "P1601405"
+																							, urLocatorCode = "ASFF83"
+																							, searchID = "453111"
+																							, acctID = "1"
+																							, userID = "443" )>
+
+		<cfif isNumeric(local.urVersion)>
+			<!--- Cancel the passive segment --->
+			<cfset local.cancelPassiveResponse = fw.getBeanFactory().getBean("PassiveAdapter").cancelPassive( targetBranch = "P1601405"
+																											, urLocatorCode = "ASFF83"
+																											, providerLocatorCode = "KCR63Q"
+																											, passiveLocatorCode = "JU20DE"
+																											, passiveSegmentRef = "jHXhw2HmTASCmcgXZqLZ6A=="
+																											, version = local.urVersion
+																											, searchID = "453111"
+																											, acctID = "1"
+																											, userID = "443" )>
+		</cfif>
+
+		<cfset variables.fw.redirect('confirmation?searchID=453729&hotelCancelled=true')>
+
+	</cffunction> --->
+
 	<cffunction name="cancelPPN" output="false">
 		<cfargument name="rc" />
 
 		<cfset local.cancelResponse.status = false />
 		<cfset local.cancelResponse.message = "" />
+		<cfset local.assistanceNeeded = false />
 
-		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( invoiceID = arguments.rc.invoiceID ) />
+		<cfset local.invoice = fw.getBeanFactory().getBean("Purchase").retrieveInvoice( searchID = arguments.rc.searchID ) />
 
 		<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
 			<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
 			<cfset local.Filter = deserializeJSON(invoice.filter) />
 			<cfset local.Traveler = deserializeJSON(invoice.traveler) />
 			<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
+
+			<!--- Four possible cancellation scenarios after an invoice is retrieved
+			1. getCancel successful, PassiveCancelReq successful, UniversalRecordModifyReq successful
+				User gets success message, no additional queueing needed
+			2. getCancel successful, PassiveCancelReq successful, UniversalRecordModifyReq unsuccessful
+				User gets success message, no additional queueing needed
+			3. getCancel successful, PassiveCancelReq unsuccessful, UniversalRecordModifyReq unsuccessful
+				User gets success message, queue to 34*CQC
+			4. getCancel unsuccessful, PassiveCancelReq unsuccessful, UniversalRecordModifyReq unsuccessful
+				User gets failed message --->
 
 			<!--- Cancel the Priceline reservation --->
 			<cfset local.cancelResponse = fw.getBeanFactory().getBean("PPNHotelAdapter").cancel( Hotel = Hotel
@@ -1125,56 +1208,106 @@
 																													, acctID = Filter.acctID
 																													, userID = invoice.userID )>
 
-					<!--- If an error from the above:
-					The hotel was cancelled with Priceline, but the PNR could not be updated. Please manually cancel the PNR, issue the fee, and regenerate the VI. --->
+					<cfif cancelPassiveResponse.status>
+						<cfset local.urVersion++ />
 
+						<!--- Modify the universal record --->
+						<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																												, urLocatorCode = invoice.urRecloc
+																												, providerLocatorCode = invoice.recloc
+																												, providerReservationInfoRef = invoice.providerReservationInfoRef
+																												, categoryType = "A"
+																												, ppnTripID = Hotel.ppnTripID
+																												, username = Filter.username
+																												, version = local.urVersion
+																												, searchID = invoice.searchID
+																												, acctID = Filter.acctID
+																												, userID = invoice.userID )>
+
+						<!--- Per FH-22: The invoice cancellation fee functionality is no longer needed right now --->
+						<!--- Get agent touch fee --->
+						<!--- <cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
+
+						<!--- Open terminal session --->
+						<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
+																											, searchID = invoice.searchID )>
+
+						<cfif hostToken EQ ''>
+							<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+							<cfset errorType = 'TerminalEntry.openSession'>
+						<cfelse>
+							<!--- Invoice service fee --->
+							<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
+																															, hostToken = hostToken
+																															, searchID = invoice.searchID )>
+
+							<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
+																							, hostToken = hostToken
+																							, searchID = invoice.searchID )>
+						</cfif> --->
+
+						<!--- <cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") /> --->
+
+						<!--- <cfif NOT modifyURResponse.status>
+							<cfset assistanceNeeded = true />
+						</cfif> --->
+					<cfelse>
+						<cfset assistanceNeeded = true />
+					</cfif>
+				<cfelse>
+					<cfset assistanceNeeded = true />
+				</cfif>
+
+				<cfif assistanceNeeded>
 					<!--- Modify the universal record --->
 					<cfset local.modifyURResponse = fw.getBeanFactory().getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
 																											, urLocatorCode = invoice.urRecloc
 																											, providerLocatorCode = invoice.recloc
 																											, providerReservationInfoRef = invoice.providerReservationInfoRef
+																											, categoryType = "Q"
 																											, ppnTripID = Hotel.ppnTripID
+																											, username = Filter.username
 																											, version = local.urVersion
 																											, searchID = invoice.searchID
 																											, acctID = Filter.acctID
 																											, userID = invoice.userID )>
-
-					<!--- Get agent touch fee --->
-					<cfset local.agentTouchFee = fw.getBeanFactory().getBean("AccountService").getAgentTouchFee( acctID = Filter.acctID )>
-
-					<!--- Open terminal session --->
-					<cfset local.hostToken = fw.getBeanFactory().getBean("TerminalEntry").openSession( targetBranch = invoice.targetBranch
-																										, searchID = invoice.searchID )>
-
-					<cfif hostToken EQ ''>
-						<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
-						<cfset errorType = 'TerminalEntry.openSession'>
-					<cfelse>
-						<!--- Invoice service fee --->
-						<cfset local.serviceFeeResponse = fw.getBeanFactory().getBean("TerminalEntry").invoiceServiceFee( targetBranch = invoice.targetBranch
-																														, hostToken = hostToken
-																														, searchID = invoice.searchID )>
-
-						<cfset fw.getBeanFactory().getBean("TerminalEntry").closeSession( targetBranch = invoice.targetBranch
-																						, hostToken = hostToken
-																						, searchID = invoice.searchID )>
+					<!--- Queue to 34*CQC --->
+					<cfif modifyURResponse.status>
+						<cfset local.account = fw.getBeanFactory().getBean("AccountService").load( accountID = Filter.acctID
+																								, returnType = "query" )>
+						<cfset local.pccBooking = account.PCC_Booking />
+						<cfset fw.getBeanFactory().getBean("UniversalAdapter").queuePlace( targetBranch = invoice.targetBranch
+																							, Filter = Filter
+																							, pccBooking = local.pccBooking
+																							, providerLocatorCode = invoice.recloc
+																							, queue = "34"
+																							, category = "QC" )>
 					</cfif>
-
-					<cfset cancelResponse.message = listPrepend(cancelResponse.message, "Reservation has successfully been cancelled.") />
-
-					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
-																					, urRecloc = invoice.urRecloc ) />
 				</cfif>
-			</cfif>
 
-			<cfif cancelResponse.message NEQ "">
-				<cfset rc.message.addError(cancelResponse.message) />
+				<!--- The reservation has been successfully cancelled with Priceline; cancel the invoice --->
+				<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+					<cfset fw.getBeanFactory().getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+																				, urRecloc = invoice.urRecloc ) />
+				</cfif>
+
+				<cfset structDelete(session.searches[invoice.searchID].stItinerary, "Hotel") />
+				<cfset session.searches[invoice.searchID].Travelers[1].getBookingDetail().setBookingFee(0) />
+
+				<!--- Send the traveler a cancellation email --->
+				<cfset fw.getBeanFactory().getBean("Email").cancelEmail( email = Traveler.email
+																		, ppnTripID = Hotel.ppnTripID
+																		, propertyName = Hotel.propertyName )>
 			</cfif>
 		<cfelse>
 			<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
 		</cfif>
 
-		<!--- <cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&cancelled=#cancelResponse.status#')> --->
+		<cfif cancelResponse.message NEQ "">
+			<cfset rc.message.addError(cancelResponse.message) />
+		</cfif>
+
+		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&hotelCancelled=#cancelResponse.status#')>
 
 	</cffunction>
 

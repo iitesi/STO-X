@@ -181,7 +181,7 @@
                                     <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
                                     <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
                                     <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
+                                    <button ng-click="loadHotelPhotos(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
                                 </div>
 
                             </div>
@@ -221,28 +221,35 @@
                                 <div ng-show="item.hotel.details.loaded">
 
                                    <dl class="dl-horizontal">
+
                                         <dt>Address:</dt>
                                         <dd>{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}} {{item.hotel.Zip}}</dd>
 
-                                        <dt ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Times:</dt>
-                                        <dd ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
+                                        <dt ng-show="item.hotel.CheckIn.length > 0">Times:</dt>
+                                        <dd ng-show="item.hotel.CheckIn.length > 0">Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
 
-                                        <dt ng-show="item.hotel.details.services.length">Service:</dt>
-                                        <dd ng-show="item.hotel.details.services.length">{{item.hotel.details.services}}</dd>
+                                        <dt ng-show="item.hotel.details.services.length && !item.hotel.details.pricelineMatched">Service:</dt>
+                                        <dd ng-show="item.hotel.details.services.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.services}}</dd>
 
-                                        <dt ng-show="item.hotel.details.facility.length">Facility:</dt>
-                                        <dd ng-show="item.hotel.details.facility.length">{{item.hotel.details.facility}}</dd>
+                                        <dt ng-show="item.hotel.details.facility.length && !item.hotel.details.pricelineMatched">Facility:</dt>
+                                        <dd ng-show="item.hotel.details.facility.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.facility}}</dd>
 
-                                        <dt ng-show="item.hotel.details.rooms.length">Rooms:</dt>
-                                        <dd ng-show="item.hotel.details.rooms.length">{{item.hotel.details.rooms}}</dd>
+                                        <dt ng-show="item.hotel.details.rooms.length && !item.hotel.details.pricelineMatched">Rooms:</dt>
+                                        <dd ng-show="item.hotel.details.rooms.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.rooms}}</dd>
 
-                                        <dt ng-show="item.hotel.details.recreation.length">Recreation:</dt>
-                                        <dd ng-show="item.hotel.details.recreation.length">{{item.hotel.details.recreation}}</dd>
+                                        <dt ng-show="item.hotel.details.recreation.length && !item.hotel.details.pricelineMatched">Recreation:</dt>
+                                        <dd ng-show="item.hotel.details.recreation.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.recreation}}</dd>
+
+                                        <dt ng-show="item.hotel.details.description.length && item.hotel.details.pricelineMatched">Hotel Description:</dt>
+                                        <dd ng-show="item.hotel.details.description.length && item.hotel.details.pricelineMatched">{{item.hotel.details.description}}</dd>
+
+                                        <dt ng-show="item.hotel.details.roomCount.length && item.hotel.details.pricelineMatched">Room Count:</dt>
+                                        <dd ng-show="item.hotel.details.roomCount.length && item.hotel.details.pricelineMatched">{{item.hotel.details.roomCount}}</dd>
                                     </dl>
 
                                 </div>
 
-                                <div ng-show="item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length" >
+                                <div ng-show="(item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length) && item.hotel.details.pricelineMatched == 'false'" >
                                     <p>This information is not available for this property.</p>
                                 </div>
                             </div>
@@ -255,6 +262,9 @@
                                 <div ng-show="item.hotel.details.loaded" style="width: 100%">
 
                                     <dl class="dl-horizontal">
+
+                                        <dt ng-show="item.hotel.details.neighborhood.length && item.hotel.details.pricelineMatched">Neighborhood:</dt>
+                                        <dd ng-show="item.hotel.details.neighborhood.length && item.hotel.details.pricelineMatched">{{item.hotel.details.neighborhood}}</dd>
 
                                         <dt ng-show="item.hotel.details.directions.length">Directions:</dt>
                                         <dd ng-show="item.hotel.details.directions.length">{{item.hotel.details.directions}}</dd>
@@ -285,10 +295,10 @@
                             </div>
 
                             <div class="hotel-panel" ng-show="showPhotos">
-                                <div ng-show="!item.hotel.details.loaded"  style="text-align: center">
+                                <div ng-show="!item.hotel.imagesLoaded"  style="text-align: center">
                                     <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                                 </div>
-                                <div ng-show="item.hotel.details.loaded">
+                                <div ng-show="item.hotel.imagesLoaded">
 
                                     <div ng-show="!item.hotel.images.length" >
                                         There are no photos available for this property.
@@ -310,34 +320,37 @@
                             </div>
 
                             <div class="hotel-panel" ng-show="showRooms">
-
+                              <div ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
                                 <table width="100%">
-                                    <tbody>
-                                        <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
-                                            <td class="room-description">
-                                                {{room.description}}
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
-                                            </td>
-                                            <td class="room-rate-code">
-                                                <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
-                                                <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
-                                                <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
-                                                <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
-                                                &nbsp;
-                                            </td>
-                                            <td class="room-rate">
-                                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
-                                                <button style="width: 75%"
-                                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
-                                                    ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                                    <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
-                                                </button>
-                                                <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                  <tr ng-show="room.promo.length">
+                                    <td colspan="3" class="promoTag">{{room.promo}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="room-description">
+                                        {{room.description}}
+                                        <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
+                                        <span ng-show="room.depositRequired == 1 && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
+                                    </td>
+                                    <td class="room-rate-code">
+                                        <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
+                                        <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
+                                        <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
+                                        <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
+                                        &nbsp;
+                                    </td>
+                                    <td class="room-rate">
+                                        <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
+                                        <button style="width: 75%"
+                                            ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
+                                            ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
+                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
+                                        </button>
+                                        <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
+                                    </td>
+                                  </tr>
+                                  <tr><td colspan="3"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></td></tr>
                                 </table>
+                              </div>
                             </div>
 
                         </div>
@@ -383,6 +396,20 @@
         <p>
             Tip: Double click on the map to update your search with hotels available in other areas of the city.
         </p>
+    </div>
+</div>
+
+<!-- Modal for cancellation policy -->
+<div id="cancellationWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myCancellationWindow" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+      <h4 id="cancellationPolicyHeader">Cancellation Policy</h4>
+    </div>
+    <div id="cancellationPolicyBody" class="modal-body form">
+      <div id="cancellationPolicyLoading" style="text-align: center">
+        <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+      </div>
+      <div id="cancellationPolicyCopy"></div>
     </div>
 </div>
 

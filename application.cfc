@@ -218,11 +218,28 @@
 			</cfif>
 		</cfif>
 
+		<!--- If trying to cancel a Priceline hotel reservation from the portal --->
+		<cfif structKeyExists(arguments.args, "invoiceID") AND (NOT structKeyExists(session, "isAuthorized") OR NOT session.isAuthorized)>
+			<cfset session.isAuthorized = false />
+
+			<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
+				<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+				<cfif NOT structKeyExists(session, "TMC") OR NOT isObject(session.TMC)>
+					<cfset application.Accounts[request.context.acctId] = application.fw.factory.getBean( "setup" ).setAccount( AcctID=request.context.acctId ) />
+					<cfset application.Accounts[request.context.acctId].TMC = application.fw.factory.getBean( "AccountService" ).getAccountTMC( application.Accounts[request.context.acctId].AccountBrand ) />
+					<cfset session.TMC = application.Accounts[request.context.acctId].TMC />
+				</cfif>
+			</cfif>
+		</cfif>
+
 		<!--- then we can check if our session.isAuthorized is already set
 				  this should have been set in the original request from search
 				  again, if this isn't present we'll abort with a 403 --->
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ true>
 			<cfinvoke component="#arguments.cfcname#" method="#arguments.method#" argumentcollection="#arguments.args#" returnvariable="local.result">
+			<cfif IsNull(local.result)>
+				<cfset local.result = ArrayNew(1)>
+			</cfif>
 			<cfif NOT isSimpleValue( local.result )>
 				<cfset local.result = serializeJSON( local.result ) />
 			</cfif>
