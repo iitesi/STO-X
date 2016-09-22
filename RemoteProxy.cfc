@@ -187,22 +187,24 @@
   </cffunction>
 
   <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
-    <cfargument name="searchId" type="numeric" required="true"/>
-    <cfargument name="propertyId" type="string" required="true" />
-    <cfargument name="callback" type="string" required="false" />
-    <cfargument name="requery" type="boolean" required="false" default="false" />
-		<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
 
-		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
-		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfcontent type="application/javascript" />
-			<cfsavecontent variable="local.callbackFunction">
-				<cfoutput>#arguments.callback#(#serializeJSON( Rooms )#)</cfoutput>
-			</cfsavecontent>
-			<cfreturn callbackFunction />
-		<cfelse>
-			<cfreturn serializeJSON( Rooms ) />
-		</cfif>
+	<cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="true"/>
+    <cfargument name="callback" type="string" required="false"/>
+    <cfargument name="requery" type="boolean" required="false" default="false"/>
+	<cfargument name="checkPriceline" type="boolean" required="false" default="false"/>
+
+	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
+
+	<cfif structKeyExists(arguments,"callback") AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript"/>
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON(rooms)#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction/>
+	<cfelse>
+		<cfreturn serializeJSON(rooms)/>
+	</cfif>
 
   </cffunction>
 
