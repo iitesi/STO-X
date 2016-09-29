@@ -870,7 +870,7 @@
 			<cfset local.approvalNeeded = true>
 		</cfif>
 
-		<cfreturn local.approvalNeeded>	 	
+		<cfreturn local.approvalNeeded>
 	</cffunction>
 
 	<cffunction name="determineCarApprovalReasons" output="false">
@@ -909,14 +909,15 @@
 
 		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
 
-		<cfif cgi.http_host EQ "r.local">
-			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "Beta">
+		<cfif listFind("r.local",cgi.server_name)>
 			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "RailoQA">
+			<cfset local.returnURL = "http://#cgi.server_name#" />
+		<cfelseif listFind("Beta,RailoQA",cgi.server_name)>
 			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
+			<cfset local.returnURL = "https://#cgi.server_name#" />
 		<cfelse>
 			<cfset local.secureURL = "https://europa.shortstravel.com" />
+			<cfset local.returnURL = "https://#cgi.server_name#" />
 		</cfif>
 
 		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->

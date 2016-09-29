@@ -20,7 +20,7 @@
 					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
 					<cfif NOT len(local.universalLocatorCode)>
 						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
-																													, locatorCode = local.providerLocatorCode ) />						
+																													, locatorCode = local.providerLocatorCode ) />
 					</cfif>
 					<cfif len(local.universalLocatorCode)>
 						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
@@ -824,6 +824,7 @@
 
 					<!--- If a Priceline hotel --->
 					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
+
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('PPNHotelAdapter').book( Traveler = Traveler
 																										, Profile = Profile
 																										, Hotel = Hotel
@@ -857,7 +858,6 @@
 																											, datetimestamp = local.datetimestamp
 																											, token = local.token
 																										)>
-
 							<!--- Parse passive create results --->
 							<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
 																										, response = passiveResponse )>

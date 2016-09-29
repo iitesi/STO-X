@@ -31,6 +31,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="ppnURL"><bean factory-bean="EnvironmentService" factory-method="getPPNURL" /></constructor-arg>
 		<constructor-arg name="ppnRefID"><bean factory-bean="EnvironmentService" factory-method="getPPNRefID" /></constructor-arg>
 		<constructor-arg name="ppnAPIKey"><bean factory-bean="EnvironmentService" factory-method="getPPNAPIKey" /></constructor-arg>
+		<constructor-arg name="ppnTestMode"><bean factory-bean="EnvironmentService" factory-method="getPPNTestMode" /></constructor-arg>
 	</bean>
 
 	<bean id="PNRService" class="com.shortstravel.pnrs.PNRService">
