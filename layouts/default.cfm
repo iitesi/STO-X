@@ -21,16 +21,16 @@
 		<meta name="description" content="Short's Travel Online">
 		<meta name="author" content="Short's Travel Management">
 		<cfoutput>
-			<link href="#application.assetURL#/css/bootstrap.min.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/skeleton.css" rel="stylesheet" media="screen">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 			<link href="//code.jquery.com/ui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/font-awesome.min.css" rel="stylesheet" media="screen">
+			
 			<!--[if IE 7]>
-				<link rel="stylesheet" href="#application.assetURL#/css/font-awesome-ie7.min.css" media="screen">
+				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
-			<link href="#application.assetURL#/css/layout.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/style.css" rel="stylesheet" media="screen">
-			<link href="#application.assetURL#/css/print.css" rel="stylesheet" media="print">
+			<link href="assets/css/layout.css" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css" rel="stylesheet" media="screen">
+			<link href="assets/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 			<!--- override header colors for TMC so their light logos will display properly --->
@@ -54,13 +54,15 @@
 			<!--[if lt IE 9]>
 				<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-			<script src="#application.assetURL#/js/jquery.plugins.min.js"></script>
-			<script src="#application.assetURL#/js/bootstrap.min.js"></script>
+			<script src="https://use.fontawesome.com/4ba3a7fb90.js"></script>
+			<script src="assets/js/jquery.plugins.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-			<script src="#application.assetURL#/js/booking.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
+			<script src="assets/js/booking.js"></script>
 		</cfoutput>
 	</head>
 	<body>
@@ -69,8 +71,15 @@
 
 
 				<div id="header-top">
-					<div class="container">
-						<div class="sixteen columns">
+					<nav class="navbar navbar-inverse">
+  							<!-- Brand and toggle get grouped for better mobile display -->
+ 							<div class="navbar-header">
+ 							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+ 								<span class="sr-only">Toggle navigation</span>
+ 								<span class="icon-bar"></span>
+ 								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+ 							  </button>
 							<cfoutput>
 
 
@@ -97,9 +106,9 @@
 							<cfelse>
 
 								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
-									<a href="#rc.filter.getSiteUrl()#" title="Home">
+									<a class="navbar-brand" id="mainlogo"  href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
-									<a href="#application.sPortalURL#" title="Home">
+									<a class="navbar-brand" id="mainlogo"  href="#application.sPortalURL#" title="Home">
 								</cfif>
 									<cfif structKeyExists(rc, "account")
 										AND isStruct(rc.account)
@@ -112,13 +121,13 @@
 										<img src="assets/img/clients/STO-Logo.png" alt="Short's Travel Management" />
 									</cfif>
 								</a>
-
+							</div> <!-- // navbar-header -->
 							</cfif>
 
 							#View('main/navigation')#
 
 							</cfoutput>
-						</div> <!--- // sixteen columns --->
+						
 							<cfif structKeyExists(rc, 'filter')
 								AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
 								<div id="onbehalfof">
@@ -130,7 +139,8 @@
 									</cfif>
 								</div>
 							</cfif>
-					</div> <!--- // container --->
+					  </div><!-- /.container-fluid -->
+ 					</nav>
 				</div> <!--- // header-top --->
 
 				<div id="header-bottom">
@@ -150,7 +160,7 @@
 							<!--- button to open search in modal window --->
 							<div class="one columns newsearch">
 								<cfoutput>
-								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="icon-search"></i></a>
+								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="fa fa-search"></i></a>
 								</cfoutput>
 							</div>
 							<cfoutput>#View('modal/search')#</cfoutput>
@@ -210,8 +220,8 @@
 
  		<div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-		<h3><i class="icon-plane"></i> FLIGHT DETAILS</h3>
+		<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+		<h3><i class="fa fa-plane"></i> FLIGHT DETAILS</h3>
 	</div>
 	<div class="modal-body">
 	</div>

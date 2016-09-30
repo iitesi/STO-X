@@ -8,7 +8,7 @@
 		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls" id="airFOPIDDiv">
-				<i id="airSpinner" class="blue icon icon-spin icon-spinner"></i>
+				<i id="airSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="airFOPID" id="airFOPID">
 				</select>
 			</div>
@@ -105,20 +105,20 @@
 	<cfif rc.hotelSelected>
 		<div id="hotelPayment">
 
-		<div class="control-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
-			<label class="control-label" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
-			<div class="controls" id="hotelFOPIDDiv">
-				<i id="hotelSpinner" class="blue icon icon-spin icon-spinner"></i>
-				<select name="hotelFOPID" id="hotelFOPID">
+		<div class="form-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
+			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
+			<div class="col-sm-8 col-xs-12" id="hotelFOPIDDiv">
+				<i id="hotelSpinner" class="blue fa fa-spin fa-spinner"></i>
+				<select class="form-control" name="hotelFOPID" id="hotelFOPID">
 				</select>
 			</div>
 		</div>
 
-		<div id="hotelNewCard" class="control-group">
-			<div id="addHotelCC">
+		<div id="hotelNewCard" class="form-group">
+			<div id="addHotelCC" class="col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="addHotelCC"><input type="button" name="displayPaymentModal" class="btn btn-primary displayPaymentModal" value="ENTER NEW CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel"></label>
 			</div>
-			<div id="removeHotelCC" class="hide">
+			<div id="removeHotelCC" class="hide col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="removeHotelCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="hotel" data-id="#rc.Traveler.getBookingDetail().getHotelFOPID()#"></label>
 			</div>
 			<input type="hidden" name="newHotelCC" id="newHotelCC" />
@@ -191,17 +191,19 @@
 					Hotel payment and cancellation policy
 				</a>
 			</span>
-			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
-				<div class="searchContainer">
-					<div class="modal-header popover-content">
-						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-						<h3 id="addModalHeader">
-							You have selected a web rate. Please read and accept the terms of this rate.
-						</h3>
-					</div>
-					<div class="modal-body popover-content">
-						<div id="addModalBody">
-							#view( 'summary/hotelcancellationpolicy' )#
+			<div id="displayHotelCancellationPolicy" class="modal searchForm fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header popover-content">
+							<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+							<h3 id="addModalHeader">
+								You have selected a web rate. Please read and accept the terms of this rate.
+							</h3>
+						</div>
+						<div class="modal-body popover-content">
+							<div id="addModalBody">
+								#view( 'summary/hotelcancellationpolicy' )#
+							</div>
 						</div>
 					</div>
 				</div>
@@ -223,7 +225,7 @@
 		<div class="control-group">
 			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls">
-				<i id="carSpinner" class="blue icon icon-spin icon-spinner"></i>
+				<i id="carSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="carFOPID" id="carFOPID">
 				</select>
 			</div>

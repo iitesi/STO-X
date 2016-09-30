@@ -2,10 +2,10 @@
 
 	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
 
-	<div class="control-group" id="userIDDiv">
-		<label class="control-label" for="userID">Change Traveler&nbsp;&nbsp;</label>		
-		<div class="controls">
-			<select name="userID" id="userID" class="input-xlarge">
+	<div class="form-group" id="userIDDiv">
+		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>		
+		<div class="col-sm-8 col-xs-12">
+			<select name="userID" id="userID" class="form-control">
 			<!--- Do not allow Georgetown to book on behalf of a guest traveler --->
 			<cfif structKeyExists(rc, "acctID") AND rc.acctID NEQ 303>
 				<option value="0">GUEST TRAVELER</option>
@@ -20,66 +20,84 @@
 			</cfloop>
 			</select>
 			<span id="nameChange">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
 			</span>
 		</div>
 	</div>
 
-	<div id="fullNameDiv" class="control-group #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
-		<label class="control-label" for="firstName">Full Name *</label>
-		<div class="controls">
-			<input type="text" name="firstName" id="firstName" placeholder="First Name" class="input-small">
-			<input type="text" name="middleName" id="middleName" placeholder="Middle Name" class="input-small">
-			<input type="text" name="lastName" id="lastName" placeholder="Last Name" class="input-small">
-			<select name="suffix" id="suffix" class="input-mini">
-				<option value=""></option>
-				<option value="JR">JR</option>
-				<option value="SR">SR</option>
-				<option value="II">II</option>
-				<option value="III">III</option>
-				<option value="IV">IV</option>
-				<option value="V">V</option>
-				<option value="VI">VI</option>
-			</select>
-			<br>
-			<label class="checkbox">
-				<input type="checkbox" name="noMiddleName" id="noMiddleName" value="1">
-				No Middle Name
-			</label>
+	<div id="fullNameDiv" class=" #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="firstName">First Name *</label>
+			<div class="col-sm-8 col-xs-12">
+				<input type="text" name="firstName" id="firstName"  class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="middleName">Middle Name</label>
+			<div class="col-sm-3 col-xs-12">
+				<input type="text" name="middleName" id="middleName" class="form-control">
+			</div>
+			<div class="checkbox col-sm-5">
+				<label>
+					<input type="checkbox"  name="noMiddleName" id="noMiddleName" value="1">
+					No Middle Name
+				</label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="lastName">Last Name *</label>
+			<div class="col-sm-8 col-xs-12">
+				<input type="text" name="lastName" id="lastName" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="suffix">Suffix</label>
+			<div class="col-sm-3 col-xs-6">
+				<select name="suffix" id="suffix" class="form-control">
+					<option value=""></option>
+					<option value="JR">JR</option>
+					<option value="SR">SR</option>
+					<option value="II">II</option>
+					<option value="III">III</option>
+					<option value="IV">IV</option>
+					<option value="V">V</option>
+					<option value="VI">VI</option>
+				</select>
+			</div>
 		</div>
 	</div>
 
-	<div id="nameCheckDiv" class="control-group hide">
+	<div id="nameCheckDiv" class="form-group hide">
 		<div class="controls blue bold">
-			<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Name Verification" data-content="We have detected a space in your first name and a blank middle name. Your middle name may be appearing as part of your first name. Please update your first and/or middle names, as needed, and check 'Save changes to profile' before confirming your purchase." href="##"></a> <span style="color:red">Please check your name!</span>
+			<a rel="popover" class="blue fa fa-lg fa-info-cicrl" data-original-title="Name Verification" data-content="We have detected a space in your first name and a blank middle name. Your middle name may be appearing as part of your first name. Please update your first and/or middle names, as needed, and check 'Save changes to profile' before confirming your purchase." href="##"></a> <span style="color:red">Please check your name!</span>
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
-		<label class="control-label" for="phoneNumber">Business Phone *</label>
-		<div class="controls">
-			<input type="text" name="phoneNumber" id="phoneNumber" class="input-medium">
+	<div class="form-group #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
+		<label class="control-label col-sm-4 col-xs-12" for="phoneNumber">Business Phone *</label>
+		<div class=" col-sm-8 col-xs-12">
+			<input type="tel" name="phoneNumber" id="phoneNumber" class="form-control">
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'wirelessPhone') ? 'error' : '')#">
-		<label class="control-label" for="wirelessPhone">Mobile Phone *</label>
-		<div class="controls">
-			<input type="text" name="wirelessPhone" id="wirelessPhone" class="input-medium">
+	<div class="form-group #(structKeyExists(rc.errors, 'wirelessPhone') ? 'error' : '')#">
+		<label class="control-label col-sm-4 col-xs-12" for="wirelessPhone">Mobile Phone *</label>
+		<div class="col-sm-8 col-xs-12">
+			<input type="tel" name="wirelessPhone" id="wirelessPhone" class="form-control">
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
-		<label class="control-label" for="email">Email *</label>
-		<div class="controls">
-			<input type="text" name="email" id="email">
+	<div class="form-group #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
+		<label class="control-label col-sm-4 col-xs-12" for="email">Email *</label>
+		<div class="col-sm-8 col-xs-12">
+			<input type="email" class="form-control" name="email" id="email">
 		</div>
 	</div>
 
-	<div class="control-group #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
-		<label class="control-label" for="ccEmails">CC Email&nbsp;&nbsp;</label>
-		<div class="controls">
-			<input type="text" name="ccEmails" id="ccEmails">
+	<div class="form-group #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
+		<label class="control-label col-sm-4 col-xs-12" for="ccEmails">CC Email&nbsp;&nbsp;</label>
+		<div class="col-sm-8 col-xs-12">
+			<input type="email" class="form-control" name="ccEmails" id="ccEmails">
 		</div>
 	</div>
 
@@ -125,7 +143,7 @@
 			<label class="control-label" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
 			<div class="controls">
 				<input type="text" name="redress" id="redress" class="input-medium">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
 			</div>
 		</div>
 
@@ -134,7 +152,7 @@
 			<div class="controls">
 				<input type="text" name="travelNumber" id="travelNumber" class="input-medium">
 				<input type="hidden" name="travelNumberType" id="travelNumberType" value="TrustedTraveler">
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
+				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
 				<cfif len(rc.KTLinks)>
 					&nbsp;<div style="display: inline-table;">#rc.KTLinks#</div>
 				</cfif>
@@ -200,52 +218,56 @@
 
 	</cfif>
 
-	<div class="control-group" id="saveProfileDiv">
+	<div class="form-group" id="saveProfileDiv">
 		<label class="control-label" for="saveProfile"></label>
-		<div class="controls">
-			<label class="saveProfile">
-				<input type="checkbox" name="saveProfile" id="saveProfile" value="1">
-				Save changes to profile
-			</label>
+		<div class="col-sm-offset-4 col-sm-8">
+			<div class="checkbox">
+				<label class="saveProfile">
+					<input type="checkbox" name="saveProfile" id="saveProfile" value="1">
+					Save changes to profile
+				</label>
+			</div>
 		</div>
 	</div>
 
-	<div class="control-group" id="createProfileDiv">
+	<div class="form-group" id="createProfileDiv">
 		<label class="control-label" for="createProfile"></label>
-		<div class="controls">
-			<label class="createProfile">
-				<input type="checkbox" name="createProfile" id="createProfile" value="1" />
-				Create a profile and save this information for my next reservation
-			</label>
+		<div class="col-sm-offset-4 col-sm-8">
+			<div class="checkbox">
+				<label class="createProfile">
+					<input type="checkbox" name="createProfile" id="createProfile" value="1" />
+					Create a profile and save this information for my next reservation
+				</label>
+			</div>
 		</div>
 	</div>
 
-	<div class="control-group" id="usernameDiv">
-		<div class="control-group">
+	<div class="" id="usernameDiv">
+		<div class="form-group">
 			<p><b>NOTE: Click "Create Profile" to save a profile regardless of whether the reservation is purchased.</b></p>
-			<label class="control-label" for="username">Username</label>
-			<div class="controls">
-				<input type="text" name="username_disabled" id="username_disabled" disabled />
+			<label class="control-label col-sm-4 col-xs-12" for="username">Username</label>
+			<div class="col-sm-8 col-xs-12">
+				<input class="form-control" type="text" name="username_disabled" id="username_disabled" disabled />
 				<input type="hidden" name="username" id="username" />
 			</div>
 		</div>
 
-		<div class="control-group #(structKeyExists(rc.errors, 'password') ? 'error' : '')#">
-			<label class="control-label" for="password">Password</label>
-			<div class="controls">
-				<input type="password" name="password" id="password" />
-				<a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
+		<div class="form-group #(structKeyExists(rc.errors, 'password') ? 'error' : '')#">
+			<label class="control-label  col-sm-4 col-xs-12" for="password">Password</label>
+			<div class=" col-sm-8 col-xs-12">
+				<input type="password" name="password" class="form-control" id="password" />
+				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
 			</div>
 		</div>
 
-		<div class="control-group #(structKeyExists(rc.errors, 'passwordConfirm') ? 'error' : '')#">
-			<label class="control-label" for="passwordConfirm">Verify Password</label>
-			<div class="controls">
-				<input type="password" name="passwordConfirm" id="passwordConfirm" />
+		<div class="form-group #(structKeyExists(rc.errors, 'passwordConfirm') ? 'error' : '')#">
+			<label class="control-label col-sm-4 col-xs-12" for="passwordConfirm">Verify Password</label>
+			<div class=" col-sm-8 col-xs-12">
+				<input class="form-group" type="password" name="passwordConfirm" id="passwordConfirm" />
 			</div>
 		</div>
 
-		<div class="control-group">
+		<div class="form-group">
 			<div class="controls">
 				<input type="submit" name="trigger" id="profileButton" class="btn btn-primary" value="CREATE PROFILE">
 			</div>

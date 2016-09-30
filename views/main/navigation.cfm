@@ -28,8 +28,8 @@
 </cfsilent>
 <cfoutput>
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
-		<nav id="main-nav">
-		    <ul>
+		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
+			<ul class="nav navbar-nav navbar-right">
 				<cfif rc.filter.getPassthrough() EQ 0 AND rc.filter.getFindit() EQ 0>
 					<!---Home--->
 					<li>
@@ -76,6 +76,6 @@
 					</cfif>--->
 				</cfif>
 			</ul>
-		</nav>
+		</div><!-- /.navbar-collapse -->
 	</cfif>
 </cfoutput>
