@@ -19,10 +19,10 @@
 <div id="filterbar" class="filter airfilterbar container">
 	 <div class="row"> 
 		<div class="sortby col-lg-5">
-			<h4 class="visible-lg-block">Sort</h4>
+			
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
-						<div class="navbar-header hidden-lg">
+						<div class="navbar-header">
 						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sort-navbar-collapse-1" aria-expanded="false">
 							<span class="sr-only">Toggle navigation</span>
 							<span class="glyphicon glyphicon-sort"></span>
@@ -53,10 +53,10 @@
 			</div>
 
 			<div class="filterbar col-lg-7">
-				<h4 class="visible-lg-block">Filter</h4>
+				
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
-						<div class="navbar-header hidden-lg">
+						<div class="navbar-header">
 							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
 								<span class="sr-only">Toggle navigation</span>
 								<span class="glyphicon glyphicon-filter"></span>

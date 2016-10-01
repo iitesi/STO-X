@@ -790,9 +790,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		font-size: 16px;
 	}
 
-#main-content .filterbar {
-		float: right;
-	}
+
 }
 
 @media (min-width:1100px) {
@@ -802,9 +800,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	#main-content .page-header h1 small {
 		font-size: 22px;
 	}
-	#main-content .filterbar {
-		float: right;
-	}
+
 }
 
 #header-bottom .row {
@@ -1363,4 +1359,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 .office-button {
 	min-width: 10em;
+}
+
+.filterbar .navbar-brand {
+	margin-right: -10px;
 }
