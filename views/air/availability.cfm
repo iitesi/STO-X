@@ -52,7 +52,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-
+		<div class="container">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -77,7 +77,7 @@
 				#View('air/badge')#
 			</cfif>
 		</cfloop>
-
+		</div> <!-- // container -->
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;

@@ -292,5 +292,5 @@ loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 
 <!--- display badge --->
 <cfoutput>
-	<div id="flight#nTripKey#" #dataString.toList(' ')# class="pull-left">#sBadge#</div>
+	<div id="flight#nTripKey#" #dataString.toList(' ')# class="col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
 </cfoutput>

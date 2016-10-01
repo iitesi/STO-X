@@ -405,7 +405,7 @@ ul.tabs li a.active {
 	margin:10px;
 	float:left;
 	position: relative;
-	width: 280px;
+	width: 100%;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
 
