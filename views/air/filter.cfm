@@ -52,7 +52,7 @@
 				</div>
 			</div>
 
-			<div class="filterbar col-lg-7">
+		<div class="filterbar col-lg-7">
 				
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
@@ -338,7 +338,7 @@
 				<!--- </div>
 			</div> --->
 
-		<!---  </div>// sixteen columns --->
+		</div> <!-- // row --->
 	</div><!--- // filter --->
 
 
