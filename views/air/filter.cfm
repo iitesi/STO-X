@@ -13,16 +13,26 @@
 
 <!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
-	<i class="icon-spinner icon-spin"></i> Waiting for all results to display before filtering is active
+	<i class="fa fa-spinner fa-spin"></i> Waiting for all results to display before filtering is active
 </div>
 
-<div id="filterbar" class="filter airfilterbar">
-	<div class="sixteen columns">
-		<div class="sortby pull-left">
-			<h4>Sort</h4>
+<div id="filterbar" class="filter airfilterbar container">
+	 <div class="row"> 
+		<div class="sortby">
+			
 				<div class="navbar">
-					<div class="navbar-inner">
-						<ul class="nav">
+					<div class="container-fluid">
+						<div class="navbar-header">
+						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sort-navbar-collapse-1" aria-expanded="false">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="glyphicon glyphicon-sort"></span>
+							
+							
+						  </button>
+						  <a class="navbar-brand" href="#">Sort</a>
+						</div>
+						<div class="collapse navbar-collapse" id="sort-navbar-collapse-1">
+						<ul class="nav navbar-nav">
 							<cfif rc.action NEQ 'air.availability'>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
@@ -38,13 +48,24 @@
 							<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
 						</ul>
 					</div>
+					</div>
 				</div>
 			</div>
 
 			<div class="filterbar">
-				<h4>Filter</h4>
+				
 				<div class="navbar">
-					<div class="navbar-inner">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="glyphicon glyphicon-filter"></span>
+								
+								
+							  </button>
+							  <a class="navbar-brand" href="#">Filter</a>
+							</div>
+						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 						<ul class="nav">
 							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="icon-caret-down"></i></a></li>
 							<cfif rc.action NEQ 'air.availability'>
@@ -71,6 +92,7 @@
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
 						</ul>
+					</div>
 					</div>
 				</div>
 				<div>
@@ -316,7 +338,7 @@
 				<!--- </div>
 			</div> --->
 
-		</div><!--- // sixteen columns --->
+		<!---  </div>// sixteen columns --->
 	</div><!--- // filter --->
 
 
