@@ -35,7 +35,7 @@ $(document).ready(function(){
 		$('#popupModalBody').html( '<i class="fa fa-spinner fa-spin"></i> One moment, we are retrieving your flight details...' );
 	});
 	
-	$('#popupModal').on('show.bs.modal', function (e) {
+	$('#popupModal').on('show.bs.modal', function (event) {
 	   var button = $(event.relatedTarget) // Button that triggered the modal
 	   var url = button.data('url') // Extract info from data-* attributes
 	   $('#popupModalBody').load(url);
