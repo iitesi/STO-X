@@ -99,9 +99,15 @@ $(document).ready(function(){
 	});
 
 	// display airline/class/fare filter well
-	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle(); //.css({"position": "absolute", "z-index": 99});
-	});
+	 $('.filterby').on('click', function() {
+		$(".filterselection").slideToggle({
+			complete: function() {
+				if(!$('.filterselection').is(':visible')) {
+					$('#airlines, #class, #fares').hide();
+				};
+			}
+		}); //.css({"position": "absolute", "z-index": 99});
+	}); 
 	
 	$('#airlinebtn').on('click', function(){
 		$('#airlines').show();

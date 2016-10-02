@@ -292,6 +292,11 @@ ul.tabs li a.active {
 	margin-bottom: 3px;
 }
 
+.filterselection {
+	display: none;
+}
+
+
 .filtertimeselection {
 	display: none;
 	margin-top: 1em;
@@ -1268,6 +1273,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 @media (max-width: 1200px) and (min-width: 991px) {
 	.filterby .hideFirst {
+		display:none;
+	}
+}
+
+@media (max-width: 1200px) and (min-width: 768px) {
+	.filterbar .hideFirst {
 		display:none;
 	}
 }
