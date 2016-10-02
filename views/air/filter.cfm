@@ -52,7 +52,7 @@
 				</div>
 			</div>
 
-		<div class="filterbar">
+		<div class="filterbar respFilter">
 				
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
