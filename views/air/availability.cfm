@@ -32,7 +32,7 @@
 		</h1>
 	</cfif>
 
-	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
+	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search leehere" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
 
 	<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 		#View('air/legs')#
