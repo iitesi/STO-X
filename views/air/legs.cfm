@@ -45,13 +45,14 @@
 
 <cfoutput>
 	<div id="legs" class="legs clearfix">
+		<ul class="nav nav-tabs">
 		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
 			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-			<a href="#popoverLink#" class="btn #popoverButtonClass# legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a>
+			<li role="presentation" class="active"><a href="#popoverLink#" class="#popoverButtonClass# legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
 	
-		<ul class="nav nav-tabs">
+		
 		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 				<li role="presentation" class="active">#nLegItem#</li>
