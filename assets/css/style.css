@@ -693,6 +693,18 @@ div.region {
 ----------------------------------------------------------------------------------------------------------
 */
 
+#popupModal .nav.nav-tabs {
+	margin-right: -1em;
+	margin-left: -1em;
+}
+
+#popupModal .nav.nav-tabs li:first{
+	margin-left:5px;
+}
+
+.tab-content {
+	margin-top: 1em;
+}
 
 .seat {
 	width:22px;
