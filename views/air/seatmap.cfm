@@ -94,7 +94,7 @@
 				<cfset ArraySort(aRows, "numeric")>
 
 		<!--- Display wing	--->
-			<table class="popUpTable">
+			<table class="popUpTable seatmapTable">
 				<tr>
 					<cfset start = 0>
 					<cfloop array="#aRows#" index="nRow">
