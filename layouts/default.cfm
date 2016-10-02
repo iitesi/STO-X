@@ -142,7 +142,7 @@
 					  </div><!-- /.container-fluid -->
  					</nav>
 				</div> <!--- // header-top --->
-
+				<cfoutput>#View('modal/search')#</cfoutput>
 				<div id="header-bottom">
 					<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
 						<div class="container">
@@ -163,7 +163,7 @@
 								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="fa fa-search"></i></a>
 								</cfoutput>
 							</div>
-							<cfoutput>#View('modal/search')#</cfoutput>
+							
 							<!--- // end modal window --->
 
 							<div class="fifteen columns">
