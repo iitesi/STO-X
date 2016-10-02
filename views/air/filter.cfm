@@ -109,7 +109,7 @@
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">
 							<cfoutput>
-								<div id="airlines" class="span2">
+								<div id="airlines" >
 									<b>Airlines</b>
 									<cfif rc.action NEQ 'air.availability'>
 										<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
@@ -128,7 +128,7 @@
 								</div>
 
 								<cfif rc.action NEQ 'air.availability'>
-									<div id="class" class="span3">
+									<div id="class" >
 										<b>Class</b>
 										<!--- Y = economy/coach --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
@@ -177,7 +177,7 @@
 										</cfif>
 									</div>
 
-									<div id="fares" class="span2">
+									<div id="fares">
 										<b>Fares</b>
 										<!--- 1 = nonrefundable --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")

@@ -56,6 +56,7 @@ $(document).ready(function(){
 
 	$('.closefilterwell').on('click', function() {
 		$('#filterwell').slideUp();
+		$('#airlines, #class, #fares').hide();
 	});
 
 	$('.closesliderwell').on('click', function() {
