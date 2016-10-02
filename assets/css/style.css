@@ -692,19 +692,7 @@ div.region {
 	SEAT MAPS
 ----------------------------------------------------------------------------------------------------------
 */
-@media (max-width: 767px) {
-	.seatmapTable {
-		transform: rotate(90deg) scale(1.5);
-		transform-origin: center;
-		display: inline-block;
-	}
-	
-	.seatmapTable::after {
-		content: "";
-		float: left;
-		margin-top: 100%;
-	}
-}
+
 
 .seat {
 	width:22px;
@@ -744,6 +732,17 @@ div.region {
 
 .pointer {
 	cursor: pointer;
+}
+
+.seatmapTable_mobile, .seatmapTable_desktop {
+	margin: 0 auto;
+}
+
+.seatmapTable_mobile td.seat {
+	transform: rotate(90deg);
+	width: 40px;
+    height: 40px;
+    background-size: cover;
 }
 
 /*

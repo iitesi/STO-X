@@ -173,22 +173,7 @@
 			
 			<!-- mobile seatmap -->
 			<table class="popUpTable seatmapTable_mobile visible-xs">
-				<!-- <tr>
-					<cfset start = 0>
-					<cfloop array="#aRows#" index="nRow">
-						<td>
-							<table width="25">
-							<tr>
-								<cfif NOT structKeyExists(stExitRows, nRow)>
-									<td>&nbsp;</td>
-								<cfelse>
-									<td class="wingmiddle">&nbsp;</td>
-								</cfif>
-							</tr>
-							</table>
-						</td>
-					</cfloop>
-				</tr> -->
+				
 
 			<!---	Display seats	--->
 				
