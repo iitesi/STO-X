@@ -67,10 +67,10 @@
 							</div>
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="fa fa-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <b class="caret"></b></a></li>
 							<cfif rc.action NEQ 'air.availability'>
-								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="fa fa-caret-down"></i></a></li>
-								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <b class="caret"></b></a></li>
+								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <b class="caret"></b></a></li>
 							</cfif>
 
 							<!--- 2:03 PM Wednesday, April 09, 2014 - Jim Priest - priest@thecrumb.com
@@ -90,7 +90,7 @@
 								</ul>
 							</li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
-							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">Single Carrier</a></li>
+							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">1 Carrier</a></li>
 						</ul>
 					</div>
 					</div>
@@ -100,7 +100,7 @@
 						<h4><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights displayed
 						 <span class="pull-right">
 							<span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
-							<a href="##" class="removefilters"> <i class="fa-refresh"></i> Clear Filters</a>
+							<a href="##" class="removefilters"> <i class="fa fa-refresh"></i> Clear Filters</a>
 						 </span>
 						</h4>
 					</cfoutput>
@@ -110,7 +110,7 @@
 				<div id="filterwell" class="well filterselection">
 							<cfoutput>
 								<div id="airlines" >
-									<b>Airlines</b>
+									
 									<cfif rc.action NEQ 'air.availability'>
 										<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
 									<cfelse>
@@ -133,7 +133,7 @@
 
 								<cfif rc.action NEQ 'air.availability'>
 									<div id="class" >
-										<b>Class</b>
+										
 										<!--- Y = economy/coach --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
 											<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -182,7 +182,7 @@
 									</div>
 
 									<div id="fares">
-										<b>Fares</b>
+										
 										<!--- 1 = nonrefundable --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
 											OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
@@ -226,6 +226,7 @@
 							<button type="button" class="closefilterwell close" title="Close filters"><i class="fa fa-times"></i></button>
 						</span>
 					</div>
+					<div class="clearfix"></div>
 				</div> <!--- // well filterselection --->
 			</div> <!--- // filterbar --->
 
