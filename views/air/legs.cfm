@@ -50,16 +50,18 @@
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			<a href="#popoverLink#" class="btn #popoverButtonClass# legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a>
 		</cfif>
-
+	
+		<ul class="nav nav-tabs">
 		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
-				<span class="btn btn-primary legbtn">#nLegItem#</span>
+				<li role="presentation" class="active">#nLegItem#</li>
 			<cfelse>
-				<a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="btn legbtn airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+				<li role="presentation"><a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#"></li>
 				<!--- Show icon indicating this is the leg they selected --->
 				<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])><i class="icon-ok"></i></cfif>
 				#nLegItem#</a>
 			</cfif>
 		</cfloop>
+		</ul>
 	</div>
 </cfoutput>
