@@ -181,7 +181,7 @@
 						<tr>
 						<!-- Left wing -->
 						<td>
-							<table width="25">
+							<table width="15">
 							<tr>
 								<cfif NOT structKeyExists(stExitRows, nRow)>
 									<td>&nbsp;</td>
@@ -237,7 +237,7 @@
 						
 						<!-- Right Wing -->
 						<td>
-							<table width="25">
+							<table width="15">
 							<tr>
 								<cfif NOT structKeyExists(stExitRows, nRow)>
 									<td>&nbsp;</td>

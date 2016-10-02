@@ -30,9 +30,15 @@ $(document).ready(function(){
 		$('#popupModalBody').html( 'We are retrieving your previous search results...' );
 	});
 
-	$('#popupModal').on('hidden', function() {
+	$('#popupModal').on('hidden.bs.modal', function() {
 		$(this).removeData('modal');
-		$('#popupModalBody').html( 'One moment, we are retrieving your flight details...' );
+		$('#popupModalBody').html( '<i class="fa fa-spinner fa-spin"></i> One moment, we are retrieving your flight details...' );
+	});
+	
+	$('#popupModal').on('shown.bs.modal', function (e) {
+	   var button = $(event.relatedTarget) // Button that triggered the modal
+	   var url = button.data('url') // Extract info from data-* attributes
+	   $('#popupModalBody').load(url);
 	});
 
 //------------------------------------------------------------------------------
