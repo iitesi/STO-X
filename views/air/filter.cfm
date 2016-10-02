@@ -18,7 +18,7 @@
 
 <div id="filterbar" class="filter airfilterbar container">
 	 <div class="row"> 
-		<div class="sortby col-lg-5">
+		<div class="sortby">
 			
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
@@ -52,7 +52,7 @@
 				</div>
 			</div>
 
-		<div class="filterbar col-lg-7">
+		<div class="filterbar">
 				
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
