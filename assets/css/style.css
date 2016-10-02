@@ -292,15 +292,6 @@ ul.tabs li a.active {
 	margin-bottom: 3px;
 }
 
-.filterselection {
-	-webkit-box-shadow: 4px 4px 10px rgba(50, 50, 50, 0.5);
-	-moz-box-shadow:    4px 4px 10px rgba(50, 50, 50, 0.5);
-	box-shadow:         4px 4px 10px rgba(50, 50, 50, 0.5);
-	position: absolute;
-	z-index: 99;
-	display: none;
-}
-
 .filtertimeselection {
 	display: none;
 	margin-top: 1em;
