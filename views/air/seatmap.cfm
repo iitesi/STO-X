@@ -207,15 +207,17 @@
 							</table>
 						</td>
 						<!-- End Left Wing -->
-						<td>
+						
 							<!-- <table width="25"> -->
 							<cfloop array="#aColumns#" index="sColumn">
 								<cfif structKeyExists(stAisles, sColumn)>
-									<table width="25">
-										<tr>
-											<td align="center">#nRow#</td>
-										</tr>
-									</table>
+									<td>
+										<table width="25">
+											<tr>
+												<td align="center">#nRow#</td>
+											</tr>
+										</table>
+									</td>
 								</cfif>
 
 								<cfif NOT structKeyExists(rc.stSeats[nRow], sColumn)>
@@ -228,24 +230,26 @@
 									<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
 									<cfset sDesc = Replace(sDesc, ',', ', ')>
 									<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
-									<table width="25">
-										<tr>
-											<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
-												<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
-												<cfif rc.action EQ 'air.summarypopup'>
-													<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
-														<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
-													<cfelseif rc.stSeats[nRow][sColumn].Avail EQ 'Preferential'>
-														<a href="##" style="display: block;" class="preferredSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+									<td>
+										<table width="25">
+											<tr>
+												<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+													<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
+													<cfif rc.action EQ 'air.summarypopup'>
+														<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+															<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+														<cfelseif rc.stSeats[nRow][sColumn].Avail EQ 'Preferential'>
+															<a href="##" style="display: block;" class="preferredSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+														</cfif>
 													</cfif>
-												</cfif>
-											</td>
-										</tr>
-									</table>
+												</td>
+											</tr>
+										</table>
+									</td>
 								</cfif>
 							</cfloop>
 							<!--</table>-->
-						</td>
+						
 						<!-- Right Wing -->
 						<td>
 							<table width="25">
