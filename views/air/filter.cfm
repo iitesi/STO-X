@@ -116,15 +116,19 @@
 									<cfelse>
 										<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.Group]>
 									</cfif>
-									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-										<cfloop array="#aCarriers#" index="Carrier" >
+									
+									<cfloop array="#aCarriers#" index="Carrier" >
+										<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 											<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
-										</cfloop>
+										</div>
+									</cfloop>
 
-										<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
+									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
+										<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 											<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="icon-plus-sign"></i> More Airlines</a>
-										</cfif>
-									</div>
+										</div>
+									</cfif>
+									
 								</div>
 
 								<cfif rc.action NEQ 'air.availability'>
@@ -216,7 +220,7 @@
 							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
 							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
 							
-					<br>
+					<div class="clearfix"></div>
 					<div>
 						<span class="pull-right">
 							<button type="button" class="closefilterwell close" title="Close filters"><i class="fa fa-times"></i></button>

@@ -102,6 +102,18 @@ $(document).ready(function(){
 	$('.filterby').on('click', function() {
 		$(".filterselection").slideToggle(); //.css({"position": "absolute", "z-index": 99});
 	});
+	
+	$('#airlinebtn').on('click', function(){
+		$('#airlines').show();
+	});
+	
+	$('#classbtn').on('click', function(){
+		$('#class').show();
+	});
+	
+	$('#farebtn').on('click', function(){
+		$('#fares').show();
+	});
 
 	// display time slider filter well
 	$('.filterbytime').on('click', function() {
