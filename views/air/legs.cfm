@@ -25,7 +25,7 @@
 
 	<cfset popoverContent = "Select a flight below or select individual legs by selecting a button to the right.">
 	<cfset popoverLink = "##">
-	<cfset popoverButtonClass = "btn-primary">
+	<cfset popoverButtonClass = "active">
 
 	<cfif structKeyExists(rc, "group") AND Len(rc.group)>
 		<cfset popoverTitle = "">
@@ -49,13 +49,13 @@
 		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
 			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-			<li role="presentation" class="active"><a href="#popoverLink#" class="#popoverButtonClass# legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
+			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" class=" legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
 	
 		
 		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
-				<li role="presentation" class="active">#nLegItem#</li>
+				<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
 			<cfelse>
 				<li role="presentation"><a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
 				<!--- Show icon indicating this is the leg they selected --->
