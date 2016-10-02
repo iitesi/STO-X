@@ -45,7 +45,7 @@
 
 <cfoutput>
 	<div id="legs" class="legs clearfix">
-		<ul class="nav nav-tabs">
+		<ul class="nav nav-pills">
 		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
 			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>

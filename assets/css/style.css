@@ -197,13 +197,13 @@ body {
 }
 /*hack to control the gap between the text and the underline*/
 .popuplink::after {
-  border-bottom: 1px dotted #999;
+  /* border-bottom: 1px dotted #999;
   bottom: 0;
   content: '';
   height: 0;
   left: 0;
   position: absolute;
-  right: 0;
+  right: 0; */
 }
 
 ul.tabs {
