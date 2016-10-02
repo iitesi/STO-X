@@ -108,10 +108,6 @@
 
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">
-					<div class="row">
-						<div class="span7">
-							<div class="row">
-
 							<cfoutput>
 								<div id="airlines" class="span2">
 									<b>Airlines</b>
@@ -202,9 +198,7 @@
 							<input type="hidden" id="NonStops" name="NonStops" value="">
 							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
 							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
-							</div>
-						</div>
-					</div> <!--- row --->
+							
 					<br>
 					<div>
 						<span class="pull-right">
