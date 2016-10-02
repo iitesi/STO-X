@@ -13,10 +13,11 @@ $(document).ready(function(){
 	// url is defined in search button / link
 	$('.searchModalButton').click(function(){
 		var frameSrc = $(this).attr('data-framesrc');
-		$('#searchModal').on('show', function () {
+		console.log(frameSrc);
+		$('#searchModal').on('show.bs.modal', function () {
 			$('iframe').attr("src",frameSrc);
 		});
-		$('#searchModal').modal({show:true})
+		$('#searchModal').modal('show')
 	});
 
 	$('.airModal').on('click', function() {
