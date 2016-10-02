@@ -92,19 +92,15 @@
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">1 Carrier</a></li>
 						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><p class="navbar-text filter"><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights</p></li>
+							<li><span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
+							<a href="##" class="removefilters"> <i class="fa fa-refresh"></i><span class="hideFirst">Clear Filters</span></a></li>
+						</ul>
 					</div>
 					</div>
 				</div>
-				<div>
-					<cfoutput>
-						<h4><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights displayed
-						 <span class="pull-right">
-							<span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
-							<a href="##" class="removefilters"> <i class="fa fa-refresh"></i> Clear Filters</a>
-						 </span>
-						</h4>
-					</cfoutput>
-				</div>
+				
 
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">
