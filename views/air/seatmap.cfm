@@ -45,7 +45,7 @@
 
 	<!--- hide breadcrumb bar for summary modal --->
 	<cfif rc.action NEQ "air.summarypopup">
-		<ul class="nav nav-pills">
+		<ul class="nav nav-pills nav-stacked">
 			<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
 			<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
 				<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
