@@ -99,12 +99,12 @@ $(document).ready(function(){
 
 	// display airline/class/fare filter well
 	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 99});
+		$(".filterselection").slideToggle(); //.css({"position": "absolute", "z-index": 99});
 	});
 
 	// display time slider filter well
 	$('.filterbytime').on('click', function() {
-		$(".filtertimeselection").slideToggle().css({"position": "relative", "z-index": 98});
+		$(".filtertimeselection").slideToggle(); //.css({"position": "relative", "z-index": 98});
 		$("#timebtn").parent().toggleClass('active');
 		// if the other filter is open let's close it
 		if( $('.filterselection').is(':visible') ){

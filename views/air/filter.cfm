@@ -202,7 +202,7 @@
 					<br>
 					<div>
 						<span class="pull-right">
-							<button type="button" class="closefilterwell close" title="Close filters"><i class="icon-remove"></i></button>
+							<button type="button" class="closefilterwell close" title="Close filters"><i class="fa fa-times"></i></button>
 						</span>
 					</div>
 				</div> <!--- // well filterselection --->
