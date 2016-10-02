@@ -777,9 +777,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		font-size: 14px;
 		white-space:nowrap;
 	}
-	#main-content .filterbar {
-		float: left;
-	}
 }
 
 @media (min-width:960px) {
@@ -789,8 +786,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	#main-content .page-header h1 small {
 		font-size: 16px;
 	}
-
-
 }
 
 @media (min-width:1100px) {
