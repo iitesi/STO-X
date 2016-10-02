@@ -67,10 +67,10 @@
 							</div>
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="icon-caret-down"></i></a></li>
+							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <i class="fa fa-caret-down"></i></a></li>
 							<cfif rc.action NEQ 'air.availability'>
-								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="icon-caret-down"></i></a></li>
-								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="icon-caret-down"></i></a></li>
+								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <i class="fa fa-caret-down"></i></a></li>
 							</cfif>
 
 							<!--- 2:03 PM Wednesday, April 09, 2014 - Jim Priest - priest@thecrumb.com
@@ -99,8 +99,8 @@
 					<cfoutput>
 						<h4><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights displayed
 						 <span class="pull-right">
-							<span class="spinner"><i class="icon-spinner icon-spin"></i> Filtering flights</span>
-							<a href="##" class="removefilters"> <i class="icon-refresh"></i> Clear Filters</a>
+							<span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
+							<a href="##" class="removefilters"> <i class="fa-refresh"></i> Clear Filters</a>
 						 </span>
 						</h4>
 					</cfoutput>
@@ -125,7 +125,7 @@
 
 									<cfif Len(rc.filter.getAirlines()) AND session.filterStatus.airlines EQ 0>
 										<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-											<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="icon-plus-sign"></i> More Airlines</a>
+											<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="fa fa-plus"></i> More Airlines</a>
 										</div>
 									</cfif>
 									
@@ -167,7 +167,7 @@
 												<cfset cabinSearchURL = cabinSearchURL & "&bRefundable=" & rc.bRefundable />
 											</cfif>
 											<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-												<a href="#buildURL(cabinSearchURL)#" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="icon-plus-sign"></i> More Business Class</a><br />
+												<a href="#buildURL(cabinSearchURL)#" title="Click to find more Business Class fares" class="airModal" data-modal="... more business class fares."><i class="fa fa-plus"></i> More Business Class</a><br />
 											</div>
 										</cfif>
 										<cfif session.filterStatus.cabinSearch.F EQ 0>
@@ -176,7 +176,7 @@
 												<cfset cabinSearchURL = cabinSearchURL & "&bRefundable=" & rc.bRefundable />
 											</cfif>
 											<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-												<a href="#buildURL(cabinSearchURL)#" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="icon-plus-sign"></i> More First Class</a><br />
+												<a href="#buildURL(cabinSearchURL)#" title="Click to find more First Class fares" class="airModal" data-modal="... more first class fares."><i class="fa fa-plus"></i> More First Class</a><br />
 											</div>
 										</cfif>
 									</div>
@@ -209,7 +209,7 @@
 												<cfset refundableURL = refundableURL & '&sCabins=' & rc.sCabins />
 											</cfif>
 											<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-												<a href="#buildURL(refundableURL)#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="icon-plus-sign"></i> More Refundable</a>
+												<a href="#buildURL(refundableURL)#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="fa fa-plus"></i> More Refundable</a>
 											</div>
 										</cfif>
 									</div>
@@ -234,7 +234,7 @@
 			<div id="sliderwell" class="well filtertimeselection">
 				<div>
 					<b>Times</b>
-					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button>
+					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="fa fa-times"></i></button>
 				</div>
 
 				<!--- 11:37 AM Thursday, December 05, 2013 - Jim Priest - jpriest@shortstravel.com
@@ -336,7 +336,7 @@
 			<div id="sliderwell" class="well filterflightselection">
 				<div>
 					<b>Flight Number</b>
-					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="icon-remove"></i></button> --->
+					<button type="button" class="pull-right closesliderwell close" title="Close filters"><i class="fa fa-times"></i></button> --->
 					        <!--- <div class="well" ng-show="filtersVisible.vendorName">
 					            <div class="row">
 					                <div class="span4">
@@ -345,7 +345,7 @@
 					                    </form>
 					                </div>
 					                <span class="pull-right">
-					                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="icon-remove"></i></button>
+					                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="fa fa-time"></i></button>
 					                </span>
 					             </div>
 					        </div> --->
@@ -360,7 +360,7 @@
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
-		<h4><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
+		<h4><i class="fa fa-spinner fa-spin"></i> One moment, we're searching for...</h4>
 	</div>
 	<div id="myModalBody" class="modal-body"></div>
 </div>
