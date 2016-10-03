@@ -9,46 +9,41 @@
 
 		<cfif NOT rc.filter.getFindIt()
 			OR rc.policy.Policy_FindItChangeAir>
-			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="icon-remove-sign"></a></div><br>
+			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="fa fa-times"></a></div><br>
 		</cfif>
 
-		<table width="1000">
-		<tr>
-
-			<td></td>
-
-			<td valign="top">
-
-			<!--- create ribbon
-			Note: Please do not display "CONTRACTED" flag on search results for Southwest.
-			--->
-				<cfif rc.Air.privateFare AND rc.Air.preferred>
-					<cfif rc.Air.Carriers[1] EQ "WN">
-						<cfif rc.Air.PTC EQ "GST">
-							<span class="ribbon ribbon-l-pref-govt"></span>
-						<cfelse>
-							<span class="ribbon ribbon-l-pref"></span>
-						</cfif>
-					<cfelse>
-						<span class="ribbon ribbon-l-pref-cont"></span>
-					</cfif>
-				<cfelseif rc.Air.preferred>
-					<cfif rc.Air.PTC EQ "GST">
-						<span class="ribbon ribbon-l-pref-govt"></span>
-					<cfelse>
-						<span class="ribbon ribbon-l-pref"></span>
-					</cfif>
-				<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
-					<span class="ribbon ribbon-l-cont"></span>
-				<cfelseif rc.Air.PTC EQ "GST">
-					<span class="ribbon ribbon-l-govt"></span>
+		<!--- create ribbon
+		Note: Please do not display "CONTRACTED" flag on search results for Southwest.
+		--->
+		<cfif rc.Air.privateFare AND rc.Air.preferred>
+			<cfif rc.Air.Carriers[1] EQ "WN">
+				<cfif rc.Air.PTC EQ "GST">
+					<span class="ribbon ribbon-l-pref-govt"></span>
+				<cfelse>
+					<span class="ribbon ribbon-l-pref"></span>
 				</cfif>
-
+			<cfelse>
+				<span class="ribbon ribbon-l-pref-cont"></span>
+			</cfif>
+		<cfelseif rc.Air.preferred>
+			<cfif rc.Air.PTC EQ "GST">
+				<span class="ribbon ribbon-l-pref-govt"></span>
+			<cfelse>
+				<span class="ribbon ribbon-l-pref"></span>
+			</cfif>
+		<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
+			<span class="ribbon ribbon-l-cont"></span>
+		<cfelseif rc.Air.PTC EQ "GST">
+			<span class="ribbon ribbon-l-govt"></span>
+		</cfif>
+		
+		<div class="row">
+			<div class="col-xs-12">
 				<h2>FLIGHT</h2>
-
-			</td>
-
-			<td colspan="2">
+			</div>
+		</div> <!-- ./row -->
+		<div class="row">
+			<div class="col-xs-12">
 				<!---
 				If they are out of policy
 				AND they want to capture reason codes
@@ -115,56 +110,50 @@
 
 				</cfif>
 
-			</td>
-
-		</tr>
-		<tr>
-
-			<td width="50"></td>
-
-			<td valign="top" width="120">
-
-				<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
+			</div>
+		</div> <!-- /.row -->
+		<div class="row">
+			<div class="col-sm-2 col-xs-4">
+				<img class="img-responsive carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
 
 				#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
+			</div>
 
-			</td>
-
-			<td width="630">
+			<div class="col-sm-8 col-xs-8">
 				<cfset seatFieldNames = ''>
 				<cfset totalCount = 0>
-				<table width="600" padding="0" align="center" border="0">
+				<div class="container">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 					<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 					<cfset count = 0>
 					<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 						<cfset count++>
 						<cfset totalCount++>
-						<tr>
-							<td>
+						<div class="summarySegment row">
+							<div class="col-lg-2 col-md-3">
 								<cfif count EQ 1>
 									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
 								</cfif>
-							</td>
+							</div>
 
-							<td title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
+							<div class="col-lg-2 col-md-3" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 								#segment.Carrier# #segment.FlightNumber#
-							</td>
+							</div>
 
-							<td title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
+							<div class="col-lg-2 col-md-3" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 								#segment.Origin# - #segment.Destination#
-							</td>
+							</div>
 
-							<td>
+							<div class="col-lg-2 col-md-3">
 								#timeFormat(segment.DepartureTime, 'h:mmt')# - #timeFormat(segment.ArrivalTime, 'h:mmt')#
-							</td>
+							</div>
 
-							<td>
+							<div class="col-lg-2 col-md-3">
 								#uCase(segment.Cabin)#
-							</td>
+							</div>
 
 <!--- seats --->
-							<td id="#totalCount#">
+							<div class="col-lg-2 col-md-3" id="#totalCount#">
 								<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
 									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#&amp;sClass=#segment.Class#&amp;nTotalCount=#totalCount#'>
 									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
@@ -177,21 +166,16 @@
 									<input type="hidden" name="segment_#segmentIndex#" id="segment_#segmentIndex#" value="">
 									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')> --->
 								</cfif>
-							</td>
+							</div>
 
-						</tr>
+						</div>
 					</cfloop>
-					<tr>
-						<td colspan="6">
-						<hr>
-						</td>
-					</tr>
 				</cfloop>
-				</table>
-			</td>
+				</div>
+			</div>
 			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
 
-			<td width="200" valign="top">
+			<div class="col-sm-2 col-xs-12">
 				<span class="blue bold large">
 					<cfif NOT structKeyExists(rc.Air, 'PricingSolution')
 						OR NOT isObject(rc.Air.PricingSolution)>
@@ -214,18 +198,10 @@
 					TICKET NOT YET ISSUED.<br />AIRFARE QUOTED IN ITINERARY IS NOT GUARANTEED UNTIL TICKETS ARE ISSUED.
 				</span>
 
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan="4"><br></td>
-		</tr>
-
-		<tr>
-
-			<td></td>
-
-			<td colspan="3">
+			</div>
+		</div> <!-- /.row -->
+		<div class="row">
+			<div class="col-xs-12">
 
 <!---
 FREQUENT PROGRAM NUMBER
@@ -273,10 +249,10 @@ SPECIAL REQUEST
 					<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
 				</cfif>
 
-			</td>
+			</div>
 
-		</tr>
-		</table>
+		</div>
+		
 
 	</cfif>
 

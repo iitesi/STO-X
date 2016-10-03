@@ -678,6 +678,7 @@ div.region {
 	font-size: 11px;
 	border-spacing: 0;
 	padding:10px;
+	margin: 0 auto;
 }
 .popUpTable table {
 	border-spacing: 0;
@@ -1124,7 +1125,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .popuplogo {padding-right: 1em;}
 
-.bigModal {
+.bigModal .modal-dialog {
 	/* margin-left: -450px;
 	margin-top: -30px;
 	width: 900px; */
