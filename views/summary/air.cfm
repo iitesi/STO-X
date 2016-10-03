@@ -122,7 +122,7 @@
 			<div class="col-sm-8 col-xs-8">
 				<cfset seatFieldNames = ''>
 				<cfset totalCount = 0>
-				<div class="container">
+				<div class="container-fluid">
 				<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 					<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 					<cfset count = 0>
@@ -130,30 +130,30 @@
 						<cfset count++>
 						<cfset totalCount++>
 						<div class="summarySegment row">
-							<div class="col-lg-2 col-md-3">
 								<cfif count EQ 1>
-									<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
+									<div class="col-xs-12">
+										<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong> #tripLength#
+									</div>
 								</cfif>
-							</div>
 
-							<div class="col-lg-2 col-md-3" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
+							<div class="col-lg-2 col-sm-3" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 								#segment.Carrier# #segment.FlightNumber#
 							</div>
 
-							<div class="col-lg-2 col-md-3" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
+							<div class="col-lg-2 col-sm-3" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 								#segment.Origin# - #segment.Destination#
 							</div>
 
-							<div class="col-lg-2 col-md-3">
+							<div class="col-lg-3 col-sm-3">
 								#timeFormat(segment.DepartureTime, 'h:mmt')# - #timeFormat(segment.ArrivalTime, 'h:mmt')#
 							</div>
 
-							<div class="col-lg-2 col-md-3">
+							<div class="col-lg-2 col-sm-3">
 								#uCase(segment.Cabin)#
 							</div>
 
 <!--- seats --->
-							<div class="col-lg-2 col-md-3" id="#totalCount#">
+							<div class="col-lg-2 col-sm-3" id="#totalCount#">
 								<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
 									<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#&amp;sClass=#segment.Class#&amp;nTotalCount=#totalCount#'>
 									<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
@@ -167,7 +167,7 @@
 									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')> --->
 								</cfif>
 							</div>
-
+							<hr class="visible-block-xs" />
 						</div>
 					</cfloop>
 				</cfloop>

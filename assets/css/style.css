@@ -1125,6 +1125,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .popuplogo {padding-right: 1em;}
 
+.popupModal {
+	cursor: pointer;
+}
+
 .bigModal .modal-dialog {
 	/* margin-left: -450px;
 	margin-top: -30px;
