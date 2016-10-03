@@ -167,7 +167,7 @@
 									<cfset seatFieldNames = listAppend(seatFieldNames, 'segment_#segmentIndex#')> --->
 								</cfif>
 							</div>
-							<hr class="visible-block-xs" />
+							<hr class="visible-xs-block" />
 						</div>
 					</cfloop>
 				</cfloop>
