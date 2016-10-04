@@ -11,8 +11,8 @@
 	</cfif>
 	<div class="tripSummary purchase-summary">
 
-		<div class="row">
-			<div class="col-xs-3"><strong>Base Rate</strong></div>
+		<div class="text-right row">
+			<div class="col-xs-offset-3 col-xs-3"><strong>Base Rate</strong></div>
 			<div class="col-xs-3"><strong>Taxes</strong></div>
 			<div class="col-xs-3"><strong>Total</strong></div>
 		</div>
@@ -28,7 +28,7 @@
 				<div class="col-xs-3">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
 				<!--- <div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div> --->
 				<div class="col-xs-3">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
-				<div class="col-xs-3" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+				<div class="col-xs-3 text-right" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
 			</div>
 			<input type="hidden" id="airTotal" value="#rc.Air.Total#">
 
@@ -53,7 +53,7 @@
 				<cfset hotelText = 'Quoted at check-in'>
 			</cfif>
 
-			<div class="row" id="hotelTotalRow">
+			<div class="row text-right" id="hotelTotalRow">
 				<div class="col-xs-3">Hotel</div>
 				<div class="col-xs-3"></div>
 				<div class="col-xs-3">#hotelText#</div>
@@ -71,7 +71,7 @@
 			<cfset currency = rc.Vehicle.getCurrency()>
 			<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
 
-			<div class="row" id="carTotalRow">
+			<div class="row text-right" id="carTotalRow">
 				<div class="col-xs-3">Car</div>
 				<div class="col-xs-3"></div>
 				<div class="col-xs-3">Quoted at pick-up</div>
