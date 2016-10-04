@@ -103,53 +103,59 @@
 
 	<cfif rc.airSelected>
 		<div class="form-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
-			<label class="control-label" for="month">Birth Date *</label>
+			<label class="control-label col-sm-4 col-xs-12" for="month">Birth Date *</label>
 			<div class="controls">
-				<select name="month" id="month" class="form-control">
-				<option value=""></option>
-				<cfloop from="1" to="12" index="i">
-					<option value="#i#">#MonthAsString(i)#</option>
-				</cfloop>
-				</select>
-				<select name="day" id="day" class="form-control">
-				<option value=""></option>
-				<cfloop from="1" to="31" index="i">
-					<option value="#i#">#i#</option>
-				</cfloop>
-				</select>
-				<select name="year" id="year" class="form-control">
-				<option value=""></option>
-				<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
-					<option value="#i#">#i#</option>
-				</cfloop>
-				</select>
+				<div class="col-sm-2">
+					<select name="month" id="month" class="form-control">
+					<option value=""></option>
+					<cfloop from="1" to="12" index="i">
+						<option value="#i#">#MonthAsString(i)#</option>
+					</cfloop>
+					</select>
+				</div>
+				<div class="col-sm-2">
+					<select name="day" id="day" class="form-control">
+					<option value=""></option>
+					<cfloop from="1" to="31" index="i">
+						<option value="#i#">#i#</option>
+					</cfloop>
+					</select>
+				</div>
+				<div class="col-sm-2">
+					<select name="year" id="year" class="form-control">
+					<option value=""></option>
+					<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
+						<option value="#i#">#i#</option>
+					</cfloop>
+					</select>
+				</div>
 			</div>
 		</div>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
-			<label class="control-label" for="gender">Gender *</label>
-			
+			<label class="control-label col-sm-4 col-xs-12" for="gender">Gender *</label>
+			 <div class="col-sm-8 col-xs-12">
 				<select name="gender" id="gender" class="form-control">
 				<option value=""></option>
 				<option value="M">Male</option>
 				<option value="F">Female</option>
 				</select>
-			
+			</div>
 		</div>
 	</cfif>
 
 	<cfif rc.airSelected>
 		<div class="form-group">
-			<label class="control-label" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
-			<div class="controls">
+			<label class="control-label col-sm-4 col-xs-12" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
+			<div class="controls col-sm-8 col-xs-12">
 				<input type="text" name="redress" id="redress" class="form-control">
 				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
 			</div>
 		</div>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'travelNumber') ? 'error' : '')#">
-			<label class="control-label" for="travelNumber">Known Traveler ##&nbsp;&nbsp;</label>
-			<div class="controls">
+			<label class="control-label col-sm-4 col-xs-12" for="travelNumber">Known Traveler ##&nbsp;&nbsp;</label>
+			<div class="controls col-sm-8 col-xs-12">
 				<input type="text" name="travelNumber" id="travelNumber" class="form-control">
 				<input type="hidden" name="travelNumberType" id="travelNumberType" value="TrustedTraveler">
 				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
@@ -296,8 +302,8 @@
 
 	<cfif overnightStay AND NOT rc.hotelSelected>
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
-			<label class="control-label" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
-			<div class="controls">
+			<label class="control-label col-sm-4 col-xs-12" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
+			<div class="controls col-sm-8 col-xs-12">
 				<select name="hotelNotBooked" id="hotelNotBooked">
 					<option value=""></option>
 					<!--- If not NASCAR, display the reasons that have always been displayed --->
@@ -322,8 +328,8 @@
 		<!--- If NASCAR --->
 		<cfif rc.acctID EQ 348>
 			<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
-				<label class="control-label" for="hotelWhereStaying">Where will you be staying? *</label>
-				<div class="controls">
+				<label class="control-label col-sm-4 col-xs-12" for="hotelWhereStaying">Where will you be staying? *</label>
+				<div class="controls col-sm-8 col-xs-12">
 					<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
 				</div>
 			</div>
