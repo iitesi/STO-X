@@ -276,7 +276,7 @@
 					</div>
 				</div>
 				</div> <!-- /.modal-dialog -->
-			</div> <!-- /#displayHotelCancellationPolicy -->
+			</div> <!-- / displayHotelCancellationPolicy -->
 	</cfif>
 </cfoutput>
 <!--- <cfdump var="#rc.Hotel#"> --->
