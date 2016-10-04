@@ -202,52 +202,61 @@
 		</div> <!-- /.row -->
 		<div class="row">
 			<div class="col-xs-12">
+				<div class="form-inline">
+  
+				<!---
+				FREQUENT PROGRAM NUMBER
+				--->
+								<cfloop array="#rc.Air.Carriers#" item="sCarrier">
+									<div class="form-group">
+										<label for="airFF#sCarrier#">#sCarrier# Frequent Flyer ##</label>
+										<input type="text" name="airFF#sCarrier#" id="airFF#sCarrier#" maxlength="20" class="form-control">
+									</div>
 
-<!---
-FREQUENT PROGRAM NUMBER
---->
-				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-
-					#sCarrier# Frequent Flyer ##
-					<input type="text" name="airFF#sCarrier#" id="airFF#sCarrier#" maxlength="20" class="input-medium">
-					&nbsp;&nbsp;&nbsp;
-
-				</cfloop>
-<!---
-ADDITIONAL REQUESTS
---->
-				<select name="specialNeeds" id="specialNeeds">
-				<option value="">SPECIAL REQUESTS</option>
-				<option value="BLND">BLIND</option>
-				<option value="DEAF">DEAF</option>
-				<option value="UMNR">UNACCOMPANIED MINOR</option>
-				<option value="WCHR">WHEELCHAIR - CAN CLIMB STAIRS</option>
-				<option value="WCHC">WHEELCHAIR - IMMOBILE</option>
-				</select>
-<!---
-GENERAL SEATS
---->
-				<cfset showWindowAisle = false />
-				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-					<cfif NOT listFind('WN,F9', sCarrier)>
-						<cfset showWindowAisle = true />
-					</cfif>
-				</cfloop>
-				<cfif showWindowAisle>
-					<select name="windowAisle" id="windowAisle">
-						<option value="">SEATS</option>
-						<option value="Window">WINDOW</option>
-						<option value="Aisle">AISLE</option>
-					</select>
-					<br />
-				</cfif>
-<!---
-SPECIAL REQUEST
---->
-				<cfif rc.showAll
-					OR rc.Policy.Policy_AllowRequests>
-					<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
-				</cfif>
+								</cfloop>
+				<!---
+				ADDITIONAL REQUESTS
+				--->
+								<div class="form-group">
+									<label for="specialNeeds" class="sr-only" >Special Requests</label>
+									<select name="specialNeeds" id="specialNeeds" class="form-control">
+										<option value="">SPECIAL REQUESTS</option>
+										<option value="BLND">BLIND</option>
+										<option value="DEAF">DEAF</option>
+										<option value="UMNR">UNACCOMPANIED MINOR</option>
+										<option value="WCHR">WHEELCHAIR - CAN CLIMB STAIRS</option>
+										<option value="WCHC">WHEELCHAIR - IMMOBILE</option>
+									</select>
+								</div>
+				<!---
+				GENERAL SEATS
+				--->
+								<cfset showWindowAisle = false />
+								<cfloop array="#rc.Air.Carriers#" item="sCarrier">
+									<cfif NOT listFind('WN,F9', sCarrier)>
+										<cfset showWindowAisle = true />
+									</cfif>
+								</cfloop>
+								<cfif showWindowAisle>
+									<div class="form-group">
+										<label for="windowAisle" class="sr-only" >Seats</label>
+										<select name="windowAisle" id="windowAisle" class="form-control">
+											<option value="">SEATS</option>
+											<option value="Window">WINDOW</option>
+											<option value="Aisle">AISLE</option>
+										</select>
+									</div>
+								</cfif>
+				<!---
+				SPECIAL REQUEST
+				--->
+								<cfif rc.showAll
+									OR rc.Policy.Policy_AllowRequests>
+									<div class="form-group">
+										<input name="specialRequests" id="specialRequests" class="form-control" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
+									</div>
+								</cfif>
+				</div> <!-- / .form-inline -->
 
 			</div>
 
