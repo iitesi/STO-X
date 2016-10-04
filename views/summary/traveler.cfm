@@ -301,7 +301,7 @@
 	</cfif>
 
 	<cfif overnightStay AND NOT rc.hotelSelected>
-		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
+		<div class="form-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
 			<div class="controls col-sm-8 col-xs-12">
 				<select class="form-control" name="hotelNotBooked" id="hotelNotBooked">
