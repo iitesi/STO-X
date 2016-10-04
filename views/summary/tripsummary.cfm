@@ -53,7 +53,7 @@
 				<cfset hotelText = 'Quoted at check-in'>
 			</cfif>
 
-			<div class="text-right" id="hotelTotalRow">
+			<div class="row" id="hotelTotalRow">
 				<div class="col-xs-3">Hotel</div>
 				<div class="col-xs-3"></div>
 				<div class="col-xs-3">#hotelText#</div>
