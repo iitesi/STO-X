@@ -22,7 +22,7 @@
 
 		<cfif rc.airSelected>
 
-			<div class="row" id="airTotalRow">
+			<div class="row text-right" id="airTotalRow">
 				<div class="col-xs-3">Flight</div>
 				<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
 				<div class="col-xs-3">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
