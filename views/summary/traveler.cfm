@@ -105,7 +105,7 @@
 		<div class="form-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="month">Birth Date *</label>
 			<div class="controls">
-				<div class="col-sm-2">
+				<div class="col-sm-3">
 					<select name="month" id="month" class="form-control">
 					<option value=""></option>
 					<cfloop from="1" to="12" index="i">
@@ -304,7 +304,7 @@
 		<div class="control-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="hotelNotBooked">Reason for not booking a hotel *&nbsp;&nbsp;</label>
 			<div class="controls col-sm-8 col-xs-12">
-				<select name="hotelNotBooked" id="hotelNotBooked">
+				<select class="form-control" name="hotelNotBooked" id="hotelNotBooked">
 					<option value=""></option>
 					<!--- If not NASCAR, display the reasons that have always been displayed --->
 					<cfif rc.acctID NEQ 348>
