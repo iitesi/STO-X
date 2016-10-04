@@ -119,7 +119,7 @@
 					#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
 				</div>
 
-				<div class="col-sm-8 col-xs-8">
+				<div class="col-sm-7 col-xs-8">
 					<cfset seatFieldNames = ''>
 					<cfset totalCount = 0>
 					<div class="container-fluid">
@@ -175,7 +175,7 @@
 				</div>
 				<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
 
-				<div class="col-sm-2 col-xs-12">
+				<div class="col-sm-3 col-xs-12">
 					<span class="blue bold large">
 						<cfif NOT structKeyExists(rc.Air, 'PricingSolution')
 							OR NOT isObject(rc.Air.PricingSolution)>
@@ -218,7 +218,7 @@
 				ADDITIONAL REQUESTS
 				--->
 								<div class="form-group">
-									<label for="specialNeeds" class="sr-only" >Special Requests</label>
+									<label for="specialNeeds"  >Special Requests</label>
 									<select name="specialNeeds" id="specialNeeds" class="form-control">
 										<option value="">SPECIAL REQUESTS</option>
 										<option value="BLND">BLIND</option>
@@ -239,7 +239,7 @@
 								</cfloop>
 								<cfif showWindowAisle>
 									<div class="form-group">
-										<label for="windowAisle" class="sr-only" >Seats</label>
+										<label for="windowAisle"  >Seats</label>
 										<select name="windowAisle" id="windowAisle" class="form-control">
 											<option value="">SEATS</option>
 											<option value="Window">WINDOW</option>
