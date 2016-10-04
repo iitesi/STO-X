@@ -1,9 +1,5 @@
 <cfoutput>
-	<style>
-	.minlineheight {
-		line-height:10px;
-	}
-	</style>
+
 	<cfif structKeyExists(rc, "Air")
 	    AND isStruct( rc.Air )
 	    AND structKeyExists(rc.Air, 'PricingSolution')
@@ -13,13 +9,12 @@
 		<cfset rc.Air.ApproximateBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getApproximateBasePrice(), 'USD', '')>
 		<cfset rc.Air.Taxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), 'USD', '')>
 	</cfif>
-	<div class="carrow" style="padding:15px; float:right;">
+	<div class="tripSummary purchase-summary">
 
-		<div class="row minlineheight">
-			<div class="span1"></div>
-			<div class="span1"><strong>Base Rate</strong></div>
-			<div class="span2"><strong>Taxes</strong></div>
-			<div class="span1"><strong>Total</strong></div>
+		<div class="row">
+			<div class="col-xs-3"><strong>Base Rate</strong></div>
+			<div class="col-xs-3"><strong>Taxes</strong></div>
+			<div class="col-xs-3"><strong>Total</strong></div>
 		</div>
 
 		<cfset tripTotal = 0>
@@ -27,13 +22,13 @@
 
 		<cfif rc.airSelected>
 
-			<div class="row minlineheight" id="airTotalRow">
-				<div class="span1">Flight</div>
+			<div class="row" id="airTotalRow">
+				<div class="col-xs-3">Flight</div>
 				<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
-				<div class="span1">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
+				<div class="col-xs-3">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
 				<!--- <div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div> --->
-				<div class="span2">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
-				<div class="span1" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+				<div class="col-xs-3">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
+				<div class="col-xs-3" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
 			</div>
 			<input type="hidden" id="airTotal" value="#rc.Air.Total#">
 
@@ -58,11 +53,11 @@
 				<cfset hotelText = 'Quoted at check-in'>
 			</cfif>
 
-			<div class="row minlineheight" id="hotelTotalRow">
-				<div class="span1">Hotel</div>
-				<div class="span1"></div>
-				<div class="span2">#hotelText#</div>
-				<div class="span1" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
+			<div class="text-right" id="hotelTotalRow">
+				<div class="col-xs-3">Hotel</div>
+				<div class="col-xs-3"></div>
+				<div class="col-xs-3">#hotelText#</div>
+				<div class="col-xs-3" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
 
@@ -76,11 +71,11 @@
 			<cfset currency = rc.Vehicle.getCurrency()>
 			<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
 
-			<div class="row minlineheight" id="carTotalRow">
-				<div class="span1">Car</div>
-				<div class="span1"></div>
-				<div class="span2">Quoted at pick-up</div>
-				<div class="span1" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
+			<div class="row" id="carTotalRow">
+				<div class="col-xs-3">Car</div>
+				<div class="col-xs-3"></div>
+				<div class="col-xs-3">Quoted at pick-up</div>
+				<div class="col-xs-3" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="carTotal" value="#vehicleTotal#">
 
@@ -89,11 +84,9 @@
 
 		</cfif>
 
-		<div class="row minlineheight #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow">
-			<div class="span1">Booking Fee</div>
-			<div class="span1"></div>
-			<div class="span2"></div>
-			<div class="span1" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
+		<div class="row text-right #(rc.fees.fee EQ 0 ? 'hide' : '')#" id="bookingFeeRow">
+			<div class="col-xs-8">Booking Fee</div>
+			<div class="col-xs-4" id="bookingFeeCol">#numberFormat(rc.fees.fee, '$____.__')#</div>
 		</div>
 		<input type="hidden" name="bookingFee" id="bookingFee" value="#rc.fees.fee#">
 		<input type="hidden" name="agent" value="#rc.fees.agent#">
@@ -105,9 +98,9 @@
 
 			<cfset tripTotal = tripTotal + rc.fees.fee>
 
-			<div class="row minlineheight" id="bookingTotalRow">
-				<div class="span4 blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="span1 blue" id="totalCol">
+			<div class="row text-right" id="bookingTotalRow">
+				<div class="col-xs-8 blue"><strong>Trip cost for current traveler</strong></div>
+				<div class="col-xs-4 blue" id="totalCol">
 					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
 				</div>
 			</div>
