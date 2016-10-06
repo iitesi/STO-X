@@ -176,7 +176,7 @@
 							<li><a href="##" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
 							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
 							<li>
-								Pick-up Location
+								<p class="navbar-text">Pick-up Location
 								<select name="pickUpLocationKey" class="filterby input-large" onChange="submit();">
 									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
@@ -197,6 +197,7 @@
 										</cfif>
 									</cfloop>
 								</select>
+								
 								<cfif rc.Filter.getCarDifferentLocations() EQ 1>
 									Drop-off Location
 									<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
@@ -220,6 +221,7 @@
 										</cfloop>
 									</select>
 								</cfif>
+								</p>
 							</li>
 						</ul>
 							
