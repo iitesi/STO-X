@@ -13,6 +13,7 @@ $(document).ready(function() {
 
 	// Hide the filter box when page loads
 	$(".filterselection").hide();
+	$('#vendors, #carTypes, #locations').hide();
 
 	// Show filter box when the vendor or car type button is clicked
 	 $("#btnCarVendor").click(function() { $('#vendors').show(); });

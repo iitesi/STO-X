@@ -204,10 +204,10 @@
 					</div>
 				</div>
 				<div id="carTypes">
-					<div class="row" style="text-align:center;"><b>CAR TYPES</b></div>
+					<div class="row" style="text-align:center;"><strong>CAR TYPES</strong></div>
 					<div class="row">
 						
-							<b>Car</b>
+							<div class="col-xs-12"><strong>Car</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "car" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -215,9 +215,8 @@
 									</div>
 								</cfif>
 							</cfloop>
-						
-						
-							<b>Van</b>
+				
+							<div class="col-xs-12"><strong>Van</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "van" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -225,9 +224,8 @@
 									</div>
 								</cfif>
 							</cfloop>
-						
-						
-							<b>SUV</b>
+					
+							<div class="col-xs-12"><strong>SUV</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "suv" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -242,9 +240,11 @@
 					
 					
 					
-				<div class="none" id="locations">
-					Pick-up Location
-								<select name="pickUpLocationKey" class="filterby input-large" onChange="submit();">
+				<div class="form-horizontal" id="locations">
+					<div class="form-group">
+						<label for="pickUpLocationKey" class="col-sm-4 col-xs-12">Pick-up Location</label>
+						<div class="col-sm-8 col-xs-12">
+								<select name="pickUpLocationKey" class="filterby form-control" onChange="submit();">
 									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 									<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 										<cfif (rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city)
@@ -264,30 +264,37 @@
 										</cfif>
 									</cfloop>
 								</select>
-								
+							</div>
+					</div>
+					
 								<cfif rc.Filter.getCarDifferentLocations() EQ 1>
-									Drop-off Location
-									<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
-										<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
-										<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
-											<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
-												OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
-												OR (vehicleLocation.distance LTE 30)>
-												<!--- If the car vendor exists in the zeus.booking.RCAR table --->
-												<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
-													<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
-													</option>
-												<cfelse>
-													<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
-													<cfset application.fw.factory.getBean('EmailService').send( developer = false
-															, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
-															, subject = 'STO: Missing Car Vendor'
-															, body = emailHTML ) />
+								<div class="form-group">
+									<label for="dropOffLocationKey" class="col-sm-4 col-xs-12">Drop-off Location</label>
+									<div class="col-sm-8 col-xs-12">
+										<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
+											<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
+											<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
+												<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
+													OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
+													OR (vehicleLocation.distance LTE 30)>
+													<!--- If the car vendor exists in the zeus.booking.RCAR table --->
+													<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
+														<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+														</option>
+													<cfelse>
+														<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
+														<cfset application.fw.factory.getBean('EmailService').send( developer = false
+																, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+																, subject = 'STO: Missing Car Vendor'
+																, body = emailHTML ) />
+													</cfif>
 												</cfif>
-											</cfif>
-										</cfloop>
-									</select>
+											</cfloop>
+										</select>
+									</div>
+								</div>
 								</cfif>
+					
 				</div>
 			</cfoutput>
 			<span class="pull-right">
