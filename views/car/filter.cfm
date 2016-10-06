@@ -190,7 +190,7 @@
 		<div class="filter">
 			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfif></cfoutput>
 		</div>
-		<div class="row well filterselection">
+		<div class="well filterselection">
 			<cfoutput>
 				<div id="vendors">
 					<div class="row" style="text-align:center;"><b>VENDORS</b></div>
@@ -300,6 +300,7 @@
 			<span class="pull-right">
 				<button type="button" class="closewell close" title="Close filters"><i class="fa fa-times"></i></button>
 			</span>
+			<div class="clearfix"></div>
 		</div>
 	</div>
 </div>
