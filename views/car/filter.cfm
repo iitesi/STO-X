@@ -179,6 +179,7 @@
 							</ul>
 								
 							<ul class="nav navbar-nav navbar-right">
+								<li><p class="navbar-text filter"><span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed</p></li>
 								<li><a href="##" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
 							</ul>
 						
@@ -188,7 +189,7 @@
 			</form>
 		</cfoutput>
 		<div class="filter">
-			<span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed <cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfif></cfoutput>
+			<cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfif></cfoutput>
 		</div>
 		<div class="well filterselection">
 			<cfoutput>
