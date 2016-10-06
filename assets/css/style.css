@@ -1291,37 +1291,37 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 @media (max-width: 990px) {
-    .respFilter .navbar-header, .filterby .navbar-header {
+    .respFilter .navbar-header {
         float: none;
     }
-    .respFilter .navbar-toggle, .filterby .navbar-toggle {
+    .respFilter .navbar-toggle {
         display: block;
 		padding-right: 12px;
 		padding-left: 12px;
     }
-    .respFilter  .navbar-collapse, .filterby .navbar-collapse {
+    .respFilter  .navbar-collapse {
         border-top: 1px solid transparent;
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
     }
-    .respFilter .navbar-collapse.collapse, .filterby .navbar-collapse.collapse {
+    .respFilter .navbar-collapse.collapse {
         display: none!important;
     }
-	.respFilter .navbar-collapse.collapse.in, .filterby .navbar-collapse.collapse.in {
+	.respFilter .navbar-collapse.collapse.in {
         display: block!important;
     }
-    .respFilter .navbar-nav, .filterby .navbar-nav {
+    .respFilter .navbar-nav {
         float: none!important;
         margin: 7.5px -15px;
     }
-    .respFilter .navbar-nav>li, .filterby .navbar-nav>li {
+    .respFilter .navbar-nav>li {
         float: none;
     }
-    .respFilter .navbar-nav>li>a, .filterby .navbar-nav>li>a {
+    .respFilter .navbar-nav>li>a {
         padding-top: 10px;
         padding-bottom: 10px;
     }
 	
-	.respFilter .navbar-text, .filterby .navbar-text {
+	.respFilter .navbar-text {
        float: none; 
        margin-right: 0px; 
        margin-left: 15px

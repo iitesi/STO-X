@@ -155,15 +155,23 @@
 
 <!---First row--->
 <div id="filterbar">
-	<div class="filter">
-		<div>
-			<h4>Filter <a href="#" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
-		</div>
+	<div class="filter respFilter">
 		<cfoutput>
 			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
-				<div class="navbar">
-					<div class="navbar-inner">
-						<ul class="nav">
+					
+				<div class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="glyphicon glyphicon-filter"></span>
+								
+								
+							  </button>
+							  <a class="navbar-brand" href="##">Filter</a>
+						</div>
+						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
+							<ul class="nav navbar-nav">
 							<li><a href="##" id="btnCarVendor" class="filterby" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
 							<li><a href="##" id="btnCarCategory" class="filterby" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
 							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
@@ -214,6 +222,12 @@
 								</cfif>
 							</li>
 						</ul>
+							
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="##" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
+							</ul>
+						
+						</div>
 					</div>
 				</div>
 			</form>
