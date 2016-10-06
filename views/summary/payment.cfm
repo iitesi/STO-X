@@ -5,20 +5,20 @@
 	<cfif rc.airSelected>
 		<div id="airPayment">
 
-		<div class="control-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
-			<label class="control-label" for="airFOPID"><strong>Flight Payment *</strong></label>
-			<div class="controls" id="airFOPIDDiv">
+		<div class="form-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
+			<label class="control-label col-sm-4 col-xs-12" for="airFOPID"><strong>Flight Payment *</strong></label>
+			<div class="controls col-sm-8 col-xs-12" id="airFOPIDDiv">
 				<i id="airSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="airFOPID" id="airFOPID">
 				</select>
 			</div>
 		</div>
 
-		<div id="airNewCard" class="control-group">
-			<div id="addAirCC">
+		<div id="airNewCard" class="form-group">
+			<div id="addAirCC col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="addAirCC"><input type="button" name="displayPaymentModal" class="btn btn-primary displayPaymentModal" value="ENTER NEW CARD" data-toggle="modal" data-backdrop="static" data-paymentType="air"></label>
 			</div>
-			<div id="removeAirCC" class="hide">
+			<div id="removeAirCC" class="hide col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="removeAirCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="air" data-id="#rc.Traveler.getBookingDetail().getAirFOPID()#"></label>
 			</div>
 			<input type="hidden" name="newAirCC" id="newAirCC" />
@@ -27,7 +27,7 @@
 
 		<div id="airManual" class="hide">
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="airCCNumber">Card Number *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirCCNumber()#</label>
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="airCCMonth">Expiration *</label>
 				<div class="controls">
 					<cfset airMonthAsString = (len(rc.Traveler.getBookingDetail().getAirCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getAirCCMonth()) : '') />
@@ -50,7 +50,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
 				<label class="control-label" for="airCCCVV">CVV Security Code *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirCCCVV()#</label>
@@ -58,7 +58,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
 				<label class="control-label" for="airBillingName">Name on Card *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirBillingName()#</label>
@@ -66,7 +66,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
 				<label class="control-label" for="airBillingAddress">Billing Address *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirBillingAddress()#</label>
@@ -74,7 +74,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
 				<label class="control-label" for="airBillingCity">City *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirBillingCity()#</label>
@@ -82,7 +82,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
 				<label class="control-label" for="airBillingState">State, Zip *</label>
 				<div class="controls">
 					<label>#rc.Traveler.getBookingDetail().getAirBillingState()# #rc.Traveler.getBookingDetail().getAirBillingZip()#</label>
@@ -93,7 +93,7 @@
 
 		</div>
 
-		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+		<div class="blue bold text-right">
 			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
 				Flight change/cancellation policy
 			</a>
@@ -127,7 +127,7 @@
 
 		<div id="hotelManual" class="hide">
 
-			<div class="control-group" id="copyAirCCDiv">
+			<div class="form-group" id="copyAirCCDiv">
 				<label class="control-label" for="copyAirCC"></label>
 				<div class="controls">
 					<label class="copyAirCC">
@@ -137,7 +137,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCNumber">Card Number *</label>
 				<div class="controls">
 					<label id="copyAirCCNumber">#rc.Traveler.getBookingDetail().getHotelCCNumber()#</label>
@@ -148,7 +148,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
 				<label class="control-label" for="hotelCCMonth">Expiration *</label>
 				<div class="controls">
 					<cfset hotelMonthAsString = (len(rc.Traveler.getBookingDetail().getHotelCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getHotelCCMonth()) : '') />
@@ -160,7 +160,7 @@
 				</div>
 			</div>
 
-			<div class="control-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
+			<div class="form-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
 				<label class="control-label" for="hotelBillingName">Name on Card *</label>
 				<div class="controls">
 					<label id="copyAirBillingName">#rc.Traveler.getBookingDetail().getHotelBillingName()#</label>
@@ -186,7 +186,7 @@
 			</cfif>
 		</cfsavecontent>
 		<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-			<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+			<div class="blue bold text-right">
 				<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
 					Hotel payment and cancellation policy
 				</a>
@@ -209,7 +209,7 @@
 				</div>
 			</div>
 		<cfelse>
-			<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+			<div class="blue bold text-right">
 				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 					Hotel payment and cancellation policy  
 				</a>
@@ -222,16 +222,16 @@
 	<cfif rc.vehicleSelected>
 		<div id="carPayment">
 
-		<div class="control-group">
-			<label class="control-label" for="carFOPID"><strong>Car Payment *</strong></label>
-			<div class="controls">
+		<div class="form-group">
+			<label class="control-label col-sm-4 col-xs-12" for="carFOPID"><strong>Car Payment *</strong></label>
+			<div class="controls col-sm-8 col-xs-12">
 				<i id="carSpinner" class="blue fa fa-spin fa-spinner"></i>
 				<select name="carFOPID" id="carFOPID">
 				</select>
 			</div>
 		</div>
 
-		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
+		<div class="blue bold text-right">
 			<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
 				Car payment and cancellation policy
 			</a>
