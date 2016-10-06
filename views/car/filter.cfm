@@ -207,7 +207,7 @@
 					<div class="row" style="text-align:center;"><strong>CAR TYPES</strong></div>
 					<div class="row">
 						
-							<div class="col-xs-12"><strong>Car</strong></div>
+							<div class="col-xs-12"><strong>Cars</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "car" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -215,8 +215,8 @@
 									</div>
 								</cfif>
 							</cfloop>
-				
-							<div class="col-xs-12"><strong>Van</strong></div>
+							<div class="col-xs-12">&nbsp;</div>
+							<div class="col-xs-12"><strong>Vans</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "van" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -224,8 +224,8 @@
 									</div>
 								</cfif>
 							</cfloop>
-					
-							<div class="col-xs-12"><strong>SUV</strong></div>
+							<div class="col-xs-12">&nbsp;</div>
+							<div class="col-xs-12"><strong>SUVs</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "suv" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
 									<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -242,7 +242,7 @@
 					
 				<div class="form-horizontal" id="locations">
 					<div class="form-group">
-						<label for="pickUpLocationKey" class="col-sm-4 col-xs-12">Pick-up Location</label>
+						<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
 						<div class="col-sm-8 col-xs-12">
 								<select name="pickUpLocationKey" class="filterby form-control" onChange="submit();">
 									<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
@@ -269,9 +269,9 @@
 					
 								<cfif rc.Filter.getCarDifferentLocations() EQ 1>
 								<div class="form-group">
-									<label for="dropOffLocationKey" class="col-sm-4 col-xs-12">Drop-off Location</label>
+									<label for="dropOffLocationKey" class="control-label col-sm-4 col-xs-12">Drop-off Location</label>
 									<div class="col-sm-8 col-xs-12">
-										<select name="dropOffLocationKey" class="filterby input-large" onChange="submit();">
+										<select name="dropOffLocationKey" class="filterby form-control" onChange="submit();">
 											<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 											<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 												<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
