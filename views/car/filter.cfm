@@ -172,16 +172,12 @@
 						</div>
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-							<li><a href="##" id="btnCarVendor" class="filterby carFilterBy" title="Click to view/hide filters">Vendors <i class="icon-caret-down"></i></a></li>
-							<li><a href="##" id="btnCarCategory" class="filterby carFilterBy" title="Click to view/hide filters">Car Types <i class="icon-caret-down"></i></a></li>
-							<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
-							<li><a href="##" id="btnLocation" class="filterby carFilterBy" title="Click to view/hide filters"><cfif rc.Filter.getCarDifferentLocations() EQ 1>Pickup/Dropoff Location<cfelse>Pickup Location</cfif></a></li>
-							<li>
+								<li><a href="##" id="btnCarVendor" class="filterby carFilterBy" title="Click to view/hide filters">Vendors <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="##" id="btnCarCategory" class="filterby carFilterBy" title="Click to view/hide filters">Car Types <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
+								<li><a href="##" id="btnLocation" class="filterby carFilterBy" title="Click to view/hide filters"><cfif rc.Filter.getCarDifferentLocations() EQ 1>Pickup/Dropoff Location<cfelse>Pickup Location</cfif> <i class="fa fa-caret-down"></i></a></li>
+							</ul>
 								
-								
-							</li>
-						</ul>
-							
 							<ul class="nav navbar-nav navbar-right">
 								<li><a href="##" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
 							</ul>
