@@ -93,23 +93,19 @@ OR NOT rc.Filter.getAir()>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 									<td data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>- Preferred</cfif><cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
-										<div align="center" style="">
+										
 										<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 												<cfset buttonType="btn-primary" />
 												<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 												<!--- If out of policy --->
 												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
-													<cfif stRate.EstimatedTotalAmount NEQ session.searches[SearchID].lowestCarRate>
-														<br />
-													</cfif>
+													
 													<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span>
-													<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
-														<br />
-													</cfif>
+													
 													<cfset buttonType="" />
 												<cfelse>
-													<br />
+													
 												</cfif>
 												<!--- If best/lowest rate --->
 												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
@@ -136,7 +132,7 @@ OR NOT rc.Filter.getAir()>
 												<br />UNAVAILABLE
 											</cfif>
 										</div>
-										</div>
+										
 									</td>
 								</cfloop>
 							</tr>
