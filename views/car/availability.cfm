@@ -62,7 +62,7 @@ OR NOT rc.Filter.getAir()>
 							<div>Shuttle Off Terminal</div>
 						</cfif>
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
-							<small class="green">PREFERRED</small>
+							<br /><small class="green">PREFERRED</small>
 						</cfif>
 					
 					</th>
@@ -88,7 +88,7 @@ OR NOT rc.Filter.getAir()>
 										<!--- Had to add the style width below for IE. --->
 										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
 										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-											<small class="green">PREFERRED</small>
+											<br /><small class="green">PREFERRED</small>
 										</cfif>
 									
 								</td>
@@ -102,12 +102,7 @@ OR NOT rc.Filter.getAir()>
 												<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
 												<!--- If out of policy --->
 												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
-													
-													<small rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</small><br />
-													
 													<cfset buttonType="" />
-											
-													
 												</cfif>
 												<!--- If best/lowest rate --->
 												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
@@ -132,6 +127,9 @@ OR NOT rc.Filter.getAir()>
 												</cfif>
 												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
 													<br /><small class="green">BEST RATE</small>
+												</cfif>
+												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
+													<br /><small rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</small>
 												</cfif>
 											<cfelse>
 												<br />UNAVAILABLE
