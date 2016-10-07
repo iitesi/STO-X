@@ -1400,6 +1400,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .rwd-table td {
   display: block;
 }
+.rwd-table td.empty {
+	display:none;
+}
+
 @media (min-width: 480px) {
   .rwd-table td:before {
     display: none;
