@@ -49,7 +49,9 @@ OR NOT rc.Filter.getAir()>
 		<div id="noFilteredResults" class="hidden noresults">No cars are available for your filtered criteria.</div>
 
 		<!-- Lee's new table -->
-		
+		<div class="panel panel-default">
+  
+		<div class="panel-heading">Results</div>
 		<table class="table carResults rwd-table">
 			<thead>
 					<th class="carTypeCol">&nbsp;</th>
@@ -92,7 +94,7 @@ OR NOT rc.Filter.getAir()>
 								</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-									<td  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>- Preferred</cfif><cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
+									<td  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
 										
 										
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
@@ -145,6 +147,7 @@ OR NOT rc.Filter.getAir()>
 				</cfloop>
 			</tbody>
 		</table>
+		</div>
 			
 		
 		<!-- End Lee's new table -->

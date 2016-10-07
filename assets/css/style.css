@@ -1386,14 +1386,13 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .filterbar .navbar-brand {
 	margin-right: -10px;
 }
-
+/* rwd-table */
 .carTypeCol img {
 	  display:none;
   }
 
 .rwd-table {
   margin: 1em 0;
-  min-width: 300px;
 }
 
 .rwd-table th {
@@ -1411,7 +1410,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .rwd-table td:before {
   content: attr(data-th) ": ";
   font-weight: bold;
-  width: 6.5em;
+  width: 75%;
   display: inline-block;
 }
 
@@ -1437,6 +1436,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   }
   .carTypeCol img {
 	  display:inline-block;
+  }
+}
+
+@media (max-width: 479px) {
+	.rwd-table td.carTypeCol:before {
+    display: none;
   }
 }
 
