@@ -49,7 +49,7 @@ OR NOT rc.Filter.getAir()>
 		<div id="noFilteredResults" class="hidden noresults">No cars are available for your filtered criteria.</div>
 
 		<!-- Lee's new table -->
-		<div class="panel panel-default">
+		<div class="panel panel-default carResultPanel">
   
 		<div class="panel-heading">Results</div>
 		<table class="table carResults rwd-table">

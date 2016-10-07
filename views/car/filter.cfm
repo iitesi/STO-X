@@ -73,7 +73,7 @@
 						&& (($("#fltrVendorSelectAll").val() == 'true')
 							|| ($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))))
 					&& inpolicy) {
-					$( "#" + car[0] ).show();
+					$( "#" + car[0] ).css('display','table-cell');
 					nCount++;
 				}
 				else { 

@@ -1408,7 +1408,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   padding-bottom: .5em;
 }
 .rwd-table td:before {
-  content: attr(data-th) ": ";
+  content: attr(data-th);
   font-weight: bold;
   width: 75%;
   display: inline-block;
@@ -1434,9 +1434,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   .rwd-table th, .rwd-table td {
     padding: 1em !important;
   }
-  .carTypeCol img {
-	  display:inline-block;
-  }
 }
 
 @media (max-width: 479px) {
@@ -1447,5 +1444,14 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .rwd-table th, .rwd-table td {
   margin: .5em 1em;
+}
+
+.rwd-table td {
+	text-align: center;
+    vertical-align: middle;
+}
+
+.carResultPanel {
+	overflow-x: scroll;
 }
 
