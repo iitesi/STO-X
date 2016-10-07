@@ -1415,7 +1415,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .rwd-table th, .rwd-table td {
   text-align: left;
 }
-@media (min-width: 480px) {
+@media (min-width: 769px) {
   .rwd-table th, .rwd-table td {
     display: table-cell;
     padding: .25em .5em;
@@ -1434,7 +1434,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   }
 }
 
-@media (max-width: 479px) {
+@media (max-width: 768px) {
 	.rwd-table td.carTypeCol:before {
     display: none;
   }

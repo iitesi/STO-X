@@ -94,7 +94,7 @@ OR NOT rc.Filter.getAir()>
 								</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-									<td  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
+									<td  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'#<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)><br /><small class='green'>PREFERRED</small></cfif> <cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
 										
 										
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
