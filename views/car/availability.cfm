@@ -58,12 +58,13 @@ OR NOT rc.Filter.getAir()>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 					<th>
 					<div id="vendor#LCase(sVendor)#" align="center" style="">
-						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
-							<span class="ribbon ribbon-r-pref"></span>
-						</cfif>
+						
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
 						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
 							<div>Shuttle Off Terminal</div>
+						</cfif>
+						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
+							<small class="green">PREFERRED</small>
 						</cfif>
 					</div>
 					</th>
@@ -83,13 +84,14 @@ OR NOT rc.Filter.getAir()>
 							<tr id="row#LCase(sCategory)#">
 								<td class="carTypeCol" data-th="#vehicleClass#">
 									
-										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-											<span class="ribbon ribbon-r-pref-small"></span>
-										</cfif>
+										
 										<span class="carType">#vehicleClass#</span><br />
 
 										<!--- Had to add the style width below for IE. --->
-										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;"><br />
+										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
+										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
+											<small class="green">PREFERRED</small>
+										</cfif>
 									
 								</td>
 
@@ -124,7 +126,7 @@ OR NOT rc.Filter.getAir()>
 												<cfif stRate.Corporate
 													AND rc.Filter.getAcctID() NEQ 497
 													AND rc.Filter.getAcctID() NEQ 499>
-													<small class="blue">CONTRACTED</small><br />
+													<br /><small class="blue">CONTRACTED</small>
 													<!--- CONTRACTED --->
 												<cfelseif stRate.Corporate>
 													<img src="assets/img/clients/dhlPreferred.png">
