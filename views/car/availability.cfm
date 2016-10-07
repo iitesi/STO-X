@@ -50,7 +50,7 @@ OR NOT rc.Filter.getAir()>
 
 		<!-- Lee's new table -->
 		
-		<table class="carResults rwd-table">
+		<table class="table carResults rwd-table">
 			<thead>
 					<th class="carTypeCol">&nbsp;</th>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
@@ -92,9 +92,9 @@ OR NOT rc.Filter.getAir()>
 								</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-									<td data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>- Preferred</cfif><cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
+									<td  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'# <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>- Preferred</cfif><cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
 										
-										<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
+										
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 												<cfset buttonType="btn-primary" />
 												<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
@@ -131,7 +131,7 @@ OR NOT rc.Filter.getAir()>
 											<cfelse>
 												<br />UNAVAILABLE
 											</cfif>
-										</div>
+									
 										
 									</td>
 								</cfloop>

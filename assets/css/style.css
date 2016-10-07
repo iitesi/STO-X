@@ -1387,52 +1387,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-right: -10px;
 }
 
-/* Responsive Table 
-.rwd-table td:before {
-  content: attr(data-th) ": ";
-  font-weight: bold;
-  width: 6.5em;
-  display: inline-block;
-}
-.rwd-table th {
-  display: none;
-}
-.rwd-table td {
-  display: block;
-}
-.rwd-table td.empty {
-	display:none;
-}
 .carTypeCol img {
 	  display:none;
   }
-@media (min-width: 480px) {
-  .rwd-table td:before {
-    display: none;
-  }
-  .rwd-table th, .rwd-table td {
-    display: table-cell;
-    padding: .25em .5em;
-  }
-  .rwd-table th:first-child, .rwd-table td:first-child {
-    padding-left: 0;
-  }
-  .rwd-table th:last-child, .rwd-table td:last-child {
-    padding-right: 0;
-  }
-  
-  .rwd-table th, .rwd-table td {
-    padding: 1em !important;
-  }
-  .carTypeCol img {
-	  display:inline-block;
-  }
-  
-} */
-.rwd-table td.empty {
-	display:none;
-}
-
 
 .rwd-table {
   margin: 1em 0;
@@ -1477,6 +1434,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   }
   .rwd-table th, .rwd-table td {
     padding: 1em !important;
+  }
+  .carTypeCol img {
+	  display:inline-block;
   }
 }
 

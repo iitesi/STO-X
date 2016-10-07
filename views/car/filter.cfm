@@ -74,12 +74,10 @@
 							|| ($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))))
 					&& inpolicy) {
 					$( "#" + car[0] ).show();
-					$( "#" + car[0] ).parents('td').removeClass('empty');
 					nCount++;
 				}
 				else { 
 					$( "#" + car[0] ).hide();
-					$( "#" + car[0] ).parents('td').addClass('empty')
 				}
 			}
 			for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
