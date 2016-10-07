@@ -1414,5 +1414,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   .rwd-table th:last-child, .rwd-table td:last-child {
     padding-right: 0;
   }
-  
+  .carCol img {
+	  display:none;
+  }
 }

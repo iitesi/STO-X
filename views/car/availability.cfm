@@ -50,7 +50,7 @@ OR NOT rc.Filter.getAir()>
 
 		<!-- Lee's new table -->
 		
-		<table class="carResults rwdTable">
+		<table class="carResults rwd-table">
 			<thead>
 					<th class="carTypeCol">&nbsp;</th>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
@@ -80,7 +80,7 @@ OR NOT rc.Filter.getAir()>
 							
 							<tr>
 								<td class="carTypeCol" data-th="#vehicleClass#">
-									<div style="width:150px;height:72px;position:relative;float:left;">
+									
 										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
 											<span class="ribbon ribbon-r-pref-small"></span>
 										</cfif>
@@ -88,7 +88,7 @@ OR NOT rc.Filter.getAir()>
 
 										<!--- Had to add the style width below for IE. --->
 										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;"><br />
-									</div>
+									
 								</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
