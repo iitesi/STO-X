@@ -4,7 +4,7 @@ OR NOT rc.Filter.getAir()>
 		<div class="page-header">
 			<cfoutput>
 				<h1>#rc.Filter.getCarHeading()#</h1>
-				<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
+				<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
 			</cfoutput>
 		</div>
 	</div>
@@ -48,6 +48,110 @@ OR NOT rc.Filter.getAir()>
 		<!--- If no records can be displayed after filtering. --->
 		<div id="noFilteredResults" class="hidden noresults">No cars are available for your filtered criteria.</div>
 
+		<!-- Lee's new table -->
+		
+		<table class="carResults">
+			<thead>
+					<th class="carTypeCol">&nbsp;</th>
+				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
+					<th>
+					<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
+						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
+							<span class="ribbon ribbon-r-pref"></span>
+						</cfif>
+						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
+						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
+							<div>Shuttle Off Terminal</div>
+						</cfif>
+					</div>
+					</th>
+				</cfloop>
+			</thead>
+			<tbody>
+				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
+					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
+
+					<cfif NOT StructIsEmpty(stCar)>
+						<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
+						<cfloop collection="#stCar#" item="vendor">
+							<cfset vehicleClass=stCar[vendor].vehicleClass & " " & stCar[vendor].category />
+							<cfbreak />
+						</cfloop>
+
+						
+							
+							<tr>
+								<td class="carTypeCol">
+									<div style="width:150px;height:72px;position:relative;float:left;">
+										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
+											<span class="ribbon ribbon-r-pref-small"></span>
+										</cfif>
+										<span class="carType">#vehicleClass#</span><br />
+
+										<!--- Had to add the style width below for IE. --->
+										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;"><br />
+									</div>
+								</td>
+
+								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
+									<td>
+										<div align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+										<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
+											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
+												<cfset buttonType="btn-primary" />
+												<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
+												<!--- If out of policy --->
+												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
+													<cfif stRate.EstimatedTotalAmount NEQ session.searches[SearchID].lowestCarRate>
+														<br />
+													</cfif>
+													<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span>
+													<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
+														<br />
+													</cfif>
+													<cfset buttonType="" />
+												<cfelse>
+													<br />
+												</cfif>
+												<!--- If best/lowest rate --->
+												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
+													<span class="green">BEST RATE</span>
+													<cfset buttonType="btn-success" />
+												</cfif>
+												<!--- If corporate/contracted rate --->
+												<cfif stRate.Corporate
+													AND rc.Filter.getAcctID() NEQ 497
+													AND rc.Filter.getAcctID() NEQ 499>
+													<span class="ribbon ribbon-r-cont-small"></span>
+													<!--- CONTRACTED --->
+												<cfelseif stRate.Corporate>
+													<img src="assets/img/clients/dhlPreferred.png">
+													<!--- CONTRACTED --->
+												</cfif><br />
+												<cfif stRate.Currency IS 'USD'>
+													<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />
+												<cfelse>
+													<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
+												</cfif>
+												<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#');" value="#thisRate#">
+											<cfelse>
+												<br />UNAVAILABLE
+											</cfif>
+										</div>
+										</div>
+									</td>
+								</cfloop>
+							
+							
+
+					</cfif>
+				</cfloop>
+			</tbody>
+		</table>
+			
+		
+		<!-- End Lee's new table -->
+		
 		<div id="vendorRow" class="carrow">
 			<table>
 			<tr>
