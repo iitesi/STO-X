@@ -77,7 +77,7 @@
 					$( "#" + car[0] ).parents('td').removeClass('empty');
 					nCount++;
 				}
-				else {
+				else { 
 					$( "#" + car[0] ).hide();
 					$( "#" + car[0] ).parents('td').addClass('empty')
 				}
