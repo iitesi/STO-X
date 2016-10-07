@@ -50,8 +50,6 @@ OR NOT rc.Filter.getAir()>
 
 		<!-- Lee's new table -->
 		<div class="panel panel-default carResultPanel">
-  
-		<div class="panel-heading">Results</div>
 		<table class="table carResults rwd-table">
 			<thead>
 					<th class="carTypeCol">&nbsp;</th>
