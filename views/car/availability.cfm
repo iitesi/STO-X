@@ -78,7 +78,7 @@ OR NOT rc.Filter.getAir()>
 							<cfbreak />
 						</cfloop>
 							
-							<tr>
+							<tr id="row#LCase(sCategory)#">
 								<td class="carTypeCol" data-th="#vehicleClass#">
 									
 										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>

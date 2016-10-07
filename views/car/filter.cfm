@@ -93,6 +93,13 @@
 				else {
 					$( '#row' + category ).hide();
 				}
+				
+				// If all the cars in a category are hidden then hide that category too - don't like empty rows
+				if($('#row' + category).find('td:not(.empty,.carTypeCol)').length < 1) {
+					$('#row' + category).hide();
+				} else {
+					$('#row' + category).show();
+				}
 			}
 			for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 				var vendor = carvendors[loopcnt];
