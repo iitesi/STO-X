@@ -55,7 +55,7 @@ OR NOT rc.Filter.getAir()>
 					<th class="carTypeCol">&nbsp;</th>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 					<th>
-					<div id="vendor#LCase(sVendor)#" align="center" style="width:120px;border-left:1px solid ##CCC;position:relative;float:left;">
+					<div id="vendor#LCase(sVendor)#" align="center" style="">
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
 							<span class="ribbon ribbon-r-pref"></span>
 						</cfif>
@@ -93,7 +93,7 @@ OR NOT rc.Filter.getAir()>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 									<td data-th="#sVendor# <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>- Preferred</cfif><cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
-										<div align="center" style="width:120px;height:72px;border-left:1px solid ##CCC;position:relative;float:left;">
+										<div align="center" style="">
 										<div id="#LCase(sCategory)##LCase(sVendor)#" align="center">
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 												<cfset buttonType="btn-primary" />
