@@ -1451,5 +1451,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .carResultPanel {
 	overflow-x: auto;
+	margin-top: 1em;
 }
 
