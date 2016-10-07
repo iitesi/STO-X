@@ -103,7 +103,7 @@ OR NOT rc.Filter.getAir()>
 												<!--- If out of policy --->
 												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
 													
-													<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span>
+													<small rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</small><br />
 													
 													<cfset buttonType="" />
 											
@@ -124,14 +124,14 @@ OR NOT rc.Filter.getAir()>
 												<cfif stRate.Corporate
 													AND rc.Filter.getAcctID() NEQ 497
 													AND rc.Filter.getAcctID() NEQ 499>
-													<span class="ribbon ribbon-r-cont-small"></span>
+													<small class="blue">CONTRACTED</small><br />
 													<!--- CONTRACTED --->
 												<cfelseif stRate.Corporate>
 													<img src="assets/img/clients/dhlPreferred.png">
 													<!--- CONTRACTED --->
 												</cfif>
 												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
-													<span class="green">BEST RATE</span>
+													<br /><small class="green">BEST RATE</small>
 												</cfif>
 											<cfelse>
 												<br />UNAVAILABLE
