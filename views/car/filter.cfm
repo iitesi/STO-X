@@ -73,11 +73,11 @@
 						&& (($("#fltrVendorSelectAll").val() == 'true')
 							|| ($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))))
 					&& inpolicy) {
-					$( "#" + car[0] ).css('display','table-cell');
+					$( "#" + car[0] ).removeClass('hidden');//.css('display','table-cell');
 					nCount++;
 				}
 				else { 
-					$( "#" + car[0] ).hide();
+					$( "#" + car[0] ).addClass('hidden');
 				}
 			}
 			for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
