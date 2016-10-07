@@ -104,15 +104,21 @@ OR NOT rc.Filter.getAir()>
 													<span rel="tooltip" class="outofpolicy" title="#ArrayToList(session.searches[rc.SearchID].stCars[sCategory][sVendor].aPolicies)#">OUT OF POLICY</span>
 													
 													<cfset buttonType="" />
-												<cfelse>
+											
 													
 												</cfif>
 												<!--- If best/lowest rate --->
 												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
-													<span class="green">BEST RATE</span>
 													<cfset buttonType="btn-success" />
 												</cfif>
 												<!--- If corporate/contracted rate --->
+											
+												<cfif stRate.Currency IS 'USD'>
+													<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />
+												<cfelse>
+													<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
+												</cfif>
+												<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#');" value="#thisRate#">
 												<cfif stRate.Corporate
 													AND rc.Filter.getAcctID() NEQ 497
 													AND rc.Filter.getAcctID() NEQ 499>
@@ -121,13 +127,10 @@ OR NOT rc.Filter.getAir()>
 												<cfelseif stRate.Corporate>
 													<img src="assets/img/clients/dhlPreferred.png">
 													<!--- CONTRACTED --->
-												</cfif><br />
-												<cfif stRate.Currency IS 'USD'>
-													<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />
-												<cfelse>
-													<cfset thisRate=stRate.Currency & Round(stRate.EstimatedTotalAmount) />
 												</cfif>
-												<input type="submit" class="btn #buttonType#" onClick="submitCarAvailability('#sCategory#', '#sVendor#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#', '#session.searches[rc.SearchID].stCars[sCategory][sVendor].Location#');" value="#thisRate#">
+												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
+													<span class="green">BEST RATE</span>
+												</cfif>
 											<cfelse>
 												<br />UNAVAILABLE
 											</cfif>
