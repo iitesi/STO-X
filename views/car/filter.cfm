@@ -86,17 +86,17 @@
 				var inpolicy = ((policy == false) || (policy == true && category[1] == 1)) ? true : false;
 
 				if ((($("#fltrCarCategorySelectAll").val() == 'true') || ($( "#fltrCategory" + category[0] ).is(':checked') == true)) && inpolicy) {
-					$( '#row' + category ).show();
+					$( '#row' + category ).removeClass('hidden');
 				}
 				else {
-					$( '#row' + category ).hide();
+					$( '#row' + category ).addClass('hidden');
 				}
 				
 				// If all the cars in a category are hidden then hide that category too - don't like empty rows
 				if($('#row' + category).find('td:not(.carTypeCol):visible').length > 0) {
-					$('#row' + category).show();
+					$('#row' + category).removeClass('hidden');
 				} else {
-					$('#row' + category).hide();
+					$('#row' + category).addClass('hidden');
 				}
 			}
 			for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
@@ -105,10 +105,10 @@
 				var inpolicy = ((policy == false) || (policy == true && vendor[1] == 1)) ? true : false;
 
 				if ((($("#fltrVendorSelectAll").val() == 'true') || ($( "#fltrVendor" + vendor[0] ).is(':checked') == true)) && inpolicy) {
-					$( '#vendor' + vendor[0] ).show();
+					$( '#vendor' + vendor[0] ).removeClass('hidden');
 				}
 				else {
-					$( '#vendor' + vendor[0] ).hide();
+					$( '#vendor' + vendor[0] ).addClass('hidden');
 				}
 			}
 

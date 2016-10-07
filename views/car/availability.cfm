@@ -54,8 +54,8 @@ OR NOT rc.Filter.getAir()>
 			<thead>
 					<th class="carTypeCol">&nbsp;</th>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-					<th>
-					<div id="vendor#LCase(sVendor)#" align="center" style="">
+					<th id="vendor#LCase(sVendor)#">
+					
 						
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
 						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
@@ -64,7 +64,7 @@ OR NOT rc.Filter.getAir()>
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
 							<small class="green">PREFERRED</small>
 						</cfif>
-					</div>
+					
 					</th>
 				</cfloop>
 			</thead>
