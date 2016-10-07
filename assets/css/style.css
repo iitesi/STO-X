@@ -1412,6 +1412,11 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   text-align: left;
 }
 
+.rwd-table td.preferredVendor:before {
+  content: attr(data-th) " (Preferred)";
+  color: #46a546;
+}
+
 .rwd-table th, .rwd-table td {
   text-align: left;
 }
