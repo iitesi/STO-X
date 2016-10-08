@@ -1464,4 +1464,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-left: -20px;
 }
 
+.change-search {
+	cursor: pointer;
+}
+
 
