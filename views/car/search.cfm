@@ -23,7 +23,7 @@
 								</div>
 								<div class="form-group">
 									
-									<label for="car-pickup-airport" class="col-sm-3 control-label">Location</label>
+									<label for="car-pickup-airport" class="col-sm-3 control-label">Pick-up</label>
 									
 									<div class="col-sm-9">
 										<input type="text" class="input-block-level airport-select2" id="car-pickup-airport" name="car-pickup-airport" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
@@ -62,7 +62,7 @@
 												<option value="23:00">11:00 PM</option>
 											</select>
 											<script type="text/javascript">
-												$('##car-pickup-time option[value=#rc.formData.carPickupTimeValue#]').prop('selected', true);
+												$('##car-pickup-time option[value="#rc.formData.carPickupTimeValue#"]').prop('selected', true);
 											</script>
 											<!--<div class="btn-group">
 												<button class="btn" id="car-pickup-time" style="width: 125px;" value="#rc.formData.carPickupTimeValue#">#rc.formData.carPickupTimeDisplay#</button>
@@ -103,10 +103,10 @@
 									
 								</div>
 								<div class="form-group hidden" id="car-dropoff-airport-wrapper">
-									<div class="form-element-label">
-										<label for="car-dropoff-airport">location</label>
-									</div>
-									<div class="form-element-content">
+									
+										<label  class="col-sm-3 control-label" for="car-dropoff-airport">Drop-off</label>
+									
+									<div class="col-sm-9">
 										<input type="text" class="input-block-level airport-select2" id="car-dropoff-airport" name="car-dropoff-airport" value="#rc.formData.carDropoffAirport#" placeholder="#rc.formData.carDropoffAirport#" />
 										<div id="car-dropoff-airport_hidden" class="hidden" style="float:left;">
 											<span class="required">Drop-off airport is missing or invalid. Begin typing to select your airport from the list.</span>
@@ -142,7 +142,7 @@
 											<option value="23:00">11:00 PM</option>
 										</select>
 										<script type="text/javascript">
-											$('##car-dropoff-time option[value=#rc.formData.carDropoffTimeValue#]').prop('selected', true);
+											$('##car-dropoff-time option[value="#rc.formData.carDropoffTimeValue#"]').prop('selected', true);
 										</script>
 										<!--<div class="btn-group">
 											<button class="btn" id="car-pickup-time" style="width: 125px;" value="#rc.formData.carPickupTimeValue#">#rc.formData.carPickupTimeDisplay#</button>
@@ -180,47 +180,7 @@
 									<div id="car-dropoff-date_hidden" class="hidden" style="float:left;">
 										<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
 									</div>
-										<div style="width: 50%; float: left;">
-											<input id="car-dropoff-date" type="text" name="car-dropoff-date" class="inline-label end-date" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" data-date-format="mm/dd/yyyy" />
-										</div>
-										<div style="width: 30%; float: left;">
-											<div class="btn-group">
-												<button class="btn" id="car-dropoff-time" style="width: 125px;" value="#rc.formData.carDropoffTimeValue#">#rc.formData.carDropoffTimeDisplay#</button>
-												<button class="btn dropdown-toggle" data-toggle="dropdown">
-													<span class="caret"></span>
-												</button>
-												<ul class="dropdown-menu">
-													<!--- <li><a href="##" data-value="Anytime">Anytime</a></li>
-													<li><a href="##" data-value="Early Morning">Early Morning</a></li>
-													<li><a href="##" data-value="Late Morning">Late Morning</a></li>
-													<li><a href="##" data-value="Afternoon">Afternoon</a></li>
-													<li><a href="##" data-value="Evening">Evening</a></li>
-													<li><a href="##" data-value="Red Eye">Red Eye</a></li> --->
-													<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
-													<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
-													<li><a href="##" data-value="08:00"> 8:00 AM</a></li>
-													<li><a href="##" data-value="09:00"> 9:00 AM</a></li>
-													<li><a href="##" data-value="10:00">10:00 AM</a></li>
-													<li><a href="##" data-value="11:00">11:00 AM</a></li>
-													<li><a href="##" data-value="12:00">12:00 PM</a></li>
-													<li><a href="##" data-value="13:00"> 1:00 PM</a></li>
-													<li><a href="##" data-value="14:00"> 2:00 PM</a></li>
-													<li><a href="##" data-value="15:00"> 3:00 PM</a></li>
-													<li><a href="##" data-value="16:00"> 4:00 PM</a></li>
-													<li><a href="##" data-value="17:00"> 5:00 PM</a></li>
-													<li><a href="##" data-value="18:00"> 6:00 PM</a></li>
-													<li><a href="##" data-value="19:00"> 7:00 PM</a></li>
-													<li><a href="##" data-value="20:00"> 8:00 PM</a></li>
-													<li><a href="##" data-value="21:00"> 9:00 PM</a></li>
-													<li><a href="##" data-value="22:00">10:00 PM</a></li>
-													<li><a href="##" data-value="23:00">11:00 PM</a></li>
-												</ul>
-											</div>
-										</div>
-										<div id="car-dropoff-date_hidden" class="hidden" style="float:left;">
-											<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
-										</div>
-									</div>
+										
 								</div>
 							</div>
 							
@@ -242,18 +202,6 @@
 									</div>
 								</div>
 							</div>
-							
-							<!--<div id="calendar-row" class="full-width">
-								<div class="row">
-									<div class="form-element-label">
-										<label>&nbsp;</label>
-									</div>
-									<div class="form-element-content">
-										<div id="start-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
-										<div id="end-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
-									</div>
-								</div>
-							</div>-->
 						</form>
 				</div>
 			</cfoutput>
