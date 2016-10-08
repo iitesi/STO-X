@@ -2,13 +2,12 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 				<h3 id="myModalHeader">CHANGE CAR SEARCH</h3>
 			</div>
 			<cfoutput>
-				<div class="modal-body">
-					<div id="myModalBody">
-						<form id="carSearchForm" class="form-search">
+				<div class="modal-body form form-horizontal">
+					<form id="carSearchForm" class="form-search">
 							<input type="hidden" id="searchID" name="searchID" value="#rc.searchID#" />
 							<div id="car-options" class="full-width">
 								<div class="row">
@@ -139,7 +138,27 @@
 									</div>
 								</div>
 							</div>
-							<div id="calendar-row" class="full-width">
+							
+							<div id="calendar-row" class="container-fluid">
+								<div class="row">
+									<div class="col-sm-5" id="hotel-date-wrapper">
+										<div class="form-group">
+											<label class="control-label">Pick-up Date</label>
+											<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+										</div>
+										<div id="start-calendar-wrapper" class="calender-wrapper"></div>
+									</div>
+									<div class="col-sm-offset-2 col-sm-5">
+										<div class="form-group">
+											<label class="control-label">Drop-off Date</label>
+											<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+										</div>
+										<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
+									</div>
+								</div>
+							</div>
+							
+							<!--<div id="calendar-row" class="full-width">
 								<div class="row">
 									<div class="form-element-label">
 										<label>&nbsp;</label>
@@ -149,9 +168,8 @@
 										<div id="end-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
 									</div>
 								</div>
-							</div>
+							</div>-->
 						</form>
-					</div>
 				</div>
 			</cfoutput>
 			<div class="modal-footer">
