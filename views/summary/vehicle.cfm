@@ -65,11 +65,11 @@
 				</div>
 
 				<div class="row">
-					<div class="col-sm-2 col-xs-4">
+					<div class="col-sm-2">
 						<img class="img-responsive " alt="#rc.Vehicle.getVendorCode()#" src="assets/img/cars/#rc.Vehicle.getVendorCode()#.png">
 					</div>
 
-					<div class="col-sm-7 col-xs-8">
+					<div class="col-sm-7">
 
 						<strong>
 							#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])#<br>
@@ -80,9 +80,10 @@
 							#rc.Vehicle.getDoorCount()# DOOR
 						</cfif><br>
 
-						<strong>
+						
 							
-								PICK-UP: #uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#<br />
+								Pick-up: <strong>#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#</strong><br />
+								Location:  <br /></strong>
 								<cfif rc.Vehicle.getPickUpLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getPickUpLocationID()>
 									<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
 									<cfset local.locationKey = ''>
@@ -98,16 +99,18 @@
 										& local.vehicleLocation[local.locationKey].city & ')' />
 									#pickupLocation#
 								<cfelseif rc.Vehicle.getPickUpLocationType() EQ 'ShuttleOffAirport'>
-									#rc.Filter.getCarPickupAirport()#<br />
+									#rc.Filter.getCarPickupAirport()#
 									SHUTTLE OFF TERMINAL
 								<cfelseif rc.Vehicle.getPickUpLocationType() EQ 'Terminal'>
-									#rc.Filter.getCarPickupAirport()#<br />
+									#rc.Filter.getCarPickupAirport()#
 									ON TERMINAL
 								<cfelse>
-									#rc.Filter.getCarPickupAirport()#<br />
+									#rc.Filter.getCarPickupAirport()#
 								</cfif>
+								</strong>
 							<br />
-								DROP-OFF: #uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#<br />
+								Drop-off: <strong>#uCase(DateFormat(rc.Filter.getCarDropOffDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#</strong><br />
+								Location: <strong>
 								<cfif rc.Vehicle.getDropOffLocationType() EQ 'CityCenterDowntown'>
 									<cfif len(rc.Vehicle.getDropOffLocationID())>
 										<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()] />
@@ -127,13 +130,13 @@
 									</cfif>
 									#dropoffLocation#
 								<cfelseif rc.Vehicle.getDropOffLocationType() EQ 'ShuttleOffAirport'>
-									#rc.Filter.getCarDropoffAirport()#<br />
+									#rc.Filter.getCarDropoffAirport()#
 									SHUTTLE OFF TERMINAL
 								<cfelseif rc.Vehicle.getDropOffLocationType() EQ 'Terminal'>
-									#rc.Filter.getCarDropoffAirport()#<br />
+									#rc.Filter.getCarDropoffAirport()#
 									ON TERMINAL
 								<cfelse>
-									#rc.Filter.getCarDropoffAirport()#<br />
+									#rc.Filter.getCarDropoffAirport()#
 								</cfif>
 						</strong>
 
@@ -160,7 +163,7 @@
 
 
 				<div class="row">
-					<div class="col-xs-12">
+					<div class="col-sm-8 col-sm-offset-2 col-xs-12">
 						#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])# LOYALTY ##
 						<input type="text" name="carFF" id="carFF" maxlength="20" class="form-control">
 					</div>
