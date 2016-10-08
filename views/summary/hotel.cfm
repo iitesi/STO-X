@@ -102,7 +102,7 @@
 						</cfif>
 					</div>
 					
-					<div class="col-sm-8 col-xs-8">
+					<div class="col-sm-7 col-xs-8">
 						<strong>
 							#rc.Hotel.getPropertyName()#<br>
 						</strong>
@@ -127,7 +127,7 @@
 
 					</div>
 
-					<div class="col-sm-2 col-xs-12">
+					<div class="col-sm-3 col-xs-12">
 						<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
 							<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
 							<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>

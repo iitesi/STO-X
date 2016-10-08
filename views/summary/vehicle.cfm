@@ -65,7 +65,7 @@
 				</div>
 
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-sm-2 col-xs-12">
 						<img class="img-responsive " alt="#rc.Vehicle.getVendorCode()#" src="assets/img/cars/#rc.Vehicle.getVendorCode()#.png">
 					</div>
 
@@ -83,7 +83,7 @@
 						
 							
 								Pick-up: <strong>#uCase(dateFormat(rc.Filter.getCarPickUpDateTime(), 'mmm d'))# #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#</strong><br />
-								Location:  <br /></strong>
+								Location:  <strong>
 								<cfif rc.Vehicle.getPickUpLocationType() EQ 'CityCenterDowntown' AND rc.Vehicle.getPickUpLocationID()>
 									<cfset local.vehicleLocation = session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()] />
 									<cfset local.locationKey = ''>
@@ -163,9 +163,12 @@
 
 
 				<div class="row">
-					<div class="col-sm-8 col-sm-offset-2 col-xs-12">
-						#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])# LOYALTY ##
-						<input type="text" name="carFF" id="carFF" maxlength="20" class="form-control">
+					<div class="form-group">
+					
+						<label class="col-sm-3 control-label" for="carFF">#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])# LOYALTY ##</label>
+						<div class="col-sm-7">
+							<input type="text" name="carFF" id="carFF" maxlength="20" class="form-control">
+						</div>
 					</div>
 				</div>
 			
