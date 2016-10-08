@@ -162,7 +162,7 @@
 			
 
 
-				<div class="row">
+				<div class="loyalty row">
 					<div class="form-group">
 					
 						<label class="col-sm-3 control-label" for="carFF">#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])# LOYALTY ##</label>
