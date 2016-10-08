@@ -36,7 +36,7 @@
 									
 										<label class="col-sm-3 control-label" for="return-date">Pick-up</label>
 									
-									<div class="form-element-content">
+								
 										<div class="col-sm-4">
 											<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label start-date form-control" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" data-date-format="mm/dd/yyyy" />
 										</div>
@@ -100,7 +100,7 @@
 										<div id="car-pickup-date_hidden" class="hidden" style="float:left;">
 											<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
 										</div>
-									</div>
+									
 								</div>
 								<div class="form-group hidden" id="car-dropoff-airport-wrapper">
 									<div class="form-element-label">
@@ -114,10 +114,72 @@
 									</div>
 								</div>
 								<div class="form-group" id="car-dropoff-wrapper">
-									<div class="form-element-label">
-										<label for="return-date">drop-off</label>
+									
+									<label class="col-sm-3 control-label" for="return-date">drop-off</label>
+									
+									<div class="col-sm-4">
+											<input id="car-dropoff-date" type="text" name="car-dropodd-date" class="inline-label end-date form-control" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" data-date-format="mm/dd/yyyy" />
+										</div>
+									<div class="col-sm-5">
+										<select class="form-control" id="car-dropoff-time">
+											<option value="06:00">6:00 AM</option>
+											<option value="07:00">7:00 AM</option>
+											<option value="08:00">8:00 AM</option>
+											<option value="09:00">9:00 AM</option>
+											<option value="10:00">10:00 AM</option>
+											<option value="11:00">11:00 AM</option>
+											<option value="12:00">12:00 PM</option>
+											<option value="13:00">1:00 PM</option>
+											<option value="14:00">2:00 PM</option>
+											<option value="15:00">3:00 PM</option>
+											<option value="16:00">4:00 PM</option>
+											<option value="17:00">5:00 PM</option>
+											<option value="18:00">6:00 PM</option>
+											<option value="19:00">7:00 PM</option>
+											<option value="20:00">8:00 PM</option>
+											<option value="21:00">9:00 PM</option>
+											<option value="22:00">10:00 PM</option>
+											<option value="23:00">11:00 PM</option>
+										</select>
+										<script type="text/javascript">
+											$('##car-dropoff-time option[value=#rc.formData.carDropoffTimeValue#]').prop('selected', true);
+										</script>
+										<!--<div class="btn-group">
+											<button class="btn" id="car-pickup-time" style="width: 125px;" value="#rc.formData.carPickupTimeValue#">#rc.formData.carPickupTimeDisplay#</button>
+											<button class="btn dropdown-toggle" data-toggle="dropdown">
+												<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<!--- <li><a href="##" data-value="Anytime">Anytime</a></li>
+												<li><a href="##" data-value="Early Morning">Early Morning</a></li>
+												<li><a href="##" data-value="Late Morning">Late Morning</a></li>
+												<li><a href="##" data-value="Afternoon">Afternoon</a></li>
+												<li><a href="##" data-value="Evening">Evening</a></li>
+												<li><a href="##" data-value="Red Eye">Red Eye</a></li> --->
+												<li><a href="##" data-value="06:00"> 6:00 AM</a></li>
+												<li><a href="##" data-value="07:00"> 7:00 AM</a></li>
+												<li><a href="##" data-value="08:00"> 8:00 AM</a></li>
+												<li><a href="##" data-value="09:00"> 9:00 AM</a></li>
+												<li><a href="##" data-value="10:00">10:00 AM</a></li>
+												<li><a href="##" data-value="11:00">11:00 AM</a></li>
+												<li><a href="##" data-value="12:00">12:00 PM</a></li>
+												<li><a href="##" data-value="13:00"> 1:00 PM</a></li>
+												<li><a href="##" data-value="14:00"> 2:00 PM</a></li>
+												<li><a href="##" data-value="15:00"> 3:00 PM</a></li>
+												<li><a href="##" data-value="16:00"> 4:00 PM</a></li>
+												<li><a href="##" data-value="17:00"> 5:00 PM</a></li>
+												<li><a href="##" data-value="18:00"> 6:00 PM</a></li>
+												<li><a href="##" data-value="19:00"> 7:00 PM</a></li>
+												<li><a href="##" data-value="20:00"> 8:00 PM</a></li>
+												<li><a href="##" data-value="21:00"> 9:00 PM</a></li>
+												<li><a href="##" data-value="22:00">10:00 PM</a></li>
+												<li><a href="##" data-value="23:00">11:00 PM</a></li>
+											</ul>
+										</div> -->
 									</div>
-									<div class="form-element-content">
+									<div id="car-dropoff-date_hidden" class="hidden" style="float:left;">
+										<span class="required">Drop-off date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
+									</div>
 										<div style="width: 50%; float: left;">
 											<input id="car-dropoff-date" type="text" name="car-dropoff-date" class="inline-label end-date" value="#rc.formData.carDropoffDate#" placeholder="#rc.formData.carDropoffDate#" data-date-format="mm/dd/yyyy" />
 										</div>
@@ -162,7 +224,7 @@
 								</div>
 							</div>
 							
-							<div id="calendar-row" class="container-fluid">
+							<div id="calendar-row" class="modal-calendar-row">
 								<div class="row">
 									<div class="col-sm-5" id="hotel-date-wrapper">
 										<div class="form-group">
