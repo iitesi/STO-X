@@ -226,7 +226,7 @@
 			<label class="control-label col-sm-4 col-xs-12" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls col-sm-8 col-xs-12">
 				<i id="carSpinner" class="blue fa fa-spin fa-spinner"></i>
-				<select name="carFOPID" id="carFOPID">
+				<select name="carFOPID" id="carFOPID" class="form-control">
 				</select>
 			</div>
 		</div>

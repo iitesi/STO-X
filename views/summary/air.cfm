@@ -54,7 +54,7 @@
 
 						<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">OUT OF POLICY *</span>
 
-						<select name="airReasonCode" id="airReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
+						<select name="airReasonCode" id="airReasonCode" class="form-control #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
 						<option value="">Select Reason for Booking Out of Policy</option>
 						<cfloop query="rc.qOutOfPolicy">
 							<option value="#rc.qOutOfPolicy.FareSavingsCode#">#rc.qOutOfPolicy.Description#</option>
