@@ -10,8 +10,8 @@
 					<form id="carSearchForm" class="form-search">
 							<input type="hidden" id="searchID" name="searchID" value="#rc.searchID#" />
 							<div id="car-options" class="full-width">
-								<div class="row">
-									<div class="form-element-label">
+								<div class="form-group">
+									<div class="control-label">
 										<label>&nbsp;</label>
 									</div>
 									<div class="form-element-content">
@@ -21,27 +21,50 @@
 										</div>
 									</div>
 								</div>
-								<div class="row">
-									<div class="form-element-label">
-										<label for="car-pickup-airport">location</label>
-									</div>
-									<div class="form-element-content">
+								<div class="form-group">
+									
+									<label for="car-pickup-airport" class="col-sm-3 control-label">Location</label>
+									
+									<div class="col-sm-9">
 										<input type="text" class="input-block-level airport-select2" id="car-pickup-airport" name="car-pickup-airport" value="#rc.formData.carPickupAirport#" placeholder="#rc.formData.carPickupAirport#" />
 										<div id="car-pickup-airport_hidden" class="hidden" style="float:left;">
 											<span class="required">Pick-up airport is missing or invalid. Begin typing to select your airport from the list.</span>
 										</div>
 									</div>
 								</div>
-								<div class="row" id="car-pickup-wrapper">
-									<div class="form-element-label">
-										<label for="return-date">pick-up</label>
-									</div>
+								<div class="form-group" id="car-pickup-wrapper">
+									
+										<label class="col-sm-3 control-label" for="return-date">Pick-up</label>
+									
 									<div class="form-element-content">
-										<div style="width: 50%; float: left;">
-											<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label start-date" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" data-date-format="mm/dd/yyyy" />
+										<div class="col-sm-4">
+											<input id="car-pickup-date" type="text" name="car-pickup-date" class="inline-label start-date form-control" value="#rc.formData.carPickupDate#" placeholder="#rc.formData.carPickupDate#" data-date-format="mm/dd/yyyy" />
 										</div>
-										<div style="width: 30%; float: left;">
-											<div class="btn-group">
+										<div class="col-sm-5">
+											<select class="form-control" id="car-pickup-time">
+												<option value="06:00">6:00 AM</option>
+												<option value="07:00">7:00 AM</option>
+												<option value="08:00">8:00 AM</option>
+												<option value="09:00">9:00 AM</option>
+												<option value="10:00">10:00 AM</option>
+												<option value="11:00">11:00 AM</option>
+												<option value="12:00">12:00 PM</option>
+												<option value="13:00">1:00 PM</option>
+												<option value="14:00">2:00 PM</option>
+												<option value="15:00">3:00 PM</option>
+												<option value="16:00">4:00 PM</option>
+												<option value="17:00">5:00 PM</option>
+												<option value="18:00">6:00 PM</option>
+												<option value="19:00">7:00 PM</option>
+												<option value="20:00">8:00 PM</option>
+												<option value="21:00">9:00 PM</option>
+												<option value="22:00">10:00 PM</option>
+												<option value="23:00">11:00 PM</option>
+											</select>
+											<script type="text/javascript">
+												$('##car-pickup-time option[value=#rc.formData.carPickupTimeValue#]').prop('selected', true);
+											</script>
+											<!--<div class="btn-group">
 												<button class="btn" id="car-pickup-time" style="width: 125px;" value="#rc.formData.carPickupTimeValue#">#rc.formData.carPickupTimeDisplay#</button>
 												<button class="btn dropdown-toggle" data-toggle="dropdown">
 													<span class="caret"></span>
@@ -72,14 +95,14 @@
 													<li><a href="##" data-value="22:00">10:00 PM</a></li>
 													<li><a href="##" data-value="23:00">11:00 PM</a></li>
 												</ul>
-											</div>
+											</div> -->
 										</div>
 										<div id="car-pickup-date_hidden" class="hidden" style="float:left;">
 											<span class="required">Pick-up date is missing or invalid (must be in 'mm/dd/yyyy' format). Select your date from the calendar below.</span>
 										</div>
 									</div>
 								</div>
-								<div class="row hidden" id="car-dropoff-airport-wrapper">
+								<div class="form-group hidden" id="car-dropoff-airport-wrapper">
 									<div class="form-element-label">
 										<label for="car-dropoff-airport">location</label>
 									</div>
@@ -90,7 +113,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="row" id="car-dropoff-wrapper">
+								<div class="form-group" id="car-dropoff-wrapper">
 									<div class="form-element-label">
 										<label for="return-date">drop-off</label>
 									</div>
@@ -144,14 +167,14 @@
 									<div class="col-sm-5" id="hotel-date-wrapper">
 										<div class="form-group">
 											<label class="control-label">Pick-up Date</label>
-											<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+											
 										</div>
 										<div id="start-calendar-wrapper" class="calender-wrapper"></div>
 									</div>
 									<div class="col-sm-offset-2 col-sm-5">
 										<div class="form-group">
 											<label class="control-label">Drop-off Date</label>
-											<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+											
 										</div>
 										<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
 									</div>
