@@ -4,7 +4,7 @@ OR NOT rc.Filter.getAir()>
 		<div class="page-header">
 			<cfoutput>
 				<h1>#rc.Filter.getCarHeading()#</h1>
-				<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
+				<h2><a  id="displayModal" class="change-search" data-toggle="modal"  data-target="##displaySearchWindow"><i class="fa fa-search"></i> Change Search</a></h2>
 			</cfoutput>
 		</div>
 	</div>
