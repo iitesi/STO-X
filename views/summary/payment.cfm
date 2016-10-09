@@ -15,7 +15,7 @@
 		</div>
 
 		<div id="airNewCard" class="form-group">
-			<div id="addAirCC col-sm-offset-4 col-sm-8">
+			<div id="addAirCC" class="col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="addAirCC"><input type="button" name="displayPaymentModal" class="btn btn-primary displayPaymentModal" value="ENTER NEW CARD" data-toggle="modal" data-backdrop="static" data-paymentType="air"></label>
 			</div>
 			<div id="removeAirCC" class="hide col-sm-offset-4 col-sm-8">
