@@ -5,7 +5,7 @@
 
 		<!--- <div class="carrow" style="padding:0 0 15px 0;"> --->
 
-			<div style="float:right;padding-right:20px;"><a href="#buildURL('car.availability?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-remove"></a></div><br>
+			<div class="pull-right"><a href="#buildURL('car.availability?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-remove"></a></div><br>
 
 			
 			
