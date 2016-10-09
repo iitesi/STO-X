@@ -12,33 +12,34 @@
 			<div style="float:right;padding-right:20px;"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="fa fa-times"></a></div><br>
 		</cfif>
 
-		<!--- create ribbon
-		Note: Please do not display "CONTRACTED" flag on search results for Southwest.
-		--->
-		<cfif rc.Air.privateFare AND rc.Air.preferred>
-			<cfif rc.Air.Carriers[1] EQ "WN">
-				<cfif rc.Air.PTC EQ "GST">
-					<span class="ribbon ribbon-l-pref-govt"></span>
-				<cfelse>
-					<span class="ribbon ribbon-l-pref"></span>
-				</cfif>
-			<cfelse>
-				<span class="ribbon ribbon-l-pref-cont"></span>
-			</cfif>
-		<cfelseif rc.Air.preferred>
-			<cfif rc.Air.PTC EQ "GST">
-				<span class="ribbon ribbon-l-pref-govt"></span>
-			<cfelse>
-				<span class="ribbon ribbon-l-pref"></span>
-			</cfif>
-		<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
-			<span class="ribbon ribbon-l-cont"></span>
-		<cfelseif rc.Air.PTC EQ "GST">
-			<span class="ribbon ribbon-l-govt"></span>
-		</cfif>
+		
 		<div class="tripsummary-detail">
 			<div class="row">
 				<div class="col-xs-12">
+					<!--- create ribbon
+					Note: Please do not display "CONTRACTED" flag on search results for Southwest.
+					--->
+					<cfif rc.Air.privateFare AND rc.Air.preferred>
+						<cfif rc.Air.Carriers[1] EQ "WN">
+							<cfif rc.Air.PTC EQ "GST">
+								<span class="ribbon ribbon-l-pref-govt"></span>
+							<cfelse>
+								<span class="ribbon ribbon-l-pref"></span>
+							</cfif>
+						<cfelse>
+							<span class="ribbon ribbon-l-pref-cont"></span>
+						</cfif>
+					<cfelseif rc.Air.preferred>
+						<cfif rc.Air.PTC EQ "GST">
+							<span class="ribbon ribbon-l-pref-govt"></span>
+						<cfelse>
+							<span class="ribbon ribbon-l-pref"></span>
+						</cfif>
+					<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
+						<span class="ribbon ribbon-l-cont"></span>
+					<cfelseif rc.Air.PTC EQ "GST">
+						<span class="ribbon ribbon-l-govt"></span>
+					</cfif>
 					<h2>FLIGHT</h2>
 				</div>
 			</div> <!-- ./row -->

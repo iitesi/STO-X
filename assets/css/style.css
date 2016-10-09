@@ -1091,6 +1091,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	right: 0;
 }
 
+.tripsummary-detail .ribbon {
+	position: relative;
+	float: left;
+	margin-left: - 30px;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	MODAL

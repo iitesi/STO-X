@@ -7,17 +7,18 @@
 
 			<div style="float:right;padding-right:20px;"><a href="#buildURL('car.availability?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-remove"></a></div><br>
 
-			<cfif rc.Vehicle.getCorporate() IS TRUE AND rc.Vehicle.getPreferred() IS TRUE>
+			
+			
+			<div class="tripsummary-detail">
+				<div class="row">
+					<div class="col-xs-12">
+					<cfif rc.Vehicle.getCorporate() IS TRUE AND rc.Vehicle.getPreferred() IS TRUE>
 						<span class="ribbon ribbon-l-pref-cont"></span>
 					<cfelseif rc.Vehicle.getPreferred() IS TRUE>
 						<span class="ribbon ribbon-l-pref"></span>
 					<cfelseif rc.Vehicle.getCorporate() IS TRUE>
 						<span class="ribbon ribbon-l-cont"></span>
 					</cfif>
-			
-			<div class="tripsummary-detail">
-				<div class="row">
-					<div class="col-xs-12">
 						<h2>CAR</h2>
 					</div>
 				</div> <!-- ./row -->
