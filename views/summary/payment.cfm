@@ -125,11 +125,10 @@
 			<input type="hidden" name="newHotelCCID" id="newHotelCCID" />
 		</div>
 
-		<div id="hotelManual" class="hidden">
+		<div id="hotelManual">
 
 			<div class="form-group" id="copyAirCCDiv">
-				<label class="control-label" for="copyAirCC"></label>
-				<div class="controls">
+				<div class="controls col-sm-offset-4 col-sm-8">
 					<label class="copyAirCC">
 						<input type="checkbox" name="copyAirCC" id="copyAirCC" value="1">
 						Copy air payment
