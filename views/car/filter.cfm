@@ -161,6 +161,9 @@
 </cfsilent>
 
 <!---First row--->
+<div class="text-right">
+	<cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#">Continue without car</a></cfif></cfoutput>
+</div>
 <div id="filterbar">
 	<div class="filter respFilter">
 		<cfoutput>
@@ -195,9 +198,7 @@
 				</div>
 			</form>
 		</cfoutput>
-		<div class="filter">
-			<cfoutput><cfif structKeyExists(session.searches[rc.SearchID].stItinerary, 'Air') OR structKeyExists(session.searches[rc.SearchID].stItinerary, 'Hotel')><a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="pull-right">Continue without car</a></cfif></cfoutput>
-		</div>
+
 		<div class="well filterselection">
 			<cfoutput>
 				<div id="vendors">
