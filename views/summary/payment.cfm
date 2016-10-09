@@ -25,11 +25,11 @@
 			<input type="hidden" name="newAirCCID" id="newAirCCID" />
 		</div>
 
-		<div id="airManual" class="hidden">
+		<div id="airManual">
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="airCCNumber">Card Number *</label>
-				<div class="controls">
+				<div class="controls col-sm-8">
 					<label class="form-control">#rc.Traveler.getBookingDetail().getAirCCNumber()#</label>
 					<input type="hidden" name="airCCName" id="airCCName">
 					<input type="hidden" name="airCCType" id="airCCType">
