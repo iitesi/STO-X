@@ -691,19 +691,19 @@ $(document).ready(function(){
 
 	$( "#airFOPID" ).change(function() {
 		if ($( "#airFOPID" ).val() == 0) {
-			$( "#airManual" ).show()
+			$( "#airManual" ).removeClass('hidden');
 		}
 		else {
-			$( "#airManual" ).hide()
+			$( "#airManual" ).addClass('hidden');
 		}
 	})
 
 	$( "#hotelFOPID" ).change(function() {
 		if ($( "#hotelFOPID" ).val() == 0) {
-			$( "#hotelManual" ).show()
+			$( "#hotelManual" ).removeClass('hidden');
 		}
 		else {
-			$( "#hotelManual" ).hide()
+			$( "#hotelManual" ).addClass('hidden');
 		}
 	})
 

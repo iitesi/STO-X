@@ -25,12 +25,12 @@
 			<input type="hidden" name="newAirCCID" id="newAirCCID" />
 		</div>
 
-		<div id="airManual" class="hide">
+		<div id="airManual" class="hidden">
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airCCNumber') ? 'error' : '')#">
-				<label class="control-label" for="airCCNumber">Card Number *</label>
+				<label class="control-label col-sm-4" for="airCCNumber">Card Number *</label>
 				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirCCNumber()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirCCNumber()#</label>
 					<input type="hidden" name="airCCName" id="airCCName">
 					<input type="hidden" name="airCCType" id="airCCType">
 					<input type="hidden" name="airCCNumber" id="airCCNumber">
@@ -39,10 +39,10 @@
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airCCExpiration') ? 'error' : '')#">
-				<label class="control-label" for="airCCMonth">Expiration *</label>
-				<div class="controls">
+				<label class="control-label col-sm-4" for="airCCMonth">Expiration *</label>
+				<div class="controls col-sm-8">
 					<cfset airMonthAsString = (len(rc.Traveler.getBookingDetail().getAirCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getAirCCMonth()) : '') />
-					<label>#airMonthAsString# #rc.Traveler.getBookingDetail().getAirCCYear()#</label>
+					<label class="form-control">#airMonthAsString# #rc.Traveler.getBookingDetail().getAirCCYear()#</label>
 					<input type="hidden" name="airCCExpiration" id="airCCExpiration">
 					<input type="hidden" name="airCCMonth" id="airCCMonth">
 					<input type="hidden" name="airCCMonthDisplay" id="airCCMonthDisplay">
@@ -51,41 +51,41 @@
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airCCCVV') ? 'error' : '')#">
-				<label class="control-label" for="airCCCVV">CVV Security Code *</label>
-				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirCCCVV()#</label>
+				<label class="control-label col-sm-4" for="airCCCVV">CVV Security Code *</label>
+				<div class="controls col-sm-8">
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirCCCVV()#</label>
 					<input type="hidden" name="airCCCVV" id="airCCCVV">
 				</div>
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airBillingName') ? 'error' : '')#">
-				<label class="control-label" for="airBillingName">Name on Card *</label>
-				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirBillingName()#</label>
+				<label class="control-label col-sm-4" for="airBillingName">Name on Card *</label>
+				<div class="controls col-sm-8">
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingName()#</label>
 					<input type="hidden" name="airBillingName" id="airBillingName">
 				</div>
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airBillingAddress') ? 'error' : '')#">
-				<label class="control-label" for="airBillingAddress">Billing Address *</label>
-				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirBillingAddress()#</label>
+				<label class="control-label col-sm-4" for="airBillingAddress">Billing Address *</label>
+				<div class="controls col-sm-8">
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingAddress()#</label>
 					<input type="hidden" name="airBillingAddress" id="airBillingAddress">
 				</div>
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airBillingCity') ? 'error' : '')#">
-				<label class="control-label" for="airBillingCity">City *</label>
-				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirBillingCity()#</label>
+				<label class="control-label col-sm-4" for="airBillingCity">City *</label>
+				<div class="controls col-sm-8">
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingCity()#</label>
 					<input type="hidden" name="airBillingCity" id="airBillingCity" maxlength="50">
 				</div>
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airBillingState') ? 'error' : '')#">
-				<label class="control-label" for="airBillingState">State, Zip *</label>
-				<div class="controls">
-					<label>#rc.Traveler.getBookingDetail().getAirBillingState()# #rc.Traveler.getBookingDetail().getAirBillingZip()#</label>
+				<label class="control-label col-sm-4" for="airBillingState">State, Zip *</label>
+				<div class="controls col-sm-8">
+					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingState()# #rc.Traveler.getBookingDetail().getAirBillingZip()#</label>
 					<input type="hidden" name="airBillingState" id="airBillingState">
 					<input type="hidden" name="airBillingZip" id="airBillingZip">
 				</div>
@@ -125,7 +125,7 @@
 			<input type="hidden" name="newHotelCCID" id="newHotelCCID" />
 		</div>
 
-		<div id="hotelManual" class="hide">
+		<div id="hotelManual" class="hidden">
 
 			<div class="form-group" id="copyAirCCDiv">
 				<label class="control-label" for="copyAirCC"></label>
@@ -138,9 +138,9 @@
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'hotelCCNumber') ? 'error' : '')#">
-				<label class="control-label" for="hotelCCNumber">Card Number *</label>
-				<div class="controls">
-					<label id="copyAirCCNumber">#rc.Traveler.getBookingDetail().getHotelCCNumber()#</label>
+				<label class="control-label col-sm-4" for="hotelCCNumber">Card Number *</label>
+				<div class="controls col-sm-8">
+					<label id="copyAirCCNumber" class="form-control">#rc.Traveler.getBookingDetail().getHotelCCNumber()#</label>
 					<input type="hidden" name="hotelCCName" id="hotelCCName">
 					<input type="hidden" name="hotelCCType" id="hotelCCType">
 					<input type="hidden" name="hotelCCNumber" id="hotelCCNumber">
@@ -149,10 +149,10 @@
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'hotelCCExpiration') ? 'error' : '')#">
-				<label class="control-label" for="hotelCCMonth">Expiration *</label>
-				<div class="controls">
+				<label class="control-label col-sm-4" for="hotelCCMonth">Expiration *</label>
+				<div class="controls col-sm-8">
 					<cfset hotelMonthAsString = (len(rc.Traveler.getBookingDetail().getHotelCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getHotelCCMonth()) : '') />
-					<label id="copyAirCCMonthYear">#hotelMonthAsString# #rc.Traveler.getBookingDetail().getHotelCCYear()#</label>
+					<label id="copyAirCCMonthYear" class="form-control">#hotelMonthAsString# #rc.Traveler.getBookingDetail().getHotelCCYear()#</label>
 					<input type="hidden" name="hotelCCExpiration" id="hotelCCExpiration">
 					<input type="hidden" name="hotelCCMonth" id="hotelCCMonth">
 					<input type="hidden" name="hotelCCMonthDisplay" id="hotelCCMonthDisplay">
@@ -161,9 +161,9 @@
 			</div>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'hotelBillingName') ? 'error' : '')#">
-				<label class="control-label" for="hotelBillingName">Name on Card *</label>
-				<div class="controls">
-					<label id="copyAirBillingName">#rc.Traveler.getBookingDetail().getHotelBillingName()#</label>
+				<label class="control-label col-sm-4" for="hotelBillingName">Name on Card *</label>
+				<div class="controls col-sm-8">
+					<label id="copyAirBillingName" class="form-control">#rc.Traveler.getBookingDetail().getHotelBillingName()#</label>
 					<input type="hidden" name="hotelBillingName" id="hotelBillingName">
 				</div>
 			</div>
