@@ -829,6 +829,12 @@
 				<cfset arrayAppend(arguments.approvalNeededReasons, 'INTERNATIONAL MAXIMUM AIRFARE RULE')>
 				<cfset local.approvalNeeded = true>
 			</cfif>
+			<!--- domestic advance purchase rule --->
+			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomAdvRule EQ 1
+				AND DateCompare(DateFormat(Now(), "mm/dd/yyyy"), DateAdd("d", -arguments.policy.Policy_ApprovalAirDomAdvDays, DateFormat(arguments.filter.getdepartDateTime(), "mm/dd/yyyy"))) EQ 1>
+				<cfset arrayAppend(arguments.approvalNeededReasons, 'DOMESTIC ADVANCE PURCHASE RULE')>
+				<cfset local.approvalNeeded = true>
+			</cfif>
 			<!--- domestic maximum airfare rule --->
 			<cfif arguments.filter.getIsDomesticTrip() EQ true AND arguments.policy.Policy_ApprovalAirDomMaxRule EQ 1
 				AND arguments.Itinerary.air.total GT arguments.policy.Policy_ApprovalAirDomMaxTotal>
