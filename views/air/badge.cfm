@@ -10,7 +10,7 @@
 
 		if(bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1) {
 			if(stTrip.Carriers[1] EQ "WN") {
-				if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST") 
+				if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")
 					ribbonClass = "ribbon-l-pref-govt";
 				else
 					ribbonClass = "ribbon-l-pref";
@@ -23,12 +23,12 @@
 			else
 				ribbonClass = "ribbon-l-pref";
 		}
-		else if(bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN") 
+		else if(bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN")
 			ribbonClass = "ribbon-l-cont";
-		else if(bDisplayFare AND (structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")) 
+		else if(bDisplayFare AND (structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST"))
 			ribbonClass = "ribbon-l-govt";
 
-		// finally add default 'ribbon' class 
+		// finally add default 'ribbon' class
 		if(Len(ribbonClass))
 			ribbonClass = "ribbon " & ribbonClass;
 
@@ -49,7 +49,7 @@
 						<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
 			</cfif>
 			--->
-			<cfscript>	
+			<cfscript>
 			flightnumbers = [];
 			loop collection="#stTrip.Groups#" item="Group" {
 				stGroup = stTrip.Groups[Group];
@@ -76,7 +76,6 @@
 						<cfif bSelected>
 							<cfset btnClass = "btn-success">
 						</cfif>
-
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br><span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
 							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
@@ -88,12 +87,16 @@
 					</cfif>
 				</td>
 			</tr>
+
 			<cfif bSelected OR !stTrip.Policy>
 				<tr align="center">
 					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
-					<td colspan="2">#(stTrip.Policy ? '' : '<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>')#</td>
+					<td colspan="2">
+						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>
+					</td>
 				</tr>
 			</cfif>
+
 			<tr>
 				<td colspan="4">&nbsp;
 					<font color="white">#flightnumbers.toList()#</font>
@@ -151,10 +154,10 @@
 					</cfscript>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
-						<td valign="top">#(bDisplayFare ? stSegment.Cabin : '')#
-										<font color="white">(#(bDisplayFare ? stSegment.Class : '')#)</font>
-										</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#"><cfif 
+						<td valign="top">
+							#(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))#
+						</td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#"><cfif
 						nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
@@ -287,7 +290,7 @@
 dataString = [];
 loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
-}	
+}
 </cfscript>
 
 <!--- display badge --->
