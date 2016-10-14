@@ -1002,6 +1002,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
 					<cfset local.bActive = local.policyResults.active>
 				</cfif>
+				<!--- Class Check --->
+				<cfset local.policyResults = policyClass( Policy = arguments.Policy
+															, stTrip= local.stTrip)>
+				<cfif local.policyResults.message NEQ ''>
+					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
+					<cfset local.bActive = local.policyResults.active>
+				</cfif>
 			</cfif>
 
 			<!--- Non preferred --->
@@ -1237,24 +1244,39 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="policyClass" output="false" hint="I check the policy.">
+
 		<cfargument name="Policy" required="true">
-		<cfargument name="class" required="true">
+		<cfargument name="stTrip" required="true">
 
 		<cfset local.policy.message = ''>
 		<cfset local.policy.active = 1>
 		<cfset local.policy.policy = 1>
 
 		<!--- Check to see if the traveler has access to first or business class. --->
-		<cfif NOT arguments.Policy.Policy_AirBusinessClass
-			AND arguments.class EQ 'C'>
-			<cfset local.policy.message = 'Cannot book business class'>
-			<cfset local.policy.policy = 0>
-			<cfset local.policy.active = 0>
-		<cfelseif NOT arguments.Policy.Policy_AirFirstClass
-			AND arguments.class EQ 'F'>
-			<cfset local.policy.message = 'Cannot book first class'>
-			<cfset local.policy.policy = 0>
-			<cfset local.policy.active = 0>
+		<cfif arguments.stTrip.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
+			<cfset local.policy.message = "Cannot book first class"/>
+			<cfset local.policy.policy = 1/>
+			<cfset local.policy.active = 1/>
+		<cfelseif arguments.stTrip.class EQ "C" AND !val(arguments.Policy.Policy_AirBusinessClass)>
+			<cfset local.policy.message = "Cannot book business class"/>
+			<cfset local.policy.policy = 1/>
+			<cfset local.policy.active = 1/>
+		<cfelseif arguments.stTrip.class EQ "C" AND val(arguments.Policy.Policy_AirBusinessClass) AND val(arguments.Policy.Policy_AirBusinessClass_Hours)>
+			<cfset local.tripSegments = arguments.stTrip.groups[listFirst(structKeyList(arguments.stTrip.groups))].segments/>
+			<cfset local.fligtTimeMinusLayovers1 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
+			<cfset local.fligtTimeMinusLayovers2 = 0/>
+			<!--- Is there a return flight? --->
+			<cfif listLen(structKeyList(arguments.stTrip.groups)) gt 1>
+				<cfset local.tripSegments = arguments.stTrip.groups[listLast(structKeyList(arguments.stTrip.groups))].segments/>
+				<cfset local.fligtTimeMinusLayovers2 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
+			</cfif>
+			<!--- Get the greater flight time of the 2 --->
+			<cfset local.fligtTimeMinusLayovers = max(local.fligtTimeMinusLayovers1,local.fligtTimeMinusLayovers2)>
+			<cfif local.fligtTimeMinusLayovers lt arguments.Policy.Policy_AirBusinessClass_Hours>
+				<cfset local.policy.message = "Flight time is less than #local.fligtTimeMinusLayovers# hours"/>
+				<cfset local.policy.policy = 1/>
+				<cfset local.policy.active = 1/>
+			</cfif>
 		</cfif>
 
 		<cfreturn local.policy />
@@ -1303,7 +1325,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	</cffunction>
 
 	<cffunction name="calculateTripTime" access="public" output="false" returntype="numeric" hint="I take a group of segments and calculate the total trip time including flight times and layovers">
-		<cfargument name="segments" type="struct" required="true" />
+
+		<cfargument name="segments" type="struct" required="true"/>
+		<cfargument name="includeLayoverTime" type="boolean" required="false" default="true"/>
 
 		<cfset var keys = structKeyList( arguments.segments ) />
 		<cfset var totalTripTime = 0 />
@@ -1316,10 +1340,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset tmpArray = ArrayOfStructSort( tmpArray, "textnocase", "ASC", "DepartureTime") />
 		<cfloop from="#arrayLen( tmpArray )#" to="1" step="-1" index="local.i" >
 			<cfset totalTripTime = totalTripTime + tmpArray[ i ].FlightTime />
-
-			<cfif i NEQ 1>
-				<cfset var layover = abs( dateDiff( "n", tmpArray[ i-1 ].ArrivalTime, tmpArray[ i ].DepartureTime ) ) />
-				<cfset totalTripTime = totalTripTime + layover />
+			<cfif arguments.includeLayoverTime>
+				<cfif i NEQ 1>
+					<cfset var layover = abs( dateDiff( "n", tmpArray[ i-1 ].ArrivalTime, tmpArray[ i ].DepartureTime ) ) />
+					<cfset totalTripTime = totalTripTime + layover />
+				</cfif>
 			</cfif>
 		</cfloop>
 
