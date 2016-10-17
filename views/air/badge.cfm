@@ -88,7 +88,7 @@
 								</cfif>
 								<br>
 								<cfif listFind('DL',stTrip.platingCarrier) AND val(stTrip.ref) EQ 0 AND val(stTrip.changePenalty) EQ 0>
-									Changes not permitted.
+									Changes not permitted
 								<cfelse>
 									Change USD #stTrip.changePenalty# for reissue
 								</cfif>

@@ -104,7 +104,7 @@
 					</cfif>
 					<br>
 					<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
-						Changes not permitted.
+						Changes not permitted
 					<cfelse>
 						Change USD #rc.Air.changePenalty# for reissue
 					</cfif>
