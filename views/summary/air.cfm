@@ -207,17 +207,19 @@
 				<span class="blue bold">
 					<a rel="popover" data-original-title="Flight Change / Cancellation Policy"
 						data-content="
-							Ticket Is
+							Ticket is
 							<cfif val(rc.Air.ref) eq 0>
-								Non-Refundable
+								non-refundable
 							<cfelse>
-								Refundable
+								refundable
 							</cfif>
 							<br>
 							<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
-								Changes not permitted
+								Changes are not permitted<br>
+								No pre-reserved seats
+
 							<cfelse>
-								Change USD #rc.Air.changePenalty# for reissue
+								Changes USD #rc.Air.changePenalty# for reissue
 							</cfif>
 						" href="##"/>
 						Flight change/cancellation policy
