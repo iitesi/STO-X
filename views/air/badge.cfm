@@ -80,17 +80,18 @@
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
 							data-content="
-								Ticket Is
+								Ticket is
 								<cfif val(stTrip.ref) eq 0>
-									Non-Refundable
+									non-refundable
 								<cfelse>
-									Refundable
+									refundable
 								</cfif>
 								<br>
 								<cfif listFind('DL',stTrip.platingCarrier) AND val(stTrip.ref) EQ 0 AND val(stTrip.changePenalty) EQ 0>
-									Changes not permitted
+									Changes are not permitted<br>
+									No pre-reserved seats
 								<cfelse>
-									Change USD #stTrip.changePenalty# for reissue
+									Changes USD #stTrip.changePenalty# for reissue
 								</cfif>
 							" href="##"/>
 							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
