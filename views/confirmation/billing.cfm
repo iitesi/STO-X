@@ -5,30 +5,30 @@
 			<cfset totalAmount = 0 />
 			<cfset displayTotal = true />
 			<cfset whichCurrency = "USD" />
-			<table width="100%" cellpadding="6" cellspacing="0">
-				<tr>
-					<td>
-						<div class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
-						<div class="blue"><strong>Reservation Code: #rc.Traveler[travelerIndex].getBookingDetail().getReservationCode()#</strong></div>
-						<div style="height:24px;"></div>
+			<div>
+				<div class="row">
+
+						<div class="blue col-sm-4"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
+						<div class="blue col-sm-4"><strong>Reservation Code: #rc.Traveler[travelerIndex].getBookingDetail().getReservationCode()#</strong></div>
+						<div class="col-sm-4">
 
 						<cfloop array="#rc.Traveler[travelerIndex].getOrgUnit()#" index="orgUnitIndex" item="orgUnit">
 							<cfif orgUnit.getOUDisplay() EQ 1>
 								<div><strong>#orgUnit.getOUName()#:</strong> #orgUnit.getValueDisplay()#</strong></div>
 							</cfif>
 						</cfloop>
-					</td>
-					<td valign="top">
-						<table width="92%">
-							<tr><td colspan="6">&nbsp;</td></tr>
-							<tr>
-								<th align="left" width="40">&nbsp;</th>
-								<th align="left" width="100">CARD USED</th>
-								<th align="left" width="80">CHARGE DATE</th>
-								<th align="right" width="70">BASE RATE</th>
-								<th align="right" width="100">TAXES</th>
-								<th align="right" width="60">TOTAL</th>
-							</tr>
+					</div>
+					</div>
+<hr>
+					<div class="row hidden-xs">
+						<div class="col-sm-offset-2 col-sm-2"><strong>Payment</strong></div>
+						<div class="col-sm-2"><strong>Charge Date</strong></div>
+						<div class="col-sm-2"><strong>Base Rate</strong></div>
+						<div class="col-sm-2"><strong>Taxes</strong></div>
+						<div class="col-sm-2"><strong>Total</strong></div>
+					</div>
+
+
 							<!--- If flight --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
 								<cfset airCardNumber = rc.Traveler[travelerIndex].getBookingDetail().getAirCCNumber() />
@@ -44,22 +44,23 @@
 								<cfset airApproximateBase = replace(rc.Air.PricingSolution.getPricingInfo()[1].getApproximateBasePrice(), airCurrency, '') />
 								<cfset airTaxes = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTaxes(), airCurrency, '') />
 								<cfset airTotal = replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), airCurrency, '') />
-								<tr>
-									<td>Flight</td>
-									<td>
+								<div class="row">
+									<div class="col-sm-2"><strong>Flight</strong></div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Payment: </strong></span>
 										<cfif airCardNumber NEQ ''>
 											#airCardType#... #right(airCardNumber, 4)#
 										<cfelse>
 											CBA
-										</cfif></td>
-									<td>#dateFormat(Now(), 'mmm d, yyyy')#</td>
+										</cfif></div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Charge Date: </strong></span>#dateFormat(Now(), 'mmm d, yyyy')#</div>
 									<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : numberFormat(airApproximateBase, '____.__')&' '&airCurrency)#</td>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Base Rate: </strong></span> #(airCurrency EQ 'USD' ? DollarFormat(airApproximateBase) : numberFormat(airApproximateBase, '____.__')&' '&airCurrency)#</div>
 									<!--- <td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airBase) : airBase&' '&airCurrency)#</td> --->
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : numberFormat(airTaxes, '____.__')&' '&airCurrency)#</td>
-									<td align="right">#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : numberFormat(airTotal, '____.__')&' '&airCurrency)#</td>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Taxes: </strong></span> #(airCurrency EQ 'USD' ? DollarFormat(airTaxes) : numberFormat(airTaxes, '____.__')&' '&airCurrency)#</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Flight Total: </strong></span>#(airCurrency EQ 'USD' ? DollarFormat(airTotal) : numberFormat(airTotal, '____.__')&' '&airCurrency)#</div>
 									<cfset totalAmount = totalAmount + airTotal />
-								</tr>
+								</div>
+								<hr class="visible-xs">
 								<cfset whichCurrency = airCurrency />
 							</cfif>
 							<!--- If hotel --->
@@ -91,19 +92,20 @@
 									<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights />
 									<cfset totalText = "Estimated Total" />
 								</cfif>
-								<tr>
-									<td>Hotel</td>
-									<td>#hotelCardType#... #right(hotelCardNumber, 4)#</td>
-									<td>AT CHECK-OUT</td>
-									<td align="right">
+								<div class="row">
+									<div class="col-sm-2"><strong>Hotel</strong></div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Payment: </strong></span>#hotelCardType#... #right(hotelCardNumber, 4)#</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Charge Date: </strong></span>At check-out</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Base Rate: </strong></span>
 										<cfif len(hotelBase)>
 											#(hotelCurrency EQ 'USD' ? DollarFormat(hotelBase) : numberFormat(hotelBase, '____.__')&' '&hotelCurrency)#
 										</cfif>
-									</td>
-									<td align="right">#hotelTaxes#</td>
-									<td align="right">#(hotelCurrency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&hotelCurrency)#</td>
+									</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Taxes: </strong></span>#hotelTaxes#</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Hotel Total: </strong></span>#(hotelCurrency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&hotelCurrency)#</div>
 									<cfset totalAmount = totalAmount + hotelTotal />
-								</tr>
+								</div>
+								<hr class="visible-xs">
 								<cfif rc.airSelected AND (hotelCurrency NEQ airCurrency)>
 									<cfset displayTotal = false />
 								<cfelse>
@@ -116,23 +118,24 @@
 								<cfset vehicleBase = rc.Vehicle.getEstimatedTotalAmount() />
 								<cfset vehicleDropOffCharge = rc.Vehicle.getDropOffCharge() />
 								<cfset vehicleDropOffChargesIncluded = rc.Vehicle.getDropOffChargesIncluded() />
-								<tr>
-									<td>Car</td>
-									<td>PRESENT AT PICK-UP</td>
-									<td>AT DROP-OFF</td>
-									<td align="right">
+								<div class="row">
+									<div class="col-sm-2"><strong>Car</strong></div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Payment: </strong></span>PRESENT AT PICK-UP</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Charge Date: </strong></span> AT DROP-OFF</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Base Rate: </strong></span>
 										#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleBase) : numberFormat(vehicleBase, '____.__')&' '&vehicleCurrency)#
 										<cfset vehicleTotal = vehicleBase />
 										<cfif NOT vehicleDropOffChargesIncluded AND vehicleDropOffCharge NEQ 0>
 											&nbsp;(+ #(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleDropOffCharge) : numberFormat(vehicleDropOffCharge, '____.__')&' '&vehicleCurrency)# drop-off charge)
 											<cfset vehicleTotal = vehicleTotal + vehicleDropOffCharge />
 										</cfif>
-									</td>
-									<td align="right">QUOTED AT PICK-UP</td>
+									</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Taxes: </strong></span> QUOTED AT PICK-UP</div>
 									<cfset totalText = "Estimated Total" />
-									<td align="right">#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleTotal) : numberFormat(vehicleTotal, '____.__')&' '&vehicleCurrency)#</td>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Car Total: </strong></span>#(vehicleCurrency EQ 'USD' ? DollarFormat(vehicleTotal) : numberFormat(vehicleTotal, '____.__')&' '&vehicleCurrency)#</div>
 									<cfset totalAmount = totalAmount + vehicleTotal />
-								</tr>
+								</div>
+								<hr class="visible-xs">
 								<cfif (rc.airSelected AND (vehicleCurrency NEQ airCurrency)) OR (rc.hotelSelected AND (vehicleCurrency NEQ hotelCurrency))>
 									<cfset displayTotal = false />
 								<cfelse>
@@ -141,9 +144,9 @@
 							</cfif>
 							<!--- If booking fee --->
 							<cfif rc.Traveler[travelerIndex].getBookingDetail().getBookingFee() NEQ 0>
-								<tr>
-									<td>Booking Fee</td>
-									<td>
+								<div class="row">
+									<div class="col-sm-2"><strong>Booking Fee<strong></div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Payment: </strong></span>
 										<cfif rc.Traveler[travelerIndex].getBookingDetail().getAirNeeded()>
 											<cfif airCardNumber NEQ ''>
 												#airCardType#... #right(airCardNumber, 4)#
@@ -153,37 +156,38 @@
 										<cfelseif rc.Traveler[travelerIndex].getBookingDetail().getHotelNeeded()>
 											#hotelCardType#... #right(hotelCardNumber, 4)#
 										</cfif>
-									</td>
-									<td>#dateFormat(Now(), 'mmm d, yyyy')#</td>
-									<td align="right">#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</td>
-									<td align="right">&nbsp;</td>
-									<td align="right">#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</td>
+									</div>
+									<div class="col-sm-2"><span class="visible-xs-inline"><strong>Charge Date: </strong></span>#dateFormat(Now(), 'mmm d, yyyy')#</div>
+
+									<div class="col-sm-offset-4 col-sm-2"><span class="visible-xs-inline"><strong>Total Booking Fee: </strong></span>#dollarFormat(rc.Traveler[travelerIndex].getBookingDetail().getBookingFee())#</div>
 									<cfset totalAmount = totalAmount + rc.Traveler[travelerIndex].getBookingDetail().getBookingFee() />
-								</tr>
+								</div>
+								<hr class="visible-xs">
 							</cfif>
 							<!--- Estimated total --->
-							<tr>
-								<td colspan="4">&nbsp;</td>
-								<td align="right"><span class="blue"><strong>#totalText#</strong></span></td>
-								<td align="right">
+
+							<div class="row">
+
+								<div class="col-sm-offset-8 col-sm-2 col-xs-6"><span class="blue"><strong>#totalText#</strong></span></div>
+								<div class="col-sm-2 col-xs-6">
 									<cfif displayTotal>
 										<span class="blue"><strong>#(whichCurrency EQ 'USD' ? DollarFormat(totalAmount) : numberFormat(totalAmount, '____.__')&' '&whichCurrency)#</strong></span>
 									</cfif>
-								</td>
-							</tr>
+								</div>
+							</div>
 							<cfif unusedTicketSelected>
-								<tr>
-									<td colspan="6" align="right">
+								<div class="row">
+									<div class="text-right col-xs-12">
 										<cfif displayTotal>
 											<span class="blue"><strong>before unused ticket credit</strong></span>
 										</cfif>
-									</td>
-								</tr>
+									</div>
+								</div>
 							</cfif>
-						</table>
-					</td>
-				</tr>
-			</table>
+
+
+
+			</div>
 			<cfif travelerIndex NEQ arrayLen(rc.Travelers)>
 				<hr />
 			</cfif>
