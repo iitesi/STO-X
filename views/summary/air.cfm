@@ -190,7 +190,23 @@
 					Total including taxes and refunds<br>
 					#(rc.air.ref ? 'Refundable' : 'No Refunds')#<br>
 					<span class="blue bold">
-						<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
+						<a rel="popover" data-original-title="Flight Change / Cancellation Policy"
+							data-content="
+								Ticket is
+								<cfif val(rc.Air.ref) eq 0>
+									non-refundable
+								<cfelse>
+									refundable
+								</cfif>
+								<br>
+								<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
+									Changes are not permitted<br>
+									No pre-reserved seats
+
+								<cfelse>
+									Changes USD #rc.Air.changePenalty# for reissue
+								</cfif>
+							" href="##"/>
 							Flight change/cancellation policy
 						</a>
 					</span>
@@ -258,120 +274,9 @@
 									</div>
 								</cfif>
 				</div> <!-- / .form-inline -->
-						</tr>
-					</cfloop>
-					<tr>
-						<td colspan="6">
-						<hr>
-						</td>
-					</tr>
-				</cfloop>
-				</table>
-			</td>
-			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
-
-			<td width="200" valign="top">
-				<span class="blue bold large">
-					<cfif NOT structKeyExists(rc.Air, 'PricingSolution')
-						OR NOT isObject(rc.Air.PricingSolution)>
-						#dollarFormat(rc.Air.Total)#
-					<cfelse>
-						#replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 'USD', '$')#
-					</cfif>
-					<br>
-				</span>
-
-				Total including taxes and refunds<br>
-				#(rc.air.ref ? 'Refundable' : 'No Refunds')#<br>
-				<span class="blue bold">
-					<a rel="popover" data-original-title="Flight Change / Cancellation Policy"
-						data-content="
-							Ticket is
-							<cfif val(rc.Air.ref) eq 0>
-								non-refundable
-							<cfelse>
-								refundable
-							</cfif>
-							<br>
-							<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
-								Changes are not permitted<br>
-								No pre-reserved seats
-
-							<cfelse>
-								Changes USD #rc.Air.changePenalty# for reissue
-							</cfif>
-						" href="##"/>
-						Flight change/cancellation policy
-					</a>
-				</span>
-
-				<span class="red bold">
-					TICKET NOT YET ISSUED.<br />AIRFARE QUOTED IN ITINERARY IS NOT GUARANTEED UNTIL TICKETS ARE ISSUED.
-				</span>
-
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan="4"><br></td>
-		</tr>
-
-		<tr>
-
-			<td></td>
-
-			<td colspan="3">
-
-<!---
-FREQUENT PROGRAM NUMBER
---->
-				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-
-					#sCarrier# Frequent Flyer ##
-					<input type="text" name="airFF#sCarrier#" id="airFF#sCarrier#" maxlength="20" class="input-medium">
-					&nbsp;&nbsp;&nbsp;
-
-				</cfloop>
-<!---
-ADDITIONAL REQUESTS
---->
-				<select name="specialNeeds" id="specialNeeds">
-				<option value="">SPECIAL REQUESTS</option>
-				<option value="BLND">BLIND</option>
-				<option value="DEAF">DEAF</option>
-				<option value="UMNR">UNACCOMPANIED MINOR</option>
-				<option value="WCHR">WHEELCHAIR - CAN CLIMB STAIRS</option>
-				<option value="WCHC">WHEELCHAIR - IMMOBILE</option>
-				</select>
-<!---
-GENERAL SEATS
---->
-				<cfset showWindowAisle = false />
-				<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-					<cfif NOT listFind('WN,F9', sCarrier)>
-						<cfset showWindowAisle = true />
-					</cfif>
-				</cfloop>
-				<cfif showWindowAisle>
-					<select name="windowAisle" id="windowAisle">
-						<option value="">SEATS</option>
-						<option value="Window">WINDOW</option>
-						<option value="Aisle">AISLE</option>
-					</select>
-					<br />
-				</cfif>
-<!---
-SPECIAL REQUEST
---->
-				<cfif rc.showAll
-					OR rc.Policy.Policy_AllowRequests>
-					<input name="specialRequests" id="specialRequests" class="input-block-level" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
-				</cfif>
-
-			</td>
-
-		</tr>
-		</table>
+			</div> <!-- /.col-xs-12 -->
+		</div> <!-- / .row -->
+	</div> <!-- / .tripsummary-detail -->
 
 	</cfif>
 

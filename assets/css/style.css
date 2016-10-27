@@ -167,11 +167,11 @@ body {
 	margin-left: 3px;
 }
 
-.alert-success {
+/* .alert-success {
 	font-size: 15px;
 	font-weight: bold;
 	line-height: 160%;
-}
+} */
 
 .alert-error-larger {
 	font-size: 15px;
@@ -483,9 +483,15 @@ ul.tabs li a.active {
 .summarydiv .form-control {
 	width: 90%;
 	display: inline-block;
-} 
+}
 .tripsummary-detail {
 	padding-left: 15px;
+	padding-bottom: 2em;
+	border-bottom: 1px solid #aaaaaa;
+}
+.tripsummary-detail:last-child {
+	padding-bottom: 0px;
+	border-bottom: 0px;
 }
 .loyalty {
 	margin-top: 1em;
@@ -964,7 +970,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	font-size: 10px;
 }
 .room-description{
-   
+
 }
 
 .room-rate-code{
@@ -1240,7 +1246,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	display:none;
 }
 
-@media (min-width: 768px) { 
+@media (min-width: 768px) {
 	#navbar-collapse-1 ul li.active {
 		border-top: 4px solid #2E76CF;
 		margin-top: -4px;
@@ -1258,11 +1264,11 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
-@media (max-width: 1199px) { 
-	.hotel .daily-rate{ 
+@media (max-width: 1199px) {
+	.hotel .daily-rate{
 		display: inline-block;
 	}
-	
+
 	.hotel .hotel-pricing .btn {
 		margin-left:1em;
 		margin-top: -6px;
@@ -1290,8 +1296,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 @media (min-width: 991px) {
 	.hotel-results {
-		height: 425px; 
-		overflow-x: hidden; 
+		height: 425px;
+		overflow-x: hidden;
 		overflow-y: auto;
 	}
 }
@@ -1326,31 +1332,31 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
         padding-top: 10px;
         padding-bottom: 10px;
     }
-	
+
 	.respFilter .navbar-text {
-       float: none; 
-       margin-right: 0px; 
+       float: none;
+       margin-right: 0px;
        margin-left: 15px
 	}
-	
+
 	.hotel {
 		width: 100%;
 	}
 }
 
-@media (max-width: 475px) { 	
+@media (max-width: 475px) {
 	.hideOnPhones {
 		display:none;
 	}
 }
 
-@media (min-width: 476px) { 	
+@media (min-width: 476px) {
 	.showOnPhones {
 		display:none;
 	}
 }
 
-@media (max-width: 960px) and (max-width: 1199) { 	
+@media (max-width: 960px) and (max-width: 1199) {
 	.hotel .hideOnPhones {
 		display:none;
 	}
@@ -1361,7 +1367,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	.hotel-pricing {
 		width:25% !important;
 		margin-top: -62px;
-	}	
+	}
 }
 
 @media (max-width: 380px) {
@@ -1373,7 +1379,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 @media (max-width: 1199px) and (min-width: 479px) {
 	.hotel-pricing {
 		margin-top: 0px;
-	}	
+	}
 }
 
 .v-center {
@@ -1473,5 +1479,3 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .change-search {
 	cursor: pointer;
 }
-
-

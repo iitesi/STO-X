@@ -1,5 +1,5 @@
 <cfoutput>
-	<div class="carrow" style="width:946px;padding:0px;margin-bottom:26px;">
+	<div class="summarydiv container-fluid">
 		<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 			<cfset totalText = "Total" />
 			<cfset totalAmount = 0 />
