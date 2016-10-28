@@ -493,6 +493,10 @@ ul.tabs li a.active {
 	padding-bottom: 0px;
 	border-bottom: 0px;
 }
+.padded {
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
 .loyalty {
 	margin-top: 1em;
 }

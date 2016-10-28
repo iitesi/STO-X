@@ -1,10 +1,7 @@
 <cfoutput>
-	<table width="100%">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
-					<tr>
-						<td width="6%">
+	<div class="tripsummary-detail">
+		<div class="row">
+			<div class="col-xs-11 col-xs-offset-1">
 							<!--- create ribbon
 							Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 							--->
@@ -29,43 +26,45 @@
 							<cfelseif rc.Air.PTC EQ "GST">
 								<span class="ribbon ribbon-l-govt"></span>
 							</cfif>
-						</td>
-						<td colspan="2">
+
 							<h2>FLIGHT</h2>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td width="12%">
-							<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br />
-							<strong>#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#</strong>
-						</td>
-						<td width="82%">
-							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						</div>
+					</div> <!-- ./row -->
+					<div class="row">
+						<div class="col-sm-2 col-xs-4 center">
+							<img class="img-responsive carrierimg center-block" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
+
+							#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
+						</div>
+
+					<div class="col-sm-10 col-xs-8">
 								<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 									<cfset count = 0>
 									<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 									<cfloop collection="#group.Segments#" item="segment" index="segmentIndex">
 										<cfset count++>
-										<tr>
-											<td width="120">
+										<div class="summarySegment row">
+
 												<cfif count EQ 1>
+													<div class="col-xs-12">
 													<strong>#dateFormat(group.DepartureTime, 'ddd, mmm d')#</strong>&nbsp;#tripLength#
+												</div>
 												</cfif>
-											</td>
-											<td width="80" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
+
+											<div class="col-lg-2 col-sm-3 col-xs-6" title="#application.stAirVendors[segment.Carrier].Name# Flt ###segment.FlightNumber#">
 												#segment.Carrier# #segment.FlightNumber#
-											</td>
-											<td width="100" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
+											</div>
+											<div class="col-lg-2 col-sm-3 col-xs-6" title="#application.stAirports[segment.Origin].airport# - #application.stAirports[segment.Destination].airport#">
 												#segment.Origin# - #segment.Destination#
-											</td>
-											<td width="100">
+											</div>
+
+											<div class="col-lg-2 col-sm-3 col-xs-6">
 												#timeFormat(segment.DepartureTime, 'h:mmt')# - #timeFormat(segment.ArrivalTime, 'h:mmt')#
-											</td>
-											<td width="80">
+											</div>
+											<div class="col-lg-2 col-sm-3 col-xs-6">
 												#uCase(segment.Cabin)#
-											</td>
-											<td width="110">
+											</div>
+											<div class="col-lg-2 col-sm-3">
 												<cfset showIcon = false />
 												<cfset seats = '' />
 												<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">
@@ -101,32 +100,32 @@
 												</cfloop>
 												SEAT #seats#
 												<cfif showIcon><a rel="popover" class="blue icon-large icon-info-sign" data-original-title="Seat Not Assigned" data-content="Seat not assigned." href="##" /></a></cfif>
-											</td>
-											<td width="110">
+											</div>
+
 												<cfif segment.Equipment NEQ ''>
+													<div class="col-xs-12">
 													#uCase(application.stEquipment[segment.Equipment])#
+												</div>
 												</cfif>
-											</td>
-											<td>
+
+
 												<cfif count EQ structCount(group.Segments)
 													AND group.TravelTime NEQ '0h 0m'>
+														<div class="col-lg-2">
 													#group.TravelTime#
+												</div>
 												</cfif>
-											</td>
-										</tr>
+
+										</div> <!-- .row  -->
 									</cfloop>
 									<cfif groupIndex NEQ (structCount(rc.Air.Groups) - 1)>
-										<tr>
-											<td colspan="8"><hr class="dashed" /></td>
-										</tr>
+										<hr class="dashed" />
 									</cfif>
 								</cfloop>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
+							</div>
+
+				</div>
+
 		<tr><td style="height:12px;"></td></tr>
 		<!--- For each traveler with a flight --->
 		<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">

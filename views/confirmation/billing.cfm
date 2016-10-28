@@ -1,5 +1,5 @@
 <cfoutput>
-	<div class="summarydiv container-fluid">
+	<div class="summarydiv container-fluid padded">
 		<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 			<cfset totalText = "Total" />
 			<cfset totalAmount = 0 />
@@ -8,7 +8,7 @@
 			<div>
 				<div class="row">
 
-						<div class="blue col-sm-4"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
+						<div class="blue col-sm-4"><strong>Name: #uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></div>
 						<div class="blue col-sm-4"><strong>Reservation Code: #rc.Traveler[travelerIndex].getBookingDetail().getReservationCode()#</strong></div>
 						<div class="col-sm-4">
 
