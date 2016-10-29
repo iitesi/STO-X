@@ -1,7 +1,7 @@
 <cfoutput>
 	<div class="tripsummary-detail">
 		<div class="row">
-			<div class="col-xs-11 col-xs-offset-1">
+			<div class="col-xs-12 padded">
 							<!--- create ribbon
 							Note: Please do not display "CONTRACTED" flag on search results for Southwest.
 							--->
@@ -26,18 +26,17 @@
 							<cfelseif rc.Air.PTC EQ "GST">
 								<span class="ribbon ribbon-l-govt"></span>
 							</cfif>
-
 							<h2>FLIGHT</h2>
 						</div>
 					</div> <!-- ./row -->
 					<div class="row">
-						<div class="col-sm-2 col-xs-4 center">
-							<img class="img-responsive carrierimg center-block" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
+						<div class="col-sm-2 col-xs-12 center">
+							<img class="img-responsive carrierimg center-block" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png">
 
-							#(ArrayLen(rc.Air.Carriers) EQ 1 ? '<br />'&application.stAirVendors[rc.Air.Carriers[1]].Name : '<br />Multiple Carriers')#
+							#(ArrayLen(rc.Air.Carriers) EQ 1 ? ''&application.stAirVendors[rc.Air.Carriers[1]].Name : 'Multiple Carriers')#
 						</div>
 
-					<div class="col-sm-10 col-xs-8">
+					<div class="col-sm-10 col-xs-12">
 								<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 									<cfset count = 0>
 									<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
@@ -126,90 +125,67 @@
 
 				</div>
 
-		<tr><td style="height:12px;"></td></tr>
 		<!--- For each traveler with a flight --->
 		<cfloop array="#rc.airTravelers#" item="traveler" index="travelerIndex">
-			<tr>
-				<td>
-					<table width="100%" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-							<td width="6%"></td>
-							<td width="12%">
-								<cfif arrayLen(rc.Travelers) GT 1>
-								<!--- <cfif arrayLen(rc.airTravelers) GT 1> --->
-									<span class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></span>
+			<div class='row'>
+				<div class="col-sm-3 col-sm-offset-2">
+					<cfif arrayLen(rc.Travelers) GT 1>
+					<!--- <cfif arrayLen(rc.airTravelers) GT 1> --->
+						<span class="blue"><strong>#uCase(rc.Traveler[travelerIndex].getFirstName())# #uCase(rc.Traveler[travelerIndex].getLastName())#</strong></span>
+					</cfif>
+				</div>
+				<cfif structKeyExists(rc.Air, "aPolicies") AND arrayLen(rc.Air.aPolicies)>
+					<div class="col-sm-2"><strong>OUT OF POLICY</strong></div>
+					<div class="col-sm-2">#ArrayToList(rc.Air.aPolicies)#</div>
+					<div class="col-sm-3">
+						<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail(), "airReasonDescription")>
+							<strong>Reason</strong>#rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription#
+						</cfif>
+					</div>
+				</cfif>
+			</div>
+
+			<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
+				<div class='row padded'>
+					<div class="col-sm-5 col-sm-offset-2">
+						<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) && len(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier])>
+							<span class="blue"><strong>#carrier# Confirmation #rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span><
+						</cfif>
+					</div>
+					<div class="col-sm-5">
+						<cfloop collection="#rc.Traveler[travelerIndex].getLoyaltyProgram()#" item="program" index="programIndex">
+							<cfif program.getShortCode() EQ carrier>
+								<cfif len(program.getAcctNum())>
+									<strong>#carrier# Flyer ##</strong> #program.getAcctNum()#
 								</cfif>
-							</td>
-							<cfif structKeyExists(rc.Air, "aPolicies") AND arrayLen(rc.Air.aPolicies)>
-									<td width="110"><strong>OUT OF POLICY</strong></td>
-									<td colspan="3">#ArrayToList(rc.Air.aPolicies)#</td>
-									<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail(), "airReasonDescription")>
-										<td width="80"><strong>Reason</strong></td>
-										<td>#rc.Traveler[travelerIndex].getBookingDetail().airReasonDescription#</td>
-									<cfelse>
-										<td colspan="2"></td>
-									</cfif>
-								</tr>
-								<tr>
-									<td colspan="2"></td>
 							</cfif>
-							<cfloop collection="#rc.Air.Carriers#" item="carrier" index="carrierIndex">
-								<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) && len(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier])>
-									<td width="110"><span class="blue"><strong>#carrier# Confirmation</strong></span></td>
-									<td width="80"><span class="blue"><strong>#rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span></td>
-								<cfelse>
-									<td width="110"></td>
-									<td width="80"></td>
-								</cfif>
-								<cfloop collection="#rc.Traveler[travelerIndex].getLoyaltyProgram()#" item="program" index="programIndex">
-									<cfif program.getShortCode() EQ carrier>
-										<cfif len(program.getAcctNum())>
-											<td width="110"><strong>#carrier# Flyer ##</strong></td>
-											<td width="120">#program.getAcctNum()#</td>
-										<cfelse>
-											<td width="110"></td>
-											<td width="120"></td>
-										</cfif>
-									</cfif>
-								</cfloop>
-								<td width="60"></td>
-								<td width="190"></td>
-								<cfif carrierIndex NEQ arrayLen(rc.Air.Carriers)>
-									</tr>
-									<tr><td colspan="2">
-								</cfif>
-							</cfloop>
-						</tr>
-						<!--- If special service or note --->
-						<cfif len(rc.Traveler[travelerIndex].getSpecialNeeds()) OR len(rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests())>
-							<tr>
-								<td colspan="4"></td>
-								<td valign="top"><strong>Special Svc</strong></td>
-								<td valign="top">
-									<cfif len(rc.Traveler[travelerIndex].getSpecialNeeds())>
-										<cfswitch expression="#rc.Traveler[travelerIndex].getSpecialNeeds()#">
-											<cfcase value="BLND">Blind</cfcase>
-											<cfcase value="DEAF">Deaf</cfcase>
-											<cfcase value="UMNR">Unaccompanied Minor</cfcase>
-											<cfcase value="WCHR">Wheelchair</cfcase>
-										</cfswitch>
-									</cfif>
-								</td>
-								<td valign="top"><strong>Note</strong></td>
-								<td valign="top" width="120">#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#</td>
-							</tr>
+						</cfloop>
+					</div>
+				</div>
+			</cfloop>
+
+			<!--- If special service or note --->
+			<cfif len(rc.Traveler[travelerIndex].getSpecialNeeds()) OR len(rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests())>
+				<div class='row'>
+					<div class="col-sm-5 col-sm-offset-2">
+					<strong>Special Svc</strong>
+						<cfif len(rc.Traveler[travelerIndex].getSpecialNeeds())>
+							<cfswitch expression="#rc.Traveler[travelerIndex].getSpecialNeeds()#">
+								<cfcase value="BLND">Blind</cfcase>
+								<cfcase value="DEAF">Deaf</cfcase>
+								<cfcase value="UMNR">Unaccompanied Minor</cfcase>
+								<cfcase value="WCHR">Wheelchair</cfcase>
+							</cfswitch>
 						</cfif>
-						<cfif travelerIndex NEQ arrayLen(rc.airTravelers)>
-							<tr>
-								<td colspan="2"></td>
-								<td colspan="6"><hr class="dashed" /></td>
-							</tr>
-						<cfelse>
-							<tr><td colspan="8" style="height:12px;"></td></tr>
-						</cfif>
-					</table>
-				</td>
-			</tr>
+					</div>
+					<div class="col-sm-5">
+						<strong>Note</strong>#rc.Traveler[travelerIndex].getBookingDetail().getSpecialRequests()#
+					</div>
+				</div>
+			</cfif>
+			<cfif travelerIndex NEQ arrayLen(rc.airTravelers)>
+				<hr class="dashed" />
+			</cfif>
 		</cfloop>
-	</table>
+	</div>
 </cfoutput>

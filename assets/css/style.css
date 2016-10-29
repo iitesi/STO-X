@@ -486,8 +486,6 @@ ul.tabs li a.active {
 }
 .tripsummary-detail {
 	padding-left: 15px;
-	padding-bottom: 2em;
-	border-bottom: 1px solid #aaaaaa;
 }
 .tripsummary-detail:last-child {
 	padding-bottom: 0px;
@@ -497,6 +495,7 @@ ul.tabs li a.active {
 	padding-top: 1em;
 	padding-bottom: 1em;
 }
+
 .loyalty {
 	margin-top: 1em;
 }
@@ -1105,6 +1104,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	position: relative;
 	float: left;
 	margin-left: -30px;
+}
+.tripsummary-detail .padded .ribbon {
+	margin-top: -1em;
 }
 
 /*
