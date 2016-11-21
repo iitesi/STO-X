@@ -3,7 +3,7 @@
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
 		<div class="pull-right"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-times"></a></div><br>
-					
+
 				<div class="tripsummary-detail">
 					<div class="row">
 						<div class="col-xs-12">
@@ -102,7 +102,7 @@
 							<img class="img-responsive" alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
 						</cfif>
 					</div>
-					
+
 					<div class="col-sm-7 col-xs-8">
 						<strong>
 							#rc.Hotel.getPropertyName()#<br>
@@ -144,11 +144,23 @@
 						</cfif>
 					<cfif rc.Filter.getFindIt() EQ 1>
 						<cfset dailyRateCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
-						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>						
+						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>
 						<span class="blue bold large">
 							#(dailyRateCurrency EQ 'USD' ? DollarFormat(hotelDailyRate) : numberFormat(hotelDailyRate, '____.__')&' '&dailyRateCurrency)#<br />
 						</span>
 						Average nightly rate<br />
+						<cfif isArray(rc.hotel.getRooms()[1].getRateChangeText()) AND arrayLen(rc.hotel.getRooms()[1].getRateChangeText()) GT 1>
+							<cfsavecontent variable="hotelRateChanges">
+								<cfloop from="1" to="#arrayLen(rc.hotel.getRooms()[1].getRateChangeText())#" index="ii">
+									#replace(replace(replace(rc.hotel.getRooms()[1].getRateChangeText()[ii], "USD", "$"), " per ", "/"), "nights", "night(s)")#<br />
+								</cfloop>
+							</cfsavecontent>
+							<span class="blue bold">
+								<a rel="popover" data-original-title="Hotel rate changes" data-content="#hotelRateChanges#" href="##" />
+									Hotel nightly rate variances
+								</a>
+							</span>
+						</cfif>
 					</cfif>
 
 					<span class="blue bold large">
