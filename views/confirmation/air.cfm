@@ -149,7 +149,7 @@
 				<div class='row padded'>
 					<div class="col-sm-5 col-sm-offset-2">
 						<cfif structKeyExists(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation(), carrier) && len(rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier])>
-							<span class="blue"><strong>#carrier# Confirmation #rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span><
+							<span class="blue"><strong>#carrier# Confirmation #rc.Traveler[travelerIndex].getBookingDetail().getAirConfirmation()[carrier]#</strong></span>
 						</cfif>
 					</div>
 					<div class="col-sm-5">

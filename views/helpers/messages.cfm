@@ -5,9 +5,9 @@
 		<cfset typeClass="alert-success" />
 		<cfif type IS "error">
 			<cfif message IS "The rules for this fare have changed - this fare is nonrefundable.">
-				<cfset typeClass="alert-error alert-error-larger" />
+				<cfset typeClass="bg-danger alert-error-larger" />
 			<cfelse>
-				<cfset typeClass="alert-error" />
+				<cfset typeClass="bg-danger" />
 			</cfif>
 		</cfif>
 

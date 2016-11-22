@@ -64,7 +64,7 @@
 	<cfoutput>
 
 
-			<div id="reservationMessage" class="alert alert-success" >
+			<div id="reservationMessage" class="alert alert-success bg-success" >
 				<cfset variables.unusedTicketSelected = false>
 				<cfloop array="#rc.Travelers#" item="local.traveler" index="travelerIndex">
 					<cfif rc.Traveler[travelerIndex].getBookingDetail().getUnusedTickets() NEQ ''>
