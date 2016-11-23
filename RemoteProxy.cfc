@@ -190,7 +190,7 @@
     <cfargument name="propertyId" type="string" required="true"/>
     <cfargument name="callback" type="string" required="false"/>
     <cfargument name="requery" type="boolean" required="false" default="false"/>
-	<cfargument name="checkPriceline" type="boolean" required="false" default="false"/>
+	<cfargument name="checkPriceline" type="boolean" required="false" default="true"/>
 	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
 
 	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
