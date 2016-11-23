@@ -12,8 +12,6 @@ function HotelRoom(){
 	this.isGovernmentRate = false;
 	this.isInPolicy = true;
 	this.outOfPolicyMessage = '';
-	this.cancellationMessage = '';
-	this.cancellationMessageLoaded = false;
 	this.rateChange = '';
 	this.ratePlanType = '';
 	this.tax = 0;
@@ -21,7 +19,6 @@ function HotelRoom(){
 	this.totalForStay = 0;
 	this.totalForStayCurrency = '';
 	this.totalIncludesMessage = '';
-	this.promo = '';
 }
 
 HotelRoom.prototype.populate = function( obj ){

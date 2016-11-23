@@ -30,13 +30,14 @@
 	<cfset local.removeFrameAddress = local.coreFrameAddress & "summary.removePayment" & local.coreFrameParameters />
 </cfsilent>
 
-<div id="displayPaymentWindow" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="myPaymentWindow" aria-hidden="true">
-	<div class="searchContainer">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
-			<h3 id="addModalHeader">ENTER CREDIT CARD INFORMATION</h3>
-			<b>PLEASE NOTE:</b> If you create or save changes to a profile, you are authorizing us to retain this credit card information for future transactions until the card expiration date. We follow PCI Compliance guidelines to ensure credit card information security.
-		</div>
+<div id="displayPaymentWindow" class="modal searchForm fade" tabindex="-1" role="dialog" aria-labelledby="myPaymentWindow" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+				<h3 id="addModalHeader">ENTER CREDIT CARD INFORMATION</h3>
+				<b>PLEASE NOTE:</b> If you create or save changes to a profile, you are authorizing us to retain this credit card information for future transactions until the card expiration date. We follow PCI Compliance guidelines to ensure credit card information security.
+			</div>
 		<cfoutput>
 			<div class="modal-body">
 				<div id="addModalBody">
@@ -45,20 +46,21 @@
 						<iframe
 							id="addIframe"
 							src=""
-							width="540"
-							height="382"
+							width="100%"
+							height="300"
 							frameBorder="0"></iframe>
 					</cfoutput>
 				</div>
 			</div>
 		</cfoutput>
-	</div>
+		</div> <!-- /.modal-content -->
+	</div> <!-- /.modal-dialog -->
 </div>
 
 <div id="removePaymentWindow" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="myPaymentWindow" aria-hidden="true">
 	<div class="searchContainer">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
 			<h3 id="removeModalHeader">REMOVE CREDIT CARD INFORMATION</h3>
 		</div>
 		<cfoutput>

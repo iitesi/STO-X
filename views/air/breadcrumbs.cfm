@@ -22,7 +22,7 @@
 							<a href="#buildURL('air.lowfare?SearchID=#filterSearchID#')#" class="breadcrumbModal" title="Click to view this search">#session.filters[filterSearchID].getHeading()#</a>
 					</cfif>
 					<cfif StructCount(session.filters) GT 1>
-						&nbsp;<a href="#buildURL('air.removeflight?SearchID=#filterSearchID#')#" title="Click to remove this flight from your saved searches"><i class="icon-remove"></i></a>
+						&nbsp;<a href="#buildURL('air.removeflight?SearchID=#filterSearchID#')#" title="Click to remove this flight from your saved searches"><i class="fa fa-times"></i></a>
 					</cfif>
 					<cfif nAirCount NEQ nTempCount><span class="divider">/</span></cfif>
 				</li>

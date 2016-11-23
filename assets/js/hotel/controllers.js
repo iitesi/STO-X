@@ -10,7 +10,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	} else {
 		$scope.finditRequest = false;
 	}
-	$scope.checkPriceline = true;
 	$scope.ratePlanType = $.url().param( 'RatePlanType' );
 	$scope.dailyRate = $.url().param( 'DailyRate' );
 	$scope.hidePage = false;
@@ -43,7 +42,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 	$scope.propertyNameFilterValue = ''; //This is outside the $scope.filterItems so that it doesn't get run on every keypress in the search box
-
+	
 	$scope.filtersApplied = {
 		vendors: false,
 		amenities: false,
@@ -52,14 +51,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		inPolicy: false,
 		noSoldOut: false
 	}
-
+	
 	$scope.filtersVisible = {
 		vendors: false,
 		amenities: false,
 		vendorName: false,
 		rating: false
 	}
-
+	
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
@@ -135,7 +134,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.getSearchResults = function( requery ){
-		SearchService.doSearch( $scope.searchId, $scope.propertyId, requery, $scope.finditRequest, $scope.checkPriceline )
+		SearchService.doSearch( $scope.searchId, $scope.propertyId, requery, $scope.finditRequest )
 			.then( function(result){
 				$scope.hotels = result.hotels;
 				$scope.filteredHotels = result.hotels;
@@ -156,7 +155,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 	$scope.getHotelRates = function( Hotel, requery ){
 		if( !Hotel.roomsReturned ){
-			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.propertyId, $scope.ratePlanType, $scope.dailyRate, $scope.policy, requery, $scope.checkPriceline )
+			HotelService.getHotelRates( $scope.searchId, Hotel, $scope.propertyId, $scope.ratePlanType, $scope.dailyRate, $scope.policy, requery )
 				.then( function(result){
 					if( !$scope.hotelFilter( result ) ){
 						$scope.filterHotels();
@@ -252,8 +251,9 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 			if( !Hotel.extendedDataRequested ){
 				var datapoints = [];
-				datapoints.push( 'rating' );
-				datapoints.push( 'info' );
+				if( Hotel.StarRating == 0 ){
+					datapoints.push( 'rating' );
+				}
 				if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
 					datapoints.push( 'signatureImage' );
 				}
@@ -352,36 +352,15 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.loadExtendedHotelData = function( Hotel ){
+
 		if( !Hotel.details.loaded ){
-			var datapoints = [];
-			datapoints.push( 'rating' );
-			datapoints.push( 'info' );
-			if( Hotel.SignatureImage.indexOf( "MissingHotel" ) != -1 ){
-				datapoints.push( 'signatureImage' );
-			}
-			HotelService.getExtendedData( $scope.searchId, Hotel, datapoints.toString() );
+			HotelService.getExtendedData( $scope.searchId, Hotel );
 		}
-	}
 
-	$scope.loadHotelPhotos = function( Hotel ){
-			HotelService.getHotelPhotos( $scope.searchId, Hotel );
-	}
-
-	$scope.showCancellationPolicy = function(Hotel, Room){
-		$('#cancellationPolicyCopy').html('');
-		$('#cancellationWindow').modal('show');
-		if(Room.cancellationMessageLoaded == false){
-			$('#cancellationPolicyLoading').show();
-			HotelService.getRoomRateRules($scope.searchId,Hotel, Room);
-		} else {
-			var cMessage = '<span>'+Room.cancellationMessage+'</span>';
-			$('#cancellationPolicyCopy').html(cMessage);
-			$('#cancellationPolicyLoading').hide();
-			$('#cancellationPolicyCopy').show();
-		}
 	}
 
 	$scope.setFilterVisibility = function( filterName ){
+
 		for ( var prop in $scope.filtersVisible ) {
 			if( prop == filterName ){
 				$scope.filtersVisible[ prop ] = !$scope.filtersVisible[ prop ];
@@ -389,6 +368,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.filtersVisible[ prop ] = false;
 			}
 		}
+
 	}
 
 	$scope.clearFilters = function(){
@@ -601,9 +581,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$('#changeSearchWindow').modal('show');
 	}
 
-	$scope.showCancellationWindow = function(){
-		$('#cancellationWindow').modal('show');
-	}
 	$scope.configureChangeSearchForm = function(){
 
 		//Now that we have the search data, we're going to set the search parameters into the change search form
@@ -662,27 +639,15 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 	$scope.selectRoom = function( Hotel, Room ){
-		var ppnBundle = "";
-		if (Room.ppnBundle != "")
-			ppnBundle = Room.ppnBundle.replaceAll('%','xxx');
 		window.location = '/booking/index.cfm?action=hotel.select&SearchID=' + $scope.search.searchID
 							+ '&propertyId=' + Hotel.PropertyId
 							+ '&ratePlanType=' + Room.ratePlanType
-							+ '&ppnBundle=' + ppnBundle
+							+ '&ppnBundle=' + Room.ppnBundle
 							+ '&totalForStay=' + Room.totalForStay
 							+ '&isInPolicy=' + Room.isInPolicy
 							+ '&outOfPolicyMessage=' + Room.outOfPolicyMessage;
 	}
 
-	String.prototype.replaceAll = function(search, replace) {
-	    //if replace is not sent, return original string otherwise it will
-	    //replace search string with 'undefined'.
-	    if (replace === undefined) {
-	        return this.toString();
-	    }
-
-	    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
-	};
 
 	$scope.initializeMap = function( lat, lon ){
 
@@ -807,3 +772,4 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$('.continue-link').attr( 'href', '/booking/index.cfm?action=hotel.skip&searchId=' + $scope.searchId );
 
 });
+

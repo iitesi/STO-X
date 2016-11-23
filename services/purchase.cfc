@@ -2,18 +2,15 @@
 	<cfproperty name="TerminalEntry"/>
 	<cfproperty name="UniversalAdapter"/>
 	<cfproperty name="bookingDSN"/>
-	<cfproperty name="virtualInvoiceDSN"/>
 
 	<cffunction name="init" output="false">
 		<cfargument name="TerminalEntry" requred="true" />
 		<cfargument name="UniversalAdapter" requred="true" />
 		<cfargument name="bookingDSN" requred="true" />
-		<cfargument name="virtualInvoiceDSN" requred="true" />
 
 		<cfset setTerminalEntry( arguments.TerminalEntry ) />
 		<cfset setUniversalAdapter( arguments.UniversalAdapter ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
-		<cfset setVirtualInvoiceDSN( arguments.virtualInvoiceDSN ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -283,7 +280,6 @@
 																							, developer = arguments.developer
 																							, specialCarReservation = arguments.Traveler.getBookingDetail().getSpecialCarReservation()
 																							, unusedTickets = (arguments.Traveler.getBookingDetail().getUnusedTickets() EQ '' ? false : true )
-																							, similarTripSelected = arguments.Traveler.getBookingDetail().getSimilarTripSelected()
 																							, Air = arguments.Air
 																							, airSelected = airSelected
 																							, Account = arguments.Account )>
@@ -392,122 +388,66 @@
 			</cfif>
 		</cfif>
 
-		<cfset local.updateInvoice = false />
-		<cfif arguments.Traveler.getBookingDetail().getSimilarTripSelected()>
-			<!--- Only STO/FindIt reservations are stored in the booking.Invoices table --->
-			<cfquery name="getInvoice" datasource="#getBookingDSN()#">
-				SELECT invoiceID
-				FROM Invoices
-				WHERE recloc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" />
-					AND userID = <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" />
-			</cfquery>
-
-			<cfif getInvoice.recordCount>
-				<cfset local.updateInvoice = true />
-			</cfif>
-		</cfif>
-
-		<cfif updateInvoice>
-			<cfquery datasource="#getBookingDSN()#">
-				UPDATE Invoices
-				SET   recloc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
-					, urRecloc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getUniversalLocatorCode()#" cfsqltype="cf_sql_varchar" >
-					, firstName = <cfqueryparam value="#arguments.Traveler.getFirstName()#" cfsqltype="cf_sql_varchar" >
-					, lastName = <cfqueryparam value="#arguments.Traveler.getLastName()#" cfsqltype="cf_sql_varchar" >
-					<cfif arguments.Traveler.getBookingDetail().getAirNeeded()>
-						, air = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getAirNeeded()#" cfsqltype="cf_sql_integer" >
-						, airSelection = <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Air') ? serializeJSON(arguments.itinerary.Air) : '')#" cfsqltype="cf_sql_longvarchar" >
-					</cfif>
-					<cfif arguments.Traveler.getBookingDetail().getCarNeeded()>
-						, car = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getCarNeeded()#" cfsqltype="cf_sql_integer" >
-						, carSelection = <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Vehicle') ? serializeJSON(arguments.itinerary.Vehicle) : '')#" cfsqltype="cf_sql_longvarchar" >
-					</cfif>
-					<cfif arguments.Traveler.getBookingDetail().getHotelNeeded()>
-						, hotel = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getHotelNeeded()#" cfsqltype="cf_sql_integer" >
-						, hotelSelection = <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Hotel') ? serializeJSON(arguments.itinerary.Hotel) : '')#" cfsqltype="cf_sql_longvarchar" >
-					</cfif>
-					, valueID = <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
-					, policyID = <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
-					, profileID = <cfqueryparam value="#arguments.Filter.getProfileID()#" cfsqltype="cf_sql_integer" >
-					, filter = <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" >
-					, traveler = <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
-					, bookingDetail = <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
-					, unusedTickets = <cfqueryparam value="#left(arguments.Traveler.getBookingDetail().getUnusedTickets(), 50)#" cfsqltype="cf_sql_varchar" >
-					, hotelSource = <cfqueryparam value="#local.hotelSource#" cfsqltype="cf_sql_varchar" >
-					, targetBranch = <cfqueryparam value="#arguments.Account.sBranch#" cfsqltype="cf_sql_varchar" >
-					, passiveRecloc = <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
-					, passiveSegmentRef = <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
-					, providerReservationInfoRef = <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
-					, active = <cfqueryparam value="1" cfsqltype="cf_sql_bit" >
-				WHERE invoiceID = <cfqueryparam value="#getInvoice.invoiceID#" cfsqltype="cf_sql_integer" >
-			</cfquery>
-
-			<cfset arguments.Traveler.getBookingDetail().setInvoiceID(getInvoice.invoiceID) />
-		<cfelse>
-			<cfquery datasource="#getBookingDSN()#" result="local.invoice">
-				INSERT INTO Invoices (
-					  searchID
-					, recloc
-					, urRecloc
-					, firstName
-					, lastName
-					, air
-					, airSelection
-					, car
-					, carSelection
-					, hotel
-					, hotelSelection
-					, userID
-					, valueID
-					, policyID
-					, profileID
-					, filter
-					, traveler
-					, bookingDetail
-					, unusedTickets
-					, hotelSource
-					, targetBranch
-					, passiveRecloc
-					, passiveSegmentRef
-					, providerReservationInfoRef
-				)
-				VALUES (
-					  <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getUniversalLocatorCode()#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#arguments.Traveler.getFirstName()#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#arguments.Traveler.getLastName()#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getAirNeeded()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Air') ? serializeJSON(arguments.itinerary.Air) : '')#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getCarNeeded()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Vehicle') ? serializeJSON(arguments.itinerary.Vehicle) : '')#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getHotelNeeded()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Hotel') ? serializeJSON(arguments.itinerary.Hotel) : '')#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#arguments.Filter.getProfileID()#" cfsqltype="cf_sql_integer" >
-					, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
-					, <cfqueryparam value="#left(arguments.Traveler.getBookingDetail().getUnusedTickets(), 50)#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#local.hotelSource#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#arguments.Account.sBranch#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
-					, <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
-				)
-			</cfquery>
-
-			<cfset arguments.Traveler.getBookingDetail().setInvoiceID(local.invoice.IDENTITYCOL) />
-		</cfif>
+		<cfquery datasource="#getBookingDSN()#">
+			INSERT INTO Invoices (
+				  searchID
+				, recloc
+				, urRecloc
+				, firstName
+				, lastName
+				, air
+				, airSelection
+				, car
+				, carSelection
+				, hotel
+				, hotelSelection
+				, userID
+				, valueID
+				, policyID
+				, profileID
+				, filter
+				, traveler
+				, bookingDetail
+				, unusedTickets
+				, hotelSource
+				, targetBranch
+				, passiveRecloc
+				, passiveSegmentRef
+				, providerReservationInfoRef
+			)
+			VALUES (
+				  <cfqueryparam value="#arguments.Filter.getSearchID()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getUniversalLocatorCode()#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Traveler.getFirstName()#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Traveler.getLastName()#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getAirNeeded()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Air') ? serializeJSON(arguments.itinerary.Air) : '')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getCarNeeded()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Vehicle') ? serializeJSON(arguments.itinerary.Vehicle) : '')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#arguments.Traveler.getBookingDetail().getHotelNeeded()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#(structKeyExists(arguments.itinerary, 'Hotel') ? serializeJSON(arguments.itinerary.Hotel) : '')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#arguments.Filter.getUserID()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#arguments.Filter.getValueID()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#arguments.Filter.getPolicyID()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#arguments.Filter.getProfileID()#" cfsqltype="cf_sql_integer" >
+				, <cfqueryparam value="#serializeJSON(arguments.Filter)#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#REReplace(serializeJSON(arguments.Traveler.getBookingDetail()), '\b\d{13,16}\b', '****************', 'ALL')#" cfsqltype="cf_sql_longvarchar" >
+				, <cfqueryparam value="#left(arguments.Traveler.getBookingDetail().getUnusedTickets(), 50)#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.hotelSource#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#arguments.Account.sBranch#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.passiveLocatorCode#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.passiveSegmentRef#" cfsqltype="cf_sql_varchar" >
+				, <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
+			)
+		</cfquery>
 
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="retrieveInvoice" output="false">
-		<cfargument name="invoiceID" type="numeric" required="false" />
-		<cfargument name="searchID" type="numeric" required="false" />
+		<cfargument name="invoiceID" type="numeric" required="true" />
 
 		<cfquery name="getInvoice" datasource="#getBookingDSN()#">
 			SELECT searchID
@@ -515,8 +455,6 @@
 				 , urRecloc
 				 , firstName
 				 , lastName
-				 , air
-				 , car
 				 , hotelSelection
 				 , userID
 				 , profileID
@@ -531,11 +469,7 @@
 				 , passiveSegmentRef
 				 , providerReservationInfoRef
 			FROM Invoices
-			<cfif len(arguments.invoiceID)>
-				WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
-			<cfelse>
-				WHERE searchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_integer" />
-			</cfif>
+			WHERE invoiceID = <cfqueryparam value="#arguments.invoiceID#" cfsqltype="cf_sql_integer" />
 		</cfquery>
 
 		<cfreturn getInvoice />
@@ -551,40 +485,6 @@
 			WHERE searchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_integer" >
 				AND urRecloc = <cfqueryparam value="#arguments.urRecloc#" cfsqltype="cf_sql_varchar" >
 		</cfquery>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="regenerateVI" output="false">
-		<cfargument name="recLoc" required="true">
-
-		<cfquery name="getVI" datasource="#getVirtualInvoiceDSN()#">
-			SELECT TOP 1 ID, AccountNumber, ID_GUID, BranchNumber
-			FROM InvoiceArchive
-			WHERE RecordLocator = <cfqueryparam value="#arguments.recLoc#" cfsqltype="cf_sql_varchar" />
-			ORDER BY VI_Timestamp DESC
-		</cfquery>
-
-		<cfif getVI.recordCount>
-			<cfset timestamp = DateAdd('d', -1, Now()) />
-
-			<cfquery datasource="#getVirtualInvoiceDSN()#">
-				INSERT INTO RUN_VI (
-					  RLoc
-					, AccountID
-					, Time_Stamp
-					, Archive_ID
-					, BranchID
-				)
-				VALUES (
-					  <cfqueryparam value="#arguments.recLoc#" cfsqltype="cf_sql_varchar" />
-					, <cfqueryparam value="#getVI.AccountNumber#" cfsqltype="cf_sql_varchar" />
-					, <cfqueryparam value="#timestamp#" cfsqltype="cf_sql_timestamp" />
-					, <cfqueryparam value="#getVI.ID_GUID#" cfsqltype="cf_sql_varchar" />
-					, <cfqueryparam value="#getVI.BranchNumber#" cfsqltype="cf_sql_varchar" />
-				)
-			</cfquery>
-		</cfif>
 
 		<cfreturn />
 	</cffunction>

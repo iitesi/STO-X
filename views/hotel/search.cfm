@@ -11,7 +11,6 @@
 	<cfsavecontent variable="localAssets">
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">
-		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.min.css">
 		<script src="<cfoutput>#googleMapsURL#</cfoutput>"></script>
 		<script type="text/javascript" src="assets/js/StyledMarker.js"></script>
 		<script type="text/javascript" src="assets/js/bootstrap-datepicker.js"></script>

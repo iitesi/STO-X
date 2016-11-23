@@ -6,7 +6,6 @@ function Hotel(){
     this.hotelChain = "";
     this.details = {
     	loaded: false,
-      pricelineMatched: false,
     	cancellation: "",
     	creditCard: "",
     	directions: "",
@@ -16,9 +15,7 @@ function Hotel(){
     	location: "",
     	recreation: "",
     	services: "",
-    	transportation: "",
-      neighborhood: "",
-      roomCount: 0
+    	transportation: ""
     };
     this.policy = false;
     this.preferredProperty = false;
@@ -29,7 +26,6 @@ function Hotel(){
     this.roomsReturned = false;
     this.allRoomsOutOfPolicy = false;
     this.images = [];
-    this.imagesLoaded = false;
     this.isGovernmentRate = false;
     this.isCorporateRate = false;
     this.extendedDataRequested = false;
@@ -91,11 +87,7 @@ Hotel.prototype.populate = function( obj ){
     for(var propt in obj){
         this[propt] = obj[propt];
     }
-    this.createAmenityList();
 
-}
-
-Hotel.prototype.createAmenityList = function(){
     //Populate the Ameneities array from the list in the database
     if( this.AmenitiesList.length ){
         if( this.AmenitiesList.charAt(0) == "|"){
@@ -104,6 +96,7 @@ Hotel.prototype.createAmenityList = function(){
 
         var unsortedAmenities =
         this.Amenities = this.AmenitiesList.split("|" ).sort();
+
     }
 }
 

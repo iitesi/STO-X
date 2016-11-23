@@ -43,7 +43,7 @@
 			<cfset frameSrc = ''>
 		</cfif>
 
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="icon-search"></i> Change Search</a></h2>
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			#View('air/legs')#
@@ -102,7 +102,7 @@
 		<div class="noFlightsFound">
 			<div class="container">
 			<h1>No Flights Available</h1>
-			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
+			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 			</div>
 		</div>
 	<cfelse>

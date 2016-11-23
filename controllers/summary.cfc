@@ -50,8 +50,7 @@
 		<cfif structKeyExists(session.searches[rc.searchID], 'Travelers')>
 			<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 				<cfif Traveler.getBookingDetail().getUniversalLocatorCode() NEQ ''
-					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()
-					AND NOT Traveler.getBookingDetail().getSimilarTripSelected()>
+					AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 					<cfset fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																					, universalRecordLocatorCode = Traveler.getBookingDetail().getUniversalLocatorCode()
 																					, Filter = rc.Filter )>
@@ -587,9 +586,6 @@
 			<cfset rc.Air = session.searches[rc.searchID].stItinerary.Air />
 		</cfif>
 
-		<!--- <cfif rc.Filter.getFindIt()> --->
-			<cfset var similarTrips = fw.getBeanFactory().getBean('Summary').getSimilarTrips(rc.Filter,fw.getBeanFactory().getBean('PNRService'))>
-		<!--- </cfif> --->
 		<!---
 		FORM SELECTED
 		--->
@@ -765,11 +761,7 @@
 					</cfif>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
 				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
-					<cfset pnrString = "" />
-					<cfif structKeyExists(rc, "recLoc") AND len(rc.recLoc)>
-						<cfset pnrString = "&recLoc=#rc.recLoc#" />
-					</cfif>
-					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID##pnrString#')>
+					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()

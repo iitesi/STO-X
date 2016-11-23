@@ -53,7 +53,6 @@
 	<cfproperty name="hotelFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="hotelWhereStaying" />
-	<cfproperty name="invoiceID" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
@@ -66,7 +65,6 @@
 	<cfproperty name="reservationCode" />
 	<cfproperty name="saveProfile" />
 	<cfproperty name="seatAssignmentNeeded" />
-	<cfproperty name="similarTripSelected" />
 	<cfproperty name="specialCarReservation" />
 	<cfproperty name="specialRequests" />
 	<cfproperty name="specialNeeds" />
@@ -137,7 +135,6 @@
 		<cfset setHotelFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setHotelWhereStaying( '' )>
-		<cfset setInvoiceID( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setNameChange( false )>
 		<cfset setNewAirCC( 0 )>
@@ -151,7 +148,6 @@
 		<cfset setSaveProfile( false )>
 		<cfset setSeatAssignmentNeeded( false )>
 		<cfset setSeats( [] )>
-		<cfset setSimilarTripSelected( false )>
 		<cfset setSpecialCarReservation( '' )>
 		<cfset setSpecialRequests( '' )>
 		<cfset setSpecialNeeds( '' )>

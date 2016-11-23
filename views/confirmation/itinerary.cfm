@@ -1,5 +1,5 @@
 <cfoutput>
-	<div class="carrow" style="width:946px;padding:0px;margin-bottom:26px;">
+	<div class="summarydiv container-fluid">
 		<table width="100%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
