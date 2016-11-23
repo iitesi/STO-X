@@ -205,7 +205,23 @@
 				Total including taxes and refunds<br>
 				#(rc.air.ref ? 'Refundable' : 'No Refunds')#<br>
 				<span class="blue bold">
-					<a rel="popover" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Change USD #rc.Air.changePenalty# for reissue" href="##" />
+					<a rel="popover" data-original-title="Flight Change / Cancellation Policy"
+						data-content="
+							Ticket is
+							<cfif val(rc.Air.ref) eq 0>
+								non-refundable
+							<cfelse>
+								refundable
+							</cfif>
+							<br>
+							<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
+								Changes are not permitted<br>
+								No pre-reserved seats
+
+							<cfelse>
+								Changes USD #rc.Air.changePenalty# for reissue
+							</cfif>
+						" href="##"/>
 						Flight change/cancellation policy
 					</a>
 				</span>

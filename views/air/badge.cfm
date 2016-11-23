@@ -77,8 +77,25 @@
 							<cfset btnClass = "btn-success">
 						</cfif>
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
-						<br><span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy" data-content="Ticket is #(stTrip.Ref ? '' : 'non-')#refundable.<br>Change USD #stTrip.changePenalty# for reissue." href="##" />
-							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</span>
+						<br>
+						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
+							data-content="
+								Ticket is
+								<cfif val(stTrip.ref) eq 0>
+									non-refundable
+								<cfelse>
+									refundable
+								</cfif>
+								<br>
+								<cfif listFind('DL',stTrip.platingCarrier) AND val(stTrip.ref) EQ 0 AND val(stTrip.changePenalty) EQ 0>
+									Changes are not permitted<br>
+									No pre-reserved seats
+								<cfelse>
+									Changes USD #stTrip.changePenalty# for reissue
+								</cfif>
+							" href="##"/>
+							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
+						</span>
 						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
 							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" data-viewport="width:700px;" href="##" />UNUSED TKT AVAIL</span>
 						</cfif>

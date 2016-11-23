@@ -94,7 +94,22 @@
 		</div>
 
 		<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
-			<a rel="popover" data-original-title="Flight change/cancellation policy" data-content="Cancellations: Ticket is #(session.searches[rc.SearchID].RequestedRefundable ? '' : 'non-')#refundable.<br>Changes: Change USD #rc.Air.changePenalty# for reissue." href="##" />
+			<a rel="popover" data-original-title="Flight change/cancellation policy"
+				data-content="
+					Ticket is
+					<cfif val(rc.Air.ref) eq 0>
+						non-refundable
+					<cfelse>
+						refundable
+					</cfif>
+					<br>
+					<cfif listFind('DL',rc.Air.platingCarrier) AND val(rc.Air.ref) EQ 0 AND val(rc.Air.changePenalty) EQ 0>
+						Changes are not permitted<br>
+						No pre-reserved seats
+					<cfelse>
+						Changes USD #rc.Air.changePenalty# for reissue
+					</cfif>
+				" href="##"/>
 				Flight change/cancellation policy
 			</a>
 		</div>
@@ -209,7 +224,7 @@
 		<cfelse>
 			<div class="blue bold" style="text-align:right; margin:-10px 0 10px;">
 				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
-					Hotel payment and cancellation policy  
+					Hotel payment and cancellation policy
 				</a>
 			</div>
 		</cfif>

@@ -1245,41 +1245,53 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 	<cffunction name="policyClass" output="false" hint="I check the policy.">
 
-		<cfargument name="Policy" required="true">
-		<cfargument name="stTrip" required="true">
+		<cfargument name="Policy" type="struct" required="true"/>
+		<cfargument name="stTrip" type="struct" required="false" default="#structNew()#"/>
+		<cfargument name="class"  type="string" required="false" default=""/>
 
-		<cfset local.policy.message = ''>
-		<cfset local.policy.active = 1>
-		<cfset local.policy.policy = 1>
+		<cfset local.policy.message = ""/>
+		<cfset local.policy.active = 1/>
+		<cfset local.policy.policy = 1/>
 
-		<!--- Check to see if the traveler has access to first or business class. --->
-		<cfif arguments.stTrip.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
-			<cfset local.policy.message = "Cannot book first class"/>
-			<cfset local.policy.policy = 1/>
-			<cfset local.policy.active = 1/>
-		<cfelseif arguments.stTrip.class EQ "C" AND !val(arguments.Policy.Policy_AirBusinessClass)>
-			<cfset local.policy.message = "Cannot book business class"/>
-			<cfset local.policy.policy = 1/>
-			<cfset local.policy.active = 1/>
-		<cfelseif arguments.stTrip.class EQ "C" AND val(arguments.Policy.Policy_AirBusinessClass) AND val(arguments.Policy.Policy_AirBusinessClass_Hours)>
-			<cfset local.tripSegments = arguments.stTrip.groups[listFirst(structKeyList(arguments.stTrip.groups))].segments/>
-			<cfset local.fligtTimeMinusLayovers1 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
-			<cfset local.fligtTimeMinusLayovers2 = 0/>
-			<!--- Is there a return flight? --->
-			<cfif listLen(structKeyList(arguments.stTrip.groups)) gt 1>
-				<cfset local.tripSegments = arguments.stTrip.groups[listLast(structKeyList(arguments.stTrip.groups))].segments/>
-				<cfset local.fligtTimeMinusLayovers2 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
+		<cfif len(trim(arguments.class))><!--- The legacy class argument passed by FindIt --->
+			<cfif arguments.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
+	-			<cfset local.policy.message = "Cannot book first class"/>
+	-			<cfset local.policy.policy = 0/>
+	-			<cfset local.policy.active = 0/>
+			<cfelseif arguments.class EQ "C" AND !val(arguments.Policy.Policy_AirBusinessClass)>
+	-			<cfset local.policy.message = "Cannot book business class"/>
+	-			<cfset local.policy.policy = 0/>
+	-			<cfset local.policy.active = 0/>
 			</cfif>
-			<!--- Get the greater flight time of the 2 --->
-			<cfset local.fligtTimeMinusLayovers = max(local.fligtTimeMinusLayovers1,local.fligtTimeMinusLayovers2)>
-			<cfif local.fligtTimeMinusLayovers lt arguments.Policy.Policy_AirBusinessClass_Hours>
-				<cfset local.policy.message = "Flight time is less than #local.fligtTimeMinusLayovers# hours"/>
+		<cfelseif structCount(arguments.stTrip)>
+			<cfif arguments.stTrip.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
+				<cfset local.policy.message = "Cannot book first class"/>
 				<cfset local.policy.policy = 1/>
 				<cfset local.policy.active = 1/>
+			<cfelseif arguments.stTrip.class EQ "C" AND !val(arguments.Policy.Policy_AirBusinessClass)>
+				<cfset local.policy.message = "Cannot book business class"/>
+				<cfset local.policy.policy = 1/>
+				<cfset local.policy.active = 1/>
+			<cfelseif arguments.stTrip.class EQ "C" AND val(arguments.Policy.Policy_AirBusinessClass) AND val(arguments.Policy.Policy_AirBusinessClass_Hours)>
+				<cfset local.tripSegments = arguments.stTrip.groups[listFirst(structKeyList(arguments.stTrip.groups))].segments/>
+				<cfset local.fligtTimeMinusLayovers1 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
+				<cfset local.fligtTimeMinusLayovers2 = 0/>
+				<!--- Is there a return flight? --->
+				<cfif listLen(structKeyList(arguments.stTrip.groups)) gt 1>
+					<cfset local.tripSegments = arguments.stTrip.groups[listLast(structKeyList(arguments.stTrip.groups))].segments/>
+					<cfset local.fligtTimeMinusLayovers2 = round(calculateTripTime(segments=local.tripSegments,includeLayoverTime=false)/60)/>
+				</cfif>
+				<!--- Get the greater flight time of the 2 --->
+				<cfset local.fligtTimeMinusLayovers = max(local.fligtTimeMinusLayovers1,local.fligtTimeMinusLayovers2)>
+				<cfif local.fligtTimeMinusLayovers lt arguments.Policy.Policy_AirBusinessClass_Hours>
+					<cfset local.policy.message = "Flight time is less than #local.fligtTimeMinusLayovers# hours"/>
+					<cfset local.policy.policy = 1/>
+					<cfset local.policy.active = 1/>
+				</cfif>
 			</cfif>
 		</cfif>
 
-		<cfreturn local.policy />
+		<cfreturn local.policy/>
 	</cffunction>
 
 	<cffunction name="sortByPreferred" output="false" hint="I take the price sorts and weight the preferred carriers.">
