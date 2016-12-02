@@ -137,7 +137,7 @@
 			<nav>
 				<ul class="pagination">
 					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
-					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
+					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
 			</nav>
@@ -166,9 +166,9 @@
                             </div>
 
                             <div class="hotel-info col-lg-7 col-md-9">
-                                <div class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</div>
+                                <div class="hotel-name"><span ng-bind="item.propertyNumber"></span> - <span ng-bind="item.hotel.PropertyName"></span></div>
                                 <div class="hotel-distance">
-                                    {{item.hotel.distance}} miles
+                                    <span ng-bind="item.hotel.distance"></span> miles
                                     <span class="rating" ng-show="item.hotel.StarRating > 0">
                                         <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 1, 'fa-star-o': item.hotel.StarRating < 1}"></i>
                                         <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 2, 'fa-star-o': item.hotel.StarRating < 2}"></i>
@@ -364,7 +364,7 @@
 			<nav>
 				<ul class="pagination bottom">
 					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
-					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a></li>
+					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
 			</nav>
