@@ -118,7 +118,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	
+
 	function showUnusedTickets(unusedTickets, selectedUnusedTickets) {
 		var unusedticketsHTML = '';
 		var displayUnusedTickets = 0;
@@ -126,7 +126,7 @@ $(document).ready(function(){
 		for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 			if ( platingcarrier == unusedTickets[i].carrier ) {
 				displayUnusedTickets = 1;
-			}	
+			}
 		}
 
 		$( "#unusedtickeverbiage" ).hide();
@@ -142,13 +142,13 @@ $(document).ready(function(){
 			unusedticketsHTML += '<tr>'
 			unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked></td>'
 			unusedticketsHTML += '<td colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
-			unusedticketsHTML += '</tr>'			
+			unusedticketsHTML += '</tr>'
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
 					if (selectedUnusedTickets.indexOf(unusedTickets[i].id) >= 0) {
 						var checked = 'checked';
-					}					
+					}
 					var d = new Date(unusedTickets[i].expirationDate);
 					unusedticketsHTML += '<tr>'
 					unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
@@ -157,7 +157,7 @@ $(document).ready(function(){
 					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
 					unusedticketsHTML += '<td><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
 					unusedticketsHTML += '</tr>'
-				}	
+				}
 			}
 			unusedticketsHTML += '</table></font>';
 
@@ -185,7 +185,7 @@ $(document).ready(function(){
 		});
 	}); */
 
-	$("#createProfileDiv").on("click", function () { 
+	$("#createProfileDiv").on("click", function () {
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {
 			$("#usernameDiv").show();
@@ -254,7 +254,7 @@ $(document).ready(function(){
 				}
 				else {
 					$( "#fullNameDiv" ).show();
-				}				
+				}
 			}
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
@@ -451,7 +451,7 @@ $(document).ready(function(){
 				div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
 				if (orgunit.OURequired == 1) {
 					div += ' *</label>';
-				} 
+				}
 				else {
 					div += '&nbsp;&nbsp;</label>';
 				}
@@ -677,7 +677,7 @@ $(document).ready(function(){
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
 
-	$("#unusedTicketsDiv").on("click", function () { 
+	$("#unusedTicketsDiv").on("click", function () {
 		recalculateTotal();
 	});
 
@@ -955,14 +955,15 @@ function formValidated(){
 			alert("You must first read and agree to all terms.");
 			$("#pricelineAgreeTerms").focus();
 			$("#agreeToTermsError").show();
-			return false;		
+			return false;
 		}
-	
+
 	return true;
 }
 
-$("#popupModal").on("hidden", function() {
-	$(this).removeData("modal");
+$('#popupModal').on('hidden.bs.modal', function () {
+    $(this).removeData('bs.modal');
+		$('#popupModal').html($('#defaultPopupContent').html());
 });
 
 $( "#purchaseButton" ).on("click", function (e) {
@@ -985,7 +986,7 @@ $( "#purchaseButton" ).on("click", function (e) {
 			setPurchaseButtons();
 			return;
 		}
-		else		
+		else
 			e.preventDefault();
 	}
 	else {
