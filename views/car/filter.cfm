@@ -182,7 +182,7 @@
 											<cfelse>
 												<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 												<cfset application.fw.factory.getBean('EmailService').send( developer = false
-														, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+														, toAddress = 'weberrors@shortstravel.com;kgoblirsch@shortstravel.com'
 														, subject = 'STO: Missing Car Vendor'
 														, body = emailHTML ) />
 											</cfif>
@@ -204,7 +204,7 @@
 												<cfelse>
 													<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 													<cfset application.fw.factory.getBean('EmailService').send( developer = false
-															, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+															, toAddress = 'weberrors@shortstravel.com;kgoblirsch@shortstravel.com'
 															, subject = 'STO: Missing Car Vendor'
 															, body = emailHTML ) />
 												</cfif>

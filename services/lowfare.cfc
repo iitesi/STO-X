@@ -63,8 +63,8 @@
 		</cfloop>
 
 		<!--- <cfif cgi.http_host EQ "r.local" OR cgi.local_host IS "RailoQA"> --->
-			<!--- <cfmail to="kmyers@shortstravel.com;klamont@shortstravel.com"
-					from="kmyers@shortstravel.com"
+			<!--- <cfmail to="productionsupport@shortstravel.com"
+					from="productionsupport@shortstravel.com"
 					subject="FLIGHT SELECTED FOR SEARCH #arguments.SearchID#"
 					type="html">
 				<div style="margin:5px;border:1px solid silver;background-color:##ebebeb;font-family:arial;font-size:12px;padding:5px;">
