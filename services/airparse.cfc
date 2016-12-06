@@ -980,7 +980,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.bActive = 1>
 
 			<cfif local.outOfPolicyBasedOnAdvPurchRule>
-				<cfset arrayAppend(local.aPolicy, "Cannot book flights less than #arguments.Policy.Policy_AirAdv# days in the future.")>
+				<cfset arrayAppend(local.aPolicy, "Cannot book flights less than #arguments.Policy.Policy_AirAdv# days in the future")>
 			</cfif>
 
 			<cfif arguments.sType EQ 'Fare'>
