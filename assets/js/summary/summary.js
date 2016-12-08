@@ -118,7 +118,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	
+
 	function showUnusedTickets(unusedTickets, selectedUnusedTickets) {
 		var unusedticketsHTML = '';
 		var displayUnusedTickets = 0;
@@ -126,7 +126,7 @@ $(document).ready(function(){
 		for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 			if ( platingcarrier == unusedTickets[i].carrier ) {
 				displayUnusedTickets = 1;
-			}	
+			}
 		}
 
 		$( "#unusedtickeverbiage" ).hide();
@@ -142,13 +142,13 @@ $(document).ready(function(){
 			unusedticketsHTML += '<tr>'
 			unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked></td>'
 			unusedticketsHTML += '<td colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
-			unusedticketsHTML += '</tr>'			
+			unusedticketsHTML += '</tr>'
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
 					if (selectedUnusedTickets.indexOf(unusedTickets[i].id) >= 0) {
 						var checked = 'checked';
-					}					
+					}
 					var d = new Date(unusedTickets[i].expirationDate);
 					unusedticketsHTML += '<tr>'
 					unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
@@ -157,7 +157,7 @@ $(document).ready(function(){
 					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
 					unusedticketsHTML += '<td><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
 					unusedticketsHTML += '</tr>'
-				}	
+				}
 			}
 			unusedticketsHTML += '</table></font>';
 
@@ -185,7 +185,7 @@ $(document).ready(function(){
 		});
 	}); */
 
-	$("#createProfileDiv").on("click", function () { 
+	$("#createProfileDiv").on("click", function () {
 		var $checkbox = $(this).find(':checkbox');
 		if ($checkbox.prop('checked')) {
 			$("#usernameDiv").show();
@@ -254,7 +254,7 @@ $(document).ready(function(){
 				}
 				else {
 					$( "#fullNameDiv" ).show();
-				}				
+				}
 			}
 			if (traveler.stoDefaultUser == 1) {
 				$( "#userIDDiv" ).hide();
@@ -438,7 +438,7 @@ $(document).ready(function(){
 			if (orgunit.OUUpdate != 0 || orgunit.valueID == '' || orgunit.valueReport == '') {
 				var inputName = orgunit.OUType + orgunit.OUPosition;
 
-				var div = '<div class="control-group'
+				var div = '<div class="form-group'
 				if ($.inArray(inputName, errors.split(",")) >= 0) {
 					div += ' error';
 				}
@@ -448,19 +448,19 @@ $(document).ready(function(){
 					div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
 				}
 
-				div += '<label class="control-label" for="' + inputName + '">' + orgunit.OUName;
+				div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
 				if (orgunit.OURequired == 1) {
 					div += ' *</label>';
-				} 
+				}
 				else {
 					div += '&nbsp;&nbsp;</label>';
 				}
-				div += '<div class="controls">';
+				div += '<div class="controls col-sm-8 col-xs-12">';
 				if (orgunit.OUFreeform == 1) {
-					div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
+					div += '<input class="form-control" type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
 				}
 				else {
-					div += '<select name="' + inputName + '" id="' + inputName + '"';
+					div += '<select class="form-control" name="' + inputName + '" id="' + inputName + '"';
 					div += '>';
 					div += '<option value="-1"></option>';
 						if (orgunit.ouValues.length) {
@@ -677,7 +677,7 @@ $(document).ready(function(){
 		$( "#totalCol" ).html( '<strong>$' + total.toFixed(2) + '</strong>' )
 	}
 
-	$("#unusedTicketsDiv").on("click", function () { 
+	$("#unusedTicketsDiv").on("click", function () {
 		recalculateTotal();
 	});
 
@@ -691,19 +691,19 @@ $(document).ready(function(){
 
 	$( "#airFOPID" ).change(function() {
 		if ($( "#airFOPID" ).val() == 0) {
-			$( "#airManual" ).show()
+			$( "#airManual" ).show();
 		}
 		else {
-			$( "#airManual" ).hide()
+			$( "#airManual" ).hide();
 		}
 	})
 
 	$( "#hotelFOPID" ).change(function() {
 		if ($( "#hotelFOPID" ).val() == 0) {
-			$( "#hotelManual" ).show()
+			$( "#hotelManual" ).show();
 		}
 		else {
-			$( "#hotelManual" ).hide()
+			$( "#hotelManual" ).hide();
 		}
 	})
 
@@ -944,7 +944,16 @@ function GetValueFromChild(selectedSegmentSeat) {
  	$("#" + seatArray[0] + " span").text( seatArray[1] );
  	// append seat to url so we can show it selected if they open seatmap again
 	var oldLink = $("#" + seatArray[0] + " a").attr( 'href' );
-	$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	if(oldLink.indexOf('seat=') > -1) {
+		var reExp = new RegExp("[\\?&]" + 'seat' + "=([^&#]*)");
+		var dlimeter = reExp.exec(oldLink);
+		dlimeter = dlimeter[0].charAt(0);
+		var newUrl = oldLink.replace(reExp, dlimeter + 'seat' + "=" + seatArray[1]);
+		$("#" + seatArray[0] + " a").attr('href', newUrl);
+
+	} else {
+		$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	}
 	// scroll to flight info
  	scrollTo('airDiv');
  }
@@ -955,14 +964,15 @@ function formValidated(){
 			alert("You must first read and agree to all terms.");
 			$("#pricelineAgreeTerms").focus();
 			$("#agreeToTermsError").show();
-			return false;		
+			return false;
 		}
-	
+
 	return true;
 }
 
-$("#popupModal").on("hidden", function() {
-	$(this).removeData("modal");
+$('#popupModal').on('hidden.bs.modal', function () {
+    $(this).removeData('bs.modal');
+		$('#popupModal').html($('#defaultPopupContent').html());
 });
 
 $( "#purchaseButton" ).on("click", function (e) {
@@ -985,7 +995,7 @@ $( "#purchaseButton" ).on("click", function (e) {
 			setPurchaseButtons();
 			return;
 		}
-		else		
+		else
 			e.preventDefault();
 	}
 	else {

@@ -24,9 +24,9 @@ I disabled these styles which all relate to the custom theme and I don't believe
 /* #Bootstrap Tweaks
 ================================================== */
 
-.alert {
+/* .alert {
     font-size: 13px;
-}
+} */
 
 .pager li > a {
     color: #444;
