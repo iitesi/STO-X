@@ -1,0 +1,8 @@
+USE [book]
+GO
+
+ALTER TABLE [Searches]
+ADD
+	WidgetURL VARCHAR(1000) NULL
+
+GO

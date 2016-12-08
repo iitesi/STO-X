@@ -1,0 +1,100 @@
+<?xml version="1.0" ?>
+ <project name="booking" default="build.production" basedir=".">
+	<description>This is a common build file used for deploying projects from Jenkins.
+		* Jenkins checks out project to Jenkins workspace
+		* Copy files to temp directory on Jenkins server
+		* Modify directories, minify code, etc
+		* Copy modified files from Jenkins box to final destination(s)
+		* Clean up temp directory
+	</description>
+	<!--  load additional tasks -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	<!-- load up environment variables - this allows us to pull variables from enviro (jenkins) -->
+	<property environment="env"/>
+	<!-- load personal properties next -->
+	<property file="${user.name}.properties" />
+	<!-- finally load common properties -->
+	<property file="build.properties" />
+
+	<!-- These files will NOT be deployed TO destination -->
+	<patternset id="deployment.exclude">
+		<!-- folders -->
+		<exclude name="**/.git/**" />
+		<exclude name="**/_build/**" />
+		<exclude name="**/_scripts/**" />
+		<exclude name="**/_tests/**" />
+		<exclude name="**/_mmServerScripts/**" />
+		<exclude name="**/_notes/**" />
+	</patternset>
+
+	<target name="-init" depends="-clean">
+		<tstamp>
+			<format property="timestamp" pattern="yyyy-MM-dd_HH-mm-ss"/>
+		</tstamp>
+		<mkdir dir="${path.temp}" />
+		<echo>Setting up timestamp (${timestamp}) and creating temp directory: ${path.temp}</echo>
+	</target>
+
+	<target name="-clean">
+		<echo>Doing initial clean up before deployment... Deleting: ${path.temp}</echo>
+		<delete dir="${path.temp}" />
+	</target>
+
+	<target name="build.production" depends="-init">
+		<echo>Copy files to: ${path.temp} for modification / cleanup before deployment</echo>
+		<move-code destination="${path.temp}" />
+		<echo>Modify files for server environment before deployment</echo>
+		<prepare-dist environment="production" />
+		<echo>Deploy files to ${path.production} via Robocopy using /MT:16</echo>
+		<deploy-code src="${path.temp}" destination="${path.production}" thread="16" />
+	</target>
+
+	<!-- MACRODEFS - DON'T EDIT BELOW THIS LINE -->
+	<macrodef name="move-code" description="Copies files from Jenkins workspace to temp directory so we can prepare them for deployment.">
+		<attribute name="destination" default="${path.temp}" />
+		<attribute name="src" default="${path.source}" />
+
+		<sequential>
+			<echo taskname="move-code">Copy '@{src}' to '@{destination}'</echo>
+			<copy todir="@{destination}" preservelastmodified="true">
+				<fileset dir="@{src}" includes="**/*">
+					<patternset refid="deployment.exclude"/>
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prepare-dist" description="Modify files for production (set framework modes, etc)">
+		<attribute name="environment" default="production"/>
+		<attribute name="distpath" default="${path.temp}"/>
+		<attribute name="path" default="${path.temp}" />
+
+		<sequential>
+			<echo taskname="prepare-dist">Writing timestamp to footer</echo>
+			<replace file="@{path}//layouts/default.cfm" token="%%%build-stamp%%%" value="Last updated: ${timestamp} ${env.BUILD_TAG}"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="deploy-code">
+		<attribute name="src" default="${path.temp}" />
+		<attribute name="destination" default="${path.production}" />
+		<attribute name="exclude" default="${deploy.exclude}" />
+		<attribute name="thread" default="16" />
+
+		<sequential>
+			<exec executable="D:/emcopy/emcopy64.exe" outputproperty="emcopy.dump">
+				<arg value="@{src}" />
+				<arg value="@{destination}" />
+				<arg value="/de" />
+				<arg value="/nosec" />
+				<arg value="/s" />
+				<arg value="/r:5" />
+				<arg value="/th" />
+				<arg value="@{thread}" />
+				<arg value="/r:3" />
+				<arg value="/w:30" />
+			</exec>
+			<echo taskname="emcopy">${emcopy.dump}</echo>
+		</sequential>
+	</macrodef>
+</project>

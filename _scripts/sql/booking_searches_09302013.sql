@@ -1,0 +1,2 @@
+ALTER TABLE SEARCHES
+ADD CarDifferent_Locations INT DEFAULT(0)

@@ -1,0 +1,278 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+
+<!-- **************************************************************************
+*******************************************************************************
+NOTE: IF YOU MAKE ANY CHANGES IN THIS FILE PLEASE VERIFY THAT THE SAME CHANGES
+ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
+*******************************************************************************
+*******************************************************************************
+-->
+
+<beans>
+	<!-- Import the centralized environments.xml file -->
+	<import resource="/com/shortstravel/config/environment.xml" />
+
+	<!-- setup underscore library - http://russplaysguitar.github.io/UnderscoreCF -->
+	<bean id="underscore" class="com.underscore.underscore" />
+
+	<bean id="AuthorizationService" class="com.shortstravel.security.AuthorizationService">
+		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+	</bean>
+
+	<bean id="UAPIFactory" class="com.travelport.UAPIFactory">
+		<constructor-arg name="serviceURL"><bean factory-bean="EnvironmentService" factory-method="getUAPIServiceURL" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+	</bean>
+
+	<bean id="PPNAPI" class="com.priceline.ppnAPI">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="ppnURL"><bean factory-bean="EnvironmentService" factory-method="getPPNURL" /></constructor-arg>
+		<constructor-arg name="ppnRefID"><bean factory-bean="EnvironmentService" factory-method="getPPNRefID" /></constructor-arg>
+		<constructor-arg name="ppnAPIKey"><bean factory-bean="EnvironmentService" factory-method="getPPNAPIKey" /></constructor-arg>
+	</bean>
+
+	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
+
+	<bean id="PPNHotelAdapter" class="com.priceline.ppnHotelAdapter">
+		<constructor-arg name="PPNAPI"><ref bean="PPNAPI" /></constructor-arg>
+	</bean>
+
+	<bean id="TerminalEntry" class="com.travelport.TerminalEntry">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="UserService"><ref bean="UserService" /></constructor-arg>
+	</bean>
+
+	<bean id="VehicleAdapter" class="com.travelport.VehicleAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+	</bean>
+
+	<bean id="AirService" class="com.shortstravel.air.AirService"/>
+
+	<bean id="AirAdapter" class="com.travelport.AirAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+		<constructor-arg name="AirService"><ref bean="AirService" /></constructor-arg>
+	</bean>
+
+	<bean id="PassiveAdapter" class="com.travelport.PassiveAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
+	</bean>
+
+	<bean id="UniversalAdapter" class="com.travelport.UniversalAdapter">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+	</bean>
+
+	<bean id="seatmap" class="booking.services.seatmap">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+	</bean>
+
+	<bean id="email" class="booking.services.email">
+		<constructor-arg name="assetURL"><bean factory-bean="EnvironmentService" factory-method="getAssetURL" /></constructor-arg>
+	</bean>
+
+	<bean id="setup" class="booking.services.setup" >
+		<constructor-arg name="assetURL"><bean factory-bean="EnvironmentService" factory-method="getAssetURL" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="portalURL"><bean factory-bean="EnvironmentService" factory-method="getPortalURL" /></constructor-arg>
+		<constructor-arg name="searchWidgetURL"><bean factory-bean="EnvironmentService" factory-method="getSearchWidgetURL" /></constructor-arg>
+		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
+		<constructor-arg name="useLinkedDatabases"><bean factory-bean="EnvironmentService" factory-method="getUseLinkedDatabases" /></constructor-arg>
+		<constructor-arg name="currentEnvironment"><bean factory-bean="EnvironmentService" factory-method="getCurrentEnvironment" /></constructor-arg>
+		<constructor-arg name="userService"><ref bean="UserService" /></constructor-arg>
+		<constructor-arg name="PolicyService"><ref bean="PolicyService" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
+
+	<bean id="purchase" class="booking.services.purchase" >
+		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
+		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="Summary" class="booking.services.summary">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="confirmation" class="booking.services.confirmation" />
+
+	<bean id="general" class="booking.services.general" />
+
+	<bean id="LocationService" class="com.shortstravel.location.locationService">
+		<constructor-arg name="LocationManager"><ref bean="LocationManager" /></constructor-arg>
+	</bean>
+
+	<bean id="LocationManager" class="com.shortstravel.location.LocationManager">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="CorporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="googleMapsClientId"><bean factory-bean="EnvironmentService" factory-method="getGoogleMapsClientId" /></constructor-arg>
+		<constructor-arg name="googleMapsAPIKey"><bean factory-bean="EnvironmentService" factory-method="getGoogleMapsAPIKey" /></constructor-arg>
+	</bean>
+
+	<bean id="UserService" class="com.shortstravel.security.UserService">
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="UserManager"><ref bean="UserManager" /></constructor-arg>
+		<constructor-arg name="LoyaltyProgramService"><ref bean="LoyaltyProgramService" /></constructor-arg>
+		<constructor-arg name="OrgUnitService"><ref bean="OrgUnitService" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+		<constructor-arg name="UnusedTicketService"><ref bean="UnusedTicketService" /></constructor-arg>
+	</bean>
+
+	<bean id="AccountService" class="com.shortstravel.account.AccountService">
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
+	</bean>
+
+	<bean id="AccountManager" class="com.shortstravel.account.AccountManager">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="OrgUnitManager" class="com.shortstravel.traveler.OrgUnitManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="OrgUnitService" class="com.shortstravel.traveler.OrgUnitService">
+		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /> </constructor-arg>
+	</bean>
+
+	<bean id="UserManager" class="com.shortstravel.security.UserManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+	</bean>
+
+	<bean id="PolicyManager" class="com.shortstravel.account.PolicyManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="PolicyService" class="com.shortstravel.account.PolicyService">
+		<constructor-arg name="PolicyManager"><ref bean="PolicyManager" /></constructor-arg>
+	</bean>
+
+	<bean id="SearchService" class="com.shortstravel.search.SearchService">
+		<constructor-arg name="SearchManager"><ref bean="SearchManager" /> </constructor-arg>
+		<constructor-arg name="UserManager"><ref bean="UserManager" /> </constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /> </constructor-arg>
+		<constructor-arg name="LocationManager"><ref bean="LocationManager" /> </constructor-arg>
+	</bean>
+
+	<bean id="SearchManager" class="com.shortstravel.search.SearchManager">
+	    <constructor-arg name="SearchesDSN"><bean factory-bean="EnvironmentService" factory-method="getSearchesDSN" /> </constructor-arg>
+		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /> </constructor-arg>
+		<constructor-arg name="StringGenerator"><ref bean="StringGenerator" /> </constructor-arg>
+	</bean>
+
+	<bean id="HotelService" class="com.shortstravel.hotel.HotelService">
+		<constructor-arg name="HotelManager"><ref bean="HotelManager" /></constructor-arg>
+		<constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+		<constructor-arg name="AccountManager"><ref bean="AccountManager" /></constructor-arg>
+		<constructor-arg name="HotelAdapter"><ref bean="HotelAdapter" /></constructor-arg>
+		<constructor-arg name="PPNHotelAdapter"><ref bean="PPNHotelAdapter" /></constructor-arg>
+	</bean>
+
+	<bean id="HotelManager" class="com.shortstravel.hotel.HotelManager">
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="LoyaltyProgramManager" class="com.shortstravel.traveler.LoyaltyProgramManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="LoyaltyProgramService" class="com.shortstravel.traveler.LoyaltyProgramService">
+		<constructor-arg name="LoyaltyProgramManager"><ref bean="LoyaltyProgramManager" /></constructor-arg>
+	</bean>
+
+	<bean id="PaymentManager" class="com.shortstravel.traveler.PaymentManager">
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="PaymentService" class="com.shortstravel.traveler.PaymentService">
+		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
+		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
+	</bean>
+	
+	<bean id="TripManager" class="com.shortstravel.traveler.TripManager"></bean>
+
+	<bean id="UnusedTicketManager" class="com.shortstravel.traveler.UnusedTicketManager">
+		<constructor-arg name="nonRefundableTicketsDSN"><bean factory-bean="EnvironmentService" factory-method="getNonRefundableTicketsDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="UnusedTicketService" class="com.shortstravel.traveler.UnusedTicketService">
+		<constructor-arg name="UnusedTicketManager"><ref bean="UnusedTicketManager" /></constructor-arg>
+	</bean>
+
+	<bean id="CouldYouService" class="booking.services.CouldYouService">
+        <constructor-arg name="SearchManager"><ref bean="SearchManager" /></constructor-arg>
+        <constructor-arg name="CouldYouManager"><ref bean="CouldYouManager" /></constructor-arg>
+	</bean>
+
+	<bean id="CouldYouManager" class="booking.services.CouldYouManager">
+        <constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
+	<bean id="AirParse" class="booking.services.AirParse">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
+	</bean>
+
+	<bean id="lowfare" class="booking.services.lowfare">
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
+
+	<bean id="airavailability" class="booking.services.airavailability" >
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
+
+	<bean id="AirPrice" class="booking.services.airprice" >
+		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
+		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+		<constructor-arg name="AirAdapter"><ref bean="AirAdapter" /></constructor-arg>
+	</bean>
+
+	<bean id="car" class="booking.services.car" >
+		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /> </constructor-arg>
+		<constructor-arg name="VehicleAdapter"><ref bean="VehicleAdapter" /></constructor-arg>
+	</bean>
+
+	<bean id="findit" class="findit.services.findit" >
+		<constructor-arg name="BookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="FindItDSN"><bean factory-bean="EnvironmentService" factory-method="getFindItDSN" /></constructor-arg>
+		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="AirPrice"><ref bean="AirPrice" /></constructor-arg>
+		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	</bean>
+
+	<bean id="StringGenerator" class="com.shortstravel.security.StringGenerator" />
+
+	<bean id="BugLogService" class="com.bugloghq.bugLogService">
+		<constructor-arg name="bugLogListener"><value>http://venus/buglog/listeners/bugLogLIstenerWS.cfc?wsdl</value></constructor-arg>
+		<constructor-arg name="apikey"><value>2CF20630-DD24-491F-BA44314842183AFC</value></constructor-arg>
+	</bean>
+	
+	<bean id="SecureAuthService" class="com.auth.SecureAuthService">
+        <constructor-arg name="secureAuthRedirectUri"><bean factory-bean="EnvironmentService" factory-method="getSecureAuthRedirectUri" /></constructor-arg>
+    </bean>
+    
+    <bean id="AuthService" class="com.auth.AuthService" />
+
+	<bean id="EmailService" class="com.shortstravel.email.emailService" />
+</beans>
