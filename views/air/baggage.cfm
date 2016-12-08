@@ -52,9 +52,9 @@
 				<cfelse>
 						<p>&nbsp;</p>
 						<p>
-							<span class="icon-stack">
-			  				<i class="icon-suitcase"></i>
-			  				<i class="icon-ban-circle icon-stack-base text-error"></i>
+							<span class="fa-stack">
+			  				<i class="fa fa-suitcase fa-stack-1x"></i>
+			  				<i class="fa-ban fa-stack-2x text-danger"></i>
 							</span>
 							Baggage Fee Information is not available for #rc.qBaggage.name#.</p>
 							<p>&nbsp;</p>

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	$('.filterselection .filtergroup').hide();
 //------------------------------------------------------------------------------
 // MODAL
 //------------------------------------------------------------------------------
@@ -13,10 +13,11 @@ $(document).ready(function(){
 	// url is defined in search button / link
 	$('.searchModalButton').click(function(){
 		var frameSrc = $(this).attr('data-framesrc');
-		$('#searchModal').on('show', function () {
+		console.log(frameSrc);
+		$('#searchModal').on('show.bs.modal', function () {
 			$('iframe').attr("src",frameSrc);
 		});
-		$('#searchModal').modal({show:true})
+		$('#searchModal').modal('show')
 	});
 
 	$('.airModal').on('click', function() {
@@ -30,9 +31,15 @@ $(document).ready(function(){
 		$('#popupModalBody').html( 'We are retrieving your previous search results...' );
 	});
 
-	$('#popupModal').on('hidden', function() {
+	$('#popupModal').on('hidden.bs.modal', function() {
 		$(this).removeData('modal');
-		$('#popupModalBody').html( 'One moment, we are retrieving your flight details...' );
+		$('#popupModalBody').html( '<i class="fa fa-spinner fa-spin"></i> One moment, we are retrieving your flight details...' );
+	});
+
+	$('#popupModal').on('show.bs.modal', function (event) {
+	   var button = $(event.relatedTarget) // Button that triggered the modal
+	   var url = button.data('url') // Extract info from data-* attributes
+	   $('#popupModalBody').load(url);
 	});
 
 //------------------------------------------------------------------------------
@@ -50,6 +57,7 @@ $(document).ready(function(){
 
 	$('.closefilterwell').on('click', function() {
 		$('#filterwell').slideUp();
+		$('#airlines, #class, #fares').hide();
 	});
 
 	$('.closesliderwell').on('click', function() {
@@ -81,6 +89,7 @@ $(document).ready(function(){
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+		$('.filterselection .filtergroup').hide();
 		$('.filtertimeselection').hide();
 		// $('.filterflightselection').hide();
 		$('.spinner').show();
@@ -92,13 +101,31 @@ $(document).ready(function(){
 	});
 
 	// display airline/class/fare filter well
-	$('.filterby').on('click', function() {
-		$(".filterselection").slideToggle().css({"position": "absolute", "z-index": 99});
+	 $('.filterby').on('click', function() {
+		$(".filterselection").slideToggle({
+			complete: function() {
+				if(!$('.filterselection').is(':visible')) {
+					$('#airlines, #class, #fares').hide();
+				};
+			}
+		}); //.css({"position": "absolute", "z-index": 99});
+	});
+
+	$('#airlinebtn').on('click', function(){
+		$('#airlines').show();
+	});
+
+	$('#classbtn').on('click', function(){
+		$('#class').show();
+	});
+
+	$('#farebtn').on('click', function(){
+		$('#fares').show();
 	});
 
 	// display time slider filter well
 	$('.filterbytime').on('click', function() {
-		$(".filtertimeselection").slideToggle().css({"position": "relative", "z-index": 98});
+		$(".filtertimeselection").slideToggle(); //.css({"position": "relative", "z-index": 98});
 		$("#timebtn").parent().toggleClass('active');
 		// if the other filter is open let's close it
 		if( $('.filterselection').is(':visible') ){

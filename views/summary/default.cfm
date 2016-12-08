@@ -40,17 +40,18 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 .form-horizontal select, textarea, input {
 	padding: 0px;
 }
+.hideElement{display:none;}
 </style>
 
 <cfoutput>
-	<div style="width:1000px;" id="summaryForm">
+	<div id="summaryForm">
 
 		<span style="float:right">
 			<cfif NOT rc.hotelSelected
 				AND rc.Filter.getAirType() NEQ 'MD'
 				AND session.DepartmentPreferences.STOHotel NEQ 0>
 				<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#">
-					<span class="icon-large icon-plus"></span> Add Hotel
+					<span class="fa fa-lg fa-plus"></span> Add Hotel
 				</a>&nbsp;&nbsp;&nbsp;&nbsp;
 			</cfif>
 
@@ -59,7 +60,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 				AND len(rc.Filter.getCarPickupAirport())
 				AND session.DepartmentPreferences.STOCar NEQ 0>
 				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
-					<span class="icon-large icon-plus"></span> Add Car
+					<span class="fa fa-lg fa-plus"></span> Add Car
 				</a>
 			</cfif>
 		</span>
@@ -86,10 +87,11 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#travIndex#')#" class="btn legbtn #(rc.travelerNumber EQ travIndex ? 'btn-primary' : '')#">
 								#count#. Traveler</a>
 						</cfif> --->
+						<p class="showOnPhones"></p>
 					</cfloop>
 					<cfif rc.travelerNumber NEQ 1>
 						<a href="#buildURL('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#&remove=1')#">
-							<span class="icon-large icon-remove-sign"></span> Remove Traveler ###rc.travelerNumber#
+							<span class="fa fa-lg fa-remove"></span> Remove Traveler ###rc.travelerNumber#
 						</a>
 					</cfif>
 				</div>
@@ -121,25 +123,19 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
-						<span style="float:right;">* denotes required fields</span>
-						<table width="1000">
-							<tr>
-								<td valign="top">
-									<div id="travelerForm">
-										#View('summary/traveler')#
-									</div>
-								</td>
-								<td valign="top">
-									<div id="paymentForm" style="padding-left:20px;">
-										#view( 'summary/payment' )#
-									</div>
-								</td>
-							</tr>
-						</table>
+					<div class="summarydiv container-fluid" >
+						<div class="row">
+						 <span class="disclaimer">* denotes required fields</span>
+							<div id="travelerForm" class="col-md-6">
+								#View('summary/traveler')#
+							</div>
+							<div id="paymentForm" class="col-md-6">
+								#view( 'summary/payment' )#
+							</div>
+						</div>
 					</div>
 
-					<div class="summarydiv" style="background-color: ##FFF;wdith:1000px;">
+					<div class="summarydiv container-fluid">
 						<div id="airDiv" class="clearfix">
 							#View('summary/air')#
 						</div>
@@ -151,27 +147,32 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						</div>
 					</div>
 
-					<div style="wdith:1150px;">
-						<table width="1033px">
-							<tr>
-								<td valign="top" width="575">
-									<div class="alert alert-success hide" id="unusedTicketsDiv">
-									</div>
-								</td>
-								<td valign="top">
-									<div style="padding-left:20px;">
-										#View('summary/tripsummary')#
-									</div>
-								</td>
-							</tr>
-						</table>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-4 col-xs-12" >
+								<div class="alert alert-success hide" id="unusedTicketsDiv">
+								</div>
+							</div>
+							<div class="summarydiv col-md-8 col-xs-12" >
+								<div>
+									#View('summary/tripsummary')#
+								</div>
+							</div>
+						</div>
 					</div>
 
 					#View('summary/buttons')#
 				</p>
 			</div>
+			<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+			    <div class="modal-header">
+			        <h4 id="myModalHeader"><i class="fa-spinner fa fa-spin"></i> Loading User</h4>
+			    </div>
+			    <div id="myModalBody" class="modal-body">
 
-			<script src="assets/js/summary/summary.js?rs=101415"></script>
+			    </div>
+			</div>
+			<script src="assets/js/summary/summary.js?rs=031516"></script>
 		</form>
 	</div>
 

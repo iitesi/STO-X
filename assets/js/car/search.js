@@ -196,7 +196,7 @@ formSubmit = function( event ){
 		$("#start-calendar-wrapper").data('datepicker').setDate(todaysDate);
 		$("#start-calendar-wrapper").data('datepicker').update();
 	}
-	formData.carPickupTimeActual = $("#car-pickup-time").val();
+	formData.carPickupTimeActual = $("#car-pickup-time option:selected").val();
 
 	switch (formData.carPickupTimeActual) {
 		case "Anytime":
@@ -235,7 +235,7 @@ formSubmit = function( event ){
 		$("#end-calendar-wrapper").data('datepicker').setDate(todaysDate);
 		$("#end-calendar-wrapper").data('datepicker').update();
 	}
-	formData.carDropoffTimeActual = $("#car-dropoff-time").val();
+	formData.carDropoffTimeActual = $("#car-dropoff-time option:selected").val();
 
 	switch (formData.carDropoffTimeActual) {
 		case "Anytime":

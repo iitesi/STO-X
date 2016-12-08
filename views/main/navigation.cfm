@@ -28,8 +28,8 @@
 </cfsilent>
 <cfoutput>
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
-		<nav id="main-nav">
-		    <ul>
+		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
+			<ul class="nav navbar-nav navbar-right">
 				<cfif rc.filter.getPassthrough() EQ 0 AND rc.filter.getFindit() EQ 0>
 					<!---Home--->
 					<li>
@@ -42,6 +42,28 @@
 						<a href="#buildURL('logout')#">Logout</a>
 					</li>--->
 		    	<cfelse>
+						<cfif (rc.action EQ 'air.lowfare' OR rc.action EQ 'air.availability') AND ArrayLen(StructKeyArray(session.searches)) GTE 1>
+							<!--<div class="container"> --->
+								<cfif structKeyExists(session, 'cookieToken')
+									AND structKeyExists(session, 'cookieDate')>
+									<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+										<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl() & '&token=#session.cookieToken#&date=#session.cookieDate#'/>
+									<cfelse>
+										<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
+									</cfif>
+								<cfelse>
+									<cfset frameSrc = ''>
+								</cfif>
+
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="##">Search <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<cfoutput>#View('air/breadcrumbs')#</cfoutput>
+								</ul>
+							</li>
+
+						</cfif>
+
 					<cfif showAirTab>
 						<!---Air--->
 						<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
@@ -76,6 +98,6 @@
 					</cfif>--->
 				</cfif>
 			</ul>
-		</nav>
+		</div><!-- /.navbar-collapse -->
 	</cfif>
 </cfoutput>

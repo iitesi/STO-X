@@ -13,11 +13,22 @@ $(document).ready(function() {
 
 	// Hide the filter box when page loads
 	$(".filterselection").hide();
+	$('#vendors, #carTypes, #locations').hide();
 
 	// Show filter box when the vendor or car type button is clicked
-	$("#btnCarVendor").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
-	$("#btnCarCategory").click(function() { $(".filterselection").slideToggle().css({"position": "absolute", "z-index": 1}); });
-
+	 $("#btnCarVendor").click(function() { $('#vendors').show(); });
+	$("#btnCarCategory").click(function() { $('#carTypes').show(); });
+	$("#btnLocation").click(function() { $('#locations').show(); });
+	
+	$('.carFilterBy').click(function() { $('.filterselection').slideToggle({
+			complete: function() {
+				if(!$('.filterselection').is(':visible')) {
+					$('#vendors, #carTypes, #locations').hide();
+				};
+			}
+		});
+	});
+ 
 	// Show filtered results when any filter criteria is clicked
 	$(":checkbox").click(function() {
 		var vendorCheckboxes = $("input[name='fltrVendor']");
@@ -61,7 +72,8 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$(".closewell").on("click", function() {
+	 $(".closewell").on("click", function() {
 		$(this).parent().parent().slideUp();
-	});
+		$('#vendors, #carTypes, #locations').hide();
+	}); 
 });
