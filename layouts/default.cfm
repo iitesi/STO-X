@@ -93,7 +93,7 @@
 								<div id="logo-container">
 									<div id="header">
 										<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
-											<a class="navbar-brand" id="mainlogo"  href="?action=menu.main" title="Home">
+											<a class="navbar-brand" id="mainlogo"  href="?action=main.menu" title="Home">
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
 										</cfif>
@@ -115,7 +115,7 @@
 							<cfelse>
 
 								<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
-									<a class="navbar-brand" id="mainlogo"  href="?action=menu.main" title="Home">
+									<a class="navbar-brand" id="mainlogo"  href="?action=main.menu" title="Home">
 								<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
 									<a class="navbar-brand" id="mainlogo"  href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
@@ -196,12 +196,15 @@
 				<div class="container">
 					#view( "helpers/messages" )#
 					<!--- Simple test to see if session still exists. --->
-					<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
-						#body#
-					<cfelseif listFind("login,logout,menu,search,trips",listFirst(request.context.action,"."))>
+					<cfif Len(session.userID)>
 						#body#
 					<cfelse>
-						Your session has timed out due to inactivity. Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
+						<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+							<cflocation url="/booking/?action=main.logout">
+						<cfelse>
+							Your session has timed out due to inactivity.
+							Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
+						</cfif>
 					</cfif>
 				</div>
 				</cfoutput>

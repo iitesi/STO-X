@@ -12,7 +12,7 @@
 		<div class="row">
 			<div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 				<cfoutput>
-				<form name="logInForm" id="logInForm" action="?action=login.main" method="post">
+				<form name="logInForm" id="logInForm" action="?action=main.login" method="post">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h1 class="panel-title">Log In</h1>

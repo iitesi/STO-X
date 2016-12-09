@@ -37,13 +37,13 @@
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<!---Menu-for mobile STO --->
 					<li>
-						<a href="#buildURL('menu.main')#">Home</a>
+						<a href="#buildURL('main.menu')#">Home</a>
 					</li>
 					<li>
-						<a href="#buildURL('search.main')#">Search</a>
+						<a href="#buildURL('main.search')#">Search</a>
 					</li>
 					<li>
-						<a href="#buildURL('trips.main')#">My Trips</a>
+						<a href="#buildURL('main.trips')#">My Trips</a>
 					</li>
 				<cfelseif rc.filter.getPassthrough() EQ 0 AND rc.filter.getFindit() EQ 0>
 					<!---Home--->
@@ -82,7 +82,10 @@
 				</cfif>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<li>
-						<a href="#buildURL('logout.main')#">Logout</a>
+						<a href="#buildURL('main.contact')#">Contact</a>
+					</li>
+					<li>
+						<a href="#buildURL('main.logout')#">Logout</a>
 					</li>
 				</cfif>
 			</ul>

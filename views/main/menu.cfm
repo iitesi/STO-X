@@ -7,7 +7,7 @@
 				</div>
 				<div class="panel-body" style="padding:25px;">
 					<cfoutput>
-						<div class="badge" onclick="window.location='?action=search.main'" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
+						<div class="badge" onclick="window.location='?action=main.search'" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
 							<table width="100%" cellspacing="0" cellpadding="0" align="center">
 								<tr>
 									<td valign="top" style="width:35px;">
@@ -22,7 +22,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="badge"onclick="window.location='?action=trips.main'" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
+						<div class="badge"onclick="window.location='?action=main.trips'" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
 							<table width="100%" cellspacing="0" cellpadding="0" align="center">
 								<tr>
 									<td valign="top" style="width:35px;">
@@ -37,24 +37,29 @@
 								</tr>
 							</table>
 						</div>
-						<div class="badge" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
-							<a href="http://findit.travel/MobileDashboard/HERTZDYCOMFLYER.pdf" style="text-decoration:none;color:black;" target="_blank">
-								<table width="100%" cellspacing="0" cellpadding="0" align="center">
-									<tr>
-										<td valign="top" style="width:35px;">
-											<button type="submit" class="btn btn-primary">
-												<span class="glyphicon glyphicon-info-sign"></span>
-											</button>
-										</td>
-										<td style="padding-left:10px;text-align:left;">
-											<span style="display:inline-block;padding:0 0 5px 0;font-size:13px;font-weight:bold;color:##696969;white-space:normal;word-wrap:break-word;">Information</span><br>
-											<span style="display:inline-block;padding:0 0 0 0;font-size:11px;font-weight:normal;white-space:normal;word-wrap:break-word;">Your travel policy documents.</span>
-										</td>
-									</tr>
-								</table>
-							</a>
-						</div>
-						<div class="badge" onclick="window.location='?action=contact.main'" style="cursor:pointer;padding:15px 13px 15px 15px;text-align:left;white-space:nowrap;">
+						<!--- STM-7280 STO and SSO account configurability --->
+						<!--- TODO: This is to be part of the account configuration like the other hard-coded accID = 532 --->
+						<!--- Per Steph we want this to pull from the policy information in the portal with checkbox to show in STO --->
+						<cfif session.acctId eq 532>
+							<div class="badge" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
+								<a href="/booking/views/dycom/travelpolicy.pdf" style="text-decoration:none;color:black;" target="_blank">
+									<table width="100%" cellspacing="0" cellpadding="0" align="center">
+										<tr>
+											<td valign="top" style="width:35px;">
+												<button type="submit" class="btn btn-primary">
+													<span class="glyphicon glyphicon-info-sign"></span>
+												</button>
+											</td>
+											<td style="padding-left:10px;text-align:left;">
+												<span style="display:inline-block;padding:0 0 5px 0;font-size:13px;font-weight:bold;color:##696969;white-space:normal;word-wrap:break-word;">Information</span><br>
+												<span style="display:inline-block;padding:0 0 0 0;font-size:11px;font-weight:normal;white-space:normal;word-wrap:break-word;">Your travel policy documents.</span>
+											</td>
+										</tr>
+									</table>
+								</a>
+							</div>
+						</cfif>
+						<div class="badge" onclick="window.location='?action=main.contact'" style="cursor:pointer;padding:15px 13px 15px 15px;text-align:left;white-space:nowrap;">
 							<table width="100%" cellspacing="0" cellpadding="0" align="center">
 								<tr>
 									<td valign="top" style="width:35px;">
