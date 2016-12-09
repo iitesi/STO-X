@@ -34,7 +34,7 @@
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 			<!--- override header colors for TMC so their light logos will display properly --->
-			<cfif rc.account.tmc.getIsExternal() EQ 1>
+			<cfif structKeyExists(rc,"account") AND rc.account.tmc.getIsExternal() EQ 1>
 				<style type="text/css">
 					##main-header {background-color: ##292929}
 					##header-top {background-color: ##F1F1F1}
@@ -44,7 +44,7 @@
 
 			<!--- overried header colors if getPassthrough is sent from widget - usually for other shorts accounts
 				These can be set in account config and passed on URL from widget	--->
-			<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
+			<cfif structKeyExists(rc,"filter") AND rc.filter.getPassthrough() EQ 1>
 				<style type="text/css">
 					body {background-color: ###rc.filter.getBodyColor()#;}
 					##main-header, ##header-top {background-color: ###rc.filter.getHeaderColor()#;}
@@ -82,12 +82,21 @@
  							  </button>
 							<cfoutput>
 
+							<cfif not structKeyExists(rc,"account") OR listFind("login,logout",listFirst(request.context.action,"."))>
 
-							<cfif rc.account.tmc.getIsExternal() EQ 1>
+								<a class="navbar-brand" id="mainlogo">
+									<img src="/booking/assets/img/clients/STO-Logo.png" alt="Shorts Travel Management" class="img-responsive">
+								</a>
+
+							<cfelseif rc.account.tmc.getIsExternal() EQ 1>
 
 								<div id="logo-container">
 									<div id="header">
-										<a href="#application.sPortalURL#" title="Home">
+										<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+											<a class="navbar-brand" id="mainlogo"  href="?action=menu.main" title="Home">
+										<cfelse>
+											<a href="#application.sPortalURL#" title="Home">
+										</cfif>
 											<img src="assets/img/logos/findit-logo.png" alt="FindIt" class="pull-left">
 										</a>
 										<div id="headerContent">
@@ -105,7 +114,9 @@
 
 							<cfelse>
 
-								<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
+								<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+									<a class="navbar-brand" id="mainlogo"  href="?action=menu.main" title="Home">
+								<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
 									<a class="navbar-brand" id="mainlogo"  href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
 									<a class="navbar-brand" id="mainlogo"  href="#application.sPortalURL#" title="Home">
@@ -118,7 +129,7 @@
 										AND FileExists("http://www.shortstravel.com/TravelPortalV2/Images/Clients/#URLEncodedFormat(rc.account.account_logo)#")>
 										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
 									<cfelse>
-										<img src="assets/img/clients/STO-Logo.png" alt="Short's Travel Management" />
+										<img src="/booking/assets/img/clients/STO-Logo.png" alt="Short's Travel Management" />
 									</cfif>
 								</a>
 							</div> <!-- // navbar-header -->
@@ -187,6 +198,8 @@
 					<!--- Simple test to see if session still exists. --->
 					<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
 						#body#
+					<cfelseif listFind("login,logout,menu,search,trips",listFirst(request.context.action,"."))>
+						#body#
 					<cfelse>
 						Your session has timed out due to inactivity. Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
 					</cfif>
@@ -229,23 +242,23 @@
 <cfoutput>
 	#view('main/developers')#
 </cfoutput>
-		<cfif application.es.getCurrentEnvironment() EQ "prod">
-			<cfoutput>
-				<script type="text/javascript">
-					var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-					document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-				</script>
-				<script type="text/javascript">
-					try {
-					var pageTracker = _gat._getTracker("UA-11345476-1");
-					pageTracker._setDetectFlash(0);
-					pageTracker._setAllowLinker(true);
-					pageTracker._setVar("#UCase(application.accounts[ session.acctId ].Account_Name)#");
-					pageTracker._trackPageview("#rc.action#");
-					} catch(err) {}
-				</script>
-			</cfoutput>
-		</cfif>
+	<cfif application.es.getCurrentEnvironment() EQ "prod">
+		<cfoutput>
+			<script type="text/javascript">
+				var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+				document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+			</script>
+			<script type="text/javascript">
+				try {
+				var pageTracker = _gat._getTracker("UA-11345476-1");
+				pageTracker._setDetectFlash(0);
+				pageTracker._setAllowLinker(true);
+				pageTracker._setVar("#UCase(application.accounts[ session.acctId ].Account_Name)#");
+				pageTracker._trackPageview("#rc.action#");
+				} catch(err) {}
+			</script>
+		</cfoutput>
+	</cfif>
 
 	</body>
 	</html>

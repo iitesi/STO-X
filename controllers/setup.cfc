@@ -78,11 +78,28 @@ setApplication
 	</cffunction>
 
 	<cffunction name="setAcctID" output="false">
-		<cfargument name="rc">
+		<cfargument name="rc"/>
+		<cfset rc.acctId = (structKeyExists(session,"acctId") ? session.acctId : 0)/>
+		<cfif rc.acctId EQ 0 AND structKeyExists(cookie,"acctId")>
+			<cfset rc.acctId = val(cookie.acctId)/>
+		</cfif>
+		<cfreturn/>
+	</cffunction>
 
-		<cfset rc.AcctID = (structKeyExists(session, 'AcctID') ? session.AcctID : 0)>
-
-		<cfreturn />
+	<cffunction name="setAccountIds" output="false">
+		<cfquery name="local.getReportToIDs" datasource="corporate_production">
+			SELECT LTrim(RTrim(ReportToID)) AS ReportToID
+			  FROM Accounts_ReportToIDs, Accounts
+			 WHERE Accounts_ReportToIDs.Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#session.acctid#"/>
+			   AND Accounts.Acct_ID = Accounts_ReportToIDs.Acct_ID
+			   AND ReportToID != ''
+			   AND ReportToID IS NOT NULL
+		</cfquery>
+		<cfif getReportToIDs.RecordCount GT 0>
+			<cfset session.accountIds = valueList(getReportToIDs.ReportToID)/>
+		<cfelse>
+			<cfset session.accountIds = 0/>
+		</cfif>
 	</cffunction>
 
 	<cffunction name="setAccount" output="false">
@@ -94,9 +111,9 @@ setApplication
 			AND dateDiff( 'n', application.Accounts[ arguments.rc.AcctID ].loadTime, now() ) LT 1>
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		<!---Lazy loading, adds account to the application scope as needed.--->
-		<cfelse>
+		<cfelseif arguments.rc.AcctID GT 0>
 			<cfset application.Accounts[arguments.rc.AcctID] = variables.bf.getBean("setup").setAccount(argumentcollection=arguments.rc) />
-			<cfset application.Accounts[arguments.rc.AcctID].TMC = variables.bf.getBean( "AccountService" ).getAccountTMC( application.Accounts[arguments.rc.AcctID].AccountBrand ) />
+			<cfset application.Accounts[arguments.rc.AcctID].TMC = variables.bf.getBean( "AccountService" ).getAccountTMC(application.Accounts[arguments.rc.AcctID].AccountBrand) />
 			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
 			<cfset rc.Account = application.Accounts[arguments.rc.AcctID]>
 		</cfif>
@@ -113,6 +130,15 @@ setApplication
 		</cfif>
 
 		<cfreturn />
+	</cffunction>
+
+	<cffunction name="setInvoiceTableSuffix" output="false">
+		<cfquery name="local.getTableName" datasource="corporate_production">
+			SELECT Table_Name
+			  FROM Accounts
+			 WHERE Acct_ID = <cfqueryparam value="#session.acctId#" cfsqltype="cf_sql_integer">
+		</cfquery>
+		<cfset session.InvoiceTableSuffix = local.getTableName.Table_Name>
 	</cffunction>
 
 	<cffunction name="setPolicyID" output="false">
