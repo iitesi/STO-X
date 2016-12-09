@@ -63,7 +63,7 @@
 			<cfdump var="#local.response#" abort />
 		</cfif>
 
-		<cfif listFind("login,logout",listFirst(request.context.action,"."))>
+		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
@@ -73,11 +73,10 @@
 			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
 				AND request.context.action NEQ 'main.notfound'
-				AND request.context.action NEQ 'menu.main'
-				AND request.context.action NEQ 'trips.main'
-				AND request.context.action NEQ 'search.main'
-				AND request.context.action NEQ 'logout.main'
-				AND request.context.action NEQ 'contact.main'
+				AND request.context.action NEQ 'main.menu'
+				AND request.context.action NEQ 'main.trips'
+				AND request.context.action NEQ 'main.search'
+				AND request.context.action NEQ 'main.contact'
 				AND request.context.action NEQ 'setup.resetPolicy'
 				AND request.context.action NEQ 'setup.setPolicy'>
 
@@ -119,9 +118,9 @@
 					<cfif NOT session.isAuthorized>
 						<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 							<cfif structKeyExists(cookie,"acctId") AND cookie.acctId EQ 532>
-								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=login.dycom" addtoken="false">
+								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=dycom.login" addtoken="false">
 							<cfelse>
-								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=login.main" addtoken="false">
+								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=main.login" addtoken="false">
 							</cfif>
 						<cfelse>
 							<cflocation url="#getBeanFactory().getBean('EnvironmentService').getPortalURL()#" addtoken="false">

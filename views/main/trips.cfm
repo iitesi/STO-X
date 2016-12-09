@@ -1,4 +1,4 @@
-<cfset qryFutureTrips = application.fw.factory.getBean("TripManager").getFutureTrips(userId=session.userId,accountIds=session.accountIds)/>
+<cfset qryFutureTrips = application.fw.factory.getBean("TripManager").getFutureTrips(userId=session.userId)/>
 <div class="container-fluid" id="Main">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
@@ -8,7 +8,7 @@
 				</div>
 				<div class="panel-body" style="padding:15px 25px 25px 25px;">
 					<cfif qryFutureTrips.recordCount>
-						<cfoutput query="qryFutureTrips" group="TravelerDisplay">
+						<cfoutput query="qryFutureTrips">
 							<cfset name = GetToken(GetToken(TravelerDisplay, 1, ","), 1, "/")/>
 							<a href="https://viewtrip.travelport.com/##!/itinerary?loc=#RecLoc#&lName=#name#" target="_blank">
 								<div class="badge" style="cursor:pointer;padding:20px 20px 20px 20px;text-align:left;white-space:normal;word-wrap:break-word;">
