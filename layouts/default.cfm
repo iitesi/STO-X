@@ -245,26 +245,36 @@
 <cfoutput>
 	#view('main/developers')#
 </cfoutput>
-	<cfif application.es.getCurrentEnvironment() EQ "prod">
-		<cfoutput>
-			<script type="text/javascript">
-				var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-				document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-			</script>
-			<script type="text/javascript">
-				try {
-				var pageTracker = _gat._getTracker("UA-11345476-1");
-				pageTracker._setDetectFlash(0);
-				pageTracker._setAllowLinker(true);
-				pageTracker._setVar("#UCase(application.accounts[ session.acctId ].Account_Name)#");
-				pageTracker._trackPageview("#rc.action#");
-				} catch(err) {}
-			</script>
-		</cfoutput>
+<cfif application.es.getCurrentEnvironment() EQ "prod">
+	<!--- on the new login screen these may not yet be defined --->
+	<cfif structKeyExists(session,"acctId") AND val(session.acctId)>
+		<cfset account_name = ucase(application.accounts[session.acctId].account_name)/>
+	<cfelse>
+		<cfset account_name = "Unknown: Not Logged In"/>
 	</cfif>
-
-	</body>
-	</html>
+	<cfif structKeyExists(rc,"action") AND len(rc.action)>
+		<cfset action = rc.action/>
+	<cfelse>
+		<cfset action = "login">
+	</cfif>
+	<cfoutput>
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try {
+			var pageTracker = _gat._getTracker("UA-11345476-1");
+			pageTracker._setDetectFlash(0);
+			pageTracker._setAllowLinker(true);
+			pageTracker._setVar("#account_name#");
+			pageTracker._trackPageview("#action#");
+			} catch(err) {}
+		</script>
+	</cfoutput>
+</cfif>
+</body>
+</html>
 </cfif>
 
 <!-- %%%build-stamp%%% -->
