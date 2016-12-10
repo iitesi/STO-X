@@ -69,7 +69,6 @@
 		<div id="main-wrapper" class="wide">
 			<header id="main-header">
 
-
 				<div id="header-top">
 					<nav class="navbar navbar-inverse">
   							<!-- Brand and toggle get grouped for better mobile display -->
@@ -82,7 +81,7 @@
  							  </button>
 							<cfoutput>
 
-							<cfif not structKeyExists(rc,"account") OR listFind("login,logout",listFirst(request.context.action,"."))>
+							<cfif NOT structKeyExists(rc,"account") OR listFind("dycom.login,main.login,main.logout",request.context.action)>
 
 								<a class="navbar-brand" id="mainlogo">
 									<img src="/booking/assets/img/clients/STO-Logo.png" alt="Shorts Travel Management" class="img-responsive">
@@ -193,20 +192,22 @@
 
 			<section id="main-content">
 				<cfoutput>
-				<div class="container">
-					#view( "helpers/messages" )#
-					<!--- Simple test to see if session still exists. --->
-					<cfif Len(session.userID)>
-						#body#
-					<cfelse>
-						<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
-							<cflocation url="/booking/?action=main.logout">
+					<div class="container">
+						#view( "helpers/messages" )#
+						<!--- Simple test to see if session still exists. --->
+						<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
+							#body#
+						<cfelseif listFind("main.logout,main.login,dycom.login",request.context.action)>
+							#body#
 						<cfelse>
-							Your session has timed out due to inactivity.
-							Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
+							<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+								<cflocation url="/booking/?action=main.logout">
+							<cfelse>
+								Your session has timed out due to inactivity.
+								Please start a <a href="#application.sPortalURL#">NEW SEARCH</a>.
+							</cfif>
 						</cfif>
-					</cfif>
-				</div>
+					</div>
 				</cfoutput>
 			</section>
 
@@ -235,46 +236,48 @@
 		</div>
 
  		<div id="searchModal" class="bigModal modal hide fade" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
-		<h3><i class="fa fa-plane"></i> FLIGHT DETAILS</h3>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+			<h3><i class="fa fa-plane"></i> FLIGHT DETAILS</h3>
+		</div>
+		<div class="modal-body"></div>
+
 	</div>
-	<div class="modal-body">
-	</div>
-</div>
-<cfoutput>
-	#view('main/developers')#
-</cfoutput>
-<cfif application.es.getCurrentEnvironment() EQ "prod">
-	<!--- on the new login screen these may not yet be defined --->
-	<cfif structKeyExists(session,"acctId") AND val(session.acctId)>
-		<cfset account_name = ucase(application.accounts[session.acctId].account_name)/>
-	<cfelse>
-		<cfset account_name = "Unknown: Not Logged In"/>
-	</cfif>
-	<cfif structKeyExists(rc,"action") AND len(rc.action)>
-		<cfset action = rc.action/>
-	<cfelse>
-		<cfset action = "login">
-	</cfif>
+
 	<cfoutput>
-		<script type="text/javascript">
-			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-		</script>
-		<script type="text/javascript">
-			try {
-			var pageTracker = _gat._getTracker("UA-11345476-1");
-			pageTracker._setDetectFlash(0);
-			pageTracker._setAllowLinker(true);
-			pageTracker._setVar("#account_name#");
-			pageTracker._trackPageview("#action#");
-			} catch(err) {}
-		</script>
+		#view('main/developers')#
 	</cfoutput>
-</cfif>
-</body>
-</html>
+
+	<cfif application.es.getCurrentEnvironment() EQ "prod">
+		<!--- on the new login screen these may not yet be defined --->
+		<cfif structKeyExists(session,"acctId") AND val(session.acctId)>
+			<cfset account_name = ucase(application.accounts[session.acctId].account_name)/>
+		<cfelse>
+			<cfset account_name = "Unknown: Not Logged In"/>
+		</cfif>
+		<cfif structKeyExists(rc,"action") AND len(rc.action)>
+			<cfset action = rc.action/>
+		<cfelse>
+			<cfset action = "login">
+		</cfif>
+		<cfoutput>
+			<script type="text/javascript">
+				var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+				document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+			</script>
+			<script type="text/javascript">
+				try {
+				var pageTracker = _gat._getTracker("UA-11345476-1");
+				pageTracker._setDetectFlash(0);
+				pageTracker._setAllowLinker(true);
+				pageTracker._setVar("#account_name#");
+				pageTracker._trackPageview("#action#");
+				} catch(err) {}
+			</script>
+		</cfoutput>
+	</cfif>
+	</body>
+	</html>
 </cfif>
 
 <!-- %%%build-stamp%%% -->
