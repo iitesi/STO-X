@@ -264,17 +264,21 @@
 										</select>
 									</div>
 								</cfif>
-				<!---
-				SPECIAL REQUEST
-				--->
-								<cfif rc.showAll
-									OR rc.Policy.Policy_AllowRequests>
-									<div class="form-group">
-										<input name="specialRequests" id="specialRequests" class="form-control" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" style="margin-top:5px;">
-									</div>
-								</cfif>
+
 				</div> <!-- / .form-inline -->
 			</div> <!-- /.col-xs-12 -->
+			<!---
+			SPECIAL REQUEST
+			--->
+				<cfif rc.showAll
+					OR rc.Policy.Policy_AllowRequests>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label for="specialRequest"  >Notes for our Travel Consultants (unused ticket credits, etc.)</label>
+							<input name="specialRequests" id="specialRequests" class="form-control" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" >
+						</div>
+					</div>
+				</cfif>
 		</div> <!-- / .row -->
 	</div> <!-- / .tripsummary-detail -->
 
