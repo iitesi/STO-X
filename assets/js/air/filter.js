@@ -86,7 +86,8 @@ $(document).ready(function(){
 		$( "#stopdropdown" ).html( 'Stops <b class="caret"></b>' );
 		$( "#stopdropdown" ).attr( "data-value", '' );
 		// reset button filters back to 0
-		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
+		$('#SingleCarrier, #InPolicy').val('0');
+		$('#NonStops').val('');
 		// hide filter well
 		$('.filterselection').hide();
 		$('.filterselection .filtergroup').hide();
