@@ -4,11 +4,11 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h1 class="panel-title">My Trips <cfif qryFutureTrips.recordCount><cfoutput>(#qryFutureTrips.recordCount#)</cfoutput></cfif></h1>
+					<h1 class="panel-title">My Trips</h1>
 				</div>
 				<div class="panel-body" style="padding:15px 25px 25px 25px;">
 					<cfif qryFutureTrips.recordCount>
-						<cfoutput query="qryFutureTrips">
+						<cfoutput query="qryFutureTrips" group="RecLoc">
 							<cfset name = GetToken(GetToken(TravelerDisplay, 1, ","), 1, "/")/>
 							<a href="https://viewtrip.travelport.com/##!/itinerary?loc=#RecLoc#&lName=#name#" target="_blank">
 								<div class="badge" style="cursor:pointer;padding:20px 20px 20px 20px;text-align:left;white-space:normal;word-wrap:break-word;">
