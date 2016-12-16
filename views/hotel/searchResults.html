@@ -181,7 +181,7 @@
                                     <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showHotelDetails}"><span class="glyphicon glyphicon-info-sign"></span> <span class="hideOnPhones">Details</span></button>
                                     <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAreaDetails}"><i class="fa fa-map" aria-hidden="true"></i> <span class="hideOnPhones">Area</span></button>
                                     <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAmenities}"><i class="fa fa-hotel" aria-hidden="true"></i> <span class="hideOnPhones">Amenities</span></button>
-                                    <button ng-click="loadHotelPhotos(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones">Photos</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones">Photos</span></button>
                                 </div>
 
                             </div>
@@ -285,7 +285,7 @@
                             <div class="hotel-panel" ng-show="showAmenities">
 
                                 <div ng-show="item.hotel.Amenities.length">
-                                    <span ng-repeat="amenity in item.hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
+                                    <span ng-repeat="amenity in item.hotel.Amenities" class="col-xs-6 col-sm-4">{{amenity}}</span>
                                 </div>
 
                                 <div ng-show="!item.hotel.Amenities.length" >
@@ -295,21 +295,21 @@
                             </div>
 
                             <div class="hotel-panel" ng-show="showPhotos">
-                                <div ng-show="!item.hotel.imagesLoaded"  style="text-align: center">
+                                <div ng-show="!item.hotel.details.loaded"  class="center">
                                     <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                                 </div>
-                                <div ng-show="item.hotel.imagesLoaded">
+                                <div ng-show="item.hotel.details.loaded">
 
                                     <div ng-show="!item.hotel.images.length" >
                                         There are no photos available for this property.
                                     </div>
 
                                     <div ng-show="item.hotel.images.length" >
-                                        <div style="text-align: left; vertical-align: top; float: left; clear: none">
+                                        <div class="center">
                                             <img ng-src="{{item.hotel.selectedImage}}" height="138" width="200"  />
                                         </div>
-                                        <div style="text-align: left; vertical-align: top; float: left; clear: right">
-                                            <div ng-repeat="image in item.hotel.images" style="padding: 3px; float: left;">
+                                        <div  class="center">
+                                            <div ng-repeat="image in item.hotel.images" style="padding: 3px; display:inline-block;">
                                                 <a href="javascript: void(0)" ng-click="$parent.item.hotel.selectedImage = image.IMAGEURL"><img ng-src="{{image.IMAGEURL}}" height="69" width="100"  /></a>
                                             </div>
                                         </div>
@@ -416,6 +416,7 @@
      <div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 id="changeSearchWindowHeader">Change Your Hotel Search</h4>
 			</div>
 			<div id="changeSearchWindowBody" class="modal-body form form-horizontal">

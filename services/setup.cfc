@@ -588,7 +588,8 @@
 	</cffunction>
 
 	<cffunction name="setKTPrograms" output="false" returntype="void">
-		<cfquery name="local.qKTPrograms" datasource="#getCorporateProductionDSN()#">
+
+		<cfquery name="local.qKTPrograms" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimespan(1,0,0,0)#">
 			SELECT ProgramID, ProgramName, ProgramLink
 			FROM KT_Programs
 			ORDER BY ProgramID
@@ -602,7 +603,7 @@
 			<cfset local.stTemp[local.qKTPrograms.ProgramID].airports = "" />
 			<cfset local.stTemp[local.qKTPrograms.ProgramID].airlines = "" />
 
-			<cfquery name="local.qKTAirports" datasource="#getCorporateProductionDSN()#">
+			<cfquery name="local.qKTAirports" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimespan(1,0,0,0)#">
 				SELECT AirportCode
 				FROM KT_Airports
 				WHERE ProgramID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qKTPrograms.ProgramID#" />
@@ -613,7 +614,7 @@
 				<cfset local.stTemp[local.qKTPrograms.ProgramID].airports = valueList(qKTAirports.AirportCode) />
 			</cfif>
 
-			<cfquery name="local.qKTAirlines" datasource="#getCorporateProductionDSN()#">
+			<cfquery name="local.qKTAirlines" datasource="#getCorporateProductionDSN()#" cachedwithin="#createTimespan(1,0,0,0)#">
 				SELECT CarrierCode
 				FROM KT_Airlines
 				WHERE ProgramID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qKTPrograms.ProgramID#" />

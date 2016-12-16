@@ -185,9 +185,6 @@
 						</td>
 					</tr>
 				</cfloop>
-				<tr>
-					<td colspan="4">&nbsp;</td>
-				</tr>
 			</cfloop>
 
 			<!--- set bag fee into var so we can display in a tooltip below --->
@@ -198,7 +195,7 @@
 			</cfsavecontent>
 
 			<tr>
-				<td height="100%" valign="bottom" align="center" colspan="4">
+				<td align="center" colspan="4">
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
 					<a data-url="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 						Details

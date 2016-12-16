@@ -10,7 +10,7 @@
 
 
 <cfoutput>
-	<ul class="breadcrumb upper">
+
 	<cfloop collection="#session.filters#" index="filterSearchID">
 			<cfif session.filters[filterSearchID].getAir()>
 				<cfset nTempCount++>
@@ -24,9 +24,9 @@
 					<cfif StructCount(session.filters) GT 1>
 						&nbsp;<a href="#buildURL('air.removeflight?SearchID=#filterSearchID#')#" title="Click to remove this flight from your saved searches"><i class="fa fa-times"></i></a>
 					</cfif>
-					<cfif nAirCount NEQ nTempCount><span class="divider">/</span></cfif>
+					
 				</li>
 			</cfif>
 		</cfloop>
-	</ul>
+
 </cfoutput>

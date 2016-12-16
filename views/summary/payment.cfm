@@ -9,7 +9,7 @@
 			<label class="control-label col-sm-4 col-xs-12" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls col-sm-8 col-xs-12" id="airFOPIDDiv">
 				<i id="airSpinner" class="blue fa fa-spin fa-spinner"></i>
-				<select name="airFOPID" id="airFOPID">
+				<select class="form-control" name="airFOPID" id="airFOPID">
 				</select>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	$('.filterselection .filtergroup').hide();
 //------------------------------------------------------------------------------
 // MODAL
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ $(document).ready(function(){
 		$(this).removeData('modal');
 		$('#popupModalBody').html( '<i class="fa fa-spinner fa-spin"></i> One moment, we are retrieving your flight details...' );
 	});
-	
+
 	$('#popupModal').on('show.bs.modal', function (event) {
 	   var button = $(event.relatedTarget) // Button that triggered the modal
 	   var url = button.data('url') // Extract info from data-* attributes
@@ -89,6 +89,7 @@ $(document).ready(function(){
 		$('#SingleCarrier, #InPolicy, #NonStops').val('0')
 		// hide filter well
 		$('.filterselection').hide();
+		$('.filterselection .filtergroup').hide();
 		$('.filtertimeselection').hide();
 		// $('.filterflightselection').hide();
 		$('.spinner').show();
@@ -108,16 +109,16 @@ $(document).ready(function(){
 				};
 			}
 		}); //.css({"position": "absolute", "z-index": 99});
-	}); 
-	
+	});
+
 	$('#airlinebtn').on('click', function(){
 		$('#airlines').show();
 	});
-	
+
 	$('#classbtn').on('click', function(){
 		$('#class').show();
 	});
-	
+
 	$('#farebtn').on('click', function(){
 		$('#fares').show();
 	});

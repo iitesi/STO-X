@@ -76,7 +76,7 @@
 					$( "#" + car[0] ).removeClass('hidden');//.css('display','table-cell');
 					nCount++;
 				}
-				else { 
+				else {
 					$( "#" + car[0] ).addClass('hidden');
 				}
 			}
@@ -91,7 +91,7 @@
 				else {
 					$( '#row' + category ).addClass('hidden');
 				}
-				
+
 				// If all the cars in a category are hidden then hide that category too - don't like empty rows
 				if($('#row' + category).find('td:not(.carTypeCol):visible').length > 0) {
 					$('#row' + category).removeClass('hidden');
@@ -139,7 +139,7 @@
 		<style type='text/css'>
 			.searchContainer {
 				max-width: 680px;
-				width: 680px;			
+				width: 680px;
 			}
 			.modal.searchForm {
 				position: absolute;
@@ -168,15 +168,14 @@
 	<div class="filter respFilter">
 		<cfoutput>
 			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
-					
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
 							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="##filter-navbar-collapse-1" aria-expanded="false">
 								<span class="sr-only">Toggle navigation</span>
 								<span class="glyphicon glyphicon-filter"></span>
-								
-								
+
+
 							  </button>
 							  <a class="navbar-brand" href="##">Filter</a>
 						</div>
@@ -187,12 +186,12 @@
 								<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
 								<li><a href="##" id="btnLocation" class="filterby carFilterBy" title="Click to view/hide filters"><cfif rc.Filter.getCarDifferentLocations() EQ 1>Pickup/Dropoff Location<cfelse>Pickup Location</cfif> <i class="fa fa-caret-down"></i></a></li>
 							</ul>
-								
+
 							<ul class="nav navbar-nav navbar-right">
 								<li><p class="navbar-text filter"><span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed</p></li>
 								<li><a href="##" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
 							</ul>
-						
+
 						</div>
 					</div>
 				</div>
@@ -215,7 +214,7 @@
 				<div id="carTypes">
 					<div class="row" style="text-align:center;"><strong>CAR TYPES</strong></div>
 					<div class="row">
-						
+
 							<div class="col-xs-12"><strong>Cars</strong></div>
 							<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="carCategory">
 								<cfif Right(carCategory, 3) IS "car" AND NOT structIsEmpty(session.searches[rc.SearchID].stCars[carCategory])>
@@ -242,13 +241,13 @@
 									</div>
 								</cfif>
 							</cfloop>
-						
+
 						<input id="fltrCarCategorySelectAll" name="fltrCarCategorySelectAll" type="hidden" value="true" />
 					</div>
 				</div>
-					
-					
-					
+
+
+
 				<div class="form-horizontal" id="locations">
 					<div class="form-group">
 						<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
@@ -266,7 +265,7 @@
 											<cfelse>
 												<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 												<cfset application.fw.factory.getBean('EmailService').send( developer = false
-														, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+														, toAddress = 'weberrors@shortstravel.com;kgoblirsch@shortstravel.com'
 														, subject = 'STO: Missing Car Vendor'
 														, body = emailHTML ) />
 											</cfif>
@@ -275,7 +274,7 @@
 								</select>
 							</div>
 					</div>
-					
+
 								<cfif rc.Filter.getCarDifferentLocations() EQ 1>
 								<div class="form-group">
 									<label for="dropOffLocationKey" class="control-label col-sm-4 col-xs-12">Drop-off Location</label>
@@ -293,7 +292,7 @@
 													<cfelse>
 														<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 														<cfset application.fw.factory.getBean('EmailService').send( developer = false
-																, toAddress = 'kmyers@shortstravel.com;klamont@shortstravel.com;kgoblirsch@shortstravel.com'
+																, toAddress = 'weberrors@shortstravel.com;kgoblirsch@shortstravel.com'
 																, subject = 'STO: Missing Car Vendor'
 																, body = emailHTML ) />
 													</cfif>
@@ -303,7 +302,7 @@
 									</div>
 								</div>
 								</cfif>
-					
+
 				</div>
 			</cfoutput>
 			<span class="pull-right">

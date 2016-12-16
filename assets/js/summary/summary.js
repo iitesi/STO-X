@@ -944,7 +944,16 @@ function GetValueFromChild(selectedSegmentSeat) {
  	$("#" + seatArray[0] + " span").text( seatArray[1] );
  	// append seat to url so we can show it selected if they open seatmap again
 	var oldLink = $("#" + seatArray[0] + " a").attr( 'href' );
-	$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	if(oldLink.indexOf('seat=') > -1) {
+		var reExp = new RegExp("[\\?&]" + 'seat' + "=([^&#]*)");
+		var dlimeter = reExp.exec(oldLink);
+		dlimeter = dlimeter[0].charAt(0);
+		var newUrl = oldLink.replace(reExp, dlimeter + 'seat' + "=" + seatArray[1]);
+		$("#" + seatArray[0] + " a").attr('href', newUrl);
+
+	} else {
+		$("#" + seatArray[0] + " a").attr('href', oldLink + "&seat=" + seatArray[1]);
+	}
 	// scroll to flight info
  	scrollTo('airDiv');
  }

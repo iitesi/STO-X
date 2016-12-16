@@ -17,17 +17,17 @@
 </div>
 
 <div id="filterbar" class="filter airfilterbar container">
-	 <div class="row"> 
+	 <div class="row">
 		<div class="sortby respFilter">
-			
+
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
 						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sort-navbar-collapse-1" aria-expanded="false">
 							<span class="sr-only">Toggle navigation</span>
 							<span class="glyphicon glyphicon-sort"></span>
-							
-							
+
+
 						  </button>
 						  <a class="navbar-brand" href="#">Sort</a>
 						</div>
@@ -53,15 +53,15 @@
 			</div>
 
 		<div class="filterbar respFilter">
-				
+
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
 							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
 								<span class="sr-only">Toggle navigation</span>
 								<span class="glyphicon glyphicon-filter"></span>
-								
-								
+
+
 							  </button>
 							  <a class="navbar-brand" href="#">Filter</a>
 							</div>
@@ -102,19 +102,19 @@
 					</div>
 					</div>
 				</div>
-				
+
 
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">
 							<cfoutput>
-								<div id="airlines" >
-									
+								<div class="filtergroup" id="airlines" >
+
 									<cfif rc.action NEQ 'air.availability'>
 										<cfset aCarriers = session.searches[rc.SearchID].stLowFareDetails.aCarriers>
 									<cfelse>
 										<cfset aCarriers = session.searches[rc.SearchID].stAvailDetails.stCarriers[rc.Group]>
 									</cfif>
-									
+
 									<cfloop array="#aCarriers#" index="Carrier" >
 										<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 											<label class="checkbox" for="Carrier#Carrier#" title="Filter by #application.stAirVendors[carrier].name#"><input id="Carrier#carrier#" name="carrier" type="checkbox" value="#carrier#"> #application.stAirVendors[Carrier].Name#</label>
@@ -126,12 +126,12 @@
 											<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#&airlines=1')#" title="Click to find more airlines" class="airModal" data-modal="... more airlines."><i class="fa fa-plus"></i> More Airlines</a>
 										</div>
 									</cfif>
-									
+
 								</div>
 
 								<cfif rc.action NEQ 'air.availability'>
-									<div id="class" >
-										
+									<div class="filtergroup"  id="class" >
+
 										<!--- Y = economy/coach --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "Y") OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'YX')>
 											<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -179,8 +179,8 @@
 										</cfif>
 									</div>
 
-									<div id="fares">
-										
+									<div class="filtergroup"  id="fares">
+
 										<!--- 1 = nonrefundable --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
 											OR StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPricing, 'X0')>
@@ -217,7 +217,7 @@
 							<input type="hidden" id="NonStops" name="NonStops" value="">
 							<input type="hidden" id="InPolicy" name="InPolicy" value="0">
 							<input type="hidden" id="SingleCarrier" name="SingleCarrier" value="0">
-							
+
 					<div class="clearfix"></div>
 					<div>
 						<span class="pull-right">
@@ -241,52 +241,37 @@
 				the sliders smaller as the screen shrinks. Ideally they would stack vertically
 				but with skeleton+bootstrap+jqueryui mess something is overriding that --->
 
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="row-fluid">
+
 
 						<cfoutput>
 							<cfswitch expression="#rc.filter.getAirType()#">
 								<cfcase value="RT">
 									<!-- SLIDERS -->
 									<div id="sliders">
-										<div class="row-fluid">
-											<div class="span3">
-												<div class="row-fluid slider">
-													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm dd")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+										<div class="row">
+											<div class="col-sm-6 col-xs-12">
+												<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm dd")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+												<div class="slider departure-slider">
+													<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+													<div class="takeoff-range0"></div>
 												</div>
-												<div class="row-fluid slider">
-													<h3>#DateFormat(rc.filter.getArrivalDateTime(), "mmmm dd")# :: #rc.filter.getArrivalCity()# - #rc.filter.getDepartCity()#</h3>
-												</div>
-											</div>
-											<div class="span3">
-												<div class="row-fluid">
-													<div class="slider departure-slider">
-														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
-														<div class="takeoff-range0"></div>
-													</div>
-												</div>
-												<div class="row-fluid">
-													<div class="departure-slider">
-														<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
-														<div class="takeoff-range1"></div>
-													</div>
+												<div class="slider arrival-slider">
+													<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+													<div class="landing-range0"></div>
 												</div>
 											</div>
-											<div class="span3 offset1">
-												<div class="row-fluid">
-													<div class="slider arrival-slider">
-														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
-														<div class="landing-range0"></div>
-													</div>
+											<div class="col-sm-6 col-xs-12">
+												<h3>#DateFormat(rc.filter.getArrivalDateTime(), "mmmm dd")# :: #rc.filter.getArrivalCity()# - #rc.filter.getDepartCity()#</h3>
+												<div class="slider departure-slider">
+													<p>Depart #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="takeoff-time2"></span> - <span class="takeoff-time3"></span></p>
+													<div class="takeoff-range1"></div>
 												</div>
-												<div class="row-fluid">
-													<div class="arrival-slider">
-														<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
-														<div class="landing-range1"></div>
-													</div>
+												<div class="slider arrival-slider">
+													<p>Arrive #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="landing-time2"></span> - <span class="landing-time3"></span></p>
+													<div class="landing-range1"></div>
 												</div>
 											</div>
+
 										</div>
 									</div>
 								</cfcase>
@@ -295,38 +280,21 @@
 								<cfcase value="OW">
 									<!-- SLIDERS -->
 									<div id="sliders">
-										<div class="row-fluid">
-											<div class="span3">
-												<div class="row-fluid slider">
-													<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm d")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
-												</div>
+											<h3>#DateFormat(rc.filter.getDepartDateTime(), "mmmm d")# :: #rc.filter.getDepartCity()# - #rc.filter.getArrivalCity()#</h3>
+											<div class="slider departure-slider">
+												<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
+												<div class="takeoff-range0"></div>
 											</div>
-											<div class="span3">
-												<div class="row-fluid">
-													<div class="slider departure-slider">
-														<p>Depart #application.stAirports[rc.filter.getDepartCity()].city# <br /><span class="takeoff-time0"></span> - <span class="takeoff-time1"></span></p>
-														<div class="takeoff-range0"></div>
-													</div>
-												</div>
-											</div>
-											<div class="span3 offset1">
-												<div class="row-fluid">
-													<div class="slider arrival-slider">
-														<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
-														<div class="landing-range0"></div>
-													</div>
-												</div>
+											<div class="slider arrival-slider">
+												<p>Arrive #application.stAirports[rc.filter.getArrivalCity()].city# <br /><span class="landing-time0"></span> - <span class="landing-time1"></span></p>
+												<div class="landing-range0"></div>
 											</div>
 										</div>
-									</div>
+
 								</cfcase>
 							</cfswitch>
 						</cfoutput>
 
-
-						</div> <!--- // row --->
-					</div> <!--- // span12 --->
-				</div> <!--- // row --->
 				<div class="clearfix"><!--- prevent badges from overlapping filters ---></div>
 			</div> <!--- // filtertimeselection --->
 

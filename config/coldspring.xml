@@ -31,7 +31,6 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="ppnURL"><bean factory-bean="EnvironmentService" factory-method="getPPNURL" /></constructor-arg>
 		<constructor-arg name="ppnRefID"><bean factory-bean="EnvironmentService" factory-method="getPPNRefID" /></constructor-arg>
 		<constructor-arg name="ppnAPIKey"><bean factory-bean="EnvironmentService" factory-method="getPPNAPIKey" /></constructor-arg>
-		<constructor-arg name="ppnTestMode"><bean factory-bean="EnvironmentService" factory-method="getPPNTestMode" /></constructor-arg>
 	</bean>
 
 	<bean id="HotelAdapter" class="com.travelport.HotelAdapter">
@@ -205,6 +204,8 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="PaymentManager"><ref bean="PaymentManager" /></constructor-arg>
 		<constructor-arg name="OrgUnitManager"><ref bean="OrgUnitManager" /></constructor-arg>
 	</bean>
+	
+	<bean id="TripManager" class="com.shortstravel.traveler.TripManager"></bean>
 
 	<bean id="UnusedTicketManager" class="com.shortstravel.traveler.UnusedTicketManager">
 		<constructor-arg name="nonRefundableTicketsDSN"><bean factory-bean="EnvironmentService" factory-method="getNonRefundableTicketsDSN" /></constructor-arg>
@@ -267,7 +268,11 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="apikey"><value>2CF20630-DD24-491F-BA44314842183AFC</value></constructor-arg>
 	</bean>
 	
-	<bean id="logService" class="com.logging.logService" />
+	<bean id="SecureAuthService" class="com.auth.SecureAuthService">
+        <constructor-arg name="secureAuthRedirectUri"><bean factory-bean="EnvironmentService" factory-method="getSecureAuthRedirectUri" /></constructor-arg>
+    </bean>
+    
+    <bean id="AuthService" class="com.auth.AuthService" />
 
 	<bean id="EmailService" class="com.shortstravel.email.emailService" />
 </beans>
