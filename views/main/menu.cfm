@@ -41,8 +41,8 @@
 						<!--- TODO: This is to be part of the account configuration like the other hard-coded accID = 532 --->
 						<!--- Per Steph we want this to pull from the policy information in the portal with checkbox to show in STO --->
 						<cfif session.acctId eq 532>
-							<div class="badge" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
-								<a href="/booking/views/dycom/travelpolicy.pdf" style="text-decoration:none;color:black;" target="_blank">
+							<a href="/booking/views/dycom/travelpolicy.pdf" style="text-decoration:none;color:black;" target="_blank">
+								<div class="badge" style="cursor:pointer;padding:13px 15px 15px 15px;text-align:left;white-space:nowrap;">
 									<table width="100%" cellspacing="0" cellpadding="0" align="center">
 										<tr>
 											<td valign="top" style="width:35px;">
@@ -56,8 +56,8 @@
 											</td>
 										</tr>
 									</table>
-								</a>
-							</div>
+								</div>
+							</a>
 						</cfif>
 						<div class="badge" onclick="window.location='?action=main.contact'" style="cursor:pointer;padding:15px 13px 15px 15px;text-align:left;white-space:nowrap;">
 							<table width="100%" cellspacing="0" cellpadding="0" align="center">
