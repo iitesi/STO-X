@@ -24,12 +24,12 @@
 			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 			<link href="//code.jquery.com/ui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" media="screen">
-			
+
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
-			<link href="assets/css/layout.css" rel="stylesheet" media="screen">
-			<link href="assets/css/style.css" rel="stylesheet" media="screen">
+			<link href="assets/css/layout.css?v=112016" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css?v-112016" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -62,7 +62,7 @@
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
-			<script src="assets/js/booking.js"></script>
+			<script src="assets/js/booking.js?v=112016"></script>
 		</cfoutput>
 	</head>
 	<body>
@@ -127,7 +127,7 @@
 							#View('main/navigation')#
 
 							</cfoutput>
-						
+
 							<cfif structKeyExists(rc, 'filter')
 								AND rc.Filter.getProfileID() NEQ rc.Filter.getUserID()>
 								<div id="onbehalfof">
@@ -163,7 +163,7 @@
 								<a href="##" class="btn searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true" title="Start a new search"><i class="fa fa-search"></i></a>
 								</cfoutput>
 							</div>
-							
+
 							<!--- // end modal window --->
 
 							<div class="fifteen columns">
