@@ -2,18 +2,16 @@
 	<cfset local.datetimestamp = now() />
 	<cfset local.string = "acctID=#rc.Filter.getAcctID()#&userID=#rc.Filter.getUserID()#&searchID=#rc.searchID#&date=#dateFormat(local.datetimestamp, 'mm/dd/yyyy')#&time=#timeFormat(local.datetimestamp, 'HH:mm:ss')#" />
 	<cfset local.token = hash(local.string&rc.account.SecurityCode) />
-	<cfif cgi.http_host EQ "r.local">
-		<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfset local.returnURL = "http://" & cgi.http_host />
-	<cfelseif cgi.local_host EQ "Beta">
+
+	<cfif listFindNoCase("r.local",cgi.server_name)>
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
-		<cfset local.returnURL = "https://" & cgi.http_host />
-	<cfelseif cgi.local_host EQ "RailoQA">
+		<cfset local.returnURL = "http://#cgi.server_name#" />
+	<cfelseif listFindNoCase("beta,beta.shortstravel.com,stohotels,www.stohotels.com,railoq,railoqa.shortstravel.com",cgi.server_name)>
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
-		<cfset local.returnURL = "https://" & cgi.http_host />
+		<cfset local.returnURL = "https://#cgi.server_name#" />
 	<cfelse>
 		<cfset local.secureURL = "https://europa.shortstravel.com" />
-		<cfset local.returnURL = "https://" & cgi.http_host />
+		<cfset local.returnURL = "https://#cgi.server_name#" />
 	</cfif>
 
 	<cfset local.coreFrameAddress = local.secureURL & "/secure-sto/index.cfm?action=" />
