@@ -77,6 +77,7 @@
 				AND request.context.action NEQ 'main.trips'
 				AND request.context.action NEQ 'main.search'
 				AND request.context.action NEQ 'main.contact'
+				AND request.context.action NEQ 'dycom.policy'
 				AND request.context.action NEQ 'setup.resetPolicy'
 				AND request.context.action NEQ 'setup.setPolicy'>
 
