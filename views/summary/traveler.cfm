@@ -3,13 +3,13 @@
 	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
 
 	<div class="form-group" id="userIDDiv">
-		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>		
+		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>
 		<div class="col-sm-8 col-xs-12">
 			<select name="userID" id="userID" class="form-control">
 			<!--- Do not allow Georgetown to book on behalf of a guest traveler --->
 			<cfif structKeyExists(rc, "acctID") AND rc.acctID NEQ 303>
 				<option value="0">GUEST TRAVELER</option>
-			</cfif>			
+			</cfif>
 			<cfloop query="rc.allTravelers">
 				<cfif len(rc.allTravelers.Name_Suffix)>
 					<cfset travelerName = "#rc.allTravelers.Last_Name# #rc.allTravelers.Name_Suffix#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
@@ -169,7 +169,7 @@
 	<div id="orgUnits"> </div>
 
 	<cfif rc.travelerNumber EQ 1>
-		
+
 		<input type="hidden" name="airNeeded" id="airNeeded" value="#(rc.airSelected ? 1 : 0)#">
 		<input type="hidden" name="hotelNeeded" id="hotelNeeded" value="#(rc.hotelSelected ? 1 : 0)#">
 		<input type="hidden" name="carNeeded" id="carNeeded" value="#(rc.vehicleSelected ? 1 : 0)#">
@@ -327,7 +327,7 @@
 		</div>
 		<!--- If NASCAR --->
 		<cfif rc.acctID EQ 348>
-			<div id="hotelWhereStayingDiv" class="control-group hide #(structKeyExists(rc.errors, 'hotelWhereStaying') ? 'error' : '')#">
+			<div id="hotelWhereStayingDiv" class="control-group#(structKeyExists(rc.errors, 'hotelWhereStaying') ? ' error' : '')#">
 				<label class="control-label col-sm-4 col-xs-12" for="hotelWhereStaying">Where will you be staying? *</label>
 				<div class="controls col-sm-8 col-xs-12">
 					<input type="text" name="hotelWhereStaying" id="hotelWhereStaying" maxlength="60" />
