@@ -401,7 +401,7 @@
 			<cfloop collection="#group.segments#" index="local.segmentStructIndex" item="local.segmentStruct">
 				<!--- If the departure airport in any group is a designated TSA Precheck airport AND the departing airline is a designated TSA Precheck airline --->
 				<cfif counter EQ 1 AND listFindNoCase(application.stKTPrograms[1].airports, segmentStruct.origin) AND listFindNoCase(application.stKTPrograms[1].airlines, segmentStruct.carrier)>
-					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />				
+					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />
 				</cfif>
 				<!--- If an international flight --->
 				<cfif (application.stAirports[segmentStruct.destination].countryCode IS 'US' AND application.stAirports[segmentStruct.origin].countryCode IS NOT 'US')
@@ -521,9 +521,9 @@
 				<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
 				<cfif 	(
 							( 	local.OU.getOURequired() EQ 1
-								AND local.OU.getOURequiredCBAOnly() EQ 0 
+								AND local.OU.getOURequiredCBAOnly() EQ 0
 							)
-							OR 
+							OR
 							( 	local.OU.getOURequiredCBAOnly() EQ 1
 								AND (
 										( arguments.Traveler.getBookingDetail().getAirNeeded()
@@ -627,6 +627,8 @@
 				<!--- To Do: Pass variables in --->
 
 				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
+				<cfdump eval=arguments.Air.aPolicies>
+				<cfdump eval=inPolicy>
 				<!--- If NASCAR --->
 				<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0>
 					<cfif arguments.acctID EQ 348
@@ -644,12 +646,13 @@
 						<cfset local.error.hotelNotBooked = ''>
 					</cfif>
 				</cfif>
-				<cfif NOT inPolicy
-					AND arguments.Policy.Policy_AirReasonCode EQ 1>
+				<cfif NOT inPolicy AND arguments.Policy.Policy_AirReasonCode EQ 1>
+					hi
 					<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>
 						<cfset local.error.airReasonCode = ''>
 					</cfif>
 				</cfif>
+				<!--- <cfabort> --->
 				<cfif arguments.Air.Total GT lowestFare
 					AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
 					AND arguments.Policy.Policy_AirLostSavings EQ 1>
@@ -876,7 +879,7 @@
 			<cfset local.approvalNeeded = true>
 		</cfif>
 		<cfreturn local.approvalNeeded>
-	 	
+
 	</cffunction>
 
 	<cffunction name="determineCarApprovalReasons" output="false">
