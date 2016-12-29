@@ -56,8 +56,8 @@ $(document).ready(function(){
 <cfoutput>
 	<cfif rc.bSelection EQ 0>
     <ul class="nav nav-tabs">
-	    <li <cfif rc.sDetails EQ 'details'>class="active"</cfif>><a href="##tab-details" data-toggle="tab" title="View details">Details</a></li>
-	    <li <cfif rc.sDetails EQ 'seatmap'>class="active"</cfif>><a href="##tab-seatmap" data-toggle="tab" title="View seat map">Seat Map</a></li>
+	    <li <cfif rc.sDetails EQ 'details'>class="active"</cfif>><a href="##tab-details" data-toggle="tab" title="View details">Info</a></li>
+	    <li <cfif rc.sDetails EQ 'seatmap'>class="active"</cfif>><a href="##tab-seatmap" data-toggle="tab" title="View seat map">Seats</a></li>
 	    <li <cfif rc.sDetails EQ 'baggage'>class="active"</cfif>><a href="##tab-baggage" data-toggle="tab" title="View baggage fees">Bags</a></li>
 	    <li <cfif rc.sDetails EQ 'email'>class="active"</cfif>><a href="##tab-email" data-toggle="tab" title="Email this intinerary">Email</a></li>
     </ul>

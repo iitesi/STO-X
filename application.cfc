@@ -32,27 +32,26 @@
 		usingSubsystems = false
 	}>
 
-
 	<cffunction name="setupApplication">
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
 				.init( defaultProperties = { currentServerName=cgi.http_host }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
-		<cfset controller( 'setup.setApplication' )>
+		<cfset controller('setup.setApplication')>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
 	</cffunction>
 
-
 	<cffunction name="setupSession">
-		<cfset session.searches = {}>
-		<cfset session.filters = {}>
-		<cfset session.aMessages = []>
-		<cfset controller( 'setup.setAccount' )>
+		<cfset session.searches = {}/>
+		<cfset session.filters = {}/>
+		<cfset session.aMessages = []/>
+		<cfset controller('setup.setAcctID')/>
+		<cfset controller('setup.setAccount')/>
 	</cffunction>
 
-
 	<cffunction name="setupRequest">
+
 		<!--- <cfif isDefined("url.reinit")>
 			<cfset ApplicationStop()>
 			<cflocation url="index.cfm" addtoken="false">
@@ -62,81 +61,107 @@
 				<cfhttpparam type="formfield" name="acctID" value="1" />
 			</cfhttp>
 			<cfdump var="#local.response#" abort />
-
 		</cfif>
 
-		<cfif (NOT structKeyExists(request.context, 'SearchID')
-			OR NOT isNumeric(request.context.searchID))
-			AND request.context.action NEQ 'main.notfound'
-			AND request.context.action NEQ 'setup.resetPolicy'
-			AND request.context.action NEQ 'setup.setPolicy'
-			AND request.context.action NEQ 'logout.default'>
-			<cfset var action = ListFirst(request.context.action, '.')>
-			<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
+		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
+
+			<cfset controller('setup.setAcctID')/>
+			<cfset controller('setup.setAccount')/>
+
 		<cfelse>
-			<cfif NOT findNoCase( ".cfc", cgi.script_name )>
-				<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
-					<cfset session.isAuthorized = false />
+			<cfif (NOT structKeyExists(request.context, 'SearchID')
+				OR NOT isNumeric(request.context.searchID))
+				AND request.context.action NEQ 'main.notfound'
+				AND request.context.action NEQ 'main.menu'
+				AND request.context.action NEQ 'main.trips'
+				AND request.context.action NEQ 'main.search'
+				AND request.context.action NEQ 'main.contact'
+				AND request.context.action NEQ 'dycom.policy'
+				AND request.context.action NEQ 'setup.resetPolicy'
+				AND request.context.action NEQ 'setup.setPolicy'>
 
-					<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
-						<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+				<cfset var action = ListFirst(request.context.action,".")>
 
-						<cfif session.isAuthorized>
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="userId" value="#request.context.userId#" />
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="acctId" value="#request.context.acctId#" />
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
+				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
 
-							<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
-							<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
+			<cfelse>
+				<cfif NOT findNoCase( ".cfc", cgi.script_name )>
+					<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
-							<cfif apiURL NEQ cgi.http_host>
-								<cfcookie domain="#apiURL#" secure="yes" name="userId" value="#request.context.userId#" />
-								<cfcookie domain="#apiURL#" secure="yes" name="acctId" value="#request.context.acctId#" />
-								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
-								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
+						<cfset session.isAuthorized = false />
+
+						<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
+							<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+
+							<cfif session.isAuthorized>
+								<cfcookie domain="#cgi.http_host#" secure="yes" name="userId" value="#request.context.userId#" />
+								<cfcookie domain="#cgi.http_host#" secure="yes" name="acctId" value="#request.context.acctId#" />
+								<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
+								<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
+
+								<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+								<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
+
+								<cfif apiURL NEQ cgi.http_host>
+									<cfcookie domain="#apiURL#" secure="yes" name="userId" value="#request.context.userId#" />
+									<cfcookie domain="#apiURL#" secure="yes" name="acctId" value="#request.context.acctId#" />
+									<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
+									<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
+								</cfif>
+								<cfset session.cookieDate = request.context.date />
+								<cfset session.cookieToken = request.context.token />
 							</cfif>
-							<cfset session.cookieDate = request.context.date />
-							<cfset session.cookieToken = request.context.token />
+
 						</cfif>
-
 					</cfif>
+
+					<cfif NOT session.isAuthorized>
+						<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+							<cfif structKeyExists(cookie,"acctId") AND cookie.acctId EQ 532>
+								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=dycom.login" addtoken="false">
+							<cfelse>
+								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=main.login" addtoken="false">
+							</cfif>
+						<cfelse>
+							<cflocation url="#getBeanFactory().getBean('EnvironmentService').getPortalURL()#" addtoken="false">
+						</cfif>
+					</cfif>
+
 				</cfif>
 
-				<cfif NOT session.isAuthorized>
-					<cflocation url="#getBeanFactory().getBean( 'EnvironmentService' ).getPortalURL()#" addtoken="false">
-				</cfif>
+				<cfset controller('setup.setSearchID')/>
+				<cfset controller('setup.setFilter')/>
+				<cfset controller('setup.setAcctID')/>
+				<cfset controller('setup.setAccount')/>
+				<cfset controller('setup.setTMC')/>
+				<cfset controller('setup.setPolicyID')/>
+				<cfset controller('setup.setPolicy')/>
+				<cfset controller('setup.setGroup')/>
+				<cfset controller('setup.setAccountIds')/>
+				<cfset controller('setup.setInvoiceTableSuffix')/>
+				<cfset controller('setup.setBlackListedCarrierPairing')/>
+
 			</cfif>
 
-			<cfset controller( 'setup.setSearchID' )>
-			<cfset controller( 'setup.setFilter' )>
-			<cfset controller( 'setup.setAcctID' )>
-			<cfset controller( 'setup.setAccount' )>
-			<cfset controller( 'setup.setTMC' )>
-			<cfset controller( 'setup.setPolicyID' )>
-			<cfset controller( 'setup.setPolicy' )>
-			<cfset controller( 'setup.setGroup' )>
-			<cfset controller( 'setup.setBlackListedCarrierPairing' )>
-
 		</cfif>
-	</cffunction>
 
+	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
 		<cfreturn view( "main/notfound" )>
 	</cffunction>
 
-
 	<cffunction name="onError" returnType="void">
+
 		<cfargument name="Exception" required=true/>
 		<cfargument name="EventName" type="String" required=true/>
 
-		<cfset local.acctID = ''>
-		<cfset local.userID = ''>
-		<cfset local.username = ''>
-		<cfset local.department = ''>
-		<cfset local.searchID = ''>
+		<cfset local.acctID = ""/>
+		<cfset local.userID = ""/>
+		<cfset local.username = ""/>
+		<cfset local.department = ""/>
+		<cfset local.searchID = ""/>
 
 		<cftry>
 			<!--- If the rc scope isn't defined then look a little more to see if we can track down the searchID and pull from the session. --->
@@ -186,18 +211,17 @@
 										, searchID = local.searchID
 										, exception = arguments.exception } >
 
-		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Error' ) />
+		<cfif application.fw.factory.getBean('EnvironmentService').getEnableBugLog()>
+			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=local.errorException, severityCode='Error') />
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		<cfelse>
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
 
-		<cfif listFindNoCase('local,qa', application.fw.factory.getBean( 'EnvironmentService' ).getCurrentEnvironment())>
+		<cfif listFindNoCase('local,qa', application.fw.factory.getBean('EnvironmentService').getCurrentEnvironment())>
 			<cfdump var="#local.errorException#" />
 		</cfif>
 	</cffunction>
-
 
 	<cffunction name="onCFCRequest" access="public" returnType="void" returnformat="plain">
 		<cfargument name="cfcname" type="string" required="true">

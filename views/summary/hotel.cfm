@@ -2,60 +2,57 @@
 
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
-		<div style="float:right;padding-right:20px;"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="icon-remove-sign"></a></div><br>
+		<div class="pull-right"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-times"></a></div><br>
 
-			<table width="1000">
-			<tr>
-
-				<td></td>
-
-				<td valign="top">
-					<!--- If DHL --->
-					<cfif rc.Filter.getAcctID() EQ 497 OR rc.Filter.getAcctID() EQ 499>
-						<cfif rc.Hotel.getPreferredProperty()>
-							<span class="ribbon ribbon-l-DHL-prefprop"></span>
-						<cfelseif rc.Hotel.getPreferredVendor()>
-							<span class="ribbon ribbon-l-DHL-prefvendor"></span>
-						</cfif>
-					<!--- if NASCAR --->
-					<cfelseif rc.Filter.getAcctID() EQ 348>
-						<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
-							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
-							<span class="ribbon ribbon-l-pref-disc"></span>
-						<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
-							<span class="ribbon ribbon-l-pref"></span>
-						<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
-							<span class="ribbon ribbon-l-disc"></span>
-						</cfif>
-					<!--- If any other account --->
-					<cfelse>
-						<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
-							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
-							<span class="ribbon ribbon-l-pref-cont"></span>
-						<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()
-							AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
-							<span class="ribbon ribbon-l-pref-govt"></span>
-						<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
-							<span class="ribbon ribbon-l-pref"></span>
-						<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()>
-							<span class="ribbon ribbon-l-govt"></span>
-						<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
-							<span class="ribbon ribbon-l-cont"></span>
-						</cfif>
-					</cfif>
-
-					<h2>HOTEL</h2>
-				</td>
-
-				<td colspan="3">
-					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
-					#(isInPolicy ? '' : '<span rel="tooltip" class="outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#" style="float:left; width:114px;">OUT OF POLICY *</span>')#
+				<div class="tripsummary-detail">
+					<div class="row">
+						<div class="col-xs-12">
+							<!--- If DHL --->
+							<cfif rc.Filter.getAcctID() EQ 497 OR rc.Filter.getAcctID() EQ 499>
+								<cfif rc.Hotel.getPreferredProperty()>
+									<span class="ribbon ribbon-l-DHL-prefprop"></span>
+								<cfelseif rc.Hotel.getPreferredVendor()>
+									<span class="ribbon ribbon-l-DHL-prefvendor"></span>
+								</cfif>
+							<!--- if NASCAR --->
+							<cfelseif rc.Filter.getAcctID() EQ 348>
+								<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+									<span class="ribbon ribbon-l-pref-disc"></span>
+								<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
+									<span class="ribbon ribbon-l-pref"></span>
+								<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
+									<span class="ribbon ribbon-l-disc"></span>
+								</cfif>
+							<!--- If any other account --->
+							<cfelse>
+								<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+									<span class="ribbon ribbon-l-pref-cont"></span>
+								<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
+									<span class="ribbon ribbon-l-pref-govt"></span>
+								<cfelseif rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()>
+									<span class="ribbon ribbon-l-pref"></span>
+								<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()>
+									<span class="ribbon ribbon-l-govt"></span>
+								<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()>
+									<span class="ribbon ribbon-l-cont"></span>
+								</cfif>
+							</cfif>
+							<h2>HOTEL</h2>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
+							#(isInPolicy ? '' : '<div class="form-group"><label rel="tooltip" for="hotelReasonCode" class="control-label col-sm-4 col-xs-12 outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#"><strong>OUT OF POLICY *</strong></label>')#
 
 					<!--- All accounts when out of policy --->
 					<cfif rc.showAll
 						OR (NOT isInPolicy
 						AND rc.Policy.Policy_HotelReasonCode)>
-						<select name="hotelReasonCode" id="hotelReasonCode" class="input-xlarge #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
+						<select name="hotelReasonCode" id="hotelReasonCode" class="form-control #(structKeyExists(rc.errors, 'hotelReasonCode') ? 'error' : '')#">
 							<option value="">Select Reason for Booking Out of Policy</option>
 							<cfloop query="rc.qOutOfPolicy_Hotel">
 								<option value="#rc.qOutOfPolicy_Hotel.HotelSavingsCode#">#rc.qOutOfPolicy_Hotel.Description#</option>
@@ -79,6 +76,7 @@
 							</cfif>
 --->
 						</select> <br><br>
+					</div>
 					</cfif>
 
 					<!--- State of Texas --->
@@ -96,67 +94,73 @@
 						</div>
 					</cfif>
 
-				</td>
+					</div> <!-- /.col -->
+				</div> <!-- /.row -->
+				<div class="row">
+					<div class="col-sm-2 col-xs-4">
+						<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
+							<img class="img-responsive" alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
+						</cfif>
+					</div>
 
-			</tr>
-			<tr>
+					<div class="col-sm-7 col-xs-8">
+						<strong>
+							#rc.Hotel.getPropertyName()#<br>
+						</strong>
 
-				<td width="50"></td>
+						#uCase(rc.Hotel.getAddress())#,
+						#uCase(rc.Hotel.getCity())#,
+						#uCase(rc.Hotel.getState())#
+						#uCase(rc.Hotel.getZip())#
+						#uCase(rc.Hotel.getCountry())#<br>
 
-				<td valign="top" width="120">
-					<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
-						<img alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">
-					</cfif>
-				</td>
+						<div style="overflow:hidden;">#uCase(rc.Hotel.getRooms()[1].getDescription())#</div><br>
 
-				<td width="630">
+						<strong>
+							CHECK-IN:
+							#uCase(dateFormat(rc.Filter.getCheckInDate(), 'mmm d'))#
+							&nbsp;&nbsp;&nbsp;
+							CHECK-OUT:
+							#uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
+							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
+							(#nights# NIGHT<cfif nights GT 1>S</cfif>)
+						</strong>
 
-					<strong>
-						#rc.Hotel.getPropertyName()#<br>
-					</strong>
+					</div>
 
-					#uCase(rc.Hotel.getAddress())#,
-					#uCase(rc.Hotel.getCity())#,
-					#uCase(rc.Hotel.getState())#
-					#uCase(rc.Hotel.getZip())#
-					#uCase(rc.Hotel.getCountry())#<br>
-
-					<div style="width:630px;overflow:hidden;">#uCase(rc.Hotel.getRooms()[1].getDescription())#</div><br>
-
-					<strong>
-						CHECK-IN:
-						#uCase(dateFormat(rc.Filter.getCheckInDate(), 'mmm d'))#
-						&nbsp;&nbsp;&nbsp;
-						CHECK-OUT:
-						#uCase(DateFormat(rc.Filter.getCheckOutDate(), 'mmm d'))#
-						<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
-						(#nights# NIGHT<cfif nights GT 1>S</cfif>)
-					</strong>
-
-				</td>
-
-				<td width="200" valign="top">
-					<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
-						<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
-						<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
-						<cfset hotelText = 'Total rate including taxes'>
-					<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
-						<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
-						<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
-						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
-					<cfelse>
-						<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
-						<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
-						<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
-					</cfif>
-
+					<div class="col-sm-3 col-xs-12">
+						<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
+							<cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+							<cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
+							<cfset hotelText = 'Total rate including taxes'>
+						<cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
+							<cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+							<cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+							<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
+						<cfelse>
+							<cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+							<cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
+							<cfset hotelText = 'Estimated Rate<br>Taxes quoted at check-in'>
+						</cfif>
 					<cfif rc.Filter.getFindIt() EQ 1>
 						<cfset dailyRateCurrency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
-						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>						
+						<cfset hotelDailyRate = rc.Hotel.getRooms()[1].getDailyRate()>
 						<span class="blue bold large">
 							#(dailyRateCurrency EQ 'USD' ? DollarFormat(hotelDailyRate) : numberFormat(hotelDailyRate, '____.__')&' '&dailyRateCurrency)#<br />
 						</span>
 						Average nightly rate<br />
+						<cfif isArray(rc.hotel.getRooms()[1].getRateChangeText()) AND arrayLen(rc.hotel.getRooms()[1].getRateChangeText()) GT 1>
+							<cfsavecontent variable="hotelRateChanges">
+								<cfloop from="1" to="#arrayLen(rc.hotel.getRooms()[1].getRateChangeText())#" index="ii">
+									#replace(replace(replace(rc.hotel.getRooms()[1].getRateChangeText()[ii], "USD", "$"), " per ", "/"), "nights", "night(s)")#<br />
+								</cfloop>
+							</cfsavecontent>
+							<span class="blue bold">
+								<a rel="popover" data-original-title="Hotel rate changes" data-content="#hotelRateChanges#" href="##" />
+									Hotel nightly rate variances
+								</a>
+							</span>
+						</cfif>
 					</cfif>
 
 					<span class="blue bold large">
@@ -202,71 +206,70 @@
 							<span class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
 						</cfif>
 					</cfif>
-
-				</td>
-			<tr>
-
-			<tr>
-				<td colspan="5"><br></td>
-			</tr>
-
-			<tr>
-
-				<td></td>
-
-				<td colspan="4">
-                    <cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
-					#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
-                    <input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="input-medium">
-                    &nbsp;&nbsp;&nbsp;
+					</div>
+				</div>
+				<div class="loyalty row">
+					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
+						<div class="form-group">
+							<label for="hotelFF" class="col-sm-3 control-label">
+								#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##
+							</label>
+							<div class="col-sm-7">
+								<input type="text" name="hotelFF" id="hotelFF" maxlength="20" class="form-control">
+							</div>
+						</div>
 					<cfelse>
-					Frequent guest numbers cannot be applied to web rate reservations.
-					&nbsp;&nbsp;&nbsp;
-					<input type="hidden" name="hotelFF" id="hotelFF">
+						Frequent guest numbers cannot be applied to web rate reservations.
+						&nbsp;&nbsp;&nbsp;
+						<input type="hidden" name="hotelFF" id="hotelFF">
 					</cfif>
-					HOTEL SPECIAL REQUESTS
-					<input type="text" name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="input-large">
-				</td>
+					<div class="form-group">
+						<label for="hotelSpecialRequests" class="col-sm-3 control-label">
+							HOTEL SPECIAL REQUESTS
+						</label>
+						<div class="col-sm-7">
+							<input type="text" name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="form-control">
+						</div>
+					</div> <!-- /.form-group -->
+				</div> <!-- /.loyalty.row -->
+				<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
+				<div class="row">
 
-			</tr>
-			<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-			<tr>
-			<td colspan="5">
-			&nbsp;&nbsp;&nbsp;
-			<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
-			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
-			<p>
-			<span class="bold">Rate Description</span><br>
-			#rc.Hotel.getRooms()[1].getPPNRateDescription()#
-			</p>
-			</cfif>
-			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
-			<p>
-			<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
-			#rc.Hotel.getRooms()[1].getDepositPolicy()#
-			</p>
-			</cfif>
-			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
-			<p>
-			<span class="bold">Cancellation Policy</span><br>
-			#rc.Hotel.getRooms()[1].getCancellationPolicy()#
-			</p>
-			</cfif>
-			<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
-			<p>
-			<span class="bold">Guarantee Policy</span><br>
-			#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
-			</p>
-			</cfif>
-			<p>
-			<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
-			</p>
-			</tr>
-			</cfif>
-			</table>
+					<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
+					<p>
+					<span class="bold">Rate Description</span><br>
+					#rc.Hotel.getRooms()[1].getPPNRateDescription()#
+					</p>
+					</cfif>
+					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
+					<p>
+					<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
+					#rc.Hotel.getRooms()[1].getDepositPolicy()#
+					</p>
+					</cfif>
+					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
+					<p>
+					<span class="bold">Cancellation Policy</span><br>
+					#rc.Hotel.getRooms()[1].getCancellationPolicy()#
+					</p>
+					</cfif>
+					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
+					<p>
+					<span class="bold">Guarantee Policy</span><br>
+					#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+					</p>
+					</cfif>
+					<p>
+					<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
+					</p>
+				</div>
+					</cfif>
+				</div>
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
-				<div class="searchContainer">
-					<div class="modal-header popover-content">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header popover-content">
 						<button type="button" class="close" data-dismiss="modal"><i class="icon-remove"></i></button>
 						<h3 id="addModalHeader"><cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 						You have selected a web rate. Please read and accept the terms of this rate.
@@ -275,8 +278,8 @@
 						</cfif>
 						</h3>
 					</div>
-					<div class="modal-body popover-content">
-						<div id="addModalBody">
+						<div class="modal-body popover-content">
+							<div id="addModalBody">
 							<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
 							#view( 'summary/hotelcancellationpolicy' )#
 							<cfelse>
@@ -285,8 +288,8 @@
 						</div>
 					</div>
 				</div>
-			</div>
-
+				</div> <!-- /.modal-dialog -->
+			</div> <!-- / displayHotelCancellationPolicy -->
 	</cfif>
 </cfoutput>
 <!--- <cfdump var="#rc.Hotel#"> --->

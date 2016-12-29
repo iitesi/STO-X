@@ -18,12 +18,11 @@
 <!--Page title row-->
 <div class="container">
     <div class="row-fluid">
-        <div class="span12">
             <div class="page-header">
                 <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
-                <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="icon-search"></i> Change Search</a></h2>
+                <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="fa fa-search"></i> Change Search</a></h2>
+				<span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
             </div>
-        </div>
     </div>
 </div>
 
@@ -31,88 +30,95 @@
 <!--Filter Bar Row-->
 <div id="filterbar" class="container" >
     <div class="filter">
-        <div>
-            <h4 >Filter<a href="javascript:void(0)" ng-click="clearFilters()" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></h4>
-        </div>
-        <div class="navbar filterby">
-            <div class="navbar-inner">
-                <ul class="nav">
-                    <li ng-class="{'active': filtersApplied.vendorName }">
-                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendorName' )" >Hotel Name <i class="icon-caret-down"></i></a>
-                    </li>
-                    <li ng-class="{'active': filtersApplied.vendors }">
-                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendors' )" >Hotel Chain <i class="icon-caret-down"></i></a>
-                    </li>
+        <div class="navbar navbar-default respFilter filterby">
+			<div class="container-fluid">
+			    <div class="navbar-header">
+				    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2" aria-expanded="false">
+					  <span class="sr-only">Toggle navigation</span>
+					  <span class="glyphicon glyphicon-filter"></span>
+				    </button>
+				    <span class="navbar-brand">Filter</a>
+			    </div>
+                <div class="collapse navbar-collapse" id="navbar-collapse-2">
+					<ul class="nav navbar-nav">
+						<li ng-class="{'active': filtersApplied.vendorName }">
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendorName' )" >Hotel Name <i class="fa fa-caret-down"></i></a>
+						</li>
+						<li ng-class="{'active': filtersApplied.vendors }">
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'vendors' )" >Hotel Chain <i class="fa fa-caret-down"></i></a>
+						</li>
 
-                    <li ng-class="{'active': filtersApplied.amenities }">
-                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'amenities' )" >Amenities <i class="icon-caret-down"></i></a>
-                    </li>
-                    <li ng-class="{'active': filtersApplied.rating }">
-                        <a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="icon-caret-down"></i></a>
-                    </li>
+						<li ng-class="{'active': filtersApplied.amenities }">
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'amenities' )" >Amenities <i class="fa fa-caret-down"></i></a>
+						</li>
+						<li ng-class="{'active': filtersApplied.rating }">
+							<a href="javascript: void(0)" ng-click="setFilterVisibility( 'rating' )">Rating <i class="fa fa-caret-down"></i></a>
+						</li>
 
-                    <li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly" ng-show="policy.POLICY_HOTELMAXRULE">In Policy</a></li>
-                    <li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
-                </ul>
+						<li href="javascript: void(0)" ng-class="{'active': filterItems.inPolicyOnly}" ><a href="javascript: void(0)" ng-click="filterItems.inPolicyOnly = !filterItems.inPolicyOnly" ng-show="policy.POLICY_HOTELMAXRULE">In Policy</a></li>
+						<li href="javascript: void(0)" ng-class="{'active': filterItems.noSoldOut}"><a href="javascript: void(0)" ng-click="filterItems.noSoldOut = !filterItems.noSoldOut">No Sold Out</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><p class="navbar-text filter ng-binding"><span ng-show="filtersApplied()" class="ng-binding" style="display: none;">{{filteredHotels.length}} of </span>{{hotels.length}} total<span class="hideFirst"> properties</span></p></li>
+						<li><a href="javascript:void(0)" ng-click="clearFilters()"><i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
+					</ul>
+				</div> <!-- /#navbar-collapse-2-->
             </div>
         </div>
-        <div class="filter">
-            <span ng-show="filtersApplied()">{{filteredHotels.length}} of </span>{{hotels.length}} total properties
-        </div>
 
-        <div class="well" ng-show="filtersVisible.vendors">
+        <div class="well container-fluid" ng-show="filtersVisible.vendors">
             <div class="row">
-                <div class="span3" ng-repeat="vendor in filterItems.vendors">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="vendor in filterItems.vendors">
                     <label><input type="checkbox" value="{{vendor.code}}" ng-model="vendor.checked"> {{vendor.name}}</label>
                  </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filtersVisible.vendor=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.vendor=false" title="Close filters"><i class="fa fa-remove"></i></button>
                 </span>
              </div>
         </div>
 
-        <div class="well" ng-show="filtersVisible.vendorName">
+        <div class="well container-fluid" ng-show="filtersVisible.vendorName">
             <div class="row">
-                <div class="span4">
+                <div class="">
                     <form class="form-inline">
                         <input type="text" ng-model="propertyNameFilterValue"> <button ng-click="filterHotels()" class="btn btn-primary">Search</button>
                     </form>
                 </div>
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.vendorName=false" title="Close filters"><i class="fa fa-remove"></i></button>
                 </span>
              </div>
         </div>
 
-        <div class="well" ng-show="filtersVisible.amenities">
+        <div class="well container-fluid" ng-show="filtersVisible.amenities">
             <div class="row">
-                <div class="span3" ng-repeat="amenity in filterItems.amenities">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="amenity in filterItems.amenities">
                     <label><input type="checkbox"  value="{{amenity}}" ng-model="amenity.checked"> {{amenity.name}}</label>
                 </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filtersVisible.amenities=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.amenities=false" title="Close filters"><i class="fa fa-remove"></i></button>
                 </span>
             </div>
         </div>
 
-        <div class="well" ng-show="filtersVisible.rating">
+        <div class="well container-fluid" ng-show="filtersVisible.rating">
             <div class="row">
-                <div class="span9" ng-repeat="item in filterItems.ratings">
+                <div class="col-md-2 col-sm-4 col-xs-12" ng-repeat="item in filterItems.ratings">
                     <label><input type="checkbox" value="{{item.rating}}" ng-model="item.checked">
                         <span class="rating">
-                            <i ng-class="{'icon-star': item.rating >= 1, 'icon-star-empty': item.rating < 1}"></i>
-                            <i ng-class="{'icon-star': item.rating >= 2, 'icon-star-empty': item.rating < 2}"></i>
-                            <i ng-class="{'icon-star': item.rating >= 3, 'icon-star-empty': item.rating < 3}"></i>
-                            <i ng-class="{'icon-star': item.rating >= 4, 'icon-star-empty': item.rating < 4}"></i>
-                            <i ng-class="{'icon-star': item.rating >= 5, 'icon-star-empty': item.rating < 5}"></i>
+                            <i ng-class="{'fa':true, 'fa-star': item.rating >= 1, 'fa-star-o': item.rating < 1}"></i>
+                            <i ng-class="{'fa':true, 'fa-star': item.rating >= 2, 'fa-star-o': item.rating < 2}"></i>
+                            <i ng-class="{'fa':true, 'fa-star': item.rating >= 3, 'fa-star-o': item.rating < 3}"></i>
+                            <i ng-class="{'fa':true, 'fa-star': item.rating >= 4, 'fa-star-o': item.rating < 4}"></i>
+                            <i ng-class="{'fa':true, 'fa-star': item.rating >= 5, 'fa-star-o': item.rating < 5}"></i>
                         </span>{{ i }}
                     </label>
                 </div>
 
                 <span class="pull-right">
-                    <button type="button" class="closewell close" ng-click="filtersVisible.ratings=false" title="Close filters"><i class="icon-remove"></i></button>
+                    <button type="button" class="closewell close" ng-click="filtersVisible.ratings=false" title="Close filters"><i class="fa fa-remove"></i></button>
                 </span>
             </div>
         </div>
@@ -120,33 +126,27 @@
     </div>
 </div>
 
-<!--Pagination and Continue without Hotel Row-->
-<div class="container">
-    <div class="row-fluid">
-        <div class="span6">
-            <div class="pull-right">
-                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-                <span ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            </div>
-        </div>
-
-        <div class="span6">
-            <span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
-        </div>
-    </div>
-</div>
 
 <!--Hotel Results and Map Row-->
 <div class="container">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="span6" >
-                <div style="height: 500px; overflow-x: hidden; overflow-y: auto;" class="hotel-results">
+    <div class="row">
+		<div class="col-md-6 col-md-push-6 hotel-result-column">
+			<div class="span6" id="mapDiv" style="height: 500px;"></div>
+		</div>
+        <div class="col-md-6 col-md-pull-6 hotel-result-column">
+			<nav>
+				<ul class="pagination">
+					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
+					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
+					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
+				</ul>
+			</nav>
+
+            <div class="hotel-results">
 
                     <div ng-show="searchCompleted && filteredHotels.length" >
 
-                        <div ng-repeat="item in visibleHotels" class="badge hotel">
+                        <div ng-repeat="item in visibleHotels" class="row hotelrowbadge hotel">
                             <!--Ribbon overlays for DHL-->
                             <span class="ribbon ribbon-r-DHL-prefprop" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredProperty"></span>
                             <span class="ribbon ribbon-r-DHL-prefvendor" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredVendor && !item.hotel.preferredProperty"></span>
@@ -161,32 +161,32 @@
                             <span class="ribbon ribbon-r-pref-cont" ng-show="(item.hotel.preferredProperty || item.hotel.preferredVendor) && item.hotel.hasCorporateRate() && search.acctID != 497 && search.acctID != 499 && search.acctID != 348"></span>
                             <span class="ribbon ribbon-r-govt" ng-show="!item.hotel.preferredProperty && !item.hotel.preferredVendor && item.hotel.hasGovernmentRate() && search.acctID != 497 && search.acctID != 499"></span>
 
-                            <div class="signature-image">
-                                <img ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
+                            <div class="col-md-2 col-xs-3 signature-image">
+                                <img class="img-responsive" ng-src="{{item.hotel.SignatureImage}}" height="70" width="100">
                             </div>
 
-                            <div class="hotel-info">
-                                <div class="hotel-name">{{item.propertyNumber}} - {{item.hotel.PropertyName}}</div>
+                            <div class="hotel-info col-lg-7 col-md-9">
+                                <div class="hotel-name"><span ng-bind="item.propertyNumber"></span> - <span ng-bind="item.hotel.PropertyName"></span></div>
                                 <div class="hotel-distance">
-                                    {{item.hotel.distance}} miles
+                                    <span ng-bind="item.hotel.distance"></span> miles
                                     <span class="rating" ng-show="item.hotel.StarRating > 0">
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 1, 'icon-star-empty': item.hotel.StarRating < 1}"></i>
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 2, 'icon-star-empty': item.hotel.StarRating < 2}"></i>
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 3, 'icon-star-empty': item.hotel.StarRating < 3}"></i>
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 4, 'icon-star-empty': item.hotel.StarRating < 4}"></i>
-                                        <i ng-class="{'icon-star': item.hotel.StarRating >= 5, 'icon-star-empty': item.hotel.StarRating < 5}"></i>
+                                        <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 1, 'fa-star-o': item.hotel.StarRating < 1}"></i>
+                                        <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 2, 'fa-star-o': item.hotel.StarRating < 2}"></i>
+                                        <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 3, 'fa-star-o': item.hotel.StarRating < 3}"></i>
+                                        <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 4, 'fa-star-o': item.hotel.StarRating < 4}"></i>
+                                        <i ng-class="{'fa': true, 'fa-star': item.hotel.StarRating >= 5, 'fa-star-o': item.hotel.StarRating < 5}"></i>
                                     </span>
                                 </div>
-                                <div class="btn-group hotel-detail-buttons">
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showHotelDetails}">Details</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAreaDetails}">Area</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showAmenities}">Amenities</button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': showPhotos}">Photos</button>
+                                <div class="btn-group btn-group-xs hotel-detail-buttons">
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showHotelDetails}"><span class="glyphicon glyphicon-info-sign"></span> <span class="hideOnPhones">Details</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAreaDetails}"><i class="fa fa-map" aria-hidden="true"></i> <span class="hideOnPhones">Area</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAmenities}"><i class="fa fa-hotel" aria-hidden="true"></i> <span class="hideOnPhones">Amenities</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones">Photos</span></button>
                                 </div>
 
                             </div>
 
-                            <div class="hotel-pricing">
+                            <div class="hotel-pricing col-lg-3 col-xs-12 pull-right">
 
                                 <img class="loading" src="/booking/assets/img/ajax-loader.gif" ng-hide="item.hotel.roomsReturned">
 
@@ -203,7 +203,7 @@
 
                                     <button
                                         id="{{item.hotel.PropertyId}}"
-                                        ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': item.hotel.isInPolicy}"
+                                        ng-class="{'btn': true, 'btn-sm' : true, 'btn-default': true, 'btn-primary': item.hotel.isInPolicy}"
                                         ng-click="updateTooltips();showRooms=!showRooms;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showPhotos=false;">
                                         <span ng-show="showRooms">HIDE ROOMS</span>
                                         <span ng-show="!showRooms">SHOW ROOMS</span>
@@ -221,28 +221,35 @@
                                 <div ng-show="item.hotel.details.loaded">
 
                                    <dl class="dl-horizontal">
+
                                         <dt>Address:</dt>
                                         <dd>{{item.hotel.Address}}, {{item.hotel.City}}, {{item.hotel.State}} {{item.hotel.Zip}}</dd>
 
-                                        <dt ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Times:</dt>
-                                        <dd ng-show="item.hotel.CheckIn.length > 0 && item.hotel.CheckOut.length > 0">Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
+                                        <dt ng-show="item.hotel.CheckIn.length > 0">Times:</dt>
+                                        <dd ng-show="item.hotel.CheckIn.length > 0">Check-in: {{item.hotel.CheckIn}} / Check-out: {{item.hotel.CheckOut}}</dd>
 
-                                        <dt ng-show="item.hotel.details.services.length">Service:</dt>
-                                        <dd ng-show="item.hotel.details.services.length">{{item.hotel.details.services}}</dd>
+                                        <dt ng-show="item.hotel.details.services.length && !item.hotel.details.pricelineMatched">Service:</dt>
+                                        <dd ng-show="item.hotel.details.services.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.services}}</dd>
 
-                                        <dt ng-show="item.hotel.details.facility.length">Facility:</dt>
-                                        <dd ng-show="item.hotel.details.facility.length">{{item.hotel.details.facility}}</dd>
+                                        <dt ng-show="item.hotel.details.facility.length && !item.hotel.details.pricelineMatched">Facility:</dt>
+                                        <dd ng-show="item.hotel.details.facility.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.facility}}</dd>
 
-                                        <dt ng-show="item.hotel.details.rooms.length">Rooms:</dt>
-                                        <dd ng-show="item.hotel.details.rooms.length">{{item.hotel.details.rooms}}</dd>
+                                        <dt ng-show="item.hotel.details.rooms.length && !item.hotel.details.pricelineMatched">Rooms:</dt>
+                                        <dd ng-show="item.hotel.details.rooms.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.rooms}}</dd>
 
-                                        <dt ng-show="item.hotel.details.recreation.length">Recreation:</dt>
-                                        <dd ng-show="item.hotel.details.recreation.length">{{item.hotel.details.recreation}}</dd>
+                                        <dt ng-show="item.hotel.details.recreation.length && !item.hotel.details.pricelineMatched">Recreation:</dt>
+                                        <dd ng-show="item.hotel.details.recreation.length && !item.hotel.details.pricelineMatched">{{item.hotel.details.recreation}}</dd>
+
+                                        <dt ng-show="item.hotel.details.description.length && item.hotel.details.pricelineMatched">Hotel Description:</dt>
+                                        <dd ng-show="item.hotel.details.description.length && item.hotel.details.pricelineMatched">{{item.hotel.details.description}}</dd>
+
+                                        <dt ng-show="item.hotel.details.roomCount.length && item.hotel.details.pricelineMatched">Room Count:</dt>
+                                        <dd ng-show="item.hotel.details.roomCount.length && item.hotel.details.pricelineMatched">{{item.hotel.details.roomCount}}</dd>
                                     </dl>
 
                                 </div>
 
-                                <div ng-show="item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length" >
+                                <div ng-show="(item.hotel.details.loaded && !item.hotel.details.services.length && !item.hotel.details.facility.length && !item.hotel.details.rooms.length && !item.hotel.details.recreation.length) && item.hotel.details.pricelineMatched == 'false'" >
                                     <p>This information is not available for this property.</p>
                                 </div>
                             </div>
@@ -255,6 +262,9 @@
                                 <div ng-show="item.hotel.details.loaded" style="width: 100%">
 
                                     <dl class="dl-horizontal">
+
+                                        <dt ng-show="item.hotel.details.neighborhood.length && item.hotel.details.pricelineMatched">Neighborhood:</dt>
+                                        <dd ng-show="item.hotel.details.neighborhood.length && item.hotel.details.pricelineMatched">{{item.hotel.details.neighborhood}}</dd>
 
                                         <dt ng-show="item.hotel.details.directions.length">Directions:</dt>
                                         <dd ng-show="item.hotel.details.directions.length">{{item.hotel.details.directions}}</dd>
@@ -275,7 +285,7 @@
                             <div class="hotel-panel" ng-show="showAmenities">
 
                                 <div ng-show="item.hotel.Amenities.length">
-                                    <span ng-repeat="amenity in item.hotel.Amenities"><div style="width: 33%; float: left;">{{amenity}}</div></span>
+                                    <span ng-repeat="amenity in item.hotel.Amenities" class="col-xs-6 col-sm-4">{{amenity}}</span>
                                 </div>
 
                                 <div ng-show="!item.hotel.Amenities.length" >
@@ -285,7 +295,7 @@
                             </div>
 
                             <div class="hotel-panel" ng-show="showPhotos">
-                                <div ng-show="!item.hotel.details.loaded"  style="text-align: center">
+                                <div ng-show="!item.hotel.details.loaded"  class="center">
                                     <img class="loading" src="/booking/assets/img/ajax-loader.gif" >
                                 </div>
                                 <div ng-show="item.hotel.details.loaded">
@@ -295,11 +305,11 @@
                                     </div>
 
                                     <div ng-show="item.hotel.images.length" >
-                                        <div style="text-align: left; vertical-align: top; float: left; clear: none">
+                                        <div class="center">
                                             <img ng-src="{{item.hotel.selectedImage}}" height="138" width="200"  />
                                         </div>
-                                        <div style="text-align: left; vertical-align: top; float: left; clear: right">
-                                            <div ng-repeat="image in item.hotel.images" style="padding: 3px; float: left;">
+                                        <div  class="center">
+                                            <div ng-repeat="image in item.hotel.images" style="padding: 3px; display:inline-block;">
                                                 <a href="javascript: void(0)" ng-click="$parent.item.hotel.selectedImage = image.IMAGEURL"><img ng-src="{{image.IMAGEURL}}" height="69" width="100"  /></a>
                                             </div>
                                         </div>
@@ -309,178 +319,219 @@
 
                             </div>
 
-                            <div class="hotel-panel" ng-show="showRooms">
+                            <div class="hotel-panel container-fluid" ng-show="showRooms">
+                              <div ng-repeat="room in item.hotel.rooms" ng-class="{'row': true, 'hotel-room': true, 'odd': $index%2 == 0}">
 
-                                <table width="100%">
-                                    <tbody>
-                                        <tr ng-repeat="room in item.hotel.rooms" ng-class="{'hotel-room': true, 'odd': $index%2 == 0}">
-                                            <td class="room-description">
-                                                {{room.description}}
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
-                                                <span ng-show="room.depositRequired && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
-                                            </td>
-                                            <td class="room-rate-code">
-                                                <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
-                                                <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
-                                                <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
-                                                <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
-                                                &nbsp;
-                                            </td>
-                                            <td class="room-rate">
-                                                <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
-                                                <button style="width: 75%"
-                                                    ng-class="{'btn': true, 'btn-mini': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
-                                                    ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                                    <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
-                                                </button>
-                                                <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                  <div class="col-xs-12" ng-show="room.promo.length">
+                                    <div class="promoTag">{{room.promo}}</div>
+                                  </div>
+
+                                    <div class="room-description col-sm-7 col-xs-12">
+                                        {{room.description}}
+                                        <span ng-show="room.depositRequired && room.apiSource == 'Travelport'" class="small red bold"><br />This rate requires payment at time of booking.</span>
+                                        <span ng-show="room.depositRequired == 1 && room.apiSource == 'Priceline'" class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
+                                    </div>
+                                    <div class="room-rate-code col-sm-2 col-xs-6 v-center">
+                                        <span ng-show="room.isCorporateRate && search.acctID != 348" class="small blue bold">CONTRACTED</span>
+                                        <span ng-show="room.isCorporateRate && search.acctID == 348" class="small blue bold">DISCOUNTED</span>
+                                        <span ng-show="room.isGovernmentRate" class="small blue bold">GOV RATE</span>
+                                        <span ng-show="room.apiSource == 'Priceline'" class="small blue bold">WEB RATE</span>
+                                        &nbsp;
+                                    </div>
+                                    <div class="room-rate col-sm-3 col-xs-12">
+                                        <span ng-show="!room.isInPolicy" rel="tooltip" class="outofpolicy" title="{{item.hotel.rooms[0].outOfPolicyMessage}}">OUT OF POLICY<br></span>
+                                        <button
+                                            ng-class="{'btn': true, 'btn-default': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
+                                            ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
+                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
+                                        </button>
+                                        <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
+                                    </div>
+
+                                  <!--<div class="col-xs-12"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></div>-->
+                                </div> <!-- /.row -->
+                              </div> <!-- /showRooms -->
+                            </div> <!-- /.hotel -->
 
                         </div>
 
                     </div>
 
-                    <div ng-show="searchCompleted && !filteredHotels.length">
-                        <p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="span6" id="mapDiv" style="height: 500px;"></div>
-        </div>
+			<div ng-show="searchCompleted && !filteredHotels.length">
+				<p>There were no hotels found based on your search criteria. Increase the number of miles for your search, <a href="javascript:void(0)" ng-click="clearFilters()" > clear your filters</a> or <a href="javascript: void(0)" ng-click="showChangeSearchWindow()">change your search</a> and try again.</p>
+			</div>
+
+			<nav>
+				<ul class="pagination bottom">
+					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
+					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
+					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
+				</ul>
+			</nav>
+		</div>
+
     </div>
 </div>
 
-<!--Bottom row under search results and map-->
-<div class="container">
-    <div class="row-fluid">
-        <div class="span6">
-            <div class="pull-right">
-                <span ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" ><< Prev Page</a>&nbsp;</span>
-                <span ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1">{{$index+1}}</a>&nbsp;</span>
-                <span ng-hide="filterItems.currentPage == calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">Next Page >></a></span>
-            </div>
-        </div>
-
-        <div class="span6">
-            <span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
-        </div>
-    </div>
-</div>
 </div>
 <!-- Modal window to be displayed while search is occurring. -->
-<div id="searchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
-    <div class="modal-header">
-        <h4 id="myModalHeader"><i class="icon-spinner icon-spin"></i> One moment, we're searching for...</h4>
-    </div>
-    <div id="myModalBody" class="modal-body">
-        <p>
-            We are finding hotels closest to {{search.hotelHeading}} for {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
-        </p>
-        <p>
-            Tip: Double click on the map to update your search with hotels available in other areas of the city.
-        </p>
-    </div>
+<div id="searchWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 id="myModalHeader"><i class="fa fa-spinner fa-spin"></i> One moment, we're searching for...</h4>
+			</div>
+			<div id="myModalBody" class="modal-body">
+				<p>
+					We are finding hotels closest to {{search.hotelHeading}} for {{search.checkInDate | date:'MM-dd-yyyy'}} - {{search.checkOutDate | date:'MM-dd-yyyy'}}.
+				</p>
+				<p>
+					Tip: Double click on the map to update your search with hotels available in other areas of the city.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for cancellation policy -->
+<div id="cancellationWindow" class="modal  fade" tabindex="-1" role="dialog" aria-labelledby="myCancellationWindow" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal"><i class="fa fa-remove"></i></button>
+			  <h4 id="cancellationPolicyHeader">Cancellation Policy</h4>
+			</div>
+			<div id="cancellationPolicyBody" class="modal-body form">
+			  <div id="cancellationPolicyLoading" style="text-align: center">
+				<img class="loading" src="/booking/assets/img/ajax-loader.gif" >
+			  </div>
+			  <div id="cancellationPolicyCopy"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal window to be displayed when change search feature is selected -->
-<div id="changeSearchWindow" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
-    <div class="modal-header">
-        <h4 id="changeSearchWindowHeader">Change Your Hotel Search</h4>
-    </div>
-    <div id="changeSearchWindowBody" class="modal-body form">
-        <div class="form-row">
-            <div class="btn-group" style="margin-right: 10px;">
-                <button class="btn btn-mini">in {{search.hotelRadius}} miles of</button>
-                <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=1">in 1 mile of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=2">in 2 miles of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=5">in 5 miles of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=10">in 10 miles of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=15">in 15 miles of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=20">in 20 miles of</a></li>
-                    <li><a href="javascript:void(0)" ng-click="search.hotelRadius=25">in 25 miles of</a></li>
-                </ul>
-            </div>
+<div id="changeSearchWindow" class="modal fade" role="dialog" aria-labelledby="mySearchWindow" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 id="changeSearchWindowHeader">Change Your Hotel Search</h4>
+			</div>
+			<div id="changeSearchWindowBody" class="modal-body form form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-6">
+						<div class="btn-group btn-group-xs" >
+							<button class="btn btn-default" >in {{search.hotelRadius}} miles of  </button>
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=1">in 1 mile of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=2">in 2 miles of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=5">in 5 miles of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=10">in 10 miles of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=15">in 15 miles of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=20">in 20 miles of</a></li>
+								<li><a href="javascript:void(0)" ng-click="search.hotelRadius=25">in 25 miles of</a></li>
+							</ul>
+						</div>
+					</div>
+					<p class="visible-xs clearfix"></p>
+					<div class="col-sm-6">
+						<div class="btn-group btn-group-xs" id="hotel-search-type" data-toggle="buttons-radio">
+							<button id="hotel-search-airport" ng-class="{'btn': true, 'btn-default': true}" ng-click="search.hotelSearch='airport'">Airport</button>
+							<button id="hotel-search-address" ng-class="{'btn': true, 'btn-default': true}" ng-click="search.hotelSearch='address'">Address</button>
+							<button id="hotel-search-location" ng-class="{'btn': true, 'btn-default': true}" ng-click="search.hotelSearch='office'" ng-show="account.OFFICES.length">Offices/Venues</button>
+						</div>
+					</div>
+				</div>
 
-            <div class="btn-group" id="hotel-search-type" data-toggle="buttons-radio" style="float: right;">
-                <button id="hotel-search-airport" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='airport'}" ng-click="search.hotelSearch='airport'">Airport</button>
-                <button id="hotel-search-address" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='address'}" ng-click="search.hotelSearch='address'">Address</button>
-                <button id="hotel-search-location" ng-class="{'btn': true, 'btn-mini': true, 'btn-primary': search.hotelSearch=='office'}" ng-click="search.hotelSearch='office'" ng-show="account.OFFICES.length">Offices/Venues</button>
-            </div>
-        </div>
+				<div class="form-group" id="hotel-airport-wrapper" ng-show="search.hotelSearch=='airport'">
+					<label for="hotel-airport" class="col-sm-3 control-label">Airport</label>
+					<div class="col-sm-9">
+						<input id="hotel-airport" name="hotel-airport" autocomplete="off" type="text" class="form-control airport-select2" ng-model="search.hotelAirport" placeholder="Airport">
+					</div>
+				</div>
 
-        <div class="form-row" id="hotel-airport-wrapper" ng-show="search.hotelSearch=='airport'">
-            <input id="hotel-airport" name="hotel-airport" autocomplete="off" type="text" class="input-block-level airport-select2" ng-model="search.hotelAirport" placeholder="airport">
-        </div>
+				<div class="form-group" id="hotel-address-wrapper"  ng-show="search.hotelSearch=='address'">
+					<label for="hotel-address" class="col-sm-3 control-label">Address</label>
+					<div class="col-sm-9">
+						<input id="hotel-address" name="hotel-address" autocomplete="off" type="text" class="form-control" placeholder="" ng-model="search.hotelAddress" maxlength="100">
+					</div>
+				</div>
 
-        <div class="form-row" id="hotel-address-wrapper"  ng-show="search.hotelSearch=='address'">
-            <input id="hotel-address" name="hotel-address" autocomplete="off" type="text" class="input-block-level" placeholder="address" ng-model="search.hotelAddress" maxlength="100">
-        </div>
+				<div class="form-group" id="hotel-city-state-wrapper"  ng-show="search.hotelSearch=='address'">
+					<label for="hotel-city" class="col-sm-offset-2 col-sm-1 control-label">City</label>
+					<div class="col-md-3 col-sm-2">
+						<input id="hotel-city" name="hotel-city" ng-model="search.hotelCity" type="text" class="form-control" placeholder="" maxlength="50">
+					</div>
+					<p class="visible-xs clearfix"></p>
+					<label for="hotel-state" class="col-sm-1 col-xs-12 control-label">State</label>
+					<div class="col-md-2 col-sm-3 col-xs-4">
+						<input id="hotel-state" name="hotel-state" ng-model="search.hotelState" type="text" class="form-control" placeholder="" maxlength="2">
+					</div>
+					<p class="visible-xs clearfix"></p>
+					<label for="hotel-zip" class="col-sm-1 col-xs-12 control-label">Zip</label>
+					<div class="col-sm-2 col-xs-5">
+						<input id="hotel-zip" name="hotel-zip" type="text" ng-model="search.hotelZip" class="form-control" placeholder="" maxlength="10">
+					</div>
+					<p class="visible-xs clearfix"></p>
+				</div>
 
-        <div class="form-row" id="hotel-city-state-wrapper"  ng-show="search.hotelSearch=='address'">
-            <div style="width: 46%; float: left; margin-right: 4%">
-                <input id="hotel-city" name="hotel-city" type="text" class="input-block-level" placeholder="city" ng-model="search.hotelCity" maxlength="50">
-            </div>
-            <div style="width: 15%; float: left; margin-right: 4%">
-                <input id="hotel-state" name="hotel-state" type="text" class="input-block-level" placeholder="state" ng-model="search.hotelState" maxlength="2">
-            </div>
-            <div style="width: 20%; float: left;">
-                <input id="hotel-zip" name="hotel-zip" type="text" class="input-block-level" placeholder="zip" ng-model="search.hotelZip" maxlength="10">
-            </div>
-        </div>
+				<div class="form-group" id="hotel-office-wrapper" ng-show="search.hotelSearch=='office' && account.OFFICES.length">
+					<label class="control-label col-sm-3">Location</label>
+					<div class="col-sm-9">
+						<div class="btn-group" >
+							<button class="btn btn-default office-button">{{search.selectedLocation}}&nbsp;</button>
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li ng-repeat="office in account.OFFICES">
+									<a href="javascript:void(0)" ng-click="search.officeID=office.ID;search.selectedLocation=office.NAME">{{office.NAME}}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!--
+				<div id="hotel-location-wrapper" ng-show="search.hotelSearch=='office'">
+					<div class="form-element-label">
+						<label>&nbsp;</label>
+					</div>
 
-        <div class="form-row" id="hotel-office-wrapper" ng-show="search.hotelSearch=='office' && account.OFFICES.length">
-            <div class="btn-group" style="margin-right: 10px;">
-                <button class="btn">{{search.selectedLocation}}&nbsp;</button>
-                <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li ng-repeat="office in account.OFFICES">
-                        <a href="javascript:void(0)" ng-click="search.officeID=office.ID;search.selectedLocation=office.NAME">{{office.NAME}}</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!--
-        <div id="hotel-location-wrapper" ng-show="search.hotelSearch=='office'">
-            <div class="form-element-label">
-                <label>&nbsp;</label>
-            </div>
-
-            <div class="form-element-content">
-                <select id="hotel-location" name="hotel-location" class="input-block-level">
-                    <option></option>
-                    <cfoutput query="locations">
-                        <option value="#locations.Office_ID#">#locations.Office_Name#</option>
-                    </cfoutput>
-                </select>
-            </div>
-        </div>
-        -->
-        <div class="form-row" id="hotel-date-wrapper">
-            <div style="width: 46%; float: left; margin-right: 4%">
-                <input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width input-block-level" value="" placeholder="check-in date" />
-            </div>
-            <div style="width: 46%; float: left;">
-                <input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width input-block-level" value="" placeholder="check-out date" />
-            </div>
-        </div>
-
-        <div class="form-row" id="calendar-wrapper">
-            <div id="start-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
-            <div id="end-calendar-wrapper" style="width: 49%; float: left; clear: none;"></div>
-        </div>
-
-    </div>
-    <div class="modal-footer">
-        <a href="javascript:void(0)" id="btnFormSubmit" class="btn btn-primary pull-right" ng-click="updateSearch()" type="submit" data-toggle="modal">Search</a>
-    </div>
+					<div class="form-element-content">
+						<select id="hotel-location" name="hotel-location" class="input-block-level">
+							<option></option>
+							<cfoutput query="locations">
+								<option value="#locations.Office_ID#">#locations.Office_Name#</option>
+							</cfoutput>
+						</select>
+					</div>
+				</div>
+				-->
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-5" id="hotel-date-wrapper">
+							<div class="form-group">
+								<label class="control-label">Check-in Date</label>
+								<input id="hotel-in-date" type="text" name="hotel-in-date" class="full-width form-control" value="" placeholder="Check-in Date" />
+							</div>
+							<div id="start-calendar-wrapper" class="calender-wrapper"></div>
+						</div>
+						<div class="col-sm-offset-2 col-sm-5">
+							<div class="form-group">
+								<label class="control-label">Check-out Date</label>
+								<input id="hotel-out-date" type="text" name="hotel-out-date" class="full-width form-control" value="" placeholder="Check-out Date" />
+							</div>
+							<div id="end-calendar-wrapper" class="calender-wrapper"> </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="javascript:void(0)" id="btnFormSubmit" class="btn btn-primary pull-right" ng-click="updateSearch()" type="submit" data-toggle="modal">Search</a>
+			</div>
+		</div>
+	</div>
 </div>

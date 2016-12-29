@@ -966,10 +966,22 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.nLowFare = local.stTrips[arguments.nLowFareTripKey].Total>
 		</cfif>
 
+		<!--- check if the flight is out of policy based on advance purchase rules --->
+		<!--- this is a one time check because the depart dates are all the same --->
+		<cfset local.firstKey = listFirst(structKeyList(local.stTrips))>
+		<cfset local.outOfPolicyBasedOnAdvPurchRule = false>
+		<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND DateDiff('d', Now(), local.stTrips[local.firstKey].Depart) LT arguments.Policy.Policy_AirAdv>
+			<cfset local.outOfPolicyBasedOnAdvPurchRule = true>
+		</cfif>
+
 		<cfloop collection="#local.stTrips#" item="local.nTripKey">
 			<cfset local.stTrip = local.stTrips[local.nTripKey]>
 			<cfset local.aPolicy = []>
 			<cfset local.bActive = 1>
+
+			<cfif local.outOfPolicyBasedOnAdvPurchRule>
+				<cfset arrayAppend(local.aPolicy, "Cannot book flights less than #arguments.Policy.Policy_AirAdv# days in the future")>
+			</cfif>
 
 			<cfif arguments.sType EQ 'Fare'>
 				<!--- Low fare --->
@@ -1061,7 +1073,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<!--- Out of policy if the depart date is less than the advance purchase requirement. --->
 			<cfset local.bAllInactive = 0>
 			<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND structKeyExists(local.stTrips, local.nTripKey)
-				AND DateDiff('d', local.stTrips[local.nTripKey].Depart, Now()) GT arguments.Policy.Policy_AirAdv>
+				AND DateDiff('d', Now(), local.stTrips[local.nTripKey].Depart) LT arguments.Policy.Policy_AirAdv>
 				<cfset local.bAllInactive = 1>
 				<cfif arguments.Policy.Policy_AirAdvDisp EQ 1>
 					<cfset local.stTrips = {}>

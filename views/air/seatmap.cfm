@@ -45,19 +45,17 @@
 
 	<!--- hide breadcrumb bar for summary modal --->
 	<cfif rc.action NEQ "air.summarypopup">
-		<ul class="breadcrumb">
+		<ul class="nav nav-pills nav-stacked">
 			<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#rc.nTripID#&Group=#rc.Group#'>
 			<cfloop collection="#stGroups#" index="GroupKey" item="stGroup">
 				<cfloop collection="#stGroup.Segments#" index="sSegKey" item="stSegment">
 					<cfset breadCount++>
 						<cfset sClass = (structKeyExists(stSegment, "Class") ? stSegment.Class : 'Y') />
 						<li class="<cfif rc.nSegment EQ sSegKey>active</cfif>">
-							<span class="pointer" title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&sClass=#sClass#&bSelection=1');" >
+							<a class="pointer" title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&sClass=#sClass#&bSelection=1');" >
 								#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
-							</span>
-							<cfif segmentCount NEQ breadCount>
-								<span class="divider">/</span>
-							</cfif>
+							</a>
+							
 						</li>
 				</cfloop>
 			</cfloop>
@@ -94,7 +92,7 @@
 				<cfset ArraySort(aRows, "numeric")>
 
 		<!--- Display wing	--->
-			<table class="popUpTable">
+			<table class="popUpTable seatmapTable_desktop hidden-xs">
 				<tr>
 					<cfset start = 0>
 					<cfloop array="#aRows#" index="nRow">
@@ -170,6 +168,92 @@
 					</cfloop>
 				</tr>
 			</table>
+			
+			<!-- mobile seatmap -->
+			<table class="popUpTable seatmapTable_mobile visible-xs">
+				
+
+			<!---	Display seats	--->
+				
+					<cfloop array="#aRows#" index="nRow">
+						<tr>
+						<!-- Left wing -->
+						<td>
+							<table width="15">
+							<tr>
+								<cfif NOT structKeyExists(stExitRows, nRow)>
+									<td>&nbsp;</td>
+								<cfelse>
+									<td class="wingmiddle">&nbsp;</td>
+								</cfif>
+							</tr>
+							</table>
+						</td>
+						<!-- End Left Wing -->
+						
+							<!-- <table width="25"> -->
+							<cfloop array="#aColumns#" index="sColumn">
+								<cfif structKeyExists(stAisles, sColumn)>
+									<td>
+										<table width="25">
+											<tr>
+												<td align="center">#nRow#</td>
+											</tr>
+										</table>
+									</td>
+								</cfif>
+
+								<cfif NOT structKeyExists(rc.stSeats[nRow], sColumn)>
+									<cfset rc.stSeats[nRow][sColumn].AVAIL = "No Seat" />
+								</cfif>
+
+								<cfif structKeyExists(rc.stSeats[nRow], sColumn)>
+									<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
+									<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
+									<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
+									<cfset sDesc = Replace(sDesc, ',', ', ')>
+									<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
+									<td>
+										<table width="25">
+											<tr>
+												<td class="seat #rc.stSeats[nRow][sColumn].Avail#<cfif sCurrentSeat EQ nRow&sColumn> currentseat</cfif>" title="#sDesc#" id="#nRow##sColumn#">
+													<!--- Per STM-2013: Removed the clickable action from air results only; can still click from summary page. --->
+													<cfif rc.action EQ 'air.summarypopup'>
+														<cfif rc.stSeats[nRow][sColumn].Avail EQ 'Available'>
+															<a href="##" style="display: block;" class="availableSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+														<cfelseif rc.stSeats[nRow][sColumn].Avail EQ 'Preferential'>
+															<a href="##" style="display: block;" class="preferredSeat" id="#rc.nTotalCount#|#nRow##sColumn#" title="Seat #nRow##sColumn#">&nbsp;</a>
+														</cfif>
+													</cfif>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</cfif>
+							</cfloop>
+							<!--</table>-->
+						
+						<!-- Right Wing -->
+						<td>
+							<table width="15">
+							<tr>
+								<cfif NOT structKeyExists(stExitRows, nRow)>
+									<td>&nbsp;</td>
+								<cfelse>
+									<td class="wingmiddle">&nbsp;</td>
+								</cfif>
+							</tr>
+							</table>
+						</td>
+						<!-- End Right wing -->
+						
+						</tr>
+					</cfloop>
+			
+
+				
+			</table>
+			<!-- end mobile setmap -->
 
 		<!--- Display legend	--->
 				<br>

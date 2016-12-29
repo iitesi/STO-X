@@ -32,7 +32,7 @@
 		</h1>
 	</cfif>
 
-	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search" data-toggle="modal" data-backdrop="static"><i class="icon-search"></i> Change Search</a></h2>
+	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search leehere" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
 
 	<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 		#View('air/legs')#
@@ -52,7 +52,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-
+		<div class="container">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -77,7 +77,7 @@
 				#View('air/badge')#
 			</cfif>
 		</cfloop>
-
+		</div> <!-- //.container -->
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
@@ -103,7 +103,7 @@
 		<div class="noFlightsFound">
 			<div class="container">
 			<h1>No Flights Available</h1>
-			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="icon-refresh"></i> Clear Filters</a> to see all results.</p>
+			<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 			</div>
 		</div>
 	<cfelse>
