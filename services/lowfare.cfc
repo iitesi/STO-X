@@ -22,7 +22,7 @@
 		<cfset StructDelete(session.searches, arguments.searchID)>
 		<cfset StructDelete(session.filters, arguments.searchID)>
 
-		<cfreturn  />
+		<cfreturn />
 	</cffunction>
 
 	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
@@ -170,9 +170,9 @@
 
 		<!--- If State of Texas, get government rates --->
 		<!--- Elements specific to this request:
-			  SearchPassenger Code="GST" and PricePTCOnly="true"
-			  PersonalGeography - CityCode=DFW
-			  PublicorPrivateFares, ProhibitNonRefundablefares=false --->
+				SearchPassenger Code="GST" and PricePTCOnly="true"
+				PersonalGeography - CityCode=DFW
+				PublicorPrivateFares, ProhibitNonRefundablefares=false --->
 		<cfif arguments.Filter.getAcctID() EQ 235>
 			<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
 												, sCabin = local.sCabin
@@ -253,7 +253,7 @@
 				<cfset local.bRefundable = true>
 			</cfif>
 
-			<!--- Note:  To debug: comment out opening and closing cfthread tags and
+			<!--- Note: To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
 			<cfthread
@@ -337,7 +337,7 @@
 													, department = arguments.Filter.getDepartment()
 													, faultstring = local.faultstring
 													, request = xmlFormat(attributes.sMessage)
-													, response = xmlFormat(attributes.sResponse)  }>
+													, response = xmlFormat(attributes.sResponse) }>
 							<cfif local.faultstring DOES NOT CONTAIN 'Transaction Error: AppErrorSeverityLevel/1'>
 								<cfset severityLevel = "Error" />
 								<cfif findNoCase('UNABLE TO FARE QUOTE', local.faultstring)>
@@ -359,7 +359,7 @@
 
 	<cffunction name="prepareSOAPHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
 		<cfargument name="Filter" required="true">
-		<cfargument name="sCabins"  required="true">
+		<cfargument name="sCabins" required="true">
 		<cfargument name="bRefundable" required="true">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 		<cfargument name="Account" required="false"	default="">
@@ -558,8 +558,10 @@
 											<com:Carrier Code="#GetToken(arguments.accountCode, 2, ',')#"/>
 										</air:PermittedCarriers>
 									<cfelse>
+										<!--- blacklisted carriers --->
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="3M"/>
+											<com:Carrier Code="DN"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="JU"/>
 											<com:Carrier Code="NK"/>
