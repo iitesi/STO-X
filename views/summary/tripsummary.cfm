@@ -89,7 +89,7 @@
 								max-width: none;
 							}
 							##tax_popover_content {
-								height: 450px;
+								height: 400px;
 								overflow-x: hidden;
 								overflow-y: scroll;
 							}
