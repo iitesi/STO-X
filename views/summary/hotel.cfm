@@ -233,6 +233,10 @@
 				<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
 					<div class="row">
 						<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+						<p>
+						<span class="bold">Age Restriction Disclosure</span><br>
+						The reservation holder must be 21 years of age or older.
+						</p>
 						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
 						<p>
 						<span class="bold">Rate Description</span><br>
@@ -257,10 +261,6 @@
 						#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
 						</p>
 						</cfif>
-						<p>
-						<span class="bold">Age Restriction Disclosure</span><br>
-						The reservation holder must be 21 years of age or older.
-						</p>
 						<p>
 						<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">
 						I have read and agree to abide by the priceline.com terms and conditions and privacy policy.
