@@ -149,7 +149,7 @@
 							#(dailyRateCurrency EQ 'USD' ? DollarFormat(hotelDailyRate) : numberFormat(hotelDailyRate, '____.__')&' '&dailyRateCurrency)#<br />
 						</span>
 						Average nightly rate<br />
-						<cfif isArray(rc.hotel.getRooms()[1].getRateChangeText()) AND arrayLen(rc.hotel.getRooms()[1].getRateChangeText()) GT 1>
+						<cftry><cfif isArray(rc.hotel.getRooms()[1].getRateChangeText()) AND arrayLen(rc.hotel.getRooms()[1].getRateChangeText()) GT 1>
 							<cfsavecontent variable="hotelRateChanges">
 								<cfloop from="1" to="#arrayLen(rc.hotel.getRooms()[1].getRateChangeText())#" index="ii">
 									#replace(replace(replace(rc.hotel.getRooms()[1].getRateChangeText()[ii], "USD", "$"), " per ", "/"), "nights", "night(s)")#<br />
@@ -161,6 +161,10 @@
 								</a>
 							</span>
 						</cfif>
+						<cfcatch type='any'>
+
+						</cfcatch>
+						</cftry>
 					</cfif>
 
 					<span class="blue bold large">
@@ -291,4 +295,3 @@
 			</div> <!-- / displayHotelCancellationPolicy -->
 	</cfif>
 </cfoutput>
-<!--- <cfdump var="#rc.Hotel#"> --->
