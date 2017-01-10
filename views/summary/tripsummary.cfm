@@ -55,8 +55,47 @@
 
 			<div class="row text-right" id="hotelTotalRow">
 				<div class="col-xs-3">Hotel</div>
-				<div class="col-xs-3"></div>
-				<div class="col-xs-3">#hotelText#</div>
+				<div class="col-xs-3">
+					<!--- Priceline requires explicit declaration of taxes --->
+					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND isNumeric(rc.Hotel.getRooms()[1].getDailyRate())>
+						#numberFormat(rc.Hotel.getRooms()[1].getDailyRate(), '$____.__')#
+					<cfelse>
+						<!--- nothing to display ---->
+					</cfif>
+				</div>
+				<div class="col-xs-3">
+					<!--- Priceline requires explicit declaration of taxes --->
+					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND isNumeric(rc.Hotel.getRooms()[1].getTax())>
+						<cfset taxStatementTitle = "Charges for Taxes and Fees"/>
+						<cfset taxStatementContent = "
+							<p>
+								In connection with facilitating your hotel transaction, the charge to your debit or credit card will include a charge for Taxes and Fees. This charge includes an estimated amount to recover the amount we pay to the hotel in connection with your reservation for taxes owed by the hotel including, without limitation, sales and use tax, occupancy tax, room tax, excise tax, value added tax and/or other similar taxes.  In certain locations, the tax amount may also include government imposed service fees or other fees not paid directly to the taxing authorities but required by law to be collected by the hotel. The amount paid to the hotel in connection with your reservation for taxes may vary from the amount we estimate and include in the charge to you. The balance of the charge for Taxes and Fees is a fee we retain as part of the compensation for our services and to cover the costs of your reservation, including, for example, customer service costs. The charge for Taxes and Fees varies based on a number of factors including, without limitation, the amount we pay the hotel and the location of the hotel where you will be staying, and may include profit that we retain.
+							</p>
+							<p>
+								Except as described below, we are not the vendor collecting and remitting taxes to the applicable taxing authorities. Our hotel suppliers, as vendors, include all applicable taxes in the amount billed to us and we pay over such amounts directly to the vendors. We are not a co-vendor associated with the vendor with whom we book or reserve our customer's travel arrangements. Taxability and the appropriate tax rate and the type of applicable taxes vary greatly by location.
+							</p>
+							<p>
+								For transactions involving hotels located within certain jurisdictions, the charge to your debit or credit card for Taxes and Fees includes a payment of tax that we are required to collect and remit to the jurisdiction for tax owed on amounts we retain as compensation for our services.
+							</p>
+							<p>
+								Please note that we are unable to facilitate a rebate of Canadian Goods and Services Tax (GST) for customers booking Canadian hotel accommodations utilizing our services.
+							</p>
+						"/>
+						<script>
+							$(document).ready(function(){
+							    $('[data-toggle="tax_popover"]').popover({
+							    	title: "#taxStatementTitle#",
+							    	content: "#taxStatementContent#",
+							    	width: "75%",
+							    	html: true
+							    });
+							});
+						</script>
+						<a href="javascript:void(0);" data-toggle="tax_popover">#numberFormat(rc.Hotel.getRooms()[1].getTax(), '$____.__')#</a>
+					<cfelse>
+						#hotelText#
+					</cfif>
+				</div>
 				<div class="col-xs-3" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
@@ -65,7 +104,7 @@
 			<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
 
 		</cfif>
-		
+
 		<cfif rc.vehicleSelected>
 
 			<cfset currency = rc.Vehicle.getCurrency()>

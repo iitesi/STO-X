@@ -230,40 +230,41 @@
 						</div>
 					</div> <!-- /.form-group -->
 				</div> <!-- /.loyalty.row -->
-				<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-				<div class="row">
-
-					<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
-					<p>
-					<span class="bold">Rate Description</span><br>
-					#rc.Hotel.getRooms()[1].getPPNRateDescription()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
-					<p>
-					<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
-					#rc.Hotel.getRooms()[1].getDepositPolicy()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
-					<p>
-					<span class="bold">Cancellation Policy</span><br>
-					#rc.Hotel.getRooms()[1].getCancellationPolicy()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
-					<p>
-					<span class="bold">Guarantee Policy</span><br>
-					#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
-					</p>
-					</cfif>
-					<p>
-					<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
-					</p>
-				</div>
-					</cfif>
-				</div>
+				<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+					<div class="row">
+						<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
+						<p>
+						<span class="bold">Rate Description</span><br>
+						#rc.Hotel.getRooms()[1].getPPNRateDescription()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
+						<p>
+						<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
+						#rc.Hotel.getRooms()[1].getDepositPolicy()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
+						<p>
+						<span class="bold">Cancellation Policy</span><br>
+						#rc.Hotel.getRooms()[1].getCancellationPolicy()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
+						<p>
+						<span class="bold">Guarantee Policy</span><br>
+						#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+						</p>
+						</cfif>
+						<p>
+						<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">
+						I have read and agree to abide by the priceline.com terms and conditions and privacy policy.
+						</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
+						</p>
+					</div>
+				</cfif>
+			</div>
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
