@@ -26,6 +26,8 @@
 		<cfparam name="rc.createProfile" default="0" />
 		<cfparam name="rc.password" default="" />
 		<cfparam name="rc.passwordConfirm" default="" />
+		<!--- <cfdump eval=session.searches[rc.searchID].stItinerary><cfabort> --->
+		<!--- private fare is false --->
 
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
@@ -560,7 +562,7 @@
 								<cfset session.searches[rc.searchID].PassedRefCheck = 1 />
 								<cfset rc.message.addError('The rules for this fare have changed - this fare is nonrefundable.') />
 							</cfif>
-							<cfset local.trip = airPriceCheck2 />							
+							<cfset local.trip = airPriceCheck2 />
 						</cfif>
 					</cfloop>
 				</cfif>
