@@ -1430,6 +1430,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   text-align: left;
 }
 
+.rwd-table td.no-label:before {
+	display:none;
+}
+
 .rwd-table td.preferredVendor:before {
   content: attr(data-th) " (Preferred)";
   color: #46a546;
@@ -1470,6 +1474,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .rwd-table td, .rwd-table th {
 	text-align: center;
     vertical-align: middle;
+}
+
+.rwd-table.rwd-table-left td, .rwd-table.rwd-table-left th {
+	text-align: left;
 }
 
 .carResultPanel {

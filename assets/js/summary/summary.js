@@ -138,11 +138,8 @@ $(document).ready(function(){
 				unusedticketsHTML += 'A $'+airAgentFee.toFixed(2)+' Travel Consultant booking fee will apply.</small>';
 			}
 			unusedticketsHTML += '</small>';
-			unusedticketsHTML += '<font color="#000000"><table width="100%"><tr><td></td><td><small>Airline</small></td><td><small>Credit Value</small></td><td><small>Expires</small></td><td><small>Original Ticket Issued To</small></td></tr>';
-			unusedticketsHTML += '<tr>'
-			unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked></td>'
-			unusedticketsHTML += '<td colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
-			unusedticketsHTML += '</tr>'
+			unusedticketsHTML += '<table class="rwd-table rwd-table-left" width="100%"><tr><th></th><th><small>Airline</small></th><th><small>Credit Value</small></th><th><small>Expires</small></th><th><small>Original Ticket Issued To</small></th></tr>';
+
 			for( var i=0, l=unusedTickets.length; i<l; i++ ) {
 				if ( platingcarrier == unusedTickets[i].carrier ) {
 					var checked = '';
@@ -150,22 +147,26 @@ $(document).ready(function(){
 						var checked = 'checked';
 					}
 					var d = new Date(unusedTickets[i].expirationDate);
-					unusedticketsHTML += '<tr>'
-					unusedticketsHTML += '<td><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
-					unusedticketsHTML += '<td><small>'+unusedTickets[i].carrierName+'</small></td>'
-					unusedticketsHTML += '<td><small>$'+unusedTickets[i].airfare.toFixed(2)+'</small></td>'
-					unusedticketsHTML += '<td><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
-					unusedticketsHTML += '<td><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
+					unusedticketsHTML += '<tr class="details">'
+					unusedticketsHTML += '<td data-th="Use this Credit"><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="'+unusedTickets[i].id+'" '+checked+'></td>'
+					unusedticketsHTML += '<td data-th="Airline"><small>'+unusedTickets[i].carrierName+'</small></td>'
+					unusedticketsHTML += '<td data-th="Credit Value"><small>$'+unusedTickets[i].airfare.toFixed(2)+'</small></td>'
+					unusedticketsHTML += '<td data-th="Expires"><small>'+(d.getUTCMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+'</small></td>'
+					unusedticketsHTML += '<td data-th="Original Ticket Issued to"><small>'+unusedTickets[i].lastName+'/'+unusedTickets[i].firstName+'</small></td>'
 					unusedticketsHTML += '</tr>'
 				}
 			}
-			unusedticketsHTML += '</table></font>';
+			unusedticketsHTML += '<tr class="details">'
+			unusedticketsHTML += '<td class="no-label"><input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked><small class="visible-xs-inline"> No, I do not want to apply unused ticket credits to this purchase</small></td>'
+			unusedticketsHTML += '<td class="no-label hidden-xs" colspan="4" style="font-weight:normal"><small>No, I do not want to apply unused ticket credits to this purchase.</small></td>'
+			unusedticketsHTML += '</tr>'
+			unusedticketsHTML += '</table>';
 
-			$( "#unusedTicketsDiv" ).show();
+			$( "#unusedTicketsDiv" ).removeClass('hide');
 			$( "#unusedTicketsDiv" ).html( unusedticketsHTML );
 		}
 		else {
-			$( "#unusedTicketsDiv" ).hide();
+			$( "#unusedTicketsDiv" ).addClass('hide');
 			$( "#unusedTicketsDiv" ).html( '<input type="radio" name="unusedtickets" class="unusedtickets" id="unusedticketsID" value="" checked>' );
 		}
 	}
