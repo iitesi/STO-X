@@ -982,7 +982,7 @@
 				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelBillingName( unencryptedCCData.billingName ) />
 			</cfif>
 		<cfelse>
-			<cfdump var="#local#" label="local.response">
+			<cfdump var="#local.response#" label="local.response">
 			<cfdump var="#arguments#" label="arguments" abort>
 		</cfif>
 
