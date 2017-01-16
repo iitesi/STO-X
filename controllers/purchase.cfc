@@ -150,6 +150,7 @@
 						<cfset local.bGovtRate = 1 />
 						<cfset local.sFaresIndicator = "PublicOrPrivateFares" />
 					</cfif>
+					<!--- <cfdump eval=local abort> --->
 
 					<cfset local.originalAirfare = Air.Total />
 
@@ -182,15 +183,34 @@
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
 							<cfset local.doAirPrice.Total = 0 />
 							<cfset local.tripKey = 0 />
-							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
-								<cfif ((trip[local.thisTrip].Class EQ Air.Class) AND
-									(trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
-									(trip[local.thisTrip].Ref EQ Air.Ref))>
-									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
+							<cfdump var="purchase.cfc 176">
+							<cfdump var=#itinerary['air']['ntripkey']#>
+							<cfdump var=#itinerary#>
+							<cfset local.mattstripkey = itinerary['air']['ntripkey']>
+							<!--- <cfdump eval=session.searches[rc.searchID]> --->
+							<cfdump eval=session.searches[rc.searchID].stTrips[mattstripkey]>
+							<cfdump eval=itinerary>
+							<cfloop list="#structKeyList(local.trip)#" index="local.thisTrip">
+								<cfdump eval=local.trip[local.thisTrip].Class>
+								<cfdump eval=air.class>
+								<cfdump eval=local.trip[local.thisTrip].PrivateFare>
+								<cfdump eval=Air.PrivateFare>
+								<cfdump eval=local.trip[local.thisTrip].Ref>
+								<cfdump eval=air.Ref>
+								<cfif ((local.trip[local.thisTrip].Class EQ Air.Class) AND
+									(local.trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+									(local.trip[local.thisTrip].Ref EQ Air.Ref))>
+									<cfset local.doAirPrice.Total = local.trip[local.thisTrip].Total />
 									<cfset local.tripKey = local.thisTrip />
+									<cfset arrayAppend(errorMessage, 'OriginalPrivate Fare ::' & local.trip[local.thisTrip].PrivateFare)>
+									<cfset arrayAppend(errorMessage, 'new Private Fare ::' & Air.PrivateFare)>
 								</cfif>
 							</cfloop>
-
+							purchase.cfc 192
+							<cfdump eval=local.trip>
+							<cfdump eval=local.doAirPrice>
+							<cfdump eval=air>
+							<cfabort>
 							<cfif local.doAirPrice.Total NEQ 0 AND (local.doAirPrice.Total LTE originalAirfare)>
 								<cfset local.nTrip = Air.nTrip>
 								<cfset local.aPolicies = Air.aPolicies>
@@ -200,7 +220,7 @@
 								<cfset Air.aPolicies = aPolicies>
 								<cfset Air.policy = policy>
 							<cfelse>
-								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
+								<cfset arrayAppend( errorMessage, '111The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
 								<cfset errorType = 'Air.airPrice'>
 							</cfif>
 						</cfif>
@@ -377,7 +397,7 @@
 																							, response = airResponse
 																							, runAgain = true )>
 								<cfelse>
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+									<cfset arrayAppend( errorMessage, '222The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
 								</cfif>
 							</cfif>
 
@@ -616,7 +636,7 @@
 																									, urRecloc = Air.UniversalLocatorCode )>
 										</cfif>
 									</cfif>
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+									<cfset arrayAppend( errorMessage, '333The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
 								<cfelse>
 									<cfset errorMessage = Air.messages>
 								</cfif>
