@@ -296,4 +296,5 @@
 			</div> <!-- / displayHotelCancellationPolicy -->
 	</cfif>
 </cfoutput>
+
 <!--- <cfdump var="#rc.Hotel#"> --->

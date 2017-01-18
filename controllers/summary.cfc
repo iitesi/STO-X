@@ -26,8 +26,6 @@
 		<cfparam name="rc.createProfile" default="0" />
 		<cfparam name="rc.password" default="" />
 		<cfparam name="rc.passwordConfirm" default="" />
-		<!--- <cfdump eval=session.searches[rc.searchID].stItinerary><cfabort> --->
-		<!--- private fare is false --->
 
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
