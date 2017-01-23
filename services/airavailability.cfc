@@ -41,7 +41,7 @@
 			<cfif arguments.Group EQ local.nLegIndex-1>
 				<cfset local.sPriority = 'HIGH'>
 			<cfelse>
-				<cfset local.sPriority = 'LOW'>
+				<cfset local.sPriority = 'HIGH'>
 			</cfif>
 			<cfset local.sThreadName = doAvailability( Filter = arguments.Filter
 												, Group = local.nLegIndex-1
@@ -53,11 +53,11 @@
 				<cfset local.stThreads[local.sThreadName] = ''>
 			</cfif>
 		</cfloop>
-		<!--- Join only if threads where thrown out. --->
+		<!--- Join only if threads where thrown out.
 		<cfif NOT StructIsEmpty(local.stThreads)
 			AND local.sPriority EQ 'HIGH'>
 			<cfthread action="join" name="#structKeyList(local.stThreads)#" />
-		</cfif>
+		</cfif>--->
 
 		<cfreturn />
 	</cffunction>
@@ -82,7 +82,7 @@
 					<cfset local.selectedCarriers = listAppend(local.selectedCarriers, local.group.platingCarrier) />
 				</cfif>
 			</cfloop>
-			
+
 			<cfloop list="#local.selectedCarriers#" index="local.carrier">
 				<cfloop collection="#local.blackListedCarrierPairing#" item="local.pairing" index="local.pairingIndex">
 					<cfif listFindNoCase(local.selectedCarriers, local.pairing[1])>
@@ -105,7 +105,7 @@
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<cfthread
+			<!--- <cfthread
 				action="run"
 				name="#local.sThreadName#"
 				priority="#arguments.sPriority#"
@@ -113,8 +113,16 @@
 				Group="#arguments.Group#"
 				Account="#arguments.Account#"
 				Policy="#arguments.Policy#"
-				BlackListedCarriers="#local.blackListedCarriers#">
-
+				BlackListedCarriers="#local.blackListedCarriers#"> --->
+				<cfscript>
+				attributes.name="#local.sThreadName#";
+				attributes.priority="#arguments.sPriority#";
+				attributes.Filter="#arguments.Filter#";
+				attributes.Group="#arguments.Group#";
+				attributes.Account="#arguments.Account#";
+				attributes.Policy="#arguments.Policy#";
+				arguments.BlackListedCarriers="#local.blackListedCarriers#";
+				</cfscript>
  				<cfset attributes.sNextRef = 'ROUNDONE'>
 				<cfset attributes.nCount = 0>
 
@@ -185,7 +193,7 @@
 
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-			</cfthread>
+			<!--- </cfthread> --->
 		</cfif>
 
 		<cfreturn local.sThreadName>
@@ -475,7 +483,7 @@
 		<cfargument name="stSegmentKeyLookUp">
 		<cfargument name="filter">
 		<cfargument name="group">
-
+<!--- <cfdump var="#arguments#" abort/> --->
 		<!--- Create a structure to hold FIRST connection points --->
 		<cfset local.stSegmentIndex = {}>
 		<cfset local.firstSegmentIndex = ''>
@@ -486,8 +494,13 @@
 						<cfif local.firstSegmentIndex EQ ''>
 							<cfset local.firstSegmentIndex = local.stConnection.XMLAttributes.SegmentIndex>
 						</cfif>
-						<cfset local.stSegmentIndex[local.stConnection.XMLAttributes.SegmentIndex] = StructNew('linked')>
-						<cfset local.stSegmentIndex[local.stConnection.XMLAttributes.SegmentIndex][1] = arguments.stSegments[arguments.stSegmentKeys[arguments.stSegmentKeyLookUp[local.stConnection.XMLAttributes.SegmentIndex]].HashIndex]>
+						<cftry>
+							<cfset local.stSegmentIndex["#local.stConnection.XMLAttributes.SegmentIndex#"] = StructNew('linked')>
+							<cfset local.stSegKeyLookup = arguments.stSegmentKeyLookUp["#local.stConnection.XMLAttributes.SegmentIndex#"]>
+							<cfset local.stSegKeyHash = arguments.stSegmentKeys["#local.stSegKeyLookup#"].HashIndex>
+							<cfset local.stSegmentIndex["#local.stConnection.XMLAttributes.SegmentIndex#"][1] = arguments.stSegments["#local.stSegKeyHash#"]>
+						<cfcatch type="any"></cfcatch>
+					 </cftry>
 					</cfif>
 				</cfloop>
 			</cfif>
@@ -498,8 +511,13 @@
 
 		<!--- Backfill with nonstops --->
 		<cfloop from="0" to="#local.firstSegmentIndex-1#" index="local.segmentIndex">
-			<cfset local.stSegmentIndex[ local.segmentIndex ] = StructNew('linked')>
-			<cfset local.stSegmentIndex[ local.segmentIndex ][1] = arguments.stSegments[ arguments.stSegmentKeys[ arguments.stSegmentKeyLookUp[ segmentIndex ] ].HashIndex ]>
+			<cftry>
+				<cfset local.stSegmentIndex[ "#local.segmentIndex#" ] = StructNew('linked')>
+				<cfset local.stSegKeyLookupNS = arguments.stSegmentKeyLookUp["#local.segmentIndex#"]>
+				<cfset local.stSegKeyHashNS = arguments.stSegmentKeys["#local.stSegKeyLookupNS#"].HashIndex>
+				<cfset local.stSegmentIndex[ "#local.segmentIndex#" ][1] = arguments.stSegments["#local.stSegKeyHashNS#"]>
+			<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 
 		<!--- Add to that structure the missing connection points --->

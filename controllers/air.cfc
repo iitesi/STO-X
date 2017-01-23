@@ -43,23 +43,21 @@
 		</cfif>
 
 		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
-		<cfif structKeyExists(arguments.rc, "filter")
-			AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
-		    <cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-	    	<!--- throw out threads and get lowfare pricing --->
+		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
+			<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+				<!--- throw out threads and get lowfare pricing --->
 				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
 
 
-				<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
+					<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
 				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
-					<cfset sleep(10000)>
-					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
+				<cfset sleep(10000)>
+				<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
 				</cfif>
 			<cfelse>
-				<cfset variables.lowfare.selectAir( searchID = rc.searchID
-													, nTrip = rc.nTrip )>
+				<cfset variables.lowfare.selectAir( searchID = rc.searchID, nTrip = rc.nTrip )>
 				<cfset session.searches[rc.searchID].stCars = {}>
 			</cfif>
 
