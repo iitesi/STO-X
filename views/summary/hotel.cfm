@@ -267,7 +267,7 @@
 						</cfif>
 						<p>
 						<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">
-						I have read and agree to abide by the priceline.com terms and conditions and privacy policy.
+						I have read and agree to abide by the <a href="http://secure.rezserver.com/hotels/help/terms/?refid=6821" target="_blank">priceline.com terms and conditions and privacy policy</a>.
 						</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
 						</p>
 					</div>
