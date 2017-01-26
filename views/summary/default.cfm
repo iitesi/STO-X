@@ -149,11 +149,11 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 					<div class="container-fluid">
 						<div class="row">
-							<div class="col-md-4 col-xs-12" >
+							<div class="col-xs-12" >
 								<div class="alert alert-success hide" id="unusedTicketsDiv">
 								</div>
 							</div>
-							<div class="summarydiv col-md-8 col-xs-12" >
+							<div class="summarydiv col-md-offset-4 col-md-8 col-xs-12" >
 								<div>
 									#View('summary/tripsummary')#
 								</div>
