@@ -4,7 +4,7 @@
 
 	<cfsavecontent variable="filterHeader">
 		<cfoutput>
-
+			<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
 			<script type='text/javascript' src='#application.assetURL#/js/air/timeslider.js'></script>
 		</cfoutput>
 	</cfsavecontent>
