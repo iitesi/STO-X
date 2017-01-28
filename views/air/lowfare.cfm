@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+
 	#view('air/unusedtickets')#
 
 	<div class="page-header">
