@@ -45,8 +45,8 @@
 		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
 		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
 			<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-				<!--- throw out threads and get lowfare pricing --->
-				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
+				<!--- throw out threads and get lowfare pricing
+				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>--->
 				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
 				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
 
