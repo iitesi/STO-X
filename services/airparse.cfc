@@ -621,7 +621,10 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfif arguments.sType EQ 'Avail'>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[local.nOverrideGroup].DepartureTime>
 			<cfelse>
+				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[0].DepartureTime>
+				<cfcatch type="any"><!---HANDLE GRACEFULLY---></cfcatch>
+				</cftry>
 			</cfif>
 			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
 			<cfset local.stTrips[tripIndex].Carriers = structKeyArray(local.aCarriers)>
