@@ -22,7 +22,7 @@
 		<cfset StructDelete(session.searches, arguments.searchID)>
 		<cfset StructDelete(session.filters, arguments.searchID)>
 
-		<cfreturn />
+		<cfreturn  />
 	</cffunction>
 
 	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
@@ -121,7 +121,7 @@
 							<cfif getToken(local.sPF, 2, ',') EQ 'WN'>
 								<cfset local.wnFound = true>
 							</cfif>
-							<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+							<cfset local.stTrips = doLowFare( Filter = arguments.Filter
 																, sCabin = local.sCabin
 																, bRefundable = local.bRefundable
 																, sPriority = arguments.sPriority
@@ -138,7 +138,7 @@
 					<cfif NOT local.wnFound
 						AND (local.airline EQ 'X'
 							OR local.airline EQ 'WN')>
-						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+						<cfset local.stTrips = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = local.bRefundable
 															, sPriority = arguments.sPriority
@@ -152,7 +152,7 @@
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfif>
 					<cfif local.airline NEQ 'WN'>
-						<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+						<cfset local.stTrips = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = local.bRefundable
 															, sPriority = arguments.sPriority
@@ -164,17 +164,18 @@
 															, fareType = "PublicFaresOnly" )>
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfif>
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 				</cfloop>
 			</cfloop>
 		</cfloop>
 
 		<!--- If State of Texas, get government rates --->
 		<!--- Elements specific to this request:
-				SearchPassenger Code="GST" and PricePTCOnly="true"
-				PersonalGeography - CityCode=DFW
-				PublicorPrivateFares, ProhibitNonRefundablefares=false --->
+			  SearchPassenger Code="GST" and PricePTCOnly="true"
+			  PersonalGeography - CityCode=DFW
+			  PublicorPrivateFares, ProhibitNonRefundablefares=false --->
 		<cfif arguments.Filter.getAcctID() EQ 235>
-			<cfset local.sThreadName = doLowFare( Filter = arguments.Filter
+			<cfset local.stTrips = doLowFare( Filter = arguments.Filter
 												, sCabin = local.sCabin
 												, bRefundable = false
 												, sPriority = arguments.sPriority
@@ -189,7 +190,7 @@
 			<cfset local.stThreads[local.sThreadName] = ''>
 		</cfif>
 
-		<!--- Join only if threads where thrown out. --->
+		<!--- Join only if threads where thrown out.
 		<cfif NOT StructIsEmpty(stThreads)
 			AND structKeyList(stThreads) NEQ ''
 			AND arguments.sPriority EQ 'HIGH'>
@@ -207,8 +208,7 @@
 					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.thread.stTrips)>
 				</cfif>
 			</cfloop>
-		</cfif>
-
+		</cfif>--->
 		<!--- 12:20 PM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
 					Delete the thread if we are running travelTech report. Please do not remove.
 					this prevents thread name error - http://cfmlblog.adamcameron.me/2013/02/thread-longevity-weirdness.html
@@ -240,7 +240,7 @@
 		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfset local.sThreadName = "">
-
+		<cfset attributes.stTrips = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate)>
 			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
@@ -253,10 +253,10 @@
 				<cfset local.bRefundable = true>
 			</cfif>
 
-			<!--- Note: To debug: comment out opening and closing cfthread tags and
+			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
 
-			<cfthread
+			<!--- <cfthread
 				action="run"
 				name="#sThreadName#"
 				priority="#arguments.sPriority#"
@@ -269,7 +269,21 @@
 				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
 				accountCode="#arguments.accountCode#"
 				fareType="#arguments.fareType#"
-				bGovtRate="#arguments.bGovtRate#">
+				bGovtRate="#arguments.bGovtRate#"> --->
+
+				<cfscript>
+				attributes.name="#local.sThreadName#";
+				attributes.priority="#arguments.sPriority#";
+				attributes.Filter="#arguments.Filter#";
+				attributes.sCabin="#arguments.sCabin#";
+				attributes.Account="#arguments.Account#";
+				attributes.Policy="#arguments.Policy#";
+				attributes.bRefundable="#local.bRefundable#";
+				attributes.airline="#arguments.airline#";
+				attributes.accountCode="#arguments.accountCode#";
+				attributes.fareType="#arguments.fareType#";
+				attributes.blackListedCarrierPairing="#arguments.blackListedCarrierPairing#";
+				</cfscript>
 
 				<!--- Put together the SOAP message. --->
 				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRate)>
@@ -301,7 +315,7 @@
 					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
-					<cfset thread.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
+					<cfset attributes.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
 																			, Account = arguments.Account)>
 
 				<cfelse> <!--- // faultstring found - let's throw an error --->
@@ -337,7 +351,7 @@
 													, department = arguments.Filter.getDepartment()
 													, faultstring = local.faultstring
 													, request = xmlFormat(attributes.sMessage)
-													, response = xmlFormat(attributes.sResponse) }>
+													, response = xmlFormat(attributes.sResponse)  }>
 							<cfif local.faultstring DOES NOT CONTAIN 'Transaction Error: AppErrorSeverityLevel/1'>
 								<cfset severityLevel = "Error" />
 								<cfif findNoCase('UNABLE TO FARE QUOTE', local.faultstring)>
@@ -351,15 +365,15 @@
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>
-			</cfthread>
+			<!--- </cfthread> --->
 		</cfif>
 
-		<cfreturn sThreadName>
+		<cfreturn attributes.stTrips>
 	</cffunction>
 
 	<cffunction name="prepareSOAPHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
 		<cfargument name="Filter" required="true">
-		<cfargument name="sCabins" required="true">
+		<cfargument name="sCabins"  required="true">
 		<cfargument name="bRefundable" required="true">
 		<cfargument name="sLowFareSearchID"	required="false" default="">
 		<cfargument name="Account" required="false"	default="">
@@ -558,10 +572,8 @@
 											<com:Carrier Code="#GetToken(arguments.accountCode, 2, ',')#"/>
 										</air:PermittedCarriers>
 									<cfelse>
-										<!--- blacklisted carriers --->
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="3M"/>
-											<com:Carrier Code="DN"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="JU"/>
 											<com:Carrier Code="NK"/>
