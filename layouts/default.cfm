@@ -81,7 +81,7 @@
  							  </button>
 							<cfoutput>
 
-							<cfif NOT structKeyExists(rc,"account") OR listFind("dycom.login,main.login,main.logout",request.context.action)>
+							<cfif NOT structKeyExists(rc,"account") OR listFind("main.login,main.logout",request.context.action)>
 
 								<a class="navbar-brand" id="mainlogo">
 									<img src="/booking/assets/img/clients/STO-Logo.png" alt="Shorts Travel Management" class="img-responsive">
@@ -91,7 +91,9 @@
 
 								<div id="logo-container">
 									<div id="header">
-										<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+										<cfif structKeyExists(session,"acctId") AND session.acctId EQ 532>
+											<a class="navbar-brand" id="mainlogo"  href="https://www.shortstravel.com/TravelPortalV2/mcv" title="Home">
+										<cfelseif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 											<a class="navbar-brand" id="mainlogo"  href="?action=main.menu" title="Home">
 										<cfelse>
 											<a href="#application.sPortalURL#" title="Home">
@@ -113,7 +115,11 @@
 
 							<cfelse>
 
-								<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
+								<cfif structKeyExists(session,"acctId") AND session.acctId EQ 532>
+
+									<a class="navbar-brand" id="mainlogo"  href="https://www.shortstravel.com/TravelPortalV2/mcv" title="Home">
+
+								<cfelseif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 									<a class="navbar-brand" id="mainlogo"  href="?action=main.menu" title="Home">
 								<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getSiteUrl()))>
 									<a class="navbar-brand" id="mainlogo"  href="#rc.filter.getSiteUrl()#" title="Home">
