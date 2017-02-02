@@ -55,13 +55,13 @@
 		<!--- <cfif isDefined("url.reinit")>
 			<cfset ApplicationStop()>
 			<cflocation url="index.cfm" addtoken="false">
-		</cfif> --->
+		</cfif>
 		<cfif request.context.action EQ 'main.notfound'>
 			<cfhttp url="https://europaqa.shortstravel.com/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
 				<cfhttpparam type="formfield" name="acctID" value="1" />
 			</cfhttp>
 			<cfdump var="#local.response#" abort />
-		</cfif>
+		</cfif>--->
 
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
