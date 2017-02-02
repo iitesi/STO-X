@@ -114,6 +114,21 @@
 							</cfif>
 
 						</cfif>
+					<cfelse>
+						<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+						<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
+						<cfif structKeyExists(request.context, 'date')>
+							<cfset session.cookieDate = request.context.date>
+							<cfif apiURL NEQ cgi.http_host>
+								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
+							</cfif>
+						</cfif>
+						<cfif structKeyExists(request.context, 'token')>
+							<cfset session.cookieToken = request.context.token>
+							<cfif apiURL NEQ cgi.http_host>
+								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
+							</cfif>
+						</cfif>
 					</cfif>
 
 					<cfif NOT session.isAuthorized>
