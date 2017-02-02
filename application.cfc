@@ -119,12 +119,14 @@
 						<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
 						<cfif structKeyExists(request.context, 'date')>
 							<cfset session.cookieDate = request.context.date>
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />								
 							<cfif apiURL NEQ cgi.http_host>
 								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
 							</cfif>
 						</cfif>
 						<cfif structKeyExists(request.context, 'token')>
 							<cfset session.cookieToken = request.context.token>
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
 							<cfif apiURL NEQ cgi.http_host>
 								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
 							</cfif>
