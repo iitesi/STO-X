@@ -618,12 +618,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.stTrips[local.tripIndex].Groups = local.stGroups>
 			<cfset local.stTrips[local.tripIndex].Duration = local.nDuration>
 			<cfset local.stTrips[local.tripIndex].Stops = local.nTotalStops>
+			<cfset local.stTrips[local.tripIndex].Depart = "N/A">
 			<cfif arguments.sType EQ 'Avail'>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[local.nOverrideGroup].DepartureTime>
 			<cfelse>
 				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[0].DepartureTime>
-				<cfcatch type="any"><!---HANDLE GRACEFULLY---></cfcatch>
+				<cfcatch type="any"><!---sometimes depart isn't available, even according to API docs---></cfcatch>
 				</cftry>
 			</cfif>
 			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
@@ -1043,12 +1044,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.bActive = local.policyResults.active>
 			</cfif>
 
-			<!--- Time --->
+			<!--- Time ---><cftry>
 			<cfset local.policyResults = policyTime( depart = local.stTrip.Depart )>
 			<cfif local.policyResults.message NEQ ''>
 				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
 				<cfset local.bActive = local.policyResults.active>
-			</cfif>
+			</cfif><cfcatch type="any"><cfdump var="#local.stTrip#" abort/></cfcatch></cftry>
 
 			<!--- F9 Time --->
 			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart
