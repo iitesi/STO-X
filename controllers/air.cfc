@@ -97,7 +97,7 @@
 			<!--- Throw out a threads and get availability --->
 			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
+			<!--- <cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)> --->
 		<cfelse>
 			<!--- Select --->
 			<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
