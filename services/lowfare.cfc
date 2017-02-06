@@ -240,7 +240,8 @@
 		<cfargument name="bGovtRate" required="false" default="false" />
 
 		<cfset local.sThreadName = "">
-		<cfset attributes.stTrips = {}>
+		<cfset local.attributes = {}>
+		<cfset local.attributes.stTrips = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
 		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate)>
 			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
@@ -272,50 +273,50 @@
 				bGovtRate="#arguments.bGovtRate#"> --->
 
 				<cfscript>
-				attributes.name="#local.sThreadName#";
-				attributes.priority="#arguments.sPriority#";
-				attributes.Filter="#arguments.Filter#";
-				attributes.sCabin="#arguments.sCabin#";
-				attributes.Account="#arguments.Account#";
-				attributes.Policy="#arguments.Policy#";
-				attributes.bRefundable="#local.bRefundable#";
-				attributes.airline="#arguments.airline#";
-				attributes.accountCode="#arguments.accountCode#";
-				attributes.fareType="#arguments.fareType#";
-				attributes.blackListedCarrierPairing="#arguments.blackListedCarrierPairing#";
+				local.attributes.name="#local.sThreadName#";
+				local.attributes.priority="#arguments.sPriority#";
+				local.attributes.Filter="#arguments.Filter#";
+				local.attributes.sCabin="#arguments.sCabin#";
+				local.attributes.Account="#arguments.Account#";
+				local.attributes.Policy="#arguments.Policy#";
+				local.attributes.bRefundable="#local.bRefundable#";
+				local.attributes.airline="#arguments.airline#";
+				local.attributes.accountCode="#arguments.accountCode#";
+				local.attributes.fareType="#arguments.fareType#";
+				local.attributes.blackListedCarrierPairing="#arguments.blackListedCarrierPairing#";
 				</cfscript>
 
 				<!--- Put together the SOAP message. --->
-				<cfset attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRate)>
+				<cfset local.attributes.sMessage = prepareSOAPHeader(arguments.Filter, arguments.sCabin, arguments.bRefundable, '', arguments.Account, arguments.airline, arguments.policy, arguments.fareType, arguments.accountCode, arguments.bGovtRate)>
 
 				<!--- Call the UAPI. --->
-				<cfset attributes.sResponse = getUAPI().callUAPI('AirService', attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
+				<cfset local.attributes.sResponse = getUAPI().callUAPI('AirService', local.attributes.sMessage, arguments.Filter.getSearchID(), arguments.Filter.getAcctID(), arguments.Filter.getUserID())>
 
 				<!--- Format the UAPI response. --->
-				<cfset attributes.aResponse = getUAPI().formatUAPIRsp(attributes.sResponse)>
+				<cfset local.attributes.aResponse = getUAPI().formatUAPIRsp(local.attributes.sResponse)>
 				<!--- If the UAPI gives an error then don't continue and send an error to BugLog instead. --->
-				<cfif FindNoCase('faultstring', attributes.sResponse) EQ 0>
+				<cfif FindNoCase('faultstring', local.attributes.sResponse) EQ 0>
 					<!--- Parse the segments. --->
-					<cfset attributes.stSegments = getAirParse().parseSegments( stResponse = attributes.aResponse )>
+					<cfset local.attributes.stSegments = getAirParse().parseSegments( stResponse = local.attributes.aResponse )>
 					<!--- Parse the trips. --->
-					<cfset attributes.stTrips = getAirParse().parseTrips( response = attributes.aResponse
-																		, stSegments = attributes.stSegments
+					<cfset local.attributes.stTrips = getAirParse().parseTrips( response = local.attributes.aResponse
+																		, stSegments = local.attributes.stSegments
 																		, bRefundable = arguments.bRefundable )>
 					<!--- Add group node --->
-					<cfset attributes.stTrips = getAirParse().addGroups( stTrips = attributes.stTrips )>
+					<cfset local.attributes.stTrips = getAirParse().addGroups( stTrips = local.attributes.stTrips, Filter=arguments.Filter )>
 
 					<!--- Remove Multiple Connections --->
-					<cfset attributes.stTrips = getAirParse().removeMultiConnections( trips = attributes.stTrips )>
+					<cfset local.attributes.stTrips = getAirParse().removeMultiConnections( trips = local.attributes.stTrips )>
 
 					<!--- Remove BlackListed Carrier Pairings --->
-					<cfset attributes.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = attributes.stTrips
+					<cfset local.attributes.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = local.attributes.stTrips
 																							, blackListedCarriers = arguments.blackListedCarrierPairing )>
 
 					<!--- Remove Private Fares --->
-					<cfset attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = attributes.stTrips )>
+					<cfset local.attributes.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = local.attributes.stTrips )>
 
 					<!--- Add preferred node from account --->
-					<cfset attributes.stTrips = getAirParse().addPreferred( stTrips = attributes.stTrips
+					<cfset local.attributes.stTrips = getAirParse().addPreferred( stTrips = local.attributes.stTrips
 																			, Account = arguments.Account)>
 
 				<cfelse> <!--- // faultstring found - let's throw an error --->
@@ -324,7 +325,7 @@
 					Grab faultstring if we are running travelTech report. Please do not remove.
 					Comment out the error handling below.
 					<cfset local.faultstring = ''>
-					<cfloop array="#attributes.aResponse#" item="local.faultItem">
+					<cfloop array="#local.attributes.aResponse#" item="local.faultItem">
 						<cfif faultItem.XMLName EQ 'faultstring'>
 							<cfset local.faultstring = faultItem.xmlText>
 						</cfif>
@@ -334,7 +335,7 @@
 
 					<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
 						<cfset local.faultstring = ''>
-						<cfloop array="#attributes.aResponse#" item="local.faultItem">
+						<cfloop array="#local.attributes.aResponse#" item="local.faultItem">
 							<cfif faultItem.XMLName EQ 'faultstring'>
 								<cfset local.faultstring = faultItem.xmlText>
 							</cfif>
@@ -350,8 +351,8 @@
 													, username = arguments.Filter.getUsername()
 													, department = arguments.Filter.getDepartment()
 													, faultstring = local.faultstring
-													, request = xmlFormat(attributes.sMessage)
-													, response = xmlFormat(attributes.sResponse)  }>
+													, request = xmlFormat(local.attributes.sMessage)
+													, response = xmlFormat(local.attributes.sResponse)  }>
 							<cfif local.faultstring DOES NOT CONTAIN 'Transaction Error: AppErrorSeverityLevel/1'>
 								<cfset severityLevel = "Error" />
 								<cfif findNoCase('UNABLE TO FARE QUOTE', local.faultstring)>
@@ -368,7 +369,7 @@
 			<!--- </cfthread> --->
 		</cfif>
 
-		<cfreturn attributes.stTrips>
+		<cfreturn local.attributes.stTrips>
 	</cffunction>
 
 	<cffunction name="prepareSOAPHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">
