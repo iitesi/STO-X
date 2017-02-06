@@ -572,8 +572,10 @@
 											<com:Carrier Code="#GetToken(arguments.accountCode, 2, ',')#"/>
 										</air:PermittedCarriers>
 									<cfelse>
+										<!--- blacklisted carriers --->
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="3M"/>
+											<com:Carrier Code="DN"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="JU"/>
 											<com:Carrier Code="NK"/>
