@@ -402,7 +402,13 @@
 			</cfif>
 		</cfif>
 
-		<cfset local.aCabins = (arguments.sCabins NEQ 'X' ? ListToArray(arguments.sCabins) : [])>
+		<cfif IsArray(arguments.sCabins)>
+			 <cfset local.aCabins = arguments.sCabins>
+		<cfelseif ListLen(arguments.sCabins) GT 0>
+			 <cfset local.aCabins = ListToArray(arguments.sCabins)>
+		<cfelse>
+			 <cfset local.aCabins = ArrayNew(1)>
+		</cfif>
 
 <!---
 ****************************************************************************
