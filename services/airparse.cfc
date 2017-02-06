@@ -300,6 +300,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.PrivateFare = local.bPrivateFare>
 						<cfset local.stTrip.PTC = local.sPTC>
 						<cfset local.stTrip.Class = local.sOverallClass>
+						<cfset local.stTrip.CabinClass = local.sClass>
 						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
 						<cfset local.stTrip.Ref = local.refundable>
 						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
@@ -571,6 +572,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="addGroups" output="false" hint="I add groups.">
 		<cfargument name="stTrips" required="true">
 		<cfargument name="sType" required="false" default="Fare">
+		<cfargument name="Filter" required="false">
 
 		<cfset local.stGroups = {}>
 		<cfset local.aCarriers = {}>
@@ -618,13 +620,16 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.stTrips[local.tripIndex].Groups = local.stGroups>
 			<cfset local.stTrips[local.tripIndex].Duration = local.nDuration>
 			<cfset local.stTrips[local.tripIndex].Stops = local.nTotalStops>
-			<cfset local.stTrips[local.tripIndex].Depart = "N/A">
 			<cfif arguments.sType EQ 'Avail'>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[local.nOverrideGroup].DepartureTime>
 			<cfelse>
 				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[0].DepartureTime>
-				<cfcatch type="any"><!---sometimes depart isn't available, even according to API docs---></cfcatch>
+				<cfcatch type="any">
+						<cfif StructKeyExists(arguments,"Filter")>
+							<cfset local.stTrips[local.tripIndex].Depart = arguments.Filter.getDepartDateTime()>
+						</cfif>
+				</cfcatch>
 				</cftry>
 			</cfif>
 			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
@@ -974,7 +979,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<!--- this is a one time check because the depart dates are all the same --->
 		<cfset local.firstKey = listFirst(structKeyList(local.stTrips))>
 		<cfset local.outOfPolicyBasedOnAdvPurchRule = false>
-		<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND DateDiff('d', Now(), local.stTrips[local.firstKey].Depart) LT arguments.Policy.Policy_AirAdv>
+		<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND !structIsEmpty(stTrips) AND DateDiff('d', Now(), local.stTrips[local.firstKey].Depart) LT arguments.Policy.Policy_AirAdv>
 			<cfset local.outOfPolicyBasedOnAdvPurchRule = true>
 		</cfif>
 
@@ -1044,12 +1049,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset local.bActive = local.policyResults.active>
 			</cfif>
 
-			<!--- Time ---><cftry>
+			<!--- Time --->
 			<cfset local.policyResults = policyTime( depart = local.stTrip.Depart )>
 			<cfif local.policyResults.message NEQ ''>
 				<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
 				<cfset local.bActive = local.policyResults.active>
-			</cfif><cfcatch type="any"><cfdump var="#local.stTrip#" abort/></cfcatch></cftry>
+			</cfif>
 
 			<!--- F9 Time --->
 			<cfset local.policyResults = policyF9Time( depart = local.stTrip.Depart
