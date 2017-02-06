@@ -14,13 +14,17 @@
 			<cfset buttonPrice = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred[1]].total>
 		</cfif>
 	</cfif>
-
 	<cfif buttonPrice EQ "">
 		<cfset popoverTitle = "View roundtrip fares">
 		<cfset buttonText = "Roundtrip Fares">
 	<cfelse>
-		<cfset popoverTitle = "Fly roundtrip for as low as $#NumberFormat( buttonPrice )#">
-		<cfset buttonText = "Roundtrip From $#NumberFormat( buttonPrice )#">
+		<cfif rc.Filter.getAirType() EQ 'OW'>
+			<cfset popoverTitle = "Fly one-way for as low as $#NumberFormat( buttonPrice )#">
+			<cfset buttonText = "One-Way From $#NumberFormat( buttonPrice )#">
+		<cfelse>
+			<cfset popoverTitle = "Fly roundtrip for as low as $#NumberFormat( buttonPrice )#">
+			<cfset buttonText = "Roundtrip From $#NumberFormat( buttonPrice )#">
+		</cfif>
 	</cfif>
 
 	<cfset popoverContent = "Select a flight below or select individual legs by selecting a button to the right.">
@@ -51,18 +55,19 @@
 			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" class=" legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
-	
-		
-		<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
-			<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
-				<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
-			<cfelse>
-				<li role="presentation"><a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
-				<!--- Show icon indicating this is the leg they selected --->
-				<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])><i class="icon-ok"></i></cfif>
-				#nLegItem#</a></li>
-			</cfif>
-		</cfloop>
+
+		<cfif rc.Filter.getAirType() NEQ 'OW'>
+			<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
+				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
+					<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
+				<cfelse>
+					<li role="presentation"><a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+					<!--- Show icon indicating this is the leg they selected --->
+					<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])><i class="icon-ok"></i></cfif>
+					#nLegItem#</a></li>
+				</cfif>
+			</cfloop>
+		</cfif>
 		</ul>
 	</div>
 </cfoutput>
