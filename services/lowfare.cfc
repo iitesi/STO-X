@@ -91,6 +91,7 @@
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
+		<cfset local.stTrips = {}>
 
 		<cfset local.airlines = []>
 		<cfif arguments.Filter.getAirlines() EQ ''>
@@ -135,6 +136,7 @@
 							<cfset local.stThreads[local.sThreadName] = ''>
 						</cfif>
 					</cfloop>
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 					<cfif NOT local.wnFound
 						AND (local.airline EQ 'X'
 							OR local.airline EQ 'WN')>
@@ -151,6 +153,7 @@
 															, accountCode = '' )>
 						<cfset local.stThreads[local.sThreadName] = ''>
 					</cfif>
+					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 					<cfif local.airline NEQ 'WN'>
 						<cfset local.stTrips = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
@@ -168,7 +171,6 @@
 				</cfloop>
 			</cfloop>
 		</cfloop>
-
 		<!--- If State of Texas, get government rates --->
 		<!--- Elements specific to this request:
 			  SearchPassenger Code="GST" and PricePTCOnly="true"
