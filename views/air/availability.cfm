@@ -80,7 +80,8 @@
 				</cfif>
 			<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
 				<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
-				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
+				<cftry>
+					<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
 					<cfif checkTrip(variables.stTrip,rc.Filter)>
 						<cfset nCount++>
@@ -91,6 +92,8 @@
 						--->
 					</cfif>
 				</cfif>
+				<cfcatch type="any"></cfcatch>
+				</cftry>
 			<cfelse>
 				<!--- this is first view so show everything --->
 				<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
@@ -158,15 +161,22 @@
 	<cfargument name="filter" required="true"/>
 	<cfset var dCity = arguments.Filter.getDepartCity()>
 	<cfset var aCity = arguments.Filter.getArrivalCity()>
-	<cfif StructCount(arguments.trip.Groups) EQ 1>
-		<cfloop collection="#arguments.trip.Groups#" item="Group">
-			<cfset stGroup = stTrip.Groups[Group]>
-			<cfif stGroup.Origin NEQ dCity AND stGroup.Destination NEQ aCity>
-				<cfreturn true>
-			</cfif>
-		</cfloop>
-		<cfreturn true>
+	<cfset var ctr = 1>
+	<cfset var aCtr = 1>
+	<cfset var bCtr = StructCount(arguments.trip.Groups)>
+	<cfif bCtr EQ 1>
+	<cfloop collection="#arguments.trip.Groups#" item="Group">
+		<cfset stGroup = arguments.trip.Groups[Group]>
+		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity)) AND (stGroup.Origin NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW',aCity))>
+			<cfreturn false>
+		</cfif>
+		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW',aCity)) AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity))>
+			<cfreturn false>
+		</cfif>
+		<cfset ctr = ctr+1>
+	</cfloop>
 	<cfelse>
-		<cfreturn true>
+		<cfreturn false>
 	</cfif>
+	<cfreturn true>
 </cffunction>
