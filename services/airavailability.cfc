@@ -643,7 +643,7 @@
 			<cfset local.badList = "">
 
 			<!--- loop over stTrips and compare chosen origin/destination against the airport codes returned from the uAPI --->
-			<cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
+			<!--- <cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
 				<cfset local.origin = ''>
 				<cfset local.destination = ''>
 				<cfloop collection="#local.tripItem.segments#" index="local.segmentIndex" item="local.segment">
@@ -659,10 +659,10 @@
 				</cfif>
 			</cfloop>
 
-			<!--- delete the trips containing bad origin/destination cities from stTrips --->
+			delete the trips containing bad origin/destination cities from stTrips
 			<cfloop list="#local.badList#" index="local.badListIndex" item="local.badListItem">
 				<cfset structDelete(local.stTrips, local.badListItem)>
-			</cfloop>
+			</cfloop>--->
 
 		<!--- // end of STM-2254 hack --->
 
