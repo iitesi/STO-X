@@ -621,7 +621,14 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.stTrips[local.tripIndex].Duration = local.nDuration>
 			<cfset local.stTrips[local.tripIndex].Stops = local.nTotalStops>
 			<cfif arguments.sType EQ 'Avail'>
+				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[local.nOverrideGroup].DepartureTime>
+				<cfcatch type="any">
+						<cfif StructKeyExists(arguments,"Filter")>
+							<cfset local.stTrips[local.tripIndex].Depart = arguments.Filter.getDepartDateTime()>
+						</cfif>
+				</cfcatch>
+				</cftry>
 			<cfelse>
 				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[0].DepartureTime>
@@ -632,7 +639,14 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				</cfcatch>
 				</cftry>
 			</cfif>
-			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
+			<cftry>
+			<cfset local.stTrips[local.tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
+			<cfcatch type="any">
+					<cfif StructKeyExists(arguments,"Filter")>
+						<cfset local.stTrips[local.tripIndex].Arrival = arguments.Filter.getArrivalDateTime()>
+					</cfif>
+			</cfcatch>
+			</cftry>
 			<cfset local.stTrips[tripIndex].Carriers = structKeyArray(local.aCarriers)>
 			<cfset local.stTrips[tripIndex].validCarriers = flagBlackListedCarriers(local.stTrips[tripIndex].Carriers)>
 			<cfset local.stTrips[tripIndex].PlatingCarrier = setPlatingCarrier(local.stTrips[tripIndex].Groups)>
