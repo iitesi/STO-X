@@ -68,7 +68,8 @@
 				<td colspan="2">
 					<cfset btnClass = "">
 					<cfif bDisplayFare>
-						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#
+						#findClass(stTrip.Class)#
+						<!--- #(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))# --->
 						<br>
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
@@ -172,10 +173,11 @@
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">
-							#(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))#
+							#(structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class))#
+							<!--- #(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))# --->
 						</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#"><cfif
-						nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">
+							<cfif segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
@@ -252,6 +254,7 @@
 							<cfset nCnt = 0>
 							<cfset segmentCount = arrayLen(structKeyArray(stGroup.Segments))>
 							<cfloop collection="#stGroup.Segments#" item="nSegment" >
+
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
 								<tr>
@@ -274,7 +277,8 @@
 							<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
 						</cfif>
 						<span class="smalltext">
-						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
+							#findClass(stTrip.Class)#<br>
+						<!--- #(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br> --->
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
 						#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#
 
@@ -311,3 +315,16 @@ loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 <cfoutput>
 	<div id="flight#nTripKey#" #dataString.toList(' ')# class="col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
 </cfoutput>
+
+<cffunction name="findClass">
+	<cfargument name="classOfService" required="true"/>
+	<cfif ListFindNoCase('y,x',classOfService) GT 0>
+		<cfreturn 'Economy'/>
+	<cfelseif ListFindNoCase('f',classOfService) GT 0>
+		<cfreturn 'First'/>
+	<cfelseif ListFindNoCase('c',classOfService) GT 0>
+		<cfreturn 'Business'/>
+	<cfelse>
+		<cfreturn 'Economy'/>
+	</cfif>
+</cffunction>
