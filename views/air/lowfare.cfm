@@ -9,10 +9,10 @@
 	<cfif bCtr GT 1>
 	<cfloop collection="#arguments.trip.Groups#" item="Group">
 		<cfset stGroup = arguments.trip.Groups[Group]>
-		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity))>
+		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
 			<cfreturn false>
 		</cfif>
-		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity))>
+		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
 			<cfreturn false>
 		</cfif>
 		<cfset ctr = ctr+1>
@@ -33,10 +33,10 @@
 	<cfif bCtr EQ 1>
 	<cfloop collection="#arguments.trip.Groups#" item="Group">
 		<cfset stGroup = arguments.trip.Groups[Group]>
-		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity)) AND (stGroup.Origin NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW',aCity))>
+		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity)) AND (stGroup.Origin NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity))>
 			<cfreturn false>
 		</cfif>
-		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW',aCity)) AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW',dCity))>
+		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity)) AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
 			<cfreturn false>
 		</cfif>
 		<cfset ctr = ctr+1>
