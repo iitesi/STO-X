@@ -517,7 +517,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="removeInvalidTrips" output="false" hint="Due to inconsistent uAPI results, this method does sanity check on results">
 		<cfargument name="trips" required="true">
 		<cfargument name="filter" required="true">
-		<cfargument name="tripType" default="1"> <!---1=Roundtrip;2=Oneway--->
 
 		<cfset var searchDepart = arguments.filter.getDepartCity()>
 		<cfset var searchArrive = arguments.filter.getArrivalCity()>
@@ -525,7 +524,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset var ctr = 1>
 
 		<cfloop collection="#tripsToVerify#" item="trip">
-			<cfif arguments.tripType EQ 1 AND !verifyRoundTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive)>
+			<cfif arguments.filter.getAirType() EQ 'RT' AND !verifyRoundTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive)>
 				<cfset StructDelete(tripsToVerify, trip)>
 			</cfif>
 			<cfset ctr++>
