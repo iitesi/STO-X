@@ -111,10 +111,12 @@
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
 			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
-				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-				<cfset nCount++>
-				<cfif checkTrip(variables.stTrip, rc.Filter)>
+				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+					<cfset nCount++>
 					#View('air/badge')#
+				<cfelse>
+						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
 				</cfif>
 			</cfloop>
 
