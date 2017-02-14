@@ -649,4 +649,25 @@
 		<cfreturn sMessage/>
 	</cffunction>
 
+	<cffunction name="testLowfareXML">
+		<cfargument name="XMLToTest" require="true"/>
+		<cfargument name="bRefundable" require="false" default="false"/>
+		<cfset local.response = {}>
+		<cfif FindNoCase('faultstring', arguments.XMLToTest) EQ 0>
+			<cfset local.aResponse = getUAPI().formatUAPIRsp(arguments.XMLToTest)>
+			<!--- Parse the segments. --->
+			<cfset local.response.stSegments = getAirParse().parseSegments( stResponse = local.aResponse, attachXML = true )>
+			<!--- Parse the trips. --->
+
+			<cfset local.response.stTrips = getAirParse().parseTrips( response = local.aResponse
+																, stSegments = local.response.stSegments
+																, bRefundable = arguments.bRefundable
+																, attachXML = true )>
+			<cfreturn local.response>
+		<cfelse>
+				<cfdump var="#local.aResponse#" abort/>
+		</cfif>
+
+	</cffunction>
+
 </cfcomponent>
