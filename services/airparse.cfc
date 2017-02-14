@@ -61,6 +61,7 @@
 
 	<cffunction name="parseSegments" output="false" hint="I take XML from uAPI and parse segments from it.">
 		<cfargument name="stResponse"	required="true" hint="Truncated XML object">
+		<cfargument name="attachXML" default="false">
 
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
@@ -71,6 +72,7 @@
 			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
 
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.XML = (arguments.attachXML ? local.stAirSegment : "attachXML need to be true to dump XML used to create segments")>
 					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
 					<cfset local.dArrivalTime = GetToken(local.dArrivalGMT, 1, '.')>
 					<cfset local.dArrivalOffset = GetToken(GetToken(local.dArrivalGMT, 2, '-'), 1, ':')>
@@ -112,7 +114,7 @@
 						TravelTime : local.travelTime,
 						Key : local.stAirSegment.XMLAttributes.Key,
 						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
-					}>
+						XML : local.XML}>
 				</cfloop>
 
 			</cfif>
@@ -162,6 +164,7 @@
 		<cfargument name="stSegments" required="true">
 		<cfargument name="bRefundable" required="false" default="false">
 		<cfargument name="bFirstPrice" required="false" default="false">
+		<cfargument name="attachXML" default="false">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -205,6 +208,7 @@
 				<cfset local.bPrivateFare = false>
 				<cfset local.tripKey = ''>
 				<cfset local.stopOvers = {}>
+				<cfset local.stTrip.XML = (arguments.attachXML ? local.responseNode : "attachXML need to be true to dump XML used to create segments")>
 
 				<cfloop array="#local.responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
