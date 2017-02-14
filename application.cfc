@@ -79,7 +79,8 @@
 				AND request.context.action NEQ 'main.contact'
 				AND request.context.action NEQ 'dycom.policy'
 				AND request.context.action NEQ 'setup.resetPolicy'
-				AND request.context.action NEQ 'setup.setPolicy'>
+				AND request.context.action NEQ 'setup.setPolicy'
+				AND request.context.action NEQ 'air.viewXMLResults'>
 
 				<cfset var action = ListFirst(request.context.action,".")>
 
