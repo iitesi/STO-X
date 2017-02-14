@@ -1,27 +1,3 @@
-<cffunction name="checkTrip">
-	<cfargument name="trip" required="true"/>
-	<cfargument name="filter" required="true"/>
-	<cfset var dCity = arguments.Filter.getDepartCity()>
-	<cfset var aCity = arguments.Filter.getArrivalCity()>
-	<cfset var ctr = 1>
-	<cfset var aCtr = 1>
-	<cfset var bCtr = StructCount(arguments.trip.Groups)>
-	<cfif bCtr GT 1>
-	<cfloop collection="#arguments.trip.Groups#" item="Group">
-		<cfset stGroup = arguments.trip.Groups[Group]>
-		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
-			<cfreturn false>
-		</cfif>
-		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
-			<cfreturn false>
-		</cfif>
-		<cfset ctr = ctr+1>
-	</cfloop>
-	<cfelse>
-		<cfreturn false>
-	</cfif>
-	<cfreturn true>
-</cffunction>
 <cffunction name="checkTripOneWay">
 	<cfargument name="trip" required="true"/>
 	<cfargument name="filter" required="true"/>
@@ -125,7 +101,7 @@
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
-					<cfif checkTrip(variables.stTrip, rc.Filter) AND rc.Filter.getAirType() NEQ 'OW'>
+					<cfif rc.Filter.getAirType() NEQ 'OW'>
 						#View('air/badge')#
 					<cfelseif checkTripOneWay(variables.stTrip, rc.Filter) AND rc.Filter.getAirType() EQ 'OW'>
 						#View('air/badge')#
