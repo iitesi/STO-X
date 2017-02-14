@@ -307,6 +307,9 @@
 					<!--- Add group node --->
 					<cfset local.attributes.stTrips = getAirParse().addGroups( stTrips = local.attributes.stTrips, Filter=arguments.Filter )>
 
+					<!--- STM-7375 check--->
+					<cfset local.attributes.stTrips = getAirParse().removeInvalidTrips(trips=local.attributes.stTrips, filter=arguments.Filter, tripType=1)>
+
 					<!--- Remove Multiple Connections --->
 					<cfset local.attributes.stTrips = getAirParse().removeMultiConnections( trips = local.attributes.stTrips )>
 

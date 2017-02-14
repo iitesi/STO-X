@@ -514,6 +514,88 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<cfreturn local.stTrips />
 	</cffunction> --->
+	<cffunction name="removeInvalidTrips" output="false" hint="Due to inconsistent uAPI results, this method does sanity check on results">
+		<cfargument name="trips" required="true">
+		<cfargument name="filter" required="true">
+		<cfargument name="tripType" default="1"> <!---1=Roundtrip;2=Oneway--->
+
+		<cfset var searchDepart = arguments.filter.getDepartCity()>
+		<cfset var searchArrive = arguments.filter.getArrivalCity()>
+		<cfset var tripsToVerify = arguments.trips>
+		<cfset var ctr = 1>
+
+		<cfloop collection="#tripsToVerify#" item="trip">
+			<cfif arguments.tripType EQ 1 AND !verifyRoundTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive)>
+				<cfset StructDelete(tripsToVerify, trip)>
+			</cfif>
+			<cfset ctr++>
+		</cfloop>
+		<cfreturn tripsToVerify>
+	</cffunction>
+
+	<cffunction name="verifyRoundTripsWithGroups" returnType="boolean" output="false" hint="Checks a trip's group for valid segments">
+		<cfargument name="trip" required="true">
+		<cfargument name="searchDepart" required="true">
+		<cfargument name="searchArrive" required="true">
+
+		<cfif StructKeyExists(arguments.trip,'Groups')>
+			<cfset var groups = arguments.trip.Groups>
+			<cfset var ctr = 0>
+			<cfloop collection="#groups#" item="group">
+				<cfset var g = groups[group]>
+				<cfset var gDepart = g.origin>
+				<cfset var gArrive = g.destination>
+				<cfif group EQ 0 AND
+						  (
+								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gDepart) OR
+								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gArrive)
+						  )>
+					<cfreturn false>
+				<cfelseif group EQ 1 AND
+						  (
+								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
+								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
+						  )>
+					<cfreturn false>
+				</cfif>
+				<cfset var segments = g.segments>
+				<cfset var tempDepart = ''>
+				<cfset var tempArrive = ''>
+				<cfset var sCtr = 1>
+				<cfset var eCtr = StructCount(segments)>
+				<cfloop collection="#segments#" item="segment">
+					<cfset var s = segments[segment]>
+					<cfset var sDepart = s.origin>
+					<cfset var sArrive = s.destination>
+					<cfif sCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
+						<cfreturn false>
+					</cfif>
+					<cfset tempDepart = s.origin>
+					<cfset tempArrive = s.destination>
+					<cfset sCtr++>
+				</cfloop>
+			</cfloop>
+			<cfreturn true>
+		<cfelse>
+			<cfreturn false>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="getMetroList" returnType="string" output="false" hint="I gather all the metro city pairs STO supports">
+		<!---STM-989 has the list--->
+		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW'>
+		<cfreturn metroList>
+	</cffunction>
+
+	<cffunction name="isMetroArea" returnType="boolean" output="false" hint="I check an airport code against metro area list">
+		<cfargument name="airport" required="true">
+		<cfset var metroList = getMetroList()>
+		<cfif ListFind(metroList,arguments.airport)>
+				<cfreturn true>
+		<cfelse>
+				<cfreturn false>
+		</cfif>
+	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
 		<cfargument name="stTrips1" required="true">
