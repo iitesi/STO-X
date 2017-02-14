@@ -69,7 +69,7 @@
 			'air:AirSegmentList' - found in low fare and availability search
 			'air:AirItinerary' - found in air pricing
 			--->
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
+			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR local.stAirSegmentList.XMLName EQ 'air:AirItinerary'>
 
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
 					<cfset local.XML = (arguments.attachXML ? local.stAirSegment : "attachXML need to be true to dump XML used to create segments")>
