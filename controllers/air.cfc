@@ -150,6 +150,24 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="viewXMLResults" output="false" hint="I can be fed a travelport XML Response XML String">
+		<cfargument name="rc">
+
+		<cfparam name="rc.bRefundable" default="false"/>
+		<cfparam name="rc.showSegments" default="false"/>
+		<cfparam name="rc.trips" default="#StructNew()#"/>
+		<cfparam name="rc.segments" default="#StructNew()#"/>
+		<cfparam name="rc.XMLToTest" default=""/>
+		<cfif len(rc.XMLToTest)>
+			<cfset var response = variables.lowfare.testLowfareXML(rc.XMLToTest,rc.bRefundable)>
+			<cfif len(rc.showSegments) AND rc.showSegments EQ "true">
+				<cfset rc.segments = response.stSegments>
+			<cfelse>
+				<cfset rc.trips = response.stTrips>				
+			</cfif>
+		</cfif>
+	</cffunction>
+
 	<cffunction name="popup" output="false" hint="I get details, seats, bags and for modal popup for each badge.">
 		<cfargument name="rc">
 
