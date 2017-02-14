@@ -173,11 +173,11 @@
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">
-							#(structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class))#
+							#Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4)#
 							<!--- #(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))# --->
 						</td>
 						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">
-							<cfif segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
+							<span>#stSegment.Origin# to #stSegment.Destination#</span></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
@@ -260,7 +260,7 @@
 								<tr>
 									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-									<td valign="top"class="flighttext" nowrap><cfif nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
+									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">
 										<cfif nCnt EQ 1>
 											#stGroup.TravelTime#
