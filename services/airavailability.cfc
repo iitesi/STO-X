@@ -176,6 +176,8 @@
 					<cfset local.attributes.stAvailTrips = parseConnections(local.attributes.aResponse, local.attributes.stSegments, local.attributes.stSegmentKeys, local.attributes.stSegmentKeyLookUp, arguments.filter, arguments.group)>
 					<!--- Add group node --->
 					<cfset local.attributes.stAvailTrips	= getAirParse().addGroups(local.attributes.stAvailTrips, 'Avail', arguments.Filter)>
+					<!--- STM-7375 check--->
+					<cfset local.attributes.stAvailTrips = getAirParse().removeInvalidTrips(trips=local.attributes.stAvailTrips, filter=arguments.Filter, tripType=2)>
 					<!--- Mark preferred carriers. --->
 					<cfset local.attributes.stAvailTrips = getAirParse().addPreferred(local.attributes.stAvailTrips, arguments.Account)>
 					<!--- Run policy on all the results --->
