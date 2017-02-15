@@ -532,7 +532,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn tripsToVerify>
 	</cffunction>
 
-	<cffunction name="verifyRoundTripsWithGroups" returnType="boolean" output="false" hint="Checks a trip's group for valid segments">
+	<cffunction name="verifyTripsWithGroups" returnType="boolean" output="false" hint="Checks a trip's group for valid segments">
 		<cfargument name="trip" required="true">
 		<cfargument name="searchDepart" required="true">
 		<cfargument name="searchArrive" required="true">
@@ -544,6 +544,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset var g = groups[group]>
 				<cfset var gDepart = g.origin>
 				<cfset var gArrive = g.destination>
+				<!---This checks if the group departs/arrives either on the trip there or the trip back (so depart/arrive are switched)--->
 				<cfif group EQ 0 AND
 						  (
 								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gDepart) OR
@@ -560,19 +561,24 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset var segments = g.segments>
 				<cfset var tempDepart = ''>
 				<cfset var tempArrive = ''>
-				<cfset var sCtr = 1>
-				<cfset var eCtr = StructCount(segments)>
-				<cfloop collection="#segments#" item="segment">
-					<cfset var s = segments[segment]>
-					<cfset var sDepart = s.origin>
-					<cfset var sArrive = s.destination>
-					<cfif sCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
-						<cfreturn false>
-					</cfif>
-					<cfset tempDepart = s.origin>
-					<cfset tempArrive = s.destination>
-					<cfset sCtr++>
-				</cfloop>
+				<cfset var startCtr = 1>
+				<cfset var segmentCount = StructCount(segments)>
+
+				<cfif segmentCount GT 1>
+					<!---Need to make sure each segment 'makes sense' if there are multiple--->
+					<!---Only multiple because single segment groups are derived from the single segment and no need to check against metro again which is exp--->
+					<cfloop collection="#segments#" item="segment">
+						<cfset var s = segments[segment]>
+						<cfset var sDepart = s.origin>
+						<cfset var sArrive = s.destination>
+						<cfif startCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
+							<cfreturn false>
+						</cfif>
+						<cfset tempDepart = s.origin>
+						<cfset tempArrive = s.destination>
+						<cfset startCtr++>
+					</cfloop>
+				</cfif>
 			</cfloop>
 			<cfreturn true>
 		<cfelse>
