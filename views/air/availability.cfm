@@ -69,42 +69,30 @@
 				<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
 				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-					<cfif checkTrip(variables.stTrip,rc.Filter)>
+
 						<cfset nCount++>
 						#View('air/badge')#
-					<cfelse>
-						<!--- TEMPORARY HACK UNTIL WE CAN FIGURE OUT WHY WE ARE SEEING LEGS THAT AREN'T WHAT WE SEARCHED FOR
-						 <cfdump var="#variables.stTrip#" />
-						--->
-					</cfif>
+
 				</cfif>
 			<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
 				<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
 				<cftry>
 					<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-					<cfif checkTrip(variables.stTrip,rc.Filter)>
+
 						<cfset nCount++>
 						#View('air/badge')#
-					<cfelse>
-						<!--- TEMPORARY HACK UNTIL WE CAN FIGURE OUT WHY WE ARE SEEING LEGS THAT AREN'T WHAT WE SEARCHED FOR
-						 <cfdump var="#variables.stTrip#" />
-						--->
-					</cfif>
+
 				</cfif>
 				<cfcatch type="any"></cfcatch>
 				</cftry>
 			<cfelse>
 				<!--- this is first view so show everything --->
 				<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-				<cfif checkTrip(variables.stTrip,rc.Filter)>
+
 					<cfset nCount++>
 					#View('air/badge')#
-				<cfelse>
-					<!--- TEMPORARY HACK UNTIL WE CAN FIGURE OUT WHY WE ARE SEEING LEGS THAT AREN'T WHAT WE SEARCHED FOR
-					 <cfdump var="#variables.stTrip#" />
-					--->
-				</cfif>
+
 			</cfif>
 		</cfloop>
 		</div> <!-- //.container -->
@@ -156,27 +144,3 @@
 
 	#View('modal/popup')#
 </cfoutput>
-<cffunction name="checkTrip">
-	<cfargument name="trip" required="true"/>
-	<cfargument name="filter" required="true"/>
-	<cfset var dCity = arguments.Filter.getDepartCity()>
-	<cfset var aCity = arguments.Filter.getArrivalCity()>
-	<cfset var ctr = 1>
-	<cfset var aCtr = 1>
-	<cfset var bCtr = StructCount(arguments.trip.Groups)>
-	<cfif bCtr EQ 1>
-	<cfloop collection="#arguments.trip.Groups#" item="Group">
-		<cfset stGroup = arguments.trip.Groups[Group]>
-		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity)) AND (stGroup.Origin NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity))>
-			<cfreturn false>
-		</cfif>
-		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity)) AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
-			<cfreturn false>
-		</cfif>
-		<cfset ctr = ctr+1>
-	</cfloop>
-	<cfelse>
-		<cfreturn false>
-	</cfif>
-	<cfreturn true>
-</cffunction>
