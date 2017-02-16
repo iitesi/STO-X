@@ -34,7 +34,7 @@
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 			<!--- override header colors for TMC so their light logos will display properly --->
-			<cfif structKeyExists(rc,"account") AND rc.account.tmc.getIsExternal() EQ 1>
+			<cfif structKeyExists(rc,"account") AND StructKeyExists(rc.account,"tmc") AND rc.account.tmc.getIsExternal() EQ 1>
 				<style type="text/css">
 					##main-header {background-color: ##292929}
 					##header-top {background-color: ##F1F1F1}
