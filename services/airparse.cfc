@@ -517,14 +517,16 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="removeInvalidTrips" output="false" hint="Due to inconsistent uAPI results, this method does sanity check on results">
 		<cfargument name="trips" required="true">
 		<cfargument name="filter" required="true">
+		<cfargument name="tripTypeOverride" default=""/>
 
 		<cfset var searchDepart = arguments.filter.getDepartCity()>
 		<cfset var searchArrive = arguments.filter.getArrivalCity()>
 		<cfset var tripsToVerify = arguments.trips>
 		<cfset var ctr = 1>
+		<cfset var tripType = (len(arguments.tripTypeOverride) ? arguments.tripTypeOverride : arguments.filter.getAirType())>
 
 		<cfloop collection="#tripsToVerify#" item="trip">
-			<cfif arguments.filter.getAirType() NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive,arguments.filter.getAirType())>
+			<cfif tripType NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive,tripType)>
 				<cfset StructDelete(tripsToVerify, trip)>
 			</cfif>
 			<cfset ctr++>
@@ -542,7 +544,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset var groups = arguments.trip.Groups>
 			<cfset var ctr = 0>
 			<!---This checks Roundtrip flights have more than one group (required)--->
-			<cfif arguments.tripType EQ 'RT' AND StructCount(groups) LT 2>
+			<cfif (arguments.tripType EQ 'RT' AND StructCount(groups) LT 2) OR (arguments.tripType EQ 'OW' AND StructCount(groups) NEQ 1)>
 				<cfreturn false>
 			</cfif>
 			<cfloop collection="#groups#" item="group">
@@ -554,13 +556,18 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						  (
 								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gDepart) OR
 								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gArrive)
+						  ) AND
+							(
+								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
+								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
 						  )>
 					<cfreturn false>
+
 				<cfelseif group EQ 1 AND
 						  (
 								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
 								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
-						  )>
+						  ) >
 					<cfreturn false>
 				</cfif>
 				<cfset var segments = g.segments>
