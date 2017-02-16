@@ -203,12 +203,15 @@
 						Details
 						<span class="divider">/</span>
 					</a>
-					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-						<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-							Seats
-							<span class="divider">/</span>
-						</a>
-					</cfif>
+					<cftry>
+						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+							<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+								Seats
+								<span class="divider">/</span>
+							</a>
+						</cfif>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
 					<a data-url="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
 						Bags
 						<span class="divider">/</span>
@@ -304,13 +307,14 @@
 
 
 <!--- set unique data-attributes for each badge for filtering by time --->
+<cftry>
 <cfscript>
 dataString = [];
 loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
 }
 </cfscript>
-
+<cfcatch type="any"></cfcatch></cftry>
 <!--- display badge --->
 <cfoutput>
 	<div id="flight#nTripKey#" #dataString.toList(' ')# class="col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
