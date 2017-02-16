@@ -524,7 +524,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset var ctr = 1>
 
 		<cfloop collection="#tripsToVerify#" item="trip">
-			<cfif arguments.filter.getAirType() NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive)>
+			<cfif arguments.filter.getAirType() NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive,arguments.filter.getAirType())>
 				<cfset StructDelete(tripsToVerify, trip)>
 			</cfif>
 			<cfset ctr++>
@@ -536,10 +536,15 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="trip" required="true">
 		<cfargument name="searchDepart" required="true">
 		<cfargument name="searchArrive" required="true">
+		<cfargument name="tripType" default="RT">
 
 		<cfif StructKeyExists(arguments.trip,'Groups')>
 			<cfset var groups = arguments.trip.Groups>
 			<cfset var ctr = 0>
+			<!---This checks Roundtrip flights have more than one group (required)--->
+			<cfif arguments.tripType EQ 'RT' AND StructCount(groups) LT 2>
+				<cfreturn false>
+			</cfif>
 			<cfloop collection="#groups#" item="group">
 				<cfset var g = groups[group]>
 				<cfset var gDepart = g.origin>
