@@ -1,3 +1,28 @@
+<cffunction name="checkTripOneWay">
+	<cfargument name="trip" required="true"/>
+	<cfargument name="filter" required="true"/>
+	<cfset var dCity = arguments.Filter.getDepartCity()>
+	<cfset var aCity = arguments.Filter.getArrivalCity()>
+	<cfset var ctr = 1>
+	<cfset var aCtr = 1>
+	<cfset var bCtr = StructCount(arguments.trip.Groups)>
+	<cfif bCtr EQ 1>
+	<cfloop collection="#arguments.trip.Groups#" item="Group">
+		<cfset stGroup = arguments.trip.Groups[Group]>
+		<cfif ctr EQ aCtr AND (stGroup.Origin NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity)) AND (stGroup.Origin NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity))>
+			<cfreturn false>
+		</cfif>
+		<cfif ctr EQ bCtr AND (stGroup.Destination NEQ aCity AND !ListFind('CHI,NYC,HOU,DFW,LON',aCity)) AND (stGroup.Destination NEQ dCity AND !ListFind('CHI,NYC,HOU,DFW,LON',dCity))>
+			<cfreturn false>
+		</cfif>
+		<cfset ctr = ctr+1>
+	</cfloop>
+	<cfelse>
+		<cfreturn false>
+	</cfif>
+	<cfreturn true>
+</cffunction>
+
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
@@ -12,7 +37,7 @@
 </cfsilent>
 
 <cfoutput>
-
+	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
 	#view('air/unusedtickets')#
 
 	<div class="page-header">
@@ -39,11 +64,9 @@
 			<cfelse>
 				<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
 			</cfif>
-		<cfelse>
-			<cfset frameSrc = ''>
+			<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 		</cfif>
 
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			#View('air/legs')#
@@ -64,9 +87,13 @@
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
 			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
-				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-				<cfset nCount++>
-				#View('air/badge')#
+				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+					<cfset nCount++>
+					#View('air/badge')#
+				<cfelse>
+						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+				</cfif>
 			</cfloop>
 
 			<cfset variables.bSelected = false>
@@ -74,7 +101,11 @@
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
 					<cfset nCount++>
-					#View('air/badge')#
+					<cfif rc.Filter.getAirType() NEQ 'OW'>
+						#View('air/badge')#
+					<cfelseif checkTripOneWay(variables.stTrip, rc.Filter) AND rc.Filter.getAirType() EQ 'OW'>
+						#View('air/badge')#
+					</cfif>
 				</cfif>
 			</cfloop>
 

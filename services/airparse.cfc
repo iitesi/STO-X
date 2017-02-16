@@ -61,6 +61,7 @@
 
 	<cffunction name="parseSegments" output="false" hint="I take XML from uAPI and parse segments from it.">
 		<cfargument name="stResponse"	required="true" hint="Truncated XML object">
+		<cfargument name="attachXML" default="false">
 
 		<cfset local.stSegments = {}>
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
@@ -68,9 +69,10 @@
 			'air:AirSegmentList' - found in low fare and availability search
 			'air:AirItinerary' - found in air pricing
 			--->
-			<cfif stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR stAirSegmentList.XMLName EQ 'air:AirItinerary'>
+			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList' OR local.stAirSegmentList.XMLName EQ 'air:AirItinerary'>
 
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
+					<cfset local.XML = (arguments.attachXML ? local.stAirSegment : "attachXML need to be true to dump XML used to create segments")>
 					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
 					<cfset local.dArrivalTime = GetToken(local.dArrivalGMT, 1, '.')>
 					<cfset local.dArrivalOffset = GetToken(GetToken(local.dArrivalGMT, 2, '-'), 1, ':')>
@@ -112,7 +114,7 @@
 						TravelTime : local.travelTime,
 						Key : local.stAirSegment.XMLAttributes.Key,
 						PolledAvailabilityOption : (StructKeyExists(local.stAirSegment.XMLAttributes, 'PolledAvailabilityOption') ? local.stAirSegment.XMLAttributes.PolledAvailabilityOption : ''),
-					}>
+						XML : local.XML}>
 				</cfloop>
 
 			</cfif>
@@ -162,6 +164,7 @@
 		<cfargument name="stSegments" required="true">
 		<cfargument name="bRefundable" required="false" default="false">
 		<cfargument name="bFirstPrice" required="false" default="false">
+		<cfargument name="attachXML" default="false">
 
 		<cfset local.stTrips = {}>
 		<cfset local.stTrip = {}>
@@ -205,6 +208,7 @@
 				<cfset local.bPrivateFare = false>
 				<cfset local.tripKey = ''>
 				<cfset local.stopOvers = {}>
+				<cfset local.stTrip.XML = (arguments.attachXML ? local.responseNode : "attachXML need to be true to dump XML used to create segments")>
 
 				<cfloop array="#local.responseNode.XMLChildren#" index="local.airPricingSolutionIndex" item="local.airPricingSolution">
 
@@ -300,6 +304,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.PrivateFare = local.bPrivateFare>
 						<cfset local.stTrip.PTC = local.sPTC>
 						<cfset local.stTrip.Class = local.sOverallClass>
+						<cfset local.stTrip.CabinClass = local.sClass>
 						<cfset local.refundable = (structKeyExists(airPricingSolution.XMLAttributes, 'Refundable') AND airPricingSolution.XMLAttributes.Refundable EQ 'true' ? 1 : 0)>
 						<cfset local.stTrip.Ref = local.refundable>
 						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
@@ -509,6 +514,93 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<cfreturn local.stTrips />
 	</cffunction> --->
+	<cffunction name="removeInvalidTrips" output="false" hint="Due to inconsistent uAPI results, this method does sanity check on results">
+		<cfargument name="trips" required="true">
+		<cfargument name="filter" required="true">
+
+		<cfset var searchDepart = arguments.filter.getDepartCity()>
+		<cfset var searchArrive = arguments.filter.getArrivalCity()>
+		<cfset var tripsToVerify = arguments.trips>
+		<cfset var ctr = 1>
+
+		<cfloop collection="#tripsToVerify#" item="trip">
+			<cfif arguments.filter.getAirType() NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive)>
+				<cfset StructDelete(tripsToVerify, trip)>
+			</cfif>
+			<cfset ctr++>
+		</cfloop>
+		<cfreturn tripsToVerify>
+	</cffunction>
+
+	<cffunction name="verifyTripsWithGroups" returnType="boolean" output="false" hint="Checks a trip's group for valid segments">
+		<cfargument name="trip" required="true">
+		<cfargument name="searchDepart" required="true">
+		<cfargument name="searchArrive" required="true">
+
+		<cfif StructKeyExists(arguments.trip,'Groups')>
+			<cfset var groups = arguments.trip.Groups>
+			<cfset var ctr = 0>
+			<cfloop collection="#groups#" item="group">
+				<cfset var g = groups[group]>
+				<cfset var gDepart = g.origin>
+				<cfset var gArrive = g.destination>
+				<!---This checks if the group departs/arrives either on the trip there or the trip back (so depart/arrive are switched)--->
+				<cfif group EQ 0 AND
+						  (
+								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gDepart) OR
+								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gArrive)
+						  )>
+					<cfreturn false>
+				<cfelseif group EQ 1 AND
+						  (
+								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
+								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
+						  )>
+					<cfreturn false>
+				</cfif>
+				<cfset var segments = g.segments>
+				<cfset var tempDepart = ''>
+				<cfset var tempArrive = ''>
+				<cfset var startCtr = 1>
+				<cfset var segmentCount = StructCount(segments)>
+
+				<cfif segmentCount GT 1>
+					<!---Need to make sure each segment 'makes sense' if there are multiple--->
+					<!---Only multiple because single segment groups are derived from the single segment and no need to check against metro again which is exp--->
+					<cfloop collection="#segments#" item="segment">
+						<cfset var s = segments[segment]>
+						<cfset var sDepart = s.origin>
+						<cfset var sArrive = s.destination>
+						<cfif startCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
+							<cfreturn false>
+						</cfif>
+						<cfset tempDepart = s.origin>
+						<cfset tempArrive = s.destination>
+						<cfset startCtr++>
+					</cfloop>
+				</cfif>
+			</cfloop>
+			<cfreturn true>
+		<cfelse>
+			<cfreturn false>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="getMetroList" returnType="string" output="false" hint="I gather all the metro city pairs STO supports">
+		<!---STM-989 has the list--->
+		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW'>
+		<cfreturn metroList>
+	</cffunction>
+
+	<cffunction name="isMetroArea" returnType="boolean" output="false" hint="I check an airport code against metro area list">
+		<cfargument name="airport" required="true">
+		<cfset var metroList = getMetroList()>
+		<cfif ListFind(metroList,arguments.airport)>
+				<cfreturn true>
+		<cfelse>
+				<cfreturn false>
+		</cfif>
+	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
 		<cfargument name="stTrips1" required="true">
@@ -571,6 +663,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 	<cffunction name="addGroups" output="false" hint="I add groups.">
 		<cfargument name="stTrips" required="true">
 		<cfargument name="sType" required="false" default="Fare">
+		<cfargument name="Filter" required="false">
 
 		<cfset local.stGroups = {}>
 		<cfset local.aCarriers = {}>
@@ -619,11 +712,32 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			<cfset local.stTrips[local.tripIndex].Duration = local.nDuration>
 			<cfset local.stTrips[local.tripIndex].Stops = local.nTotalStops>
 			<cfif arguments.sType EQ 'Avail'>
+				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[local.nOverrideGroup].DepartureTime>
+				<cfcatch type="any">
+						<cfif StructKeyExists(arguments,"Filter")>
+							<cfset local.stTrips[local.tripIndex].Depart = arguments.Filter.getDepartDateTime()>
+						</cfif>
+				</cfcatch>
+				</cftry>
 			<cfelse>
+				<cftry>
 				<cfset local.stTrips[local.tripIndex].Depart = local.stGroups[0].DepartureTime>
+				<cfcatch type="any">
+						<cfif StructKeyExists(arguments,"Filter")>
+							<cfset local.stTrips[local.tripIndex].Depart = arguments.Filter.getDepartDateTime()>
+						</cfif>
+				</cfcatch>
+				</cftry>
 			</cfif>
-			<cfset local.stTrips[tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
+			<cftry>
+			<cfset local.stTrips[local.tripIndex].Arrival = local.stGroups[local.nOverrideGroup].ArrivalTime>
+			<cfcatch type="any">
+					<cfif StructKeyExists(arguments,"Filter")>
+						<cfset local.stTrips[local.tripIndex].Arrival = arguments.Filter.getArrivalDateTime()>
+					</cfif>
+			</cfcatch>
+			</cftry>
 			<cfset local.stTrips[tripIndex].Carriers = structKeyArray(local.aCarriers)>
 			<cfset local.stTrips[tripIndex].validCarriers = flagBlackListedCarriers(local.stTrips[tripIndex].Carriers)>
 			<cfset local.stTrips[tripIndex].PlatingCarrier = setPlatingCarrier(local.stTrips[tripIndex].Groups)>
@@ -970,7 +1084,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<!--- this is a one time check because the depart dates are all the same --->
 		<cfset local.firstKey = listFirst(structKeyList(local.stTrips))>
 		<cfset local.outOfPolicyBasedOnAdvPurchRule = false>
-		<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND DateDiff('d', Now(), local.stTrips[local.firstKey].Depart) LT arguments.Policy.Policy_AirAdv>
+		<cfif arguments.Policy.Policy_AirAdvRule EQ 1 AND !structIsEmpty(stTrips) AND DateDiff('d', Now(), local.stTrips[local.firstKey].Depart) LT arguments.Policy.Policy_AirAdv>
 			<cfset local.outOfPolicyBasedOnAdvPurchRule = true>
 		</cfif>
 
