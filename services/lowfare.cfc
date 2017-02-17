@@ -245,7 +245,7 @@
 		<cfset local.attributes = {}>
 		<cfset local.attributes.stTrips = {}>
 		<!--- Don't go back to the UAPI if we already got the data. --->
-		<cfif NOT StructKeyExists(arguments.stPricing, arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate)>
+
 			<cfset local.sThreadName = arguments.sCabin&arguments.bRefundable&arguments.airline&arguments.bGovtRate&arguments.fareType&replace(arguments.accountCode, ',', '', 'all')>
 			<cfset local[local.sThreadName] = {}>
 
@@ -371,8 +371,7 @@
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>
-			<!--- </cfthread> --->
-		</cfif>
+			
 
 		<cfreturn local.attributes.stTrips>
 	</cffunction>
