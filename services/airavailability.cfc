@@ -100,13 +100,6 @@
 			</cfloop>
 		</cfif>
 
-		<!--- Don't go back to the getUAPI if we already got the data UNLESS we now have to exclude blacklisted carrier pairings. --->
-		<cfif NOT structKeyExists(session.searches, arguments.Filter.getSearchID())
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()], 'stAvailDetails')
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails, 'stGroups')
-			OR NOT structKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups, arguments.Group)
-			OR len(local.blackListedCarriers)>
-
 			<cfset local.sThreadName = 'Group'&arguments.Group>
 			<cfset local[local.sThreadName] = {}>
 
@@ -189,9 +182,6 @@
 
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-			<!--- </cfthread> --->
-		</cfif>
-
 		<cfreturn local.sThreadName>
 	</cffunction>
 
