@@ -554,19 +554,19 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<!---This checks if the group departs/arrives either on the trip there or the trip back (so depart/arrive are switched)--->
 				<cfif group EQ 0 AND
 						  (
-								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gDepart) OR
-								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gArrive)
+								!checkMetro(arguments.searchDepart,gDepart) OR (arguments.searchDepart NEQ gDepart AND !isMetroArea(arguments.searchDepart)) OR
+								!checkMetro(arguments.searchArrive,gArrive) OR (arguments.searchArrive NEQ gArrive AND !isMetroArea(arguments.searchArrive))
 						  ) AND
 							(
-								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
-								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
+								!checkMetro(arguments.searchArrive,gDepart) OR (arguments.searchArrive NEQ gDepart AND !isMetroArea(arguments.searchArrive)) OR
+								!checkMetro(arguments.searchDepart,gArrive) OR (arguments.searchDepart NEQ gArrive AND !isMetroArea(arguments.searchDepart))
 						  )>
 					<cfreturn false>
 
 				<cfelseif group EQ 1 AND
 						  (
-								(!isMetroArea(arguments.searchArrive) AND arguments.searchArrive NEQ gDepart) OR
-								(!isMetroArea(arguments.searchDepart) AND arguments.searchDepart NEQ gArrive)
+								!checkMetro(arguments.searchArrive,gDepart) OR (arguments.searchArrive NEQ gDepart AND !isMetroArea(arguments.searchArrive)) OR
+								!checkMetro(arguments.searchDepart,gArrive) OR (arguments.searchDepart NEQ gArrive AND !isMetroArea(arguments.searchDepart))
 						  ) >
 					<cfreturn false>
 				</cfif>
@@ -612,6 +612,50 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfelse>
 				<cfreturn false>
 		</cfif>
+	</cffunction>
+
+	<cffunction name="checkMetro" returnType="boolean" output="false" hint="I check against metro list and ensure it is a valid airport">
+		<cfargument name="airportOrMetro" required="true">
+		<cfargument name="airportToCheck" required="true">
+
+		<cfif isMetroArea(arguments.airportOrMetro)>
+				<cfset var airportList = metroAirportList(arguments.airportOrMetro)>
+				<cfif ListLen(airportList) LTE 0 OR ListFind(metroAirportList(arguments.airportOrMetro),airportToCheck)>
+					<cfreturn true>
+				<cfelse>
+					<cfreturn false>
+				</cfif>
+		<cfelse>
+			<cfreturn true> <!---NOT A METRO, LET THE OTHER CHECKS HAPPEN--->
+		</cfif>
+	</cffunction>
+
+	<cffunction name="metroAirportList" returnType="string" output="false" hint="I check an airport code against metro area list">
+		<cfargument name="airport" required="true">
+		<cfswitch expression="#arguments.airport#">
+			<cfcase value="NYC">
+				<cfset var returnList = 'JFK,JRA,JRB,LGA,NBP,NES,NWK,NWS,QNY,ZME,ZRP,ZYP'>
+			</cfcase>
+			<cfcase value="WAS">
+				<cfset var returnList = 'BOF,GBO,IAD,MTN,ZBP,ZRZ,ZWU'>
+			</cfcase>
+			<cfcase value="DFW">
+				<cfset var returnList = 'ADS,AFW,DAL,DFW,FWH,JDB,RBD'>
+			</cfcase>
+			<cfcase value="HOU">
+				<cfset var returnList = 'DWH,EFD,HOU,IAH,JDX,JGP,JGQ,JWH'>
+			</cfcase>
+			<cfcase value="HOU">
+				<cfset var returnList = 'DWH,EFD,HOU,IAH,JDX,JGP,JGQ,JWH'>
+			</cfcase>
+			<cfcase value="CHI">
+				<cfset var returnList = 'DPA,MDW,ORD,PWK,RFD,ZUK,ZUN,ZWV'>
+			</cfcase>
+			<cfdefaultcase>
+				<cfset var returnList = ''>
+			</cfdefaultcase>
+		</cfswitch>
+		<cfreturn returnList>
 	</cffunction>
 
 	<cffunction name="mergeTrips" output="false" hint="I merge passed in trips.">
