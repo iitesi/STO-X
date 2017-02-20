@@ -68,7 +68,8 @@
 				<td colspan="2">
 					<cfset btnClass = "">
 					<cfif bDisplayFare>
-						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#
+						#findClass(stTrip.Class)#
+						<!--- #(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))# --->
 						<br>
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
@@ -172,10 +173,11 @@
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">
-							#(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))#
+							#Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4)#
+							<!--- #(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))# --->
 						</td>
-						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#"><cfif
-						nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
+						<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">
+							<span>#stSegment.Origin# to #stSegment.Destination#</span></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
 								#stGroup.TravelTime#
@@ -201,12 +203,15 @@
 						Details
 						<span class="divider">/</span>
 					</a>
-					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-						<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-							Seats
-							<span class="divider">/</span>
-						</a>
-					</cfif>
+					<cftry>
+						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+							<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+								Seats
+								<span class="divider">/</span>
+							</a>
+						</cfif>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
 					<a data-url="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
 						Bags
 						<span class="divider">/</span>
@@ -214,12 +219,12 @@
 					<a data-url="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 						Email
 					</a>
-					<cfif (application.es.getCurrentEnvironment() NEQ 'prod'
+					<!--- <cfif (application.es.getCurrentEnvironment() NEQ 'prod'
 						AND application.es.getCurrentEnvironment() NEQ 'beta')
 						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
-					</cfif>
+					</cfif> --->
 				</td>
 			</tr>
 		</table>
@@ -252,12 +257,13 @@
 							<cfset nCnt = 0>
 							<cfset segmentCount = arrayLen(structKeyArray(stGroup.Segments))>
 							<cfloop collection="#stGroup.Segments#" item="nSegment" >
+
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
 								<tr>
 									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
-									<td valign="top"class="flighttext" nowrap><cfif nCnt EQ 1 AND segmentCount NEQ 1>to <span>#stSegment.Destination#</span></cfif></td>
+									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">
 										<cfif nCnt EQ 1>
 											#stGroup.TravelTime#
@@ -274,7 +280,8 @@
 							<strong class="largetext">$#NumberFormat(stTrip.Total)#</strong><br>
 						</cfif>
 						<span class="smalltext">
-						#(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br>
+							#findClass(stTrip.Class)#<br>
+						<!--- #(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))#<br> --->
 						#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<br>
 						#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#
 
@@ -300,14 +307,28 @@
 
 
 <!--- set unique data-attributes for each badge for filtering by time --->
+<cftry>
 <cfscript>
 dataString = [];
 loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
 }
 </cfscript>
-
+<cfcatch type="any"></cfcatch></cftry>
 <!--- display badge --->
 <cfoutput>
 	<div id="flight#nTripKey#" #dataString.toList(' ')# class="col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
 </cfoutput>
+
+<cffunction name="findClass">
+	<cfargument name="classOfService" required="true"/>
+	<cfif ListFindNoCase('y,x',classOfService) GT 0>
+		<cfreturn 'Economy'/>
+	<cfelseif ListFindNoCase('f',classOfService) GT 0>
+		<cfreturn 'First'/>
+	<cfelseif ListFindNoCase('c',classOfService) GT 0>
+		<cfreturn 'Business'/>
+	<cfelse>
+		<cfreturn 'Economy'/>
+	</cfif>
+</cffunction>

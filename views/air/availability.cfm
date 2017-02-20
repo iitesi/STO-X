@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-
+  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
 	#view('air/unusedtickets')#
 
 <div class="page-header">
@@ -32,7 +32,16 @@
 		</h1>
 	</cfif>
 
-	<h2><a href="##displaySearchWindow" id="displayModal" class="change-search leehere" data-toggle="modal" data-backdrop="static"><i class="fa fa-search"></i> Change Search</a></h2>
+	<cfif structKeyExists(session, 'cookieToken')
+		AND structKeyExists(session, 'cookieDate')>
+		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
+		<cfelse>
+			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
+		</cfif>
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
+	</cfif>
+
 
 	<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 		#View('air/legs')#
@@ -60,21 +69,30 @@
 				<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
 				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-					<cfset nCount++>
-					#View('air/badge')#
+
+						<cfset nCount++>
+						#View('air/badge')#
+
 				</cfif>
 			<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
 				<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
-				<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
+				<cftry>
+					<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
 					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-					<cfset nCount++>
-					#View('air/badge')#
+
+						<cfset nCount++>
+						#View('air/badge')#
+
 				</cfif>
+				<cfcatch type="any"></cfcatch>
+				</cftry>
 			<cfelse>
 				<!--- this is first view so show everything --->
 				<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
-				<cfset nCount++>
-				#View('air/badge')#
+
+					<cfset nCount++>
+					#View('air/badge')#
+
 			</cfif>
 		</cfloop>
 		</div> <!-- //.container -->

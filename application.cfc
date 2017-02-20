@@ -55,13 +55,13 @@
 		<!--- <cfif isDefined("url.reinit")>
 			<cfset ApplicationStop()>
 			<cflocation url="index.cfm" addtoken="false">
-		</cfif> --->
+		</cfif>
 		<cfif request.context.action EQ 'main.notfound'>
 			<cfhttp url="https://europaqa.shortstravel.com/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
 				<cfhttpparam type="formfield" name="acctID" value="1" />
 			</cfhttp>
 			<cfdump var="#local.response#" abort />
-		</cfif>
+		</cfif>--->
 
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
@@ -79,7 +79,8 @@
 				AND request.context.action NEQ 'main.contact'
 				AND request.context.action NEQ 'dycom.policy'
 				AND request.context.action NEQ 'setup.resetPolicy'
-				AND request.context.action NEQ 'setup.setPolicy'>
+				AND request.context.action NEQ 'setup.setPolicy'
+				AND request.context.action NEQ 'air.viewXMLResults'>
 
 				<cfset var action = ListFirst(request.context.action,".")>
 
@@ -113,6 +114,23 @@
 								<cfset session.cookieToken = request.context.token />
 							</cfif>
 
+						</cfif>
+					<cfelse>
+						<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+						<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
+						<cfif structKeyExists(request.context, 'date')>
+							<cfset session.cookieDate = request.context.date>
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />								
+							<cfif apiURL NEQ cgi.http_host>
+								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
+							</cfif>
+						</cfif>
+						<cfif structKeyExists(request.context, 'token')>
+							<cfset session.cookieToken = request.context.token>
+							<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
+							<cfif apiURL NEQ cgi.http_host>
+								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
+							</cfif>
 						</cfif>
 					</cfif>
 

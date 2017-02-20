@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-
+	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
 	#view('air/unusedtickets')#
 
 	<div class="page-header">
@@ -39,11 +39,9 @@
 			<cfelse>
 				<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
 			</cfif>
-		<cfelse>
-			<cfset frameSrc = ''>
+			<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 		</cfif>
 
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 			#View('air/legs')#
@@ -64,17 +62,21 @@
 			<cfset variables.bSelected = true>
 			<cfset variables.nCount = 0>
 			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
-				<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-				<cfset nCount++>
-				#View('air/badge')#
+				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+					<cfset nCount++>
+					#View('air/badge')#
+				<cfelse>
+						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+				</cfif>
 			</cfloop>
 
 			<cfset variables.bSelected = false>
 			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
 				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
 					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-					<cfset nCount++>
-					#View('air/badge')#
+					<cfset nCount++>					
+						#View('air/badge')#
 				</cfif>
 			</cfloop>
 
