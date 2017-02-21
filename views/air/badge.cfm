@@ -110,7 +110,7 @@
 				<tr align="center">
 					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
 					<td colspan="2">
-						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">OUT OF POLICY</span>
+						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#</span>
 					</td>
 				</tr>
 			</cfif>
