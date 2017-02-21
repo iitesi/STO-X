@@ -86,12 +86,12 @@
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
-
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
 		<cfset local.stTrips = {}>
+		<cfset local.stTripsTemp = {}>
 
 		<cfset local.airlines = []>
 		<cfif arguments.Filter.getAirlines() EQ ''>
@@ -122,7 +122,8 @@
 							<cfif getToken(local.sPF, 2, ',') EQ 'WN'>
 								<cfset local.wnFound = true>
 							</cfif>
-							<cfset local.stTrips = doLowFare( Filter = arguments.Filter
+							<cfset local.stTripsTemp = {}>
+							<cfset local.stTripsTemp = doLowFare( Filter = arguments.Filter
 																, sCabin = local.sCabin
 																, bRefundable = local.bRefundable
 																, sPriority = arguments.sPriority
@@ -133,14 +134,14 @@
 																, airline = airline
 																, fareType = "PrivateFaresOnly"
 																, accountCode = sPF )>
-							<cfset local.stThreads[local.sThreadName] = ''>
-						</cfif>
+								<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.stTripsTemp)>
+							</cfif>
 					</cfloop>
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 					<cfif NOT local.wnFound
 						AND (local.airline EQ 'X'
 							OR local.airline EQ 'WN')>
-						<cfset local.stTrips = doLowFare( Filter = arguments.Filter
+						<cfset local.stTripsTemp = {}>
+						<cfset local.stTripsTemp = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = local.bRefundable
 															, sPriority = arguments.sPriority
@@ -152,10 +153,11 @@
 															, fareType = "PrivateFaresOnly"
 															, accountCode = '' )>
 						<cfset local.stThreads[local.sThreadName] = ''>
+						<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.stTripsTemp)>
 					</cfif>
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 					<cfif local.airline NEQ 'WN'>
-						<cfset local.stTrips = doLowFare( Filter = arguments.Filter
+						<cfset local.stTripsTemp = {}>
+						<cfset local.stTripsTemp = doLowFare( Filter = arguments.Filter
 															, sCabin = local.sCabin
 															, bRefundable = local.bRefundable
 															, sPriority = arguments.sPriority
@@ -165,9 +167,8 @@
 															, BlackListedCarrierPairing = local.BlackListedCarrierPairing
 															, airline = local.airline
 															, fareType = "PublicFaresOnly" )>
-						<cfset local.stThreads[local.sThreadName] = ''>
+						<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.stTripsTemp)>
 					</cfif>
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.stTrips)>
 				</cfloop>
 			</cfloop>
 		</cfloop>
@@ -177,7 +178,8 @@
 			  PersonalGeography - CityCode=DFW
 			  PublicorPrivateFares, ProhibitNonRefundablefares=false --->
 		<cfif arguments.Filter.getAcctID() EQ 235>
-			<cfset local.stTrips = doLowFare( Filter = arguments.Filter
+			<cfset local.stTripsTemp = {}>
+			<cfset local.stTripsTemp = doLowFare( Filter = arguments.Filter
 												, sCabin = local.sCabin
 												, bRefundable = false
 												, sPriority = arguments.sPriority
@@ -189,7 +191,7 @@
 												, fareType = "PublicOrPrivateFares"
 												, accountCode = sPF
 												, bGovtRate = true )>
-			<cfset local.stThreads[local.sThreadName] = ''>
+			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.stTripsTemp)>
 		</cfif>
 
 		<!--- Join only if threads where thrown out.
@@ -219,6 +221,7 @@
 		<!--- <cfdump var="#session.searches[arguments.Filter.getSearchID()].stTrips#" abort> --->
 
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
+		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = local.stTrips>
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 
 		<cfreturn />
@@ -371,7 +374,7 @@
 
 				<!--- flag this as being processed so we don't return to uAPI in future --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>
-			
+
 
 		<cfreturn local.attributes.stTrips>
 	</cffunction>
