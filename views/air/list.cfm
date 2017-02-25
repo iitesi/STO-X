@@ -62,9 +62,13 @@
 				}
 			}
 			</cfscript>
-					<div class="col-md-2 center" style="font-weight: bold;">
-						<img class="carrierimg" src="assets/img/airlines/#(ArrayLen(stTrip.Carriers) EQ 1 ? stTrip.Carriers[1] : 'Mult')#.png">
-						#(ArrayLen(stTrip.Carriers) EQ 1 ? '<br />'&application.stAirVendors[stTrip.Carriers[1]].Name : '<br />Multiple Carriers')#
+					<div class="col-sm-2 center" style="font-weight: bold;">
+						<cfif ArrayLen(stTrip.Carriers) EQ 1>
+							<img class="carrierimg" src="assets/img/airlines/#stTrip.Carriers[1]#.png">
+							<cfelse>
+								<img class="carrierimg" src="assets/img/airlines/Mult.png" height="60px">
+								<br />Multiple Carriers
+							</cfif>
 					</div>
 
 
@@ -88,8 +92,9 @@
 	<cfset arrayAppend(timeFilterTotal, departureTime)>
 	<cfset arrayAppend(timeFilterTotal, arrivalTime)>
 	--->
-	<div class="col-md-3" style="vertical-align: middle;margin-top: 1.5em;">
-		Depart #stGroup.Origin# <strong>#DateFormat(stGroup.DepartureTime, 'ddd')# #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
+	<div class="col-sm-3 center">
+		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
+		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
 		Arrive #stGroup.Destination# <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br />
 		<small>Travel Time: #stGroup.TravelTime#</small>
 	</div>
@@ -123,21 +128,19 @@
 </cfloop>
 <!-- END -->
 
-				  <div class="col-md-4 center price">
+				  <div class="col-sm-4 center price">
 
 				<!--<td colspan="2"> -->
 					<cfset btnClass = "">
 					<cfif bDisplayFare>
-						#findClass(stTrip.Class)#
-						<!--- #(stTrip.Class EQ 'Y' ? 'ECONOMY' : (stTrip.Class EQ 'C' ? 'BUSINESS' : 'FIRST'))# --->
-						<br>
+
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
 						</cfif>
 						<cfif bSelected>
 							<cfset btnClass = "btn-success">
 						</cfif>
-						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
+						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)# - #findClass(stTrip.Class)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
 							data-content="
@@ -155,7 +158,7 @@
 									Changes USD #stTrip.changePenalty# for reissue
 								</cfif>
 							" href="##"/>
-							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
+							<small>#(stTrip.Ref EQ 0 ? 'NO REFUNDS<br>' : 'REFUNDABLE<br>')#</small>
 						</span>
 						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
 							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" href="##" />UNUSED TKT AVAIL</span>
@@ -171,7 +174,7 @@
 				<tr align="center">
 					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
 					<td colspan="2">
-						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#">#(stTrip.Policy ? '' : 'OUT OF POLICY<br>')#</span>
+						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : 'OUT OF POLICY')#</small></span>
 					</td>
 				</tr>
 			</cfif>
@@ -182,7 +185,7 @@
 					#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='fa fa-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='fa fa-suitcase'></i>&nbsp;<i class='fa fa-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
 				</cfloop>
 			</cfsavecontent>
-			<br />
+			<div>
 			<small>
 
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
@@ -214,6 +217,7 @@
 					</cfif> --->
 
 			</small>
+		</div>
 		</div> <!-- /.price -->
 	</div> <!-- /.row -->
 </div> <!-- /.panel-body -->
