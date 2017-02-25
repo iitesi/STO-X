@@ -57,29 +57,52 @@
 			<cfif structKeyExists(session.searches[rc.SearchID], "sUserMessage") AND len(session.searches[rc.SearchID].sUserMessage)>
 				<div class="alert alert-error">ERROR: #session.searches[rc.SearchID].sUserMessage#</div>
 			</cfif>
-
+			<div class="grid-view clearfix">
 			<!--- Display selected badges (selected via schedule search) --->
-			<cfset variables.bSelected = true>
-			<cfset variables.nCount = 0>
-			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
-				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
-					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
-					<cfset nCount++>
-					#View('air/badge')#
-				<cfelse>
-						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
-				</cfif>
-			</cfloop>
-
-			<cfset variables.bSelected = false>
-			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
-				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
-					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-					<cfset nCount++>					
+				<cfset variables.bSelected = true>
+				<cfset variables.nCount = 0>
+				<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+					<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+						<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+						<cfset nCount++>
 						#View('air/badge')#
-				</cfif>
-			</cfloop>
+					<cfelse>
+							<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+					</cfif>
+				</cfloop>
 
+				<cfset variables.bSelected = false>
+				<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
+					<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
+						<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
+						<cfset nCount++>
+							#View('air/badge')#
+					</cfif>
+				</cfloop>
+			</div> <!-- /.grid-view -->
+
+			<div class="list-view">
+				<cfset variables.bSelected = true>
+				<cfset variables.nCount = 0>
+				<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+					<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+						<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+						<cfset nCount++>
+						#View('air/list')#
+					<cfelse>
+							<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+					</cfif>
+				</cfloop>
+
+				<cfset variables.bSelected = false>
+				<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
+					<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
+						<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
+						<cfset nCount++>
+							#View('air/list')#
+					</cfif>
+				</cfloop>
+			</div>
 			<script type="application/javascript">
 				// define for sorting ( see air/filter.js and booking.js airSort() )
 	 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stLowFareDetails.aSortArrival)#;
