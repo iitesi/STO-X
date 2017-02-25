@@ -93,10 +93,12 @@
 	<cfset arrayAppend(timeFilterTotal, arrivalTime)>
 	--->
 	<div class="col-sm-3 center">
+		<cfset stopCount = structCount(stGroup.Segments) - 1>
 		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
 		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
 		Arrive #stGroup.Destination# <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br />
-		<small>Travel Time: #stGroup.TravelTime#</small>
+		<small><strong>#(segmentCount EQ 1? 'Nonstop' : segmentCount)#-stop</strong> Travel Time: #stGroup.TravelTime#</small>
+		<p class="xs-visible"></p>
 	</div>
 
 <!--	<cfset nCnt = 0>
@@ -158,7 +160,7 @@
 									Changes USD #stTrip.changePenalty# for reissue
 								</cfif>
 							" href="##"/>
-							<small>#(stTrip.Ref EQ 0 ? 'NO REFUNDS<br>' : 'REFUNDABLE<br>')#</small>
+							<small>#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</small>
 						</span>
 						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
 							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" href="##" />UNUSED TKT AVAIL</span>
@@ -174,7 +176,7 @@
 				<tr align="center">
 					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
 					<td colspan="2">
-						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : 'OUT OF POLICY')#</small></span>
+						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : ' - OUT OF POLICY')#</small></span>
 					</td>
 				</tr>
 			</cfif>
