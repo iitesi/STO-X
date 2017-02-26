@@ -30,7 +30,7 @@
 
 		// finally add default 'ribbon' class
 		if(Len(ribbonClass))
-			ribbonClass = "ribbon " & ribbonClass;
+			ribbonClass = "ribbon ribbon-adjusted " & ribbonClass;
 
 		if(len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")){
 			bSelected = false;
@@ -97,7 +97,7 @@
 		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
 		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
 		Arrive #stGroup.Destination# <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br />
-		<small><strong>#(segmentCount EQ 1? 'Nonstop' : segmentCount)#-stop</strong> Travel Time: #stGroup.TravelTime#</small>
+		<small><strong>#(stopCount EQ 0? 'Nonstop' : stopCount & (stopCount EQ 1? '-stop' : '-stops'))#</strong> Travel Time: #stGroup.TravelTime#</small>
 		<p class="xs-visible"></p>
 	</div>
 
