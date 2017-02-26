@@ -1499,3 +1499,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .change-search {
 	cursor: pointer;
 }
+
+.viewToggle {
+	margin-top: -7px;
+}

@@ -286,6 +286,25 @@ $(document).ready(function(){
 	//------------------------------------------------------------------------------
 	filterAir();
 
+	var view = Cookies.get('sto-view-pref')
+	if(!view || view == 'grid') {
+		// Default to grid-view
+		$('.showGridView').addClass('active');
+		$('.list-view').hide();
+	} else {
+		$('.showListView').addClass('active');
+		$('.grid-view').hide();
+	}
+
+	$('.viewToggle button').click(function(ev){
+		$('.viewToggle button').toggleClass('active');
+		$('.grid-view,.list-view').toggle();
+		var viewSelected = $(ev.target).data('view');
+		if(!viewSelected) viewSelected =  $(ev.target).parents('[data-view]').data('view')
+		Cookies.set('sto-view-pref', viewSelected);
+
+	});
+
 }); // end of $(document).ready(function()
 
 // -----------------------------------------------------------------------------

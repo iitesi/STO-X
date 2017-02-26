@@ -62,6 +62,7 @@
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
 			<script src="assets/js/booking.js?v=112016"></script>
 		</cfoutput>
 	</head>

@@ -57,7 +57,7 @@
 			<cfif structKeyExists(session.searches[rc.SearchID], "sUserMessage") AND len(session.searches[rc.SearchID].sUserMessage)>
 				<div class="alert alert-error">ERROR: #session.searches[rc.SearchID].sUserMessage#</div>
 			</cfif>
-			<div class="grid-view clearfix">
+			<div class="grid-view container">
 			<!--- Display selected badges (selected via schedule search) --->
 				<cfset variables.bSelected = true>
 				<cfset variables.nCount = 0>
@@ -81,7 +81,8 @@
 				</cfloop>
 			</div> <!-- /.grid-view -->
 
-			<div class="list-view">
+			<div class="list-view container">
+				<br />
 				<cfset variables.bSelected = true>
 				<cfset variables.nCount = 0>
 				<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">

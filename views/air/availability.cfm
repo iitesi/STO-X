@@ -61,7 +61,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-		<div class="container">
+		<div class="grid-view container">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -96,6 +96,31 @@
 			</cfif>
 		</cfloop>
 		</div> <!-- //.container -->
+
+		<div class="list-view container">
+			<br />
+			<cfset variables.bSelected = true>
+			<cfset variables.nCount = 0>
+			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
+				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
+					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
+					<cfset nCount++>
+					#View('air/list')#
+				<cfelse>
+						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+				</cfif>
+			</cfloop>
+
+			<cfset variables.bSelected = false>
+			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
+				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
+					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
+					<cfset nCount++>
+						#View('air/list')#
+				</cfif>
+			</cfloop>
+		</div>
+
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
