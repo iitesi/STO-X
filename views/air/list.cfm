@@ -53,6 +53,7 @@
 			</cfif>
 			--->
 			<cfscript>
+
 			flightnumbers = [];
 			loop collection="#stTrip.Groups#" item="Group" {
 				stGroup = stTrip.Groups[Group];
@@ -62,6 +63,8 @@
 				}
 			}
 			</cfscript>
+			<cfset groupCount = structCount(stTrip.Groups)>
+			<cfset groupClass = (groupCount EQ 1? 'col-sm-6' : 'col-sm-3')>
 					<div class="col-sm-2 center" style="font-weight: bold;">
 						<cfif ArrayLen(stTrip.Carriers) EQ 1>
 							<img class="carrierimg" src="assets/img/airlines/#stTrip.Carriers[1]#.png">
@@ -92,7 +95,7 @@
 	<cfset arrayAppend(timeFilterTotal, departureTime)>
 	<cfset arrayAppend(timeFilterTotal, arrivalTime)>
 	--->
-	<div class="col-sm-3 center">
+	<div class="#groupClass# center">
 		<cfset stopCount = structCount(stGroup.Segments) - 1>
 		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
 		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />

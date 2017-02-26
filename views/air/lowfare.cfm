@@ -57,7 +57,7 @@
 			<cfif structKeyExists(session.searches[rc.SearchID], "sUserMessage") AND len(session.searches[rc.SearchID].sUserMessage)>
 				<div class="alert alert-error">ERROR: #session.searches[rc.SearchID].sUserMessage#</div>
 			</cfif>
-			<div class="grid-view container">
+			<div class="grid-view container hidden">
 			<!--- Display selected badges (selected via schedule search) --->
 				<cfset variables.bSelected = true>
 				<cfset variables.nCount = 0>
@@ -81,7 +81,7 @@
 				</cfloop>
 			</div> <!-- /.grid-view -->
 
-			<div class="list-view container">
+			<div class="list-view container hidden">
 				<br />
 				<cfset variables.bSelected = true>
 				<cfset variables.nCount = 0>

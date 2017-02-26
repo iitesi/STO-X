@@ -61,7 +61,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-		<div class="grid-view container">
+		<div class="grid-view container hidden">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -97,26 +97,39 @@
 		</cfloop>
 		</div> <!-- //.container -->
 
-		<div class="list-view container">
+		<div class="list-view container hidden">
 			<br />
-			<cfset variables.bSelected = true>
-			<cfset variables.nCount = 0>
-			<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
-				<cfif StructKeyExists(session.searches[rc.SearchID].stTrips,variables.nTripKey)>
-					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[variables.nTripKey]>
-					<cfset nCount++>
-					#View('air/list')#
-				<cfelse>
-						<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
-				</cfif>
-			</cfloop>
+			<cfloop array="#arrayToLoop#" index="variables.nTripKey">
+				<cfset variables.nCount = 0>
 
-			<cfset variables.bSelected = false>
-			<cfloop array="#session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred#" index="variables.nTripKey">
-				<cfif NOT StructKeyExists(session.searches[rc.SearchID].stLowFareDetails.stPriced, nTripKey)>
-					<cfset variables.stTrip = session.searches[rc.SearchID].stTrips[nTripKey]>
-					<cfset nCount++>
+				 <cfif StructKeyExists(rc, "southWestMatch") AND rc.southWestMatch EQ true>
+					<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
+					<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
+						<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+							<cfset nCount++>
+							#View('air/list')#
+
+					</cfif>
+				<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
+					<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
+					<cftry>
+						<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
+						<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+							<cfset nCount++>
+							#View('air/list')#
+
+					</cfif>
+					<cfcatch type="any"></cfcatch>
+					</cftry>
+				<cfelse>
+					<!--- this is first view so show everything --->
+					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+						<cfset nCount++>
 						#View('air/list')#
+
 				</cfif>
 			</cfloop>
 		</div>
