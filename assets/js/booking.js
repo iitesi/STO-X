@@ -270,7 +270,8 @@ function sortAir(sort) {
 	var sortlist = eval( sort );
 	// console.log(sortlist);
 	for (var t = 0; t < sortlist.length; t++) {
-		$( "#aircontent" ).append( $( "#flight" + sortlist[t] ) );
+		$( "#aircontent .grid-view" ).append( $( ".grid-view .flight" + sortlist[t] ) );
+		$( "#aircontent .list-view" ).append( $( ".list-view .flight" + sortlist[t] ) );
 	}
 	return false;
 }
