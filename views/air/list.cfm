@@ -95,41 +95,49 @@
 	<cfset arrayAppend(timeFilterTotal, departureTime)>
 	<cfset arrayAppend(timeFilterTotal, arrivalTime)>
 	--->
+	<cfset nCnt = 0>
+		<cfset segmentCount = structCount(stGroup.Segments)>
+		<cfset details = "">
+		<cfset aKeys = structKeyArray(stGroup.Segments)>
+		<cfloop collection="#stGroup.Segments#" item="nSegment" >
+			<cfscript>
+			nCnt++;
+			stSegment = stGroup.Segments[nSegment];
+			if(NOT arrayFind(carrierList, stSegment.Carrier))
+				arrayAppend(carrierList, stSegment.Carrier);
+			if(len(details))
+				details = details & '<br />';
+			details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
+			if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
+				minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
+				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & application.stAirports[stSegment.Destination].airport;
+			}
+			</cfscript>
+			<cfif nCnt EQ 1>
+				<cfset nFirstSeg = nSegment>
+				<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
+			</cfif>
+		</cfloop>
+
 	<div class="#groupClass# center">
 		<cfset stopCount = structCount(stGroup.Segments) - 1>
 		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
 		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
 		Arrive #stGroup.Destination# <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br />
-		<small><strong>#(stopCount EQ 0? 'Nonstop' : stopCount & (stopCount EQ 1? '-stop' : '-stops'))#</strong> Travel Time: #stGroup.TravelTime#</small>
+		<small><strong>
+		<cfif stopCount EQ 0>
+			Nonstop
+		<cfelse>
+
+			<a data-container="body" rel="popover" data-toggle="popover" data-placement="bottom" title="Flight Stops" data-content="#details#">
+  			#stopCount & (stopCount EQ 1? '-stop' : '-stops')#
+			</a>
+		</cfif>
+		</strong> Travel Time: #stGroup.TravelTime#</small>
 		<p class="xs-visible"></p>
 	</div>
 
-<!--	<cfset nCnt = 0>
-	<cfset segmentCount = structCount(stGroup.Segments)>
-	<cfloop collection="#stGroup.Segments#" item="nSegment" >
-		<cfscript>
-		nCnt++;
-		stSegment = stGroup.Segments[nSegment];
-		if(NOT arrayFind(carrierList, stSegment.Carrier))
-			arrayAppend(carrierList, stSegment.Carrier);
-		</cfscript>
-		<tr>
-			<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
-			<td valign="top">
-				#Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4)# -->
-				<!--- #(stTrip.Class EQ 'Y' ? 'Economy' : (stTrip.Class EQ 'C' ? 'Business' : 'First'))# --->
-			<!--</td>
-			<td valign="top" title="#application.stAirports[stSegment.Destination].airport#">
-				<span>#stSegment.Origin# to #stSegment.Destination#</span></td>
-			<td valign="top">
-				<cfif nCnt EQ 1>
-					#stGroup.TravelTime#
-					<cfset nFirstSeg = nSegment>
-					<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
-				</cfif>
-			</td>
-		</tr>
-	</cfloop> -->
+<!--	 -->
 </cfloop>
 <!-- END -->
 
