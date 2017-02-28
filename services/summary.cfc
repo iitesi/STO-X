@@ -915,11 +915,11 @@
 
 		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
 
-		<cfif cgi.http_host EQ "r.local">
+		<cfif cgi.server_name EQ "r.local">
 			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "Beta">
+		<cfelseif cgi.server_name EQ "Beta">
 			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "RailoQA">
+		<cfelseif cgi.server_name EQ "RailoQA">
 			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfelse>
 			<cfset local.secureURL = "https://europa.shortstravel.com" />

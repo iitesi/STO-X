@@ -1,142 +1,135 @@
 <cfcomponent name="STORemoteProxy" output="false">
 
-	<cffunction name="getAuthorizedTravelers" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userID" type="numeric" required="true"/>
-		<cfargument name="acctID" type="numeric" required="true"/>
-		<cfargument name="returnFormat" type="string" required="false" default="array"/>
+<cffunction name="getAuthorizedTravelers" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="userID" type="numeric" required="true"/>
+	<cfargument name="acctID" type="numeric" required="true"/>
+	<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
-		<cftry>
-			<cfreturn getBean( "UserService" ).getAuthorizedTravelers( argumentCollection=arguments ) />
-			<cfcatch type="any">
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-		</cftry>
+	<cftry>
+		<cfreturn getBean( "UserService" ).getAuthorizedTravelers( argumentCollection=arguments ) />
+		<cfcatch type="any">
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>
 
-	</cffunction>
+</cffunction>
 
-	<cffunction name="getUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
+<cffunction name="getUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="userId" type="numeric" required="true"/>
 
-		<cftry>
-			<cfreturn getBean( "UserService" ).load( arguments.userId ) />
-			<cfcatch type="any">
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-		</cftry>
+	<cftry>
+		<cfreturn getBean( "UserService" ).load( arguments.userId ) />
+		<cfcatch type="any">
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>
 
-	</cffunction>
+</cffunction>
 
-	<cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userID" type="numeric" required="true"/>
-		<cfargument name="acctID" type="numeric" required="true"/>
-	    <cfargument name="valueID" type="numeric" required="true"/>
-	    <cfargument name="arrangerID" type="numeric" required="true"/>
-	    <cfargument name="vendor" type="string" required="false" default=""/>
+<cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="userID" type="numeric" required="true"/>
+	<cfargument name="acctID" type="numeric" required="true"/>
+    <cfargument name="valueID" type="numeric" required="true"/>
+    <cfargument name="arrangerID" type="numeric" required="true"/>
+    <cfargument name="vendor" type="string" required="false" default=""/>
 
-		<cftry>
-			<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
-																		, acctID = arguments.acctID
-																		, valueID = arguments.valueID
-																		, arrangerID = arguments.arrangerID
-																		, vendor = arguments.vendor)>
-			<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
-			<cfset Traveler.setBookingDetail( BookingDetail )>
+	<cftry>
+		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
+																	, acctID = arguments.acctID
+																	, valueID = arguments.valueID
+																	, arrangerID = arguments.arrangerID
+																	, vendor = arguments.vendor)>
+		<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
+		<cfset Traveler.setBookingDetail( BookingDetail )>
 
-			<cfreturn Traveler />
+		<cfreturn Traveler />
 
-			<cfcatch type="any">
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-		</cftry>
+		<cfcatch type="any">
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>
 
-	</cffunction>
+</cffunction>
 
-	<cffunction name="loadOrgUnit" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="acctID" type="numeric" required="true">
-		<cfargument name="valueID" type="numeric" required="true">
-		<cfargument name="userID" type="numeric" required="true">
+<cffunction name="loadOrgUnit" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="acctID" type="numeric" required="true">
+	<cfargument name="valueID" type="numeric" required="true">
+	<cfargument name="userID" type="numeric" required="true">
 
-		<cftry>
-			<cfreturn getBean( "OrgUnitService" ).loadOrgUnit( acctID = arguments.acctID, valueID = arguments.valueID, userID = arguments.userID ) />
+	<cftry>
+		<cfreturn getBean( "OrgUnitService" ).loadOrgUnit( acctID = arguments.acctID, valueID = arguments.valueID, userID = arguments.userID ) />
 
-			<cfcatch type="any">
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-		</cftry>
+		<cfcatch type="any">
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>
 
-	</cffunction>
+</cffunction>
 
-	<cffunction name="getOrgUnitValues" returntype="any" access="remote" output="false" returnformat="JSON">
-		<cfargument name="ouID" required="true">
-		<cfargument name="valueID" required="false" default="0">
-		<cfargument name="conditionalSort1" required="false" default="">
-		<cfargument name="conditionalSort2" required="false" default="">
-		<cfargument name="conditionalSort3" required="false" default="">
-		<cfargument name="conditionalSort4" required="false" default="">
-		<cfargument name="conditionalSort5" required="false" default="">
-		<cfargument name="returnFormat" type="string" required="false" default="array"/>
+<cffunction name="getOrgUnitValues" returntype="any" access="remote" output="false" returnformat="JSON">
+	<cfargument name="ouID" required="true">
+	<cfargument name="valueID" required="false" default="0">
+	<cfargument name="conditionalSort1" required="false" default="">
+	<cfargument name="conditionalSort2" required="false" default="">
+	<cfargument name="conditionalSort3" required="false" default="">
+	<cfargument name="conditionalSort4" required="false" default="">
+	<cfargument name="conditionalSort5" required="false" default="">
+	<cfargument name="returnFormat" type="string" required="false" default="array"/>
 
-		<!---<cftry>--->
-			<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
-																				, valueID = arguments.valueID
-																				, conditionalSort1 = arguments.conditionalSort1
-																				, conditionalSort2 = arguments.conditionalSort2
-																				, conditionalSort3 = arguments.conditionalSort3
-																				, conditionalSort4 = arguments.conditionalSort4
-																				, conditionalSort5 = arguments.conditionalSort5
-																				, returnFormat = arguments.returnFormat ) />
+	<!---<cftry>--->
+		<cfset local.qOrgUnitValues = getBean( "OrgUnitService" ).getOrgUnitValues( ouID = arguments.ouID
+																			, valueID = arguments.valueID
+																			, conditionalSort1 = arguments.conditionalSort1
+																			, conditionalSort2 = arguments.conditionalSort2
+																			, conditionalSort3 = arguments.conditionalSort3
+																			, conditionalSort4 = arguments.conditionalSort4
+																			, conditionalSort5 = arguments.conditionalSort5
+																			, returnFormat = arguments.returnFormat ) />
 
-			<cfreturn serializeJSON( qOrgUnitValues ) />
+		<cfreturn serializeJSON( qOrgUnitValues ) />
 
-			<!---<cfcatch type="any">
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-		</cftry>--->
+		<!---<cfcatch type="any">
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>--->
 
-	</cffunction>
+</cffunction>
 
-	<cffunction name="getUserCCEmails" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userId" type="numeric" required="true"/>
-		<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
+<cffunction name="getUserCCEmails" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="userId" type="numeric" required="true"/>
+	<cfargument name="returnType" type="string" required="false" default="struct" hint="Valid values: query|array|string"/>
 
-		<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
-	</cffunction>
+	<cfreturn getBean( "UserService" ).getUserCCEmails( arguments.userId, arguments.returnType ) />
+</cffunction>
 
-	<cffunction name="getUserTravelerNumber" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="userID" type="numeric" required="true"/>
-		<cfargument name="travelNumberType" type="string" required="true"/>
+<cffunction name="getUserTravelerNumber" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="userID" type="numeric" required="true"/>
+	<cfargument name="travelNumberType" type="string" required="true"/>
 
-		<cfreturn getBean( "UserService" ).getUserTravelerNumber( arguments.userId, arguments.travelNumberType) />
-	</cffunction>
+	<cfreturn getBean( "UserService" ).getUserTravelerNumber( arguments.userId, arguments.travelNumberType) />
+</cffunction>
 
-    <cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
-        <cfargument name="searchId" type="numeric" required="true"/>
+<cffunction name="getSearch" returntype="any" access="remote" output="false" returnformat="json" hint="">
+    <cfargument name="searchId" type="numeric" required="true"/>
+	<cfset var result = new com.shortstravel.RemoteResponse() />
+	<cftry>
+		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+		<cfif isNumeric( Search.getSearchID() ) AND Search.getSearchID() > 0>
+			<cfset result.setData( Search ) />
+		<cfelse>
+			<cfset result.addError( "Unable to locate the specified search." ) />
+			<cfset result.setSuccess( false ) />
+		</cfif>
+		<cfcatch type="any">
+			<cfset result.addError( "An error occurred while retrieving the specified search." ) />
+			<cfset result.setSuccess( false ) />
+			<cfset logError( cfcatch, arguments ) />
+		</cfcatch>
+	</cftry>
+    <cfreturn result />
+</cffunction>
 
-		<cfset var result = new com.shortstravel.RemoteResponse() />
-
-		<cftry>
-			<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
-
-			<cfif isNumeric( Search.getSearchID() ) AND Search.getSearchID() > 0>
-				<cfset result.setData( Search ) />
-			<cfelse>
-				<cfset result.addError( "Unable to locate the specified search." ) />
-				<cfset result.setSuccess( false ) />
-			</cfif>
-
-			<cfcatch type="any">
-				<cfset result.addError( "An error occurred while retrieving the specified search." ) />
-				<cfset result.setSuccess( false ) />
-				<cfset logError( cfcatch, arguments ) />
-			</cfcatch>
-
-		</cftry>
-
-        <cfreturn result />
-
-    </cffunction>
-
-	<cffunction name="updateSearch" access="remote" output="false" returntype="any" returnFormat="json" hint="">
+<cffunction name="updateSearch" access="remote" output="false" returntype="any" returnFormat="json" hint="">
 		<cfargument name="searchId" type="numeric" required="true"/>
 		<cfargument name="hotelRadius" type="numeric" required="false" />
 		<cfargument name="hotelSearch" type="string" required="false" />
@@ -175,279 +168,454 @@
 
 	</cffunction>
 
-    <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
-        <cfargument name="searchId" type="numeric" required="true"/>
-        <cfargument name="propertyId" type="string" required="false" default="" />
-		<cfargument name="requery" type="boolean" required="false" default="false" />
-        <cfargument name="finditRequest" type="boolean" required="false" default="false" />
+<cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
+	<cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="false" default="" />
+	<cfargument name="requery" type="boolean" required="false" default="false" />
+    <cfargument name="finditRequest" type="boolean" required="false" default="false" />
+	<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
+    <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
+</cffunction>
 
-        <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
+<cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
 
-    </cffunction>
+	<cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="true"/>
+    <cfargument name="callback" type="string" required="false"/>
+    <cfargument name="requery" type="boolean" required="false" default="false"/>
+	<cfargument name="checkPriceline" type="boolean" required="false" default="true"/>
+	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
 
-    <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
-        <cfargument name="searchId" type="numeric" required="true"/>
-        <cfargument name="propertyId" type="string" required="true" />
-        <cfargument name="callback" type="string" required="false" />
-        <cfargument name="requery" type="boolean" required="false" default="false" />
+	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
 
-		<cfset var Rooms = getBean( "HotelService" ).getAvailableRooms( argumentCollection=arguments ) />
-		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfcontent type="application/javascript" />
-			<cfsavecontent variable="local.callbackFunction">
-				<cfoutput>#arguments.callback#(#serializeJSON( Rooms )#)</cfoutput>
-			</cfsavecontent>
-			<cfreturn callbackFunction />
-		<cfelse>
-			<cfreturn serializeJSON( Rooms ) />
-		</cfif>
+	<cfif structKeyExists(arguments,"callback") AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript"/>
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON(rooms)#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction/>
+	<cfelse>
+		<cfreturn serializeJSON(rooms)/>
+	</cfif>
 
-    </cffunction>
+</cffunction>
 
-	<cffunction name="getHotelDetails" access="remote" output="false" returntype="any" returnformat="plain" hint="I get the extended details for a particular hotel">
-		<cfargument name="propertyId" type="string" requred="true" />
-		<cfargument name="forceUpdate" type="boolean" required="false" default="false" />
-		<cfargument name="callback" type="string" required="false" />
+<cffunction name="getHotelDetails" access="remote" output="false" returntype="any" returnformat="plain" hint="I get the extended details for a particular hotel">
 
-		<cfset var result = new com.shortstravel.RemoteResponse() />
+	<cfargument name="propertyId" type="string" requred="true" />
+	<cfargument name="forceUpdate" type="boolean" required="false" default="false" />
+	<cfargument name="callback" type="string" required="false" />
 
-		<!---<cftry>--->
-			<cfset result.setData( getBean( "HotelService" ).getExtendedHotelData( argumentCollection=arguments ) ) />
+	<cfset var result = new com.shortstravel.RemoteResponse() />
 
-			<!---<cfcatch type="any">
-				<cfset result.addError( "An error occurred while retrieving extended data for the requested hotel." ) />
+	<cfset result.setData( getBean( "HotelService" ).getExtendedHotelData( argumentCollection=arguments ) ) />
+
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn serializeJSON( result ) />
+	</cfif>
+
+</cffunction>
+
+<cffunction name="getRoomRateRules" returntype="any" access="remote" returnformat="plain" output="false" hint="">
+
+	<cfargument name="searchId" type="numeric" required="true"/>
+    <cfargument name="propertyId" type="string" required="true" />
+    <cfargument name="ratePlanType" type="string" required="true" />
+    <cfargument name="ppnBundle" type="string" required="true" />
+	<cfargument name="callback" type="string" required="false" />
+    <cfargument name="isRemote" type="boolean" required="false" default="true" />
+
+	<cfset var result = new com.shortstravel.RemoteResponse() />
+	<cfset result.setData(getBean( "HotelService" ).getRoomRateRules( argumentCollection=arguments )) />
+
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(# LTRIM(RTRIM(serializeJSON( result )))#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn serializeJSON( result ) />
+	</cfif>
+
+</cffunction>
+
+<cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
+ 	<cfargument name="accountId" type="numeric" required="true" />
+	<cfif NOT structKeyExists( application.accounts, arguments.accountId )>
+		<cfreturn getBean( "setup" ).setAccount( AcctID = arguments.accountId ) />
+	<cfelse>
+		<cfreturn application.accounts[ arguments.accountId ] />
+	</cfif>
+</cffunction>
+
+<cffunction name="getPolicy" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular account policy">
+	<cfargument name="policyId" type="numeric" required="true" />
+
+	<cfif NOT( structKeyExists( application, "policies" ) AND structKeyExists( application.policies, arguments.policyId ) )>
+		<cfset getBean( "Setup" ).setPolicy( arguments.policyId ) />
+	</cfif>
+
+	<!---TODO: Abstract this so that we're not reaching directly into the Application scope--->
+	<cfreturn application.policies[ arguments.policyId ] />
+</cffunction>
+
+<cffunction name="getAccountPolicies" returntype="any" access="remote" output="false" returnformat="json" hint="">
+    <cfargument name="accountId" type="numeric" required="true" />
+	<cfreturn getBean( "AccountService" ).listAccountPolicies( arguments.accountId ) />
+</cffunction>
+
+<cffunction name="couldYou" access="remote" output="false" returntype="any" returnFormat="json" hint="I perform a CouldYou search for a particular search on the specified day">
+	<cfargument name="searchId" type="numeric" required="true" />
+	<cfargument name="requestedDate" type="date" required="true" />
+	<cfargument name="requery" type="boolean" required="false" default="false" />
+
+	<cfset var cy = structNew() />
+	<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
+	<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
+	<cfset var Filter = getBean("Setup").setFilter(searchID = arguments.searchId, requery = true) />
+	<cfset cy.searchId = arguments.searchId />
+	<cfset cy.searchStarted = now() />
+
+	<cfif Search.getAir()>
+		<cftry>
+			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfcatch type="any">
+				<cfset cy.Air = "" />
+			</cfcatch>
+		</cftry>
+	</cfif>
+
+	<cfif Search.getHotel()>
+		<cftry>
+			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfcatch type="any">
+				<cfset cy.Hotel = "" />
+			</cfcatch>
+		</cftry>
+	</cfif>
+	<cfif Search.getCar()>
+		<cftry>
+			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfcatch type="any">
+				<cfset cy.Car = "" />
+			</cfcatch>
+		</cftry>
+	</cfif>
+
+	<cfset cy.searchEnded = now() />
+
+	<!---Save the result of this call into the CouldYou logging table--->
+	<cftry>
+		<cfset getBean( "CouldYouService" ).logAlternateTrip( arguments.searchId, cy ) />
+
+		<cfcatch type="any">
+			<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
+			<cfif getBean( 'EnvironmentService' ).getEnableBugLog()>
+				 <cfset getBean('BugLogService').notifyService( message=cfcatch.Message, exception=cfcatch, severityCode='Error' ) />
+			<cfelse>
+				 <!--- <cfset super.onError( arguments.exception, arguments.eventName )> --->
+			 </cfif>
+		</cfcatch>
+	</cftry>
+
+	<cfreturn cy />
+
+</cffunction>
+
+<cffunction name="getSearchTraveler" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular traveler that has been associated with a trip/search">
+	<cfargument name="searchID" required="true" type="numeric">
+	<cfargument name="travelerNumber" required="true" type="numeric">
+
+	<cfreturn getBean("Summary").getTraveler( argumentCollection=arguments ) />
+
+</cffunction>
+
+<cffunction name="loadFindItGuest" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="searchID" type="numeric" required="true" />
+
+	<cftry>
+		<cfset local.findItGuest = getBean("findit").getFindItRequest(searchID = arguments.searchID) />
+
+		<cfreturn findItGuest />
+
+		<cfcatch type="any">
+			<cfset logError(cfcatch, arguments) />
+		</cfcatch>
+	</cftry>
+</cffunction>
+
+<cffunction name="updateTravelerCompany" access="remote" output="false" returntype="any" returnformat="json" hint="I update a particular traveler whose company has been changed on the summary page and associated payments">
+	<cfargument name="userID" required="true" type="numeric" />
+	<cfargument name="acctID" required="true" type="numeric" />
+	<cfargument name="arrangerID" required="true" type="numeric" />
+	<cfargument name="searchID" required="true" type="numeric" />
+	<cfargument name="travelerNumber" required="true" type="numeric" />
+	<cfargument name="valueID" required="true" type="numeric" />
+	<cfargument name="vendor" required="false" default="" />
+
+	<cfset local.qOrgUnitValues = getBean("OrgUnitService").getOrgUnitValues(ouID = 399
+																				, valueID = arguments.valueID
+																				, returnFormat = "query") />
+
+	<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueID(qOrgUnitValues.Value_ID) />
+	<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueDisplay(qOrgUnitValues.Value_Display) />
+	<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueReport(qOrgUnitValues.Value_Report) />
+
+	<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].setPayment(getBean("PaymentService").getUserPayments(userID = arguments.userID
+																				, acctID = arguments.acctID
+																				, valueID = arguments.valueID
+																				, arrangerID = arguments.arrangerID) )>
+
+	<cfif arguments.vendor NEQ ''>
+		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].addPayment(getBean("PaymentService").getCarPayments(userID = arguments.userID
+																				, acctID = arguments.acctID
+																				, valueID = arguments.valueID
+																				, vendor = arguments.vendor) )>
+	</cfif>
+
+	<cfreturn session.searches[arguments.searchID].travelers[arguments.travelerNumber] />
+</cffunction>
+
+<cffunction name="getUAPILogEntries" access="remote" output="false" returntype="any" returnformat="plain" hint="I retrieve entries from the uAPI log based on the specified criteria">
+	<cfargument name="searchID" type="numeric" required="false" />
+	<cfargument name="acctId" type="numeric" required="false" />
+	<cfargument name="userId" type="numeric" required="false" />
+	<cfargument name="startDate" type="date" required="false" />
+	<cfargument name="endDate" type="date" required="false" />
+	<cfargument name="services" type="string" required="false" />
+
+	<cfset var result = new com.shortstravel.RemoteResponse() />
+
+	<cfif structKeyExists( arguments, "searchID" ) OR ( structKeyExists( arguments, "acctId" ) AND structKeyExists( arguments, "userId" ) )>
+		<cfset var data = structNew() />
+
+		<cftry>
+
+			<cfset data[ 'entries' ] = getBean( "uAPI" ).getLogEntries( argumentCollection=arguments ) />
+
+			<cfif structKeyExists( arguments, "searchId" )>
+				<cfset data[ 'search' ] = getBean( "SearchService" ).load( arguments.searchId ) />
+			</cfif>
+
+			<cfset result.setData( data ) />
+
+			<cfcatch type="any">
+				<cfset result.addError( "An error occurred while retrieving log entries for the specified criteria." ) />
 				<cfset result.setSuccess( false ) />
 				<cfset logError( cfcatch, arguments ) />
 			</cfcatch>
-		</cftry>--->
+		</cftry>
 
-		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfcontent type="application/javascript" />
-			<cfsavecontent variable="local.callbackFunction">
-				<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
-			</cfsavecontent>
-			<cfreturn callbackFunction />
+	</cfif>
+
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn serializeJSON( result ) />
+	</cfif>
+
+</cffunction>
+
+<cffunction name="getUAPILogEntry" access="remote" output="false" returntype="any" returnformat="plain" hint="">
+	<cfargument name="entryId" type="numeric" required="false" />
+
+	<cfset var result = new com.shortstravel.RemoteResponse() />
+	<cfset result.setData( getBean( "uAPI" ).getLogEntry( argumentCollection=arguments ) )/>
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn serializeJSON( result ) />
+	</cfif>
+
+</cffunction>
+
+<cffunction name="getSimilarTrips" output="false" access="remote" returntype="any" returnFormat="plain"  >
+
+	<cftry>
+		<cfset var search = getBean( "SearchService" ).load( request.context.searchId ) />
+		<cfif StructKeyExists(request.context,'userID')>
+			<cfset var similarTrips = getBean('Summary').getSimilarTrips(search,getBean('PNRService'),request.context.userID)>
 		<cfelse>
-			<cfreturn serializeJSON( result ) />
+			<cfset var similarTrips = getBean('Summary').getSimilarTrips(search,getBean('PNRService'))>
 		</cfif>
+	<cfcatch type="any">
+		<cfreturn '#CFCATCH.message#'>
+	</cfcatch>
+	</cftry>
 
-	</cffunction>
+	<cfreturn SerializeJSON(similarTrips)>
+</cffunction>
 
-    <cffunction name="getAccount" returntype="any" access="remote" output="false" returnformat="json" hint="">
-        <cfargument name="accountId" type="numeric" required="true" />
+<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
+	<cfargument name="beanName" type="string" required="true"/>
 
-		<cfif NOT structKeyExists( application.accounts, arguments.accountId )>
-			<cfreturn getBean( "setup" ).setAccount( AcctID = arguments.accountId ) />
-		<cfelse>
-			<cfreturn application.accounts[ arguments.accountId ] />
-		</cfif>
+	<cfreturn application.fw.factory.getBean( arguments.beanName ) />
+</cffunction>
 
-    </cffunction>
+<cffunction name="logError" returntype="any" access="private" output="false" hint="I send an error report to BugLogHQ">
+	<cfargument name="Exception" required=true/>
+	<cfargument name="ExtraInfo" type="any" required="false" default="" />
 
-	<cffunction name="getPolicy" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular account policy">
-		<cfargument name="policyId" type="numeric" required="true" />
+	<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
+		 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Error', extraInfo=arguments.ExtraInfo ) />
+	 </cfif>
 
-		<cfif NOT( structKeyExists( application, "policies" ) AND structKeyExists( application.policies, arguments.policyId ) )>
-			<cfset getBean( "Setup" ).setPolicy( arguments.policyId ) />
-		</cfif>
+</cffunction>
 
-		<!---TODO: Abstract this so that we're not reaching directly into the Application scope--->
-		<cfreturn application.policies[ arguments.policyId ] />
-	</cffunction>
+<cffunction name="retrievePPN" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="searchID" type="numeric" required="true" />
+    <cfargument name="invoiceID" type="string" required="true" />
+	<cfargument name="callback" type="string" required="false" />
 
-    <cffunction name="getAccountPolicies" returntype="any" access="remote" output="false" returnformat="json" hint="">
-        <cfargument name="accountId" type="numeric" required="true" />
+    <cfset local.hotel = {} />
+	<cfset local.invoice = getBean("Purchase").retrieveInvoice( invoiceID = arguments.invoiceID ) />
 
-        <cfreturn getBean( "AccountService" ).listAccountPolicies( arguments.accountId ) />
+	<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
+		<cfset local.hotel = invoice.hotelSelection />
+	</cfif>
 
-    </cffunction>
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#hotel#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn hotel />
+	</cfif>
+</cffunction>
 
-	<cffunction name="couldYou" access="remote" output="false" returntype="any" returnFormat="json" hint="I perform a CouldYou search for a particular search on the specified day">
-		<cfargument name="searchId" type="numeric" required="true" />
-		<cfargument name="requestedDate" type="date" required="true" />
-		<cfargument name="requery" type="boolean" required="false" default="false" />
+<cffunction name="cancelPPN" returntype="any" access="remote" output="false" hint="" returnformat="json">
+	<cfargument name="searchID" type="numeric" required="true"/>
+    <cfargument name="invoiceID" type="string" required="true"/>
+	<cfargument name="callback" type="string" required="false" />
 
-		<cfset var cy = structNew() />
-		<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
-		<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
-		<cfset var Filter = getBean("Setup").setFilter(searchID = arguments.searchId, requery = true) />
-		<cfset cy.searchId = arguments.searchId />
-		<cfset cy.searchStarted = now() />
+	<cfset local.cancelResponse.status = false />
+	<cfset local.cancelResponse.message = "" />
+	<cfset local.assistanceNeeded = false />
 
-		<cfif Search.getAir()>
-			<cftry>
-				<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
-				<cfcatch type="any">
-					<cfset cy.Air = "" />
-				</cfcatch>
-			</cftry>
-		</cfif>
+	<cfset local.invoice = getBean("Purchase").retrieveInvoice( invoiceID = arguments.invoiceID ) />
 
-		<cfif Search.getHotel()>
-			<cftry>
-				<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
-				<cfcatch type="any">
-					<cfset cy.Hotel = "" />
-				</cfcatch>
-			</cftry>
-		</cfif>
-		<cfif Search.getCar()>
-			<cftry>
-				<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
-				<cfcatch type="any">
-					<cfset cy.Car = "" />
-				</cfcatch>
-			</cftry>
-		</cfif>
+	<cfif isQuery(invoice) AND invoice.recordCount AND len(invoice.passiveRecloc)>
+		<cfset local.Hotel = deserializeJSON(invoice.hotelSelection) />
+		<cfset local.Filter = deserializeJSON(invoice.filter) />
+		<cfset local.Traveler = deserializeJSON(invoice.traveler) />
+		<cfset local.BookingDetail = deserializeJSON(invoice.bookingDetail) />
 
-		<cfset cy.searchEnded = now() />
+		<!--- Cancel the Priceline reservation --->
+		<cfset local.cancelResponse = getBean("PPNHotelAdapter").cancel( Hotel = Hotel
+																		, Filter = Filter )>
 
-		<!---Save the result of this call into the CouldYou logging table--->
-		<cftry>
-			<cfset getBean( "CouldYouService" ).logAlternateTrip( arguments.searchId, cy ) />
+		<cfif cancelResponse.status>
+			<!--- Retrieve the universal record version --->
+			<cfset local.urVersion = getBean("UniversalAdapter").retrieveUR( targetBranch = invoice.targetBranch
+																			, urLocatorCode = invoice.urRecloc
+																			, searchID = invoice.searchID
+																			, acctID = Filter.acctID
+																			, userID = invoice.userID )>
 
-			<cfcatch type="any">
-				<!---Log this error, but do not prevent the request from completing because we can't write the log entry--->
-				<cfif getBean( 'EnvironmentService' ).getEnableBugLog()>
-					 <cfset getBean('BugLogService').notifyService( message=cfcatch.Message, exception=cfcatch, severityCode='Error' ) />
+			<cfif isNumeric(local.urVersion)>
+				<!--- Cancel the passive segment --->
+				<cfset local.cancelPassiveResponse = getBean("PassiveAdapter").cancelPassive( targetBranch = invoice.targetBranch
+																							, urLocatorCode = invoice.urRecloc
+																							, providerLocatorCode = invoice.recloc
+																							, passiveLocatorCode = invoice.passiveRecloc
+																							, passiveSegmentRef = invoice.passiveSegmentRef
+																							, version = local.urVersion
+																							, searchID = invoice.searchID
+																							, acctID = Filter.acctID
+																							, userID = invoice.userID )>
+
+				<cfif cancelPassiveResponse.status>
+					<cfset local.urVersion++ />
+
+					<!--- Modify the universal record --->
+					<cfset local.modifyURResponse = getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																						, urLocatorCode = invoice.urRecloc
+																						, providerLocatorCode = invoice.recloc
+																						, providerReservationInfoRef = invoice.providerReservationInfoRef
+																						, categoryType = "A"
+																						, ppnTripID = Hotel.ppnTripID
+																						, username = Filter.username
+																						, version = local.urVersion
+																						, searchID = invoice.searchID
+																						, acctID = Filter.acctID
+																						, userID = invoice.userID )>
 				<cfelse>
-					 <!--- <cfset super.onError( arguments.exception, arguments.eventName )> --->
-				 </cfif>
-			</cfcatch>
-		</cftry>
-
-		<cfreturn cy />
-
-	</cffunction>
-
-	<cffunction name="getSearchTraveler" access="remote" output="false" returntype="any" returnformat="json" hint="I retrieve a particular traveler that has been associated with a trip/search">
-		<cfargument name="searchID" required="true" type="numeric">
-		<cfargument name="travelerNumber" required="true" type="numeric">
-
-		<cfreturn getBean("Summary").getTraveler( argumentCollection=arguments ) />
-
-	</cffunction>
-
-	<cffunction name="loadFindItGuest" returntype="any" access="remote" output="false" hint="" returnformat="json">
-		<cfargument name="searchID" type="numeric" required="true" />
-
-		<cftry>
-			<cfset local.findItGuest = getBean("findit").getFindItRequest(searchID = arguments.searchID) />
-
-			<cfreturn findItGuest />
-
-			<cfcatch type="any">
-				<cfset logError(cfcatch, arguments) />
-			</cfcatch>
-		</cftry>
-	</cffunction>
-	
-	<cffunction name="updateTravelerCompany" access="remote" output="false" returntype="any" returnformat="json" hint="I update a particular traveler whose company has been changed on the summary page and associated payments">
-		<cfargument name="userID" required="true" type="numeric" />
-		<cfargument name="acctID" required="true" type="numeric" />
-		<cfargument name="arrangerID" required="true" type="numeric" />
-		<cfargument name="searchID" required="true" type="numeric" />
-		<cfargument name="travelerNumber" required="true" type="numeric" />
-		<cfargument name="valueID" required="true" type="numeric" />
-		<cfargument name="vendor" required="false" default="" />
-
-		<cfset local.qOrgUnitValues = getBean("OrgUnitService").getOrgUnitValues(ouID = 399
-																					, valueID = arguments.valueID
-																					, returnFormat = "query") />
-
-		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueID(qOrgUnitValues.Value_ID) />
-		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueDisplay(qOrgUnitValues.Value_Display) />
-		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].getOrgUnit()[1].setValueReport(qOrgUnitValues.Value_Report) />
-
-		<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].setPayment(getBean("PaymentService").getUserPayments(userID = arguments.userID
-																					, acctID = arguments.acctID
-																					, valueID = arguments.valueID
-																					, arrangerID = arguments.arrangerID) )>
-
-		<cfif arguments.vendor NEQ ''>
-			<cfset session.searches[arguments.searchID].travelers[arguments.travelerNumber].addPayment(getBean("PaymentService").getCarPayments(userID = arguments.userID
-																					, acctID = arguments.acctID
-																					, valueID = arguments.valueID
-																					, vendor = arguments.vendor) )>
-		</cfif>
-
-		<cfreturn session.searches[arguments.searchID].travelers[arguments.travelerNumber] />
-	</cffunction>
-
-	<cffunction name="getUAPILogEntries" access="remote" output="false" returntype="any" returnformat="plain" hint="I retrieve entries from the uAPI log based on the specified criteria">
-		<cfargument name="searchID" type="numeric" required="false" />
-		<cfargument name="acctId" type="numeric" required="false" />
-		<cfargument name="userId" type="numeric" required="false" />
-		<cfargument name="startDate" type="date" required="false" />
-		<cfargument name="endDate" type="date" required="false" />
-		<cfargument name="services" type="string" required="false" />
-
-		<cfset var result = new com.shortstravel.RemoteResponse() />
-
-		<cfif structKeyExists( arguments, "searchID" ) OR ( structKeyExists( arguments, "acctId" ) AND structKeyExists( arguments, "userId" ) )>
-			<cfset var data = structNew() />
-
-			<cftry>
-
-				<cfset data[ 'entries' ] = getBean( "uAPI" ).getLogEntries( argumentCollection=arguments ) />
-
-				<cfif structKeyExists( arguments, "searchId" )>
-					<cfset data[ 'search' ] = getBean( "SearchService" ).load( arguments.searchId ) />
+					<cfset assistanceNeeded = true />
 				</cfif>
+			<cfelse>
+				<cfset assistanceNeeded = true />
+			</cfif>
 
-				<cfset result.setData( data ) />
+			<cfif assistanceNeeded>
+				<!--- Modify the universal record --->
+				<cfset local.modifyURResponse = getBean("UniversalAdapter").modifyUR( targetBranch = invoice.targetBranch
+																					, urLocatorCode = invoice.urRecloc
+																					, providerLocatorCode = invoice.recloc
+																					, providerReservationInfoRef = invoice.providerReservationInfoRef
+																					, categoryType = "Q"
+																					, ppnTripID = Hotel.ppnTripID
+																					, username = Filter.username
+																					, version = local.urVersion
+																					, searchID = invoice.searchID
+																					, acctID = Filter.acctID
+																					, userID = invoice.userID )>
+				<!--- Queue to 34*CQC --->
+				<cfif modifyURResponse.status>
+					<cfset local.account = getBean("AccountService").load( accountID = Filter.acctID
+																			, returnType = "query" )>
+					<cfset local.pccBooking = account.PCC_Booking />
+					<cfset getBean("UniversalAdapter").queuePlace( targetBranch = invoice.targetBranch
+																	, Filter = Filter
+																	, pccBooking = local.pccBooking
+																	, providerLocatorCode = invoice.recloc
+																	, queue = "34"
+																	, category = "QC" )>
+				</cfif>
+			</cfif>
 
-				<cfcatch type="any">
-					<cfset result.addError( "An error occurred while retrieving log entries for the specified criteria." ) />
-					<cfset result.setSuccess( false ) />
-					<cfset logError( cfcatch, arguments ) />
-				</cfcatch>
-			</cftry>
-
+			<!--- The reservation has been successfully cancelled with Priceline; cancel the invoice --->
+			<cfif invoice.air EQ 0 AND invoice.car EQ 0>
+				<cfset getBean("Purchase").cancelInvoice( searchID = invoice.searchID
+														, urRecloc = invoice.urRecloc ) />
+			</cfif>
 		</cfif>
+	<cfelse>
+		<cfset cancelResponse.message = listPrepend(cancelResponse.message, "We were unable to retrieve your reservation.") />
+	</cfif>
 
-		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfcontent type="application/javascript" />
-			<cfsavecontent variable="local.callbackFunction">
-				<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
-			</cfsavecontent>
-			<cfreturn callbackFunction />
-		<cfelse>
-			<cfreturn serializeJSON( result ) />
-		</cfif>
+	<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
+		<cfcontent type="application/javascript" />
+		<cfsavecontent variable="local.callbackFunction">
+			<cfoutput>#arguments.callback#(#serializeJSON( cancelResponse )#)</cfoutput>
+		</cfsavecontent>
+		<cfreturn callbackFunction />
+	<cfelse>
+		<cfreturn serializeJSON( cancelResponse ) />
+	</cfif>
+</cffunction>
 
-	</cffunction>
+<cffunction name="regenerateVI" returntype="any" access="remote" output="false" hint="" returnformat="json">
+    <cfargument name="recLoc" type="string" required="true" />
+	<cfargument name="callback" type="string" required="false" />
+	<cfset getBean("Purchase").regenerateVI( recLoc = arguments.recLoc ) />
+	<cfreturn />
+</cffunction>
 
-	<cffunction name="getUAPILogEntry" access="remote" output="false" returntype="any" returnformat="plain" hint="">
-		<cfargument name="entryId" type="numeric" required="false" />
-
-		<cfset var result = new com.shortstravel.RemoteResponse() />
-		<cfset result.setData( getBean( "uAPI" ).getLogEntry( argumentCollection=arguments ) )/>
-		<cfif structKeyExists( arguments, "callback" ) AND arguments.callback NEQ "">
-			<cfcontent type="application/javascript" />
-			<cfsavecontent variable="local.callbackFunction">
-				<cfoutput>#arguments.callback#(#serializeJSON( result )#)</cfoutput>
-			</cfsavecontent>
-			<cfreturn callbackFunction />
-		<cfelse>
-			<cfreturn serializeJSON( result ) />
-		</cfif>
-
-	</cffunction>
-
-	<cffunction name="getBean" returntype="any" access="private" output="false" hint="I manage getting individual beans from ColdSpring">
-		<cfargument name="beanName" type="string" required="true"/>
-
-		<cfreturn application.fw.factory.getBean( arguments.beanName ) />
-	</cffunction>
-
-	<cffunction name="logError" returntype="any" access="private" output="false" hint="I send an error report to BugLogHQ">
-		<cfargument name="Exception" required=true/>
-		<cfargument name="ExtraInfo" type="any" required="false" default="" />
-
-		<cfif application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog() IS true>
-			 <cfset application.fw.factory.getBean('BugLogService').notifyService( message=arguments.exception.Message, exception=arguments.exception, severityCode='Error', extraInfo=arguments.ExtraInfo ) />
-		 </cfif>
-
-	</cffunction>
 </cfcomponent>

@@ -1,13 +1,13 @@
 var controllers = angular.module('app.controllers',[]);
 
 controllers.controller( "HotelCtrl", function( $scope, $location, SearchService, HotelService ){
+	
 	/* Scope variables that will be used to modify state of items in the view */
 	$scope.searchId = $.url().param( 'SearchID' );
 	$scope.propertyId = $.url().param( 'PropertyID' );
 	if (!!$scope.propertyId) {
 		$scope.finditRequest = true;
-	}
-	else {
+	} else {
 		$scope.finditRequest = false;
 	}
 	$scope.ratePlanType = $.url().param( 'RatePlanType' );
@@ -130,7 +130,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 				$scope.messages = result.messages;
 
 
-			} )
+			} );
 	}
 
 	$scope.getSearchResults = function( requery ){
