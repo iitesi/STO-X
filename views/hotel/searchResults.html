@@ -130,23 +130,31 @@
 <!--Hotel Results and Map Row-->
 <div class="container">
     <div class="row">
-		<div class="col-md-6 col-md-push-6 hotel-result-column">
-			<div class="span6" id="mapDiv" style="height: 500px;"></div>
+		<div ng-hide="hideMap" class="col-xs-12 hotel-result-column">
+			<div id="mapDiv" style="height: 300px;"></div>
 		</div>
-        <div class="col-md-6 col-md-pull-6 hotel-result-column">
+        <div class="col-xs-12 hotel-result-column">
 			<nav>
 				<ul class="pagination">
 					<li ng-hide="filterItems.currentPage == 1"><a href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage - 1" >&laquo;</a></li>
 					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
+        <div class="pull-right">
+          <button type="button" class="btn btn-default" ng-click="toggleMap()"><i class="fa fa-map-marker "  aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;{{ hideMap && 'Show' || 'Hide' }} Map</span></button>
+          <div class="btn-group" role="group" >
+             <button type="button"  ng-class="{ active: view == 'grid' }" class="btn btn-default showGridView" ng-click="toggleView()" ><i class="fa fa-th" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;Grid View</span></button>
+             <button type="button" ng-class="{ active: view == 'list' }" class="btn btn-default showListView" ng-click="toggleView()" data-view="list"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;List View</span></button>
+           </div>
+        </div>
 			</nav>
 
-            <div class="hotel-results">
+            <div class="hotel-results container-fluid">
 
-                    <div ng-show="searchCompleted && filteredHotels.length" >
+                    <div ng-show="searchCompleted && filteredHotels.length" class="row" >
 
-                        <div ng-repeat="item in visibleHotels" class="row hotelrowbadge hotel">
+                        <div ng-repeat="item in visibleHotels" class="row hotelrow">
+                          <div class="hotelrowbadge hotel">
                             <!--Ribbon overlays for DHL-->
                             <span class="ribbon ribbon-r-DHL-prefprop" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredProperty"></span>
                             <span class="ribbon ribbon-r-DHL-prefvendor" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredVendor && !item.hotel.preferredProperty"></span>
@@ -178,10 +186,10 @@
                                     </span>
                                 </div>
                                 <div class="btn-group btn-group-xs hotel-detail-buttons">
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showHotelDetails}"><span class="glyphicon glyphicon-info-sign"></span> <span class="hideOnPhones">Details</span></button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAreaDetails}"><i class="fa fa-map" aria-hidden="true"></i> <span class="hideOnPhones">Area</span></button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAmenities}"><i class="fa fa-hotel" aria-hidden="true"></i> <span class="hideOnPhones">Amenities</span></button>
-                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones">Photos</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showHotelDetails=!showHotelDetails;showAreaDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showHotelDetails}"><span class="glyphicon glyphicon-info-sign"></span> <span class="hideOnPhones hideOnGrid">Details</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAreaDetails=!showAreaDetails;showHotelDetails=false;showAmenities=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAreaDetails}"><i class="fa fa-map" aria-hidden="true"></i> <span class="hideOnPhones hideOnGrid">Area</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showAmenities=!showAmenities;showHotelDetails=false;showAreaDetails=false;showPhotos=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showAmenities}"><i class="fa fa-hotel" aria-hidden="true"></i> <span class="hideOnPhones hideOnGrid">Amenities</span></button>
+                                    <button ng-click="loadExtendedHotelData(item.hotel);showPhotos=!showPhotos;showHotelDetails=false;showAreaDetails=false;showAmenities=false;showRooms=false;" ng-class="{'btn': true, 'btn-default': true, 'btn-primary': showPhotos}"><span class="glyphicon glyphicon-camera"></span> <span class="hideOnPhones hideOnGrid">Photos</span></button>
                                 </div>
 
                             </div>
@@ -352,7 +360,7 @@
                                 </div> <!-- /.row -->
                               </div> <!-- /showRooms -->
                             </div> <!-- /.hotel -->
-
+                          </div>
                         </div>
 
                     </div>
