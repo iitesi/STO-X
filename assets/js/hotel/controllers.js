@@ -779,17 +779,8 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.toggleView = function(){
 		if($scope.view == 'grid') $scope.view = 'list';
 		else $scope.view = 'grid';
-		$scope.toggleHotelCell();
-
 
 		Cookies.set('sto-view-pref', $scope.view);
-	}
-
-	$scope.toggleHotelCell = function(){
-		$('.hotelrow').toggleClass('col-lg-4 col-md-6 col-sm-12 grid row');
-		$('.hotelrow .signature-image').toggleClass('col-md-2');
-		$('.hotelrow .hotel-info').toggleClass('col-lg-7 col-md-9 col-lg-8');
-		$('.hotelrow .hotel-pricing').toggleClass('col-lg-3');
 	}
 
 	/* Items executed when controller is loaded */
@@ -799,8 +790,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 
 
 	$scope.loadSearch( $scope.searchId );
-
-	if($scope.view == 'grid') $scope.toggleHotelCell();
 
 	$('.continue-link').attr( 'href', '/booking/index.cfm?action=hotel.skip&searchId=' + $scope.searchId );
 
