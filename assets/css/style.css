@@ -1382,7 +1382,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
-.grid .hideOnGrid {
+.grid .hideOnGrid, .grid-view .hideOnGrid {
 	display:none;
 }
 
@@ -1448,6 +1448,11 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   text-align: left;
 }
 
+.carResultPanel .rwd-table td:before {
+	min-width: 50%;
+	width:auto;
+}
+
 .rwd-table td.no-label:before {
 	display:none;
 }
@@ -1465,6 +1470,18 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: table-cell;
     padding: .25em .5em;
   }
+
+	.list-view .rwd-table th {
+		display: none;
+	}
+	.list-view .rwd-table td {
+		display: block;
+	}
+
+	.list-view .rwd-table td.hiddenOnList {
+		display: none;
+	}
+
   .rwd-table th:first-child, .rwd-table td:first-child {
     padding-left: 0;
   }
@@ -1474,6 +1491,11 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   .rwd-table td:before {
     display: none;
   }
+
+	.list-view .rwd-table td:before {
+		display: inline-block;
+	}
+
   .rwd-table th, .rwd-table td {
     padding: 1em !important;
   }
@@ -1484,6 +1506,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: none;
   }
 }
+
+
 
 .rwd-table th, .rwd-table td {
   margin: .5em 1em;
@@ -1514,4 +1538,39 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .viewToggle {
 	margin-top: -7px;
+}
+
+.grid .hiddenOnGrid, .grid-view .hiddenOnGrid {
+	display: none;
+}
+
+.list-view .hiddenOnList {
+	display: none;
+}
+
+.car-vehicle-class {
+	display: inline-block;
+	margin-right: 6em;
+	width: 8em;
+}
+
+@media (max-width: 475px) {
+	.car-vehicle-class {
+		display: block;
+		text-align: center;
+		margin-right: inherit;
+		width: auto;
+	}
+
+	.carResultPanel .rwd-table td:before {
+	  content: attr(data-th);
+	  font-weight: bold;
+	  width: 100%;
+	  display: block;
+	  text-align: center;
+	}
+}
+
+.list-view .noBorder {
+	border: 0px;
 }

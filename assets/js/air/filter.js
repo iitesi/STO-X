@@ -303,7 +303,6 @@ $(document).ready(function(){
 		var viewSelected = $(ev.target).data('view');
 		if(!viewSelected) viewSelected =  $(ev.target).parents('[data-view]').data('view')
 		Cookies.set('sto-view-pref', viewSelected);
-
 	});
 
 }); // end of $(document).ready(function()

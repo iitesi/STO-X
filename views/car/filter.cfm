@@ -168,7 +168,9 @@
 	<div class="filter respFilter">
 		<cfoutput>
 			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
-				<div class="navbar navbar-default">
+				<div class="row">
+					<div class="col-xs-7 col-md-12 col-lg-9">
+						<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
 							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="##filter-navbar-collapse-1" aria-expanded="false">
@@ -195,6 +197,18 @@
 						</div>
 					</div>
 				</div>
+					</div>
+					<div class="col-xs-5 col-md-12 col-lg-3 viewToggle">
+							 <div class="pull-right">
+								 <div class="navbar-text navbar-left">
+									 <div class="btn-group" role="group" >
+										  <button type="button" class="btn btn-default showGridView" data-view="grid"><i class="fa fa-th" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;Grid View</span></button>
+										  <button type="button" class="btn btn-default showListView" data-view="list"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;List View</span></button>
+										</div>
+								 </div>
+						</div>
+					</div>
+			</div>
 			</form>
 		</cfoutput>
 
