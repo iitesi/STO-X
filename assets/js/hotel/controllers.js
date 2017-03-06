@@ -26,7 +26,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.errors = [];
 	$scope.messages = [];
 
-	$scope.hideMap = Cookies.get('sto-hide-map-pref')? Cookies.get('sto-hide-map-pref') : false;
+	$scope.hideMap = Cookies.get('sto-hide-map-pref')? Cookies.get('sto-hide-map-pref') === 'true' : false;
 	var mapHiddenOnLoad = $scope.hideMap;
 	$scope.view = Cookies.get('sto-view-pref')? Cookies.get('sto-view-pref') : 'grid';
 
