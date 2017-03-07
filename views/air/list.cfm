@@ -62,25 +62,29 @@
 					arrayAppend(flightnumbers, stGroup.Segments[nSegment].flightNumber);
 				}
 			}
+			gCnt = 0;
 			</cfscript>
 			<cfset groupCount = structCount(stTrip.Groups)>
-			<cfset groupClass = (groupCount EQ 1? 'col-sm-6' : 'col-sm-3')>
+
 					<div class="col-sm-2 center" style="font-weight: bold;">
 						<cfif ArrayLen(stTrip.Carriers) EQ 1>
 							<img class="carrierimg" src="assets/img/airlines/#stTrip.Carriers[1]#.png">
+							<br />#application.stAirVendors[stTrip.Carriers[1]].Name #
 							<cfelse>
 								<img class="carrierimg" src="assets/img/airlines/Mult.png" height="60px">
 								<br />Multiple Carriers
 							</cfif>
+							<p class="xs-visible"></p>
 					</div>
 
 
 
 <!-- BEGIN -->
+<div class="col-sm-6">
 <cfloop collection="#stTrip.Groups#" item="Group">
 	<cfscript>
 	stGroup = stTrip.Groups[Group];
-
+	gCnt++;
 	// set times for badges, and get total times so we can set time sliders in filter
 	departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
 	arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
@@ -100,17 +104,18 @@
 		<cfset details = "">
 		<cfset aKeys = structKeyArray(stGroup.Segments)>
 		<cfloop collection="#stGroup.Segments#" item="nSegment" >
+
 			<cfscript>
 			nCnt++;
 			stSegment = stGroup.Segments[nSegment];
 			if(NOT arrayFind(carrierList, stSegment.Carrier))
 				arrayAppend(carrierList, stSegment.Carrier);
-			if(len(details))
-				details = details & '<br />';
-			details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
+			//if(len(details))
+			//	details = details & '<br />';
+			//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
 			if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
 				minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
-				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & application.stAirports[stSegment.Destination].airport;
+				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
 			}
 			</cfscript>
 			<cfif nCnt EQ 1>
@@ -119,26 +124,33 @@
 			</cfif>
 		</cfloop>
 
-	<div class="#groupClass# center">
+	<div class="col-sm-6 text-right xs-center">
 		<cfset stopCount = structCount(stGroup.Segments) - 1>
-		<strong>#DateFormat(stGroup.DepartureTime, 'dddd mmmm d')#</strong><br />
-		Depart #stGroup.Origin# <strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br />
-		Arrive #stGroup.Destination# <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br />
+		<strong>#DateFormat(stGroup.DepartureTime, 'ddd m/d')#</strong>
+		<span class="flightTimeOrigin"><strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br /><small>#stGroup.Origin#</small></span> &mdash;
+		<span class="flightTimeOrigin">  <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br /><small>#stGroup.Destination#</small></span>
+	</div>
+	<div class="col-sm-6 text-left xs-center">
 		<small><strong>
 		<cfif stopCount EQ 0>
 			Nonstop
 		<cfelse>
 
-			<a data-container="body" rel="popover" data-toggle="popover" data-placement="bottom" title="Flight Stops" data-content="#details#">
+
   			#stopCount & (stopCount EQ 1? '-stop' : '-stops')#
-			</a>
+			</strong>
+			#details#
 		</cfif>
-		</strong> Travel Time: #stGroup.TravelTime#</small>
-		<p class="xs-visible"></p>
+		<br /> Travel Time: #stGroup.TravelTime#</small>
+
+<cfif gCnt NEQ groupCount >
+		<hr class="visible-xs" />
+	</cfif>
 	</div>
 
 <!--	 -->
 </cfloop>
+</div> <!-- /.col-sm-6 -->
 <!-- END -->
 
 				  <div class="col-sm-4 center price">
@@ -187,7 +199,7 @@
 				<tr align="center">
 					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
 					<td colspan="2">
-						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : ' - OUT OF POLICY')#</small></span>
+						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : '<br />OUT OF POLICY')#</small></span>
 					</td>
 				</tr>
 			</cfif>

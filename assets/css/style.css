@@ -704,6 +704,17 @@ div.region {
 	border-spacing: 0;
 }
 
+span.flightTimeOrigin {
+    display: inline-block;
+    vertical-align: top;
+		text-align: center;
+}
+
+.flightTimeOrigin small {
+    margin-top: -3px;
+    display: block;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	SEAT MAPS
@@ -1567,3 +1578,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .list-view .noBorder {
 	border: 0px;
 }
+
+ @media (max-width: 768px) {
+	 .xs-center {
+		 text-align: center;
+	 }
+ }
