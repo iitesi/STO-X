@@ -183,7 +183,7 @@
     <cfargument name="propertyId" type="string" required="true"/>
     <cfargument name="callback" type="string" required="false"/>
     <cfargument name="requery" type="boolean" required="false" default="false"/>
-	<cfargument name="checkPriceline" type="boolean" required="false" default="true"/>
+	<cfargument name="checkPriceline" type="boolean" required="false" default="#iif(isDefined('session.acctID') && session.acctID == 1, de('true'), de('false'))#"/><!--- temp soft rollout restriction to STM internal account --->
 	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
 
 	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
