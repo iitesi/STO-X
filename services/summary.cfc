@@ -915,14 +915,16 @@
 
 		<cfset local.encryptedCCData = toString(toBinary(arguments.ccData)) />
 
-		<cfif cgi.http_host EQ "r.local">
-			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "Beta">
-			<cfset local.secureURL = "http://europaqa.shortstravel.com" />
-		<cfelseif cgi.local_host EQ "RailoQA">
+
+		<cfif listFindNoCase("r.local",cgi.server_name)>
 			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
+			<cfset local.returnURL = "http://#cgi.server_name#" />
+		<cfelseif listFindNoCase("beta,beta.shortstravel.com,stohotels,www.stohotels.com,railoq,railoqa.shortstravel.com",cgi.server_name)>
+			<cfset local.secureURL = "https://europaqa.shortstravel.com" />
+			<cfset local.returnURL = "https://#cgi.server_name#" />
 		<cfelse>
 			<cfset local.secureURL = "https://europa.shortstravel.com" />
+			<cfset local.returnURL = "https://#cgi.server_name#" />
 		</cfif>
 
 		<!--- Send the encrypted credit card data back over to the DMZ to decrypt the data --->
