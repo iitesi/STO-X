@@ -203,12 +203,10 @@
 						</span>
 					</cfif>
 
-					<cfif rc.Hotel.getRooms()[1].getDepositRequired()>
-						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
-							<span class="small red bold"><br />This rate requires payment at time of booking.</span>
-						<cfelse>
-							<span class="small red bold"><br />Websaver - Full pre-payment required upon booking.</span>
-						</cfif>
+					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+						<span class="small red bold"><br />#rc.Hotel.getRooms()[1].getPPNRateDescription()#</span>
+					<cfelseif rc.Hotel.getRooms()[1].getDepositRequired()>
+						<span class="small red bold"><br />This rate requires payment at time of booking.</span>
 					</cfif>
 					</div>
 				</div>
@@ -236,40 +234,45 @@
 						</div>
 					</div> <!-- /.form-group -->
 				</div> <!-- /.loyalty.row -->
-				<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-				<div class="row">
-
-					<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
-					<p>
-					<span class="bold">Rate Description</span><br>
-					#rc.Hotel.getRooms()[1].getPPNRateDescription()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
-					<p>
-					<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
-					#rc.Hotel.getRooms()[1].getDepositPolicy()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
-					<p>
-					<span class="bold">Cancellation Policy</span><br>
-					#rc.Hotel.getRooms()[1].getCancellationPolicy()#
-					</p>
-					</cfif>
-					<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
-					<p>
-					<span class="bold">Guarantee Policy</span><br>
-					#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
-					</p>
-					</cfif>
-					<p>
-					<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">I have read and agree to all terms.</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
-					</p>
-				</div>
-					</cfif>
-				</div>
+				<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+					<div class="row">
+						<h3>You have selected a web rate. Please read and accept the terms of this rate below.</h3>
+						<p>
+						<span class="bold">Age Restriction Disclosure</span><br>
+						The reservation holder must be 21 years of age or older.
+						</p>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getPPNRateDescription())))>
+						<p>
+						<span class="bold">Rate Description</span><br>
+						#rc.Hotel.getRooms()[1].getPPNRateDescription()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getDepositPolicy())))>
+						<p>
+						<span class="bold">Pre-Pay Policy and Room Charge Disclosure</span><br>
+						#rc.Hotel.getRooms()[1].getDepositPolicy()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getCancellationPolicy())))>
+						<p>
+						<span class="bold">Cancellation Policy</span><br>
+						#rc.Hotel.getRooms()[1].getCancellationPolicy()#
+						</p>
+						</cfif>
+						<cfif len(LTRIM(RTRIM(rc.Hotel.getRooms()[1].getGuaranteePolicy())))>
+						<p>
+						<span class="bold">Guarantee Policy</span><br>
+						#rc.Hotel.getRooms()[1].getGuaranteePolicy()#
+						</p>
+						</cfif>
+						<p>
+						<input class="input-large" type="checkbox" name="pricelineAgreeTerms" id="pricelineAgreeTerms"> <span class="bold preferred">
+						I have read and agree to abide by the <a href="http://secure.rezserver.com/hotels/help/terms/?refid=6821" target="_blank">priceline.com terms and conditions and privacy policy</a>.
+						</span> <span id="agreeToTermsError" class="small red bold notShown"> You must agree to the terms before purchasing.</span>
+						</p>
+					</div>
+				</cfif>
+			</div>
 			<div id="displayHotelCancellationPolicy" class="modal searchForm hide fade" tabindex="-1" role="dialog" aria-labelledby="displayHotelCancellationPolicy" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
