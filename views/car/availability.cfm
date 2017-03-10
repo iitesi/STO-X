@@ -72,30 +72,6 @@ OR NOT rc.Filter.getAir()>
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 
-
-			<div class="grid-view panel panel-default carResultPanel hidden">
-				<table class="table carResults rwd-table">
-				<thead>
-						<th class="carTypeCol">&nbsp;</th>
-					<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-						<th id="vendor#LCase(sVendor)#">
-
-
-							<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
-							<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
-								<div>Shuttle Off Terminal</div>
-							</cfif>
-							<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
-								<br /><small class="green">PREFERRED</small>
-							</cfif>
-
-						</th>
-					</cfloop>
-				</thead>
-				<tbody>
-					<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
-						<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
-
 						<cfif NOT StructIsEmpty(stCar)>
 							<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
 							<cfloop collection="#stCar#" item="vendor">
@@ -116,34 +92,6 @@ OR NOT rc.Filter.getAir()>
 											</cfif>
 
 									</td>
-
-									<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
-										<td <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>class="preferredVendor"</cfif>  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'#<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
-											<div class="col-sm-2 hiddenOnGrid hidden-xs">
-													<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png">
-													<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)><br/><strong class="green">Preferred</strong></cfif>
-											</div>
-
-												<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
-													<cfset buttonType="btn-primary" />
-													<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
-													<!--- If out of policy --->
-													<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
-														<cfset buttonType="" />
-													</cfif>
-													<!--- If best/lowest rate --->
-													<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
-														<cfset buttonType="btn-success" />
-													</cfif>
-													<!--- If corporate/contracted rate --->
-													<div class="col-sm-7 hiddenOnGrid">#vehicleClass#
-														<cfif stRate.Corporate
-															AND rc.Filter.getAcctID() NEQ 497
-															AND rc.Filter.getAcctID() NEQ 499>
-															<br /><small class="blue">CONTRACTED</small>
-														</cfif>
-													</div>
-
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 									<td <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>class="preferredVendor"</cfif>  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'#<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
