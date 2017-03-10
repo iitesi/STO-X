@@ -103,6 +103,9 @@
 		<cfset segmentCount = structCount(stGroup.Segments)>
 		<cfset details = "">
 		<cfset aKeys = structKeyArray(stGroup.Segments)>
+			<div class="col-xs-12 xs-center"><strong>#DateFormat(stGroup.DepartureTime, 'ddd, MMM d')#</strong></div>
+			<div class="row">
+
 		<cfloop collection="#stGroup.Segments#" item="nSegment" >
 
 			<cfscript>
@@ -118,35 +121,48 @@
 				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
 			}
 			</cfscript>
+			<div class="col-sm-5 text-right xs-center">
+				<span class="flightNumber">#stSegment.Carrier# #stSegment.FlightNumber#</span>
+				<span class="cityPair">#stSegment.Origin# - #stSegment.Destination#</span>
+			</div>
+			<div class="col-sm-5 text-left xs-center">
+				<span class="flightTimes">#TimeFormat(stSegment.DepartureTime, 'h:mmt')# - #TimeFormat(stSegment.ArrivalTime, 'h:mmt')#</span>
+				<span class="flightClass small">#findClass(stSegment.Class)#</span>
+			</div>
+			<div class="col-sm-2 text-left xs-center small">
+				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+					<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#stSegment.Class#&nSegment=#nSegment#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+						Seat Map
+					</a>
+				</cfif>
+			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
 				<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
 			</cfif>
 		</cfloop>
-
-	<div class="col-sm-6 text-right xs-center">
-		<cfset stopCount = structCount(stGroup.Segments) - 1>
-		<strong>#DateFormat(stGroup.DepartureTime, 'ddd m/d')#</strong>
-		<span class="flightTimeOrigin"><strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br /><small>#stGroup.Origin#</small></span> &mdash;
-		<span class="flightTimeOrigin">  <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br /><small>#stGroup.Destination#</small></span>
-	</div>
-	<div class="col-sm-6 text-left xs-center">
-		<small><strong>
-		<cfif stopCount EQ 0>
-			Nonstop
-		<cfelse>
-
-
-  			#stopCount & (stopCount EQ 1? '-stop' : '-stops')#
-			</strong>
-			#details#
+</div>
+			<!-- <div class="col-sm-6 text-right xs-center">
+				<cfset stopCount = structCount(stGroup.Segments) - 1>
+				<span class="flightTimeOrigin"><strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br /><small>#stGroup.Origin#</small></span> &mdash;
+				<span class="flightTimeOrigin">  <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br /><small>#stGroup.Destination#</small></span>
+			</div>
+			<div class="col-sm-6 text-left xs-center">
+				<small><strong>
+				<cfif stopCount EQ 0>
+					Nonstop
+				<cfelse>
+		  			#stopCount & (stopCount EQ 1? '-stop' : '-stops')#
+					</strong>
+					#details#
+				</cfif>
+				<br /> Travel Time: #stGroup.TravelTime#</small>
+		</div> -->
+	<cfif gCnt NEQ groupCount >
+			<hr class="visible-xs" />
 		</cfif>
-		<br /> Travel Time: #stGroup.TravelTime#</small>
 
-<cfif gCnt NEQ groupCount >
-		<hr class="visible-xs" />
-	</cfif>
-	</div>
 
 <!--	 -->
 </cfloop>

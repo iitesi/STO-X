@@ -715,6 +715,21 @@ span.flightTimeOrigin {
     display: block;
 }
 
+span.flightNumber {
+    display: inline-block;
+    width: 4em;
+}
+
+span.cityPair {
+    width: 6em;
+    display: inline-block;
+}
+
+span.flightTimes {
+    display: inline-block;
+    width: 8em;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	SEAT MAPS
