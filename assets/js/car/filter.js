@@ -1,27 +1,5 @@
 $(document).ready(function() {
 	// Get the total number of records before any filtering and set the numTotal value
-	var view = Cookies.get('sto-view-pref')
-	if(!view || view == 'grid') {
-		// Default to grid-view
-		$('.showGridView').addClass('active');
-		$('.carResultPanel').addClass('grid-view');
-		$('.carResultPanel').removeClass('list-view');
-	} else {
-		$('.showListView').addClass('active');
-		$('.carResultPanel').addClass('list-view');
-		$('.carResultPanel').removeClass('grid-view');
-	}
-
-	$('.carResultPanel').removeClass('hidden');
-
-	$('.viewToggle button').click(function(ev){
-		$('.viewToggle button').toggleClass('active');
-		$('.carResultPanel').toggleClass('grid-view list-view');
-		var viewSelected = $(ev.target).data('view');
-		if(!viewSelected) viewSelected =  $(ev.target).parents('[data-view]').data('view')
-		Cookies.set('sto-view-pref', viewSelected);
-	});
-
 	var numTotal = filterCar();
 	$("#numTotal").text(numTotal);
 	$("#numFiltered").text(numTotal);
@@ -41,7 +19,7 @@ $(document).ready(function() {
 	 $("#btnCarVendor").click(function() { $('#vendors').show(); });
 	$("#btnCarCategory").click(function() { $('#carTypes').show(); });
 	$("#btnLocation").click(function() { $('#locations').show(); });
-
+	
 	$('.carFilterBy').click(function() { $('.filterselection').slideToggle({
 			complete: function() {
 				if(!$('.filterselection').is(':visible')) {
@@ -50,7 +28,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-
+ 
 	// Show filtered results when any filter criteria is clicked
 	$(":checkbox").click(function() {
 		var vendorCheckboxes = $("input[name='fltrVendor']");
@@ -89,7 +67,7 @@ $(document).ready(function() {
 	}); */
 
 	// Clear all filters
-	$("#clearFilters").click(function() {
+	$("#clearFilters").click(function() { 
 		$("#numFiltered").text(filterCar('clearAll'));
 		return false;
 	});
@@ -97,5 +75,5 @@ $(document).ready(function() {
 	 $(".closewell").on("click", function() {
 		$(this).parent().parent().slideUp();
 		$('#vendors, #carTypes, #locations').hide();
-	});
+	}); 
 });

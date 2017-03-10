@@ -1408,7 +1408,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
-.grid .hideOnGrid, .grid-view .hideOnGrid {
+.grid .hideOnGrid {
 	display:none;
 }
 
@@ -1497,18 +1497,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: table-cell;
     padding: .25em .5em;
   }
-
-	.list-view .rwd-table th {
-		display: none;
-	}
-	.list-view .rwd-table td {
-		display: block;
-	}
-
-	.list-view .rwd-table td.hiddenOnList {
-		display: none;
-	}
-
   .rwd-table th:first-child, .rwd-table td:first-child {
     padding-left: 0;
   }
@@ -1518,7 +1506,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   .rwd-table td:before {
     display: none;
   }
-
   .rwd-table th, .rwd-table td {
     padding: 1em !important;
   }
@@ -1529,8 +1516,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     display: none;
   }
 }
-
-
 
 .rwd-table th, .rwd-table td {
   margin: .5em 1em;
@@ -1570,8 +1555,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .list-view .hiddenOnList {
 	display: none;
 }
-
-
 
 @media (max-width: 475px) {
 	.car-vehicle-class {
