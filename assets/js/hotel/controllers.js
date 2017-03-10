@@ -31,7 +31,6 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.view = Cookies.get('sto-view-pref')? Cookies.get('sto-view-pref') : 'grid';
 
 
-
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.currentPage = 1;
@@ -65,6 +64,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		rating: false
 	}
 
+
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
 
@@ -76,7 +76,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 						.then( function( result ){
 							$scope.account = result;
 						});
-					if(!mapHiddenOnLoad) $scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
+					$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
 					$scope.loadPolicy( $scope.search.policyID );
 					if (!!$scope.propertyId) {
 						setTimeout(function() {
@@ -783,11 +783,10 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		Cookies.set('sto-view-pref', $scope.view);
 	}
 
+
 	/* Items executed when controller is loaded */
 
 	$('#searchWindow').modal('show');
-
-
 
 	$scope.loadSearch( $scope.searchId );
 

@@ -1347,6 +1347,13 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 }
 
+@media (min-width: 991px) {
+	.hotel-results {
+		height: 425px;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+}
 
 @media (max-width: 990px) {
     .respFilter .navbar-header {
@@ -1406,10 +1413,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	.hotel .hideOnPhones {
 		display:none;
 	}
-}
-
-.grid .hideOnGrid {
-	display:none;
 }
 
 
