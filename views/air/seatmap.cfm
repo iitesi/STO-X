@@ -55,7 +55,7 @@
 							<a class="pointer" title="View seats for this flight..." onClick="$('##seats').html('<i class=&quot;icon-spinner icon-spin&quot;></i> One moment while we fetch seat information...');$('##seatcontent').load('?action=air.seatmap&#sURL#&nSegment=#sSegKey#&sClass=#sClass#&bSelection=1');" >
 								#application.stAirVendors[stSegment.Carrier].Name# #stSegment.FlightNumber# (#stSegment.Origin# to #stSegment.Destination#)
 							</a>
-							
+
 						</li>
 				</cfloop>
 			</cfloop>
@@ -129,7 +129,9 @@
 								<cfif structKeyExists(rc.stSeats[nRow], sColumn)>
 									<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
 									<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
+									<cfif ListFind(sDesc, 'AVAIL') GT 0>
 									<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
+									</cfif>
 									<cfset sDesc = Replace(sDesc, ',', ', ')>
 									<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 									<tr>
@@ -168,13 +170,13 @@
 					</cfloop>
 				</tr>
 			</table>
-			
+
 			<!-- mobile seatmap -->
 			<table class="popUpTable seatmapTable_mobile visible-xs">
-				
+
 
 			<!---	Display seats	--->
-				
+
 					<cfloop array="#aRows#" index="nRow">
 						<tr>
 						<!-- Left wing -->
@@ -190,7 +192,7 @@
 							</table>
 						</td>
 						<!-- End Left Wing -->
-						
+
 							<!-- <table width="25"> -->
 							<cfloop array="#aColumns#" index="sColumn">
 								<cfif structKeyExists(stAisles, sColumn)>
@@ -210,7 +212,9 @@
 								<cfif structKeyExists(rc.stSeats[nRow], sColumn)>
 									<cfset sDesc = rc.stSeats[nRow][sColumn].AVAIL>
 									<cfset sDesc = ListAppend(sDesc, structKeyList(rc.stSeats[nRow][sColumn]))>
-									<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
+									<cfif ListFind(sDesc, 'AVAIL') GT 0>
+										<cfset sDesc = ListDeleteAt(sDesc, ListFind(sDesc, 'AVAIL'))>
+									</cfif>
 									<cfset sDesc = Replace(sDesc, ',', ', ')>
 									<cfset sDesc = (sDesc EQ '' ? nRow&sColumn : nRow&sColumn&': '&sDesc)>
 									<td>
@@ -232,7 +236,7 @@
 								</cfif>
 							</cfloop>
 							<!--</table>-->
-						
+
 						<!-- Right Wing -->
 						<td>
 							<table width="15">
@@ -246,12 +250,12 @@
 							</table>
 						</td>
 						<!-- End Right wing -->
-						
+
 						</tr>
 					</cfloop>
-			
 
-				
+
+
 			</table>
 			<!-- end mobile setmap -->
 
