@@ -8,7 +8,7 @@ OR NOT rc.Filter.getAir()>
 			</cfoutput>
 		</div>
 	</div>
-	
+
 	<!--- SOLA/LSU --->
 	<cfif ( rc.acctID EQ 254
 		OR rc.acctID EQ 255 )
@@ -55,8 +55,8 @@ OR NOT rc.Filter.getAir()>
 					<th class="carTypeCol">&nbsp;</th>
 				<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 					<th id="vendor#LCase(sVendor)#">
-					
-						
+
+
 						<img alt="#sVendor#" src="assets/img/cars/#sVendor#.png" style="padding-top:28px;">
 						<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">
 							<div>Shuttle Off Terminal</div>
@@ -64,7 +64,7 @@ OR NOT rc.Filter.getAir()>
 						<cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>
 							<br /><small class="green">PREFERRED</small>
 						</cfif>
-					
+
 					</th>
 				</cfloop>
 			</thead>
@@ -72,31 +72,31 @@ OR NOT rc.Filter.getAir()>
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 
-					<cfif NOT StructIsEmpty(stCar)>
-						<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
-						<cfloop collection="#stCar#" item="vendor">
-							<cfset vehicleClass=stCar[vendor].vehicleClass & " " & stCar[vendor].category />
-							<cfbreak />
-						</cfloop>
-							
-							<tr id="row#LCase(sCategory)#">
-								<td class="carTypeCol" data-th="#vehicleClass#">
-									
-										
-										<span class="carType">#vehicleClass#</span><br />
+						<cfif NOT StructIsEmpty(stCar)>
+							<!--- Grab the user-friendly vehicle class and category for the first item in the structure. --->
+							<cfloop collection="#stCar#" item="vendor">
+								<cfset vehicleClass=stCar[vendor].vehicleClass & " " & stCar[vendor].category />
+								<cfbreak />
+							</cfloop>
 
-										<!--- Had to add the style width below for IE. --->
-										<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
-										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-											<br /><small class="green">PREFERRED</small>
-										</cfif>
-									
-								</td>
+								<tr id="row#LCase(sCategory)#">
+									<td class="carTypeCol hiddenOnList" data-th="#vehicleClass#">
+
+
+											<span class="carType">#vehicleClass#</span><br />
+
+											<!--- Had to add the style width below for IE. --->
+											<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
+											<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
+												<br /><small class="green">PREFERRED</small>
+											</cfif>
+
+									</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 									<td <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>class="preferredVendor"</cfif>  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'#<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
-										
-										
+
+
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 												<cfset buttonType="btn-primary" />
 												<cfset stRate = session.searches[rc.SearchID].stCars[sCategory][sVendor]>
@@ -109,7 +109,7 @@ OR NOT rc.Filter.getAir()>
 													<cfset buttonType="btn-success" />
 												</cfif>
 												<!--- If corporate/contracted rate --->
-											
+
 												<cfif stRate.Currency IS 'USD'>
 													<cfset thisRate="$" & Round(stRate.EstimatedTotalAmount) />
 												<cfelse>
@@ -134,20 +134,20 @@ OR NOT rc.Filter.getAir()>
 											<cfelse>
 												<br />UNAVAILABLE
 											</cfif>
-									
-										
+
+
 									</td>
 								</cfloop>
 							</tr>
-							
+
 
 					</cfif>
 				</cfloop>
 			</tbody>
 		</table>
 		</div>
-			
-		
+
+
 		<!-- End Lee's new table -->
 		<!--
 		<div id="vendorRow" class="carrow">

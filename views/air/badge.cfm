@@ -317,7 +317,7 @@ loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
 <cfcatch type="any"></cfcatch></cftry>
 <!--- display badge --->
 <cfoutput>
-	<div id="flight#nTripKey#" #dataString.toList(' ')# class="col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
+	<div #dataString.toList(' ')# class="flight#nTripKey# col-lg-3 col-md-4 col-sm-6 col-xs-12">#sBadge#</div>
 </cfoutput>
 
 <cffunction name="findClass">

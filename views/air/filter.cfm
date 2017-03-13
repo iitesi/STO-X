@@ -17,7 +17,7 @@
 
 <div id="filterbar" class="filter airfilterbar container">
 	 <div class="row">
-		<div class="sortby respFilter">
+		<div class="col-xs-7 sortby respFilter">
 
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
@@ -50,8 +50,22 @@
 					</div>
 				</div>
 			</div>
+			<div class="col-xs-5 viewToggle">
 
-		<div class="filterbar respFilter">
+					 <div class="pull-right">
+
+						 <div class="navbar-text navbar-left">
+							 <div class="btn-group" role="group" >
+								  <button type="button" class="btn btn-default showGridView" data-view="grid"><i class="fa fa-th" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;Grid View</span></button>
+								  <button type="button" class="btn btn-default showListView" data-view="list"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;List View</span></button>
+								</div>
+						 </div>
+
+				</div>
+			</div>
+
+
+		<div class="col-xs-12 filterbar respFilter">
 
 				<div class="navbar navbar-default">
 					<div class="container-fluid">

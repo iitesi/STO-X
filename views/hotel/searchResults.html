@@ -146,6 +146,7 @@
 
                     <div ng-show="searchCompleted && filteredHotels.length" >
 
+
                         <div ng-repeat="item in visibleHotels" class="row hotelrowbadge hotel">
                             <!--Ribbon overlays for DHL-->
                             <span class="ribbon ribbon-r-DHL-prefprop" ng-show="(search.acctID == 497 || search.acctID == 499) && item.hotel.preferredProperty"></span>
@@ -352,7 +353,6 @@
                                 </div> <!-- /.row -->
                               </div> <!-- /showRooms -->
                             </div> <!-- /.hotel -->
-
                         </div>
 
                     </div>

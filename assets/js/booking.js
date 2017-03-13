@@ -137,7 +137,7 @@ function filterAir(reset) {
 
 		// set count to all, and show all badges
 		showCount = flightresults.length;
-		$('[id^="flight"]').show();
+		$('[class^="flight"]').show();
 
 	} else {
 
@@ -241,9 +241,9 @@ function filterAir(reset) {
 		// show or hide flight
 			if(showFlight == true){
 				showCount++;
-				$( '#flight' + flight[0] ).show();
+				$( '.flight' + flight[0] ).show();
 			} else {
-				$( '#flight' + flight[0] ).hide();
+				$( '.flight' + flight[0] ).hide();
 			}
 
 		} // end of for loop flightresults
@@ -270,7 +270,8 @@ function sortAir(sort) {
 	var sortlist = eval( sort );
 	// console.log(sortlist);
 	for (var t = 0; t < sortlist.length; t++) {
-		$( "#aircontent" ).append( $( "#flight" + sortlist[t] ) );
+		$( "#aircontent .grid-view" ).append( $( ".grid-view .flight" + sortlist[t] ) );
+		$( "#aircontent .list-view" ).append( $( ".list-view .flight" + sortlist[t] ) );
 	}
 	return false;
 }
