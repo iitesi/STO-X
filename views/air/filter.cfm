@@ -107,7 +107,7 @@
 						</ul>
 						<cfoutput>
 						<ul class="nav navbar-nav navbar-right">
-							<li><p class="navbar-text filter"><span id="flightCount">#rc.totalflights#</span> of <span id="flightCount2">#rc.totalflights#</span> flights</p></li>
+							<li><p class="navbar-text filter"><span id="flightCount">#rc.totalflights#</span> flights showing</p></li>
 							<li><span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
 							<a href="##" class="removefilters"> <i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
 						</ul>
@@ -336,13 +336,24 @@
 		</div> <!-- // row --->
 	</div><!--- // filter --->
 
-
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4><i class="fa fa-spinner fa-spin"></i> One moment, we're searching for...</h4>
+				</div>
+				<div id="myModalBody" class="modal-body">
+					<p>Search form goes here.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- Modal
+<div id="myModal" class="modal hide fade" style="width:200px; height:200px; background-color: white;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<h4><i class="fa fa-spinner fa-spin"></i> One moment, we're searching for...</h4>
 	</div>
 	<div id="myModalBody" class="modal-body"></div>
-</div>
+</div>-->
 
 <div class="clearfix"></div>

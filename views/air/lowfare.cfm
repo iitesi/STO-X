@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=201703095'></script>
 	#view('air/unusedtickets')#
 
 	<div class="page-header">
@@ -55,10 +55,11 @@
 			</div>
 
 			<cfif structKeyExists(session.searches[rc.SearchID], "sUserMessage") AND len(session.searches[rc.SearchID].sUserMessage)>
-				<div class="alert alert-error">ERROR: #session.searches[rc.SearchID].sUserMessage#</div>
+				<div class="alert alert-error">#session.searches[rc.SearchID].sUserMessage#</div>
 			</cfif>
 			<div class="grid-view container hidden">
-			<!--- Display selected badges (selected via schedule search) --->
+				<!--- Display selected badges (selected via schedule search) --->
+
 				<cfset variables.bSelected = true>
 				<cfset variables.nCount = 0>
 				<cfloop collection="#session.searches[rc.SearchID].stLowFareDetails.stPriced#" item="variables.nTripKey">
@@ -67,7 +68,7 @@
 						<cfset nCount++>
 						#View('air/badge')#
 					<cfelse>
-							<div class="alert alert-error">ERROR: Could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
+							<div class="alert alert-error">We could not price selected flight itinerary.  If you feel this to be an error, please contact your travel manager/agent.</div>
 					</cfif>
 				</cfloop>
 

@@ -24,7 +24,7 @@
 		<cfargument name="SearchID" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="sCabin" required="false" default="Y"><!--- Options (one item) - Economy, Y, Business, C, First, F --->
+		<cfargument name="sCabin" required="false" default=""><!--- Options (one item) - Economy, Y, Business, C, First, F --->
 		<cfargument name="bRefundable" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="bRestricted" required="false" default="0"><!--- Options (one item) - 0, 1 --->
 		<cfargument name="sFaresIndicator" required="false" default="PublicAndPrivateFares"><!--- Options (one item) - PublicAndPrivateFares, PublicOrPrivateFares, PublicFaresOnly, PrivateFaresOnly --->
@@ -55,6 +55,9 @@
 		<cfset local.stSegments = {}>
 		<cfset local.nTripKey = ''>
 		<cfset local.TotalFare = 0>
+		<cfif !len(arguments.sCabin)>
+			<cfset arguments.sCabin = arguments.Filter.getClassOfService()>
+		</cfif>
 		<cfset session.searches[arguments.SearchID].sUserMessage = '' />
 
 		<cfif arguments.nTrip EQ ''
@@ -136,11 +139,9 @@
 					AND NOT arguments.totalOnly>
 					<!--- Add trip id to the list of priced items --->
 					<cfset session.searches[arguments.SearchID].stLowFareDetails.stPriced = addstPriced(session.searches[arguments.SearchID].stLowFareDetails.stPriced, local.nTripKey)>
-					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.SearchID].stTrips = AirParse.mergeTrips(session.searches[arguments.SearchID].stTrips, local.stTrips)>
-					<!--- Finish up the results --->
-					<cfset local.void = AirParse.finishLowFare(arguments.SearchID, arguments.Account, arguments.Policy)>
-					<!--- Clear out their results --->
+						<!---Store the priced trips so we can merge all data into the active stTrips resultset. --->
+					<cfset session.searches[arguments.SearchID].stPricedTrips = local.stTrips><!--- Merge all data into the current session structures. --->
+					<!--- Cabin check --->
 					<cfif arguments.sCabin NEQ local.stTrips[local.nTripKey].Class>
 						<cfset session.searches[arguments.SearchID].sUserMessage = 'Pricing returned '&(local.stTrips[local.nTripKey].Class EQ 'Y' ? 'economy' : (local.stTrips[local.nTripKey].Class EQ 'C' ? 'business' : 'first'))&' class instead of '&(arguments.sCabin EQ 'Y' ? 'economy' : (arguments.sCabin EQ 'C' ? 'business' : 'first'))&'.'>
 					</cfif>
@@ -150,7 +151,7 @@
 				</cfif>
 			</cfif>
 		<cfelse>
-			<cfset session.searches[arguments.SearchID].sUserMessage = 'Fare type selected is unavailable for pricing.'>
+			<cfset session.searches[arguments.SearchID].sUserMessage = 'The airlines you have selected do not have an interline ticketing agreement, you will need to purchase each flight as a one way ticket in order to accommodate your specific airline request.'>
 		</cfif>
 
 		<cfreturn local.stTrips>
@@ -297,8 +298,9 @@
 	<cffunction name="addstPriced" output="false">
 		<cfargument name="stPriced" required="true">
 		<cfargument name="nTripKey" required="true">
-
-		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})>
+			<!--- Why are we doing this next line?  It allows for x number of 'selected' flights on rt view
+		<cfset local.stPriced = (IsStruct(arguments.stPriced) ? arguments.stPriced : {})> --->
+		<!---Set to empty struct each time--->
 		<cfset local.stPriced[arguments.nTripKey] = ''>
 
 		<cfreturn local.stPriced>

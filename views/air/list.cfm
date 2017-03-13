@@ -127,19 +127,19 @@
 			</div>
 			<div class="col-sm-5 text-left xs-center">
 				<span class="flightTimes">#TimeFormat(stSegment.DepartureTime, 'h:mmt')# - #TimeFormat(stSegment.ArrivalTime, 'h:mmt')#</span>
-				<span class="flightClass small">#findClass(stSegment.Class)#</span>
+				<span class="flightClass small">#Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4)#</span>
 			</div>
 			<div class="col-sm-2 text-left xs-center small">
 				<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
 					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-					<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#stSegment.Class#&nSegment=#nSegment#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+					<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4)#&nSegment=#nSegment#" class="popupModal" data-toggle="modal" data-target="##popupModal">
 						Seat Map
 					</a>
 				</cfif>
 			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
-				<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
+				<cfset sClass = (bDisplayFare ? Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4) : 'Y') />
 			</cfif>
 		</cfloop>
 </div>
@@ -183,6 +183,14 @@
 						</cfif>
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)# - #findClass(stTrip.Class)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
+						<cfif bSelected OR !stTrip.Policy>
+							<tr align="center">
+								<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br/>')#</td>
+								<td colspan="2">
+									<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : 'OUT OF POLICY<br/>')#</small></span>
+								</td>
+							</tr>
+						</cfif>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
 							data-content="
 								Ticket is
@@ -211,14 +219,6 @@
 
 
 
-			<cfif bSelected OR !stTrip.Policy>
-				<tr align="center">
-					<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span>')#</td>
-					<td colspan="2">
-						<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : '<br />OUT OF POLICY')#</small></span>
-					</td>
-				</tr>
-			</cfif>
 
 			<!--- set bag fee into var so we can display in a tooltip below --->
 			<cfsavecontent variable="tooltip">

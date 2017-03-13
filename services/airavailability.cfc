@@ -32,39 +32,47 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="Group" required="false">
 		<cfargument name="sCabins" required="false">
-
+		<cfargument name="reQuery" default="false">
 		<cfset local.stThreads = {}>
 		<cfset local.sThreadName = ''>
 		<cfset local.sPriority = ''>
+		<cfset local.stTrips = {}>
 		<cfif IsNumeric(arguments.Group)>
-		<!--- Create a thread for every leg. Give priority to the group specifically selected. --->
-		<cfif arguments.Filter.getClassOfService() EQ ''>
-			<cfset local.aCabins = ['X']>
-		<cfelseif Len(arguments.sCabins)>
-			<!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
-			<cfset local.aCabins = [arguments.sCabins]>
-		<cfelse>
-			<!--- otherwise get the class/cabin passed from the widget --->
-			<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
+			<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stAvailTrips')
+						OR (StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stAvailTrips') AND !StructKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailTrips,arguments.Group))
+						OR (StructKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailTrips,arguments.Group) AND !StructCount(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group]))>
+
+				<!--- Create a thread for every leg. Give priority to the group specifically selected. --->
+				<cfif arguments.Filter.getClassOfService() EQ ''>
+					<cfset local.aCabins = ['X']>
+				<cfelseif Len(arguments.sCabins)>
+					<!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
+					<cfset local.aCabins = [arguments.sCabins]>
+				<cfelse>
+					<!--- otherwise get the class/cabin passed from the widget --->
+					<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
+				</cfif>
+
+				<cfset local.stTrips = doAvailability( Filter = arguments.Filter
+													, Group = arguments.Group
+													, Account = arguments.Account
+													, Policy = arguments.Policy
+													, sPriority = 'HIGH'
+													, sCabins = local.aCabins)>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], local.stTrips)>
+				<!--- Add list of available carriers per leg --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
+				<!--- Add sorting per leg --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
+				<!--- Sorting with preferred departure or arrival time taken into account --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
+				<!--- Mark this leg as priced --->
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
+			</cfif>
 		</cfif>
-
-			<cfset local.sThreadName = doAvailability( Filter = arguments.Filter
-												, Group = arguments.Group
-												, Account = arguments.Account
-												, Policy = arguments.Policy
-												, sPriority = 'HIGH'
-												, sCabins = local.aCabins)>
-			</cfif>
-				<!---<cfif local.sPriority EQ 'HIGH' AND local.sThreadName NEQ ''>
-				<cfset local.stThreads[local.sThreadName] = ''>
-			</cfif>
-
-	 Join only if threads where thrown out.
-		<cfif NOT StructIsEmpty(local.stThreads)
-			AND local.sPriority EQ 'HIGH'>
-			<cfthread action="join" name="#structKeyList(local.stThreads)#" />
-		</cfif>--->
-
 		<cfreturn />
 	</cffunction>
 
@@ -125,7 +133,7 @@
 			<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 			<!--- Create unique segment keys. --->
 			<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
-			<cfif local.nCount GT 3>
+			<cfif local.nCount GT 10> <!---This number was 3 and I found increasing this brought back more results in availability.--->
 				<cfset local.sNextRef	= ''>
 			</cfif>
 			<!--- Create unique segment keys. --->
@@ -151,23 +159,9 @@
 			<!--- Merge information into the current session structures. --->
 			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.tempTrips)>
 		</cfloop>
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = local.stTrips>
 		<!--- Remove all blackListed carriers that may have been added during this and previous calls --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().removeBlackListedCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], local.BlackListedCarriers)>
-		<!--- Add list of available carriers per leg --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
-		<!--- Add sorting per leg --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
-
-		<!--- Sorting with preferred departure or arrival time taken into account --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
-
-		<!--- Mark this leg as priced --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-}		<cfreturn local.sThreadName>
+		<cfset local.stTrips = getAirParse().removeBlackListedCarriers(local.stTrips, local.BlackListedCarriers)>
+		<cfreturn local.stTrips>
 	</cffunction>
 
 	<cffunction name="prepareSoapHeader" access="private" returntype="string" output="false" hint="I prepare the SOAP header.">

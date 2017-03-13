@@ -5,6 +5,7 @@ function toggleDiv(div) {
 	Submits the air.availability form.
 */
 function submitAvailability (nTripKey) {
+	showBadgeModal();
 	$("#nTrip").val(nTripKey);
 	$("#availabilityForm").submit();
 }
@@ -12,9 +13,16 @@ function submitAvailability (nTripKey) {
 	Submits the air.lowfare form.
 */
 function submitLowFare (nTripKey) {
+	showBadgeModal();
 	$("#nTrip").val(nTripKey);
 	$("#lowfareForm").submit();
 }
+
+function showBadgeModal() {
+	$('#myModalBody').text( 'Confirming airline selection...' );
+	$('#myModal').modal('show');
+};
+
 /*
 	Submits the car.availability form.
 */
@@ -115,166 +123,6 @@ function getUnusedTickets(userid, acctid) {
 	console.log('flight[7] = ' + flight[7] + ' | nonstops = ' + nonstops);
 	console.log('-------------------------------')
 ----------------------------------------------------------------------*/
-function filterAir(reset) {
-
-	var loopcnt = 0;
-	var classy = $("#ClassY:checked").val();
-	var classc = $("#ClassC:checked").val();
-	var classf = $("#ClassF:checked").val();
-	var fare0 = $("#Fare0:checked").val();
-	var fare1 = $("#Fare1:checked").val();
-	var nonstops = $("#NonStops").val();
-	var inpolicy = $("#InPolicy").val();
-	var singlecarrier = $("#SingleCarrier").val();
-	var showCount = 0;
-	var showFlight = false;
-
-	// see if any airlines are checked in filter
-	var airfields = $('input[name=carrier]:checked').map(function () { return this.value; }).toArray();
-
-	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
-	if(reset == 'true'){
-
-		// set count to all, and show all badges
-		showCount = flightresults.length;
-		$('[class^="flight"]').show();
-
-	} else {
-
-		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
-			var flight = flightresults[loopcnt];
-			showFlight = true;
-
-			// loop through and only check each subsequent filter if the previous
-			// filter didn't already hide it ( showflight=true )
-
-			// check in-policy, single carrier
-			if(showFlight == true){
-				if( (flight[1] == 0 && inpolicy == 1 ) || (flight[2] == 1 && singlecarrier == 1 ) ){
-					showFlight = false;
-				}
-			}
-
-			// non-stops - show all by default (nonstops will be empty)
-			if(showFlight == true){
-				if( nonstops.length > 0 && flight[7] != nonstops ){
-					showFlight = false;
-				}
-			}
-
-			// check refundable / non-refundable and not both checked at once which would imply you want to see everything
-			if(showFlight == true){
-				if(
-						(
-							(fare0 == 0 && flight[4] == 1)
-							|| (fare1 == 1 && flight[4] == 0)
-						)
-					// if all are selected show all
-					&& !( fare0 == 0 && fare1 == 1)
-				){
-					showFlight = false;
-				}
-			}
-
-			// check class Y = Economy, C = Business, F = First
-			if(showFlight == true){
-
-				if ( // single selection made
-					( classy == 'Y' && classc != 'C' && classf != 'F' )
-					|| ( classc == 'C' && classy != 'Y' && classf != 'F' )
-					|| ( classf == 'F' && classy != 'Y' && classc != 'C' )
-				){
-					 if (
-						 		( classy == 'Y' && flight[6] == 'C' || classy == 'Y' && flight[6] == 'F')
-						 || ( classc == 'C' && flight[6] == 'Y' || classc == 'C' && flight[6] == 'F' )
-						 || ( classf == 'F' && flight[6] == 'Y' || classf == 'F' && flight[6] == 'C' )
-				 			// if all are selected show all
-					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
-					 	) {
-					 		showFlight = false;
-					 	} // inside if
-
-				} else if ( // two selections made
-
-						 ( classy == 'Y' && classc == 'C' && classf != 'F' )
-					|| ( classy == 'Y' && classf == 'F' && classc != 'C' )
-					|| ( classc == 'C' && classf == 'F' && classy != 'Y' )
-				){
-					 if (
-									( classy == 'Y' && classc == 'C' && classf != 'F' && flight[6] == 'F' )
-							|| 	( classf == 'F' && classc == 'C' && classy != 'Y' && flight[6] == 'Y' )
-							|| 	( classy == 'Y' && classf == 'F' && classc != 'C' && flight[6] == 'C' )
-				 			// if all are selected show all
-					 		&& !( classf == 'F' && classc == 'C' && classf == 'F' )
-					 	) {
-					 		showFlight = false;
-					 	} // inside if
-				} // two selections made
-			} // showflight = true
-
-
-			// check carriers
-			if(showFlight == true){
-					// check first to see if ANY airlines are checked
-					if (airfields.length) {
-
-						var show = 0;
-						$.each( airfields, function( intValue, currentElement ) {
-
-							// loop over and see if airline is in trip
-							if( jQuery.inArray( currentElement , flight[3]) >= 0 ) {
-								show = 1;
-								// as soon as we've found 1 match we can dump out of the loop and we'll show this trip
-								return false;
-							}
-
-						}); // end each()
-
-						// if nothing matches - we'll hide the trip
-						if (show == 0){
-							showFlight = false;
-						}
-					} // airfields.length
-			} // showflight = true
-
-
-		// show or hide flight
-			if(showFlight == true){
-				showCount++;
-				$( '.flight' + flight[0] ).show();
-			} else {
-				$( '.flight' + flight[0] ).hide();
-			}
-
-		} // end of for loop flightresults
-	} // reset == 'true'
-
-	// show/hide no flights found message
-	if(showCount == 0){
-		$('.noFlightsFound').show();
-	} else {
-		$('.noFlightsFound').hide();
-	}
-
-	// show flight count
- 	$('#flightCount').text(showCount);
- 	if (parseInt($('#flightCount').text()) > parseInt($('#flightCount2').text())) {
- 		$('#flightCount2').text(showCount);
- 	}
-	$('.spinner').hide();
-	return false;
-} // ----------- end of function filterAir()------------------------------------
-
-
-function sortAir(sort) {
-	var sortlist = eval( sort );
-	// console.log(sortlist);
-	for (var t = 0; t < sortlist.length; t++) {
-		$( "#aircontent .grid-view" ).append( $( ".grid-view .flight" + sortlist[t] ) );
-		$( "#aircontent .list-view" ).append( $( ".list-view .flight" + sortlist[t] ) );
-	}
-	return false;
-}
 
 function AirPrice(searchid, trip_id, cabin, refundable) {
 	$.ajax({type:"POST",

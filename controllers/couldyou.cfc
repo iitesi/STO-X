@@ -49,6 +49,7 @@
 			<cfset arrayAppend( currencies, "USD" ) />
 		</cfif>
 		<cfif val(rc.Filter.getHotel())>
+			<cftry>
 			<cfif rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() !=  "" >
 				<cfset arrayAppend( currencies, rc.itinerary.hotel.getRooms()[1].getTotalForStayCurrency() ) />
 			<cfelseif rc.itinerary.hotel.getRooms()[1].getBaseRateCurrency() !=  "">
@@ -58,6 +59,10 @@
 			<cfelse>
 				<cfset arrayAppend( currencies, "" ) />
 			</cfif>
+			<cfcatch type="any">
+				<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
+			</cfcatch>
+		</cftry>
 		</cfif>
 		<cfif val(rc.Filter.getCar())>
 			<cfset arrayAppend( currencies, rc.itinerary.vehicle.getCurrency() ) />
