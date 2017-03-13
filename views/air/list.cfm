@@ -104,7 +104,7 @@
 		<cfset details = "">
 		<cfset aKeys = structKeyArray(stGroup.Segments)>
 			<div class="col-xs-12 xs-center"><strong>#DateFormat(stGroup.DepartureTime, 'ddd, MMM d')#</strong></div>
-			<div class="row">
+			<div class="row" style="margin-bottom:10px !important;">
 
 		<cfloop collection="#stGroup.Segments#" item="nSegment" >
 
