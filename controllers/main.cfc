@@ -6,10 +6,19 @@
 		<cfif structKeyExists(arguments.rc, 'Filter') AND IsObject(arguments.rc.Filter)>
 
 			<cfif arguments.rc.Filter.getAir() AND NOT StructKeyExists(session.searches[arguments.rc.SearchID].stItinerary, 'Air')>
-				<cfif structKeyExists(arguments.rc, "requery") AND arguments.rc.requery IS true>
-					<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&requery=true')>
+				<!---schedule based search only for roundtrip for now, go to lowfare for anything other than rt search--->
+				<cfif (structKeyExists(arguments.rc,"searchMode") AND arguments.rc.searchMode EQ '1') OR arguments.rc.Filter.getAirType() NEQ 'RT'>
+					<cfif structKeyExists(arguments.rc, "requery") AND arguments.rc.requery IS true>
+						<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#&requery=true')>
+					<cfelse>
+						<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
+					</cfif>
 				<cfelse>
-					<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
+					<cfif structKeyExists(arguments.rc, "requery") AND arguments.rc.requery IS true>
+						<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&group=0&requery=true')>
+					<cfelse>
+						<cfset variables.fw.redirect('air.availability?SearchID=#arguments.rc.SearchID#&group=0')>
+					</cfif>
 				</cfif>
 			</cfif>
 

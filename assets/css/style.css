@@ -423,6 +423,17 @@ ul.tabs li a.active {
 	color: #211922;
 }
 
+.grid .hotelrowbadge {
+	width: 100%;
+
+}
+
+@media (min-width: 990px) {
+	.grid .hotelrowbadge {
+			height: 220px;
+	}
+}
+
 .badge .carrierimg {
 	padding-bottom: 5px;
 }
@@ -693,6 +704,32 @@ div.region {
 	border-spacing: 0;
 }
 
+span.flightTimeOrigin {
+    display: inline-block;
+    vertical-align: top;
+		text-align: center;
+}
+
+.flightTimeOrigin small {
+    margin-top: -3px;
+    display: block;
+}
+
+span.flightNumber {
+    display: inline-block;
+    width: 4em;
+}
+
+span.cityPair {
+    width: 6em;
+    display: inline-block;
+}
+
+span.flightTimes {
+    display: inline-block;
+    width: 8em;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------------
 	SEAT MAPS
@@ -901,6 +938,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     overflow: hidden;
 }
 
+.grid .hotel-name {
+	height: 35px;
+}
+
 .hotel-distance{
     font-size: 11px;
     display: block;
@@ -1107,6 +1148,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 .tripsummary-detail .padded .ribbon {
 	margin-top: -1em;
+}
+
+.ribbon.ribbon-adjusted {
+	position: relative;
+	margin-top:-15px;
+	margin-bottom: -43px;
 }
 
 /*
@@ -1430,6 +1477,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   text-align: left;
 }
 
+.carResultPanel .rwd-table td:before {
+	min-width: 50%;
+	width:auto;
+	text-align: center;
+}
+
 .rwd-table td.no-label:before {
 	display:none;
 }
@@ -1493,3 +1546,42 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .change-search {
 	cursor: pointer;
 }
+
+.viewToggle {
+	margin-top: -7px;
+}
+
+.grid .hiddenOnGrid, .grid-view .hiddenOnGrid {
+	display: none;
+}
+
+.list-view .hiddenOnList {
+	display: none;
+}
+
+@media (max-width: 475px) {
+	.car-vehicle-class {
+		display: block;
+		text-align: center;
+		margin-right: inherit;
+		width: auto;
+	}
+
+	.carResultPanel .rwd-table td:before {
+	  content: attr(data-th);
+	  font-weight: bold;
+	  width: 100%;
+	  display: block;
+	  text-align: center;
+	}
+}
+
+.list-view .noBorder {
+	border: 0px;
+}
+
+ @media (max-width: 768px) {
+	 .xs-center {
+		 text-align: center;
+	 }
+ }

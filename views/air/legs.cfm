@@ -7,7 +7,8 @@
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")
 			AND IsArray(session.searches[rc.SearchID].stLowFareDetails.aSortFare)
 			AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.aSortFare) GT 0>
-			<cfset buttonPrice = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total>
+			<cftry><cfset buttonPrice = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total>
+				<cfcatch type="any"><cfdump var="#session.searches[rc.SearchID].stTrips#" abort/></cfcatch></cftry>
 		<cfelseif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFarePreferred")
 			AND IsArray(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred)
 			AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred) GT 0>
@@ -50,11 +51,6 @@
 <cfoutput>
 	<div id="legs" class="legs clearfix">
 		<ul class="nav nav-pills">
-		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
-			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
-			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" class=" legbtn popuplink" rel="poptop" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
-		</cfif>
 
 		<cfif rc.Filter.getAirType() NEQ 'OW'>
 			<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
@@ -67,6 +63,11 @@
 					#nLegItem#</a></li>
 				</cfif>
 			</cfloop>
+		</cfif>
+		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
+			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
+			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
+			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" <cfif popoverButtonClass EQ 'active'>class=" legbtn"<cfelse>class="airModal legbtn"</cfif> rel="poptop" data-modal="Roundtrip Flights" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
 		</ul>
 	</div>

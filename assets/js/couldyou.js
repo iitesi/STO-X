@@ -210,7 +210,8 @@ shortstravel.couldyou = {
 		}
 
 		//Get hotel total
-		if( shortstravel.search.hotel == 1 && selectedDate.hotel != "" && selectedDate.hotel.Rooms.length ){
+
+		if( shortstravel.search.hotel == 1 && selectedDate.hotel && selectedDate.hotel != "" && selectedDate.hotel.Rooms && selectedDate.hotel.Rooms.length ){
 			var hotelTotal = 0;
 			if( selectedDate.hotel.Rooms[ 0 ].totalForStay != 0 ){
 				hotelTotal = selectedDate.hotel.Rooms[ 0 ].totalForStay;
@@ -221,6 +222,7 @@ shortstravel.couldyou = {
 			}
 			total = total + hotelTotal;
 		}
+
 
 		//Get vehicle total
 		if( shortstravel.search.car == 1 && selectedDate.vehicle != "" ){
@@ -238,22 +240,30 @@ shortstravel.couldyou = {
 	calculateMaxSavingDates: function(){
 		var maxSavings = 0;
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
-			var selectedDate = shortstravel.couldyou.data[i];
-			if( selectedDate.message.indexOf( 'not available' ) == -1 ){
-				var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
-				if( dailySavings > maxSavings ){
-					maxSavings = dailySavings;
+			if(shortstravel.couldyou.data[i]){
+				var selectedDate = shortstravel.couldyou.data[i];
+				if(selectedDate.message){
+					if( selectedDate.message.indexOf( 'not available' ) == -1 ){
+						var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
+						if( dailySavings > maxSavings ){
+							maxSavings = dailySavings;
+						}
+					}
 				}
 			}
 		}
 
 		if( maxSavings > 0 ){
 			for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
-				var selectedDate = shortstravel.couldyou.data[i];
-				if( selectedDate.message.indexOf( 'not available' ) == -1 ){
-					var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
-					if( dailySavings == maxSavings ){
-						selectedDate.maxSavings = true;
+				if(shortstravel.couldyou.data[i]){
+					var selectedDate = shortstravel.couldyou.data[i];
+					if(selectedDate.message){
+						if( selectedDate.message.indexOf( 'not available' ) == -1 ){
+							var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
+							if( dailySavings == maxSavings ){
+								selectedDate.maxSavings = true;
+							}
+						}
 					}
 				}
 			}
@@ -264,7 +274,8 @@ shortstravel.couldyou = {
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
 			var selectedDate = shortstravel.couldyou.data[i];
 			var dateCell = $('td[data-date="' + dateFormat( selectedDate.departureDate, "yyyy-mm-dd" ) + '"]' );
-
+			if(!selectedDate.message)
+				selectedDate.message = 'not available';
 
 			if( ( shortstravel.search.air == 1 && selectedDate.air == "" ) ||
 				( shortstravel.search.hotel == 1 && selectedDate.hotel == "" ) ||
@@ -546,6 +557,8 @@ shortstravel.couldyou = {
 	},
 
 	continueToPurchase: function(){
+		$('#myModalBody').text( 'Confirming airline selection...' );
+		$('#myModal').modal();
 		window.location = '/booking/index.cfm?action=couldyou.processSelection&searchId=' + shortstravel.search.searchID
 			+ "&originalDate=" + dateFormat( shortstravel.couldyou.dates.originalDepart, 'mm-dd-yyyy', true )
 			+ "&selectedDate=" + $("#btnContinuePurchase" ).val();

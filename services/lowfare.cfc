@@ -76,8 +76,7 @@
 		<cfreturn />
 	</cffunction>
 
-
-	<cffunction name="threadLowFare" output="false" hint="I assemble info to pass to thread.">
+	<cffunction name="threadLowFare" output="false">
 		<!--- arguments getting passed in from RC --->
 		<cfargument name="sPriority" required="false" default="HIGH">
 		<cfargument name="bRefundable" required="false" default="false">
@@ -86,6 +85,35 @@
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
+		<cfargument name="reQuery" default="false">
+
+		<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stTrips')>
+			<cfset local.stTrips = getLowFareResults(argumentcollection=arguments)>
+		<cfelse>
+			<!---Used session cached version of the trips--->
+			<cfset local.stTrips = session.searches[arguments.Filter.getSearchID()].stTrips>
+		</cfif>
+		<!---Merge any selected / 'priced' trips from indv leg selection--->
+		<cfif StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stPricedTrips') AND StructCount(session.searches[arguments.Filter.getSearchID()].stPricedTrips) GT 0>
+			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, session.searches[arguments.Filter.getSearchID()].stPricedTrips)>
+		</cfif>
+		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips,local.stTrips)>
+		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
+		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="getLowFareResults" output="false" hint="I assemble info to pass to thread.">
+		<!--- arguments getting passed in from RC --->
+		<cfargument name="sPriority" required="false" default="HIGH">
+		<cfargument name="bRefundable" required="false" default="false">
+		<cfargument name="Filter" required="false" default="X">
+		<cfargument name="stPricing" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sCabins" default="">
+		<cfargument name="reQuery" default="false">
+
 		<cfset local.aRefundable = ListToArray(arguments.bRefundable)>
 		<cfset local.sThreadName = ''>
 		<cfset local.stThreads = {}>
@@ -193,38 +221,7 @@
 												, bGovtRate = true )>
 			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, local.stTripsTemp)>
 		</cfif>
-
-		<!--- Join only if threads where thrown out.
-		<cfif NOT StructIsEmpty(stThreads)
-			AND structKeyList(stThreads) NEQ ''
-			AND arguments.sPriority EQ 'HIGH'>
-			<cfthread action="join" name="#structKeyList(stThreads)#" />
-
-			<cfloop collection="#cfthread#" index="local.i" item="local.thread">
-				<cfif thread.status NEQ 'COMPLETED'
-					AND thread.status NEQ 'RUNNING'
-					AND application.fw.factory.getBean( 'EnvironmentService' ).getEnableBugLog()>
-					<cfset local.errorException = { searchID=arguments.Filter.getSearchID(), request=thread }>
-					<cfset application.fw.factory.getBean('BugLogService').notifyService( message='CFTHREAD: #thread.error.message#', exception=local.errorException, severityCode='Error' ) />
-					<!--- <cfdump var="#thread#" /><cfabort /> --->
-				<cfelseif structKeyExists(local.thread, 'stTrips')>
-					<!--- Merge all data into the current session structures. --->
-					<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips, local.thread.stTrips)>
-				</cfif>
-			</cfloop>
-		</cfif>--->
-		<!--- 12:20 PM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
-					Delete the thread if we are running travelTech report. Please do not remove.
-					this prevents thread name error - http://cfmlblog.adamcameron.me/2013/02/thread-longevity-weirdness.html
-					<cfset structdelete(cfthread,"#structKeyList(stThreads)#")>
-		--->
-		<!--- <cfdump var="#session.searches[arguments.Filter.getSearchID()].stTrips#" abort> --->
-
-		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
-		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = local.stTrips>
-		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-
-		<cfreturn />
+		<cfreturn local.stTrips>
 	</cffunction>
 
 <!--- PRIVATE METHODS ===================================================== --->

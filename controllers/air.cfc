@@ -11,32 +11,7 @@
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
-		<cfif NOT structKeyExists(session.searches[rc.searchID], 'unusedtickets')>
-			<cfset local.unusedTicketStruct = {}>
-			<cfif arguments.rc.Filter.getProfileID() NEQ 0>
-				<cfset session.searches[rc.searchID].unusedtickets = fw.getBeanFactory().getBean( "UnusedTicketService" ).getUnusedTickets( userID = arguments.rc.Filter.getProfileID() ) />
-				<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
-					<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
-						<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
-						<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.subUnusedTicketIndex" item="local.subUnusedTicketItem">
-							<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
-								<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
-									Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
-									Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
-									Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
-									Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
-									Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
-								</tr>">
-							</cfif>
-						</cfloop>
-					</cfif>
-				</cfloop>
-				<cfset rc.Filter.setUnusedTicketCarriers( local.unusedTicketStruct )>
-			<cfelse>
-				<cfset session.searches[rc.searchID].unusedtickets = [] />
-			</cfif>
-		</cfif>
-
+		<cfset doUnusedTicketSetup(arguments.rc)>
 		<cfif structKeyExists(arguments.rc, "airlines")
 			AND arguments.rc.airlines EQ 1>
 			<cfset rc.filter.setAirlines("")>
@@ -92,14 +67,18 @@
 	<cffunction name="availability" output="false" hint="I get info on legs when button is clicked on search results.">
 		<cfargument name="rc">
 
+
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
+			<cfset doUnusedTicketSetup(arguments.rc)>
 			<cfset arguments.rc.sPriority = 'LOW'>
 			<!--- Throw out a threads and get availability --->
 			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<!--- <cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)> --->
+			<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
 		<cfelse>
 			<!--- Select --->
+			<cfset arguments.rc.reQuery = true>
+			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
 			<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
 		</cfif>
 
@@ -163,7 +142,7 @@
 			<cfif len(rc.showSegments) AND rc.showSegments EQ "true">
 				<cfset rc.segments = response.stSegments>
 			<cfelse>
-				<cfset rc.trips = response.stTrips>				
+				<cfset rc.trips = response.stTrips>
 			</cfif>
 		</cfif>
 	</cffunction>
@@ -317,6 +296,35 @@
 		</cfif>
 
 		<cfreturn local.totalFlights>
+	</cffunction>
+
+	<cffunction name="doUnusedTicketSetup">
+		<cfargument name="rc" required="true">
+		<cfif NOT structKeyExists(session.searches[rc.searchID], 'unusedtickets')>
+			<cfset local.unusedTicketStruct = {}>
+			<cfif arguments.rc.Filter.getProfileID() NEQ 0>
+				<cfset session.searches[rc.searchID].unusedtickets = fw.getBeanFactory().getBean( "UnusedTicketService" ).getUnusedTickets( userID = arguments.rc.Filter.getProfileID() ) />
+				<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
+					<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
+						<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
+						<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.subUnusedTicketIndex" item="local.subUnusedTicketItem">
+							<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
+								<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
+									Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
+									Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
+									Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
+									Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
+									Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
+								</tr>">
+							</cfif>
+						</cfloop>
+					</cfif>
+				</cfloop>
+				<cfset rc.Filter.setUnusedTicketCarriers( local.unusedTicketStruct )>
+			<cfelse>
+				<cfset session.searches[rc.searchID].unusedtickets = [] />
+			</cfif>
+		</cfif>
 	</cffunction>
 
 </cfcomponent>

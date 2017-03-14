@@ -29,7 +29,7 @@
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
 			<link href="assets/css/layout.css?v=112016" rel="stylesheet" media="screen">
-			<link href="assets/css/style.css?v-112016" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css?v-032017" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -62,7 +62,8 @@
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
-			<script src="assets/js/booking.js?v=112016"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
 		</cfoutput>
 	</head>
 	<body>

@@ -26,6 +26,11 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.errors = [];
 	$scope.messages = [];
 
+	$scope.hideMap = Cookies.get('sto-hide-map-pref')? Cookies.get('sto-hide-map-pref') === 'true' : false;
+	var mapHiddenOnLoad = $scope.hideMap;
+	$scope.view = Cookies.get('sto-view-pref')? Cookies.get('sto-view-pref') : 'grid';
+
+
 	//Collection of items that we can filter our hotel results by
 	$scope.filterItems = {};
 	$scope.filterItems.currentPage = 1;
@@ -42,7 +47,7 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$scope.filterItems.noSoldOut = false;
 	$scope.filterItems.inPolicyOnly = false;
 	$scope.propertyNameFilterValue = ''; //This is outside the $scope.filterItems so that it doesn't get run on every keypress in the search box
-	
+
 	$scope.filtersApplied = {
 		vendors: false,
 		amenities: false,
@@ -51,14 +56,14 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		inPolicy: false,
 		noSoldOut: false
 	}
-	
+
 	$scope.filtersVisible = {
 		vendors: false,
 		amenities: false,
 		vendorName: false,
 		rating: false
 	}
-	
+
 
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
@@ -762,6 +767,22 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 		$scope.markers.push( marker );
 	}
 
+	$scope.toggleMap = function(){
+		$scope.hideMap = !$scope.hideMap;
+		if(mapHiddenOnLoad) {
+			$scope.initializeMap( $scope.search.hotelLat, $scope.search.hotelLong );
+			mapHiddenOnLoad = false;
+		}
+		Cookies.set('sto-hide-map-pref', $scope.hideMap);
+	}
+
+	$scope.toggleView = function(){
+		if($scope.view == 'grid') $scope.view = 'list';
+		else $scope.view = 'grid';
+
+		Cookies.set('sto-view-pref', $scope.view);
+	}
+
 
 	/* Items executed when controller is loaded */
 
@@ -772,4 +793,3 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	$('.continue-link').attr( 'href', '/booking/index.cfm?action=hotel.skip&searchId=' + $scope.searchId );
 
 });
-

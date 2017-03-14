@@ -7,7 +7,7 @@
 
 	<cfset googleMapsURL = googleMapsURL & "maps.googleapis.com/maps/api/js?client="
 						   & application.es.getGoogleMapsClientId()
-						   & "&sensor=false&v=3.12" />
+						   & "&sensor=false&v=3.27" />
 	<cfsavecontent variable="localAssets">
 		<link href="assets/css/datepicker.css" rel="stylesheet" media="screen" />
 		<link rel="stylesheet" type="text/css" href="assets/css/select2.css">

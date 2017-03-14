@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js'></script>
+  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=201703096'></script>
 	#view('air/unusedtickets')#
 
 <div class="page-header">
@@ -61,7 +61,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-		<div class="container">
+		<div class="grid-view container hidden">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -96,6 +96,44 @@
 			</cfif>
 		</cfloop>
 		</div> <!-- //.container -->
+
+		<div class="list-view container hidden">
+			<br />
+			<cfloop array="#arrayToLoop#" index="variables.nTripKey">
+				<cfset variables.nCount = 0>
+
+				 <cfif StructKeyExists(rc, "southWestMatch") AND rc.southWestMatch EQ true>
+					<!--- if they originally picked a southwest flight - only show southwest for other leg(s) --->
+					<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] EQ "WN">
+						<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+							<cfset nCount++>
+							#View('air/list')#
+
+					</cfif>
+				<cfelseif StructKeyExists(rc, "firstSelectedGroup")>
+					<!--- if this is not the first segment selected - hide southwest as it can't be booked with other carriers --->
+					<cftry>
+						<cfif session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey].carriers[1] NEQ "WN">
+						<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+							<cfset nCount++>
+							#View('air/list')#
+
+					</cfif>
+					<cfcatch type="any"></cfcatch>
+					</cftry>
+				<cfelse>
+					<!--- this is first view so show everything --->
+					<cfset variables.stTrip = session.searches[rc.SearchID].stAvailTrips[rc.Group][nTripKey]>
+
+						<cfset nCount++>
+						#View('air/list')#
+
+				</cfif>
+			</cfloop>
+		</div>
+
 		<script type="application/javascript">
 			// define for sorting ( see air/filter.js and booking.js airSort() )
 			var sortbyarrival = #SerializeJSON(session.searches[rc.SearchID].stAvailDetails.aSortArrival[rc.Group])#;
