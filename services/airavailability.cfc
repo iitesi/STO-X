@@ -133,7 +133,7 @@
 			<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 			<!--- Create unique segment keys. --->
 			<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
-			<cfif local.nCount GT 10> <!---This number was 3 and I found increasing this brought back more results in availability.--->
+			<cfif local.nCount GT 20> <!---This number was 3 and I found increasing this brought back more results in availability.--->
 				<cfset local.sNextRef	= ''>
 			</cfif>
 			<!--- Create unique segment keys. --->

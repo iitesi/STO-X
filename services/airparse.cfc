@@ -580,14 +580,20 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<!---Need to make sure each segment 'makes sense' if there are multiple--->
 					<!---Only multiple because single segment groups are derived from the single segment and no need to check against metro again which is exp--->
 					<cfloop collection="#segments#" item="segment">
-						<cfset var s = segments[segment]>
-						<cfset var sDepart = s.origin>
-						<cfset var sArrive = s.destination>
-						<cfif startCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
+						<cftry>
+							<cfset var s = segments[segment]>
+							<cfset var sDepart = s.origin>
+							<cfset var sArrive = s.destination>
+							<cfif startCtr GT 1 AND sDepart NEQ tempArrive> <!---segment other than first doesn't have depart the same as previous arrive--->
+								<cfreturn false>
+							</cfif>
+							<cfset tempDepart = s.origin>
+							<cfset tempArrive = s.destination>
+						<cfcatch type="any">
+							<!---Couldn't find the segment--->
 							<cfreturn false>
-						</cfif>
-						<cfset tempDepart = s.origin>
-						<cfset tempArrive = s.destination>
+						</cfcatch>
+						</cftry>
 						<cfset startCtr++>
 					</cfloop>
 				</cfif>
