@@ -257,7 +257,7 @@
 
 	<cfif application.es.getCurrentEnvironment() EQ "prod">
 		<!--- on the new login screen these may not yet be defined --->
-		<cfif structKeyExists(session,"acctId") AND val(session.acctId)>
+		<cfif structKeyExists(session,"acctId") AND val(session.acctId) AND structKeyExists(application.accounts,session.acctId)>
 			<cfset account_name = ucase(application.accounts[session.acctId].account_name)/>
 		<cfelse>
 			<cfset account_name = "Unknown: Not Logged In"/>
