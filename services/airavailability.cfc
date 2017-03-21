@@ -396,14 +396,14 @@
 						<cfset local.sIndex &= local.stAirSegment.XMLAttributes[local.sCol]>
 					</cfloop>
 					<!--- Create a look up structure for the primary key. --->
-					<cfset local.stSegmentKeys[local.stAirSegment.XMLAttributes.Key] = {
+					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegmentKeys[tempKey] = {
 						HashIndex	: 	getUAPI().HashNumeric(local.sIndex),
 						Index		: 	local.sIndex
 					}>
 				</cfloop>
 			</cfif>
 		</cfloop>
-
 		<cfreturn local.stSegmentKeys />
 	</cffunction>
 
@@ -418,7 +418,8 @@
 				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
 					<cfif local.stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
 						<cfset local.sAPIKey = local.stAirSegmentRef.XMLAttributes.Key>
-						<cfset arguments.stSegmentKeys[local.sAPIKey].nLocation = local.cnt>
+						<cfset local.tempKey = getUAPI().HashNumeric(local.sAPIKey)>
+						<cfset arguments.stSegmentKeys[local.tempKey].nLocation = local.cnt>
 						<cfset local.cnt++>
 					</cfif>
 				</cfloop>
@@ -454,7 +455,8 @@
 					<cfset local.dDepartGMT = local.stAirSegment.XMLAttributes.DepartureTime>
 					<cfset local.dDepartTime = GetToken(local.dDepartGMT, 1, '.')>
 					<cfset local.dDepartOffset = GetToken(GetToken(local.dDepartGMT, 2, '-'), 1, ':')>
-					<cfset local.stSegments[arguments.stSegmentKeys[local.stAirSegment.XMLAttributes.Key].HashIndex] = {
+					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegments[arguments.stSegmentKeys[tempKey].HashIndex] = {
 						Arrival					: local.dArrivalGMT,
 						ArrivalTime			: ParseDateTime(local.dArrivalTime),
 						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
