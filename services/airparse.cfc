@@ -97,8 +97,8 @@
 							</cftry>
 						</cfif>
 					</cfloop>
-
-					<cfset local.stSegments[local.stAirSegment.XMLAttributes.Key] = {
+					<cfset local.tempKey = getUAPI().hashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegments[local.tempKey] = {
 						ArrivalTime : ParseDateTime(local.dArrivalTime),
 						ArrivalGMT : ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
 						Carrier : local.stAirSegment.XMLAttributes.Carrier,
@@ -227,20 +227,21 @@
 
 						<cfloop array="#local.airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif local.journey.XMLName EQ 'air:AirSegmentRef'>
-								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.journey.XMLAttributes.Key]) : {}>
+								<cfset local.tempJourneyKey = getUAPI().hashNumeric(local.journey.XMLAttributes.Key)>
+								<cfset local.stTrip.Segments[local.tempJourneyKey] = structKeyExists(arguments.stSegments, local.tempJourneyKey) ? structCopy(arguments.stSegments[local.tempJourneyKey]) : {}>
 
 								<cfloop array="#local.distinctFields#" index="local.field">
-									<cfset local.tripKey &= local.stTrip.Segments[local.journey.XMLAttributes.Key][local.field]>
+									<cfset local.tripKey &= local.stTrip.Segments[local.tempJourneyKey][local.field]>
 								</cfloop>
 							</cfif>
-							<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key].TravelTime = local.totalTravelTime />
+							<cfset local.stTrip.Segments[local.tempJourneyKey].TravelTime = local.totalTravelTime />
 						</cfloop>
 
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
-						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.airPricingSolution.XMLAttributes.Key]) : {}>
-
+						<cfset local.tempJourneyKey = getUAPI().hashNumeric(local.airPricingSolution.XMLAttributes.Key)>
+						<cfset local.stTrip.Segments[local.tempJourneyKey] = structKeyExists(arguments.stSegments, local.tempJourneyKey) ? structCopy(arguments.stSegments[local.tempJourneyKey]) : {}>
 						<cfloop array="#local.distinctFields#" index="local.field">
-							<cfset local.tripKey &= local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key][local.field]>
+							<cfset local.tripKey &= local.stTrip.Segments[local.tempJourneyKey][local.field]>
 						</cfloop>
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirPricingInfo'>
 						<cfset local.sOverallClass = 'E'>
@@ -277,9 +278,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 							<cfelseif local.airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
+								<cfset local.segKey = getUAPI().hashNumeric(local.airPricingSolution2.XMLAttributes.SegmentRef)>
+
 								<cfset local.sClass = (StructKeyExists(local.airPricingSolution2.XMLAttributes, 'CabinClass') ? local.airPricingSolution2.XMLAttributes.CabinClass : 'Economy')>
-								<cfset local.stTrip.Segments[local.airPricingSolution2.XMLAttributes.SegmentRef].Class = local.airPricingSolution2.XMLAttributes.BookingCode>
-								<cfset local.stTrip.Segments[local.airPricingSolution2.XMLAttributes.SegmentRef].Cabin = local.sClass>
+								<cfset local.stTrip.Segments[local.segKey].Class = local.airPricingSolution2.XMLAttributes.BookingCode>
+								<cfset local.stTrip.Segments[local.segKey].Cabin = local.sClass>
 								<cfif local.sClass EQ 'First'>
 									<cfset local.sOverallClass = 'F'>
 								<cfelseif local.sOverallClass NEQ 'F' AND local.sClass EQ 'Business'>
