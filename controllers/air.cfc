@@ -28,7 +28,7 @@
 
 					<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
 				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
-					<!--- <cfset sleep(10000)> --->
+					<cfset sleep(10000)>
 					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
 				</cfif>
 			<cfelse>

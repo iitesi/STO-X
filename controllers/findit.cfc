@@ -61,7 +61,7 @@
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 
 		<cfif structKeyList(local.pricedTrip) NEQ ''>
-			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(local.pricedTrip)#&bSelect=1')>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(local.pricedTrip)#&bSelect=1&reQuery=true')>
 		<cfelse>
 			<cfset rc.message.addError('The flight from FindIt is no longer available.')>
 			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
