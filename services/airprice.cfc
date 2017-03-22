@@ -55,8 +55,10 @@
 		<cfset local.stSegments = {}>
 		<cfset local.nTripKey = ''>
 		<cfset local.TotalFare = 0>
-		<cfif !len(arguments.sCabin)>
+		<cfif arguments.findIt EQ '0' AND len(arguments.Filter.getClassOfService()) AND !len(arguments.sCabin)>
 			<cfset arguments.sCabin = arguments.Filter.getClassOfService()>
+		<cfelseif arguments.findIt EQ '0' AND !len(arguments.sCabin)>
+			<cfset arguments.sCabin = 'Y'>
 		</cfif>
 		<cfset session.searches[arguments.SearchID].sUserMessage = '' />
 
