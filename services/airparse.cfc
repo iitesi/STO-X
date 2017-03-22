@@ -521,15 +521,19 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="trips" required="true">
 		<cfargument name="filter" required="true">
 		<cfargument name="tripTypeOverride" default=""/>
+		<cfargument name="chosenGroup" default="-1"/>
 
 		<cfset var searchDepart = arguments.filter.getDepartCity()>
 		<cfset var searchArrive = arguments.filter.getArrivalCity()>
+		<cfset var departDay = DayOfYear(arguments.filter.getDepartDateTime())>
+		<cfset var arriveDay = DayOfYear(arguments.filter.getArrivalDateTime())>
 		<cfset var tripsToVerify = arguments.trips>
 		<cfset var ctr = 1>
 		<cfset var tripType = (len(arguments.tripTypeOverride) ? arguments.tripTypeOverride : arguments.filter.getAirType())>
-
 		<cfloop collection="#tripsToVerify#" item="local.trip">
-			<cfif tripType NEQ 'MD' AND StructKeyExists(tripsToVerify,local.trip) AND !verifyTripsWithGroups(tripsToVerify[local.trip],searchDepart,searchArrive,tripType)>
+			<cfif tripType NEQ 'MD'
+					  AND StructKeyExists(tripsToVerify,local.trip)
+						AND (!verifyTripsWithGroups(tripsToVerify[local.trip],searchDepart,searchArrive,tripType) OR !verifyTripDates(tripsToVerify[local.trip],departDay,arriveDay,arguments.chosenGroup))>
 				<cfset StructDelete(tripsToVerify, local.trip)>
 			</cfif>
 			<cfset ctr++>
@@ -602,6 +606,32 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				</cfif>
 			</cfloop>
 			<cfreturn true>
+		<cfelse>
+			<cfreturn false>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="verifyTripDates" returnType="boolean" output="false" hint="Checks a trip's group for valid departure/arrival days">
+		<cfargument name="trip" required="true">
+		<cfargument name="departDay" required="true">
+		<cfargument name="arriveDay" required="true">
+		<cfargument name="chosenGroup" default="-1">
+
+		<cfif StructKeyExists(arguments.trip,'Groups')>
+			<cfset var groups = arguments.trip.Groups>
+			<cfset var ctr = 0>
+			<cfloop collection="#groups#" item="local.group">
+				<cfset groupToCheck = ((chosenGroup GTE 0) ? arguments.chosenGroup : local.group)>
+				<cfset var g = groups[group]>
+				<cfset var gDepart = DayOfYear(g.departureTime)>
+				<!---This checks if the group depart/arrive day is not the same as what is picked (group 0 is depart, group 1 is arrive)--->
+				<cfif groupToCheck EQ 0  AND departDay NEQ gDepart>
+					<cfreturn false>
+				<cfelseif groupToCheck EQ 1 AND arriveDay NEQ gDepart>
+					<cfreturn false>
+				</cfif>
+				<cfreturn true>
+			</cfloop>
 		<cfelse>
 			<cfreturn false>
 		</cfif>
