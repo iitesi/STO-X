@@ -528,9 +528,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset var ctr = 1>
 		<cfset var tripType = (len(arguments.tripTypeOverride) ? arguments.tripTypeOverride : arguments.filter.getAirType())>
 
-		<cfloop collection="#tripsToVerify#" item="trip">
-			<cfif tripType NEQ 'MD' AND (!StructKeyExists(tripsToVerify,trip) OR !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive,tripType))>
-				<cfset StructDelete(tripsToVerify, trip)>
+		<cfloop collection="#tripsToVerify#" item="local.trip">
+			<cfif tripType NEQ 'MD' AND StructKeyExists(tripsToVerify,local.trip) AND !verifyTripsWithGroups(tripsToVerify[local.trip],searchDepart,searchArrive,tripType)>
+				<cfset StructDelete(tripsToVerify, local.trip)>
 			</cfif>
 			<cfset ctr++>
 		</cfloop>
