@@ -622,8 +622,8 @@
 				</cfif>
 
 				<!--- To Do: Pass variables in --->
-				<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
-				<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total />
+				<cfset local.lowestFareTripID = ((StructKeyExists(session.searches[rc.searchid].stLowFareDetails,'aSortFare') AND StructKeyExists(session.searches[rc.searchid].stLowFareDetails.aSortFare,'1')) ? session.searches[rc.searchid].stLowFareDetails.aSortFare[1] : 0) />
+				<cfset local.lowestFare = (StructKeyExists(session.searches[rc.searchid].stTrips,lowestFareTripID) ? session.searches[rc.searchid].stTrips[lowestFareTripID].Total : 0) />
 				<!--- To Do: Pass variables in --->
 
 				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
