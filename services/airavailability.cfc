@@ -149,7 +149,7 @@
 			<!--- Add group node --->
 			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
 			<!--- STM-7375 check--->
-			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW')>
+			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group)>
 			<!--- Mark preferred carriers. --->
 			<cfset local.tempTrips = getAirParse().addPreferred(local.tempTrips, arguments.Account)>
 			<!--- Run policy on all the results --->
@@ -582,7 +582,7 @@
 		junk code to remove flights not matching original arrival/departure
 
 		Also see below for methods relating to city codes included in this hack
-		--->
+
 
 			<!--- get selected origin/destination from the filter --->
 			<cfset local.original.departure = Left(arguments.filter.getLegsForTrip()[arguments.group+1], 3)>
@@ -599,7 +599,7 @@
 				<cfset local.toCheck.arrival = getCityCodeAirportCodes(local.original.arrival)>
 			</cfif>
 
-			<cfset local.badList = "">
+			<cfset local.badList = "">--->
 
 			<!--- loop over stTrips and compare chosen origin/destination against the airport codes returned from the uAPI --->
 			<!--- <cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
