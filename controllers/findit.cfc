@@ -57,7 +57,7 @@
 			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
 		</cfcatch>
 		</cftry>
-
+		<cfset rc.reQuery = true>
 		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 
 		<cfif structKeyList(local.pricedTrip) NEQ ''>
