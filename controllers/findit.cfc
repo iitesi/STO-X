@@ -51,20 +51,23 @@
 		<cftry>
 			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].aPolicies = local.trip.aPolicies>
 			<cfset local.pricedTrip[structKeyList(local.pricedTrip)].policy = local.trip.policy>
+			<cfset rc.reQuery = true>
+			<cfset arguments.rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+			<cfset fw.getBeanFactory().getBean('lowfare').threadLowfare(argumentcollection=arguments.rc)>
+			<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
+
 		<cfcatch type="any">
 			<!---Something went wrong - STM-6420 fix--->
 			<cfset rc.message.addError('There was an error trying to select the flight.  Try selecting manually.')>
-			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&reQuery=true')>
 		</cfcatch>
 		</cftry>
-		<cfset rc.reQuery = true>
-		<cfset fw.getBeanFactory().getBean('airavailability').threadAvailability(argumentcollection=arguments.rc)>
 
 		<cfif structKeyList(local.pricedTrip) NEQ ''>
 			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&nTrip=#structKeyList(local.pricedTrip)#&bSelect=1&reQuery=true')>
 		<cfelse>
 			<cfset rc.message.addError('The flight from FindIt is no longer available.')>
-			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#')>
+			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&reQuery=true')>
 		</cfif>
 	</cffunction>
 

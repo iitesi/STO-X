@@ -1,8 +1,8 @@
 <cfoutput>
 
 	<cfif rc.airSelected>
-		<cfset lowestFareTripID = ((StructKeyExists(session.searches[rc.searchid].stLowFareDetails,'aSortFare') AND StructKeyExists(session.searches[rc.searchid].stLowFareDetails.aSortFare,'1')) ? session.searches[rc.searchid].stLowFareDetails.aSortFare[1] : 0) />
-		<cfset lowestFare = (StructKeyExists(session.searches[rc.searchid].stTrips,lowestFareTripID) ? session.searches[rc.searchid].stTrips[lowestFareTripID].Total : 0) />
+		<cfset lowestFareTripID = session.searches[rc.searchid].stLowFareDetails.aSortFare[1] />
+		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total />
 		<cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)>
 
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">
