@@ -97,8 +97,8 @@
 							</cftry>
 						</cfif>
 					</cfloop>
-
-					<cfset local.stSegments[local.stAirSegment.XMLAttributes.Key] = {
+					<cfset local.tempKey = getUAPI().hashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegments[local.tempKey] = {
 						ArrivalTime : ParseDateTime(local.dArrivalTime),
 						ArrivalGMT : ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
 						Carrier : local.stAirSegment.XMLAttributes.Carrier,
@@ -227,20 +227,21 @@
 
 						<cfloop array="#local.airPricingSolution.XMLChildren#" index="local.journeyItem" item="local.journey">
 							<cfif local.journey.XMLName EQ 'air:AirSegmentRef'>
-								<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.journey.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.journey.XMLAttributes.Key]) : {}>
+								<cfset local.tempJourneyKey = getUAPI().hashNumeric(local.journey.XMLAttributes.Key)>
+								<cfset local.stTrip.Segments[local.tempJourneyKey] = structKeyExists(arguments.stSegments, local.tempJourneyKey) ? structCopy(arguments.stSegments[local.tempJourneyKey]) : {}>
 
 								<cfloop array="#local.distinctFields#" index="local.field">
-									<cfset local.tripKey &= local.stTrip.Segments[local.journey.XMLAttributes.Key][local.field]>
+									<cfset local.tripKey &= local.stTrip.Segments[local.tempJourneyKey][local.field]>
 								</cfloop>
 							</cfif>
-							<cfset local.stTrip.Segments[local.journey.XMLAttributes.Key].TravelTime = local.totalTravelTime />
+							<cfset local.stTrip.Segments[local.tempJourneyKey].TravelTime = local.totalTravelTime />
 						</cfloop>
 
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirSegmentRef'>
-						<cfset local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key] = structKeyExists(arguments.stSegments, local.airPricingSolution.XMLAttributes.Key) ? structCopy(arguments.stSegments[local.airPricingSolution.XMLAttributes.Key]) : {}>
-
+						<cfset local.tempJourneyKey = getUAPI().hashNumeric(local.airPricingSolution.XMLAttributes.Key)>
+						<cfset local.stTrip.Segments[local.tempJourneyKey] = structKeyExists(arguments.stSegments, local.tempJourneyKey) ? structCopy(arguments.stSegments[local.tempJourneyKey]) : {}>
 						<cfloop array="#local.distinctFields#" index="local.field">
-							<cfset local.tripKey &= local.stTrip.Segments[local.airPricingSolution.XMLAttributes.Key][local.field]>
+							<cfset local.tripKey &= local.stTrip.Segments[local.tempJourneyKey][local.field]>
 						</cfloop>
 					<cfelseif local.airPricingSolution.XMLName EQ 'air:AirPricingInfo'>
 						<cfset local.sOverallClass = 'E'>
@@ -277,9 +278,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 							<cfelseif local.airPricingSolution2.XMLName EQ 'air:BookingInfo'>
 								<!--- Pricing cabin class --->
+								<cfset local.segKey = getUAPI().hashNumeric(local.airPricingSolution2.XMLAttributes.SegmentRef)>
+
 								<cfset local.sClass = (StructKeyExists(local.airPricingSolution2.XMLAttributes, 'CabinClass') ? local.airPricingSolution2.XMLAttributes.CabinClass : 'Economy')>
-								<cfset local.stTrip.Segments[local.airPricingSolution2.XMLAttributes.SegmentRef].Class = local.airPricingSolution2.XMLAttributes.BookingCode>
-								<cfset local.stTrip.Segments[local.airPricingSolution2.XMLAttributes.SegmentRef].Cabin = local.sClass>
+								<cfset local.stTrip.Segments[local.segKey].Class = local.airPricingSolution2.XMLAttributes.BookingCode>
+								<cfset local.stTrip.Segments[local.segKey].Cabin = local.sClass>
 								<cfif local.sClass EQ 'First'>
 									<cfset local.sOverallClass = 'F'>
 								<cfelseif local.sOverallClass NEQ 'F' AND local.sClass EQ 'Business'>
@@ -518,16 +521,20 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="trips" required="true">
 		<cfargument name="filter" required="true">
 		<cfargument name="tripTypeOverride" default=""/>
+		<cfargument name="chosenGroup" default="-1"/>
 
 		<cfset var searchDepart = arguments.filter.getDepartCity()>
 		<cfset var searchArrive = arguments.filter.getArrivalCity()>
+		<cfset var departDay = DayOfYear(arguments.filter.getDepartDateTime())>
+		<cfset var arriveDay = DayOfYear(arguments.filter.getArrivalDateTime())>
 		<cfset var tripsToVerify = arguments.trips>
 		<cfset var ctr = 1>
 		<cfset var tripType = (len(arguments.tripTypeOverride) ? arguments.tripTypeOverride : arguments.filter.getAirType())>
-
-		<cfloop collection="#tripsToVerify#" item="trip">
-			<cfif tripType NEQ 'MD' AND !verifyTripsWithGroups(tripsToVerify[trip],searchDepart,searchArrive,tripType)>
-				<cfset StructDelete(tripsToVerify, trip)>
+		<cfloop collection="#tripsToVerify#" item="local.trip">
+			<cfif tripType NEQ 'MD'
+					  AND StructKeyExists(tripsToVerify,local.trip)
+						AND (!verifyTripsWithGroups(tripsToVerify[local.trip],searchDepart,searchArrive,tripType) OR !verifyTripDates(tripsToVerify[local.trip],departDay,arriveDay,arguments.chosenGroup))>
+				<cfset StructDelete(tripsToVerify, local.trip)>
 			</cfif>
 			<cfset ctr++>
 		</cfloop>
@@ -599,6 +606,32 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				</cfif>
 			</cfloop>
 			<cfreturn true>
+		<cfelse>
+			<cfreturn false>
+		</cfif>
+	</cffunction>
+
+	<cffunction name="verifyTripDates" returnType="boolean" output="false" hint="Checks a trip's group for valid departure/arrival days">
+		<cfargument name="trip" required="true">
+		<cfargument name="departDay" required="true">
+		<cfargument name="arriveDay" required="true">
+		<cfargument name="chosenGroup" default="-1">
+
+		<cfif StructKeyExists(arguments.trip,'Groups')>
+			<cfset var groups = arguments.trip.Groups>
+			<cfset var ctr = 0>
+			<cfloop collection="#groups#" item="local.group">
+				<cfset groupToCheck = ((chosenGroup GTE 0) ? arguments.chosenGroup : local.group)>
+				<cfset var g = groups[group]>
+				<cfset var gDepart = DayOfYear(g.departureTime)>
+				<!---This checks if the group depart/arrive day is not the same as what is picked (group 0 is depart, group 1 is arrive)--->
+				<cfif groupToCheck EQ 0  AND departDay NEQ gDepart>
+					<cfreturn false>
+				<cfelseif groupToCheck EQ 1 AND arriveDay NEQ gDepart>
+					<cfreturn false>
+				</cfif>
+				<cfreturn true>
+			</cfloop>
 		<cfelse>
 			<cfreturn false>
 		</cfif>

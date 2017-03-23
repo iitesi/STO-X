@@ -149,7 +149,7 @@
 			<!--- Add group node --->
 			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
 			<!--- STM-7375 check--->
-			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW')>
+			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group)>
 			<!--- Mark preferred carriers. --->
 			<cfset local.tempTrips = getAirParse().addPreferred(local.tempTrips, arguments.Account)>
 			<!--- Run policy on all the results --->
@@ -396,14 +396,14 @@
 						<cfset local.sIndex &= local.stAirSegment.XMLAttributes[local.sCol]>
 					</cfloop>
 					<!--- Create a look up structure for the primary key. --->
-					<cfset local.stSegmentKeys[local.stAirSegment.XMLAttributes.Key] = {
+					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegmentKeys[tempKey] = {
 						HashIndex	: 	getUAPI().HashNumeric(local.sIndex),
 						Index		: 	local.sIndex
 					}>
 				</cfloop>
 			</cfif>
 		</cfloop>
-
 		<cfreturn local.stSegmentKeys />
 	</cffunction>
 
@@ -418,7 +418,8 @@
 				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
 					<cfif local.stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
 						<cfset local.sAPIKey = local.stAirSegmentRef.XMLAttributes.Key>
-						<cfset arguments.stSegmentKeys[local.sAPIKey].nLocation = local.cnt>
+						<cfset local.tempKey = getUAPI().HashNumeric(local.sAPIKey)>
+						<cfset arguments.stSegmentKeys[local.tempKey].nLocation = local.cnt>
 						<cfset local.cnt++>
 					</cfif>
 				</cfloop>
@@ -454,7 +455,8 @@
 					<cfset local.dDepartGMT = local.stAirSegment.XMLAttributes.DepartureTime>
 					<cfset local.dDepartTime = GetToken(local.dDepartGMT, 1, '.')>
 					<cfset local.dDepartOffset = GetToken(GetToken(local.dDepartGMT, 2, '-'), 1, ':')>
-					<cfset local.stSegments[arguments.stSegmentKeys[local.stAirSegment.XMLAttributes.Key].HashIndex] = {
+					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
+					<cfset local.stSegments[arguments.stSegmentKeys[tempKey].HashIndex] = {
 						Arrival					: local.dArrivalGMT,
 						ArrivalTime			: ParseDateTime(local.dArrivalTime),
 						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
@@ -580,7 +582,7 @@
 		junk code to remove flights not matching original arrival/departure
 
 		Also see below for methods relating to city codes included in this hack
-		--->
+
 
 			<!--- get selected origin/destination from the filter --->
 			<cfset local.original.departure = Left(arguments.filter.getLegsForTrip()[arguments.group+1], 3)>
@@ -597,7 +599,7 @@
 				<cfset local.toCheck.arrival = getCityCodeAirportCodes(local.original.arrival)>
 			</cfif>
 
-			<cfset local.badList = "">
+			<cfset local.badList = "">--->
 
 			<!--- loop over stTrips and compare chosen origin/destination against the airport codes returned from the uAPI --->
 			<!--- <cfloop collection="#local.stTrips#" index="local.tripIndex" item="local.tripItem">
