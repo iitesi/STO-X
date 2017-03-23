@@ -146,7 +146,9 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							#View('summary/vehicle')#
 						</div>
 					</div>
-
+					<cfif StructKeyExists(rc,"Messages") AND ArrayLen(rc.Messages) GT 0>
+						#view('summary/messages')#						
+					</cfif>
 					<div class="container-fluid">
 						<div class="row">
 							<div class="col-xs-12" >
@@ -160,7 +162,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							</div>
 						</div>
 					</div>
-
 					#View('summary/buttons')#
 				</p>
 			</div>

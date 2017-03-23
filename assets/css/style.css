@@ -23,6 +23,14 @@
 	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
 	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
 }
+
+.travelMessage {
+	margin: 10px 0;
+	border: 1px solid red;
+	background-color:#EEEEEF; 
+	padding: 8px;
+}
+
 a {
     color: #2E76CF;
 }
