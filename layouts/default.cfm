@@ -29,7 +29,7 @@
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
 			<link href="assets/css/layout.css?v=112016" rel="stylesheet" media="screen">
-			<link href="assets/css/style.css?v-032017" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css?v-03232017" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
