@@ -526,7 +526,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset var searchDepart = arguments.filter.getDepartCity()>
 		<cfset var searchArrive = arguments.filter.getArrivalCity()>
 		<cfset var departDay = DayOfYear(arguments.filter.getDepartDateTime())>
-		<cfset var arriveDay = DayOfYear(arguments.filter.getArrivalDateTime())>
+		<cfset var arriveDay = ((arguments.filter.getAirType() NEQ 'OW' AND IsDate(arguments.filter.getArrivalDateTime())) ? DayOfYear(arguments.filter.getArrivalDateTime()) : 0)>
 		<cfset var tripsToVerify = arguments.trips>
 		<cfset var ctr = 1>
 		<cfset var tripType = (len(arguments.tripTypeOverride) ? arguments.tripTypeOverride : arguments.filter.getAirType())>
