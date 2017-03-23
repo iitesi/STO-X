@@ -93,6 +93,8 @@
 			<cfset rc.KTLinks = fw.getBeanFactory().getBean('Summary').setKTLinks(Air = rc.Air)>
 		</cfif>
 
+		<cfset rc.Messages = fw.getBeanFactory().getBean('MessageService').getMessages(rc.Filter)>
+
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
 		<!--- <cfif listFind('46144,198731,213137,215289,215292,217035,217041', rc.filter.getUserID())>
