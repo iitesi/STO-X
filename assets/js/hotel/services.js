@@ -83,7 +83,7 @@ services.factory( "HotelService", function( $window, $http ){
 				var rooms = [];
 				//We only want to check things if rooms are returned (not sold out)
 				if(response.data.length > 0)
-					Hotel.allRoomsOutOfPolicy = true;					
+					Hotel.allRoomsOutOfPolicy = true;
 				for (var i = 0; i < response.data.length; i++) {
 					var hr = new HotelRoom();
 					hr.populate( response.data[i] );
@@ -116,7 +116,7 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getExtendedData = function( searchId, Hotel, datapoints ){
 		Hotel.extendedDataRequested = true;
-		var remoteURL = shortstravel.shortsAPIURL + "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
+		var remoteURL = "/booking/RemoteProxy.cfc?method=getHotelDetails&callback=JSON_CALLBACK&searchId=" + searchId + "&propertyId=" + Hotel.PropertyId;
 		if ( typeof datapoints != 'undefined' ){
 			remoteURL = remoteURL + '&datapoints=' + datapoints;
 		}
