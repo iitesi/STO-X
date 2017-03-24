@@ -21,7 +21,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = (NOT isLocalHost(cgi.remote_addr) ? false : true),
+		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? false : true),
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
@@ -34,7 +34,7 @@
 
 	<cffunction name="setupApplication">
 		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
-				.init( defaultProperties = { currentServerName=cgi.http_host }) />
+				.init( defaultProperties = { currentServerName=cgi.server_name }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 		<cfset controller('setup.setApplication')>
