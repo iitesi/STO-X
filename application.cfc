@@ -21,7 +21,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? false : true),
+		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? true : false),
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
