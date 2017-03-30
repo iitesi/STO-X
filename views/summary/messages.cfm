@@ -1,6 +1,6 @@
 <cfoutput>
-<cfif StructKeyExists(rc,'Messages')>
-  <cfloop array="#rc.Messages#" index="local.msg">
+<cfif StructKeyExists(rc,'TravelMessages')>
+  <cfloop array="#rc.TravelMessages#" index="local.msg">
     <div class="travelMessage">
       #local.msg.getHTMLText()#
     </div>
