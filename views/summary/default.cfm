@@ -146,8 +146,8 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							#View('summary/vehicle')#
 						</div>
 					</div>
-					<cfif StructKeyExists(rc,"Messages") AND ArrayLen(rc.Messages) GT 0>
-						#view('summary/messages')#						
+					<cfif StructKeyExists(rc,"TravelMessages") AND ArrayLen(rc.TravelMessages) GT 0>
+						#view('summary/messages')#
 					</cfif>
 					<div class="container-fluid">
 						<div class="row">
