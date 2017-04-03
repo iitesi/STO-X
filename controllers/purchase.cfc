@@ -183,9 +183,9 @@
 							<cfset local.doAirPrice.Total = 0 />
 							<cfset local.tripKey = 0 />
 							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
-								<cfif ((trip[local.thisTrip].Class EQ Air.Class) AND
-									(trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
-									(trip[local.thisTrip].Ref EQ Air.Ref))>
+								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
+											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+									     trip[local.thisTrip].Ref EQ Air.Ref>
 									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
 									<cfset local.tripKey = local.thisTrip />
 								</cfif>
