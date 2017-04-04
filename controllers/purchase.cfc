@@ -183,9 +183,9 @@
 							<cfset local.doAirPrice.Total = 0 />
 							<cfset local.tripKey = 0 />
 							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
-								<cfif ((trip[local.thisTrip].Class EQ Air.Class) AND
-									(trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
-									(trip[local.thisTrip].Ref EQ Air.Ref))>
+								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
+											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+									     trip[local.thisTrip].Ref EQ Air.Ref>
 									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
 									<cfset local.tripKey = local.thisTrip />
 								</cfif>
@@ -200,7 +200,8 @@
 								<cfset Air.aPolicies = aPolicies>
 								<cfset Air.policy = policy>
 							<cfelse>
-								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#.' )>
+								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
+								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
 								<cfset errorType = 'Air.airPrice'>
 							</cfif>
 						</cfif>
@@ -377,7 +378,8 @@
 																							, response = airResponse
 																							, runAgain = true )>
 								<cfelse>
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+									<!---ERROR CODE PA02.  Not quite sure on this, could be cancel PNR failed?--->
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code PA02).' )>
 								</cfif>
 							</cfif>
 
@@ -616,10 +618,13 @@
 																									, urRecloc = Air.UniversalLocatorCode )>
 										</cfif>
 									</cfif>
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)#.' )>
+									<!---ERROR CODE PA03.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
+									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code: PA03).' )>
 								<cfelse>
-									<cfset errorMessage = Air.messages>
-								</cfif>
+									<cfset errorMessage = Air.messages> <!---Not sure what this does, next line ensures it will show up in sto error report--->
+									<!---ERROR CODE PA04.  Unknown--->
+									<cfset arrayAppend( errorMessage, 'The price quoted cannot be purchased at this time (error code: PA04).' )>
+							 </cfif>
 								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>

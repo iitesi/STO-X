@@ -93,7 +93,7 @@
 			<cfset rc.KTLinks = fw.getBeanFactory().getBean('Summary').setKTLinks(Air = rc.Air)>
 		</cfif>
 
-		<cfset rc.Messages = fw.getBeanFactory().getBean('TravelMessageService').getMessages(rc.Filter)>
+		<cfset rc.TravelMessages = fw.getBeanFactory().getBean('TravelMessageService').getMessages(rc.Filter)>
 
 		<!--- Determine whether the traveler is coming from an internal or external TMC --->
 		<!--- TODO: Replace below logic with the true logic after testing is over --->
