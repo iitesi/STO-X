@@ -52,102 +52,24 @@
 
 	<cffunction name="setupRequest">
 
-		<!--- <cfif isDefined("url.reinit")>
-			<cfset ApplicationStop()>
-			<cflocation url="index.cfm" addtoken="false">
-		</cfif>
-		<cfif request.context.action EQ 'main.notfound'>
-			<cfhttp url="https://europaqa.shortstravel.com/secure-sto/index.cfm?action=summary.decryptData" method="post" result="local.response">
-				<cfhttpparam type="formfield" name="acctID" value="1" />
-			</cfhttp>
-			<cfdump var="#local.response#" abort />
-		</cfif>--->
-
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
 
 		<cfelse>
+			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy,air.viewXMLResults'>
 
 			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
-				AND request.context.action NEQ 'main.notfound'
-				AND request.context.action NEQ 'main.menu'
-				AND request.context.action NEQ 'main.trips'
-				AND request.context.action NEQ 'main.search'
-				AND request.context.action NEQ 'main.contact'
-				AND request.context.action NEQ 'dycom.policy'
-				AND request.context.action NEQ 'setup.resetPolicy'
-				AND request.context.action NEQ 'setup.setPolicy'
-				AND request.context.action NEQ 'air.viewXMLResults'>
+				AND !ListFind(local.actionList,request.context.action)>
 
 				<cfset var action = ListFirst(request.context.action,".")>
 
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
 
-			<cfelse>
-				<cfif NOT findNoCase( ".cfc", cgi.script_name )>
-					<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
-
-						<cfset session.isAuthorized = false />
-
-						<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
-							<cfset session.isAuthorized = getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
-
-							<cfif session.isAuthorized>
-								<cfcookie domain="#cgi.http_host#" secure="yes" name="userId" value="#request.context.userId#" />
-								<cfcookie domain="#cgi.http_host#" secure="yes" name="acctId" value="#request.context.acctId#" />
-								<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
-								<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
-
-								<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
-								<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
-
-								<cfif apiURL NEQ cgi.http_host>
-									<cfcookie domain="#apiURL#" secure="yes" name="userId" value="#request.context.userId#" />
-									<cfcookie domain="#apiURL#" secure="yes" name="acctId" value="#request.context.acctId#" />
-									<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
-									<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
-								</cfif>
-								<cfset session.cookieDate = request.context.date />
-								<cfset session.cookieToken = request.context.token />
-							</cfif>
-
-						</cfif>
-					<cfelse>
-						<cfset var apiURL = getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
-						<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
-						<cfif structKeyExists(request.context, 'date')>
-							<cfset session.cookieDate = request.context.date>
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />								
-							<cfif apiURL NEQ cgi.http_host>
-								<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
-							</cfif>
-						</cfif>
-						<cfif structKeyExists(request.context, 'token')>
-							<cfset session.cookieToken = request.context.token>
-							<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
-							<cfif apiURL NEQ cgi.http_host>
-								<cfcookie domain="#apiURL#" secure="yes" name="token" value="#request.context.token#" />
-							</cfif>
-						</cfif>
-					</cfif>
-
-					<cfif NOT session.isAuthorized>
-						<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
-							<cfif structKeyExists(cookie,"acctId") AND cookie.acctId EQ 532>
-								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=dycom.login" addtoken="false">
-							<cfelse>
-								<cflocation url="#getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=main.login" addtoken="false">
-							</cfif>
-						<cfelse>
-							<cflocation url="#getBeanFactory().getBean('EnvironmentService').getPortalURL()#" addtoken="false">
-						</cfif>
-					</cfif>
-
-				</cfif>
-
+			<cfelse>				
+				<cfset controller('setup.setRequest')/>
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
 				<cfset controller('setup.setAcctID')/>
