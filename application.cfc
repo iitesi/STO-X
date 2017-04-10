@@ -69,7 +69,7 @@
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
 
 			<cfelse>				
-				<cfset controller('setup.setRequest')/>
+				<cfset controller('setup.setupRequest')/>
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
 				<cfset controller('setup.setAcctID')/>
