@@ -737,7 +737,7 @@
 				<cfset session.isAuthorized = false />
 
 				<cfif structKeyExists( request.context, "userId" ) AND structKeyExists( request.context, "acctId" ) AND structKeyExists( request.context, "date" ) AND structKeyExists( request.context, "token" )>
-					<cfset session.isAuthorized = fw.getBeanFactory().getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
+					<cfset session.isAuthorized = application.fw.factory.getBean( "AuthorizationService" ).checkCredentials( request.context.userId, request.context.acctId, request.context.date, request.context.token )>
 
 					<cfif session.isAuthorized>
 						<cfcookie domain="#cgi.http_host#" secure="yes" name="userId" value="#request.context.userId#" />
@@ -745,7 +745,7 @@
 						<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
 						<cfcookie domain="#cgi.http_host#" secure="yes" name="token" value="#request.context.token#" />
 
-						<cfset var apiURL = fw.getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+						<cfset var apiURL = application.fw.factory.getBean('EnvironmentService').getShortsAPIURL() />
 						<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
 
 						<cfif apiURL NEQ cgi.http_host>
@@ -760,7 +760,7 @@
 
 				</cfif>
 			<cfelse>
-				<cfset var apiURL = fw.getBeanFactory().getBean('EnvironmentService').getShortsAPIURL() />
+				<cfset var apiURL = application.fw.factory.getBean('EnvironmentService').getShortsAPIURL() />
 				<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
 				<cfif structKeyExists(request.context, 'date')>
 					<cfset session.cookieDate = request.context.date>
@@ -781,12 +781,12 @@
 			<cfif NOT session.isAuthorized>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<cfif structKeyExists(cookie,"acctId") AND cookie.acctId EQ 532>
-						<cflocation url="#fw.getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=dycom.login" addtoken="false">
+						<cflocation url="#application.fw.factory.getBean('EnvironmentService').getSTOURL()#/?action=dycom.login" addtoken="false">
 					<cfelse>
-						<cflocation url="#fw.getBeanFactory().getBean('EnvironmentService').getSTOURL()#/?action=main.login" addtoken="false">
+						<cflocation url="#application.fw.factory.getBean('EnvironmentService').getSTOURL()#/?action=main.login" addtoken="false">
 					</cfif>
 				<cfelse>
-					<cflocation url="#fw.getBeanFactory().getBean('EnvironmentService').getPortalURL()#" addtoken="false">
+					<cflocation url="#application.fw.factory.getBean('EnvironmentService').getPortalURL()#" addtoken="false">
 				</cfif>
 			</cfif>
 

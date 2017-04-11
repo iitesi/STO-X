@@ -192,4 +192,12 @@ setApplication
 
 		<cfreturn />
 	</cffunction>
+
+	<cffunction name="setBlackListedCarrierPairing" output="false">
+		<cfargument name="rc">
+		<cfif NOT StructKeyExists(application, 'blackListedCarrierPairing')>
+			<cfset variables.bf.getBean("setup").setBlackListedCarrierPairing(argumentcollection=arguments.rc)>
+		</cfif>
+		<cfreturn />
+	</cffunction>
 </cfcomponent>
