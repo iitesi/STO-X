@@ -69,7 +69,7 @@
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
 
 			<cfelse>				  
-				<cfset controller('setup.setupRequest')/>
+				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)> 
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
 				<cfset controller('setup.setAcctID')/>
