@@ -730,7 +730,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="authorizeRequest" output="true">	 
+	<cffunction name="authorizeRequest" output="false">	 
 		<cfif NOT findNoCase( ".cfc", cgi.script_name )>
 			<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
