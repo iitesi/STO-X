@@ -44,7 +44,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-xs-12">
+						<div class="col-xs-6">
 							<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
 							#(isInPolicy ? '' : '<div class="form-group"><label rel="tooltip" for="hotelReasonCode" class="control-label col-sm-4 col-xs-12 outofpolicy" title="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#"><strong>OUT OF POLICY *</strong></label>')#
 

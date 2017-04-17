@@ -20,4 +20,16 @@
 		<cfreturn qUser />
 	</cffunction>
 
+	<cffunction name="getTrip" output="false" hint="">
+		<cfargument name="SearchID" type="numeric" required="true">
+		<cfargument name="PropertyID" type="numeric" required="true">
+		<cfquery name="local.getTrip" datasource="booking">
+			SELECT TOP 1 ResultsJSON
+			FROM FindItOptions_Hotel
+			WHERE SearchID = <cfqueryparam value="#arguments.searchID#" cfsqltype="cf_sql_numeric" />
+				AND PropertyID = <cfqueryparam value="#arguments.propertyID#" cfsqltype="cf_sql_varchar" />
+			ORDER BY ID DESC
+		</cfquery>
+		<cfreturn getTrip />
+	</cffunction>
 </cfcomponent>
