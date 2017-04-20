@@ -586,6 +586,7 @@
 										<!--- blacklisted carriers --->
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="3M"/>
+											<com:Carrier Code="DE"/>
 											<com:Carrier Code="DN"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="JU"/>
