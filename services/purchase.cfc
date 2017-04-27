@@ -461,7 +461,7 @@
 				) VALUES (
 					<cfqueryparam value="#getNewInvoice.InvoiceID#" cfsqltype="cf_sql_integer"/>,
 					0,
-					null
+					null,
 					<cfqueryparam value="#arguments.itinerary.Hotel.getRooms()[1].getDailyRate()#"  cfsqltype="cf_sql_money"/>,
 					GetDate(),
 					null
