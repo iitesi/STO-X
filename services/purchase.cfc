@@ -52,7 +52,7 @@
 
 			<cfloop condition="count LT 2 AND processFileFinishing">
 				<cfset count++>
-				<!--- 
+				<!---
 				Pull up the PNR within the terminal session so all commands below run for that PNR
 				Command = *K65D84
 				--->
@@ -61,7 +61,7 @@
 																			, pnr = arguments.providerLocatorCode
 																			, searchID = arguments.searchID )>
 				<cfif NOT arguments.airSelected>
-					<!--- 
+					<!---
 					Add form of payment to non air booked PNRs
 					Command = F-CK
 					--->
@@ -81,7 +81,7 @@
 																		, bar = arguments.Traveler.getBAR()[1].Name
 																		, par = arguments.Traveler.getPAR()
 																		, searchID = arguments.searchID)>
-					
+
 					<cfif NOT readPARResponse.error>
 						<!---
 						Move PAR and BAR
@@ -122,7 +122,7 @@
 																		, bookingPCC = arguments.pccBooking
 																		, searchID = arguments.searchID )>
 
-								<!--- 
+								<!---
 								Add ticketing date
 								Command = T-U53-MM/DD/YYYY
 								--->
@@ -162,7 +162,7 @@
 								</cfif>
 							</cfif>
 
-							<!--- 
+							<!---
 							Add received by line into the PNR
 							Command = R:CHRISTINE DOHMEN 319-231-8322
 							--->
@@ -230,9 +230,9 @@
 
 							<cfif NOT verifyStoredFareResponse.error OR agentErrorQueue>
 								<cfif arguments.Filter.getAcctID() EQ 348 AND arguments.Traveler.getOrgUnit()[1].getValueID() NEQ 14046>
-									<!--- 
+									<!---
 									If NASCAR account but not NASCAR company (Value_ID = 14046), remove BARPAR accounting line.
-									*PT to see the lines in the PNR, then move down to count more, 
+									*PT to see the lines in the PNR, then move down to count more,
 									then remove the T-CA-43@021433 accounting line if found.
 									Command = *PT
 									Command = MD
@@ -242,9 +242,9 @@
 																				, hostToken = arguments.hostToken
 																				, searchID = arguments.searchID )>
 								<cfelse>
-									<!--- 
+									<!---
 									Otherwise, remove duplicate accounting line. Only run if removeBARPARAccounting() has not been performed.
-									*PT to see the lines in the PNR, then move down to count more, 
+									*PT to see the lines in the PNR, then move down to count more,
 									then remove that line number if there were two accounting lines found.
 									Command = *PT
 									Command = MD
@@ -314,18 +314,18 @@
 																	, version = arguments.version )>
 									</cfif>
 								</cfif>
-								
+
 								<cfif NOT processFileFinishing>
 									<!--- Sign out of terminal entry session --->
 									<cfset TerminalEntry.closeSession( targetBranch = arguments.targetBranch
 																		, hostToken = arguments.hostToken
 																		, searchID = arguments.searchID )>
 								</cfif>
-					
+
 							<cfelse>
 								<cfset responseMessage = verifyStoredFareResponse>
 							</cfif><!--- verifyStoredFareResponse.error = true --->
-						
+
 						<cfelse>
 							<cfset responseMessage = moveBARPARResponse>
 						</cfif><!--- moveBARPARResponse.error = true --->
@@ -333,7 +333,7 @@
 					<cfelse>
 						<cfset responseMessage = readPARResponse>
 					</cfif><!--- readPARResponse.error = true --->
-				
+
 				<cfelse>
 					<cfset responseMessage = displayPNRResponse>
 				</cfif><!--- displayPNRResponse.error = true --->
@@ -442,6 +442,34 @@
 				, <cfqueryparam value="#local.providerReservationInfoRef#" cfsqltype="cf_sql_varchar" >
 			)
 		</cfquery>
+
+		<cfif local.hotelSource EQ "Priceline">
+			<!--- Add new invoice to queue to sync to agresso --->
+			<cfquery name="getNewInvoice" datasource="#getBookingDSN()#">
+				SELECT InvoiceID
+				  FROM Invoices
+				 WHERE RecLoc = <cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+			<cfquery name="insertSyncToAgresso" datasource="Reporting">
+				INSERT INTO PassivePNRRateUpdates (
+					RecLoc,
+					InvoiceId,
+					IsUpdated,
+					OldRate,
+					NewRate,
+					DateCreated,
+					DateUpdated
+				) VALUES (
+					<cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar"/>,
+					<cfqueryparam value="#getNewInvoice.InvoiceID#" cfsqltype="cf_sql_integer"/>,
+					0,
+					null,
+					<cfqueryparam value="#arguments.itinerary.Hotel.getRooms()[1].getDailyRate()#"  cfsqltype="cf_sql_money"/>,
+					GetDate(),
+					null
+				)
+			</cfquery>
+		</cfif>
 
 		<cfreturn />
 	</cffunction>
