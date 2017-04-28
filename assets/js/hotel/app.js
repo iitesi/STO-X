@@ -12,7 +12,7 @@ app.config([ '$routeProvider', function( $routeProvider) {
 	$routeProvider.
 		when('/', {
 			controller: 'HotelCtrl',
-			templateUrl: '/booking/views/hotel/searchResults.html'
+			templateUrl: '/booking/views/hotel/searchResults.html?v=20170428'
 		})
 }]);
 
