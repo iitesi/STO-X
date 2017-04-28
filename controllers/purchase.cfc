@@ -334,12 +334,13 @@
 										<cfset Air.AirITNumber = number.ITNumber />
 									</cfif>
 								</cfloop>
-							</cfif>
-
+							</cfif> 
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )>
-
+																							, response = airResponse )> 
+							<cfif Air.segmentError>
+								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
+							</cfif>
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
 							<cfif Air.Total GT originalAirfare>
 								<cfset local.runAgain = true />
@@ -1315,5 +1316,11 @@
 		<cfset variables.fw.redirect('confirmation?searchID=#rc.searchID#&hotelCancelled=#cancelResponse.status#')>
 
 	</cffunction>
-
+	<cffunction name="handleSegmentError">
+		<cfargument name="Air" required="true">
+		<cfargument name="Message" required="true"> 
+		<cfargument name="searchID" required="true">
+		<cfset arguments.message.addError(arguments.air.segmentErrorMessage)>
+		<cfset variables.fw.redirect('air.lowfare?searchID=#arguments.searchID#&soldOutTrip=#arguments.air.nTrip#')>
+	</cffunction>
 </cfcomponent>
