@@ -9,14 +9,15 @@
 
 
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
-		<cfargument name="rc">
-
+		<cfargument name="rc"> 
 		<cfset doUnusedTicketSetup(arguments.rc)>
 		<cfif structKeyExists(arguments.rc, "airlines")
 			AND arguments.rc.airlines EQ 1>
 			<cfset rc.filter.setAirlines("")>
 		</cfif>
-
+		<cfif StructKeyExists(arguments.rc,"SoldOutTrip")>
+			<cfset variables.lowfare.unSelectAir(arguments.rc.searchID,arguments.rc.SoldOutTrip)>
+		</cfif>
 		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
 		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
 			<cfif NOT structKeyExists(arguments.rc, 'bSelect')> <!---IF WE HAVEN'T SELECTED A FLIGHT--->
