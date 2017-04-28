@@ -452,6 +452,7 @@
 			</cfquery>
 			<cfquery name="insertSyncToAgresso" datasource="Reporting">
 				INSERT INTO PassivePNRRateUpdates (
+					RecLoc,
 					InvoiceId,
 					IsUpdated,
 					OldRate,
@@ -459,6 +460,7 @@
 					DateCreated,
 					DateUpdated
 				) VALUES (
+					<cfqueryparam value="#arguments.Traveler.getBookingDetail().getReservationCode()#" cfsqltype="cf_sql_varchar"/>,
 					<cfqueryparam value="#getNewInvoice.InvoiceID#" cfsqltype="cf_sql_integer"/>,
 					0,
 					null,
