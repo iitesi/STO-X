@@ -23,8 +23,8 @@
 		<script src="assets/js/angular-resource.min.js"></script>
 		<script src="assets/js/purl.js"></script>
 		<script src="assets/js/hotel/services.js?v=20170428"></script>
-		<script src="assets/js/hotel/controllers.js"></script>
-		<script src="assets/js/hotel/app.js"></script>
+		<script src="assets/js/hotel/controllers.js?v=20170428"></script>
+		<script src="assets/js/hotel/app.js?v=20170428"></script>
 		<script type="text/javascript">
 			shortstravel = {};
 			<cfoutput>shortstravel.shortsAPIURL = '#rc.shortsAPIURL#';</cfoutput>
