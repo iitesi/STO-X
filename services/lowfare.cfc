@@ -75,7 +75,15 @@
 
 		<cfreturn />
 	</cffunction>
-
+	<cffunction name="unSelectAir" output="false">
+		<cfargument name="SearchID">
+		<cfargument name="nTrip">
+		<cfset session.searches[arguments.SearchID].stItinerary.Air = "">
+		<cfset session.searches[arguments.SearchID]['Air'] = false />
+		<cfset StructDelete(session.searches[arguments.searchID].stTrips,arguments.nTrip)> 
+		<cfset StructDelete(session.searches[arguments.searchID],"stPricedTrips")>
+		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)> 
+	</cffunction>
 	<cffunction name="threadLowFare" output="false">
 		<!--- arguments getting passed in from RC --->
 		<cfargument name="sPriority" required="false" default="HIGH">
@@ -586,6 +594,7 @@
 										<!--- blacklisted carriers --->
 										<air:ProhibitedCarriers>
 											<com:Carrier Code="3M"/>
+											<com:Carrier Code="DE"/>
 											<com:Carrier Code="DN"/>
 											<com:Carrier Code="G4"/>
 											<com:Carrier Code="JU"/>
