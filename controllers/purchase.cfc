@@ -1,7 +1,8 @@
 <cfcomponent extends="abstract">
 
 	<cffunction name="default" output="false">
-		<cfargument name="rc">
+		<cfargument name="rc">   
+		<cfparam name="arguments.rc.priceQuotedError" default="0">
 
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
@@ -176,13 +177,14 @@
 																							, bGovtRate = bGovtRate
 																							, bFirstPrice = 1
 																						)>
+
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
 							<cfset local.doAirPrice.Total = 0 />
 							<cfset local.tripKey = 0 />
-							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
+							<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
 								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 									     trip[local.thisTrip].Ref EQ Air.Ref>
@@ -191,6 +193,21 @@
 								</cfif>
 							</cfloop>
 
+							<cfif local.doAirPrice.Total EQ 0>
+								<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
+								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
+											 (trip[local.thisTrip].Total LTE originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+									     trip[local.thisTrip].Ref EQ Air.Ref>
+									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
+									<cfset local.tripKey = local.thisTrip />
+								</cfif>
+							</cfloop>
+								<cfif local.doAirPrice.Total NEQ 0 AND arguments.rc.priceQuotedError EQ 0>
+									<cfset rc.message.addError("This Trip is now available at a lower price. The price was $#originalAirfare# and is now $#local.doAirPrice.Total#")> 
+									<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&priceQuotedError=1')>
+								</cfif>
+							</cfif>
+
 							<cfif local.doAirPrice.Total NEQ 0 AND (local.doAirPrice.Total LTE originalAirfare)>
 								<cfset local.nTrip = Air.nTrip>
 								<cfset local.aPolicies = Air.aPolicies>
@@ -198,12 +215,13 @@
 								<cfset Air = trip[local.tripKey]>
 								<cfset Air.nTrip = nTrip>
 								<cfset Air.aPolicies = aPolicies>
-								<cfset Air.policy = policy>
+								<cfset Air.policy = policy> 
 							<cfelse>
 								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
 								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
 								<cfset errorType = 'Air.airPrice'>
 							</cfif>
+
 						</cfif>
 					</cfif>
 					<cfset Traveler.getBookingDetail().setAirRefundableFare(Air.total) />

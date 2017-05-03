@@ -1,5 +1,5 @@
 <cfoutput>
-
+	<input type="hidden" name="priceQuotedError" value="#rc.priceQuotedError#">
 	<h2>PAYMENT</h2>
 
 	<cfif rc.airSelected>

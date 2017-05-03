@@ -26,6 +26,7 @@
 		<cfparam name="rc.createProfile" default="0" />
 		<cfparam name="rc.password" default="" />
 		<cfparam name="rc.passwordConfirm" default="" />
+		<cfparam name="rc.priceQuotedError" default="0">
 
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
@@ -762,8 +763,12 @@
 						<cfset rc.travelerNumber = 1>
 					</cfif>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#rc.travelerNumber#')>
-				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'>
-					<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
+				<cfelseif rc.trigger EQ 'CONFIRM PURCHASE'> 
+					<cfif rc.priceQuotedError eq 1>
+						<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#&priceQuotedError=1')>
+					<cfelse>
+						<cfset variables.fw.redirect('purchase?searchID=#rc.searchID#')>
+					</cfif>
 				<cfelseif rc.trigger EQ 'CREATE PROFILE'>
 					<cfset local.newUserID = fw.getBeanFactory().getBean('UserService').createProfile( User = rc.Traveler
 																						, acctID = rc.Filter.getAcctID()
