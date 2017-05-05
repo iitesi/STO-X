@@ -40,6 +40,9 @@
 		<cfset controller('setup.setApplication')>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
+		<cfif getBeanFactory().getBean('EnvironmentService').getEnableNewRelicMonitoring()>
+			<cfset application.NewRelic = createObject( "java", "com.newrelic.api.agent.NewRelic" )>
+		</cfif>
 	</cffunction>
 
 	<cffunction name="setupSession">
@@ -51,6 +54,11 @@
 	</cffunction>
 
 	<cffunction name="setupRequest">
+
+		<!---NEW RELIC MONITORING.  THIS WILL SEND THE ACTUAL FW1 EVENT--->
+		<cfif structKeyExists( application, "NewRelic" )>
+    	<cfset application.NewRelic.setTransactionName( "CFML", getFullyQualifiedAction() )>
+		</cfif>
 
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
