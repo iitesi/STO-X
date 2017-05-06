@@ -40,8 +40,9 @@
 		<cfset controller('setup.setApplication')>
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
-		<cfif getBeanFactory().getBean('EnvironmentService').getEnableNewRelicMonitoring()>
-			<cfset application.NewRelic = createObject( "java", "com.newrelic.api.agent.NewRelic" )>
+		<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
+		<cfif !structKeyExists(application,"Monitor")>
+			<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
 		</cfif>
 	</cffunction>
 
@@ -54,11 +55,9 @@
 	</cffunction>
 
 	<cffunction name="setupRequest">
-
-		<!---NEW RELIC MONITORING.  THIS WILL SEND THE ACTUAL FW1 EVENT--->
-		<cfif structKeyExists( application, "NewRelic" )>
-    	<cfset application.NewRelic.setTransactionName( "CFML", getFullyQualifiedAction() )>
-		</cfif>
+<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
+		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
+		<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
 
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
 
@@ -76,8 +75,8 @@
 
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
 
-			<cfelse>				  
-				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)> 
+			<cfelse>
+				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
 				<cfset controller('setup.setAcctID')/>
@@ -176,6 +175,9 @@
 		<cfargument name="method" type="string" required="true">
 		<cfargument name="args" type="struct" required="true">
 
+		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
+		<cfset application.Monitor.sendTransaction("#arguments.cfcname#.#arguments.method#")>
+
 		<!--- if we are in production - lets check to see where the request is coming from
 					if its not one of our servers we'll end things with a 403  --->
 		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'prod'>
@@ -211,5 +213,4 @@
 
 		<cfreturn />
 	</cffunction>
-
 </cfcomponent>
