@@ -38,12 +38,7 @@
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 		<cfset controller('setup.setApplication')>
-		<cfset application.gmtOffset = '6:00'>
-		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
-		<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
-		<cfif !structKeyExists(application,"Monitor")>
-			<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
-		</cfif>
+		<cfset setupApplicationVariables()>
 	</cffunction>
 
 	<cffunction name="setupSession">
@@ -208,6 +203,11 @@
 
 		<cfreturn />
 	</cffunction>
+	<cffunction name="setupApplicationVariables" output="false">
+		<cfset application.gmtOffset = '6:00'>
+		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
+	</cffunction>
+
 	<cffunction name="transactionMonitorExists" output="false">
 		<cftry>
 			<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
