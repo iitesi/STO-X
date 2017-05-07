@@ -55,26 +55,21 @@
 	</cffunction>
 
 	<cffunction name="setupRequest">
-<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
+
 		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
 		<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
+		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
 
 		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
-
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
-
 		<cfelse>
 			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy,air.viewXMLResults'>
-
 			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
 				AND !ListFind(local.actionList,request.context.action)>
-
 				<cfset var action = ListFirst(request.context.action,".")>
-
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
-
 			<cfelse>
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 				<cfset controller('setup.setSearchID')/>
@@ -88,11 +83,8 @@
 				<cfset controller('setup.setAccountIds')/>
 				<cfset controller('setup.setInvoiceTableSuffix')/>
 				<cfset controller('setup.setBlackListedCarrierPairing')/>
-
 			</cfif>
-
 		</cfif>
-
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
