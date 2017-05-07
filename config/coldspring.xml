@@ -279,9 +279,24 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 
 	<bean id="SecureAuthService" class="com.auth.SecureAuthService">
         <constructor-arg name="secureAuthRedirectUri"><bean factory-bean="EnvironmentService" factory-method="getSecureAuthRedirectUri" /></constructor-arg>
-    </bean>
+  </bean>
 
-    <bean id="AuthService" class="com.auth.AuthService" />
+  <bean id="AuthService" class="com.auth.AuthService" />
 
 	<bean id="EmailService" class="com.shortstravel.email.emailService" />
+
+	<bean id="MonitorService" class="com.logging.monitorService">
+		<constructor-arg name="monitorAgent"><bean factory-bean="EnvironmentService" factory-method="getExternalMonitor" /></constructor-arg>
+	</bean>
+
+	<bean id="LogService" class="com.logging.logService" />
+
+	<bean id="Monitor" class="booking.services.transactionMonitor">
+		<constructor-arg name="enableTransactionLogging"><bean factory-bean="EnvironmentService" factory-method="getEnableTransactionLogging" /></constructor-arg>
+		<constructor-arg name="enableTransactionMonitoring"><bean factory-bean="EnvironmentService" factory-method="getEnableTransactionMonitoring" /></constructor-arg>
+		<constructor-arg name="transactionLogFile"><bean factory-bean="EnvironmentService" factory-method="getTransactionLog" /></constructor-arg>
+		<constructor-arg name="monitorAgent"><ref bean="MonitorService" /></constructor-arg>
+		<constructor-arg name="loggingAgent"><ref bean="LogService" /></constructor-arg>
+	</bean>
+
 </beans>
