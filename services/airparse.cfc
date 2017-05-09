@@ -1371,11 +1371,12 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="useUpPolicy" required="false" default="false"> 
 		<cfset local.policy.message = ''>
 		<cfset local.policy.active = 1>
-		<cfset local.policy.policy = 1>
-		
+		<cfset local.policy.policy = 1> 
 		<!--- Remove first refundable fares --->
 		<cfif arguments.class EQ 'F'
-			AND arguments.refundable EQ 1 AND !(arguments.useUpPolicy AND arguments.Policy.Policy_AirRefRule AND arguments.Policy.Policy_AirFirstClass)>
+			AND arguments.refundable EQ 1 AND 
+			((arguments.useUpPolicy AND (!arguments.Policy.Policy_AirRefRule OR !arguments.Policy.Policy_AirFirstClass))
+				OR !arguments.useUpPolicy)>
 			<cfset local.policy.message = 'Hide UP fares'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
