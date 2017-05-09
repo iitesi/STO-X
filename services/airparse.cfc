@@ -1364,7 +1364,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfreturn local.policy />
 	</cffunction>
 
-	<cffunction name="policyUpFares" output="true" hint="I check the policy.">
+	<cffunction name="policyUpFares" output="false" hint="I check the policy.">
 		<cfargument name="Policy" required="true">
 		<cfargument name="refundable" required="true">
 		<cfargument name="class" required="true">
