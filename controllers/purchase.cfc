@@ -203,7 +203,7 @@
 								</cfif>
 							</cfloop>
 								<cfif local.doAirPrice.Total NEQ 0 AND arguments.rc.priceQuotedError EQ 0>
-									<cfset rc.message.addError("This Trip is now available at a lower price. The price was $#originalAirfare# and is now $#local.doAirPrice.Total#")> 
+									<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")> 
 									<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&priceQuotedError=1')>
 								</cfif>
 							</cfif>
