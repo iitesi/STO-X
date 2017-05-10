@@ -639,7 +639,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 	<cffunction name="getMetroList" returnType="string" output="false" hint="I gather all the metro city pairs STO supports">
 		<!---STM-989 has the list--->
-		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW,HAR'>
+		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW,HAR,MIA'>
 		<cfreturn metroList>
 	</cffunction>
 
@@ -692,6 +692,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfcase>
 			<cfcase value="HAR">
 				<cfset var returnList = 'HAR,MDT'>
+			</cfcase>
+			<cfcase value="MIA">
+				<cfset var returnList = 'PBI,FLL,MIA'>
 			</cfcase>
 			<cfdefaultcase>
 				<cfset var returnList = ''>
