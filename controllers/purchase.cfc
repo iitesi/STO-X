@@ -111,11 +111,10 @@
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
 
-				<cfif hostToken EQ ''>
-					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
+				<cfif hostToken EQ ''> 
+					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>  
 					<cfset errorType = 'TerminalEntry.openSession'>
-				</cfif>
-
+				</cfif>   
 				<!--- Find the profile in the GDS --->
 				<cfset local.profileFound = true>
 				<cfif left(Traveler.getPAR(), 14) EQ 'STODEFAULTUSER'>
@@ -1051,7 +1050,7 @@
 																					, Filter = rc.Filter
 																					, Account = rc.Account )>
 
-				<cfelse>
+				<cfelse> 
 					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
@@ -1060,8 +1059,12 @@
 					<cfset local.errorList = message>
 					<!--- If account has Purchase Error Contact Info in STO Admin --->
 					<cfif len(rc.Account.Error_Contact)>
-						<cfset errorList = listAppend(errorList, rc.Account.Error_Contact)>
+						<cfset errorList = listAppend(errorList, Replace(rc.Account.Error_Contact,',','&##44;','all'))>
 					</cfif>
+					<!--- Loop through array of errorMessages and replace all commas with &##44; --->
+					<cfloop array="#errorMessage#" index="i" item="msg">
+						<cfset errorMessage[i] = Replace(msg,',','&##44;','all')>						
+					</cfloop>
 					<cfif rc.Filter.getSTMEmployee()
 						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
 						<cfset errorList = listAppend(errorList, arrayToList(errorMessage))>
@@ -1075,7 +1078,7 @@
 						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList))>
 						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
 					</cfif>
-					<cfset rc.message.addError(errorList)>
+					<cfset rc.message.addError(errorList)> 
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
