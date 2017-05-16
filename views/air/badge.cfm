@@ -15,7 +15,10 @@
 				else
 					ribbonClass = "ribbon-l-pref";
 			}
-			else ribbonClass = "ribbon-l-pref-cont";
+			else if(rc.acctId EQ 532)
+				ribbonClass = "ribbon-l-pref";
+			else
+				ribbonClass = "ribbon-l-pref-cont";
 		}
 		else if(stTrip.preferred EQ 1) {
 			if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")

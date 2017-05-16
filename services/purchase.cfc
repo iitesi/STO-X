@@ -533,7 +533,7 @@
 				</cfquery>
 
 				<cfif local.getMessage.recordCount>
-					<cfset local.message = local.getMessage.message>
+					<cfset local.message = Replace(local.getMessage.message,',','&##44;','all')>
 					<cfbreak>
 				</cfif>
 			</cfloop>

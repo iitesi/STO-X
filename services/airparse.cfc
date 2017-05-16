@@ -639,7 +639,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 	<cffunction name="getMetroList" returnType="string" output="false" hint="I gather all the metro city pairs STO supports">
 		<!---STM-989 has the list--->
-		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW,HAR'>
+		<cfset var metroList = 'DTT,YEA,YMQ,NYC,YTO,WAS,CHI,LON,BUE,SAO,BJS,OSA,SPK,SEL,TYO,BER,BUH,MIL,MOW,PAR,ROM,STO,RIO,HOU,DFW,HAR,MIA'>
 		<cfreturn metroList>
 	</cffunction>
 
@@ -692,6 +692,9 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 			</cfcase>
 			<cfcase value="HAR">
 				<cfset var returnList = 'HAR,MDT'>
+			</cfcase>
+			<cfcase value="MIA">
+				<cfset var returnList = 'PBI,FLL,MIA'>
 			</cfcase>
 			<cfdefaultcase>
 				<cfset var returnList = ''>
@@ -1371,14 +1374,15 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfargument name="Policy" required="true">
 		<cfargument name="refundable" required="true">
 		<cfargument name="class" required="true">
-
+		<cfargument name="useUpPolicy" required="false" default="false"> 
 		<cfset local.policy.message = ''>
 		<cfset local.policy.active = 1>
-		<cfset local.policy.policy = 1>
-
+		<cfset local.policy.policy = 1> 
 		<!--- Remove first refundable fares --->
 		<cfif arguments.class EQ 'F'
-			AND arguments.refundable EQ 1>
+			AND arguments.refundable EQ 1 AND 
+			((arguments.useUpPolicy AND (!arguments.Policy.Policy_AirRefRule OR !arguments.Policy.Policy_AirFirstClass))
+				OR !arguments.useUpPolicy)>
 			<cfset local.policy.message = 'Hide UP fares'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
