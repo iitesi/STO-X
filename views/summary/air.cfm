@@ -26,6 +26,8 @@
 							<cfelse>
 								<span class="ribbon ribbon-l-pref"></span>
 							</cfif>
+						<cfelseif rc.acctId EQ 532>
+							<span class="ribbon ribbon-l-pref"></span>
 						<cfelse>
 							<span class="ribbon ribbon-l-pref-cont"></span>
 						</cfif>
