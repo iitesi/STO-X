@@ -27,8 +27,10 @@
 							<!--- If any other account --->
 							<cfelse>
 								<cfif rc.Hotel.getRooms()[1].getIsCorporateRate()
-									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
-									<span class="ribbon ribbon-l-pref-cont"></span>
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()) AND rc.acctID NEQ 532>
+								<cfelseif rc.Hotel.getRooms()[1].getIsCorporateRate()
+									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor()) AND rc.acctID EQ 532>
+									<span class="ribbon ribbon-l-pref"></span>
 								<cfelseif rc.Hotel.getRooms()[1].getIsGovernmentRate()
 									AND (rc.Hotel.getPreferredProperty() OR rc.Hotel.getPreferredVendor())>
 									<span class="ribbon ribbon-l-pref-govt"></span>
