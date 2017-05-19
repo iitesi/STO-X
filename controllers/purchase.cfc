@@ -2,8 +2,7 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">   
-		<cfparam name="arguments.rc.priceQuotedError" default="0">
-
+		<cfparam name="arguments.rc.priceQuotedError" default="0"> 
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 
@@ -355,7 +354,7 @@
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )> 
-							<cfif Air.segmentError>
+							<cfif Air.segmentError or Air.seatAssignmentNeeded>
 								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
 							</cfif>
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
@@ -620,12 +619,10 @@
 									<cfset errorType = 'Air.confirmSegments' />
 								</cfif>
 							</cfif>
-
+ 
 							<!--- Parse error --->
-							<cfif (Air.UniversalLocatorCode EQ '')
-								OR Air.error
-								OR (Air.Total GT originalAirfare)>
-								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
+							<cfif (Air.UniversalLocatorCode EQ '') OR Air.error>
+								<cfif Air.error AND len(Air.UniversalLocatorCode)>
 									<cfif len(Air.UniversalLocatorCode)>
 										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode
