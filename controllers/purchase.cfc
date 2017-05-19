@@ -1,9 +1,8 @@
 <cfcomponent extends="abstract">
 
 	<cffunction name="default" output="false">
-		<cfargument name="rc">   
+		<cfargument name="rc">
 		<cfparam name="arguments.rc.priceQuotedError" default="0">
-
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 
@@ -111,10 +110,10 @@
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
 
-				<cfif hostToken EQ ''> 
-					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>  
+				<cfif hostToken EQ ''>
+					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
 					<cfset errorType = 'TerminalEntry.openSession'>
-				</cfif>   
+				</cfif>
 				<!--- Find the profile in the GDS --->
 				<cfset local.profileFound = true>
 				<cfif left(Traveler.getPAR(), 14) EQ 'STODEFAULTUSER'>
@@ -183,7 +182,7 @@
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
 							<cfset local.doAirPrice.Total = 0 />
 							<cfset local.tripKey = 0 />
-							<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
+							<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
 								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 									     trip[local.thisTrip].Ref EQ Air.Ref>
@@ -193,7 +192,7 @@
 							</cfloop>
 
 							<cfif local.doAirPrice.Total EQ 0>
-								<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
+								<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
 								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 											 (trip[local.thisTrip].Total LTE originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 									     trip[local.thisTrip].Ref EQ Air.Ref>
@@ -202,7 +201,7 @@
 								</cfif>
 							</cfloop>
 								<cfif local.doAirPrice.Total NEQ 0 AND arguments.rc.priceQuotedError EQ 0>
-									<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")> 
+									<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")>
 									<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&priceQuotedError=1')>
 								</cfif>
 							</cfif>
@@ -214,7 +213,7 @@
 								<cfset Air = trip[local.tripKey]>
 								<cfset Air.nTrip = nTrip>
 								<cfset Air.aPolicies = aPolicies>
-								<cfset Air.policy = policy> 
+								<cfset Air.policy = policy>
 							<cfelse>
 								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
 								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
@@ -351,11 +350,11 @@
 										<cfset Air.AirITNumber = number.ITNumber />
 									</cfif>
 								</cfloop>
-							</cfif> 
+							</cfif>
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )> 
-							<cfif Air.segmentError>
+																							, response = airResponse )>
+							<cfif Air.segmentError or (Air.error AND Air.seatAssignmentNeeded)>
 								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
 							</cfif>
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
@@ -622,10 +621,8 @@
 							</cfif>
 
 							<!--- Parse error --->
-							<cfif (Air.UniversalLocatorCode EQ '')
-								OR Air.error
-								OR (Air.Total GT originalAirfare)>
-								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
+							<cfif Air.UniversalLocatorCode EQ '' OR Air.error>
+								<cfif Air.error AND len(Air.UniversalLocatorCode)>
 									<cfif len(Air.UniversalLocatorCode)>
 										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode
@@ -636,16 +633,23 @@
 																									, urRecloc = Air.UniversalLocatorCode )>
 										</cfif>
 									</cfif>
-									<!---ERROR CODE PA03.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
-									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code: PA03).' )>
+									<!---ERROR CODE PA05.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
+									<cfset errorType = 'Air'>
+									<cfset arrayAppend( errorMessage,Air.messages)>
+									<cfset arrayAppend( errorMessage, 'We were unable to confirm your reservation. (error code: PA05).' )>
 								<cfelse>
-									<cfset errorMessage = Air.messages> <!---Not sure what this does, next line ensures it will show up in sto error report--->
 									<!---ERROR CODE PA04.  Unknown--->
-									<cfset arrayAppend( errorMessage, 'The price quoted cannot be purchased at this time (error code: PA04).' )>
+									<cfset errorType = 'Air'>
+									<cfset arrayAppend( errorMessage,Air.messages)>
+									<cfset arrayAppend( errorMessage, 'We were unable to confirm your reservation. (error code: PA04).' )>
 							 </cfif>
-								<cfset errorType = 'Air'>
+
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
+ 							<cfelseif Air.Total GT originalAirfare>
+								<!---ERROR CODE PA04.  Unknown--->
+								<cfset errorType = 'Air'>
+								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code: PA03).' )>
 							<cfelse>
 								<cfset universalLocatorCode = Air.UniversalLocatorCode>
 								<cfset Traveler.getBookingDetail().setSeatAssignmentNeeded( Air.seatAssignmentNeeded )>
@@ -1050,7 +1054,7 @@
 																					, Filter = rc.Filter
 																					, Account = rc.Account )>
 
-				<cfelse> 
+				<cfelse>
 					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
@@ -1063,7 +1067,7 @@
 					</cfif>
 					<!--- Loop through array of errorMessages and replace all commas with &##44; --->
 					<cfloop array="#errorMessage#" index="i" item="msg">
-						<cfset errorMessage[i] = Replace(msg,',','&##44;','all')>						
+						<cfset errorMessage[i] = Replace(msg,',','&##44;','all')>
 					</cfloop>
 					<cfif rc.Filter.getSTMEmployee()
 						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
@@ -1078,7 +1082,7 @@
 						OR find('NEED GUEST CREDIT CARD IN CARD DEPOSIT', errorList))>
 						<cfset session.searches[rc.searchID].stItinerary.Hotel.getRooms()[1].setDepositRequired( true )>
 					</cfif>
-					<cfset rc.message.addError(errorList)> 
+					<cfset rc.message.addError(errorList)>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 				</cfif>
 			</cfif>
@@ -1339,7 +1343,7 @@
 	</cffunction>
 	<cffunction name="handleSegmentError">
 		<cfargument name="Air" required="true">
-		<cfargument name="Message" required="true"> 
+		<cfargument name="Message" required="true">
 		<cfargument name="searchID" required="true">
 		<cfset arguments.message.addError(arguments.air.segmentErrorMessage)>
 		<cfset variables.fw.redirect('air.lowfare?searchID=#arguments.searchID#&soldOutTrip=#arguments.air.nTrip#')>
