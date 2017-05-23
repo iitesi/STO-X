@@ -620,7 +620,10 @@
 									<cfset errorType = 'Air.confirmSegments' />
 								</cfif>
 							</cfif>
-
+							<cfif (Air.error AND Air.seatAssignmentNeeded)> 
+								<cfset cancelResponse(rc, air, local.version)>
+								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
+							</cfif>
 							<!--- Parse error --->
 							<cfif (Air.UniversalLocatorCode EQ '')
 								OR Air.error
@@ -1093,7 +1096,19 @@
 
 		<cfreturn />
 	</cffunction>
-
+	<cffunction name="cancelResponse" output="false">
+		<cfargument name="rc">
+		<cfargument name="air">
+		<cfargument name="version">
+		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
+																								, universalRecordLocatorCode = arguments.Air.UniversalLocatorCode
+																								, Filter = arguments.rc.Filter
+																								, Version = arguments.version )>
+		<cfif cancelResponse.status>
+			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = arguments.rc.Filter.getSearchID()
+																	, urRecloc = arguments.Air.UniversalLocatorCode )>
+		</cfif>
+	</cffunction>
 	<cffunction name="cancel" output="false">
 		<cfargument name="rc">
 
