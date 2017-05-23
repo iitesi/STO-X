@@ -620,24 +620,16 @@
 									<cfset errorType = 'Air.confirmSegments' />
 								</cfif>
 							</cfif>
-							<cfif (Air.error AND Air.seatAssignmentNeeded)> 
-								<cfset cancelResponse(rc, air, local.version)>
-								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
-							</cfif>
 							<!--- Parse error --->
 							<cfif (Air.UniversalLocatorCode EQ '')
 								OR Air.error
 								OR (Air.Total GT originalAirfare)>
 								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
 									<cfif len(Air.UniversalLocatorCode)>
-										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
-																									, universalRecordLocatorCode = Air.UniversalLocatorCode
-																									, Filter = rc.Filter
-																									, Version = version )>
-										<cfif cancelResponse.status>
-											<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
-																									, urRecloc = Air.UniversalLocatorCode )>
-										</cfif>
+									<cfset cancelResponse(rc, air, local.version)>
+										<cfif (Air.error AND Air.seatAssignmentNeeded)> 
+											<cfset handleSegmentError(Air,rc.message,rc.searchID)>
+										</cfif> 
 									</cfif>
 									<!---ERROR CODE PA03.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
 									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code: PA03).' )>
@@ -1100,13 +1092,15 @@
 		<cfargument name="rc">
 		<cfargument name="air">
 		<cfargument name="version">
-		<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
-																								, universalRecordLocatorCode = arguments.Air.UniversalLocatorCode
-																								, Filter = arguments.rc.Filter
-																								, Version = arguments.version )>
-		<cfif cancelResponse.status>
-			<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = arguments.rc.Filter.getSearchID()
-																	, urRecloc = arguments.Air.UniversalLocatorCode )>
+		<cfif len(arguments.Air.UniversalLocatorCode)>
+			<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
+																									, universalRecordLocatorCode = arguments.Air.UniversalLocatorCode
+																									, Filter = arguments.rc.Filter
+																									, Version = arguments.version )>
+			<cfif cancelResponse.status>
+				<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = arguments.rc.Filter.getSearchID()
+																		, urRecloc = arguments.Air.UniversalLocatorCode )>
+			</cfif>
 		</cfif>
 	</cffunction>
 	<cffunction name="cancel" output="false">
