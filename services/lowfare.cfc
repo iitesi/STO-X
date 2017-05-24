@@ -627,6 +627,7 @@
 									ProhibitRestrictedFares="false"
 									ETicketability="Required"
 									ProhibitNonExchangeableFares="false"
+									ProhibitUnbundledFareTypes="true"
 									ForceSegmentSelect="false" >
 									<cfif arguments.fareType EQ 'PrivateFaresOnly'
 										AND arguments.accountCode NEQ ''>
