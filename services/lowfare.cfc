@@ -80,9 +80,9 @@
 		<cfargument name="nTrip">
 		<cfset session.searches[arguments.SearchID].stItinerary.Air = "">
 		<cfset session.searches[arguments.SearchID]['Air'] = false />
-		<cfset StructDelete(session.searches[arguments.searchID].stTrips,arguments.nTrip)> 
+		<cfset StructDelete(session.searches[arguments.searchID].stTrips,arguments.nTrip)>
 		<cfset StructDelete(session.searches[arguments.searchID],"stPricedTrips")>
-		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)> 
+		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)>
 	</cffunction>
 	<cffunction name="threadLowFare" output="false">
 		<!--- arguments getting passed in from RC --->
