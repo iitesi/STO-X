@@ -216,6 +216,7 @@
 								<cfset Air.aPolicies = aPolicies>
 								<cfset Air.policy = policy> 
 							<cfelse>
+								<cfset cancelResponse(rc, air, local.version)>
 								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
 								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
 								<cfset errorType = 'Air.airPrice'>
