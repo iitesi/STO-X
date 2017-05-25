@@ -318,9 +318,9 @@
 					<!--- STM-7375 check--->
 					<cfset local.attributes.stTrips = getAirParse().removeInvalidTrips(trips=local.attributes.stTrips, filter=arguments.Filter)>
 
-					<!--- Remove Multiple Connections --->
+					<!--- Remove Multiple Connections
 					<cfset local.attributes.stTrips = getAirParse().removeMultiConnections( trips = local.attributes.stTrips )>
-
+					--->
 					<!--- Remove BlackListed Carrier Pairings --->
 					<cfset local.attributes.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = local.attributes.stTrips
 																							, blackListedCarriers = arguments.blackListedCarrierPairing )>
@@ -577,7 +577,7 @@
 									AllowChangeOfAirport="false"
 									ProhibitOvernightLayovers="true"
 									<cfif arguments.filter.getIsDomesticTrip() IS "true">
-										MaxConnectionTime="300"
+										<!---MaxConnectionTime="300"--->
 									</cfif>
 									ProhibitMultiAirportConnection="true"
 									PreferNonStop="true">
