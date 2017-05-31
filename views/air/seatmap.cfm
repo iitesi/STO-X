@@ -308,7 +308,7 @@
 
 			$('.preferredSeat').on('click', function() {
 				var preferredSeatSelected =  $(this).attr('id');
-				$('##confirmPreferredTable').show();
+				$('##confirmPreferredTable').removeClass('hide');
 				$('##preferredSeatID').val(preferredSeatSelected);
 			});
 
