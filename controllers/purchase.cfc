@@ -17,15 +17,15 @@
 					<cfset Traveler.getBookingDetail().setSimilarTripSelected( true )>
 					<cfset local.providerLocatorCode = rc.recLoc />
 					<!--- <cfset local.providerLocatorCode = "J8G1KA" /> --->
-					<cflog text="Log 1 UniversalAdapter.searchUR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+					<cflog text="Log 1 UniversalAdapter.searchUR (Similar trip selected) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
 					<cfif NOT len(local.universalLocatorCode)>
-						<cflog text="Log 2 UniversalAdapter.importUR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 2 UniversalAdapter.importUR (Similar trip, import UR) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
 																													, locatorCode = local.providerLocatorCode ) />
 					</cfif>
 					<cfif len(local.universalLocatorCode)>
-						<cflog text="Log 3 UniversalAdapter.retrieveUR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 3 UniversalAdapter.retrieveUR (Similar trip, Retrieve UR) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
 																										 , urLocatorCode = local.universalLocatorCode ) />
 					</cfif>
@@ -166,7 +166,7 @@
 					<cfif (NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution))
 						AND session.searches[rc.SearchID].PassedRefCheck EQ 0>
-						<cflog text="Log 10 AirPrice.doAirPrice for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 10 AirPrice.doAirPrice (First call) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
@@ -187,7 +187,7 @@
 																							, bFirstPrice = 1
 																						)>
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
-							<cflog text="Log 10.25 Fare type selected is unavailable for pricing. for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+							<cflog text="Log 10.25 Fare type selected is unavailable for pricing. (First call) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
@@ -197,6 +197,7 @@
 								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 									     trip[local.thisTrip].Ref EQ Air.Ref>
+									<cflog text="Log 10.3 AirPrice first call matched trip for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
 									<cfset local.tripKey = local.thisTrip />
 								</cfif>
@@ -211,7 +212,7 @@
 								<cfset Air.aPolicies = aPolicies>
 								<cfset Air.policy = policy>
 							<cfelse>
-								<cflog text="Log 10.5 PA01 for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+								<cflog text="Log 10.5 PA01 (Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
 								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
 								<cfset errorType = 'Air.airPrice'>
@@ -222,7 +223,7 @@
 
 					<cfif arrayIsEmpty(errorMessage)>
 						<!--- Do a lowest refundable air price before air create for U6 --->
-						<cflog text="Log 11 AirPrice.doAirPrice for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 11 AirPrice.doAirPrice (Refundable Airprice) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
 																						, Policy = rc.Policy
@@ -245,6 +246,7 @@
 						<!--- Check to see if this is a contracted Southwest flight --->
 						<cfset local.contractedSWFlight = false />
 						<cfif Air.platingCarrier IS 'WN'>
+							<cflog text="Log 11.5 Carrier is SW for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.privateCarriers = '' />
 							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
 								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
@@ -252,6 +254,7 @@
 
 							<!--- If the account policy has Southwest listed as a private fare --->
 							<cfif listFindNoCase(privateCarriers, 'WN')>
+								<cflog text="Log 11.75 (Southwest listed as a private fare) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.contractedSWFlight = true />
 							</cfif>
 						</cfif>
