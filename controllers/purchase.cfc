@@ -373,7 +373,7 @@
 								</cfif>
 
 								<cfif runAgain>
-									<cflog text="Log 16 AirAdapter.create for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+									<cflog text="Log 16 AirAdapter.create (runAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -393,7 +393,7 @@
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									 )>
-									<cflog text="Log 17 AirAdapter.parseAirRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+									<cflog text="Log 17 AirAdapter.parseAirRsp (runAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse
 																							, runAgain = true )>
@@ -421,7 +421,7 @@
 																						, providerLocatorCode = Air.ProviderLocatorCode )> --->
 
 								<!--- Display PNR --->
-								<cflog text="Log 18 for TerminalEntry.displayPNR #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+								<cflog text="Log 18 for TerminalEntry.displayPNR (Southwest) #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, pnr = Air.ProviderLocatorCode
@@ -430,7 +430,7 @@
 								<cfif NOT displayPNRResponse.error>
 									<!--- STM-3845: Check the status of all segments before .IHK --->
 									<!--- Check segment statuses --->
-									<cflog text="Log 19 TerminalEntry.checkSegmentStatus for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+									<cflog text="Log 19 TerminalEntry.checkSegmentStatus (Southwest) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
@@ -469,13 +469,13 @@
 										<cfset sleep(2000) />
 
 										<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
-										<cflog text="Log 20 TerminalEntry.ignorePNR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+										<cflog text="Log 20 TerminalEntry.ignorePNR (checkSegmentStatusAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, searchID = rc.searchID )>
 
 										<cfset sleep(2000) />
-										<cflog text="Log 21 for TerminalEntry.displayPNR #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+										<cflog text="Log 21 for TerminalEntry.displayPNR (checkSegmentStatusAgain) #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
@@ -507,9 +507,11 @@
 													</cfif>
 												</cfloop>
 											<cfelse>
+												<cflog text="Log 22.25 confirmSegmentsError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 												<cfset confirmSegmentsError = true />
 											</cfif>
 										<cfelse>
+												<cflog text="Log 22.5 confirmSegmentsError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
@@ -518,13 +520,13 @@
 										<cfset sleep(2000) />
 
 										<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
-										<cflog text="Log 23 TerminalEntry.ignorePNR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+										<cflog text="Log 23 TerminalEntry.ignorePNR (checkSegmentStatusAgain 2nd Time) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, searchID = rc.searchID )>
 
 										<cfset sleep(2000) />
-										<cflog text="Log 24 TerminalEntry.displayPNR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+										<cflog text="Log 24 TerminalEntry.displayPNR (checkSegmentStatusAgain 2nd Time) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
@@ -552,9 +554,11 @@
 													</cfif>
 												</cfloop>
 											<cfelse>
+												<cflog text="Log 25.25 confirmSegmentsError 2nd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 												<cfset confirmSegmentsError = true />
 											</cfif>
 										<cfelse>
+											<cflog text="Log 25.5 confirmSegmentsError 2nd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
@@ -618,14 +622,17 @@
 																										, searchID = rc.searchID
 																										, command = 'E' )>
 												<cfif erRecordResponse.error>
+													<cflog text="Log 30.1 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 													<cfset confirmSegmentsError = true />
 												</cfif>
 											</cfif>
 										<cfelse>
+											<cflog text="Log 30.2 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
 								<cfelse>
+									<cflog text="Log 30.3 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset confirmSegmentsError = true />
 								</cfif>
 
@@ -775,13 +782,13 @@
 																										, command = 'T:R' )>
 							<cfif NOT verifyStoredFareResponse.error>
 								<!--- ER --->
-								<cflog text="Log 37 TerminalEntry.erRecord for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+								<cflog text="Log 37 TerminalEntry.erRecord (NOT verifyStoredFareResponse.error) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 								<!--- If error, ER again --->
 								<cfif erRecordResponse.error>
-									<cflog text="Log 38 TerminalEntry.erRecord for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+									<cflog text="Log 38 TerminalEntry.erRecord (erRecordResponse.error) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
@@ -789,7 +796,7 @@
 								</cfif>
 								<cfif NOT erRecordResponse.error>
 									<!--- Sell vehicle --->
-									<cflog text="Log 39 for VehicleAdapter.create #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+									<cflog text="Log 39 for VehicleAdapter.create (NOT erRecordResponse) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.vehicleResponse = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -912,13 +919,13 @@
 																											, token = local.token
 																										)>
 							<!--- Parse passive create results --->
-							<cflog text="Log 45 PassiveAdapter.parseHotelRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+							<cflog text="Log 45 PassiveAdapter.parseHotelRsp (Parse passive create results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
 																										, response = passiveResponse )>
 						</cfif>
 					<!--- If a Travelport hotel --->
 					<cfelse>
-						<cflog text="Log 46 HotelAdapter.create for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 46 HotelAdapter.create (If a Travelport hotel) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -938,7 +945,7 @@
 																										, token = local.token
 																									)>
 						<!--- Parse sell results --->
-						<cflog text="Log 47 HotelAdapter.parseHotelRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 47 HotelAdapter.parseHotelRsp (Parse sell results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																								, response = hotelResponse )>
 
@@ -968,7 +975,7 @@
 																										)>
 
 							<!--- Parse sell results --->
-							<cflog text="Log 49 HotelAdapter.parseHotelRsp Parse sell results for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+							<cflog text="Log 49 HotelAdapter.parseHotelRsp (Parse sell results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = hotelResponse )>
 						</cfif>
