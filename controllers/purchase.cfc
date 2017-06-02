@@ -17,10 +17,10 @@
 					<cfset Traveler.getBookingDetail().setSimilarTripSelected( true )>
 					<cfset local.providerLocatorCode = rc.recLoc />
 					<!--- <cfset local.providerLocatorCode = "J8G1KA" /> --->
-					<cflog text="Log 1 UniversalAdapter.searchUR (Similar trip selected) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+					<cflog text="Log 1 UniversalAdapter.searchUR (Similar trip selected/Set UniversalLocatorCode) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
 					<cfif NOT len(local.universalLocatorCode)>
-						<cflog text="Log 2 UniversalAdapter.importUR (Similar trip, import UR) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+						<cflog text="Log 2 UniversalAdapter.importUR (Similar trip, import UR/Set UniversalLocatorCode) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
 																													, locatorCode = local.providerLocatorCode ) />
 					</cfif>
@@ -673,6 +673,7 @@
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
 							<cfelse>
+								<cflog text="Log 32.85 Set UniversalLocatorCode for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset universalLocatorCode = Air.UniversalLocatorCode>
 								<cfset Traveler.getBookingDetail().setSeatAssignmentNeeded( Air.seatAssignmentNeeded )>
 							</cfif>
@@ -835,6 +836,7 @@
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).parseError( vehicleResponse )>
 						<cfset errorType = 'Vehicle'>
 					<cfelse>
+						<cflog text="Log 41.4 Set UniversalLocatorCode for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
 					</cfif>
 					<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
@@ -988,6 +990,7 @@
 						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
 					<cfelse>
+						<cflog text="Log 49.75 Set UniversalLocatorCode for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
 						<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
