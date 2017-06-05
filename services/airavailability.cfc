@@ -383,62 +383,47 @@
 		<cfreturn message/>
 	</cffunction>
 
+
 	<cffunction name="parseSegmentKeys" output="false">
 		<cfargument name="stResponse"	required="true">
 
-		<cfset local.stSegmentKeys = {}>
+		<cfset local.stSegmentKeys = StructNew('linked')>
 		<cfset local.sIndex = ''>
-		<!--- Create list of fields that make up a distint segment. --->
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber','TravelTime']>
-		<!--- Loop through results. --->
+
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<!--- Build up the distinct segment string. --->
-					<cfset local.sIndex = ''>
-					<cfloop array="#aSegmentKeys#" index="local.sCol">
-						<cfset local.sIndex &= local.stAirSegment.XMLAttributes[local.sCol]>
-					</cfloop>
+
 					<!--- Create a look up structure for the primary key. --->
 					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
-					<cfset local.stSegmentKeys[tempKey] = {
-						HashIndex	: 	getUAPI().HashNumeric(local.sIndex),
-						Index		: 	local.sIndex
+					<cfset local.stSegmentKeys[local.tempKey] = {
+						HashIndex	: 	local.tempKey
 					}>
+
 				</cfloop>
 			</cfif>
 		</cfloop>
 		<cfreturn local.stSegmentKeys />
 	</cffunction>
 
-	<cffunction name="addSegmentRefs" output="false">
+	<cffunction name="parseKeyLookup" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegmentKeys">
 
 		<cfset local.sAPIKey = ''>
 		<cfset local.cnt = 0>
+		<cfset local.stSegmentKeyLookUp = StructNew('linked')>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
 			<cfif local.stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
 				<cfloop array="#stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
 					<cfif local.stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
 						<cfset local.sAPIKey = local.stAirSegmentRef.XMLAttributes.Key>
 						<cfset local.tempKey = getUAPI().HashNumeric(local.sAPIKey)>
-						<cfset arguments.stSegmentKeys[local.tempKey].nLocation = local.cnt>
+						<cfset local.stSegmentKeyLookUp[local.cnt] = tempKey>
 						<cfset local.cnt++>
 					</cfif>
 				</cfloop>
 			</cfif>
-		</cfloop>
-
-		<cfreturn arguments.stSegmentKeys />
-	</cffunction>
-
-	<cffunction name="parseKeyLookup" output="false">
-		<cfargument name="stSegmentKeys">
-
-		<cfset local.stSegmentKeyLookUp = {}>
-		<cfloop collection="#arguments.stSegmentKeys#" item="local.sKey">
-			<cfset local.stSegmentKeyLookUp[arguments.stSegmentKeys[local.sKey].nLocation] = local.sKey>
 		</cfloop>
 
 		<cfreturn local.stSegmentKeyLookUp />
