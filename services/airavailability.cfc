@@ -521,75 +521,52 @@
 		<cfargument name="stSegmentKeyLookUp">
 		<cfargument name="filter">
 		<cfargument name="group">
-<!--- <cfdump var="#arguments#" abort/> --->
-		<!--- Create a structure to hold FIRST connection points --->
-		<cfset local.stSegmentIndex = {}>
-		<cfset local.firstSegmentIndex = ''>
+		<cfargument name="startAt">
+
+		<cfset local.stSegmentIndex = StructNew('linked')>
+		<cfset local.route = 0>
+		<cfset local.i = 0>
+		<cfset local.j = 1>
+		<cfset local.legs = StructNew('linked')>
 		<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
 			<cfif local.stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
-				<cfloop array="#local.stAirItinerarySolution.XMLChildren#" index="local.stConnection">
-					<cfif local.stConnection.XMLName EQ 'air:Connection'>
-						<cfif local.firstSegmentIndex EQ ''>
-							<cfset local.firstSegmentIndex = local.stConnection.XMLAttributes.SegmentIndex>
-						</cfif>
-						<cftry>
-							<cfset local.stSegmentIndex["#local.stConnection.XMLAttributes.SegmentIndex#"] = StructNew('linked')>
-							<cfset local.stSegKeyLookup = arguments.stSegmentKeyLookUp["#local.stConnection.XMLAttributes.SegmentIndex#"]>
-							<cfset local.stSegKeyHash = arguments.stSegmentKeys["#local.stSegKeyLookup#"].HashIndex>
-							<cfset local.stSegmentIndex["#local.stConnection.XMLAttributes.SegmentIndex#"][1] = arguments.stSegments["#local.stSegKeyHash#"]>
-						<cfcatch type="any"></cfcatch>
-					 </cftry>
+				<cfset local.legs[route] = StructNew('linked')>
+				<cfloop array="#local.stAirItinerarySolution.XMLChildren#" index="local.stAirSegmentRef">
+					<cfif local.stAirSegmentRef.XMLName EQ 'air:AirSegmentRef'>
+
+							<cfset local.stSegKeyHash = arguments.stSegmentKeys[arguments.stSegmentKeyLookUp[i]].HashIndex>
+							<cfset local.legs[route][j] = arguments.stSegments[local.stSegKeyHash]>
+
+							<cfif NOT(isConnection(arguments.stResponse,i))>
+									<cfset local.j = 0>
+									<cfset local.route++>
+									<cfset local.legs[local.route] = StructNew('linked')>
+							</cfif>
+							<cfset local.i++>
+							<cfset local.j++>
+
 					</cfif>
 				</cfloop>
 			</cfif>
 		</cfloop>
-		<cfif local.firstSegmentIndex EQ ''>
-			<cfset local.firstSegmentIndex = arrayLen(structKeyArray(arguments.stSegmentKeyLookUp))-1>
+
+		<cfif arraylen(StructKeyArray(local.legs[local.route])) EQ 0>
+			<cfset StructDelete(local.legs,local.route)>
 		</cfif>
 
-		<!--- Backfill with nonstops --->
-		<cfloop from="0" to="#local.firstSegmentIndex-1#" index="local.segmentIndex">
-			<cftry>
-				<cfset local.stSegmentIndex[ "#local.segmentIndex#" ] = StructNew('linked')>
-				<cfset local.stSegKeyLookupNS = arguments.stSegmentKeyLookUp["#local.segmentIndex#"]>
-				<cfset local.stSegKeyHashNS = arguments.stSegmentKeys["#local.stSegKeyLookupNS#"].HashIndex>
-				<cfset local.stSegmentIndex[ "#local.segmentIndex#" ][1] = arguments.stSegments["#local.stSegKeyHashNS#"]>
-			<cfcatch type="any"></cfcatch>
-			</cftry>
-		</cfloop>
-
-		<!--- Add to that structure the missing connection points --->
-		<cfset local.stTrips = {}>
-		<cfset local.nCount = 0>
-		<cfset local.nSegNum = 1>
-		<cfset local.nMaxCount = arrayLen(structKeyArray(arguments.stSegmentKeys))>
-		<cfloop collection="#local.stSegmentIndex#" item="local.nIndex">
-			<cfset local.nCount = local.nIndex>
-			<cfset local.nSegNum = 1>
-			<cfloop condition="NOT StructKeyExists(local.stSegmentIndex, local.nCount+1) AND local.nCount LT nMaxCount AND StructKeyExists(arguments.stSegmentKeyLookUp, local.nCount+1)">
-				<cfset local.nSegNum++>
-				<cfset local.stSegmentIndex[local.nIndex][local.nSegNum] = arguments.stSegments[arguments.stSegmentKeys[arguments.stSegmentKeyLookUp[local.nCount+1]].HashIndex]>
-				<cfset local.nCount++>
-			</cfloop>
-		</cfloop>
-
 		<!--- Create an appropriate trip key --->
-		<cfset local.stTrips = {}>
-		<cfset local.sIndex = ''>
-		<cfset local.aCarriers = {}>
+		<cfset local.stTrips = StructNew('linked')>
 		<cfset local.nHashNumeric = ''>
-		<cfset local.aSegmentKeys = ['Origin', 'Destination', 'DepartureTime', 'ArrivalTime', 'Carrier', 'FlightNumber']>
-		<cfloop collection="#local.stSegmentIndex#" item="local.nIndex">
-			<cfloop collection="#local.stSegmentIndex[local.nIndex]#" item="local.sSegment">
-				<cfset local.sIndex = ''>
-				<cfloop array="#aSegmentKeys#" index="local.stSegment">
-					<cfset local.sIndex &= local.stSegmentIndex[local.nIndex][sSegment][local.stSegment]>
-				</cfloop>
+		<cfloop collection="#local.legs#" item="local.route">
+			<cfset local.nHashNumeric = randrange(100000,900000)>
+			<cfloop condition="StructKeyExists(local.stTrips, local.nHashNumeric)">
+				<cfset local.nHashNumeric = randrange(100000,900000)>
 			</cfloop>
-			<cfset local.nHashNumeric = getUAPI().hashNumeric(local.sIndex)>
-			<cfset local.stTrips[nHashNumeric].Segments = local.stSegmentIndex[local.nIndex]>
-			<cfset local.stTrips[nHashNumeric].Class = 'X'>
-			<cfset local.stTrips[nHashNumeric].Ref = 'X'>
+				<cfset local.stTrips[nHashNumeric].Segments = local.legs[local.route]>
+				<cfset local.stTrips[nHashNumeric].Class = 'X'>
+				<cfset local.stTrips[nHashNumeric].Ref = 'X'>
+				<cfset local.stTrips[nHashNumeric].index = arguments.startAt>
+				<cfset arguments.startAt++>
 		</cfloop>
 
 		<!--- STM-2254 Hack
