@@ -433,7 +433,8 @@
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
 
-		<cfset local.stSegments = {}>
+		<cfset local.stSegments = structnew('linked')>
+
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
