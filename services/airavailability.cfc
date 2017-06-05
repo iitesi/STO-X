@@ -491,6 +491,29 @@
 		<cfreturn 'Unavail'/>
 	</cffunction>
 
+
+	<cffunction name = "isConnection" output="false">
+		<cfargument name="stResponse">
+		<cfargument name="segIndex">
+
+			<cfloop array="#arguments.stResponse#" index="local.stAirItinerarySolution">
+				<cfif local.stAirItinerarySolution.XMLName EQ 'air:AirItinerarySolution'>
+					<cfloop array="#local.stAirItinerarySolution.XMLChildren#" index="local.stConnection">
+						<cfif local.stConnection.XMLName EQ 'air:Connection'>
+
+							<cfif local.stConnection.XMLAttributes.SegmentIndex EQ arguments.segIndex>
+								<cfreturn true>
+							</cfif>
+
+						</cfif>
+					</cfloop>
+			 </cfif>
+		</cfloop>
+
+		<cfreturn false>
+
+	</cffunction>
+
 	<cffunction name="parseConnections" output="false">
 		<cfargument name="stResponse">
 		<cfargument name="stSegments">
