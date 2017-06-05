@@ -446,7 +446,9 @@
 					<cfset local.dDepartTime = GetToken(local.dDepartGMT, 1, '.')>
 					<cfset local.dDepartOffset = GetToken(GetToken(local.dDepartGMT, 2, '-'), 1, ':')>
 					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
-					<cfset local.stSegments[arguments.stSegmentKeys[tempKey].HashIndex] = {
+
+
+					<cfset local.stSegments[arguments.stSegmentKeys[local.tempKey].HashIndex] = {
 						Arrival					: local.dArrivalGMT,
 						ArrivalTime			: ParseDateTime(local.dArrivalTime),
 						ArrivalGMT			: ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
