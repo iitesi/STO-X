@@ -133,21 +133,24 @@
 			<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 			<!--- Create unique segment keys. --->
 			<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
-			<cfif local.nCount GT 20> <!---This number was 3 and I found increasing this brought back more results in availability.--->
+			<cfif local.nCount GT 25> <!---This number was 3 and I found increasing this brought back more results in availability.--->
 				<cfset local.sNextRef	= ''>
 			</cfif>
+
+
 			<!--- Create unique segment keys. --->
 			<cfset local.stSegmentKeys = parseSegmentKeys(local.aResponse)>
-			<!--- Add in the connection references --->
-			<cfset local.stSegmentKeys = addSegmentRefs(local.aResponse, local.stSegmentKeys)>
 			<!--- Parse the segments. --->
 			<cfset local.stSegments = parseSegments(local.aResponse, local.stSegmentKeys)>
 			<!--- Create a look up list opposite of the stSegmentKeys --->
-			<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.stSegmentKeys)>
+			<!---<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.stSegmentKeys)>--->
+			<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.aResponse,local.stSegmentKeys)>
 			<!--- Parse the trips. --->
-			<cfset local.tempTrips = parseConnections(local.aResponse, local.stSegments, local.stSegmentKeys, local.stSegmentKeyLookUp, arguments.filter, arguments.group)>
+			<cfset local.tempTrips = parseConnections(local.aResponse, local.stSegments, local.stSegmentKeys, local.stSegmentKeyLookUp, arguments.filter, arguments.group,arraylen(StructKeyArray( local.stTrips )) + 1)>
+
 			<!--- Add group node --->
 			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
+
 			<!--- STM-7375 check--->
 			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group)>
 			<!--- Mark preferred carriers. --->
