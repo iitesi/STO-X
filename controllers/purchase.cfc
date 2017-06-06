@@ -883,7 +883,7 @@
 
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
-					<cflog text="Log 33.5 Hotel.getUniversalLocatorCode() is #Hotel.getUniversalLocatorCode()# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+					<cflog text="Log 41.75 Hotel.getUniversalLocatorCode() is #Hotel.getUniversalLocatorCode()# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset Hotel.setPassiveLocatorCode('')>
 					<cfset Hotel.setPassiveSegmentRef('')>
 					<cfset Hotel.setProviderReservationInfoRef('')>
@@ -1017,7 +1017,7 @@
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode ) />
 				<cfelseif arrayIsEmpty(errorMessage)>
 					<cfset errorType = 'Misc' />
-					<cflog text="Log 49.5 The system encountered a connectivity issue for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+					<cflog text="Log 49.85 The system encountered a connectivity issue for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset arrayAppend( errorMessage, 'The system encountered a connectivity issue. Please try again or contact us to complete your reservation.' ) />
 				</cfif>
 
