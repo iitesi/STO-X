@@ -135,17 +135,16 @@
 			<cfset local.aResponse = getUAPI().formatUAPIRsp(local.sResponse)>
 			<!--- Create unique segment keys. --->
 			<cfset local.sNextRef =	getAirParse().parseNextReference(local.aResponse)>
-			<cfif local.nCount GT 25> <!---This number was 3 and I found increasing this brought back more results in availability.--->
+			<cfif local.nCount GT 20> <!---This number was 3 and I found increasing this brought back more results in availability.--->
 				<cfset local.sNextRef	= ''>
 			</cfif>
 
-
+			<!---<cfset ArrayAppend(session.response1, local.aResponse)>--->
 			<!--- Create unique segment keys. --->
 			<cfset local.stSegmentKeys = parseSegmentKeys(local.aResponse)>
 			<!--- Parse the segments. --->
-			<cfset local.stSegments = parseSegments(local.aResponse, local.stSegmentKeys)>
+			<cfset local.stSegments = parseSegments(local.aResponse, local.stSegmentKeys, arguments.Filter)>
 			<!--- Create a look up list opposite of the stSegmentKeys --->
-			<!---<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.stSegmentKeys)>--->
 			<cfset local.stSegmentKeyLookUp = parseKeyLookUp(local.aResponse,local.stSegmentKeys)>
 			<!--- Parse the trips. --->
 			<cfset local.tempTrips = parseConnections(local.aResponse, local.stSegments, local.stSegmentKeys, local.stSegmentKeyLookUp, arguments.filter, arguments.group,arraylen(StructKeyArray( local.stTrips )) + 1)>
@@ -321,7 +320,9 @@
 											</air:SearchDestination>
 
 											<cfif local.qSearchLegs.Depart_DateTimeActual EQ "Anytime">
-												<air:SearchDepTime PreferredTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#" />
+												<air:SearchDepTime PreferredTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#">
+													 <com:TimeRange EarliestTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#T01:00" LatestTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd')#T23:59"/>
+												</air:SearchDepTime>
 											<cfelse>
 												<air:SearchDepTime PreferredTime="#DateFormat(local.qSearchLegs.Depart_DateTime, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTime, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#">
 													<com:TimeRange EarliestTime="#DateFormat(local.qSearchLegs.Depart_DateTimeStart, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTimeStart, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" LatestTime="#DateFormat(local.qSearchLegs.Depart_DateTimeEnd, 'yyyy-mm-dd') & 'T' & TimeFormat(local.qSearchLegs.Depart_DateTimeEnd, 'HH:mm:ss.lll') & '-' & TimeFormat(application.gmtOffset, 'HH:mm')#" />
@@ -344,16 +345,7 @@
 <!--- MaxSolutions="1" --->
 
 							<cfif arguments.sNextRef EQ ''>
-								<air:AirSearchModifiers
-									DistanceType="MI"
-									IncludeFlightDetails="false"
-									AllowChangeOfAirport="false"
-									ProhibitOvernightLayovers="true"
-									<cfif arguments.filter.getIsDomesticTrip() IS "true">
-										MaxConnectionTime="300"
-									</cfif>
-									ProhibitMultiAirportConnection="true"
-									PreferNonStop="true">
+								<air:AirSearchModifiers>
 									<cfif Len(arguments.filter.getAirlines()) EQ 2>
 										<air:PermittedCarriers>
 											<com:Carrier Code="#arguments.filter.getAirlines()#"/>
@@ -436,13 +428,14 @@
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
+		<cfargument name="Filter" required="true">
 
 		<cfset local.stSegments = structnew('linked')>
 
 		<cfloop array="#arguments.stResponse#" index="local.stAirSegmentList">
 			<cfif local.stAirSegmentList.XMLName EQ 'air:AirSegmentList'>
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
-					<cfset local.cabinClass = findCabinClassFromBookingInfo(local.stAirSegment)>
+					<cfset local.cabinClass = findCabinClassFromBookingInfo(local.stAirSegment,arguments.Filter)>
 					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
 					<cfset local.dArrivalTime = GetToken(local.dArrivalGMT, 1, '.')>
 					<cfset local.dArrivalOffset = GetToken(GetToken(local.dArrivalGMT, 2, '-'), 1, ':')>
@@ -478,18 +471,36 @@
 		<cfreturn local.stSegments />
 	</cffunction>
 
+	<cffunction name = "CabinClassMap">
+		<cfargument name="ourCode">
+
+		<cfswitch expression="#arguments.OurCode#">
+			<cfcase value="Y">
+				<cfreturn "Economy">
+			</cfcase>
+			<cfcase value="C">
+				<cfreturn "Business">
+			</cfcase>
+			<cfcase value="F">
+				<cfreturn "First">
+			</cfcase>
+			<cfdefaultcase>
+				<cfreturn "Economy">
+			</cfdefaultcase>
+		</cfswitch>
+
+	</cffunction>
+
 	<cffunction name="findCabinClassFromBookingInfo">
 		<cfargument name="segment" required="true"/>
+		<cfargument name="Filter" required="true">
 		<cfloop array="#arguments.segment.XMLChildren#" index="local.xmlChild">
 			<cfif local.xmlChild.XMLName EQ 'air:AirAvailInfo'>
 				<cfloop array="#local.xmlChild.XMLChildren#" index="local.xmlChild2">
 						<cfif local.xmlChild2.XMLName EQ 'air:BookingCodeInfo'>
-							<cftry>
+						  <cfif CabinClassMap(arguments.Filter.getclassOfService()) EQ local.xmlChild2.XMLAttributes.CabinClass>
 								<cfreturn local.xmlChild2.XMLAttributes.CabinClass />
-								<cfcatch type="any">
-									<cfreturn 'Unavail' />
-								</cfcatch>
-							</cftry>
+							</cfif>
 						</cfif>
 					</cfloop>
 				</cfif>
