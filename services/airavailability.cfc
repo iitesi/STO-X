@@ -59,6 +59,7 @@
 													, Policy = arguments.Policy
 													, sPriority = 'HIGH'
 													, sCabins = local.aCabins)>
+
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], local.stTrips)>
 				<!--- Add list of available carriers per leg --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
@@ -393,7 +394,8 @@
 					<!--- Create a look up structure for the primary key. --->
 					<cfset local.tempKey = getUAPI().HashNumeric(local.stAirSegment.XMLAttributes.Key)>
 					<cfset local.stSegmentKeys[local.tempKey] = {
-						HashIndex	: 	local.tempKey
+						HashIndex	: 	local.tempKey,
+						ApiKey: local.stAirSegment.XMLAttributes.Key
 					}>
 
 				</cfloop>
@@ -461,7 +463,8 @@
 						Group						: local.stAirSegment.XMLAttributes.Group,
 						Origin					: local.stAirSegment.XMLAttributes.Origin,
 						TravelTime			: local.stAirSegment.XMLAttributes.TravelTime,
-						CabinClass		  : local.cabinClass
+						CabinClass		  : local.cabinClass,
+						ApiKey					: local.stAirSegment.XMLAttributes.Key
 					}>
 
 
@@ -485,7 +488,7 @@
 				<cfreturn "First">
 			</cfcase>
 			<cfdefaultcase>
-				<cfreturn "Economy">
+				<cfreturn "">
 			</cfdefaultcase>
 		</cfswitch>
 
@@ -574,16 +577,26 @@
 		<!--- Create an appropriate trip key --->
 		<cfset local.stTrips = StructNew('linked')>
 		<cfset local.nHashNumeric = ''>
+		<cfset local.field = ''>
+		<cfset local.arrayfields = ["Arrival","ArrivalTime","Departure","DepartureTime","Origin","Destination","Carrier","FlightNumber","CabinClass","FlightTime"]>
 		<cfloop collection="#local.legs#" item="local.route">
-			<cfset local.nHashNumeric = randrange(100000,900000)>
-			<cfloop condition="StructKeyExists(local.stTrips, local.nHashNumeric)">
-				<cfset local.nHashNumeric = randrange(100000,900000)>
+			<cfset local.HashKey = ''>
+			<cfset local.leg = local.legs[local.route]>
+			<cfloop collection="#local.leg#" item="local.j">
+				<cfloop array="#local.arrayfields#" index="local.field" >
+					<cfset local.HashKey &= local.leg[local.j][local.field]>
+				</cfloop>
 			</cfloop>
-				<cfset local.stTrips[nHashNumeric].Segments = local.legs[local.route]>
-				<cfset local.stTrips[nHashNumeric].Class = 'X'>
-				<cfset local.stTrips[nHashNumeric].Ref = 'X'>
-				<cfset local.stTrips[nHashNumeric].index = arguments.startAt>
-				<cfset arguments.startAt++>
+
+
+			<cfset local.nHashNumeric = getUAPI().HashNumeric(local.HashKey)>
+
+			<cfset local.stTrips[nHashNumeric].Segments = local.legs[local.route]>
+			<cfset local.stTrips[nHashNumeric].Class = 'X'>
+			<cfset local.stTrips[nHashNumeric].Ref = 'X'>
+			<cfset local.stTrips[nHashNumeric].index = arguments.startAt>
+			<cfset arguments.startAt++>
+
 		</cfloop>
 
 		<!--- STM-2254 Hack
