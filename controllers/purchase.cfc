@@ -5,11 +5,12 @@
 
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
-
+		<cflog text="Begin purchase for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 			<cfif arrayIsEmpty(errorMessage) AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
 				<cfset local.universalLocatorCode = ''>
+				<cflog text="Log 0.5 universalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 				<!--- Version needs to be set and updated based on how many times the universal record is used. --->
 				<cfset local.version = -1>
 				<!--- If a similar trip has been selected --->
@@ -17,12 +18,17 @@
 					<cfset Traveler.getBookingDetail().setSimilarTripSelected( true )>
 					<cfset local.providerLocatorCode = rc.recLoc />
 					<!--- <cfset local.providerLocatorCode = "J8G1KA" /> --->
+					<cflog text="Log 1 UniversalAdapter.searchUR (Similar trip selected/Set UniversalLocatorCode) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').searchUR( local.providerLocatorCode ) />
+					<cflog text="Log 1.5 universalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfif NOT len(local.universalLocatorCode)>
+						<cflog text="Log 2 UniversalAdapter.importUR (Similar trip, import UR/Set UniversalLocatorCode) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.universalLocatorCode = fw.getBeanFactory().getBean('UniversalAdapter').importUR( targetBranch = rc.Account.sBranch
 																													, locatorCode = local.providerLocatorCode ) />
+						<cflog text="Log 2.5 universalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					</cfif>
 					<cfif len(local.universalLocatorCode)>
+						<cflog text="Log 3 UniversalAdapter.retrieveUR (Similar trip, Retrieve UR) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.version = fw.getBeanFactory().getBean('UniversalAdapter').retrieveUR( targetBranch = rc.Account.sBranch
 																										 , urLocatorCode = local.universalLocatorCode ) />
 					</cfif>
@@ -33,6 +39,7 @@
 				</cfif>
 				<!--- Looks odd, but this is used to compare differences between their profile and what information
 				they entered into the summary page. --->
+				<cflog text="Log 4 UserService.loadBasicUser for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 				<cfset local.Profile = fw.getBeanFactory().getBean('UserService').loadBasicUser( userID = rc.Filter.getUserID() )>
 				<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
 				<cfset local.airSelected = (structKeyExists(itinerary, 'Air') ? true : false)>
@@ -63,7 +70,9 @@
 
 				<!--- LSU can charge to a different department cc which means the accountid needs to also change. --->
 				<cfif rc.Filter.getAcctID() EQ 255>
+					<cflog text="Log 5 Summary.getLSUAccountID for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset Traveler.setAccountID( fw.getBeanFactory().getBean('Summary').getLSUAccountID( Traveler = Traveler ) )>
+					<cflog text="Log 6 Summary.getLSUValueReportID for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.statmentInformation = fw.getBeanFactory().getBean('Summary').getLSUValueReportID( AccountID = Traveler.getAccountID() ) />
 				</cfif>
 
@@ -76,6 +85,7 @@
 				</cfif> --->
 
 				<!--- Determine if pre trip approval is needed. --->
+				<cflog text="Log 7 Summary.determineApproval for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 				<cfset local.approval = fw.getBeanFactory().getBean('Summary').determineApproval( Policy = rc.Policy
 																								, Filter = rc.Filter
 																								, Traveler = Traveler
@@ -107,10 +117,12 @@
 				<cfset local.token = hash(local.string&rc.account.SecurityCode) />
 
 				<!--- Open terminal session --->
+				<cflog text="Log 8 TerminalEntry.openSession for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 				<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
 																								, searchID = rc.searchID )>
 
 				<cfif hostToken EQ ''>
+					<cflog text="Log 8.5 Terminal - open session failed for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset arrayAppend(errorMessage, 'Terminal - open session failed')>
 					<cfset errorType = 'TerminalEntry.openSession'>
 				</cfif>
@@ -122,6 +134,7 @@
 				</cfif>
 				<cfif arrayIsEmpty(errorMessage)
 					AND Traveler.getPAR() NEQ ''>
+					<cflog text="Log 9 TerminalEntry.readPAR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset parResponse = fw.getBeanFactory().getBean('TerminalEntry').readPAR( targetBranch = rc.Account.sBranch
 																								, hostToken = hostToken
 																								, pcc = Traveler.getBAR()[1].PCC
@@ -156,7 +169,7 @@
 					<cfif (NOT structKeyExists(Air, 'PricingSolution')
 						OR NOT isObject(Air.PricingSolution))
 						AND session.searches[rc.SearchID].PassedRefCheck EQ 0>
-
+						<cflog text="Log 10 AirPrice.doAirPrice (First call) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.trip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
@@ -177,6 +190,7 @@
 																							, bFirstPrice = 1
 																						)>
 						<cfif structIsEmpty(trip) OR structKeyExists(trip, 'faultMessage')>
+							<cflog text="Log 10.25 Fare type selected is unavailable for pricing. (First call) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset arrayAppend( errorMessage, 'Fare type selected is unavailable for pricing.' )>
 							<cfset errorType = 'Air.airPrice'>
 						<cfelseif NOT structKeyExists(trip, 'faultMessage')>
@@ -186,6 +200,7 @@
 								<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 											 (trip[local.thisTrip].Total EQ originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 									     trip[local.thisTrip].Ref EQ Air.Ref>
+									<cflog text="Log 10.3 AirPrice first call matched trip for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
 									<cfset local.tripKey = local.thisTrip />
 								</cfif>
@@ -200,6 +215,7 @@
 								<cfset Air.aPolicies = aPolicies>
 								<cfset Air.policy = policy>
 							<cfelse>
+								<cflog text="Log 10.5 PA01 (Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)#) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<!---ERROR CODE PA01.  Private fare is being used, which usually means the account needs to set up a negotiated rate for the airline(s)--->
 								<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(trip[structKeyList(trip)].Total)# (error code: PA01).' )>
 								<cfset errorType = 'Air.airPrice'>
@@ -210,6 +226,7 @@
 
 					<cfif arrayIsEmpty(errorMessage)>
 						<!--- Do a lowest refundable air price before air create for U6 --->
+						<cflog text="Log 11 AirPrice.doAirPrice (Refundable Airprice) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.refundableTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																						, Account = rc.Account
 																						, Policy = rc.Policy
@@ -232,6 +249,7 @@
 						<!--- Check to see if this is a contracted Southwest flight --->
 						<cfset local.contractedSWFlight = false />
 						<cfif Air.platingCarrier IS 'WN'>
+							<cflog text="Log 11.5 Carrier is SW for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.privateCarriers = '' />
 							<cfloop array="#rc.Account.Air_PF#" item="local.privateCarrier" index="local.privateCarrierIndex">
 								<cfset privateCarriers = listAppend(privateCarriers, listGetAt(privateCarrier, 2)) />
@@ -239,6 +257,7 @@
 
 							<!--- If the account policy has Southwest listed as a private fare --->
 							<cfif listFindNoCase(privateCarriers, 'WN')>
+								<cflog text="Log 11.75 (Southwest listed as a private fare) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.contractedSWFlight = true />
 							</cfif>
 						</cfif>
@@ -251,7 +270,7 @@
 							<cfif contractedSWFlight>
 								<cfset local.faresIndicator = 'PrivateFaresOnly' />
 							</cfif>
-
+							<cflog text="Log 12 AirPrice.doAirPrice for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.lowestPublicTrip = fw.getBeanFactory().getBean('AirPrice').doAirPrice( searchID = rc.searchID
 																							, Account = rc.Account
 																							, Policy = rc.Policy
@@ -274,6 +293,7 @@
 						</cfif>
 
 						<cfif hostToken EQ ''>
+							<cflog text="Log 12.5 Terminal - open session failed for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset listAppend(errorMessage, 'Terminal - open session failed')>
 							<cfset errorType = 'TerminalEntry.openSession'>
 						<cfelse>
@@ -297,7 +317,7 @@
 								</cfloop>
 							</cfif>
 							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
-
+							<cflog text="Log 13 AirPrice.create for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -319,6 +339,7 @@
 
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
+							<cflog text="Log 13.5 Air.universalLocatorCode is #Air.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Air.SupplierLocatorCode = ''>
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
@@ -337,6 +358,7 @@
 							</cfif>
 
 							<!--- Parse sell results --->
+							<cflog text="Log 14 AirAdapter.parseAirRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )>
 
@@ -344,6 +366,7 @@
 							<cfif Air.Total GT originalAirfare>
 								<cfset local.runAgain = true />
 								<cfif len(Air.UniversalLocatorCode)>
+									<cflog text="Log 15 UniversalAdapter.cancelUR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode
 																									, Filter = rc.Filter
@@ -354,6 +377,7 @@
 								</cfif>
 
 								<cfif runAgain>
+									<cflog text="Log 16 AirAdapter.create (runAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -373,11 +397,12 @@
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
 																									 )>
-
+									<cflog text="Log 17 AirAdapter.parseAirRsp (runAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse
 																							, runAgain = true )>
 								<cfelse>
+									<cflog text="Log 17.5 PA02 for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<!---ERROR CODE PA02.  Not quite sure on this, could be cancel PNR failed?--->
 									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code PA02).' )>
 								</cfif>
@@ -400,6 +425,7 @@
 																						, providerLocatorCode = Air.ProviderLocatorCode )> --->
 
 								<!--- Display PNR --->
+								<cflog text="Log 18 for TerminalEntry.displayPNR (Southwest) #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, pnr = Air.ProviderLocatorCode
@@ -408,6 +434,7 @@
 								<cfif NOT displayPNRResponse.error>
 									<!--- STM-3845: Check the status of all segments before .IHK --->
 									<!--- Check segment statuses --->
+									<cflog text="Log 19 TerminalEntry.checkSegmentStatus (Southwest) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
@@ -446,17 +473,19 @@
 										<cfset sleep(2000) />
 
 										<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
+										<cflog text="Log 20 TerminalEntry.ignorePNR (checkSegmentStatusAgain) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, searchID = rc.searchID )>
 
 										<cfset sleep(2000) />
-
+										<cflog text="Log 21 for TerminalEntry.displayPNR (checkSegmentStatusAgain) #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
 																						, searchID = rc.searchID )>
 										<cfif NOT displayPNRResponse.error>
+											<cflog text="Log 22 TerminalEntry.checkSegmentStatus for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, searchID = rc.searchID )>
@@ -482,9 +511,11 @@
 													</cfif>
 												</cfloop>
 											<cfelse>
+												<cflog text="Log 22.25 confirmSegmentsError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 												<cfset confirmSegmentsError = true />
 											</cfif>
 										<cfelse>
+												<cflog text="Log 22.5 confirmSegmentsError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
@@ -493,17 +524,19 @@
 										<cfset sleep(2000) />
 
 										<!--- When we see PN status, we need to do a TERMINAL COMMAND "I" before we display the record again. --->
+										<cflog text="Log 23 TerminalEntry.ignorePNR (checkSegmentStatusAgain 2nd Time) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset fw.getBeanFactory().getBean('TerminalEntry').ignorePNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, searchID = rc.searchID )>
 
 										<cfset sleep(2000) />
-
+										<cflog text="Log 24 TerminalEntry.displayPNR (checkSegmentStatusAgain 2nd Time) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
 																						, searchID = rc.searchID )>
 										<cfif NOT displayPNRResponse.error>
+											<cflog text="Log 25 for TerminalEntry.checkSegmentStatus #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
 																												, searchID = rc.searchID )>
@@ -525,15 +558,18 @@
 													</cfif>
 												</cfloop>
 											<cfelse>
+												<cflog text="Log 25.25 confirmSegmentsError 2nd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 												<cfset confirmSegmentsError = true />
 											</cfif>
 										<cfelse>
+											<cflog text="Log 25.5 confirmSegmentsError 2nd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
 
  									<cfif NOT confirmSegmentsError>
 										<!--- Confirm segments --->
+										<cflog text="Log 26 for TerminalEntry.confirmSegments #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset local.segmentResponse = fw.getBeanFactory().getBean('TerminalEntry').confirmSegments( targetBranch = rc.Account.sBranch
 																											, hostToken = hostToken
 																											, searchID = rc.searchID )>
@@ -558,6 +594,7 @@
 										<!--- Only need to T:R if a fare was stored --->
 										<cfif Air.Total NEQ 0>
 											<!--- T:R --->
+											<cflog text="Log 27 TerminalEntry.verifyStoredFare for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
@@ -568,6 +605,7 @@
 
 										<cfif Air.Total EQ 0 OR NOT verifyStoredFareResponse.error>
 											<!--- Add received by STO.CONFIRMED.SEGMENTS line --->
+											<cflog text="Log 28 TerminalEntry.addReceivedBy for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').addReceivedBy( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, userID = rc.Filter.getUserID()
@@ -575,29 +613,35 @@
 																										, receivedBy = 'STO.CONFIRMED.SEGMENTS' )>
 
 											<!--- E --->
+											<cflog text="Log 29 TerminalEntry.erRecord for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, command = 'E' )>
 											<!--- If error, E again --->
 											<cfif erRecordResponse.error>
+												<cflog text="Log 30 for TerminalEntry.erRecord #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 												<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
 																										, command = 'E' )>
 												<cfif erRecordResponse.error>
+													<cflog text="Log 30.1 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 													<cfset confirmSegmentsError = true />
 												</cfif>
 											</cfif>
 										<cfelse>
+											<cflog text="Log 30.2 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset confirmSegmentsError = true />
 										</cfif>
 									</cfif>
 								<cfelse>
+									<cflog text="Log 30.3 confirmSegmentsError 3rd Time for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset confirmSegmentsError = true />
 								</cfif>
 
 								<cfif confirmSegmentsError>
+									<cflog text="Log 30.5 The fare for the flight you found is no longer available. Please select another flight. for TerminalEntry.erRecord #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset arrayAppend( errorMessage, 'The fare for the flight you found is no longer available. Please select another flight.' )>
 									<cfset errorType = 'Air.confirmSegments' />
 								</cfif>
@@ -609,27 +653,32 @@
 								OR (Air.Total GT originalAirfare)>
 								<cfif (Air.Total GT originalAirfare) OR (Air.error AND len(Air.UniversalLocatorCode))>
 									<cfif len(Air.UniversalLocatorCode)>
+										<cflog text="Log 31 UniversalAdapter.cancelUR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 										<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = rc.Account.sBranch
 																									, universalRecordLocatorCode = Air.UniversalLocatorCode
 																									, Filter = rc.Filter
 																									, Version = version )>
 										<cfif cancelResponse.status>
+											<cflog text="Log 32 Purchase.cancelInvoice for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 											<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = rc.Filter.getSearchID()
 																									, urRecloc = Air.UniversalLocatorCode )>
 										</cfif>
 									</cfif>
 									<!---ERROR CODE PA03.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
+									<cflog text="Log 32.5 PA03 for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset arrayAppend( errorMessage, 'The price quoted is no longer available online. Please select another flight or contact us to complete your reservation.  Price was #dollarFormat(originalAirfare)# and now is #dollarFormat(Air.Total)# (error code: PA03).' )>
 								<cfelse>
 									<cfset errorMessage = Air.messages> <!---Not sure what this does, next line ensures it will show up in sto error report--->
 									<!---ERROR CODE PA04.  Unknown--->
+									<cflog text="Log 32.75 AirPrice.doAirPrice for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset arrayAppend( errorMessage, 'The price quoted cannot be purchased at this time (error code: PA04).' )>
 							 </cfif>
 								<cfset errorType = 'Air'>
 								<cfset Traveler.getBookingDetail().setAirConfirmation( '' )>
 								<cfset Traveler.getBookingDetail().setSeats( '' )>
-							<cfelse>
+							<cfelse> 
 								<cfset universalLocatorCode = Air.UniversalLocatorCode>
+								<cflog text="Log 32.85 universalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset Traveler.getBookingDetail().setSeatAssignmentNeeded( Air.seatAssignmentNeeded )>
 							</cfif>
 
@@ -688,6 +737,7 @@
 						</cfloop>
 					</cfif>
 					<!--- Sell vehicle --->
+					<cflog text="Log 33 VehicleAdapter.create for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.vehicleResponse = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -712,7 +762,9 @@
 																									)>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
+					<cflog text="Log 33.5 Vehicle.getUniversalLocatorCode() is #Vehicle.getUniversalLocatorCode()# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<!--- Parse the vehicle --->
+					<cflog text="Log 34 VehicleAdapter.parseVehicleRsp  for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
 																									, response = vehicleResponse )>
 					<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
@@ -720,12 +772,14 @@
 					<!--- If the VERIFY ATFQ error occurs, do terminal commands to verify the stored fare, then do VehicleCreate again --->
 					<cfif Vehicle.error>
 						<!--- Display PNR --->
+						<cflog text="Log 35 TerminalEntry.displayPNR for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, pnr = providerLocatorCode
 																										, searchID = rc.searchID )>
 						<cfif NOT displayPNRResponse.error>
 							<!--- T:R --->
+							<cflog text="Log 36 TerminalEntry.verifyStoredFare for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.verifyStoredFareResponse = fw.getBeanFactory().getBean('TerminalEntry').verifyStoredFare( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID
@@ -734,11 +788,13 @@
 																										, command = 'T:R' )>
 							<cfif NOT verifyStoredFareResponse.error>
 								<!--- ER --->
+								<cflog text="Log 37 TerminalEntry.erRecord (NOT verifyStoredFareResponse.error) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
 								<!--- If error, ER again --->
 								<cfif erRecordResponse.error>
+									<cflog text="Log 38 TerminalEntry.erRecord (erRecordResponse.error) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.erRecordResponse = fw.getBeanFactory().getBean('TerminalEntry').erRecord( targetBranch = rc.Account.sBranch
 																										, hostToken = hostToken
 																										, searchID = rc.searchID )>
@@ -746,6 +802,7 @@
 								</cfif>
 								<cfif NOT erRecordResponse.error>
 									<!--- Sell vehicle --->
+									<cflog text="Log 39 for VehicleAdapter.create (NOT erRecordResponse) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset local.vehicleResponse = fw.getBeanFactory().getBean('VehicleAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -769,6 +826,7 @@
 																										, specialCarReservation = specialCarReservation
 																									)>
 									<!--- Parse the vehicle --->
+									<cflog text="Log 40 VehicleAdapter.parseVehicleRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 									<cfset Vehicle = fw.getBeanFactory().getBean('VehicleAdapter').parseVehicleRsp( Vehicle = Vehicle
 																											, response = vehicleResponse )>
 									<cfset Traveler.getBookingDetail().setCarConfirmation(Vehicle.getConfirmation()) />
@@ -779,10 +837,12 @@
 
 					<!--- Parse error --->
 					<cfif Vehicle.getUniversalLocatorCode() EQ ''>
+						<cflog text="Log 41 UAPIFactory.load for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset errorMessage = fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).parseError( vehicleResponse )>
 						<cfset errorType = 'Vehicle'>
-					<cfelse>
+					<cfelse> 
 						<cfset universalLocatorCode = Vehicle.getUniversalLocatorCode()>
+						<cflog text="Log 41.5 universalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					</cfif>
 					<cfset providerLocatorCode = Vehicle.getProviderLocatorCode()>
 					<!--- Update universal version --->
@@ -823,13 +883,14 @@
 
 					<cfset Hotel.setProviderLocatorCode('')>
 					<cfset Hotel.setUniversalLocatorCode('')>
+					<cflog text="Log 41.75 Hotel.getUniversalLocatorCode() is #Hotel.getUniversalLocatorCode()# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset Hotel.setPassiveLocatorCode('')>
 					<cfset Hotel.setPassiveSegmentRef('')>
 					<cfset Hotel.setProviderReservationInfoRef('')>
 
 					<!--- If a Priceline hotel --->
 					<cfif Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND len(Hotel.getRooms()[1].getPPNBundle())>
-
+						<cflog text="Log 42 PPNHotelAdapter.book for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('PPNHotelAdapter').book( Traveler = Traveler
 																										, Profile = Profile
 																										, Hotel = Hotel
@@ -840,10 +901,12 @@
 																									)>
 
 						<!--- Parse book results --->
+						<cflog text="Log 43 PPNHotelAdapter.parseHotelRsp for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset Hotel = fw.getBeanFactory().getBean('PPNHotelAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = hotelResponse )>
 
 						<cfif NOT Hotel.getError()>
+							<cflog text="Log 44 for PassiveAdapter.create #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
 																											, bookingPCC = rc.Account.PCC_Booking
 																											, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)
@@ -864,11 +927,13 @@
 																											, token = local.token
 																										)>
 							<!--- Parse passive create results --->
+							<cflog text="Log 45 PassiveAdapter.parseHotelRsp (Parse passive create results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Hotel = fw.getBeanFactory().getBean('PassiveAdapter').parseHotelRsp( Hotel = Hotel
 																										, response = passiveResponse )>
 						</cfif>
 					<!--- If a Travelport hotel --->
 					<cfelse>
+						<cflog text="Log 46 HotelAdapter.create (If a Travelport hotel) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -888,6 +953,7 @@
 																										, token = local.token
 																									)>
 						<!--- Parse sell results --->
+						<cflog text="Log 47 HotelAdapter.parseHotelRsp (Parse sell results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																								, response = hotelResponse )>
 
@@ -896,7 +962,7 @@
 							<cfset Hotel.setError( false ) />
 							<cfset Hotel.setMessages( [] ) />
 							<cfset Hotel.setSimultChgsError( false ) />
-
+							<cflog text="Log 48 HotelAdapter.create for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																											, bookingPCC = rc.Account.PCC_Booking
 																											, Traveler = Traveler
@@ -917,6 +983,7 @@
 																										)>
 
 							<!--- Parse sell results --->
+							<cflog text="Log 49 HotelAdapter.parseHotelRsp (Parse sell results) for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 							<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																									, response = hotelResponse )>
 						</cfif>
@@ -924,11 +991,13 @@
 
 					<!--- Parse error --->
 					<cfif Hotel.getUniversalLocatorCode() EQ '' OR Hotel.getError()>
+						<cflog text="Log 49.5 Hotel Error for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset errorMessage = Hotel.getMessages()>
 						<cfset errorType = 'Hotel'>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation('') />
-					<cfelse>
+					<cfelse>						
 						<cfset universalLocatorCode = Hotel.getUniversalLocatorCode()>
+						<cflog text="Log 49.75  UniversalLocatorCode is #local.universalLocatorCode# for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset providerLocatorCode = Hotel.getProviderLocatorCode()>
 						<cfset Traveler.getBookingDetail().setHotelConfirmation(Hotel.getConfirmation()) />
 					</cfif>
@@ -948,6 +1017,7 @@
 					<cfset Traveler.getBookingDetail().setUniversalLocatorCode( universalLocatorCode ) />
 				<cfelseif arrayIsEmpty(errorMessage)>
 					<cfset errorType = 'Misc' />
+					<cflog text="Log 49.85 The system encountered a connectivity issue for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset arrayAppend( errorMessage, 'The system encountered a connectivity issue. Please try again or contact us to complete your reservation.' ) />
 				</cfif>
 
@@ -955,6 +1025,7 @@
 
 					<!--- Short's Travel/Internal TMCs only --->
 					<cfif NOT rc.Account.tmc.getIsExternal()>
+						<cflog text="Log 50 UniversalAdapter.queuePlace for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset fw.getBeanFactory().getBean('UniversalAdapter').queuePlace( targetBranch = rc.Account.sBranch
 																						, Filter = rc.Filter
 																						, pccBooking = rc.Account.PCC_Booking
@@ -982,7 +1053,7 @@
 						developer="#(listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)#"
 						version="#version#"
 						Account="#rc.Account#">
-
+						<cflog text="Log 51 Purchase.fileFinishing for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset fw.getBeanFactory().getBean('Purchase').fileFinishing( targetBranch = arguments.targetBranch
 																					, hostToken = arguments.hostToken
 																					, pccBooking = arguments.pccBooking
@@ -1005,6 +1076,7 @@
 
 				<!--- Sign out of session if error or normal purchase flow --->
 				<cfelseif hostToken NEQ ''>
+					<cflog text="Log 52 TerminalEntry.closeSession for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
 																									, hostToken = hostToken
 																									, searchID = rc.searchID )>
@@ -1013,6 +1085,7 @@
 				<cfif arrayIsEmpty(errorMessage)>
 					<!--- Save profile to database --->
 					<cfif Traveler.getBookingDetail().getSaveProfile()>
+						<cflog text="Log 53 UserService.saveProfile for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset fw.getBeanFactory().getBean('UserService').saveProfile( User = Traveler
 																						, OriginalUser = Profile
 																						, Account = rc.Account
@@ -1021,21 +1094,24 @@
 					</cfif>
 					<!--- Create profile in database --->
 					<cfif Traveler.getBookingDetail().getCreateProfile() AND Traveler.getUserID() EQ 0>
+						<cflog text="Log 54 UserService.createProfile for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 						<cfset rc.Filter.setUserID(fw.getBeanFactory().getBean('UserService').createProfile( User = Traveler
 																						, Account = rc.Account
 																						, acctID = rc.Filter.getAcctID()
 																						, searchID = rc.searchID )) />
 					</cfif>
-
+					<cflog text="Log 55 Purchase.databaseInvoices for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset fw.getBeanFactory().getBean('Purchase').databaseInvoices( Traveler = Traveler
 																					, itinerary = itinerary
 																					, Filter = rc.Filter
 																					, Account = rc.Account )>
 
 				<cfelse>
+					<cflog text="Log 56 UAPIFactory.load for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset fw.getBeanFactory().getBean('UAPIFactory').load( rc.Account.TMC ).databaseErrors( errorMessage = errorMessage
 																				, searchID = rc.searchID
 																				, errorType = errorType )>
+					<cflog text="Log 57 Purchase.getErrorMessage for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 					<cfset local.message = fw.getBeanFactory().getBean('Purchase').getErrorMessage( errorMessage = errorMessage
 																							, errorContact = rc.Account.Error_Contact )>
 					<cfset local.errorList = message>
