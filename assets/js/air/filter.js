@@ -506,7 +506,6 @@ function filterAir(reset) {
 
 function sortAir(sort) {
 	var sortlist = eval( sort );
-	// console.log(sortlist);
 	if(sortlist){
 		for (var t = 0; t < sortlist.length; t++) {
 			$( "#aircontent .grid-view" ).append( $( ".grid-view .flight" + sortlist[t] ) );
@@ -515,3 +514,8 @@ function sortAir(sort) {
 	}
 	return false;
 }
+
+$(document).ready(function(){
+	$('#sortbyduration').click();
+	$('#singlecarrierbtn').click();
+});
