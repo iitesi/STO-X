@@ -1,17 +1,20 @@
 <cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
 	<cfproperty name="UAPIFactory">
-	<cfproperty name="uAPISchemas" />
+	<cfproperty name="uAPISchemas">
 	<cfproperty name="AirParse">
+	<cfproperty name="KrakenService">
 
 	<cffunction name="init" output="false">
 		<cfargument name="UAPIFactory">
-		<cfargument name="uAPISchemas" type="any" required="true" />
+		<cfargument name="uAPISchemas">
 		<cfargument name="AirParse">
+		<cfargument name="KrakenService">
 
 		<cfset setUAPIFactory(arguments.UAPIFactory)>
-		<cfset setUAPISchemas( arguments.uAPISchemas ) />
+		<cfset setUAPISchemas( arguments.uAPISchemas )>
 		<cfset setAirParse(arguments.AirParse)>
+		<cfset setKrakenService(arguments.KrakenService)>
 
 		<cfreturn this>
 	</cffunction>
@@ -466,6 +469,22 @@
 						CabinClass		  : local.cabinClass,
 						ApiKey					: local.stAirSegment.XMLAttributes.Key
 					}>
+
+					<!---<cfdump var="#local.stAirSegment#" abort>--->
+
+					<!---"OriginAirportCode": "SNA",
+              "DepartureTime": "2017-07-15T12:08:00-05:00",
+              "DestinationAirportCode": "ORD",
+              "ArrivalTime": "2017-07-15T16:12:00-05:00",
+              "FlightDuration": "04:04:00",
+              "FlightNumber": "661",
+              "CarrierCode": "UA",
+              "ProviderCode": "1V",
+              "BookingCode": "N",
+              "Equipment": "320",
+              "CabinClass": "Economy",
+              "Group": 0,
+              "AvailabilitySource": "S"--->
 
 
 				</cfloop>
