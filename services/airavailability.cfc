@@ -80,6 +80,182 @@
 		<cfreturn />
 	</cffunction>
 
+
+	<cffunction name = "doAvailabilityNew" access="public" output="false">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Group" required="true">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sPriority" required="false"	default="HIGH">
+		<cfargument name="sCabins" default="">
+
+			<!--- Checking to see if a carrier, if selected, has any blacklisted pairings --->
+			<cfset local.blackListedCarrierPairing = application.blackListedCarrierPairing />
+			<cfset local.selectedCarriers = "" />
+			<cfset local.blackListedCarriers = "" />
+
+			<cfif structKeyExists(session.searches, arguments.Filter.getSearchID()) AND structKeyExists(session.searches[arguments.Filter.getSearchID()], "stSelected")>
+				<cfloop collection="#session.searches[arguments.Filter.getSearchID()].stSelected#" item="local.group" index="local.groupIndex">
+					<cfif isStruct(local.group) AND NOT structIsEmpty(local.group) AND structKeyExists(local.group, "platingCarrier")>
+						<cfset local.selectedCarriers = listAppend(local.selectedCarriers, local.group.platingCarrier) />
+					</cfif>
+				</cfloop>
+
+				<cfloop list="#local.selectedCarriers#" index="local.carrier">
+					<cfloop collection="#local.blackListedCarrierPairing#" item="local.pairing" index="local.pairingIndex">
+						<cfif listFindNoCase(local.selectedCarriers, local.pairing[1])>
+							<cfset local.blackListedCarriers = listAppend(local.blackListedCarriers, local.pairing[2]) />
+						</cfif>
+					</cfloop>
+				</cfloop>
+			</cfif>
+
+			<cfset local.priority="#arguments.sPriority#">
+			<cfset local.Filter="#arguments.Filter#">
+			<cfset local.Group="#arguments.Group#">
+			<cfset local.Account="#arguments.Account#">
+			<cfset local.Policy="#arguments.Policy#">
+			<cfset local.stTrips = {}>
+
+			<cfset var jsonreq = prepareBodyRequest(arguments.Filter,arguments.Group,arguments.sCabins)>
+
+			<cfif arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))>
+				<cfset session.ktrips = getKrakenService().FlightSearch(jsonreq)>
+			</cfif>
+
+
+
+	</cffunction>
+
+	<cffunction name="prepareBodyRequest" access="private" returntype="struct" output="false" hint="I prepare the Body Request.">
+		<cfargument name="Filter" required="true">
+		<cfargument name="Group" required="true">
+		<cfargument name="sCabins" required="false" default="">
+
+		<cfset var jsonreq = structnew()>
+
+		<cfif IsArray(arguments.sCabins)>
+			 <cfset local.aCabins = arguments.sCabins>
+		<cfelseif ListLen(arguments.sCabins) GT 0>
+			 <cfset local.aCabins = ListToArray(arguments.sCabins)>
+		<cfelse>
+			 <cfset local.aCabins = ArrayNew(1)>
+		</cfif>
+
+		<cfscript>
+			local.jsonreq["TravelerAccountId"] = 1;
+			local.jsonreq["TravelerName"] = "John Doe";
+			local.jsonreq["DetailLevel"] = "Full";
+			local.jsonreq["FlightSearchOptions"] = {};
+			local.jsonreq["FlightSearchOptions"]["AirLinesWhiteList"]	= [];
+			local.jsonreq["FlightSearchOptions"]["PreferredProviders"] = ["1V"];
+			local.jsonreq["FlightSearchOptions"]["PreferredCabinClass"] = CabinClassMap(arguments.sCabins[1]);
+			local.jsonreq["Legs"] = [];
+
+			if(arguments.Filter.getAirType() EQ 'OW') {
+					arrayappend(local.jsonreq["Legs"],getLeg(arguments.Filter,0));
+			} else if (arguments.Filter.getAirType() EQ 'RT') {
+					arrayappend(local.jsonreq["Legs"],getLeg(arguments.Filter,0));
+					arrayappend(local.jsonreq["Legs"],getLeg(arguments.Filter,1));
+			} else if (arguments.Filter.getAirType() EQ 'MD') {
+				local.qLegs = arguments.filter.getLegs();
+				for(var i=1; i <= local.qLegs.recordCount; i++) {
+					local.leg = {};
+					local.leg["TimeRangeType"]	= "DepartureTime";
+					if (local.qLegs["Depart_DateTimeActual"][i] EQ "Anytime") {
+						local.leg["TimeRangeStart"] =	DateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T00:00:00.000Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T23:59:00.000Z";
+						local.leg["OriginAirportCode"] = local.qLegs["Depart_City"][i];
+						local.leg["DestinationAirportCode"] = local.qLegs["Arrival_City"][i];
+					} else {
+						local.leg["TimeRangeStart"] =	DateFormat(local.qLegs["Depart_DateTimeStart"][i], 'yyyy-mm-dd') & 'T' & TimeFormat(local.qLegs["Depart_DateTimeStart"][i], 'HH:mm:ss.lll') & "Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(local.qLegs["Depart_DateTimeEnd"][i], 'yyyy-mm-dd') & 'T' & TimeFormat(local.qLegs["Depart_DateTimeEnd"][i], 'HH:mm:ss.lll') & "Z";
+						local.leg["OriginAirportCode"] = local.qLegs["Depart_City"][i];
+						local.leg["DestinationAirportCode"] = local.qLegs["Arrival_City"][i];
+					}
+					arrayappend(local.jsonreq["Legs"],local.leg);
+				}
+			}
+		</cfscript>
+
+		<cfreturn jsonreq>
+
+		<!---<cfsavecontent variable = "jsonreq">
+			<cfoutput>
+			{
+				"TravelerAccountId": 1,
+				"TravelerName": "Bob Cobb",
+				"DetailLevel": "Full",
+				"FlightSearchOptions": {
+						"AirLinesWhiteList": [],
+						"PreferredProviders": ["1V"],
+						"PreferredCabinClass": "#arguments.sCabins[1]#"
+				},
+				"Legs": [
+									{
+											"TimeRangeType": "DepartureTime",
+											"TimeRangeStart": "2017-07-15T00:00:00.000Z",
+											"TimeRangeEnd": "2017-07-15T23:59:00.000Z",
+											"OriginAirportCode": "LAX",
+											"DestinationAirportCode": "CID"
+									},
+									{
+											"TimeRangeType": "DepartureTime",
+											"TimeRangeStart": "2017-07-16T00:00:00.000Z",
+											"TimeRangeEnd": "2017-07-16T23:59:00.000Z",
+											"OriginAirportCode": "CID",
+											"DestinationAirportCode": "MIA"
+									},
+									{
+											"TimeRangeType": "DepartureTime",
+											"TimeRangeStart": "2017-07-28T00:00:00.000Z",
+											"TimeRangeEnd": "2017-07-28T23:59:00.000Z",
+											"OriginAirportCode": "MIA",
+											"DestinationAirportCode": "PHX"
+									}
+				]
+			}
+			</cfoutput>
+		</cfsavecontent>--->
+
+	</cffunction>
+
+	<cffunction name = "getLeg" returnType = "struct">
+		<cfargument name="filter">
+		<cfargument name="LegIndex">
+			<cfscript>
+				local.leg = {};
+				if(arguments.LegIndex EQ 0) {
+					local.leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+					if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+						local.leg["TimeRangeStart"] =	DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+						local.leg["OriginAirportCode"] = arguments.Filter.getDepartCity();
+						local.leg["DestinationAirportCode"] = arguments.Filter.getArrivalCity();
+					} else {
+						local.leg["TimeRangeStart"] =	DateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+						local.leg["OriginAirportCode"] = arguments.Filter.getDepartCity();
+						local.leg["DestinationAirportCode"] = arguments.Filter.getArrivalCity();
+					}
+				} else {
+					local.leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+					if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+						local.leg["TimeRangeStart"] =	DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+						local.leg["OriginAirportCode"] = arguments.Filter.getArrivalCity();
+						local.leg["DestinationAirportCode"] = arguments.Filter.getDepartCity();
+					} else {
+						local.leg["TimeRangeStart"] =	DateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+						local.leg["TimeRangeEnd"] =	DateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & TimeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+						local.leg["OriginAirportCode"] = arguments.Filter.getArrivalCity();
+						local.leg["DestinationAirportCode"] = arguments.Filter.getDepartCity();
+					}
+				}
+				return 	local.leg;
+		</cfscript>
+	</cffunction>
+
 	<cffunction name="doAvailability" output="false">
 		<cfargument name="Filter" required="true">
 		<cfargument name="Group" required="true">
@@ -126,7 +302,6 @@
 		local.stTrips = {};
 
 		</cfscript>
-
 
 		<cfloop condition="local.sNextRef NEQ ''">
 			<cfset local.tempTrips = {}>
@@ -186,6 +361,7 @@
 			<cfset local.qSearchLegs = arguments.filter.getLegs()[1]>
 		</cfif>
 
+		<cfset session.Legsx = arguments.filter.getLegs()>
 		<!--- Code needs to be reworked and put in a better location --->
 		<cfset local.targetBranch = arguments.Account.sBranch>
 		<cfif arguments.Filter.getAcctID() EQ 254

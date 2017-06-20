@@ -248,14 +248,13 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="AirPrice" class="booking.services.airprice" >
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="car" class="booking.services.car" >
