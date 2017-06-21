@@ -56,7 +56,13 @@
 					<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
 				</cfif>
 
-				<cfset local.stTrips = doAvailability( Filter = arguments.Filter
+				<!---<cfset local.stTrips = doAvailability( Filter = arguments.Filter
+													, Group = arguments.Group
+													, Account = arguments.Account
+													, Policy = arguments.Policy
+													, sPriority = 'HIGH'
+													, sCabins = local.aCabins)>--->
+				<cfset local.stTrips = doAvailabilityNew( Filter = arguments.Filter
 													, Group = arguments.Group
 													, Account = arguments.Account
 													, Policy = arguments.Policy
@@ -123,7 +129,37 @@
 				<cfset session.ktrips = getKrakenService().FlightSearch(jsonreq)>
 			</cfif>
 
+			<!---<cfdump var = "#arraylen(session.ktrips.Trips)#">--->
 
+			<cfset local.stSegments = parseSegmentsNew(arguments.Group)>
+
+			<cfset local.tempTrips = parseConnectionsNew( local.stSegments)>
+
+			<!---<cfdump var = "#arraylen(structKeyArray(local.tempTrips))#" abort>--->
+
+			<!--- Add group node --->
+			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
+
+
+
+			<!--- STM-7375 check--->
+			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group)>
+			<!--- Mark preferred carriers. --->
+			<cfset local.tempTrips = getAirParse().addPreferred(local.tempTrips, arguments.Account)>
+			<!--- Run policy on all the results --->
+			<cfset local.tempTrips	= getAirParse().checkPolicy(local.tempTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
+
+			<!---<cfdump var = "#local.tempTrips#" abort>--->
+			<!--- Create javascript structure per trip. --->
+			<cfset local.tempTrips	=	getAirParse().addJavascript(local.tempTrips, 'Avail')>
+
+
+
+			<cfset local.stTrips = local.tempTrips>
+
+			<!---<cfset local.stTrips = getAirParse().removeBlackListedCarriers(local.stTrips, local.BlackListedCarriers)>--->
+
+			<cfreturn local.stTrips>
 
 	</cffunction>
 
@@ -179,44 +215,6 @@
 		</cfscript>
 
 		<cfreturn jsonreq>
-
-		<!---<cfsavecontent variable = "jsonreq">
-			<cfoutput>
-			{
-				"TravelerAccountId": 1,
-				"TravelerName": "Bob Cobb",
-				"DetailLevel": "Full",
-				"FlightSearchOptions": {
-						"AirLinesWhiteList": [],
-						"PreferredProviders": ["1V"],
-						"PreferredCabinClass": "#arguments.sCabins[1]#"
-				},
-				"Legs": [
-									{
-											"TimeRangeType": "DepartureTime",
-											"TimeRangeStart": "2017-07-15T00:00:00.000Z",
-											"TimeRangeEnd": "2017-07-15T23:59:00.000Z",
-											"OriginAirportCode": "LAX",
-											"DestinationAirportCode": "CID"
-									},
-									{
-											"TimeRangeType": "DepartureTime",
-											"TimeRangeStart": "2017-07-16T00:00:00.000Z",
-											"TimeRangeEnd": "2017-07-16T23:59:00.000Z",
-											"OriginAirportCode": "CID",
-											"DestinationAirportCode": "MIA"
-									},
-									{
-											"TimeRangeType": "DepartureTime",
-											"TimeRangeStart": "2017-07-28T00:00:00.000Z",
-											"TimeRangeEnd": "2017-07-28T23:59:00.000Z",
-											"OriginAirportCode": "MIA",
-											"DestinationAirportCode": "PHX"
-									}
-				]
-			}
-			</cfoutput>
-		</cfsavecontent>--->
 
 	</cffunction>
 
@@ -606,6 +604,63 @@
 		<cfreturn local.stSegmentKeyLookUp />
 	</cffunction>
 
+	<cffunction name = "parseSegmentsNew" returnType = "struct"  access = "private">
+		<cfargument name="group">
+
+		<cfset local.stSegments = structnew('linked')>
+		<cfset local.route = 0>
+		<cfset local.j = 1>
+		<cfset local.stSegments[local.route] = StructNew('linked')>
+		<cfloop array="#session.ktrips.Trips#" index="local.trip">
+			<cfloop array="#local.trip.TripSegments#" index="local.segment">
+				<cfloop array="#local.segment.Flights#" index="local.flight">
+						<cfif local.flight.Group EQ arguments.group>
+							<cfset local.cabinClass = local.flight.cabinClass>
+							<cfset local.dArrival = local.flight.ArrivalTime>
+							<cfset local.dArrivalGMT = ParseDateTime(DateFormat(local.dArrival,"yyyy-mm-dd")&"T"&TimeFormat(local.dArrival,"HH:mm:ss"))>
+							<cfset local.dArrivalTime = ParseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"))>
+							<cfset local.dDeparture = local.flight.DepartureTime>
+							<cfset local.dDepartureGMT = ParseDateTime(DateFormat(local.dDeparture,"yyyy-mm-dd")&"T"&TimeFormat(local.dDeparture,"HH:mm:ss"))>
+							<cfset local.dDepartureTime =  ParseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"))>
+							<cfset local.stSegments[local.route][local.j] = {
+								Arrival					: local.dArrivalGMT,
+								ArrivalTime			: local.dArrivalTime,
+								ArrivalGMT			: local.dArrivalGMT,
+								Carrier 				: local.flight.CarrierCode,
+								ChangeOfPlane		: false,
+								Departure				: local.dDeparture,
+								DepartureTime		: local.dDepartureTime,
+								DepartureGMT		: local.dDepartureGMT,
+								Destination			: local.flight.DestinationAirportCode,
+								Equipment				: local.flight.Equipment,
+								FlightNumber		: local.flight.FlightNumber,
+								FlightTime			: val(ListGetAt(local.flight.FlightDuration,1,':')) * 60 + val(ListGetAt(local.flight.FlightDuration,2,':')),
+								Group						: local.flight.Group,
+								Origin					: local.flight.OriginAirportCode,
+								TravelTime			: val(ListGetAt(local.flight.FlightDuration,1,':')) * 60 + val(ListGetAt(local.flight.FlightDuration,2,':')),
+								CabinClass		  : local.cabinClass
+							}>
+							<cfset local.j++>
+						<cfelse>
+							<cfbreak>
+						</cfif>
+				</cfloop>
+				<cfif Arraylen(StructKeyArray(local.stSegments[local.route])) GT 0>
+					<cfset local.route++>
+					<cfset local.j = 1>
+					<cfset local.stSegments[local.route] = StructNew('linked')>
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfif Arraylen(StructKeyArray(local.stSegments[local.route])) EQ 0>
+			<cfset StructDelete(local.stSegments, local.route)>
+		</cfif>
+
+		<cfreturn local.stSegments />
+
+	</cffunction>
+
 	<cffunction name="parseSegments" output="false">
 		<cfargument name="stResponse"		required="true">
 		<cfargument name="stSegmentKeys"	required="true">
@@ -647,21 +702,6 @@
 					}>
 
 					<!---<cfdump var="#local.stAirSegment#" abort>--->
-
-					<!---"OriginAirportCode": "SNA",
-              "DepartureTime": "2017-07-15T12:08:00-05:00",
-              "DestinationAirportCode": "ORD",
-              "ArrivalTime": "2017-07-15T16:12:00-05:00",
-              "FlightDuration": "04:04:00",
-              "FlightNumber": "661",
-              "CarrierCode": "UA",
-              "ProviderCode": "1V",
-              "BookingCode": "N",
-              "Equipment": "320",
-              "CabinClass": "Economy",
-              "Group": 0,
-              "AvailabilitySource": "S"--->
-
 
 				</cfloop>
 			</cfif>
@@ -728,6 +768,34 @@
 		<cfreturn false>
 
 	</cffunction>
+
+	<cffunction name = "parseConnectionsNew" returnType = "struct" access="private">
+			<cfargument name="legs">
+
+			<cfset local.stTrips = StructNew('linked')>
+			<cfset local.nHashNumeric = ''>
+			<cfset local.field = ''>
+			<cfset local.arrayfields = ["Arrival","ArrivalTime","Departure","DepartureTime","Origin","Destination","Carrier","FlightNumber","CabinClass","FlightTime"]>
+			<cfloop collection="#arguments.legs#" item="local.route">
+				<cfset local.HashKey = ''>
+				<cfset local.leg = arguments.legs[local.route]>
+				<cfloop collection="#local.leg#" item="local.j">
+					<cfloop array="#local.arrayfields#" index="local.field" >
+						<cfset local.HashKey &= local.leg[local.j][local.field]>
+					</cfloop>
+				</cfloop>
+				<cfset local.nHashNumeric = getUAPI().HashNumeric(local.HashKey)>
+				<cfif NOT(StructKeyExists(local.stTrips, local.nHashNumeric))>
+					<cfset local.stTrips[nHashNumeric].Segments = arguments.legs[local.route]>
+					<cfset local.stTrips[nHashNumeric].Class = 'X'>
+					<cfset local.stTrips[nHashNumeric].Ref = 'X'>
+				</cfif>
+			</cfloop>
+
+			<cfreturn local.stTrips />
+
+	</cffunction>
+
 
 	<cffunction name="parseConnections" output="false">
 		<cfargument name="stResponse">
