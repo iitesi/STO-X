@@ -172,10 +172,6 @@
 	</cfif>
 </div>
 
-
-<cfdump var = "#session.ktrips#">
-<!---<cfdump var = "#session.Legsx#">--->
-
 	<!--- submitted when badge button is pressed via JS --->
 	<form method="post" action="#buildURL('air.availability')#" id="availabilityForm">
 		<input type="hidden" name="bSelect" value="1">
