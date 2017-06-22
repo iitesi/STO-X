@@ -619,7 +619,7 @@
 										</cfif>
 									</cfif>
 									<!---ERROR CODE PA03.  Missing Universal Locator Code on the air or there is an error or the total is higher than original.--->
-									<cfset arrayAppend( errorMessage, 'One or more segments could not be purchased at this time. Please try your search again. If you selected a preferred seat and do not have a valid loyalty number, you will also experience this error. If this problem persists, please contact your travel manager/agent (error code: PA03).' )>
+									<cfset arrayAppend( errorMessage, 'One or more segments could not be purchased at this time. If you selected a preferred seat and do not have a valid loyalty number, please pick different seat(s) and try your purchase again. If this problem persists, please contact your travel manager/agent (error code: PA03).' )>
 								<cfelse>
 									<cfset errorMessage = Air.messages> <!---Not sure what this does, next line ensures it will show up in sto error report--->
 									<!---ERROR CODE PA04.  Unknown--->
