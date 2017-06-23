@@ -77,6 +77,8 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
 			session.ktrips = getKrakenService().FlightSearch(requestBody);
+			//writeDump(session.ktrips);
+			//abort;
 		}
 
 		var stSegments = parseSegmentsNew(arguments.Group);
@@ -239,15 +241,17 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		stSegments[local.route] = structNew('linked');
 
-		for (var t = 1; t <= arrayLen(session.ktrips.Trips); t++) {
+		for (var t = 1; t <= arrayLen(session.ktrips.FlightSearchResults); t++) {
 
-			for (var s = 1; s <= arrayLen(session.ktrips.Trips[t].TripSegments); s++) {
+			for (var s = 1; s <= arrayLen(session.ktrips.FlightSearchResults[t].TripSegments); s++) {
 
-				for (var f = 1; f <= arrayLen(session.ktrips.Trips[t].TripSegments[s].Flights); f++) {
+				local.Group = session.ktrips.FlightSearchResults[t].TripSegments[s].Group;
 
-					local.flight = session.ktrips.Trips[t].TripSegments[s].FLights[f];
+				if (local.Group EQ arguments.group) {
 
-					if (local.flight.Group EQ arguments.group) {
+					for (var f = 1; f <= arrayLen(session.ktrips.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+
+						local.flight = session.ktrips.FlightSearchResults[t].TripSegments[s].FLights[f];
 
 						local.cabinClass = local.flight.cabinClass;
 						local.dArrival = local.flight.ArrivalTime;
@@ -262,7 +266,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 							ArrivalTime		: local.dArrivalTime,
 							ArrivalGMT		: local.dArrivalGMT,
 							Carrier 		: local.flight.CarrierCode,
-							ChangeOfPlane	: false,
+							ChangeOfPlane	: false, // TODO: new node coming from Kraken
 							Departure		: local.dDeparture,
 							DepartureTime	: local.dDepartureTime,
 							DepartureGMT	: local.dDepartureGMT,
@@ -272,23 +276,19 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 							FlightTime		: val(listGetAt(local.flight.FlightDuration,1,':')) * 60 + val(listGetAt(local.flight.FlightDuration,2,':')),
 							TravelTime		: val(listGetAt(local.flight.FlightDuration,1,':')) * 60 + val(listGetAt(local.flight.FlightDuration,2,':')),
 							CabinClass		: local.cabinClass,
-							Group			: local.flight.Group,
+							Group			: local.Group,
 							Origin			: local.flight.OriginAirportCode
 						};
 
 						local.j++;
-
-					} else {
-
-						break;
 					}
-				}
 
-				if (arraylen(structKeyArray(local.stSegments[local.route])) GT 0) {
+					if (arraylen(structKeyArray(local.stSegments[local.route])) GT 0) {
 
-					local.route++;
-					local.j = 1;
-					local.stSegments[local.route] = structNew('linked');
+		                 local.route++;
+		                 local.j = 1;
+		                 local.stSegments[local.route] = structNew('linked');
+		             }
 				}
 			}
 		}
@@ -298,6 +298,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 			structDelete(local.stSegments, local.route);
 
 		}
+
+		//writeDump(local.stSegments);
+		//abort;
 
 		return local.stSegments;
 	}
