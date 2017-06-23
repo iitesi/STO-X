@@ -129,13 +129,9 @@
 				<cfset session.ktrips = getKrakenService().FlightSearch(jsonreq)>
 			</cfif>
 
-			<!---<cfdump var = "#arraylen(session.ktrips.Trips)#">--->
-
 			<cfset local.stSegments = parseSegmentsNew(arguments.Group)>
 
 			<cfset local.tempTrips = parseConnectionsNew( local.stSegments)>
-
-			<!---<cfdump var = "#arraylen(structKeyArray(local.tempTrips))#" abort>--->
 
 			<!--- Add group node --->
 			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
@@ -149,11 +145,8 @@
 			<!--- Run policy on all the results --->
 			<cfset local.tempTrips	= getAirParse().checkPolicy(local.tempTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy)>
 
-			<!---<cfdump var = "#local.tempTrips#" abort>--->
 			<!--- Create javascript structure per trip. --->
 			<cfset local.tempTrips	=	getAirParse().addJavascript(local.tempTrips, 'Avail')>
-
-
 
 			<cfset local.stTrips = local.tempTrips>
 
