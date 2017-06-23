@@ -1,31 +1,31 @@
 /**
- * airavailability
+ * AirAvailability
  *
  * @author gkernen/eperez
  * @date 6/22/17
  **/
-component name="airavailability" extends="airavailability_old" accessors=true output=false
+component name="AirAvailability" extends="airavailability_old" accessors=true output=false
 
 {
-
+	//
+	property KrakenService;
 	property UAPIFactory;
 	property uAPISchemas;
 	property AirParse;
-	property KrakenService;
 
-	public airavailability function init (
+	public AirAvailability function init (
 
+		required any KrakenService,
 		required any UAPIFactory,
 		required any uAPISchemas,
-		required any AirParse,
-		required any KrakenService
+		required any AirParse
 
 	) {
 
+		setKrakenService(arguments.KrakenService);
 		setUAPIFactory(arguments.UAPIFactory);
 		setUAPISchemas(arguments.uAPISchemas);
 		setAirParse(arguments.AirParse);
-		setKrakenService(arguments.KrakenService);
 
 		return this;
 	}
@@ -72,26 +72,26 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 			}
 		}
 
-		var jsonreq = prepareBodyRequest(arguments.Filter,arguments.Group,arguments.sCabins);
+		var requestBody = getRequestBody(arguments.Filter,arguments.Group,arguments.sCabins);
 		var stTrips = {};
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
-			session.ktrips = getKrakenService().FlightSearch(jsonreq);
+			session.ktrips = getKrakenService().FlightSearch(requestBody);
 		}
 
-		stSegments = parseSegmentsNew(arguments.Group);
+		var stSegments = parseSegmentsNew(arguments.Group);
 
 		local.tempTrips = parseConnectionsNew(stSegments);
 
 		local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter);
 
-		local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group);
+		local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW', chosenGroup=arguments.group);
 
 		local.tempTrips = getAirParse().addPreferred(local.tempTrips, arguments.Account);
 
 		local.tempTrips	= getAirParse().checkPolicy(local.tempTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy);
 
-		local.tempTrips	=	getAirParse().addJavascript(local.tempTrips, 'Avail');
+		local.tempTrips	=getAirParse().addJavascript(local.tempTrips, 'Avail');
 
 		local.stTrips = local.tempTrips;
 
@@ -99,7 +99,7 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 
 	}
 
-	public struct function prepareBodyRequest (
+	public struct function getRequestBody (
 
 		required any Filter,
 		required any Group,
@@ -107,7 +107,7 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 
 	) {
 
-		var jsonreq = {};
+		var requestBody = {};
 		var leg = {};
 
 		if (isArray(arguments.sCabins)) {
@@ -124,29 +124,29 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 
 		}
 
-		jsonreq["TravelerAccountId"] = 1;
-		jsonreq["TravelerName"] = "John Doe";
-		jsonreq["DetailLevel"] = "Full";
-		jsonreq["FlightSearchOptions"] = {};
-		jsonreq["FlightSearchOptions"]["AirLinesWhiteList"]	= [];
-		jsonreq["FlightSearchOptions"]["PreferredProviders"] = ["1V"];
-		jsonreq["FlightSearchOptions"]["PreferredCabinClass"] = CabinClassMap(arguments.sCabins[1]);
-		jsonreq["Legs"] = [];
+		requestBody["TravelerAccountId"] = 1;
+		requestBody["TravelerName"] = "John Doe";
+		requestBody["DetailLevel"] = "Full";
+		requestBody["FlightSearchOptions"] = {};
+		requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= [];
+		requestBody["FlightSearchOptions"]["PreferredProviders"] = ["1V"];
+		requestBody["FlightSearchOptions"]["PreferredCabinClass"] = CabinClassMap(arguments.sCabins[1]);
+		requestBody["Legs"] = [];
 
 		if (arguments.Filter.getAirType() EQ 'OW') {
 
-				arrayappend(jsonreq["Legs"],getLeg(arguments.Filter,0));
+			arrayappend(requestBody["Legs"],getLeg(arguments.Filter,0));
 
 		} else if (arguments.Filter.getAirType() EQ 'RT') {
 
-				arrayappend(jsonreq["Legs"],getLeg(arguments.Filter,0));
-				arrayappend(jsonreq["Legs"],getLeg(arguments.Filter,1));
+			arrayappend(requestBody["Legs"],getLeg(arguments.Filter,0));
+			arrayappend(requestBody["Legs"],getLeg(arguments.Filter,1));
 
 		} else if (arguments.Filter.getAirType() EQ 'MD') {
 
 			local.qLegs = arguments.filter.getLegs();
 
-			for (var i=1; i <= local.qLegs.recordCount; i++) {
+			for (var i = 1; i <= local.qLegs.recordCount; i++) {
 
 				leg = {};
 
@@ -167,11 +167,11 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 					leg["DestinationAirportCode"] = local.qLegs["Arrival_City"][i];
 				}
 
-				arrayappend(jsonreq["Legs"], leg);
+				arrayAppend(requestBody["Legs"], leg);
 			}
 		}
 
-		return jsonreq;
+		return requestBody;
 	}
 
 	public struct function getLeg (
@@ -233,11 +233,11 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 
 	) {
 
-		var stSegments = structnew('linked');
+		var stSegments = structNew('linked');
 		var route = 0;
 		var j = 1;
 
-		stSegments[local.route] = StructNew('linked');
+		stSegments[local.route] = structNew('linked');
 
 		for (var t = 1; t <= arrayLen(session.ktrips.Trips); t++) {
 
@@ -256,6 +256,7 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 						local.dDeparture = local.flight.DepartureTime;
 						local.dDepartureGMT = parseDateTime(dateFormat(local.dDeparture,"yyyy-mm-dd") & "T" & timeFormat(local.dDeparture,"HH:mm:ss"));
 						local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
+
 						local.stSegments[local.route][local.j] = {
 							Arrival			: local.dArrivalGMT,
 							ArrivalTime		: local.dArrivalTime,
@@ -287,7 +288,7 @@ component name="airavailability" extends="airavailability_old" accessors=true ou
 
 					local.route++;
 					local.j = 1;
-					local.stSegments[local.route] = StructNew('linked');
+					local.stSegments[local.route] = structNew('linked');
 				}
 			}
 		}
