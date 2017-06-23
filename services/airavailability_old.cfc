@@ -701,8 +701,6 @@
 						ApiKey					: local.stAirSegment.XMLAttributes.Key
 					}>
 
-					<!---<cfdump var="#local.stAirSegment#" abort>--->
-
 				</cfloop>
 			</cfif>
 		</cfloop>
