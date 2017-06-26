@@ -72,7 +72,10 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 			}
 		}
 
-		var requestBody = getRequestBody(arguments.Filter,arguments.Group,arguments.sCabins);
+		var requestBody = getRequestBody(Filter = arguments.Filter,
+																		 Group = arguments.Group,
+																		 Account = arguments.Account,
+																		 sCabins = arguments.sCabins);
 		var stTrips = {};
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
@@ -105,12 +108,21 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		required any Filter,
 		required any Group,
+		required any Account,
 		required any sCabins = ''
 
 	) {
 
 		var requestBody = {};
 		var leg = {};
+
+		local.airlines = [];
+
+		if ( len(trim(arguments.Filter.getAirlines())) ) {
+
+			local.airlines = arguments.Filter.getAirlines();
+
+		}
 
 		if (isArray(arguments.sCabins)) {
 
@@ -126,12 +138,12 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		}
 
-		requestBody["TravelerAccountId"] = 1;
+		requestBody["TravelerAccountId"] = arguments.Filter.getAcctID();
+		requestBody["TargetBranch"] = arguments.Account.sBranch;
 		requestBody["TravelerName"] = "John Doe";
 		requestBody["DetailLevel"] = "Full";
 		requestBody["FlightSearchOptions"] = {};
-		requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= [];
-		requestBody["FlightSearchOptions"]["PreferredProviders"] = ["1V"];
+		requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
 		requestBody["FlightSearchOptions"]["PreferredCabinClass"] = CabinClassMap(arguments.sCabins[1]);
 		requestBody["Legs"] = [];
 
@@ -158,20 +170,20 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 					leg["TimeRangeStart"] =	dateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T00:00:00.000Z";
 					leg["TimeRangeEnd"] =	dateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T23:59:00.000Z";
-					leg["OriginAirportCode"] = local.qLegs["Depart_City"][i];
-					leg["DestinationAirportCode"] = local.qLegs["Arrival_City"][i];
 
 				} else {
 
 					leg["TimeRangeStart"] =	dateFormat(local.qLegs["Depart_DateTimeStart"][i], 'yyyy-mm-dd') & 'T' & timeFormat(local.qLegs["Depart_DateTimeStart"][i], 'HH:mm:ss.lll') & "Z";
 					leg["TimeRangeEnd"] =	dateFormat(local.qLegs["Depart_DateTimeEnd"][i], 'yyyy-mm-dd') & 'T' & timeFormat(local.qLegs["Depart_DateTimeEnd"][i], 'HH:mm:ss.lll') & "Z";
-					leg["OriginAirportCode"] = local.qLegs["Depart_City"][i];
-					leg["DestinationAirportCode"] = local.qLegs["Arrival_City"][i];
 				}
+
+				leg["OriginAirportCode"] = { "Code" : local.qLegs["Depart_City"][i] , "IsCity": local.qLegs["airFrom_CityCode"][i] ? true : false};
+				leg["DestinationAirportCode"] = { "Code" : local.qLegs["Arrival_City"][i] , "IsCity": local.qLegs["airTo_CityCode"][i] ? true : false};
 
 				arrayAppend(requestBody["Legs"], leg);
 			}
 		}
+
 
 		return requestBody;
 	}
@@ -193,17 +205,16 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 				leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
 				leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
-				leg["OriginAirportCode"] = arguments.Filter.getDepartCity();
-				leg["DestinationAirportCode"] = arguments.Filter.getArrivalCity();
 
 			} else {
 
 				leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & "Z";
 				leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
-				leg["OriginAirportCode"] = arguments.Filter.getDepartCity();
-				leg["DestinationAirportCode"] = arguments.Filter.getArrivalCity();
 
 			}
+
+			leg["OriginAirportCode"] = { "Code": arguments.Filter.getDepartCity(), "IsCity": arguments.filter.getAirFromCityCode()  ? true : false};
+			leg["DestinationAirportCode"] = { "Code": arguments.Filter.getArrivalCity(), "IsCity": arguments.filter.getAirToCityCode()  ? true : false};
 
 		} else {
 
@@ -213,17 +224,17 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 				leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
 				leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
-				leg["OriginAirportCode"] = arguments.Filter.getArrivalCity();
-				leg["DestinationAirportCode"] = arguments.Filter.getDepartCity();
 
 			} else {
 
 				leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & "Z";
 				leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
-				leg["OriginAirportCode"] = arguments.Filter.getArrivalCity();
-				leg["DestinationAirportCode"] = arguments.Filter.getDepartCity();
 
 			}
+
+			leg["OriginAirportCode"] = {"Code" :arguments.Filter.getArrivalCity(), "IsCity": arguments.filter.getAirToCityCode()  ? true : false};
+			leg["DestinationAirportCode"] = { "Code" :arguments.Filter.getDepartCity(), "IsCity": arguments.filter.getAirFromCityCode()  ? true : false};
+
 		}
 
 		return leg;
@@ -243,6 +254,8 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		for (var t = 1; t <= arrayLen(session.ktrips.FlightSearchResults); t++) {
 
+			var source = session.ktrips.FlightSearchResults[t].FlightSearchResultSource;
+
 			for (var s = 1; s <= arrayLen(session.ktrips.FlightSearchResults[t].TripSegments); s++) {
 
 				local.Group = session.ktrips.FlightSearchResults[t].TripSegments[s].Group;
@@ -254,6 +267,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 						local.flight = session.ktrips.FlightSearchResults[t].TripSegments[s].FLights[f];
 
 						local.cabinClass = local.flight.cabinClass;
+						local.ChangeOfPlane = local.flight.ChangeOfPlane;
 						local.dArrival = local.flight.ArrivalTime;
 						local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
 						local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"));
@@ -266,7 +280,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 							ArrivalTime		: local.dArrivalTime,
 							ArrivalGMT		: local.dArrivalGMT,
 							Carrier 		: local.flight.CarrierCode,
-							ChangeOfPlane	: false, // TODO: new node coming from Kraken
+							ChangeOfPlane	: local.ChangeOfPlane,
 							Departure		: local.dDeparture,
 							DepartureTime	: local.dDepartureTime,
 							DepartureGMT	: local.dDepartureGMT,
@@ -277,7 +291,8 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 							TravelTime		: val(listGetAt(local.flight.FlightDuration,1,':')) * 60 + val(listGetAt(local.flight.FlightDuration,2,':')),
 							CabinClass		: local.cabinClass,
 							Group			: local.Group,
-							Origin			: local.flight.OriginAirportCode
+							Origin			: local.flight.OriginAirportCode,
+							Source : local.source
 						};
 
 						local.j++;
