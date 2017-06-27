@@ -79,7 +79,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		var stTrips = {};
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
-			session.ktrips = getKrakenService().FlightSearch(requestBody);		
+			session.ktrips = getKrakenService().FlightSearch(requestBody);
 		}
 
 		var stSegments = parseSegmentsNew(arguments.Group);
@@ -99,6 +99,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		local.tempTrips = getAirParse().removeBlackListedCarriers(local.tempTrips, local.BlackListedCarriers);
 
 		local.stTrips = local.tempTrips;
+
+		//writeDump(local.stTrips);
+		//abort;
 
 		return local.stTrips;
 
@@ -292,7 +295,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 							CabinClass		: local.cabinClass,
 							Group			: local.Group,
 							Origin			: local.flight.OriginAirportCode,
-							Source : local.source
+							Source 			: local.source
 						};
 
 						local.j++;

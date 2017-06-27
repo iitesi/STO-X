@@ -137,6 +137,9 @@
 					</a>
 				</cfif>
 			</div>
+			<div>
+				<cfif structKeyExists(stSegment,"Source")><span style="background-color:##FFFFE0">#stSegment.Source#</span></cfif>
+			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
 				<cfset sClass = (bDisplayFare ? Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4) : 'Y') />
