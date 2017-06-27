@@ -136,8 +136,6 @@
 			<!--- Add group node --->
 			<cfset local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter)>
 
-
-
 			<!--- STM-7375 check--->
 			<cfset local.tempTrips = getAirParse().removeInvalidTrips(trips=local.tempTrips, filter=arguments.Filter, tripTypeOverride='OW',chosenGroup=arguments.group)>
 			<!--- Mark preferred carriers. --->
@@ -150,7 +148,7 @@
 
 			<cfset local.stTrips = local.tempTrips>
 
-			<!---<cfset local.stTrips = getAirParse().removeBlackListedCarriers(local.stTrips, local.BlackListedCarriers)>--->
+			<cfset local.stTrips = getAirParse().removeBlackListedCarriers(local.stTrips, local.BlackListedCarriers)>
 
 			<cfreturn local.stTrips>
 
