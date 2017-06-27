@@ -79,9 +79,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		var stTrips = {};
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
-			session.ktrips = getKrakenService().FlightSearch(requestBody);
-			//writeDump(session.ktrips);
-			//abort;
+			session.ktrips = getKrakenService().FlightSearch(requestBody);		
 		}
 
 		var stSegments = parseSegmentsNew(arguments.Group);
