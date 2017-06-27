@@ -283,7 +283,7 @@
 						<td>
 							<br />
 							<h3>You have selected a preferred seat. Please make sure your frequent flyer status qualifies you for this preferred seat.</h3>
-							<h3 class="red bold">If you do not qualify for this seat, we cannot guarantee that a seat will be assigned to you.</h3>
+							<h3 class="red bold">If you do not qualify for a preferred seat with this specific airline and you choose a preferred seat, you will not be able to book this flight.</h3>
 							<input type="hidden" id="preferredSeatID" value="">
 							<input type="button" id="confirmSeat" class="btn btn-primary" value="CONTINUE WITH PREFERRED SEAT">
 						</td>
@@ -308,13 +308,13 @@
 
 			$('.preferredSeat').on('click', function() {
 				var preferredSeatSelected =  $(this).attr('id');
-				$('##confirmPreferredTable').show();
+				$('##confirmPreferredTable').removeClass('hide');
 				$('##preferredSeatID').val(preferredSeatSelected);
 			});
 
 			$('##confirmSeat').on('click', function() {
 				var seatSelected =  $('##preferredSeatID').val();
-				window.parent.GetValueFromChild( seatSelected );
+				window.parent.GetValueFromChild( seatSelected ); 
 				$('##popupModal').modal('hide');
 				$(this).removeData('modal');
 			});
