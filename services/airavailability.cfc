@@ -96,7 +96,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.tempTrips	= getAirParse().checkPolicy(local.tempTrips, arguments.Filter.getSearchID(), '', 'Avail', arguments.Account, arguments.Policy);
 
-		local.tempTrips	=getAirParse().addJavascript(local.tempTrips, 'Avail');
+		local.tempTrips	= getAirParse().addJavascript(local.tempTrips, 'Avail');
+
+		local.tempTrips = getAirParse().removeBlackListedCarriers(local.tempTrips, local.BlackListedCarriers);
 
 		local.stTrips = local.tempTrips;
 
