@@ -79,7 +79,8 @@
 						</cfif>
 						<cfif bSelected>
 							<cfset btnClass = "btn-success">
-						</cfif>
+						</cfif>source
+
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
@@ -187,7 +188,9 @@
 							<span>#stSegment.Origin# to #stSegment.Destination#</span></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
-								#stGroup.TravelTime#
+								<cfif structKeyExists(stGroup,"TravelTime")>
+									#stGroup.TravelTime#
+								</cfif>
 								<cfset nFirstSeg = nSegment>
 								<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
 							</cfif>
@@ -273,7 +276,9 @@
 									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">
 										<cfif nCnt EQ 1>
-											#stGroup.TravelTime#
+											<cfif structKeyExists(stGroup,"TravelTime")>
+												#stGroup.TravelTime#
+											</cfif>
 											<cfset nFirstSeg = nSegment>
 										</cfif>
 									</td>
