@@ -264,10 +264,10 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
-					 <cfif structKeyExists(variables,"tripSource")>
+					 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
 						<div style="padding:20px;">
 							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
-						</p>
+						</div>
 					</cfif>
 			</small>
 		</div>
