@@ -34,7 +34,7 @@
 
 	<cfif structKeyExists(session, 'cookieToken')
 		AND structKeyExists(session, 'cookieDate')>
-		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl())) AND !listFind("beta,beta.shortstravel.com", cgi.server_name)>
+		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl())) OR (listFind("railoqa,railoqa.shortstravel.com,beta,beta.shortstravel.com", cgi.server_name))>
 			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
 		<cfelse>
 			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
