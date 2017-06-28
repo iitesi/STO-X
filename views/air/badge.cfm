@@ -176,7 +176,7 @@
 						arrayAppend(carrierList, stSegment.Carrier);
 					</cfscript>
 					<tr>
-						<td valign="top" colspan="4"><cfif structKeyExists(stSegment,"Source")><span style="background-color:##FFFFE0">#stSegment.Source#</span></cfif></td>
+						<td valign="top" colspan="4"><cfif nCnt eq 1 AND structKeyExists(stSegment,"Source")><span class="trip-source" style="background-color:##FFFFE0">#stSegment.Source#</span></cfif></td>
 					</tr>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>

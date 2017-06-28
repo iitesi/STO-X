@@ -138,7 +138,7 @@
 				</cfif>
 			</div>
 			<div>
-				<cfif structKeyExists(stSegment,"Source")><span style="background-color:##FFFFE0">#stSegment.Source#</span></cfif>
+				<cfif nCnt eq 1 AND structKeyExists(stSegment,"Source")><span class="trip-source" style="background-color:##FFFFE0">#stSegment.Source#</span></cfif>
 			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
