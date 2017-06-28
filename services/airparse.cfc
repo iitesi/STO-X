@@ -794,12 +794,14 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset local.stGroups[local.nOverrideGroup].Origin = local.segment.Origin>
 					<cfset local.nStops = -1>
 				</cfif>
-
-				<cfset local.nDuration = local.nDuration + local.segment.TravelTime />
-
+				<cfif local.firstSegment OR local.segment.TravelTime GT local.nDuration>
+					<cfset local.nDuration = local.nDuration + local.segment.TravelTime />
+					<cfset local.travelTime = '#int(local.segment.TravelTime/60)#h #local.segment.TravelTime%60#m' />
+				</cfif>
 				<cfset local.stGroups[local.nOverrideGroup].Segments[local.segmentIndex] = local.segment>
 				<cfset local.stGroups[local.nOverrideGroup].ArrivalTime = local.segment.ArrivalTime>
 				<cfset local.stGroups[local.nOverrideGroup].Destination = local.segment.Destination>
+				<cfset local.stGroups[local.nOverrideGroup].TravelTime = local.travelTime>
 				<cfset local.aCarriers[local.segment.Carrier] = ''>
 				<cfset local.nStops++>
 				<cfset local.stGroups[local.nOverrideGroup].Stops = local.nStops>
@@ -807,12 +809,6 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset local.nTotalStops = local.nStops>
 				</cfif>
 			</cfloop>
-			<cfif local.nDuration % 60 GT 0>
-				<cfset local.travelTime = '#int(local.nDuration/60)#h #local.nDuration%60#m'>
-			<cfelse>
-				<cfset local.travelTime = '#int(local.nDuration/60)#h'>
-			</cfif>
-			<cfset local.stGroups[local.nOverrideGroup].TravelTime = local.travelTime>
 			<cfset local.stTrips[local.tripIndex].Groups = local.stGroups>
 			<cfset local.stTrips[local.tripIndex].Duration = local.nDuration>
 			<cfset local.stTrips[local.tripIndex].Stops = local.nTotalStops>
