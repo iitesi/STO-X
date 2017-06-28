@@ -34,7 +34,7 @@
 
 	<cfif structKeyExists(session, 'cookieToken')
 		AND structKeyExists(session, 'cookieDate')>
-		<cfif listFindNoCase(cgi.server_name,"beta,beta.shortstravel.com")>
+		<cfif listFindNoCase("beta,beta.shortstravel.com", cgi.server_name)>
 			<cfset frameSrc ="https://beta.shortstravel.com/search/index.cfm?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#">
 		<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
