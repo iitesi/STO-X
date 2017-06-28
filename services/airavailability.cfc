@@ -121,9 +121,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.airlines = [];
 
-		if ( len(trim(arguments.Filter.getAirlines())) ) {
+		if (len(trim(arguments.Filter.getAirlines()))) {
 
-			local.airlines = arguments.Filter.getAirlines();
+			local.airlines = listToArray(arguments.Filter.getAirlines());
 
 		}
 

@@ -126,13 +126,15 @@
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfscript>
-				stGroup = stTrip.Groups[Group];
+					stGroup = stTrip.Groups[Group];
 
-				// set times for badges, and get total times so we can set time sliders in filter
-				departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
-				arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
-				timeFilter["departureTime#group#"] = departureTime;
-				timeFilter["arrivalTime#group#"] = arrivalTime;
+					// set times for badges, and get total times so we can set time sliders in filter
+					departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
+					arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
+					timeFilter["departureTime#group#"] = departureTime;
+					timeFilter["arrivalTime#group#"] = arrivalTime;
+
+					variables.tripSource = "";
 
 				</cfscript>
 				<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
@@ -170,14 +172,19 @@
 				<cfloop collection="#stGroup.Segments#" item="nSegment" >
 
 					<cfscript>
-					nCnt++;
-					stSegment = stGroup.Segments[nSegment];
-					if(NOT arrayFind(carrierList, stSegment.Carrier))
-						arrayAppend(carrierList, stSegment.Carrier);
+
+						nCnt++;
+						stSegment = stGroup.Segments[nSegment];
+
+						if(NOT arrayFind(carrierList, stSegment.Carrier)) {
+							arrayAppend(carrierList, stSegment.Carrier);
+						}
+
+						if (nCnt eq 1 AND structKeyExists(stSegment,"Source")) {
+							variables.tripSource = stSegment.Source;
+						}
+
 					</cfscript>
-					<tr>
-						<td valign="top" colspan="4"><cfif nCnt eq 1 AND structKeyExists(stSegment,"Source")><span class="trip-source" style="background-color:##FFFFE0">#stSegment.Source#</span></cfif></td>
-					</tr>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
 						<td valign="top">
@@ -235,6 +242,11 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
+					 <cfif structKeyExists(variables,"tripSource")>
+						<div style="padding:20px;">
+							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+						</p>
+					</cfif>
 				</td>
 			</tr>
 		</table>

@@ -91,6 +91,8 @@
 	timeFilter["departureTime#group#"] = departureTime;
 	timeFilter["arrivalTime#group#"] = arrivalTime;
 
+	variables.tripSource = "";
+
 	</cfscript>
 	<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
 	STM-2544 need to create a container of min/max times so we can use to set filters
@@ -109,17 +111,23 @@
 		<cfloop collection="#stGroup.Segments#" item="nSegment" >
 
 			<cfscript>
-			nCnt++;
-			stSegment = stGroup.Segments[nSegment];
-			if(NOT arrayFind(carrierList, stSegment.Carrier))
-				arrayAppend(carrierList, stSegment.Carrier);
-			//if(len(details))
-			//	details = details & '<br />';
-			//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
-			if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
-				minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
-				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
-			}
+				nCnt++;
+				stSegment = stGroup.Segments[nSegment];
+
+				if(NOT arrayFind(carrierList, stSegment.Carrier))
+					arrayAppend(carrierList, stSegment.Carrier);
+				//if(len(details))
+				//	details = details & '<br />';
+				//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
+				if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
+					minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
+					details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
+				}
+
+				if (nCnt eq 1 AND structKeyExists(stSegment,"Source")) {
+					variables.tripSource = stSegment.Source;
+				}
+
 			</cfscript>
 			<div class="col-sm-5 text-right xs-center">
 				<span class="flightNumber">#stSegment.Carrier# #stSegment.FlightNumber#</span>
@@ -136,9 +144,6 @@
 						Seat Map
 					</a>
 				</cfif>
-			</div>
-			<div>
-				<cfif nCnt eq 1 AND structKeyExists(stSegment,"Source")><span class="trip-source" style="background-color:##FFFFE0">#stSegment.Source#</span></cfif>
 			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
@@ -259,7 +264,11 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
-
+					 <cfif structKeyExists(variables,"tripSource")>
+						<div style="padding:20px;">
+							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+						</p>
+					</cfif>
 			</small>
 		</div>
 		</div> <!-- /.price -->
