@@ -137,13 +137,16 @@
 					</a>
 				</cfif>
 			</div>
+			<div>
+				<cfif structKeyExists(stSegment,"Source")><span style="background-color:##FFFFE0">#stSegment.Source#</span></cfif>
+			</div>
 			<cfif nCnt EQ 1>
 				<cfset nFirstSeg = nSegment>
 				<cfset sClass = (bDisplayFare ? Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4) : 'Y') />
 			</cfif>
 		</cfloop>
 </div>
-			<!-- <div class="col-sm-6 text-right xs-center">
+			<!---- <div class="col-sm-6 text-right xs-center">
 				<cfset stopCount = structCount(stGroup.Segments) - 1>
 				<span class="flightTimeOrigin"><strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br /><small>#stGroup.Origin#</small></span> &mdash;
 				<span class="flightTimeOrigin">  <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br /><small>#stGroup.Destination#</small></span>
@@ -158,7 +161,7 @@
 					#details#
 				</cfif>
 				<br /> Travel Time: #stGroup.TravelTime#</small>
-		</div> -->
+		</div> --->
 	<cfif gCnt NEQ groupCount >
 			<hr class="visible-xs" />
 		</cfif>

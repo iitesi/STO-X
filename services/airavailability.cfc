@@ -100,6 +100,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.stTrips = local.tempTrips;
 
+		//writeDump(local.stTrips);
+		//abort;
+
 		return local.stTrips;
 
 	}
