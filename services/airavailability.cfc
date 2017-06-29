@@ -73,13 +73,13 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		}
 
 		var requestBody = getRequestBody(Filter = arguments.Filter,
-																		 Group = arguments.Group,
-																		 Account = arguments.Account,
-																		 sCabins = arguments.sCabins);
+										 Group = arguments.Group,
+										 Account = arguments.Account,
+										 sCabins = arguments.sCabins);
 		var stTrips = {};
 
-		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "ktrips"))) {
-			session.ktrips = getKrakenService().FlightSearch(requestBody);
+		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "KrakenSearchResults"))) {
+			session.KrakenSearchResults = getKrakenService().FlightSearch(requestBody);
 		}
 
 		var stSegments = parseSegmentsNew(arguments.Group);
@@ -187,6 +187,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 			}
 		}
 
+		//writeDump(serializeJSON(requestBody));
+		//abort;
+
 
 		return requestBody;
 	}
@@ -255,21 +258,21 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		stSegments[local.route] = structNew('linked');
 
-		for (var t = 1; t <= arrayLen(session.ktrips.FlightSearchResults); t++) {
+		for (var t = 1; t <= arrayLen(session.KrakenSearchResults.FlightSearchResults); t++) {
 
-			var source = session.ktrips.FlightSearchResults[t].FlightSearchResultSource;
+			var source = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
 
-			for (var s = 1; s <= arrayLen(session.ktrips.FlightSearchResults[t].TripSegments); s++) {
+			for (var s = 1; s <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments); s++) {
 
-				local.Group = session.ktrips.FlightSearchResults[t].TripSegments[s].Group;
+				local.Group = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Group;
 
-				local.TravelTime = session.ktrips.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
+				local.TravelTime = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
 
 				if (local.Group EQ arguments.group) {
 
-					for (var f = 1; f <= arrayLen(session.ktrips.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+					for (var f = 1; f <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Flights); f++) {
 
-						local.flight = session.ktrips.FlightSearchResults[t].TripSegments[s].FLights[f];
+						local.flight = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].FLights[f];
 
 						local.cabinClass = local.flight.cabinClass;
 						local.ChangeOfPlane = local.flight.ChangeOfPlane;
