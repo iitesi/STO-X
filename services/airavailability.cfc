@@ -260,7 +260,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		for (var t = 1; t <= arrayLen(session.KrakenSearchResults.FlightSearchResults); t++) {
 
-			var source = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
+			local.sourceX = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
 
 			for (var s = 1; s <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments); s++) {
 
@@ -284,23 +284,23 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 						local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
 
 						local.stSegments[local.route][local.j] = {
-							Arrival				: local.dArrivalGMT,
+							Arrival			: local.dArrivalGMT,
 							ArrivalTime		: local.dArrivalTime,
 							ArrivalGMT		: local.dArrivalGMT,
-							Carrier 			: local.flight.CarrierCode,
+							Carrier 		: local.flight.CarrierCode,
 							ChangeOfPlane	: local.ChangeOfPlane,
-							Departure			: local.dDeparture,
+							Departure		: local.dDeparture,
 							DepartureTime	: local.dDepartureTime,
 							DepartureGMT	: local.dDepartureGMT,
 							Destination		: local.flight.DestinationAirportCode,
-							Equipment			: local.flight.Equipment,
+							Equipment		: local.flight.Equipment,
 							FlightNumber	: local.flight.FlightNumber,
 							FlightTime		: local.flight.FlightDurationInMinutes,
-							TravelTime		:	local.TravelTime,
+							TravelTime		: local.TravelTime,
 							CabinClass		: local.cabinClass,
-							Group					: local.Group,
-							Origin				: local.flight.OriginAirportCode,
-							Source 				: local.source
+							Group			: local.Group,
+							Origin			: local.flight.OriginAirportCode,
+							Source 			: local.sourceX
 						};
 
 						local.j++;
