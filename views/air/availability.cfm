@@ -173,11 +173,11 @@
 	</cfif>
 </div>
 
-<cfscript>
+<!--- <cfscript>
 
 	writeDump(session.KrakenSearchResults.RemovedFlightSearchResults);
 
-</cfscript>
+</cfscript> --->
 
 	<!--- submitted when badge button is pressed via JS --->
 	<form method="post" action="#buildURL('air.availability')#" id="availabilityForm">
