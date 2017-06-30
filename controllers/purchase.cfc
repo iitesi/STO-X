@@ -335,11 +335,38 @@
 									</cfif>
 								</cfloop>
 							</cfif>
-
+						<!--- 	<cfset airResponse ='<SOAP:Envelope
+    xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP:Body>
+        <SOAP:Fault>
+            <faultcode>Server.Business</faultcode>
+            <faultstring>General air service Error.</faultstring>
+            <detail>
+                <air:AvailabilityErrorInfo
+                    xmlns:air="http://www.travelport.com/schema/air_v33_0"
+                    xmlns:common_v33_0="http://www.travelport.com/schema/common_v33_0" >
+                    <common_v33_0:Code>3000</common_v33_0:Code>
+                    <common_v33_0:Service>AIRSVC</common_v33_0:Service>
+                    <common_v33_0:Type>Business</common_v33_0:Type>
+                    <common_v33_0:Description>General air service Error.</common_v33_0:Description>
+                    <common_v33_0:TransactionId>D5F6FAF20A0759C982E827C7B901C8A8</common_v33_0:TransactionId>
+                    <air:AirSegmentError>
+                        <air:AirSegment Key="yvdhRzBAAA/BJUD4TBAAAA==" Group="0" Carrier="AA" FlightNumber="4569" Origin="DCA" Destination="MSY" DepartureTime="2017-07-12T00:00:00.000-04:00" ArrivalTime="2017-07-12T00:00:00.000-05:00" ClassOfService="V" ChangeOfPlane="false" OptionalServicesIndicator="false"/>
+                        <air:ErrorMessage>0 AVAIL/WL CLOSED AA4569 DCAMSY *</air:ErrorMessage>
+                    </air:AirSegmentError>
+                </air:AvailabilityErrorInfo>
+            </detail>
+        </SOAP:Fault>
+    </SOAP:Body>
+</SOAP:Envelope>'> --->
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
 																							, response = airResponse )>
-
+							<cfif Air.segmentError>
+								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
+								<cfset cancelResponse(rc, air, local.version)>
+								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
+							</cfif>
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
 							<cfif Air.Total GT originalAirfare>
 								<cfset local.runAgain = true />
@@ -1316,4 +1343,26 @@
 
 	</cffunction>
 
+	<cffunction name="cancelResponse" output="false">
+		<cfargument name="rc">
+		<cfargument name="air">
+		<cfargument name="version">
+		<cfif len(arguments.Air.UniversalLocatorCode)>
+			<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
+																									, universalRecordLocatorCode = arguments.Air.UniversalLocatorCode
+																									, Filter = arguments.rc.Filter
+																									, Version = arguments.version )>
+			<cfif cancelResponse.status>
+				<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = arguments.rc.Filter.getSearchID()
+																		, urRecloc = arguments.Air.UniversalLocatorCode )>
+			</cfif>
+		</cfif>
+	</cffunction>
+	<cffunction name="handleSegmentError">
+		<cfargument name="Air" required="true">
+		<cfargument name="Message" required="true"> 
+		<cfargument name="searchID" required="true">
+		<cfset arguments.message.addError(arguments.air.segmentErrorMessage)>
+		<cfset variables.fw.redirect('air.lowfare?searchID=#arguments.searchID#&soldOutTrip=#arguments.air.nTrip#')>
+	</cffunction>
 </cfcomponent>
