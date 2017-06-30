@@ -647,7 +647,7 @@
 					</cfloop>
 				</cfloop>
 				<cfset local.nHashNumeric = getUAPI().HashNumeric(local.HashKey)>
-				<cfif NOT(StructKeyExists(local.stTrips, local.nHashNumeric))>
+				<cfif NOT(StructKeyExists(local.stTrips, local.nHashNumeric)) OR uCase(local.leg[1]["Source"]) NEQ "QPX">
 					<cfset local.stTrips[nHashNumeric].Segments = arguments.legs[local.route]>
 					<cfset local.stTrips[nHashNumeric].Class = 'X'>
 					<cfset local.stTrips[nHashNumeric].Ref = 'X'>
