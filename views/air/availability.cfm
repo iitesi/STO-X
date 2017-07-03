@@ -12,7 +12,7 @@
 </cfsilent>
 
 <cfoutput>
-  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=201703096'></script>
+  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
 	#view('air/unusedtickets')#
 
 <div class="page-header">
@@ -34,14 +34,15 @@
 
 	<cfif structKeyExists(session, 'cookieToken')
 		AND structKeyExists(session, 'cookieDate')>
-		<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+		<cfif listFindNoCase("beta,beta.shortstravel.com", cgi.server_name)>
+			<cfset frameSrc ="https://beta.shortstravel.com/search/index.cfm?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#">
+		<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
 			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
 		<cfelse>
 			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
 		</cfif>
 		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 	</cfif>
-
 
 	<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
 		#View('air/legs')#
@@ -171,6 +172,12 @@
 		</div>
 	</cfif>
 </div>
+
+<!--- <cfscript>
+
+	writeDump(session.KrakenSearchResults.RemovedFlightSearchResults);
+
+</cfscript> --->
 
 	<!--- submitted when badge button is pressed via JS --->
 	<form method="post" action="#buildURL('air.availability')#" id="availabilityForm">

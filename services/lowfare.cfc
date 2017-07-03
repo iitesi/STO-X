@@ -152,6 +152,7 @@
 				<cfloop array="#local.airlines#" index="local.airlineIndex" item="local.airline">
 
 					<cfset local.wnFound = false>
+
 					<cfloop array="#arguments.Account.Air_PF#" index="local.sPF">
 						<cfif local.airline EQ 'X'
 							OR local.airline EQ getToken(sPF, 2, ',')>

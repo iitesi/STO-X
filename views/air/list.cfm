@@ -91,6 +91,8 @@
 	timeFilter["departureTime#group#"] = departureTime;
 	timeFilter["arrivalTime#group#"] = arrivalTime;
 
+	variables.tripSource = "";
+
 	</cfscript>
 	<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
 	STM-2544 need to create a container of min/max times so we can use to set filters
@@ -109,17 +111,23 @@
 		<cfloop collection="#stGroup.Segments#" item="nSegment" >
 
 			<cfscript>
-			nCnt++;
-			stSegment = stGroup.Segments[nSegment];
-			if(NOT arrayFind(carrierList, stSegment.Carrier))
-				arrayAppend(carrierList, stSegment.Carrier);
-			//if(len(details))
-			//	details = details & '<br />';
-			//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
-			if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
-				minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
-				details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
-			}
+				nCnt++;
+				stSegment = stGroup.Segments[nSegment];
+
+				if(NOT arrayFind(carrierList, stSegment.Carrier))
+					arrayAppend(carrierList, stSegment.Carrier);
+				//if(len(details))
+				//	details = details & '<br />';
+				//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
+				if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ Group) {
+					minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
+					details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
+				}
+
+				if (nCnt eq 1 AND structKeyExists(stSegment,"Source")) {
+					variables.tripSource = stSegment.Source;
+				}
+
 			</cfscript>
 			<div class="col-sm-5 text-right xs-center">
 				<span class="flightNumber">#stSegment.Carrier# #stSegment.FlightNumber#</span>
@@ -143,7 +151,7 @@
 			</cfif>
 		</cfloop>
 </div>
-			<!-- <div class="col-sm-6 text-right xs-center">
+			<!---- <div class="col-sm-6 text-right xs-center">
 				<cfset stopCount = structCount(stGroup.Segments) - 1>
 				<span class="flightTimeOrigin"><strong> #TimeFormat(stGroup.DepartureTime, 'h:mmt')#</strong><br /><small>#stGroup.Origin#</small></span> &mdash;
 				<span class="flightTimeOrigin">  <strong>#TimeFormat(stGroup.ArrivalTime, 'h:mmt')#</strong><br /><small>#stGroup.Destination#</small></span>
@@ -158,7 +166,7 @@
 					#details#
 				</cfif>
 				<br /> Travel Time: #stGroup.TravelTime#</small>
-		</div> -->
+		</div> --->
 	<cfif gCnt NEQ groupCount >
 			<hr class="visible-xs" />
 		</cfif>
@@ -256,7 +264,11 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
-
+					 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
+						<div style="padding:20px;">
+							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+						</div>
+					</cfif>
 			</small>
 		</div>
 		</div> <!-- /.price -->
