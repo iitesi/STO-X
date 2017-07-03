@@ -80,6 +80,7 @@
 						<cfif bSelected>
 							<cfset btnClass = "btn-success">
 						</cfif>
+
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
@@ -125,13 +126,15 @@
 			</tr>
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfscript>
-				stGroup = stTrip.Groups[Group];
+					stGroup = stTrip.Groups[Group];
 
-				// set times for badges, and get total times so we can set time sliders in filter
-				departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
-				arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
-				timeFilter["departureTime#group#"] = departureTime;
-				timeFilter["arrivalTime#group#"] = arrivalTime;
+					// set times for badges, and get total times so we can set time sliders in filter
+					departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
+					arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
+					timeFilter["departureTime#group#"] = departureTime;
+					timeFilter["arrivalTime#group#"] = arrivalTime;
+
+					variables.tripSource = "";
 
 				</cfscript>
 				<!--- 4:40 PM Wednesday, December 04, 2013 - Jim Priest - jpriest@shortstravel.com
@@ -167,11 +170,20 @@
 				<cfset nCnt = 0>
 				<cfset segmentCount = structCount(stGroup.Segments)>
 				<cfloop collection="#stGroup.Segments#" item="nSegment" >
+
 					<cfscript>
-					nCnt++;
-					stSegment = stGroup.Segments[nSegment];
-					if(NOT arrayFind(carrierList, stSegment.Carrier))
-						arrayAppend(carrierList, stSegment.Carrier);
+
+						nCnt++;
+						stSegment = stGroup.Segments[nSegment];
+
+						if(NOT arrayFind(carrierList, stSegment.Carrier)) {
+							arrayAppend(carrierList, stSegment.Carrier);
+						}
+
+						if (nCnt eq 1 AND structKeyExists(stSegment,"Source")) {
+							variables.tripSource = stSegment.Source;
+						}
+
 					</cfscript>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
@@ -183,7 +195,9 @@
 							<span>#stSegment.Origin# to #stSegment.Destination#</span></td>
 						<td valign="top">
 							<cfif nCnt EQ 1>
-								#stGroup.TravelTime#
+								<cfif structKeyExists(stGroup,"TravelTime")>
+									#stGroup.TravelTime#
+								</cfif>
 								<cfset nFirstSeg = nSegment>
 								<cfset sClass = (bDisplayFare ? stSegment.Class : 'Y') />
 							</cfif>
@@ -228,6 +242,11 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
+					 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
+						<div style="padding:20px;">
+							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+						</div>
+					</cfif>
 				</td>
 			</tr>
 		</table>
@@ -269,7 +288,9 @@
 									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">
 										<cfif nCnt EQ 1>
-											#stGroup.TravelTime#
+											<cfif structKeyExists(stGroup,"TravelTime")>
+												#stGroup.TravelTime#
+											</cfif>
 											<cfset nFirstSeg = nSegment>
 										</cfif>
 									</td>
