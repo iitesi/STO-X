@@ -79,7 +79,7 @@
 						</cfif>
 						<cfif bSelected>
 							<cfset btnClass = "btn-success">
-						</cfif>source
+						</cfif>
 
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
