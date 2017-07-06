@@ -433,7 +433,13 @@
 							<cfif Air.segmentError>
 								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset cancelResponse(rc, air, local.version)>
-								<cfset handleSegmentError(Air,rc.message,rc.searchID)>
+								<cfset rc.message.addError(air.segmentErrorMessage)>
+								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&soldOutTrip=#Air.nTrip#')>
+							</cfif>
+
+							<cfif Air.fault>
+								<cfset rc.message.addError(Air.messages[1])>
+								<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
 							</cfif>
 							<!--- If the fare increased at AirCreate, cancel the PNR and run AirCreate one more time without the plating carrier --->
 							<cfif Air.Total GT originalAirfare>
@@ -1425,12 +1431,5 @@
 																		, urRecloc = arguments.Air.UniversalLocatorCode )>
 			</cfif>
 		</cfif>
-	</cffunction>
-	<cffunction name="handleSegmentError">
-		<cfargument name="Air" required="true">
-		<cfargument name="Message" required="true"> 
-		<cfargument name="searchID" required="true">
-		<cfset arguments.message.addError(arguments.air.segmentErrorMessage)>
-		<cfset variables.fw.redirect('air.lowfare?searchID=#arguments.searchID#&soldOutTrip=#arguments.air.nTrip#')>
 	</cffunction>
 </cfcomponent>
