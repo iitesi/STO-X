@@ -72,14 +72,34 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 			}
 		}
 
-		var requestBody = getRequestBody(Filter = arguments.Filter,
-										 Group = arguments.Group,
-										 Account = arguments.Account,
-										 sCabins = arguments.sCabins);
 		var stTrips = {};
+		var requestBody = "";
+		var airlines = "";
+		var mergedTrips = {};
 
 		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "KrakenSearchResults"))) {
-			session.KrakenSearchResults = getKrakenService().FlightSearch(requestBody);
+
+			if (len(trim(arguments.Filter.getAirlines()))) {
+				airlines = [arguments.Filter.getAirlines()];
+			} else {
+				airlines = ['','AA','UA','DL'];
+			}
+
+			for(local.i = 1; local.i LTE ArrayLen(local.airlines); i++) {
+
+				requestBody = getRequestBody(Filter = arguments.Filter,
+												 Group = arguments.Group,
+												 Account = arguments.Account,
+												 sCabins = arguments.sCabins,
+												 airlines = [local.airlines[i]]);
+
+				mergedTrips = mergeResults(mergedTrips,getKrakenService().FlightSearch(requestBody));
+
+			}
+
+
+			session.KrakenSearchResults = mergedTrips;
+
 		}
 
 		var stSegments = parseSegmentsNew(arguments.Group);
@@ -100,11 +120,20 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.stTrips = local.tempTrips;
 
-		//writeDump(local.stTrips);
-		//abort;
-
 		return local.stTrips;
 
+	}
+
+	public struct function mergeResults(required struct storage,required struct tomerge) {
+
+		if(StructCount(storage) EQ 0) {
+			return arguments.tomerge;
+		}	else {
+			for(local.i = 1; local.i LTE ArrayLen(arguments.tomerge.FlightSearchResults); i++) {
+				ArrayAppend(arguments.storage.FlightSearchResults, arguments.tomerge.FlightSearchResults[i]);
+			}
+			return arguments.storage;
+		}
 	}
 
 	public struct function getRequestBody (
@@ -112,20 +141,25 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		required any Filter,
 		required any Group,
 		required any Account,
-		required any sCabins = ''
+		required any sCabins = '',
+		required any airlines,
 
 	) {
 
 		var requestBody = {};
 		var leg = {};
 
-		local.airlines = [];
+		if(len(arguments.airlines[1]) EQ 0) {
+			local.airlines = [];
+		}	else {
+			local.airlines = arguments.airlines;
+		}
 
-		if (len(trim(arguments.Filter.getAirlines()))) {
+		/*if (len(trim(arguments.Filter.getAirlines()))) {
 
 			local.airlines = listToArray(arguments.Filter.getAirlines());
 
-		}
+		}*/
 
 		if (isArray(arguments.sCabins)) {
 
