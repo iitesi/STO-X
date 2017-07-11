@@ -434,7 +434,7 @@
 								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset cancelResponse(rc, air, local.version)>
 								<cfset rc.message.addError(air.segmentErrorMessage)>
-								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&soldOutTrip=#Air.nTrip#')>
+								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&requery=true')>
 							</cfif>
 
 							<cfif Air.fault>
