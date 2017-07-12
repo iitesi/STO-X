@@ -1,7 +1,6 @@
 <cfscript>
 	// service handles auth and redirects
 	application.fw.factory.getBean("AuthService").authenticate(
-		acctId = 1, // only stm in beta
 		data = form
 	);
 </cfscript>
@@ -21,7 +20,7 @@
 						<div class="panel-body">
 							<cfif isDefined("invalidLogin")>
 								<p style="color:red;font-weight:bold;text-align:center;">
-									Username and Password not found.
+									Username and Password not found. Please contact online support.
 								</p>
 							</cfif>
 							<div class="form-group">
