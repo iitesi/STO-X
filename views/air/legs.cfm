@@ -7,8 +7,7 @@
 		<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")
 			AND IsArray(session.searches[rc.SearchID].stLowFareDetails.aSortFare)
 			AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.aSortFare) GT 0>
-			<cftry><cfset buttonPrice = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total>
-				<cfcatch type="any"><cfdump var="#session.searches[rc.SearchID].stTrips#" abort/></cfcatch></cftry>
+			<cfset buttonPrice = session.searches[rc.SearchID].stTrips[session.searches[rc.SearchID].stLowFareDetails.aSortFare[1]].total> 
 		<cfelseif structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFarePreferred")
 			AND IsArray(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred)
 			AND ArrayLen(session.searches[rc.SearchID].stLowFareDetails.aSortFarePreferred) GT 0>
