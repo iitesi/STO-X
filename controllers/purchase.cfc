@@ -298,7 +298,7 @@
 							</cfif>
 							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
-							<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
+						<!--- 	<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -315,7 +315,11 @@
 																										, airFOPID = local.airFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
-																									 )>
+																									 )> --->
+
+							<!--- Passing off Air.total value into local scope before resetting it in case there is an
+							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 ---> 
+							<cfset local.Total = Air.Total>  
 
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
@@ -323,10 +327,10 @@
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
 							<cfset Air.BookingTravelerKey = ''>
-							<cfset Air.Total = 0>
+							<cfset Air.Total = 0> 
 							<cfset Air.BookingTravelerSeats = [] />
-
-							<cfset Air.AirITNumber = '' />
+							<cfset Air.AirITNumber = '' /> 
+							
 							<!--- Add the plating carrier's air IT number, if one exists for this account --->
 							<cfif structKeyExists(rc.Account, 'AirITNumbers') AND arrayLen(rc.Account.AirITNumbers)>
 								<cfloop array="#rc.Account.AirITNumbers#" index="local.numberIndex" item="local.number">
@@ -335,14 +339,7 @@
 									</cfif>
 								</cfloop>
 							</cfif>
-							<!---
-
-						THE FOLLOWING SOAP FAULTS ALLOW YOU TO TEST VARIOUS SCENARIOS.
-						FEEL FREE TO PLUG ANY AIR CREATE RESPONSE IN.  JUST SET local.airResposne = RESPONSE_TO_MOCK
-
-						!!!!!!IMPORTANT: COMMENT OUT THE AIR CREATE CALL 40 OR SO LINES ABOVE THIS SO NOT TO CREATE ROGUE PNRs!!!!!!!
-
-							<cfset local.airResponse ='<SOAP:Envelope
+									<cfset local.airResponse ='<SOAP:Envelope
     xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP:Body>
         <SOAP:Fault>
@@ -366,6 +363,14 @@
         </SOAP:Fault>
     </SOAP:Body>
 </SOAP:Envelope>'>
+							<!---
+
+						THE FOLLOWING SOAP FAULTS ALLOW YOU TO TEST VARIOUS SCENARIOS.
+						FEEL FREE TO PLUG ANY AIR CREATE RESPONSE IN.  JUST SET local.airResposne = RESPONSE_TO_MOCK
+
+						!!!!!!IMPORTANT: COMMENT OUT THE AIR CREATE CALL 40 OR SO LINES ABOVE THIS SO NOT TO CREATE ROGUE PNRs!!!!!!!
+
+					
 							<cfset local.airResponse = '<SOAP:Envelope
     xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP:Body>
@@ -429,11 +434,12 @@
 
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )>
+																							, response = airResponse )> 
 							<cfif Air.segmentError>
 								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset cancelResponse(rc, air, local.version)>
-								<cfset rc.message.addError(air.segmentErrorMessage)>
+								<cfset rc.message.addError(air.segmentErrorMessage)> 
+								<cfset Air.Total = local.Total>  
 								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&requery=true')>
 							</cfif>
 
