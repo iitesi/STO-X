@@ -298,7 +298,7 @@
 							</cfif>
 							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
-						<!--- 	<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
+						 	<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -315,7 +315,7 @@
 																										, airFOPID = local.airFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
-																									 )> --->
+																									 )>  
 
 							<!--- Passing off Air.total value into local scope before resetting it in case there is an
 							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 ---> 
@@ -339,7 +339,7 @@
 									</cfif>
 								</cfloop>
 							</cfif>
-									<cfset local.airResponse ='<SOAP:Envelope
+							<!---		<cfset local.airResponse ='<SOAP:Envelope
     xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP:Body>
         <SOAP:Fault>
@@ -363,7 +363,7 @@
         </SOAP:Fault>
     </SOAP:Body>
 </SOAP:Envelope>'>
-							<!---
+							
 
 						THE FOLLOWING SOAP FAULTS ALLOW YOU TO TEST VARIOUS SCENARIOS.
 						FEEL FREE TO PLUG ANY AIR CREATE RESPONSE IN.  JUST SET local.airResposne = RESPONSE_TO_MOCK
