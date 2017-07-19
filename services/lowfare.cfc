@@ -3,15 +3,18 @@
 	<cfproperty name="UAPIFactory">
 	<cfproperty name="uAPISchemas">
 	<cfproperty name="AirParse">
+	<cfproperty name="KrakenService">
 
 	<cffunction name="init" output="false" hint="Init method.">
 		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 		<cfargument name="AirParse">
+		<cfargument name="KrakenService">
 
 		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas(arguments.uAPISchemas)>
 		<cfset setAirParse(arguments.AirParse)>
+		<cfset setKrakenService(arguments.KrakenService)>
 
 		<cfreturn this>
 	</cffunction>
@@ -62,19 +65,9 @@
 			</cfif>
 		</cfloop>
 
-		<!--- <cfif cgi.http_host EQ "r.local" OR cgi.local_host IS "RailoQA"> --->
-			<!--- <cfmail to="productionsupport@shortstravel.com"
-					from="productionsupport@shortstravel.com"
-					subject="FLIGHT SELECTED FOR SEARCH #arguments.SearchID#"
-					type="html">
-				<div style="margin:5px;border:1px solid silver;background-color:##ebebeb;font-family:arial;font-size:12px;padding:5px;">
-					<cfdump var="#session.searches[arguments.SearchID].stItinerary#">
-				</div>
-			</cfmail> --->
-		<!--- </cfif> --->
-
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="unSelectAir" output="false">
 		<cfargument name="SearchID">
 		<cfargument name="nTrip">
@@ -84,6 +77,7 @@
 		<cfset StructDelete(session.searches[arguments.searchID],"stPricedTrips")>
 		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)>
 	</cffunction>
+
 	<cffunction name="threadLowFare" output="false">
 		<!--- arguments getting passed in from RC --->
 		<cfargument name="sPriority" required="false" default="HIGH">
@@ -96,7 +90,8 @@
 		<cfargument name="reQuery" default="false">
 
 		<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stTrips')>
-			<cfset local.stTrips = getLowFareResults(argumentcollection=arguments)>
+			<!---<cfset local.stTrips = getLowFareResults(argumentcollection=arguments)>--->
+			<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
 		<cfelse>
 			<!---Used session cached version of the trips--->
 			<cfset local.stTrips = session.searches[arguments.Filter.getSearchID()].stTrips>
@@ -110,6 +105,177 @@
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 		<cfreturn />
 	</cffunction>
+
+	<cffunction name="getLowFareResultsNew" output="false">
+		<cfargument name="sPriority" required="false" default="HIGH">
+		<cfargument name="bRefundable" required="false" default="false">
+		<cfargument name="Filter" required="false" default="X">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="sCabins" default="">
+
+		<cfscript>
+
+			var stTrips = {};
+			var requestBody = "";
+			var airlines = "";
+			var mergedTrips = {};
+
+			if (NOT(StructKeyExists(session, "KrakenSearchResults"))) {
+
+				if (len(trim(arguments.Filter.getAirlines()))) {
+
+					airlines = [arguments.Filter.getAirlines()];
+
+				} else {
+
+					airlines = ['ALL','AA','UA','DL'];
+				}
+
+				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
+
+					requestBody = getKrakenService().getRequestSearchBody(Filter = arguments.Filter,
+																																 Account = arguments.Account,
+																																 sCabins = arguments.sCabins,
+																																 airlines = [local.airlines[i]]);
+
+					mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(requestBody));
+
+				}
+
+				session.KrakenSearchResults = mergedTrips;
+
+			}
+
+		</cfscript>
+
+		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
+
+		<cfset local.stTrips = parseTrips()>
+
+		<cfset local.stTrips = getAirParse().addGroups( stTrips = local.stTrips, Filter=arguments.Filter )>
+
+		<cfset local.stTrips = getAirParse().removeInvalidTrips(trips=local.stTrips, filter=arguments.Filter)>
+
+		<cfset local.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = local.stTrips, blackListedCarriers = local.blackListedCarrierPairing )>
+
+		<cfset local.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = local.stTrips )>
+
+		<cfset local.stTrips = getAirParse().addPreferred( stTrips = local.stTrips, Account = arguments.Account)>
+
+		<!---<cfset session.searches[arguments.Filter.getSearchID()].stLowFareDetails.stPricing[arguments.sCabin&arguments.bRefundable&arguments.airline] = 1>--->
+
+		<cfreturn local.stTrips>
+
+ 	</cffunction>
+
+
+	<cffunction name="parseTrips" output="false" returntype="struct">
+
+			<cfscript>
+
+				local.stTrips = structNew('linked');
+				local.route = 0;
+				local.j = 1;
+
+				local.stTrips[local.route] = structNew();
+				local.stTrips[local.route]["Segments"] = structNew('linked');
+
+				for (var t = 1; t <= MIN(120,arrayLen(session.KrakenSearchResults.FlightSearchResults)); t++) {
+
+					local.sourceX = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
+					local.Base = session.KrakenSearchResults.FlightSearchResults[t].BaseFare;
+					local.ApproximateBase = session.KrakenSearchResults.FlightSearchResults[t].BaseFare;
+					local.Taxes = session.KrakenSearchResults.FlightSearchResults[t].Taxes;
+					local.Total = session.KrakenSearchResults.FlightSearchResults[t].TotalFare;
+					local.Ref = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Refundable") ? session.KrakenSearchResults.FlightSearchResults[t].Refundable : 0;
+					local.RequestedRefundable = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "RequestedRefundable") ? session.KrakenSearchResults.FlightSearchResults[t].RequestedRefundable : 0;
+					local.privateFare = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "privateFare") ? session.KrakenSearchResults.FlightSearchResults[t].privateFare : false;
+					local.Class = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Class") ? session.KrakenSearchResults.FlightSearchResults[t].Class : "Y";
+					local.cabinClass = getKrakenService().CabinClassMap(local.Class);
+					local.changePenalty = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "changePenalty") ? session.KrakenSearchResults.FlightSearchResults[t].changePenalty : 200;
+					local.PTC = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "PassengerTypeCode") ? session.KrakenSearchResults.FlightSearchResults[t].PassengerTypeCode : "ADT";
+
+					local.stTrips[local.route].Base = local.Base;
+					local.stTrips[local.route].ApproximateBase = local.ApproximateBase;
+					local.stTrips[local.route].Taxes = local.Taxes;
+					local.stTrips[local.route].Total = local.Total;
+					local.stTrips[local.route].cabinClass = local.cabinClass;
+					local.stTrips[local.route].Class = local.Class;
+					local.stTrips[local.route].privateFare = local.privateFare;
+					local.stTrips[local.route].changePenalty = local.changePenalty;
+					local.stTrips[local.route].PTC = local.PTC;
+					local.stTrips[local.route].Ref = local.Ref;
+					local.stTrips[local.route].RequestedRefundable = local.RequestedRefundable;
+					local.stTrips[local.route].Xml = "";
+
+					for (var s = 1; s <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments); s++) {
+
+						local.Group = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Group;
+
+						local.TravelTime = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
+
+						for (var f = 1; f <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+
+							local.flight = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].FLights[f];
+
+							local.cabinClass = local.flight.cabinClass;
+							local.ChangeOfPlane = local.flight.ChangeOfPlane;
+							local.dArrival = local.flight.ArrivalTime;
+							local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
+							local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"));
+							local.dDeparture = local.flight.DepartureTime;
+							local.dDepartureGMT = parseDateTime(dateFormat(local.dDeparture,"yyyy-mm-dd") & "T" & timeFormat(local.dDeparture,"HH:mm:ss"));
+							local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
+
+							local.stTrips[local.route]["Segments"][local.j] = {
+								Arrival			: local.dArrival,
+								ArrivalTime		: local.dArrivalTime,
+								ArrivalGMT		: local.dArrivalGMT,
+								Carrier 		: local.flight.CarrierCode,
+								ChangeOfPlane	: local.ChangeOfPlane,
+								Departure		: local.dDeparture,
+								DepartureTime	: local.dDepartureTime,
+								DepartureGMT	: local.dDepartureGMT,
+								Destination		: local.flight.DestinationAirportCode,
+								Equipment		: local.flight.Equipment,
+								FlightNumber	: local.flight.FlightNumber,
+								FlightTime		: local.flight.FlightDurationInMinutes,
+								TravelTime		: local.TravelTime,
+								Cabin		: local.cabinClass,
+								Group			: local.Group,
+								Origin			: local.flight.OriginAirportCode,
+								PolledAvailabilityOption: '',
+								Class: 'L',
+								Xml: '',
+								Source 			: local.sourceX
+							};
+
+							local.j++;
+						}
+
+					}
+
+					if (arraylen(structKeyArray(local.stTrips[local.route]["Segments"])) GT 0) {
+							 local.route++;
+							 local.j = 1;
+							 local.stTrips[local.route] = structNew('linked');
+							 local.stTrips[local.route]["Segments"] = structNew('linked');
+					}
+				}
+
+				if (arraylen(structKeyArray(local.stTrips[local.route]["Segments"])) EQ 0) {
+
+					structDelete(local.stTrips, local.route);
+
+				}
+
+			</cfscript>
+
+			<cfreturn local.stTrips>
+
+	</cffunction>
+
 
 	<cffunction name="getLowFareResults" output="false" hint="I assemble info to pass to thread.">
 		<!--- arguments getting passed in from RC --->
@@ -267,21 +433,6 @@
 
 			<!--- Note:  To debug: comment out opening and closing cfthread tags and
 			dump sMessage or sResponse to see what uAPI is getting and sending back --->
-
-			<!--- <cfthread
-				action="run"
-				name="#sThreadName#"
-				priority="#arguments.sPriority#"
-				Filter="#arguments.Filter#"
-				sCabin="#arguments.sCabin#"
-				Account="#arguments.Account#"
-				Policy="#arguments.Policy#"
-				bRefundable="#local.bRefundable#"
-				airline="#arguments.airline#"
-				blackListedCarrierPairing="#arguments.blackListedCarrierPairing#"
-				accountCode="#arguments.accountCode#"
-				fareType="#arguments.fareType#"
-				bGovtRate="#arguments.bGovtRate#"> --->
 
 				<cfscript>
 				local.attributes.name="#local.sThreadName#";
