@@ -2,7 +2,7 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
-
+		<cfparam name="arguments.rc.priceQuotedError" default="0">
 		<cfset local.errorMessage = []> <!--- variable used to display an error on the summary page to the traveler --->
 		<cfset local.errorType = ''> <!--- air, car, hotel, terminal, etc --->
 
@@ -190,6 +190,21 @@
 									<cfset local.tripKey = local.thisTrip />
 								</cfif>
 							</cfloop>
+
+							<cfif local.doAirPrice.Total EQ 0>
+								<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
+									<cfif  trip[local.thisTrip].Class EQ Air.Class AND
+												 (trip[local.thisTrip].Total LTE originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
+										     trip[local.thisTrip].Ref EQ Air.Ref>
+										<cfset local.doAirPrice.Total = trip[local.thisTrip].Total />
+										<cfset local.tripKey = local.thisTrip />
+									</cfif>
+								</cfloop>
+									<cfif local.doAirPrice.Total NEQ 0 AND arguments.rc.priceQuotedError EQ 0>
+										<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")> 
+										<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&priceQuotedError=1')>
+									</cfif>
+							</cfif>
 
 							<cfif local.doAirPrice.Total NEQ 0 AND (local.doAirPrice.Total LTE originalAirfare)>
 								<cfset local.nTrip = Air.nTrip>
