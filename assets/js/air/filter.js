@@ -88,6 +88,7 @@ $(document).ready(function(){
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy').val('0');
 		$('#NonStops').val('');
+		$('#flightnumber').val('');
 		// hide filter well
 		$('.filterselection').hide();
 		$('.filterselection .filtergroup').hide();
@@ -381,7 +382,6 @@ function filterAir(reset) {
 	// reset all filters - reset=true is passed from air/filter.js  resetAirDelay() and is used to clear filters
 	if(reset == 'true'){
 
-		$('#flightnumber').val('');
 		// set count to all, and show all badges
 		showCount = flightresults.length;
 		$('[class^="flight"]').show();
