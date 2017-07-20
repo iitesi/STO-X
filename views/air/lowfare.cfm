@@ -1,13 +1,13 @@
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
-	<cfset variables.minheight = 250>
+	<cfset variables.minheight = 255>
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
 	<cfif variables.nLegs EQ 2>
-		<cfset variables.minheight = 335>
+		<cfset variables.minheight = 340>
 	<cfelseif variables.nLegs GT 2>
-		<cfset variables.minheight = 375>
+		<cfset variables.minheight = 380>
 	</cfif>
 </cfsilent>
 
