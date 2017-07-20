@@ -160,6 +160,8 @@
 
 		<cfset local.stTrips = getAirParse().addGroups( stTrips = local.stTrips, Filter=arguments.Filter )>
 
+		<cfset local.stTrips = addPricePerMinute(local.stTrips)>
+
 		<cfset local.stTrips = getAirParse().removeInvalidTrips(trips=local.stTrips, filter=arguments.Filter)>
 
 		<cfset local.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = local.stTrips, blackListedCarriers = local.blackListedCarrierPairing )>
@@ -173,7 +175,7 @@
  	</cffunction>
 
 
-	<cffunction name="parseTrips" output="false" returntype="struct">
+	<cffunction name="parseTrips" output="false" returntype="struct" access="private">
 
 			<cfscript>
 
@@ -202,8 +204,8 @@
 					local.Ref = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Refundable") ? session.KrakenSearchResults.FlightSearchResults[t].Refundable : 0;
 					local.RequestedRefundable = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "RequestedRefundable") ? session.KrakenSearchResults.FlightSearchResults[t].RequestedRefundable : 0;
 					local.privateFare = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "privateFare") ? session.KrakenSearchResults.FlightSearchResults[t].privateFare : false;
-					local.Class = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Class") ? session.KrakenSearchResults.FlightSearchResults[t].Class : "Y";
-					local.cabinClass = getKrakenService().CabinClassMap(local.Class);
+					local.cabinClass = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass;
+					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
 					local.changePenalty = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "changePenalty") ? session.KrakenSearchResults.FlightSearchResults[t].changePenalty : 200;
 					local.PTC = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "PassengerTypeCode") ? session.KrakenSearchResults.FlightSearchResults[t].PassengerTypeCode : "ADT";
 
@@ -284,6 +286,21 @@
 			</cfscript>
 
 			<cfreturn local.stTrips>
+
+	</cffunction>
+
+	<cffunction name ="addPricePerMinute" output="false" returnType = "struct" access="private">
+		<cfargument name="stTrips" type="struct" required="true">
+
+			<cfscript>
+
+				for(key in arguments.stTrips) {
+					arguments.stTrips[key].pricePerMinute = arguments.stTrips[key].Total / arguments.stTrips[key].Duration;
+				}
+
+				return arguments.stTrips;
+
+			</cfscript>
 
 	</cffunction>
 
