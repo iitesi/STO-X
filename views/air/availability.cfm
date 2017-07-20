@@ -12,8 +12,16 @@
 </cfsilent>
 
 <cfoutput>
-  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
-	#view('air/unusedtickets')#
+<script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
+
+<script>
+	$(document).ready(function(){
+		$('##sortbyduration').click();
+		$('##singlecarrierbtn').click();
+	});
+</script>
+
+#view('air/unusedtickets')#
 
 <div class="page-header">
 	<cfif rc.filter.getAirType() IS "MD">
