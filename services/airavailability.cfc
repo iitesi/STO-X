@@ -44,6 +44,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 	public struct function doAvailabilityNew (
 
+		required any Refundable,
 		required any Filter,
 		required any Group,
 		required any Account,
@@ -56,6 +57,12 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		local.blackListedCarrierPairing = application.blackListedCarrierPairing;
 		local.selectedCarriers = '';
 		local.blackListedCarriers = '';
+
+		local.Refundable = (arguments.Refundable NEQ 'X' AND arguments.Refundable) ? true : false;
+
+		if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1) {
+			local.Refundable = true;
+		}
 
 		if (structKeyExists(session.searches, arguments.Filter.getSearchID()) AND structKeyExists(session.searches[arguments.Filter.getSearchID()], "stSelected")) {
 
@@ -91,7 +98,8 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 			for(local.i = 1; local.i LTE ArrayLen(local.airlines); i++) {
 
-				requestBody = getKrakenService().getRequestSearchBody(Filter = arguments.Filter,
+				requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																															 Filter = arguments.Filter,
 																															 Account = arguments.Account,
 																															 sCabins = arguments.sCabins,
 																															 airlines = [local.airlines[i]]);
