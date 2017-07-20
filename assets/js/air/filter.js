@@ -514,8 +514,3 @@ function sortAir(sort) {
 	}
 	return false;
 }
-
-$(document).ready(function(){
-	$('#sortbyduration').click();
-	$('#singlecarrierbtn').click();
-});
