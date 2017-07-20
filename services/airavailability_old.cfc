@@ -20,6 +20,7 @@
 	</cffunction>
 
 	<cffunction name="threadAvailability" output="false">
+		<cfargument name="bRefundable" required="false" default="false">
 		<cfargument name="Filter" required="true">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
@@ -46,7 +47,8 @@
 					<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
 				</cfif>
 
-				<cfset local.stTrips = doAvailabilityNew( Filter = arguments.Filter
+				<cfset local.stTrips = doAvailabilityNew( Refundable = arguments.bRefundable,
+													Filter = arguments.Filter
 													, Group = arguments.Group
 													, Account = arguments.Account
 													, Policy = arguments.Policy

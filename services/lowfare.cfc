@@ -113,11 +113,11 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
 
-		<!---<cfset local.bRefundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable ? 'true' : 'false')>
+		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
 
 		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
-			<cfset local.bRefundable = true>
-		</cfif>--->
+			<cfset local.Refundable = true>
+		</cfif>
 
 		<cfscript>
 
@@ -139,7 +139,8 @@
 
 				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
 
-					requestBody = getKrakenService().getRequestSearchBody(Filter = arguments.Filter,
+					requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																 Filter = arguments.Filter,
 																																 Account = arguments.Account,
 																																 sCabins = arguments.sCabins,
 																																 airlines = [local.airlines[i]]);
@@ -156,7 +157,7 @@
 
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
 
-		<cfset local.stTrips = parseTrips()>
+		<cfset local.stTrips = parseTrips(local.Refundable)>
 
 		<cfset local.stTrips = getAirParse().addGroups( stTrips = local.stTrips, Filter=arguments.Filter )>
 
@@ -176,6 +177,7 @@
 
 
 	<cffunction name="parseTrips" output="false" returntype="struct" access="private">
+			<cfargument name="Refundable" required="true">
 
 			<cfscript>
 
@@ -202,7 +204,7 @@
 					local.Taxes = session.KrakenSearchResults.FlightSearchResults[t].Taxes;
 					local.Total = session.KrakenSearchResults.FlightSearchResults[t].TotalFare;
 					local.Ref = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Refundable") ? session.KrakenSearchResults.FlightSearchResults[t].Refundable : 0;
-					local.RequestedRefundable = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "RequestedRefundable") ? session.KrakenSearchResults.FlightSearchResults[t].RequestedRefundable : 0;
+					local.RequestedRefundable = arguments.Refundable;
 					local.privateFare = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "privateFare") ? session.KrakenSearchResults.FlightSearchResults[t].privateFare : false;
 					local.cabinClass = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
