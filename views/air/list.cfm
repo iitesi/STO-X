@@ -196,7 +196,6 @@
 								 <span class="trip-ppm" style="">#DollarFormat(stTrip.pricePerMinute)#&nbsp;per minute</span>
 							 </div>
 						</cfif>
-						<br>
 						<cfif bSelected OR !stTrip.Policy>
 							<tr align="center">
 								<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br/>')#</td>
