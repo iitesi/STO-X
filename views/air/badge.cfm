@@ -247,11 +247,12 @@
 							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
 						</div>
 					</cfif>
-					<cfif structKeyExists(stTrip,"pricePerMinute")>
+					<!--- For now only in list view --->
+					<!--- <cfif structKeyExists(stTrip,"pricePerMinute")>
 					 <div style="padding:10px;">
 						 <span class="trip-source" style="background-color:##FFFFE0">#DollarFormat(stTrip.pricePerMinute)#&nbsp;per minute</span>
 					 </div>
-				 </cfif>
+					</cfif> --->
 				</td>
 			</tr>
 		</table>
