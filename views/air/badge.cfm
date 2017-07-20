@@ -43,7 +43,7 @@
 		}
 	</cfscript>
 	<cfoutput>
-		<div class="screenbadge badge">
+		<div class="screenbadge badge flight">
 			<!--- display ribbon --->
 			<span class="#ribbonclass#"></span>
 
@@ -289,7 +289,7 @@
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
 								<tr>
-									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
+									<td valign="top"class="flighttext">#stSegment.Carrier#<span class="flightNumber">#stSegment.FlightNumber#</span></td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
 									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">
