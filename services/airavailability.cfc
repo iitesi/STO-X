@@ -85,7 +85,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 			} else {
 
-				airlines = ['ALL','AA','UA','DL'];
+				airlines = ['ALL','AA','UA','DL','WN'];
 
 			}
 
