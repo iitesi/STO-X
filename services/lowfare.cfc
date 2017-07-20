@@ -137,6 +137,9 @@
 					airlines = ['ALL','AA','UA','DL'];
 				}
 
+				/*WriteDump(local.airlines);
+				abort;*/
+
 				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
 
 					requestBody = getKrakenService().getRequestSearchBody(Filter = arguments.Filter,
