@@ -108,7 +108,7 @@
 								<div class="input-group" id="flightnumber-filter-container">
 							      <input type="text" class="form-control" placeholder="Flight #" name="flightnumber" id="flightnumber">
 							      <span class="input-group-btn">
-							      	  <button class="btn btn-secondary" type="button" id="flightnumberbtn"> > </button>
+							      	  <button class="btn btn-secondary" type="button" name="flightnumberbtn" id="flightnumberbtn"> > </button>
 							      </span>
 							    </div>
 							</li>
@@ -123,7 +123,6 @@
 					</div>
 					</div>
 				</div>
-
 
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">
