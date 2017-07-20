@@ -134,11 +134,8 @@
 
 				} else {
 
-					airlines = ['ALL','AA','UA','DL'];
+					airlines = ['ALL','AA','UA','DL','WN'];
 				}
-
-				/*WriteDump(local.airlines);
-				abort;*/
 
 				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
 
