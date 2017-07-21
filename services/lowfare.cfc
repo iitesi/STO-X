@@ -206,7 +206,7 @@
 					local.Taxes = local.sliceArray[t].Taxes;
 					local.Total = local.sliceArray[t].TotalFare;
 					local.Ref = StructKeyExists(local.sliceArray[t], "Refundable") ? local.sliceArray[t].Refundable : 0;
-					local.RequestedRefundable = arguments.Refundable;
+					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "privateFare") ? local.sliceArray[t].privateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
