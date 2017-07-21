@@ -519,20 +519,21 @@ function filterAirByFlightNumber(flightNumber) {
 	flightNumber = flightNumber.replace(/^\D+/g,'');
 	
 	if (flightNumber.length > 0) {
-		$("div[class^=flight]").each(function(){
+		
+		$("div[class^=flight]").each(function() {
+			
 			if ($('span.flightNumber:contains('+flightNumber+')',this).length) {
+				
 				$(this).show();
+				
 			} else {
+				
 				$(this).hide();
 			}
 		});
-	} else {
-		$("div[class^=flight]").show();
+		
+		$('#flightCount').text($('div[class^=flight]:visible').length);
 	}
-	
-	$('#flightCount').text($('div[class^=flight]:visible').length);
-	
-	return;
 }
 
 function sortAir(sort) {
