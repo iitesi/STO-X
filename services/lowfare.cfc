@@ -210,6 +210,7 @@
 					local.privateFare = StructKeyExists(local.sliceArray[t], "privateFare") ? local.sliceArray[t].privateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
+					local.Key = StructKeyExists(local.sliceArray[t], "TripPricingKey") ? local.sliceArray[t].TripPricingKey : "";
 					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty : 0;
 					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerTypeCode") ? local.sliceArray[t].PassengerTypeCode : "ADT";
 
@@ -219,6 +220,7 @@
 					local.stTrips[local.route].Total = local.Total;
 					local.stTrips[local.route].cabinClass = local.cabinClass;
 					local.stTrips[local.route].Class = local.Class;
+					local.stTrips[local.route].Key = local.Key;
 					local.stTrips[local.route].privateFare = local.privateFare;
 					local.stTrips[local.route].changePenalty = local.changePenalty;
 					local.stTrips[local.route].PTC = local.PTC;
