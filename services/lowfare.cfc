@@ -196,20 +196,22 @@
 					}
 				);
 
-				for (var t = 1; t <= MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.FlightSearchResults)); t++) {
+				local.sliceArray = ArraySlice(session.KrakenSearchResults.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.FlightSearchResults)));
 
-					local.sourceX = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
-					local.Base = session.KrakenSearchResults.FlightSearchResults[t].BaseFare;
-					local.ApproximateBase = session.KrakenSearchResults.FlightSearchResults[t].BaseFare;
-					local.Taxes = session.KrakenSearchResults.FlightSearchResults[t].Taxes;
-					local.Total = session.KrakenSearchResults.FlightSearchResults[t].TotalFare;
-					local.Ref = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "Refundable") ? session.KrakenSearchResults.FlightSearchResults[t].Refundable : 0;
+				for (var t = 1; t <= arrayLen(local.sliceArray); t++) {
+
+					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
+					local.Base = local.sliceArray[t].BaseFare;
+					local.ApproximateBase = local.sliceArray[t].BaseFare;
+					local.Taxes = local.sliceArray[t].Taxes;
+					local.Total = local.sliceArray[t].TotalFare;
+					local.Ref = StructKeyExists(local.sliceArray[t], "Refundable") ? local.sliceArray[t].Refundable : 0;
 					local.RequestedRefundable = arguments.Refundable;
-					local.privateFare = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "privateFare") ? session.KrakenSearchResults.FlightSearchResults[t].privateFare : false;
-					local.cabinClass = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass;
+					local.privateFare = StructKeyExists(local.sliceArray[t], "privateFare") ? local.sliceArray[t].privateFare : false;
+					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
-					local.changePenalty = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "changePenalty") ? session.KrakenSearchResults.FlightSearchResults[t].changePenalty : 200;
-					local.PTC = StructKeyExists(session.KrakenSearchResults.FlightSearchResults[t], "PassengerTypeCode") ? session.KrakenSearchResults.FlightSearchResults[t].PassengerTypeCode : "ADT";
+					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty : 0;
+					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerTypeCode") ? local.sliceArray[t].PassengerTypeCode : "ADT";
 
 					local.stTrips[local.route].Base = local.Base;
 					local.stTrips[local.route].ApproximateBase = local.ApproximateBase;
@@ -224,15 +226,15 @@
 					local.stTrips[local.route].RequestedRefundable = local.RequestedRefundable;
 					local.stTrips[local.route].Xml = "";
 
-					for (var s = 1; s <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments); s++) {
+					for (var s = 1; s <= arrayLen(local.sliceArray[t].TripSegments); s++) {
 
-						local.Group = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Group;
+						local.Group = local.sliceArray[t].TripSegments[s].Group;
 
-						local.TravelTime = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
+						local.TravelTime = local.sliceArray[t].TripSegments[s].TotalTravelTimeInMinutes;
 
-						for (var f = 1; f <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+						for (var f = 1; f <= arrayLen(local.sliceArray[t].TripSegments[s].Flights); f++) {
 
-							local.flight = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].FLights[f];
+							local.flight = local.sliceArray[t].TripSegments[s].FLights[f];
 
 							local.cabinClass = local.flight.cabinClass;
 							local.ChangeOfPlane = local.flight.ChangeOfPlane;
@@ -286,6 +288,8 @@
 				}
 
 			</cfscript>
+
+
 
 			<cfreturn local.stTrips>
 
