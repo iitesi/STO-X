@@ -196,7 +196,15 @@
 					}
 				);
 
-				local.sliceArray = ArraySlice(session.KrakenSearchResults.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.FlightSearchResults)));
+				if(arrayLen(session.KrakenSearchResults.FlightSearchResults) GT 0) {
+
+					local.sliceArray = ArraySlice(session.KrakenSearchResults.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.FlightSearchResults)));
+
+				}	else {
+
+					local.sliceArray = [];
+
+				}
 
 				for (var t = 1; t <= arrayLen(local.sliceArray); t++) {
 
