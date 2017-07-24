@@ -202,17 +202,17 @@
 
 					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
 					local.Base = local.sliceArray[t].BaseFare;
-					local.ApproximateBase = local.sliceArray[t].BaseFare;
+					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare;
 					local.Taxes = local.sliceArray[t].Taxes;
 					local.Total = local.sliceArray[t].TotalFare;
-					local.Ref = StructKeyExists(local.sliceArray[t], "Refundable") ? local.sliceArray[t].Refundable : 0;
+					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable ") ? local.sliceArray[t].IsRefundable  : 0;
 					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
-					local.privateFare = StructKeyExists(local.sliceArray[t], "privateFare") ? local.sliceArray[t].privateFare : false;
+					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
 					local.Key = StructKeyExists(local.sliceArray[t], "TripPricingKey") ? local.sliceArray[t].TripPricingKey : "";
 					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty : 0;
-					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerTypeCode") ? local.sliceArray[t].PassengerTypeCode : "ADT";
+					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerType") ? local.sliceArray[t].PassengerType : "ADT";
 
 					local.stTrips[local.route].Base = local.Base;
 					local.stTrips[local.route].ApproximateBase = local.ApproximateBase;
@@ -239,6 +239,7 @@
 							local.flight = local.sliceArray[t].TripSegments[s].FLights[f];
 
 							local.cabinClass = local.flight.cabinClass;
+							local.BookingCode = local.flight.BookingCode;
 							local.ChangeOfPlane = local.flight.ChangeOfPlane;
 							local.dArrival = local.flight.ArrivalTime;
 							local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
@@ -265,7 +266,7 @@
 								Group			: local.Group,
 								Origin			: local.flight.OriginAirportCode,
 								PolledAvailabilityOption: '',
-								Class: 'L',
+								Class: local.BookingCode,
 								Xml: '',
 								Source 			: local.sourceX
 							};
