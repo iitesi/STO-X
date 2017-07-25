@@ -525,7 +525,7 @@ function filterAirByFlightNumber(flightNumber) {
 		$("div[class^=flight]").each(function() {
 			
 			var flightDiv = $(this);
-			var showFlight = false
+			var showFlight = false;
 			
 			$('span.flightNumberFilter',this).each(function() {
 				if ($(this).text() == flightNumber) {
