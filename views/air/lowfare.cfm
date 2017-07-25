@@ -17,6 +17,7 @@
 	<script>
 		$(document).ready(function(){
 			$('##sortbyprice').click();
+			$('##singlecarrierbtn').click();
 		});
 	</script>
 

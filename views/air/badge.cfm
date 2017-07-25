@@ -289,7 +289,7 @@
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
 								<tr>
-									<td valign="top"class="flighttext">#stSegment.Carrier#<span class="flightNumber">#stSegment.FlightNumber#</span></td>
+									<td valign="top"class="flighttext">#stSegment.Carrier#<span class="flightNumber">#stSegment.FlightNumber#</span><span class="flightNumberFilter" style="display:none;">#reReplace(stSegment.FlightNumber,"^\D+","all")#</span></td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
 									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">

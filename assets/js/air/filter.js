@@ -88,7 +88,6 @@ $(document).ready(function(){
 		// reset button filters back to 0
 		$('#SingleCarrier, #InPolicy').val('0');
 		$('#NonStops').val('');
-		$('#flightnumber').val('');
 		// hide filter well
 		$('.filterselection').hide();
 		$('.filterselection .filtergroup').hide();
@@ -385,6 +384,9 @@ function filterAir(reset) {
 		// set count to all, and show all badges
 		showCount = flightresults.length;
 		$('[class^="flight"]').show();
+		
+		$('#flightnumber').val('');
+		$('span.flightNumberFilter').hide();
 
 	} else {
 
@@ -522,13 +524,22 @@ function filterAirByFlightNumber(flightNumber) {
 		
 		$("div[class^=flight]").each(function() {
 			
-			if ($('span.flightNumber:contains('+flightNumber+')',this).length) {
+			var flightDiv = $(this);
+			var showFlight = false
+			
+			$('span.flightNumberFilter',this).each(function() {
+				if ($(this).text() == flightNumber) {
+					showFlight = true;
+				}
+			});
+			
+			if (showFlight) {
 				
-				$(this).show();
+				flightDiv.show();
 				
 			} else {
 				
-				$(this).hide();
+				flightDiv.hide();
 			}
 		});
 		

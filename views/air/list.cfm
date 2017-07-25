@@ -131,6 +131,7 @@
 			</cfscript>
 			<div class="col-sm-5 text-right xs-center">
 				<span class="flightNumber">#stSegment.Carrier# #stSegment.FlightNumber#</span>
+				<span class="flightNumberFilter" style="display:none;">#reReplace(stSegment.FlightNumber,"^\D+","all")#</span>
 				<span class="cityPair">#stSegment.Origin# - #stSegment.Destination#</span>
 			</div>
 			<div class="col-sm-5 text-left xs-center">
