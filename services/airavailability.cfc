@@ -79,42 +79,49 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 			}
 		}
 
-		var stTrips = {};
-		var requestBody = "";
-		var airlines = "";
-		var mergedTrips = {};
+		local.mergedTrips = {};
 
-		if (arguments.Group EQ 0 OR NOT(StructKeyExists(session, "KrakenSearchResults"))) {
+		local.key = getKrakenService().getKey(Refundable = local.Refundable,
+																		 Filter = arguments.Filter,
+																		 Account = arguments.Account,
+																		 sCabins = arguments.sCabins);
+
+		if ( NOT(StructKeyExists(session, "KrakenSearchResults")) OR
+				 NOT(StructKeyExists(session.KrakenSearchResults, "key")) OR
+				 session.KrakenSearchResults.key NEQ local.key ) {
 
 			if (len(trim(arguments.Filter.getAirlines()))) {
 
-				airlines = [arguments.Filter.getAirlines()];
+				local.airlines = [arguments.Filter.getAirlines()];
 
 			} else {
 
-				airlines = ['ALL','AA','UA','DL','WN'];
+				local.airlines = ['ALL','AA','UA','DL','WN'];
 
 			}
 
 			for(local.i = 1; local.i LTE ArrayLen(local.airlines); i++) {
 
-				requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
-																															 Filter = arguments.Filter,
-																															 Account = arguments.Account,
-																															 sCabins = arguments.sCabins,
-																															 airlines = [local.airlines[i]]);
+				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																		 Filter = arguments.Filter,
+																																		 Account = arguments.Account,
+																																		 sCabins = arguments.sCabins,
+																																		 airlines = [local.airlines[i]]);
 
-				mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(requestBody));
+
+				local.mergedTrips = getKrakenService().mergeResults(local.mergedTrips,getKrakenService().FlightSearch(local.requestBody));
 
 			}
 
-			session.KrakenSearchResults = mergedTrips;
+			session.KrakenSearchResults = StructNew();
+			session.KrakenSearchResults.trips = local.mergedTrips;
+			session.KrakenSearchResults.key = local.key;
 
 		}
 
-		var stSegments = parseSegmentsNew(arguments.Group);
+		local.stSegments = parseSegmentsNew(arguments.Group);
 
-		local.tempTrips = parseConnectionsNew(stSegments);
+		local.tempTrips = parseConnectionsNew(local.stSegments);
 
 		local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter);
 
@@ -146,21 +153,21 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		stSegments[local.route] = structNew('linked');
 
-		for (var t = 1; t <= arrayLen(session.KrakenSearchResults.FlightSearchResults); t++) {
+		for (var t = 1; t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); t++) {
 
-			local.sourceX = session.KrakenSearchResults.FlightSearchResults[t].FlightSearchResultSource;
+			local.sourceX = session.KrakenSearchResults.trips.FlightSearchResults[t].FlightSearchResultSource;
 
-			for (var s = 1; s <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments); s++) {
+			for (var s = 1; s <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); s++) {
 
-				local.Group = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Group;
+				local.Group = session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].Group;
 
-				local.TravelTime = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
+				local.TravelTime = session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].TotalTravelTimeInMinutes;
 
 				if (local.Group EQ arguments.group) {
 
-					for (var f = 1; f <= arrayLen(session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+					for (var f = 1; f <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].Flights); f++) {
 
-						local.flight = session.KrakenSearchResults.FlightSearchResults[t].TripSegments[s].FLights[f];
+						local.flight = session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].FLights[f];
 
 						local.cabinClass = local.flight.cabinClass;
 						local.ChangeOfPlane = local.flight.ChangeOfPlane;
@@ -209,8 +216,6 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		}
 
-		/*WriteDump(local.stSegments);
-		abort;*/
 		return local.stSegments;
 	}
 

@@ -121,35 +121,43 @@
 
 		<cfscript>
 
-			var stTrips = {};
-			var requestBody = "";
-			var airlines = "";
-			var mergedTrips = {};
+			local.mergedTrips = {};
 
-			if (NOT(StructKeyExists(session, "KrakenSearchResults"))) {
+			local.key = getKrakenService().getKey(Refundable = local.Refundable,
+																					  Filter = arguments.Filter,
+																					  Account = arguments.Account,
+																					  sCabins = arguments.sCabins);
+
+			if ( NOT(StructKeyExists(session, "KrakenSearchResults")) OR
+					 NOT(StructKeyExists(session.KrakenSearchResults, "key")) OR
+					 session.KrakenSearchResults.key NEQ local.key ) {
 
 				if (len(trim(arguments.Filter.getAirlines()))) {
 
-					airlines = [arguments.Filter.getAirlines()];
+					local.airlines = [arguments.Filter.getAirlines()];
 
 				} else {
 
-					airlines = ['ALL','AA','UA','DL','WN'];
+					local.airlines = ['ALL','AA','UA','DL','WN'];
 				}
 
 				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
 
-					requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
-																																 Filter = arguments.Filter,
-																																 Account = arguments.Account,
-																																 sCabins = arguments.sCabins,
-																																 airlines = [local.airlines[i]]);
+					local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																			 Filter = arguments.Filter,
+																																			 Account = arguments.Account,
+																																			 sCabins = arguments.sCabins,
+																																			 airlines = [local.airlines[i]]);
 
-					mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(requestBody));
+
+
+					local.mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(local.requestBody));
 
 				}
 
-				session.KrakenSearchResults = mergedTrips;
+				session.KrakenSearchResults = StructNew();
+				session.KrakenSearchResults.trips = local.mergedTrips;
+				session.KrakenSearchResults.key = getKrakenService().hashNumeric(local.key);
 
 			}
 
@@ -188,7 +196,7 @@
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
 
-				arraySort(session.KrakenSearchResults.FlightSearchResults,
+				arraySort(session.KrakenSearchResults.trips.FlightSearchResults,
 					function (e1, e2) {
 						if(e1.TotalFare LT e2.TotalFare) return -1;
 						else if(e1.TotalFare EQ e2.TotalFare) return 0;
@@ -196,9 +204,9 @@
 					}
 				);
 
-				if(arrayLen(session.KrakenSearchResults.FlightSearchResults) GT 0) {
+				if(arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
 
-					local.sliceArray = ArraySlice(session.KrakenSearchResults.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.FlightSearchResults)));
+					local.sliceArray = ArraySlice(session.KrakenSearchResults.trips.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.trips.FlightSearchResults)));
 
 				}	else {
 
