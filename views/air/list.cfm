@@ -192,11 +192,11 @@
 						</cfif>
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)# - #findClass(stTrip.Class)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
-						<cfif structKeyExists(stTrip,"pricePerMinute")>
+						<!---<cfif structKeyExists(stTrip,"pricePerMinute")>
 							 <div style="padding:10px;">
 								 <span class="trip-ppm" style="">#DollarFormat(stTrip.pricePerMinute)#&nbsp;per minute</span>
 							 </div>
-						</cfif>
+						</cfif>--->
 						<cfif bSelected OR !stTrip.Policy>
 							<tr align="center">
 								<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br/>')#</td>
