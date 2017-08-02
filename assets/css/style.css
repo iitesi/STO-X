@@ -1593,3 +1593,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		 text-align: center;
 	 }
  }
+
+ div#flightnumber-filter-container {
+ 	width: 110px;
+ 	padding: 8px 0 0 10px;
+ }
+ 
+  div#flightnumber-filter-container input#flightnumber {
+  	width:75px;
+  }

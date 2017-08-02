@@ -235,7 +235,7 @@ $(document).ready(function(){
 		filterAirDelay.run();
 		return false;
 	});
-
+	
 	// check for active state when page loads
 	var fields = $('#class').find('input[name^="Class"]:checked');
 	if (fields.length) {
@@ -254,7 +254,14 @@ $(document).ready(function(){
 		filterAirDelay.run();
 		return false;
 	});
-
+	
+	// Flightnumber filter
+	$('#flightnumberbtn').on('click', function() {
+		$('.spinner').show();
+		filterAirByFlightNumber($('#flightnumber').val());
+		$('.spinner').hide();
+	})
+	
 	// check for active state when page loads
 	var fields = $('#fares').find('input[name^="Fare"]:checked');
 	if (fields.length) {
@@ -349,7 +356,7 @@ FunctionGuard.prototype.cancel = function(){
     this.timer && clearTimeout(this.timer);
 }
 
-	// This is a functions that scrolls to #id
+// This is a functions that scrolls to #id
 function scrollToId(id) {
   $('html,body').animate({scrollTop: $("#"+id).offset().top},'fast');
 }
@@ -377,10 +384,14 @@ function filterAir(reset) {
 		// set count to all, and show all badges
 		showCount = flightresults.length;
 		$('[class^="flight"]').show();
+		
+		$('#flightnumber').val('');
+		$('span.flightNumberFilter').hide();
 
 	} else {
 
 		for (loopcnt = 0; loopcnt <= (flightresults.length-1); loopcnt++) {
+			
 			var flight = flightresults[loopcnt];
 			showFlight = true;
 
@@ -404,10 +415,10 @@ function filterAir(reset) {
 			// check refundable / non-refundable and not both checked at once which would imply you want to see everything
 			if(showFlight == true){
 				if(
-						(
-							(fare0 == 0 && flight[4] == 1)
-							|| (fare1 == 1 && flight[4] == 0)
-						)
+					(
+						(fare0 == 0 && flight[4] == 1)
+						|| (fare1 == 1 && flight[4] == 0)
+					)
 					// if all are selected show all
 					&& !( fare0 == 0 && fare1 == 1)
 				){
@@ -424,7 +435,7 @@ function filterAir(reset) {
 					|| ( classf == 'F' && classy != 'Y' && classc != 'C' )
 				){
 					 if (
-						 		( classy == 'Y' && flight[6] == 'C' || classy == 'Y' && flight[6] == 'F')
+						 ( classy == 'Y' && flight[6] == 'C' || classy == 'Y' && flight[6] == 'F')
 						 || ( classc == 'C' && flight[6] == 'Y' || classc == 'C' && flight[6] == 'F' )
 						 || ( classf == 'F' && flight[6] == 'Y' || classf == 'F' && flight[6] == 'C' )
 				 			// if all are selected show all
@@ -435,12 +446,12 @@ function filterAir(reset) {
 
 				} else if ( // two selections made
 
-						 ( classy == 'Y' && classc == 'C' && classf != 'F' )
+					( classy == 'Y' && classc == 'C' && classf != 'F' )
 					|| ( classy == 'Y' && classf == 'F' && classc != 'C' )
 					|| ( classc == 'C' && classf == 'F' && classy != 'Y' )
 				){
 					 if (
-									( classy == 'Y' && classc == 'C' && classf != 'F' && flight[6] == 'F' )
+							( classy == 'Y' && classc == 'C' && classf != 'F' && flight[6] == 'F' )
 							|| 	( classf == 'F' && classc == 'C' && classy != 'Y' && flight[6] == 'Y' )
 							|| 	( classy == 'Y' && classf == 'F' && classc != 'C' && flight[6] == 'C' )
 				 			// if all are selected show all
@@ -450,7 +461,6 @@ function filterAir(reset) {
 					 	} // inside if
 				} // two selections made
 			} // showflight = true
-
 
 			// check carriers
 			if(showFlight == true){
@@ -476,8 +486,7 @@ function filterAir(reset) {
 					} // airfields.length
 			} // showflight = true
 
-
-		// show or hide flight
+			// show or hide flight
 			if(showFlight == true){
 				showCount++;
 				$( '.flight' + flight[0] ).show();
@@ -497,11 +506,45 @@ function filterAir(reset) {
 
 	// show flight count
  	$('#flightCount').text(showCount);
+ 	
  	if (parseInt($('#flightCount').text()) > parseInt($('#flightCount2').text())) {
  		$('#flightCount2').text(showCount);
  	}
+ 	
 	$('.spinner').hide();
+	
 	return false;
+}
+
+function filterAirByFlightNumber(flightNumber) {
+	
+	flightNumber = flightNumber.replace(/^\D+/g,'');
+	
+	if (flightNumber.length > 0) {
+		
+		$("div[class^=flight]").each(function() {
+			
+			var flightDiv = $(this);
+			var showFlight = false;
+			
+			$('span.flightNumberFilter',this).each(function() {
+				if ($(this).text() == flightNumber) {
+					showFlight = true;
+				}
+			});
+			
+			if (showFlight) {
+				
+				flightDiv.show();
+				
+			} else {
+				
+				flightDiv.hide();
+			}
+		});
+		
+		$('#flightCount').text($('div[class^=flight]:visible').length);
+	}
 }
 
 function sortAir(sort) {
@@ -514,8 +557,3 @@ function sortAir(sort) {
 	}
 	return false;
 }
-
-$(document).ready(function(){
-	$('#sortbyduration').click();
-	$('#singlecarrierbtn').click();
-});

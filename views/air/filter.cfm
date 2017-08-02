@@ -104,18 +104,25 @@
 							</li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">1 Carrier</a></li>
+							<li>
+								<div class="input-group" id="flightnumber-filter-container">
+							      <input type="text" class="form-control" placeholder="Flight #" name="flightnumber" id="flightnumber">
+							      <span class="input-group-btn">
+							      	  <button class="btn btn-secondary" type="button" name="flightnumberbtn" id="flightnumberbtn"> > </button>
+							      </span>
+							    </div>
+							</li>
 						</ul>
 						<cfoutput>
-						<ul class="nav navbar-nav navbar-right">
-							<li><p class="navbar-text filter"><span id="flightCount">#rc.totalflights#</span> flights showing</p></li>
-							<li><span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
-							<a href="##" class="removefilters"> <i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
-						</ul>
+							<ul class="nav navbar-nav navbar-right">
+								<li><p class="navbar-text filter"><span id="flightCount">#rc.totalflights#</span> flights showing</p></li>
+								<li><span class="spinner"><i class="fa fa-spinner fa-spin"></i> Filtering flights</span>
+								<a href="##" class="removefilters"> <i class="fa fa-refresh"></i><span class="hideFirst"> Clear Filters</span></a></li>
+							</ul>
 						</cfoutput>
 					</div>
 					</div>
 				</div>
-
 
 				<!--- filter well for airline/class/fares --->
 				<div id="filterwell" class="well filterselection">

@@ -43,7 +43,7 @@
 		}
 	</cfscript>
 	<cfoutput>
-		<div class="screenbadge badge">
+		<div class="screenbadge badge flight">
 			<!--- display ribbon --->
 			<span class="#ribbonclass#"></span>
 
@@ -247,6 +247,12 @@
 							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
 						</div>
 					</cfif>
+					<!--- For now only in list view --->
+					<!--- <cfif structKeyExists(stTrip,"pricePerMinute")>
+					 <div style="padding:10px;">
+						 <span class="trip-source" style="background-color:##FFFFE0">#DollarFormat(stTrip.pricePerMinute)#&nbsp;per minute</span>
+					 </div>
+					</cfif> --->
 				</td>
 			</tr>
 		</table>
@@ -283,7 +289,7 @@
 								<cfset nCnt++>
 								<cfset stSegment = stGroup.Segments[nSegment]>
 								<tr>
-									<td valign="top"class="flighttext">#stSegment.Carrier##stSegment.FlightNumber#</td>
+									<td valign="top"class="flighttext">#stSegment.Carrier#<span class="flightNumber">#stSegment.FlightNumber#</span><span class="flightNumberFilter" style="display:none;">#reReplace(stSegment.FlightNumber,"^\D+","all")#</span></td>
 									<td valign="top"class="flighttext">#(bDisplayFare ? stSegment.Cabin : '')#</td>
 									<td valign="top"class="flighttext" nowrap><span>stSegment.Origin to #stSegment.Destination#</span></td>
 									<td valign="top"class="flighttext">

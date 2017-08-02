@@ -131,6 +131,7 @@
 			</cfscript>
 			<div class="col-sm-5 text-right xs-center">
 				<span class="flightNumber">#stSegment.Carrier# #stSegment.FlightNumber#</span>
+				<span class="flightNumberFilter" style="display:none;">#reReplace(stSegment.FlightNumber,"^\D+","all")#</span>
 				<span class="cityPair">#stSegment.Origin# - #stSegment.Destination#</span>
 			</div>
 			<div class="col-sm-5 text-left xs-center">
@@ -191,6 +192,11 @@
 						</cfif>
 						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)# - #findClass(stTrip.Class)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
 						<br>
+						<!---<cfif structKeyExists(stTrip,"pricePerMinute")>
+							 <div style="padding:10px;">
+								 <span class="trip-ppm" style="">#DollarFormat(stTrip.pricePerMinute)#&nbsp;per minute</span>
+							 </div>
+						</cfif>--->
 						<cfif bSelected OR !stTrip.Policy>
 							<tr align="center">
 								<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br/>')#</td>
@@ -225,9 +231,6 @@
 					</cfif>
 				<!--</td>-->
 
-
-
-
 			<!--- set bag fee into var so we can display in a tooltip below --->
 			<cfsavecontent variable="tooltip">
 				<cfloop array="#carrierList#" item="carrier">
@@ -236,39 +239,38 @@
 			</cfsavecontent>
 			<div>
 			<small>
-
-					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-					<a data-url="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-						Details
-						<span class="divider">/</span>
-					</a>
-					<cftry>
-						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-							<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-								Seats
-								<span class="divider">/</span>
-							</a>
-						</cfif>
-						<cfcatch type="any"></cfcatch>
-					</cftry>
-					<a data-url="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
-						Bags
-						<span class="divider">/</span>
-					</a>
-					<a data-url="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-						Email
-					</a>
-					<!--- <cfif (application.es.getCurrentEnvironment() NEQ 'prod'
-						AND application.es.getCurrentEnvironment() NEQ 'beta')
-						OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
-						<span class="divider">/</span>
-						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
-					</cfif> --->
-					 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
-						<div style="padding:20px;">
-							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
-						</div>
+				<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
+				<a data-url="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+					Details
+					<span class="divider">/</span>
+				</a>
+				<cftry>
+					<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
+						<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+							Seats
+							<span class="divider">/</span>
+						</a>
 					</cfif>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<a data-url="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
+					Bags
+					<span class="divider">/</span>
+				</a>
+				<a data-url="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
+					Email
+				</a>
+				<!--- <cfif (application.es.getCurrentEnvironment() NEQ 'prod'
+					AND application.es.getCurrentEnvironment() NEQ 'beta')
+					OR listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
+					<span class="divider">/</span>
+					<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
+				</cfif> --->
+				 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
+					<div style="padding:20px;">
+						<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+					</div>
+				</cfif>
 			</small>
 		</div>
 		</div> <!-- /.price -->

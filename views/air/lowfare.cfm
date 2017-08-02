@@ -1,18 +1,26 @@
 <cfsilent>
 	<cfset variables.bDisplayFare = true>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
-	<cfset variables.minheight = 250>
+	<cfset variables.minheight = 285>
 	<cfset variables.nDisplayGroup = "">
 	<cfset variables.bSelected = false>
 	<cfif variables.nLegs EQ 2>
-		<cfset variables.minheight = 335>
+		<cfset variables.minheight = 340>
 	<cfelseif variables.nLegs GT 2>
-		<cfset variables.minheight = 375>
+		<cfset variables.minheight = 380>
 	</cfif>
 </cfsilent>
 
 <cfoutput>
-	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=201703095'></script>
+	<script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
+
+	<script>
+		$(document).ready(function(){
+			$('##sortbyprice').click();
+			$('##singlecarrierbtn').click();
+		});
+	</script>
+
 	#view('air/unusedtickets')#
 
 	<div class="page-header">

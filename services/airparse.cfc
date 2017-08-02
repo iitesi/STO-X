@@ -312,31 +312,32 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 						<cfset local.stTrip.Ref = local.refundable>
 						<cfset local.stTrip.RequestedRefundable = (arguments.bRefundable IS 'true' ? 1 : local.stTrip.Ref)>
 						<cfset local.stTrip.changePenalty = changePenalty>
-
-					<!--- <cfelseif local.airPricingSolution.XMLName EQ 'air:Connection'>
-
-						<cfif NOT structKeyExists(local.airPricingSolution.XMLAttributes, 'StopOver')
-							OR NOT local.airPricingSolution.XMLAttributes.StopOver>
-							<cfset local.stTrip.connections[local.airPricingSolution.XMLAttributes.SegmentIndex] = true>
-						</cfif> --->
-
-						<!--- 9:57 AM Saturday, March 29, 2014 - Jim Priest - jpriest@shortstravel.com
-									fareCalc used for travelTech reporting only! Please do not remove.
-						<cfset local.stTrip.fareCalc = local.fareCalc>
-						--->
-
 					</cfif>
 				</cfloop>
 
 				<cfset local.sTripKey = getUAPI().hashNumeric( local.tripKey&local.sOverallClass&refundable )>
-				<cfset local.stTrips[local.sTripKey] = local.stTrip>
-				<cfif arguments.bFirstPrice>
-					<cfbreak />
+				<cfif NOT(structKeyExists(local.stTrips,local.sTripKey))>
+					<cfset local.stTrips[local.sTripKey] = local.stTrip>
+				<cfelse>
+					<cfset local.stTrips[local.sTripKey] = local.stTrips[local.sTripKey].Total GT local.stTrip.Total ? local.stTrip : local.stTrips[local.sTripKey]>
 				</cfif>
 			</cfif>
 		</cfloop>
 
-		<cfreturn  local.stTrips/>
+		<cfset local.minFare = StructNew()>
+		<cfloop collection = "#local.stTrips#" item="local.sTripKey">
+			<cfif NOT(structKeyExists(local.minFare,"minTrip"))>
+				<cfset local.minFare.minTrip = local.stTrips[local.sTripKey]>
+				<cfset local.minFare.sTripKey = local.sTripKey>
+			<cfelse>
+				<cfset local.minFare.minTrip = local.stTrips[local.sTripKey].Total LT local.minFare.minTrip.Total ? local.stTrips[local.sTripKey] : local.minFare.minTrip>
+				<cfset local.minFare.sTripKey = local.stTrips[local.sTripKey].Total LT local.minFare.minTrip.Total ? local.sTripKey : local.minFare.sTripKey>
+			</cfif>
+		</cfloop>
+		<cfset local.Trip = StructNew()>
+		<cfset local.Trip[local.minFare.sTripKey] = local.minFare.minTrip>
+		<cfreturn  local.Trip/>
+
 	</cffunction>
 
 	<!--- Below was created because of different results initially being returned with the uAPI version upgrade; keeping in case we have to account for such parsing in the future. --->
