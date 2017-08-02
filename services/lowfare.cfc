@@ -138,22 +138,16 @@
 
 				} else {
 
-					local.airlines = ['ALL','AA','UA','DL','WN'];
+					local.airlines = ['ALL'];
 				}
 
-				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
+				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																		 Filter = arguments.Filter,
+																																		 Account = arguments.Account,
+																																		 sCabins = arguments.sCabins,
+																																		 airlines = local.airlines );
 
-					local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
-																																			 Filter = arguments.Filter,
-																																			 Account = arguments.Account,
-																																			 sCabins = arguments.sCabins,
-																																			 airlines = [local.airlines[i]]);
-
-
-
-					local.mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(local.requestBody));
-
-				}
+				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
 
 				session.KrakenSearchResults = StructNew();
 				session.KrakenSearchResults.trips = local.mergedTrips;

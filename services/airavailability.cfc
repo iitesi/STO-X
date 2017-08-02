@@ -96,22 +96,17 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 			} else {
 
-				local.airlines = ['ALL','AA','UA','DL','WN'];
+				local.airlines = ['ALL'];
 
 			}
 
-			for(local.i = 1; local.i LTE ArrayLen(local.airlines); i++) {
+			local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																	 Filter = arguments.Filter,
+																																	 Account = arguments.Account,
+																																	 sCabins = arguments.sCabins,
+																																	 airlines = local.airlines );
 
-				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
-																																		 Filter = arguments.Filter,
-																																		 Account = arguments.Account,
-																																		 sCabins = arguments.sCabins,
-																																		 airlines = [local.airlines[i]]);
-
-
-				local.mergedTrips = getKrakenService().mergeResults(local.mergedTrips,getKrakenService().FlightSearch(local.requestBody));
-
-			}
+			local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
 
 			session.KrakenSearchResults = StructNew();
 			session.KrakenSearchResults.trips = local.mergedTrips;
@@ -119,9 +114,9 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		}
 
-		local.stSegments = parseSegmentsNew(arguments.Group);
+		local.stSegments = parseSegments(arguments.Group);
 
-		local.tempTrips = parseConnectionsNew(local.stSegments);
+		local.tempTrips = parseConnections(local.stSegments);
 
 		local.tempTrips	= getAirParse().addGroups(local.tempTrips, 'Avail', arguments.Filter);
 
@@ -141,11 +136,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 	}
 
-	public struct function parseSegmentsNew (
-
-		required any Group
-
-	) {
+	public struct function parseSegments (	required any Group ) {
 
 		var stSegments = structNew('linked');
 		var route = 0;
