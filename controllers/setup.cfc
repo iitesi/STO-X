@@ -58,6 +58,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'blacklistedCarriers')>
 			<cfset variables.bf.getBean("setup").setBlackListedCarrier(argumentcollection=arguments.rc)>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'lowFareResultsLimit')>
+			<cfset application.lowFareResultsLimit = 250><!--- cosnt limnit 250 while we figure out pagination for search results views --->
+		</cfif>
 
 		<cfreturn />
 	</cffunction>

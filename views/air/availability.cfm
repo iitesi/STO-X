@@ -2,18 +2,26 @@
 	<cfset variables.bDisplayFare = false>
 	<cfset variables.bSelected = false>
 	<cfset variables.nLegs = ArrayLen(rc.Filter.getLegsForTrip())>
-	<cfset variables.minheight = 200>
+	<cfset variables.minheight = 285>
 	<cfset variables.nDisplayGroup = rc.Group>
 	<cfif variables.nLegs EQ 2>
-		<cfset variables.minheight = 250>
+		<cfset variables.minheight = 340>
 	<cfelseif variables.nLegs GT 2>
-		<cfset variables.minheight = 300>
+		<cfset variables.minheight = 380>
 	</cfif>
 </cfsilent>
 
 <cfoutput>
-  <script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
-	#view('air/unusedtickets')#
+<script type='text/javascript' src='#application.assetURL#/js/air/filter.js?v=#application.staticAssetVersion#'></script>
+
+<script>
+	$(document).ready(function(){
+		$('##sortbyduration').click();
+		$('##singlecarrierbtn').click();
+	});
+</script>
+
+#view('air/unusedtickets')#
 
 <div class="page-header">
 	<cfif rc.filter.getAirType() IS "MD">

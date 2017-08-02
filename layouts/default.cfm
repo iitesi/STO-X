@@ -20,7 +20,7 @@
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="Short's Travel Online">
-		<meta name="author" content="Short's Travel Management">	
+		<meta name="author" content="Short's Travel Management">
 		<cfif rc.addNewRelicBrowserJS>
 		<!--New Relic Browser-->
 		<script type="text/javascript">
@@ -36,9 +36,9 @@
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
-			<link href="assets/css/layout.css?v=112016" rel="stylesheet" media="screen">
-			<link href="assets/css/style.css?v-03232017" rel="stylesheet" media="screen">
-			<link href="assets/css/print.css" rel="stylesheet" media="print">
+			<link href="assets/css/layout.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
+			<link href="assets/css/style.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
+			<link href="assets/css/print.css?v=#application.staticAssetVersion#" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 			<!--- override header colors for TMC so their light logos will display properly --->

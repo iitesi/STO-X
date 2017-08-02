@@ -60,7 +60,7 @@
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
 		<cfelse>
-			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy,air.viewXMLResults'>
+			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy'>
 			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
 				AND !ListFind(local.actionList,request.context.action)>
