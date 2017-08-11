@@ -215,7 +215,7 @@
 					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare;
 					local.Taxes = local.sliceArray[t].Taxes;
 					local.Total = local.sliceArray[t].TotalFare;
-					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable ") ? local.sliceArray[t].IsRefundable  : 0;
+					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
 					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
