@@ -138,22 +138,16 @@
 
 				} else {
 
-					local.airlines = ['ALL','AA','UA','DL','WN'];
+					local.airlines = ['ALL'];
 				}
 
-				for(local.i = 1; local.i LTE ArrayLen(local.airlines); local.i++) {
+				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+																																		 Filter = arguments.Filter,
+																																		 Account = arguments.Account,
+																																		 sCabins = arguments.sCabins,
+																																		 airlines = local.airlines );
 
-					local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
-																																			 Filter = arguments.Filter,
-																																			 Account = arguments.Account,
-																																			 sCabins = arguments.sCabins,
-																																			 airlines = [local.airlines[i]]);
-
-
-
-					local.mergedTrips = getKrakenService().mergeResults(mergedTrips,getKrakenService().FlightSearch(local.requestBody));
-
-				}
+				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
 
 				session.KrakenSearchResults = StructNew();
 				session.KrakenSearchResults.trips = local.mergedTrips;
@@ -221,7 +215,7 @@
 					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare;
 					local.Taxes = local.sliceArray[t].Taxes;
 					local.Total = local.sliceArray[t].TotalFare;
-					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable ") ? local.sliceArray[t].IsRefundable  : 0;
+					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
 					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
