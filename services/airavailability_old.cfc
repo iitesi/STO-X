@@ -72,7 +72,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name = "parseConnectionsNew" returnType = "struct" access="private">
+	<cffunction name = "parseConnections" returnType = "struct" access="private">
 			<cfargument name="legs">
 
 			<cfset local.stTrips = StructNew('linked')>
