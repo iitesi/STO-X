@@ -190,17 +190,61 @@
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
 
-				arraySort(session.KrakenSearchResults.trips.FlightSearchResults,
-					function (e1, e2) {
-						if(e1.TotalFare LT e2.TotalFare) return -1;
-						else if(e1.TotalFare EQ e2.TotalFare) return 0;
-						else return 1;
-					}
-				);
 
-				if(arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
+				if (arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
 
-					local.sliceArray = ArraySlice(session.KrakenSearchResults.trips.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.trips.FlightSearchResults)));
+						local.refundableTrips = arraynew(1);
+						local.nonRefundableTrips = arraynew(1);
+
+						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
+
+								if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
+
+									ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+
+								} else {
+
+									ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+
+								}
+						}
+
+
+						if( arraylen(local.refundableTrips) LTE application.lowFareResultsLimit ) {
+
+							if ( arraylen(local.nonRefundableTrips) LTE application.lowFareResultsLimit - arraylen(local.refundableTrips) ) {
+
+								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+
+							} else {
+
+								arraySort(local.nonRefundableTrips,
+									function (e1, e2) {
+										if(e1.TotalFare LT e2.TotalFare) return -1;
+										else if(e1.TotalFare EQ e2.TotalFare) return 0;
+										else return 1;
+									}
+								);
+
+								local.nonRefundableTrips = ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit - arraylen(local.refundableTrips));
+
+								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+
+							}
+
+						} else {
+
+							arraySort(local.refundableTrips,
+								function (e1, e2) {
+									if(e1.TotalFare LT e2.TotalFare) return -1;
+									else if(e1.TotalFare EQ e2.TotalFare) return 0;
+									else return 1;
+								}
+							);
+
+							local.sliceArray = ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
+
+						}
 
 				}	else {
 
@@ -208,7 +252,7 @@
 
 				}
 
-				for (var t = 1; t <= arrayLen(local.sliceArray); t++) {
+				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
 
 					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
 					local.Base = local.sliceArray[t].BaseFare;
