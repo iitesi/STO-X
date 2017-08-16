@@ -51,7 +51,7 @@
 												</button>
 											</td>
 											<td style="padding-left:10px;text-align:left;">
-												<span style="display:inline-block;padding:0 0 5px 0;font-size:13px;font-weight:bold;color:##696969;white-space:normal;word-wrap:break-word;">Information</span><br>
+												<span style="display:inline-block;padding:0 0 5px 0;font-size:13px;font-weight:bold;color:##696969;white-space:normal;word-wrap:break-word;">Policy Reminders</span><br>
 												<span style="display:inline-block;padding:0 0 0 0;font-size:11px;font-weight:normal;white-space:normal;word-wrap:break-word;">Your travel policy documents.</span>
 											</td>
 										</tr>
