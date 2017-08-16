@@ -280,6 +280,8 @@
 					local.stTrips[local.route].PTC = local.PTC;
 					local.stTrips[local.route].Ref = local.Ref;
 					local.stTrips[local.route].RequestedRefundable = local.RequestedRefundable;
+					local.stTrips[local.route].TotalBag = 0;
+					local.stTrips[local.route].TotalBag2 = 0;
 					local.stTrips[local.route].Xml = "";
 
 					for (var s = 1; s <= arrayLen(local.sliceArray[t].TripSegments); s++) {
