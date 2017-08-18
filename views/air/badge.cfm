@@ -124,6 +124,7 @@
 					<font color="white">#flightnumbers.toList()#</font>
 				</td>
 			</tr>
+			<cfset variables.bcodes = "">
 			<cfloop collection="#stTrip.Groups#" item="Group">
 				<cfscript>
 					stGroup = stTrip.Groups[Group];
@@ -184,6 +185,10 @@
 							variables.tripSource = stSegment.Source;
 						}
 
+						if(structKeyExists(stSegment,"Class")) {
+							variables.bcodes = variables.bcodes & stSegment.Class & " ";
+						}
+
 					</cfscript>
 					<tr>
 						<td valign="top" title="#application.stAirVendors[stSegment.Carrier].Name# Flt ###stSegment.FlightNumber#">#stSegment.Carrier##stSegment.FlightNumber#</td>
@@ -242,9 +247,14 @@
 						<span class="divider">/</span>
 						<a href="?action=findit.send&SearchID=#rc.searchID#&nTripID=#nTripKey#">FindIt</a>
 					</cfif> --->
-					 <cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
-						<div style="padding:20px;">
-							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
+					<cfif structKeyExists(variables,"bcodes") AND application.es.getCurrentEnvironment() NEQ "prod" AND len(variables.bcodes) GT 0>
+						<div style="padding:15px;">
+							<span class="trip-source" style="background-color:##FFFFE0">#variables.bcodes#</span>
+						</div>
+					</cfif>
+					<cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
+						<div>
+							<span class="trip-source" style="background-color:##FFFFE0">#variables.tripSource#</span>
 						</div>
 					</cfif>
 					<!--- For now only in list view --->
