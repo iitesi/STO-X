@@ -50,7 +50,7 @@ $(document).ready(function(){
 			success:function(traveler) {
 				loadTraveler(traveler, 'initial');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
@@ -93,7 +93,7 @@ $(document).ready(function(){
 			success:function(traveler) {
 				loadTraveler(traveler, 'change');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
@@ -435,67 +435,67 @@ $(document).ready(function(){
 	}
 
 	function createForm(orgunit) {
-		if (orgunit.OUDisplay == 1) {
-			var inputName = orgunit.OUType + orgunit.OUPosition;
+		var userID =  $( "#userID" ).val(); 
+		var inputName = orgunit.OUType + orgunit.OUPosition; 
 
-			var div = '<div class="form-group'
-			if ($.inArray(inputName, errors.split(",")) >= 0) {
-				div += ' error';
-			}
-			div += '">';
+		var div = '<div class="form-group'
+		if ($.inArray(inputName, errors.split(",")) >= 0) {
+			div += ' error';
+		}
+		div += '">';
 
-			if (orgunit.OUSTOVerbiage != '') {
-				div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
-			}
-
-			div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
-			if (orgunit.OURequired == 1) {
-				div += ' *</label>';
-			}
-			else {
-				div += '&nbsp;&nbsp;</label>';
-			}
-			div += '<div class="controls col-sm-8 col-xs-12">';
-			if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')){
-				div += '<input class="form-control" type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
-			}
-			else if(orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1'){
-				div += '<span>'+orgunit.valueReport+'</span>';
-				div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueReport + '">';
-			}
-			else if((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
-				div += '<select class="form-control" name="' + inputName + '" id="' + inputName + '"';
-				div += '>';
-				div += '<option value="-1"></option>';
-					if (orgunit.ouValues.length) {
-						for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
-							div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
-						}
-					}
-					else {
-						div += '<option value="' + orgunit.valueID + '">' + orgunit.valueDisplay + '</option>';
-					}
-				div += '</select>';
-			}
-			else if(orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1') {
-				div += '<span>'+orgunit.valueDisplay+'</span>';
-				div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueID + '">';
-			}
-			div += '</div>';
-			div += '</div>';
-			$( "#orgUnits" ).append( div );
-			if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')) {
-				$( "#" + inputName ).val( orgunit.valueReport );
-			}
-			else if ((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
-				$( "#" + inputName ).val( orgunit.valueID );
-				if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
-					$( "#" + inputName ).attr( "disabled", true );
-				}
-			}
+		if (orgunit.OUSTOVerbiage != '') {
+			div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
 		}
 
-		return false;
+		div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
+		if (orgunit.OURequired == 1  || (orgunit.OURequiredGuestOnly ==1 && userID == 0) || (orgunit.OURequiredProfileOnly ==1 && userID != 0)) {
+			div += ' *</label>';
+		}
+		else {
+			div += '&nbsp;&nbsp;</label>';
+		}
+		div += '<div class="controls col-sm-8 col-xs-12">';
+		if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')){
+			div += '<input class="form-control" type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
+		}
+		else if(orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1'){
+			div += '<span>'+orgunit.valueReport+'</span>';
+			div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueReport + '">';
+		}
+		else if((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
+			div += '<select class="form-control" name="' + inputName + '" id="' + inputName + '"';
+			div += '>';
+			div += '<option value="-1"></option>';
+				if (orgunit.ouValues.length) {
+					for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
+						div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
+					}
+				}
+				else {
+					div += '<option value="' + orgunit.valueID + '">' + orgunit.valueDisplay + '</option>';
+				}
+			div += '</select>';
+		}
+		else if(orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1') {
+			div += '<span>'+orgunit.valueDisplay+'</span>';
+			div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueID + '">';
+		}
+		div += '</div>';
+		div += '</div>';
+		$( "#orgUnits" ).append( div );
+		if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')) {
+			$( "#" + inputName ).val( orgunit.valueReport );
+		}
+		else if ((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
+			$( "#" + inputName ).val( orgunit.valueID );
+			if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
+				$( "#" + inputName ).attr( "disabled", true );
+			}
+		}
+	 
+
+	return false;
 	}
 
 	function loadPayments(traveler, typeOfService) {

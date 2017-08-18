@@ -516,12 +516,19 @@
 			</cfif>
 		</cfif>
 
-		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU">
+		<cfloop array="#arguments.Traveler.getOrgUnit()#" index="local.ouIndex" item="local.OU"> 
 			<cfif local.OU.getOUDisplay() EQ 1>
 				<cfset local.field = local.OU.getOUType() & local.OU.getOUPosition()>
 				<cfif 	(
 							( 	local.OU.getOURequired() EQ 1
-								AND local.OU.getOURequiredCBAOnly() EQ 0
+							)
+							OR
+							( 	local.OU.getOURequiredGuestOnly() EQ 1
+								AND arguments.Traveler.getUserID() EQ 0
+							)
+							OR
+							( 	local.OU.getOURequiredProfileOnly() EQ 1
+								AND arguments.Traveler.getUserID() NEQ 0
 							)
 							OR
 							( 	local.OU.getOURequiredCBAOnly() EQ 1
