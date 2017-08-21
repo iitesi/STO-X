@@ -435,6 +435,7 @@ $(document).ready(function(){
 	}
 
 	function createForm(orgunit) {
+		console.log('orgunit:'+JSON.stringify(orgunit, null, 4));
 		if (orgunit.OUDisplay == 1) {
 			var userID =  $( "#userID" ).val(); 
 			var inputName = orgunit.OUType + orgunit.OUPosition; 
