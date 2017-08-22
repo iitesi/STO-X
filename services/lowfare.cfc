@@ -89,17 +89,14 @@
 		<cfargument name="sCabins" default="">
 		<cfargument name="reQuery" default="false">
 
-		<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stTrips')>
-				<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
-		<cfelse>
-			<!---Used session cached version of the trips--->
-			<cfset local.stTrips = session.searches[arguments.Filter.getSearchID()].stTrips>
-		</cfif>
+		<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
+
 		<!---Merge any selected / 'priced' trips from indv leg selection--->
 		<cfif StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stPricedTrips') AND StructCount(session.searches[arguments.Filter.getSearchID()].stPricedTrips) GT 0>
 			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, session.searches[arguments.Filter.getSearchID()].stPricedTrips)>
 		</cfif>
-		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips,local.stTrips)>
+
+		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = local.stTrips>
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 		<cfreturn />
@@ -115,7 +112,7 @@
 
 		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
 
-		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
+		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0>
 			<cfset local.Refundable = true>
 		</cfif>
 
@@ -123,7 +120,7 @@
 
 			local.mergedTrips = {};
 
-			local.key = getKrakenService().getKey(Refundable = local.Refundable,
+			local.key = getKrakenService().getKey(OnlyRefundableFares = local.Refundable,
 																					  Filter = arguments.Filter,
 																					  Account = arguments.Account,
 																					  sCabins = arguments.sCabins);
@@ -141,13 +138,15 @@
 					local.airlines = ['ALL'];
 				}
 
-				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+				local.requestBody = getKrakenService().getRequestSearchBody( OnlyRefundableFares  = local.Refundable,
 																																		 Filter = arguments.Filter,
 																																		 Account = arguments.Account,
 																																		 sCabins = arguments.sCabins,
 																																		 airlines = local.airlines );
 
 				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
+
+
 
 				session.KrakenSearchResults = StructNew();
 				session.KrakenSearchResults.trips = local.mergedTrips;
