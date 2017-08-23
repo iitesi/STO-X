@@ -50,7 +50,7 @@ $(document).ready(function(){
 			success:function(traveler) {
 				loadTraveler(traveler, 'initial');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
@@ -93,7 +93,7 @@ $(document).ready(function(){
 			success:function(traveler) {
 				loadTraveler(traveler, 'change');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
@@ -434,9 +434,10 @@ $(document).ready(function(){
 
 	}
 
-	function createForm(orgunit) {
+	function createForm(orgunit) { 
 		if (orgunit.OUDisplay == 1) {
-			var inputName = orgunit.OUType + orgunit.OUPosition;
+			var userID =  $( "#userID" ).val(); 
+			var inputName = orgunit.OUType + orgunit.OUPosition; 
 
 			var div = '<div class="form-group'
 			if ($.inArray(inputName, errors.split(",")) >= 0) {
@@ -449,7 +450,7 @@ $(document).ready(function(){
 			}
 
 			div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
-			if (orgunit.OURequired == 1) {
+			if (orgunit.OURequired == 1  || (orgunit.OURequiredGuestOnly ==1 && userID == 0) || (orgunit.OURequiredProfileOnly ==1 && userID != 0)) {
 				div += ' *</label>';
 			}
 			else {
@@ -494,8 +495,9 @@ $(document).ready(function(){
 				}
 			}
 		}
+	 
 
-		return false;
+	return false;
 	}
 
 	function loadPayments(traveler, typeOfService) {
