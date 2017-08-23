@@ -1059,15 +1059,11 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 	<cffunction name="addTotalBagFare" output="false" hint="Set Price + 1 bag and Price + 2 bags.">
 		<cfargument name="stTrips" 	required="true">
-		<cfloop collection="#arguments.stTrips#" item="local.sTrip">
-			<cfif NOT StructKeyExists(arguments.stTrips[local.sTrip], 'TotalBag')>
-				<cfset arguments.stTrips[local.sTrip].TotalBag = arguments.stTrips[local.sTrip].Total + application.stAirVendors[arguments.stTrips[local.sTrip].Carriers[1]].Bag1>
-			</cfif>
-			<cfif NOT StructKeyExists(arguments.stTrips[local.sTrip], 'TotalBag2')>
-				<cfset arguments.stTrips[local.sTrip].TotalBag2 = arguments.stTrips[local.sTrip].Total + application.stAirVendors[arguments.stTrips[local.sTrip].Carriers[1]].Bag2>
-			</cfif>
-		</cfloop>
-		<cfreturn arguments.stTrips/>
+			<cfloop collection="#arguments.stTrips#" item="local.sTrip">
+					<cfset arguments.stTrips[local.sTrip].TotalBag = arguments.stTrips[local.sTrip].Total + application.stAirVendors[arguments.stTrips[local.sTrip].Carriers[1]].Bag1>
+					<cfset arguments.stTrips[local.sTrip].TotalBag2 = arguments.stTrips[local.sTrip].Total + application.stAirVendors[arguments.stTrips[local.sTrip].Carriers[1]].Bag2>
+			</cfloop>
+			<cfreturn arguments.stTrips/>
 	</cffunction>
 
 	<cffunction name="findResults" output="false" hint="I populate the stResults struct with flight numbers for fares and classes (0,1,Y,C,F).">
@@ -1355,13 +1351,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<!--- Don't display when non refundable / refundable --->
 		<cfif arguments.Policy.Policy_AirRefRule EQ 1
-			AND (arguments.Policy.Policy_AirRefDisp EQ 1 OR arguments.Policy.Policy_AirNonRefRule EQ 0)
+			AND arguments.Policy.Policy_AirNonRefRule EQ 0
 			AND arguments.refundable EQ 0>
 			<cfset local.policy.message = 'Hide non refundable fares'>
 			<cfset local.policy.policy = 0>
 			<cfset local.policy.active = 0>
 		<cfelseif arguments.Policy.Policy_AirNonRefRule EQ 1
-			AND (arguments.Policy.Policy_AirNonRefDisp EQ 1 OR arguments.Policy.Policy_AirRefRule EQ 0)
+			AND arguments.Policy.Policy_AirRefRule EQ 0
 			AND arguments.refundable EQ 1>
 			<cfset local.policy.message = 'Hide refundable fares'>
 			<cfset local.policy.policy = 0>

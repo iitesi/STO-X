@@ -89,17 +89,14 @@
 		<cfargument name="sCabins" default="">
 		<cfargument name="reQuery" default="false">
 
-		<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stTrips')>
-				<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
-		<cfelse>
-			<!---Used session cached version of the trips--->
-			<cfset local.stTrips = session.searches[arguments.Filter.getSearchID()].stTrips>
-		</cfif>
+		<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
+
 		<!---Merge any selected / 'priced' trips from indv leg selection--->
 		<cfif StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stPricedTrips') AND StructCount(session.searches[arguments.Filter.getSearchID()].stPricedTrips) GT 0>
 			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, session.searches[arguments.Filter.getSearchID()].stPricedTrips)>
 		</cfif>
-		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stTrips,local.stTrips)>
+
+		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = local.stTrips>
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
 		<cfreturn />
@@ -115,7 +112,7 @@
 
 		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
 
-		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1>
+		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0>
 			<cfset local.Refundable = true>
 		</cfif>
 
@@ -123,7 +120,7 @@
 
 			local.mergedTrips = {};
 
-			local.key = getKrakenService().getKey(Refundable = local.Refundable,
+			local.key = getKrakenService().getKey(OnlyRefundableFares = local.Refundable,
 																					  Filter = arguments.Filter,
 																					  Account = arguments.Account,
 																					  sCabins = arguments.sCabins);
@@ -141,13 +138,15 @@
 					local.airlines = ['ALL'];
 				}
 
-				local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+				local.requestBody = getKrakenService().getRequestSearchBody( OnlyRefundableFares  = local.Refundable,
 																																		 Filter = arguments.Filter,
 																																		 Account = arguments.Account,
 																																		 sCabins = arguments.sCabins,
 																																		 airlines = local.airlines );
 
 				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
+
+
 
 				session.KrakenSearchResults = StructNew();
 				session.KrakenSearchResults.trips = local.mergedTrips;
@@ -190,17 +189,61 @@
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
 
-				arraySort(session.KrakenSearchResults.trips.FlightSearchResults,
-					function (e1, e2) {
-						if(e1.TotalFare LT e2.TotalFare) return -1;
-						else if(e1.TotalFare EQ e2.TotalFare) return 0;
-						else return 1;
-					}
-				);
 
-				if(arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
+				if (arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
 
-					local.sliceArray = ArraySlice(session.KrakenSearchResults.trips.FlightSearchResults,1, MIN(application.lowFareResultsLimit,arrayLen(session.KrakenSearchResults.trips.FlightSearchResults)));
+						local.refundableTrips = arraynew(1);
+						local.nonRefundableTrips = arraynew(1);
+
+						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
+
+								if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
+
+									ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+
+								} else {
+
+									ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+
+								}
+						}
+
+
+						if( arraylen(local.refundableTrips) LTE application.lowFareResultsLimit ) {
+
+							if ( arraylen(local.nonRefundableTrips) LTE application.lowFareResultsLimit - arraylen(local.refundableTrips) ) {
+
+								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+
+							} else {
+
+								arraySort(local.nonRefundableTrips,
+									function (e1, e2) {
+										if(e1.TotalFare LT e2.TotalFare) return -1;
+										else if(e1.TotalFare EQ e2.TotalFare) return 0;
+										else return 1;
+									}
+								);
+
+								local.nonRefundableTrips = ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit - arraylen(local.refundableTrips));
+
+								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+
+							}
+
+						} else {
+
+							arraySort(local.refundableTrips,
+								function (e1, e2) {
+									if(e1.TotalFare LT e2.TotalFare) return -1;
+									else if(e1.TotalFare EQ e2.TotalFare) return 0;
+									else return 1;
+								}
+							);
+
+							local.sliceArray = ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
+
+						}
 
 				}	else {
 
@@ -208,7 +251,7 @@
 
 				}
 
-				for (var t = 1; t <= arrayLen(local.sliceArray); t++) {
+				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
 
 					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
 					local.Base = local.sliceArray[t].BaseFare;
@@ -236,6 +279,8 @@
 					local.stTrips[local.route].PTC = local.PTC;
 					local.stTrips[local.route].Ref = local.Ref;
 					local.stTrips[local.route].RequestedRefundable = local.RequestedRefundable;
+					local.stTrips[local.route].TotalBag = 0;
+					local.stTrips[local.route].TotalBag2 = 0;
 					local.stTrips[local.route].Xml = "";
 
 					for (var s = 1; s <= arrayLen(local.sliceArray[t].TripSegments); s++) {

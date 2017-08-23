@@ -60,7 +60,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.Refundable = (arguments.Refundable NEQ 'X' AND arguments.Refundable) ? true : false;
 
-		if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirRefDisp EQ 1) {
+		if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0) {
 			local.Refundable = true;
 		}
 
@@ -81,7 +81,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 		local.mergedTrips = {};
 
-		local.key = getKrakenService().getKey(Refundable = local.Refundable,
+		local.key = getKrakenService().getKey(OnlyRefundableFares = local.Refundable,
 																		 Filter = arguments.Filter,
 																		 Account = arguments.Account,
 																		 sCabins = arguments.sCabins);
@@ -103,7 +103,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 
 
-			local.requestBody = getKrakenService().getRequestSearchBody( AllowNonRefundable = !local.Refundable,
+			local.requestBody = getKrakenService().getRequestSearchBody( OnlyRefundableFares = local.Refundable,
 																																	 Filter = arguments.Filter,
 																																	 Account = arguments.Account,
 																																	 sCabins = arguments.sCabins,
