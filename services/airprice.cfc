@@ -227,7 +227,7 @@
 									</cfif>
 								</cfloop>
 							</air:AirItinerary>
-							<air:AirPricingModifiers ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="#arguments.sFaresIndicator#" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="#ProhibitRestrictedFares#" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
+							<air:AirPricingModifiers ProhibitUnbundledFareTypes="true" ProhibitNonRefundableFares="#ProhibitNonRefundableFares#" FaresIndicator="#arguments.sFaresIndicator#" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ProhibitRestrictedFares="#ProhibitRestrictedFares#" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false">
 								<cfif arrayLen(arguments.stAccount.Air_PF)
 									AND arrayLen(local.carriers) EQ 1
 									AND arguments.bAccountCodes EQ 1>
