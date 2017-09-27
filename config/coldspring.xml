@@ -243,6 +243,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Converter"><ref bean="Converter" /></constructor-arg>
 	</bean>
 
 	<bean id="airavailability" class="booking.services.airavailability" >
@@ -250,6 +251,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Converter"><ref bean="Converter" /></constructor-arg>
 	</bean>
 
 	<bean id="AirPrice" class="booking.services.airprice" >
@@ -288,6 +290,8 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 				<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
 				<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
   </bean>
+
+	<bean id="Converter" class="booking.helpers.converter"/>
 
   <bean id="AuthService" class="com.auth.AuthService" />
 
