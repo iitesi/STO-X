@@ -4,17 +4,20 @@
 	<cfproperty name="uAPISchemas">
 	<cfproperty name="AirParse">
 	<cfproperty name="KrakenService">
+	<cfproperty name="Converter">
 
 	<cffunction name="init" output="false" hint="Init method.">
 		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 		<cfargument name="AirParse">
 		<cfargument name="KrakenService">
+		<cfargument name="Converter" >
 
 		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas(arguments.uAPISchemas)>
 		<cfset setAirParse(arguments.AirParse)>
 		<cfset setKrakenService(arguments.KrakenService)>
+		<cfset setConverter(arguments.Converter)>
 
 		<cfreturn this>
 	</cffunction>
@@ -297,8 +300,8 @@
 							local.BookingCode = local.flight.BookingCode;
 							local.ChangeOfPlane = local.flight.ChangeOfPlane;
 
-							local.dArrival = trim(local.flight.ArrivalTime);
-							local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
+							local.dArrival = local.flight.ArrivalTime;
+							local.dArrivalGMT = this.getConverter().fromGMTStringToDateObj(local.dArrival);
 
 							if(Find("+", local.dArrival)) {
 								local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"+"),"+"));
@@ -307,7 +310,7 @@
 							}
 
 							local.dDeparture = local.flight.DepartureTime;
-							local.dDepartureGMT = parseDateTime(dateFormat(local.dDeparture,"yyyy-mm-dd") & "T" & timeFormat(local.dDeparture,"HH:mm:ss"));
+							local.dDepartureGMT = this.getConverter().fromGMTStringToDateObj(local.dDeparture);
 
 							if(Find("+", local.dDeparture)) {
 								local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"+"),"+"));
