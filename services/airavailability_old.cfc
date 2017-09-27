@@ -27,8 +27,7 @@
 		<cfargument name="Group" required="false">
 		<cfargument name="sCabins" required="false">
 		<cfargument name="reQuery" default="false">
-		<cfset local.stThreads = {}>
-		<cfset local.sThreadName = ''>
+		
 		<cfset local.sPriority = ''>
 		<cfset local.stTrips = {}>
 		<cfif IsNumeric(arguments.Group)>

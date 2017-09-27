@@ -208,7 +208,7 @@
 						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
 							data-content="
 								Ticket is
-								<cfif val(stTrip.ref) eq 0>
+								<cfif stTrip.ref eq 0>
 									non-refundable
 								<cfelse>
 									refundable
