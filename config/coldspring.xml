@@ -289,7 +289,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 				<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
   </bean>
 
-  <bean id="AuthService" class="com.auth.AuthService" />
+	<bean id="AuthService" class="com.auth.AuthService" />
 
 	<bean id="EmailService" class="com.shortstravel.email.emailService" />
 
