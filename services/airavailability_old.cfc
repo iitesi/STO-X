@@ -4,20 +4,17 @@
 	<cfproperty name="uAPISchemas">
 	<cfproperty name="AirParse">
 	<cfproperty name="KrakenService">
-	<cfproperty name="Converter">
 
 	<cffunction name="init" output="false">
 		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 		<cfargument name="AirParse">
 		<cfargument name="KrakenService">
-		<cfargument name="Converter">
 
 		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas( arguments.uAPISchemas )>
 		<cfset setAirParse(arguments.AirParse)>
 		<cfset setKrakenService(arguments.KrakenService)>
-		<cfset setConverter(arguments.Converter)>
 
 		<cfreturn this>
 	</cffunction>

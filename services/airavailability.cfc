@@ -12,21 +12,18 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 	property UAPIFactory;
 	property uAPISchemas;
 	property AirParse;
-	property Converter;
 
 	public AirAvailability function init (
 		required any KrakenService,
 		required any UAPIFactory,
 		required any uAPISchemas,
-		required any AirParse,
-		required any Converter
+		required any AirParse
 	) {
 
 		setKrakenService(arguments.KrakenService);
 		setUAPIFactory(arguments.UAPIFactory);
 		setUAPISchemas(arguments.uAPISchemas);
 		setAirParse(arguments.AirParse);
-		setConverter(arguments.Converter);
 
 		return this;
 	}
@@ -171,7 +168,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 						local.ChangeOfPlane = local.flight.ChangeOfPlane;
 
 						local.dArrival = local.flight.ArrivalTime;
-						local.dArrivalGMT = this.getConverter().fromGMTStringToDateObj(local.dArrival);
+						local.dArrivalGMT = this.getAirParse().fromGMTStringToDateObj(local.dArrival);
 
 						if(Find("+", local.dArrival)) {
 							local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"+"),"+"));
@@ -180,7 +177,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 						}
 
 						local.dDeparture = local.flight.DepartureTime;
-						local.dDepartureGMT = this.getConverter().fromGMTStringToDateObj(local.dDeparture);
+						local.dDepartureGMT = this.getAirParse().fromGMTStringToDateObj(local.dDeparture);
 
 						if(Find("+", local.dDeparture)) {
 							local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"+"),"+"));
