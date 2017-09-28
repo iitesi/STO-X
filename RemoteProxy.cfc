@@ -173,7 +173,7 @@
     <cfargument name="propertyId" type="string" required="false" default="" />
 	<cfargument name="requery" type="boolean" required="false" default="false" />
     <cfargument name="finditRequest" type="boolean" required="false" default="false" />
-	<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
+	<cfargument name="checkPriceline" type="boolean" required="false" default="true" />
     <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 </cffunction>
 
@@ -185,8 +185,8 @@
     <cfargument name="requery" type="boolean" required="false" default="false"/>
 	<cfargument name="checkPriceline" type="boolean" required="false" default="true"/>
 	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
-	<!--- Temporarily disabling priceline rates site wide (STM-7845) --->
-	<cfset arguments.checkPriceline = 0>
+
+	<cfset arguments.checkPriceline = true/>
 	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
 
 	<cfif structKeyExists(arguments,"callback") AND arguments.callback NEQ "">
