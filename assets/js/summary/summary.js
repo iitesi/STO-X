@@ -434,7 +434,7 @@ $(document).ready(function(){
 
 	}
 
-	function createForm(orgunit) { 
+	function createForm(orgunit) {  
 		if (orgunit.OUDisplay == 1) {
 			var userID =  $( "#userID" ).val(); 
 			var inputName = orgunit.OUType + orgunit.OUPosition; 
@@ -647,7 +647,10 @@ $(document).ready(function(){
 		if (optionShow == false) {
 			$( "#carFOPID" ).append('<option value="0">Present your credit card at the pick-up counter</option>')
 		}
-		$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
+		
+		if (traveler.bookingDetail.carFOPID.length) {
+			$( "#carFOPID" ).val( traveler.bookingDetail.carFOPID );
+		}
 	}
 
 	function recalculateTotal() {
