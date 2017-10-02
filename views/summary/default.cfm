@@ -67,8 +67,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 		<h1>Purchase Reservation</h1>
 
-		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#">
-
+		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#"> 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
 				<div class="legs clearfix">
@@ -173,7 +172,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			    </div>
 			</div>
-			<script src="assets/js/summary/summary.js?v=20170502"></script>
+			<script src="assets/js/summary/summary.js?v=#TimeFormat(Now(),'hhmmss')#"></script>
 		</form>
 	</div>
 
