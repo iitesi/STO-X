@@ -219,8 +219,8 @@
 
 								arraySort(local.nonRefundableTrips,
 									function (e1, e2) {
-										if(e1.TotalFare LT e2.TotalFare) return -1;
-										else if(e1.TotalFare EQ e2.TotalFare) return 0;
+										if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+										else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
 										else return 1;
 									}
 								);
@@ -235,8 +235,8 @@
 
 							arraySort(local.refundableTrips,
 								function (e1, e2) {
-									if(e1.TotalFare LT e2.TotalFare) return -1;
-									else if(e1.TotalFare EQ e2.TotalFare) return 0;
+									if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+									else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
 									else return 1;
 								}
 							);
@@ -254,17 +254,17 @@
 				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
 
 					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
-					local.Base = local.sliceArray[t].BaseFare;
-					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare;
-					local.Taxes = local.sliceArray[t].Taxes;
-					local.Total = local.sliceArray[t].TotalFare;
+					local.Base = local.sliceArray[t].BaseFare.Value;
+					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare.Value;
+					local.Taxes = local.sliceArray[t].Taxes.Value;
+					local.Total = local.sliceArray[t].TotalFare.Value;
 					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
 					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
 					local.Key = StructKeyExists(local.sliceArray[t], "TripPricingKey") ? local.sliceArray[t].TripPricingKey : "";
-					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty : 0;
+					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty.Value : 0;
 					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerType") ? local.sliceArray[t].PassengerType : "ADT";
 
 					local.stTrips[local.route].Base = local.Base;
