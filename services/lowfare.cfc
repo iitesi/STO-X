@@ -297,8 +297,8 @@
 							local.BookingCode = local.flight.BookingCode;
 							local.ChangeOfPlane = local.flight.ChangeOfPlane;
 
-							local.dArrival = trim(local.flight.ArrivalTime);
-							local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
+							local.dArrival = local.flight.ArrivalTime;
+							local.dArrivalGMT = this.getAirParse().fromGMTStringToDateObj(local.dArrival);
 
 							if(Find("+", local.dArrival)) {
 								local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"+"),"+"));
@@ -307,7 +307,7 @@
 							}
 
 							local.dDeparture = local.flight.DepartureTime;
-							local.dDepartureGMT = parseDateTime(dateFormat(local.dDeparture,"yyyy-mm-dd") & "T" & timeFormat(local.dDeparture,"HH:mm:ss"));
+							local.dDepartureGMT = this.getAirParse().fromGMTStringToDateObj(local.dDeparture);
 
 							if(Find("+", local.dDeparture)) {
 								local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"+"),"+"));

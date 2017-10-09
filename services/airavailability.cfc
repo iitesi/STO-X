@@ -14,12 +14,10 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 	property AirParse;
 
 	public AirAvailability function init (
-
 		required any KrakenService,
 		required any UAPIFactory,
 		required any uAPISchemas,
 		required any AirParse
-
 	) {
 
 		setKrakenService(arguments.KrakenService);
@@ -144,17 +142,17 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 	public struct function parseSegments ( required any Group ) {
 
-		var stSegments = structNew('linked');
-		var route = 0;
-		var j = 1;
+		local.stSegments = structNew('linked');
+		local.route = 0;
+		local.j = 1;
 
-		stSegments[local.route] = structNew('linked');
+		local.stSegments[local.route] = structNew('linked');
 
-		for (var t = 1; t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); t++) {
+		for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
 
 			local.sourceX = session.KrakenSearchResults.trips.FlightSearchResults[t].FlightSearchResultSource;
 
-			for (var s = 1; s <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); s++) {
+			for (local.s = 1; local.s <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); local.s++) {
 
 				local.Group = session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].Group;
 
@@ -162,7 +160,7 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 
 				if (local.Group EQ arguments.group) {
 
-					for (var f = 1; f <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].Flights); f++) {
+					for (local.f = 1; local.f <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].Flights); local.f++) {
 
 						local.flight = session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[s].FLights[f];
 
@@ -170,24 +168,22 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 						local.ChangeOfPlane = local.flight.ChangeOfPlane;
 
 						local.dArrival = local.flight.ArrivalTime;
-						local.dArrivalGMT = parseDateTime(dateFormat(local.dArrival,"yyyy-mm-dd") & "T" & timeFormat(local.dArrival,"HH:mm:ss"));
+						local.dArrivalGMT = this.getAirParse().fromGMTStringToDateObj(local.dArrival);
 
 						if(Find("+", local.dArrival)) {
 							local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"+"),"+"));
 						} else {
 							local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"));
 						}
-						//local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"));
 
 						local.dDeparture = local.flight.DepartureTime;
-						local.dDepartureGMT = parseDateTime(dateFormat(local.dDeparture,"yyyy-mm-dd") & "T" & timeFormat(local.dDeparture,"HH:mm:ss"));
+						local.dDepartureGMT = this.getAirParse().fromGMTStringToDateObj(local.dDeparture);
 
 						if(Find("+", local.dDeparture)) {
 							local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"+"),"+"));
 						} else {
 							local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
 						}
-						//local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
 
 
 						local.stSegments[local.route][local.j] = {
