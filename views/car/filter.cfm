@@ -247,7 +247,7 @@
 				</div>
 
 
-
+			<form method="post" id="locationFilter" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
 				<div class="form-horizontal" id="locations">
 					<div class="form-group">
 						<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
@@ -304,6 +304,7 @@
 								</cfif>
 
 				</div>
+			</form>
 			</cfoutput>
 			<span class="pull-right">
 				<button type="button" class="closewell close" title="Close filters"><i class="fa fa-times"></i></button>
