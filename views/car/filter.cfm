@@ -166,8 +166,7 @@
 </div>
 <div id="filterbar">
 	<div class="filter respFilter">
-		<cfoutput>
-			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
+		<cfoutput> 
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
@@ -194,8 +193,7 @@
 
 						</div>
 					</div>
-				</div>
-			</form>
+				</div> 
 		</cfoutput>
 
 		<div class="well filterselection">
