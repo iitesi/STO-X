@@ -136,6 +136,9 @@
 								<cfelseif rc.Vehicle.getDropOffLocationType() EQ 'Terminal'>
 									#rc.Filter.getCarDropoffAirport()#
 									ON TERMINAL
+								<cfelseif !len(rc.Vehicle.getDropOffLocationID())>
+									<cfset local.dropoffLocation = local.pickupLocation />									
+									#dropoffLocation#
 								<cfelse>
 									#rc.Filter.getCarDropoffAirport()#
 								</cfif>
