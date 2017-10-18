@@ -969,16 +969,11 @@
 
 							<cfif Hotel.getRooms()[1].getIsCancellable()>
 
-								<!--- <cfdump var="#hotelResponse#"/>
-								<cfdump var="#Hotel#"/> --->
-
 								<cfset local.bookingDetails = fw.getBeanFactory().getBean('PPNHotelAdapter').getBookinglDetails(
 									bookingId = Hotel.getPPNTripID(),
 									accessCode = Hotel.getPPNAccessCode(),
 									email = Traveler.getEmail()
 								)/>
-
-								<!--- <cfdump var="#local.bookingDetails#" abort/> --->
 
 								<cfif structKeyExists(local.bookingDetails,"cancellation_pin")>
 									<cfset Hotel.getRooms()[1].setCancellationPIN(local.bookingDetails.cancellation_pin)/>
