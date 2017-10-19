@@ -170,30 +170,34 @@
 
 <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
 	<cfargument name="searchId" type="numeric" required="true"/>
-  <cfargument name="propertyId" type="string" required="false" default="" />
+ 	<cfargument name="propertyId" type="string" required="false" default="" />
 	<cfargument name="requery" type="boolean" required="false" default="false" />
-  <cfargument name="finditRequest" type="boolean" required="false" default="false" />
+  	<cfargument name="finditRequest" type="boolean" required="false" default="false" />
     <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 </cffunction>
 
 <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
 	<cfargument name="searchId" type="numeric" required="true"/>
-  <cfargument name="propertyId" type="string" required="true"/>
-  <cfargument name="callback" type="string" required="false"/>
-	<cfargument name="checkPriceline" type="numeric" required="false" default="0">
-  <cfargument name="requery" type="boolean" required="false" default="false"/>
+  	<cfargument name="propertyId" type="string" required="true"/>
+  	<cfargument name="callback" type="string" required="false"/>
+	<cfargument name="checkPriceline" type="string" required="false" default="">
+ 	<cfargument name="requery" type="boolean" required="false" default="false"/>
 	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
 
-	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
+	<cfif NOT isNumeric(arguments.checkPriceline)>
+		<cfset arguments.checkPriceline = 0/>
+	</cfif>
+
+	<cfset local.rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
 
 	<cfif structKeyExists(arguments,"callback") AND arguments.callback NEQ "">
 		<cfcontent type="application/javascript"/>
 		<cfsavecontent variable="local.callbackFunction">
-			<cfoutput>#arguments.callback#(#serializeJSON(rooms)#)</cfoutput>
+			<cfoutput>#arguments.callback#(#serializeJSON(local.rooms)#)</cfoutput>
 		</cfsavecontent>
 		<cfreturn callbackFunction/>
 	<cfelse>
-		<cfreturn serializeJSON(rooms)/>
+		<cfreturn serializeJSON(local.rooms)/>
 	</cfif>
 
 </cffunction>
