@@ -526,6 +526,19 @@
 																										, hostToken = hostToken
 																										, pnr = Air.ProviderLocatorCode
 																										, searchID = rc.searchID )>
+									<cfif FindNoCase('session',local.displayPNRResponse.Message[4])>
+									<!--- Close terminal session --->
+									<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID )>
+									<!--- Open terminal session --->
+									<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																								, searchID = rc.searchID )>
+									<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pnr = Air.ProviderLocatorCode
+																										, searchID = rc.searchID)>
+								</cfif>
 
 								<cfif NOT displayPNRResponse.error>
 									<!--- STM-3845: Check the status of all segments before .IHK --->
