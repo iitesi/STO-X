@@ -192,7 +192,7 @@
 							</cfloop>
 
 							<cfif local.doAirPrice.Total EQ 0>
-								<cfloop list="#structKeyList(trip)#" index="local.thisTrip"> 
+								<cfloop list="#structKeyList(trip)#" index="local.thisTrip">
 									<cfif  trip[local.thisTrip].Class EQ Air.Class AND
 												 (trip[local.thisTrip].Total LTE originalAirfare OR trip[local.thisTrip].PrivateFare EQ Air.PrivateFare) AND
 										     trip[local.thisTrip].Ref EQ Air.Ref>
@@ -201,7 +201,7 @@
 									</cfif>
 								</cfloop>
 									<cfif local.doAirPrice.Total NEQ 0 AND arguments.rc.priceQuotedError EQ 0>
-										<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")> 
+										<cfset rc.message.addError("The price has changed to $#local.doAirPrice.Total#. Would you like to continue?")>
 										<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&priceQuotedError=1')>
 									</cfif>
 							</cfif>
@@ -313,7 +313,7 @@
 							</cfif>
 							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
-					<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
+						 	<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -330,11 +330,11 @@
 																										, airFOPID = local.airFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
-																									 )>   
+																									 )>
 
 							<!--- Passing off Air.total value into local scope before resetting it in case there is an
-							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 ---> 
-							<cfset local.Total = Air.Total>  
+							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 --->
+							<cfset local.Total = Air.Total>
 
 							<cfset Air.ProviderLocatorCode = ''>
 							<cfset Air.UniversalLocatorCode = ''>
@@ -342,10 +342,10 @@
 							<cfset Air.ReservationLocatorCode = ''>
 							<cfset Air.PricingInfoKey = ''>
 							<cfset Air.BookingTravelerKey = ''>
-							<cfset Air.Total = 0> 
+							<cfset Air.Total = 0>
 							<cfset Air.BookingTravelerSeats = [] />
-							<cfset Air.AirITNumber = '' /> 
-							
+							<cfset Air.AirITNumber = '' />
+
 							<!--- Add the plating carrier's air IT number, if one exists for this account --->
 							<cfif structKeyExists(rc.Account, 'AirITNumbers') AND arrayLen(rc.Account.AirITNumbers)>
 								<cfloop array="#rc.Account.AirITNumbers#" index="local.numberIndex" item="local.number">
@@ -378,14 +378,14 @@
         </SOAP:Fault>
     </SOAP:Body>
 </SOAP:Envelope>'>
-							
+
 
 						THE FOLLOWING SOAP FAULTS ALLOW YOU TO TEST VARIOUS SCENARIOS.
 						FEEL FREE TO PLUG ANY AIR CREATE RESPONSE IN.  JUST SET local.airResposne = RESPONSE_TO_MOCK
 
 						!!!!!!IMPORTANT: COMMENT OUT THE AIR CREATE CALL 40 OR SO LINES ABOVE THIS SO NOT TO CREATE ROGUE PNRs!!!!!!!
 
-					
+
 							<cfset local.airResponse = '<SOAP:Envelope
     xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP:Body>
@@ -449,12 +449,12 @@
 
 							<!--- Parse sell results --->
 							<cfset Air = fw.getBeanFactory().getBean('AirAdapter').parseAirRsp( Air = Air
-																							, response = airResponse )> 
+																							, response = airResponse )>
 							<cfif Air.segmentError>
 								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
 								<cfset cancelResponse(rc, air, local.version)>
-								<cfset rc.message.addError(air.segmentErrorMessage)> 
-								<cfset Air.Total = local.Total>  
+								<cfset rc.message.addError(air.segmentErrorMessage)>
+								<cfset Air.Total = local.Total>
 								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&requery=true')>
 							</cfif>
 
@@ -526,20 +526,7 @@
 																										, hostToken = hostToken
 																										, pnr = Air.ProviderLocatorCode
 																										, searchID = rc.searchID )>
- 
-								<cfif FindNoCase('session',local.displayPNRResponse.Message[4])>
-									<!--- Close terminal session --->
-									<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
-																									, hostToken = hostToken
-																									, searchID = rc.searchID )>
-									<!--- Open terminal session --->
-									<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
-																								, searchID = rc.searchID )>
-									<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
-																										, hostToken = hostToken
-																										, pnr = Air.ProviderLocatorCode
-																										, searchID = rc.searchID)>
-								</cfif>
+
 								<cfif NOT displayPNRResponse.error>
 									<!--- STM-3845: Check the status of all segments before .IHK --->
 									<!--- Check segment statuses --->
@@ -590,7 +577,7 @@
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
-																						, searchID = rc.searchID)>
+																						, searchID = rc.searchID )>
 										<cfif NOT displayPNRResponse.error>
 											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
@@ -979,6 +966,21 @@
 																									, response = hotelResponse )>
 
 						<cfif NOT Hotel.getError()>
+
+							<cfif Hotel.getRooms()[1].getIsCancellable()>
+
+								<cfset local.bookingDetails = fw.getBeanFactory().getBean('PPNHotelAdapter').getBookinglDetails(
+									bookingId = Hotel.getPPNTripID(),
+									accessCode = Hotel.getPPNAccessCode(),
+									email = Traveler.getEmail()
+								)/>
+
+								<cfif structKeyExists(local.bookingDetails,"cancellation_pin")>
+									<cfset Hotel.getRooms()[1].setCancellationPIN(local.bookingDetails.cancellation_pin)/>
+								</cfif>
+
+							</cfif>
+
 							<cfset local.passiveResponse = fw.getBeanFactory().getBean('PassiveAdapter').create( targetBranch = rc.Account.sBranch
 																											, bookingPCC = rc.Account.PCC_Booking
 																											, airSelected = (airSelected AND Traveler.getBookingDetail().getAirNeeded() ? true : false)

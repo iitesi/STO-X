@@ -77,7 +77,7 @@ services.factory( "HotelService", function( $window, $http ){
 
 	HotelService.getHotelRates = function( searchId, Hotel, finditHotel, finditRatePlan, finditRate, policy, requery ) {
 		Hotel.roomsRequested = true;
-		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery;
+		var url = "/booking/RemoteProxy.cfc?method=getAvailableHotelRooms&SearchID=" + searchId + "&PropertyId=" + Hotel.PropertyId + '&requery=' + requery + '&checkPriceline='+policy.POLICY_HOTELPRICELINEENABLED;
 		return $http.get( url )
 			.then( function( response ){
 				var rooms = [];

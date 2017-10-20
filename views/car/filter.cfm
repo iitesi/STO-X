@@ -166,8 +166,7 @@
 </div>
 <div id="filterbar">
 	<div class="filter respFilter">
-		<cfoutput>
-			<form method="post" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
+		<cfoutput> 
 				<div class="navbar navbar-default">
 					<div class="container-fluid">
 						<div class="navbar-header">
@@ -194,8 +193,7 @@
 
 						</div>
 					</div>
-				</div>
-			</form>
+				</div> 
 		</cfoutput>
 
 		<div class="well filterselection">
@@ -247,7 +245,7 @@
 				</div>
 
 
-
+			<form method="post" id="locationFilter" action="#buildURL('car.availability?searchID=#rc.searchID#')#">
 				<div class="form-horizontal" id="locations">
 					<div class="form-group">
 						<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
@@ -304,6 +302,7 @@
 								</cfif>
 
 				</div>
+			</form>
 			</cfoutput>
 			<span class="pull-right">
 				<button type="button" class="closewell close" title="Close filters"><i class="fa fa-times"></i></button>

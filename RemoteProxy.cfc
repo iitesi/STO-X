@@ -170,33 +170,34 @@
 
 <cffunction name="getHotelSearchResults" returntype="any" access="remote" output="false" returnformat="json" hint="">
 	<cfargument name="searchId" type="numeric" required="true"/>
-    <cfargument name="propertyId" type="string" required="false" default="" />
+ 	<cfargument name="propertyId" type="string" required="false" default="" />
 	<cfargument name="requery" type="boolean" required="false" default="false" />
-    <cfargument name="finditRequest" type="boolean" required="false" default="false" />
-	<cfargument name="checkPriceline" type="boolean" required="false" default="false" />
+  	<cfargument name="finditRequest" type="boolean" required="false" default="false" />
     <cfreturn getBean( "HotelService" ).search( argumentCollection=arguments ) />
 </cffunction>
 
 <cffunction name="getAvailableHotelRooms" returntype="any" access="remote" returnformat="plain" output="false" hint="">
-
 	<cfargument name="searchId" type="numeric" required="true"/>
-    <cfargument name="propertyId" type="string" required="true"/>
-    <cfargument name="callback" type="string" required="false"/>
-    <cfargument name="requery" type="boolean" required="false" default="false"/>
-	<cfargument name="checkPriceline" type="boolean" required="false" default="true"/>
+  	<cfargument name="propertyId" type="string" required="true"/>
+  	<cfargument name="callback" type="string" required="false"/>
+	<cfargument name="checkPriceline" type="string" required="false" default="">
+ 	<cfargument name="requery" type="boolean" required="false" default="false"/>
 	<cfargument name="forceUpdate" type="boolean" required="false" default="true" />
-	<!--- Temporarily disabling priceline rates site wide (STM-7845) --->
-	<cfset arguments.checkPriceline = 0>
-	<cfset var rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
+
+	<cfif NOT isNumeric(arguments.checkPriceline)>
+		<cfset arguments.checkPriceline = 0/>
+	</cfif>
+
+	<cfset local.rooms = getBean("HotelService").getAvailableRooms(argumentCollection=arguments)/>
 
 	<cfif structKeyExists(arguments,"callback") AND arguments.callback NEQ "">
 		<cfcontent type="application/javascript"/>
 		<cfsavecontent variable="local.callbackFunction">
-			<cfoutput>#arguments.callback#(#serializeJSON(rooms)#)</cfoutput>
+			<cfoutput>#arguments.callback#(#serializeJSON(local.rooms)#)</cfoutput>
 		</cfsavecontent>
 		<cfreturn callbackFunction/>
 	<cfelse>
-		<cfreturn serializeJSON(rooms)/>
+		<cfreturn serializeJSON(local.rooms)/>
 	</cfif>
 
 </cffunction>
@@ -226,11 +227,11 @@
 <cffunction name="getRoomRateRules" returntype="any" access="remote" returnformat="plain" output="false" hint="">
 
 	<cfargument name="searchId" type="numeric" required="true"/>
-    <cfargument name="propertyId" type="string" required="true" />
-    <cfargument name="ratePlanType" type="string" required="true" />
-    <cfargument name="ppnBundle" type="string" required="true" />
+  <cfargument name="propertyId" type="string" required="true" />
+  <cfargument name="ratePlanType" type="string" required="true" />
+  <cfargument name="ppnBundle" type="string" required="true" />
 	<cfargument name="callback" type="string" required="false" />
-    <cfargument name="isRemote" type="boolean" required="false" default="true" />
+  <cfargument name="isRemote" type="boolean" required="false" default="true" />
 
 	<cfset var result = new com.shortstravel.RemoteResponse() />
 	<cfset result.setData(getBean( "HotelService" ).getRoomRateRules( argumentCollection=arguments )) />
