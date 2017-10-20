@@ -313,7 +313,7 @@
 							</cfif>
 							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
-						 	<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
+					<cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
 																										, Profile = Profile
@@ -330,7 +330,7 @@
 																										, airFOPID = local.airFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
-																									 )>  
+																									 )>   
 
 							<!--- Passing off Air.total value into local scope before resetting it in case there is an
 							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 ---> 
@@ -526,7 +526,20 @@
 																										, hostToken = hostToken
 																										, pnr = Air.ProviderLocatorCode
 																										, searchID = rc.searchID )>
-
+ 
+								<cfif FindNoCase('session',local.displayPNRResponse.Message[4])>
+									<!--- Close terminal session --->
+									<cfset fw.getBeanFactory().getBean('TerminalEntry').closeSession( targetBranch = rc.Account.sBranch
+																									, hostToken = hostToken
+																									, searchID = rc.searchID )>
+									<!--- Open terminal session --->
+									<cfset local.hostToken = fw.getBeanFactory().getBean('TerminalEntry').openSession( targetBranch = rc.Account.sBranch
+																								, searchID = rc.searchID )>
+									<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
+																										, hostToken = hostToken
+																										, pnr = Air.ProviderLocatorCode
+																										, searchID = rc.searchID)>
+								</cfif>
 								<cfif NOT displayPNRResponse.error>
 									<!--- STM-3845: Check the status of all segments before .IHK --->
 									<!--- Check segment statuses --->
@@ -577,7 +590,7 @@
 										<cfset local.displayPNRResponse = fw.getBeanFactory().getBean('TerminalEntry').displayPNR( targetBranch = rc.Account.sBranch
 																						, hostToken = hostToken
 																						, pnr = Air.ProviderLocatorCode
-																						, searchID = rc.searchID )>
+																						, searchID = rc.searchID)>
 										<cfif NOT displayPNRResponse.error>
 											<cfset local.checkSegmentStatusResponse = fw.getBeanFactory().getBean('TerminalEntry').checkSegmentStatus( targetBranch = rc.Account.sBranch
 																												, hostToken = hostToken
