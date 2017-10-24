@@ -10,3 +10,23 @@
 		</div> <!-- /.col -->
 	</div> <!-- /.row -->
 </cfoutput>
+
+<script type="text/javascript"> 
+	$( document ).ready(function() {
+ 		$("#purchaseForm").submit(function () {
+ 			var emailList = $('#ccEmails').val(); 
+ 			var commaLength = emailList.split(',').length; 
+ 			var emailCount = []; 
+ 			for (i=0; i < commaLength; i++){ 
+ 				emailList = emailList.replace(",",";");
+ 			 }    
+ 			if (emailList.indexOf(';') !== -1) {
+ 			 	emailCount = emailList.split(';').length;
+ 			 }  
+ 			if (emailCount > 12) {
+ 				alert('Please limit the CC list to 12 email addresses.');
+ 			}
+ 		return false;
+ 		 });
+ 	});
+</script>
