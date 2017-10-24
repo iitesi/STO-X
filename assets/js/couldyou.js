@@ -98,19 +98,19 @@ shortstravel.couldyou = {
 
 		if( requestedDate.departureDate.getTime() == shortstravel.couldyou.dates.originalDepart.getTime() ){
 			requestedDate.air = {};
-			if( typeof shortstravel.itinerary.AIR == 'object' ){
-				requestedDate.air[ "1" ] = shortstravel.itinerary.AIR;
+			if( typeof shortstravel.itinerary.Air == 'object' ){
+				requestedDate.air[ "1" ] = shortstravel.itinerary.Air;
 			} else {
 				requestedDate.air[ "1" ] = "";
 			}
-			if( typeof shortstravel.itinerary.HOTEL == 'object' ){
-				requestedDate.hotel = shortstravel.itinerary.HOTEL;
+			if( typeof shortstravel.itinerary.Hotel == 'object' ){
+				requestedDate.hotel = shortstravel.itinerary.Hotel;
 			} else {
 				requestedDate.hotel = "";
 			}
 
-			if( typeof shortstravel.itinerary.VEHICLE == 'object' ){
-				requestedDate.vehicle = shortstravel.itinerary.VEHICLE;
+			if( typeof shortstravel.itinerary.Vehicle == 'object' ){
+				requestedDate.vehicle = shortstravel.itinerary.Vehicle;
 			} else {
 				requestedDate.vehicle = "";
 			}
@@ -124,21 +124,22 @@ shortstravel.couldyou = {
 				url: '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate.departureDate,
 				dataType: 'json',
 				success: function( data ){
-					requestedDate.air = data.AIR;
-					requestedDate.hotel = data.HOTEL;
-					requestedDate.vehicle = data.CAR;
+
+					requestedDate.air = data.Air;
+					requestedDate.hotel = data.Hotel;
+					requestedDate.vehicle = data.Car;
 					requestedDate.dataLoaded = true;
 					requestedDate.total = shortstravel.couldyou.calculateDailyTotal( requestedDate );
 
-					pushFlight = false;
+					var pushFlight = false;
 					if (requestedDate.air == "" || (requestedDate.air != undefined && requestedDate.air["FAULTMESSAGE"] != undefined)) {
 						pushFlight = true;
 					}
-					pushHotel = false;
+					var pushHotel = false;
 					if (requestedDate.hotel == "") {
 						pushHotel = true;
 					}
-					pushVehicle = false;
+					var pushVehicle = false;
 					if (requestedDate.vehicle == "") {
 						pushVehicle = true;
 					}
@@ -197,11 +198,11 @@ shortstravel.couldyou = {
 	calculateDailyTotal: function( selectedDate ){
 
 		var total = 0;
-
 		//Get air total
 		if( shortstravel.search.air == 1 && selectedDate.air != "" ){
 			for( tripId in selectedDate.air ){
-				var airTotal = selectedDate.air[ tripId ].TOTAL;
+				var airTotal = selectedDate.air[ tripId ].Total;
+				console.log(airTotal);
 				if( typeof airTotal != 'number' ){
 					airTotal = parseFloat( airTotal );
 				}
@@ -210,8 +211,7 @@ shortstravel.couldyou = {
 		}
 
 		//Get hotel total
-
-		if( shortstravel.search.hotel == 1 && selectedDate.hotel && selectedDate.hotel != "" && selectedDate.hotel.Rooms && selectedDate.hotel.Rooms.length ){
+		if( shortstravel.search.hotel == 1 && selectedDate.hotel != "" && selectedDate.hotel.Rooms.length ){
 			var hotelTotal = 0;
 			if( selectedDate.hotel.Rooms[ 0 ].totalForStay != 0 ){
 				hotelTotal = selectedDate.hotel.Rooms[ 0 ].totalForStay;
@@ -222,7 +222,6 @@ shortstravel.couldyou = {
 			}
 			total = total + hotelTotal;
 		}
-
 
 		//Get vehicle total
 		if( shortstravel.search.car == 1 && selectedDate.vehicle != "" ){
@@ -240,30 +239,22 @@ shortstravel.couldyou = {
 	calculateMaxSavingDates: function(){
 		var maxSavings = 0;
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
-			if(shortstravel.couldyou.data[i]){
-				var selectedDate = shortstravel.couldyou.data[i];
-				if(selectedDate.message){
-					if( selectedDate.message.indexOf( 'not available' ) == -1 ){
-						var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
-						if( dailySavings > maxSavings ){
-							maxSavings = dailySavings;
-						}
-					}
-				}
+			var selectedDate = shortstravel.couldyou.data[i];
+
+				var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
+				if( dailySavings > maxSavings ){
+					maxSavings = dailySavings;
+
 			}
 		}
 
 		if( maxSavings > 0 ){
 			for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
-				if(shortstravel.couldyou.data[i]){
-					var selectedDate = shortstravel.couldyou.data[i];
-					if(selectedDate.message){
-						if( selectedDate.message.indexOf( 'not available' ) == -1 ){
-							var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
-							if( dailySavings == maxSavings ){
-								selectedDate.maxSavings = true;
-							}
-						}
+				var selectedDate = shortstravel.couldyou.data[i];
+				if( selectedDate.message.indexOf( 'not available' ) == -1 ){
+					var dailySavings = ( Math.round( shortstravel.itinerary.total ) ) - ( Math.round( selectedDate.total ) );
+					if( dailySavings == maxSavings ){
+						selectedDate.maxSavings = true;
 					}
 				}
 			}
@@ -274,8 +265,7 @@ shortstravel.couldyou = {
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
 			var selectedDate = shortstravel.couldyou.data[i];
 			var dateCell = $('td[data-date="' + dateFormat( selectedDate.departureDate, "yyyy-mm-dd" ) + '"]' );
-			if(!selectedDate.message)
-				selectedDate.message = 'not available';
+
 
 			if( ( shortstravel.search.air == 1 && selectedDate.air == "" ) ||
 				( shortstravel.search.hotel == 1 && selectedDate.hotel == "" ) ||
@@ -464,9 +454,9 @@ shortstravel.couldyou = {
 				var airBaseRate = 0;
 
 				for( var tripId in selectedDate.air ){
-					airBaseRate += parseFloat( selectedDate.air[tripId].BASE );
-					airTaxes += parseFloat( selectedDate.air[tripId].TAXES );
-					airTotal += parseFloat( selectedDate.air[tripId].TOTAL );
+					airBaseRate += parseFloat( selectedDate.air[tripId].Base );
+					airTaxes += parseFloat( selectedDate.air[tripId].Taxes );
+					airTotal += parseFloat( selectedDate.air[tripId].Total );
 				}
 
 				$('#airBaseRate' ).html( shortstravel.couldyou.formatCurrency( airBaseRate, 2 ) );
@@ -494,10 +484,10 @@ shortstravel.couldyou = {
 					$('#hotelTaxes' ).html( 'Quoted at checkin' );
 				}
 
-				if( selectedDate.hotel.Rooms[0].ratePlanType != shortstravel.itinerary.HOTEL.Rooms[0].ratePlanType ){
+				if( selectedDate.hotel.Rooms[0].ratePlanType != shortstravel.itinerary.Hotel.Rooms[0].ratePlanType ){
 					$( '#alert-text' ).html(
 						'<b>WARNING!</b> The room type for this date is different than your original.<br>Original: '
-						+ shortstravel.itinerary.HOTEL.Rooms[0].description.toUpperCase()
+						+ shortstravel.itinerary.Hotel.Rooms[0].description.toUpperCase()
 						+ '<br>Selected: '
 						+ selectedDate.hotel.Rooms[0].description.toUpperCase()
 					);
@@ -534,26 +524,27 @@ shortstravel.couldyou = {
 				roundedCost = roundedCost.toFixed( places );
 			}
 
-			if( typeof shortstravel.itinerary.AIR == 'object' ){
+			if( typeof shortstravel.itinerary.Air == 'object' ){
 				return '$ ' + roundedCost;
 			}
 			else {
-				if( typeof shortstravel.itinerary.HOTEL != 'undefined' ){
-					if( shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.HOTEL.Rooms[0].dailyRateCurrency == 'USD' ){
+				if( typeof shortstravel.itinerary.Hotel != 'undefined' ){
+					if( shortstravel.itinerary.Hotel.Rooms[0].totalForStayCurrency == 'USD' || shortstravel.itinerary.Hotel.Rooms[0].dailyRateCurrency == 'USD' ){
 						return '$ ' + roundedCost;
 					} else {
-						return roundedCost + shortstravel.itinerary.HOTEL.Rooms[0].totalForStayCurrency;
+						return roundedCost + shortstravel.itinerary.Hotel.Rooms[0].totalForStayCurrency;
 					}
 				}
-				if( typeof shortstravel.itinerary.VEHICLE != 'undefined' ){
-					if( shortstravel.itinerary.VEHICLE.currency == 'USD' ){
+				if( typeof shortstravel.itinerary.Vehicle != 'undefined' ){
+					if( shortstravel.itinerary.Vehicle.currency == 'USD' ){
 						return '$ ' + roundedCost;
 					} else {
-						return roundedCost + shortstravel.itinerary.VEHICLE.currency;
+						return roundedCost + shortstravel.itinerary.Vehicle.currency;
 					}
 				}
 			}
 		}
+		return '-';
 	},
 
 	continueToPurchase: function(){
