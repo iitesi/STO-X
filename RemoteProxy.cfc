@@ -280,15 +280,15 @@
 
 	<cfset var cy = structNew() />
 	<cfset var cy.requestedDate = "#dateFormat( arguments.requestedDate, 'mm-dd-yyyy' )#" />
-	<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) />
-	<cfset var Filter = getBean("Setup").setFilter(searchID = arguments.searchId, requery = true) />
+	<cfset var Search = getBean( "SearchService" ).load( arguments.searchId ) /> 
 	<cfset cy.searchId = arguments.searchId />
 	<cfset cy.searchStarted = now() />
 
 	<cfif Search.getAir()>
 		<cftry>
-			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
 			<cfcatch type="any">
+					<cfset session.searches[ arguments.SearchID ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = cfcatch.message />
 				<cfset cy.Air = "" />
 			</cfcatch>
 		</cftry>
@@ -296,7 +296,7 @@
 
 	<cfif Search.getHotel()>
 		<cftry>
-			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfset cy.Hotel = getBean( 'HotelService' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
 			<cfcatch type="any">
 				<cfset cy.Hotel = "" />
 			</cfcatch>
@@ -304,7 +304,7 @@
 	</cfif>
 	<cfif Search.getCar()>
 		<cftry>
-			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Filter, arguments.requestedDate, arguments.requery ) />
+			<cfset cy.Car = getBean( 'Car' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
 			<cfcatch type="any">
 				<cfset cy.Car = "" />
 			</cfcatch>
