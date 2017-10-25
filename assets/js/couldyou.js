@@ -388,7 +388,11 @@ shortstravel.couldyou = {
 				} else {
 					row += '>'
 				}
-				row += '<td>' + selectedDate.message +'</td>';
+				if(typeof selectedDate != 'undefined' & typeof selectedDate.message != 'undefined' && selectedDate.message != '')
+					row += '<td>' + selectedDate.message +'</td>';
+				else
+					row += '<td>not available</td>';
+					
 				row += '<td>';
 				if( selectedDate.message != 'Itinerary not available'){
 					row += shortstravel.couldyou.formatCurrency( Math.abs( Math.round( shortstravel.itinerary.total - selectedDate.total ) ) );
@@ -429,16 +433,18 @@ shortstravel.couldyou = {
 
 	changeDate: function( newDate ){
 
+		var foundTrip = false;
+
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
 			if( shortstravel.couldyou.data[i].departureDate.getTime() == newDate.getTime() && shortstravel.couldyou.data[i].message != ''){
-				console.log(shortstravel.couldyou.data[i])
 				var selectedDate = shortstravel.couldyou.data[i];
+				foundTrip = true;
 				break;
 			}
 		}
 
 		if( !( newDate.getTime() < shortstravel.couldyou.dates.preStart.getTime()  || newDate.getTime() > shortstravel.couldyou.dates.postEnd.getTime() )
-			&& shortstravel.couldyou.data[i].message != '' )
+			&& foundTrip && shortstravel.couldyou.data[i].message != '' )
 		{
 
 
