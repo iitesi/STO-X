@@ -430,14 +430,15 @@ shortstravel.couldyou = {
 	changeDate: function( newDate ){
 
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
-			if( shortstravel.couldyou.data[i].departureDate.getTime() == newDate.getTime() ){
+			if( shortstravel.couldyou.data[i].departureDate.getTime() == newDate.getTime() && shortstravel.couldyou.data[i].message != ''){
+				console.log(shortstravel.couldyou.data[i])
 				var selectedDate = shortstravel.couldyou.data[i];
 				break;
 			}
 		}
 
 		if( !( newDate.getTime() < shortstravel.couldyou.dates.preStart.getTime()  || newDate.getTime() > shortstravel.couldyou.dates.postEnd.getTime() )
-			&& selectedDate.message.indexOf( 'not available' ) == -1 )
+			&& shortstravel.couldyou.data[i].message != '' )
 		{
 
 
@@ -516,7 +517,7 @@ shortstravel.couldyou = {
 			places = 0;
 		}
 		if (isNaN(cost)) {
-			return '-';
+			return '';
 		}
 		else {
 			var roundedCost = ( Math.round( cost * (Math.pow(10,places)) ) / (Math.pow(10,places)) );
@@ -544,7 +545,6 @@ shortstravel.couldyou = {
 				}
 			}
 		}
-		return '-';
 	},
 
 	continueToPurchase: function(){
