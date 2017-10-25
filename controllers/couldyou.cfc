@@ -2,6 +2,9 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
+		<cfset session.searches[ rc.searchID ].couldYou = structNew() />
+
+		<cfset session.searches[ rc.searchID ].couldYou.air = structNew() />
 
 		<cfset rc.itinerary = session.searches[rc.searchID].stItinerary>
 
