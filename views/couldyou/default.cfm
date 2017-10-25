@@ -6,32 +6,32 @@
 		<script src="/booking/assets/js/fullcalendar.min.js"></script>
 		<script src="/booking/assets/js/purl.js"></script>
 		<script src="/booking/assets/js/date.format.js"></script>
-		<script src="/booking/assets/js/couldyou.js?v=20171024"></script>
+		<script src="/booking/assets/js/couldyou.js?v=20171025"></script>
 		<script type="text/javascript">
 			<cfoutput>shortstravel.search = #serializeJSON( rc.Filter )#;</cfoutput>
 			<cfoutput>shortstravel.itinerary = #serializeJSON( session.searches[ rc.searchID ].stItinerary )#;</cfoutput>
 			shortstravel.itinerary.total = 0;
-			if( typeof shortstravel.itinerary.AIR != 'undefined' ){
-				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.AIR.TOTAL );
+			if( typeof shortstravel.itinerary.Air != 'undefined' ){
+				shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.Air.Total );
 			}
-			if( typeof shortstravel.itinerary.HOTEL != "undefined" ){
-				if (shortstravel.itinerary.HOTEL.Rooms[0].totalForStay != 0) {
-					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].totalForStay );
+			if( typeof shortstravel.itinerary.Hotel != "undefined" ){
+				if (shortstravel.itinerary.Hotel.Rooms[0].totalForStay != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.Hotel.Rooms[0].totalForStay );
 				}
-				else if (shortstravel.itinerary.HOTEL.Rooms[0].baseRate != 0) {
-					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].baseRate );
+				else if (shortstravel.itinerary.Hotel.Rooms[0].baseRate != 0) {
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.Hotel.Rooms[0].baseRate );
 				}
 				else {
 					checkInDate = new Date(shortstravel.search.checkInDate);
 					checkOutDate = new Date(shortstravel.search.checkOutDate);
 					dateDiff = (checkOutDate.getTime() - checkInDate.getTime());
 					numNights = (dateDiff / (1000*60*60*24));
-					hotelTotal = parseFloat( shortstravel.itinerary.HOTEL.Rooms[0].dailyRate ) * numNights;
+					hotelTotal = parseFloat( shortstravel.itinerary.Hotel.Rooms[0].dailyRate ) * numNights;
 					shortstravel.itinerary.total += hotelTotal;
 				}
 			}
-			if( typeof shortstravel.itinerary.VEHICLE != "undefined" ){
-					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.VEHICLE.estimatedTotalAmount );
+			if( typeof shortstravel.itinerary.Vehicle != "undefined" ){
+					shortstravel.itinerary.total += parseFloat( shortstravel.itinerary.Vehicle.estimatedTotalAmount );
 			}
 			shortstravel.itinerary.total = Math.round( shortstravel.itinerary.total );
 		</script>
