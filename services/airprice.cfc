@@ -336,14 +336,6 @@
 			<cfset flight = "" />
 		</cfif>
 
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ], "couldYou" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou = structNew() />
-		</cfif>
-
-		<cfif NOT structKeyExists( session.searches[ arguments.Search.getSearchID() ].couldYou, "air" ) >
-			<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air = structNew() />
-		</cfif>
-
 		<cfset session.searches[ arguments.Search.getSearchID() ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = flight />
 
 		<cfreturn flight />
