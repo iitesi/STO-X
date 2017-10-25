@@ -288,7 +288,6 @@
 		<cftry>
 			<cfset cy.Air = getBean( 'AirPrice' ).doCouldYouSearch( Search, arguments.requestedDate, arguments.requery ) />
 			<cfcatch type="any">
-					<cfset session.searches[ arguments.SearchID ].couldYou.air[ dateFormat( arguments.requestedDate, 'mm-dd-yyyy' ) ] = cfcatch.message />
 				<cfset cy.Air = "" />
 			</cfcatch>
 		</cftry>
