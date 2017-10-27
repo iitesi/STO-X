@@ -22,9 +22,9 @@
 		<script src="assets/js/angular.min.js"></script>
 		<script src="assets/js/angular-resource.min.js"></script>
 		<script src="assets/js/purl.js"></script>
-		<script src="assets/js/hotel/services.js?v=20170428"></script>
-		<script src="assets/js/hotel/controllers.js?v=20170428"></script>
-		<script src="assets/js/hotel/app.js?v=20170428"></script>
+		<script src="assets/js/hotel/services.js?v=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
+		<script src="assets/js/hotel/controllers.js?v=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
+		<script src="assets/js/hotel/app.js?v=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 		<script type="text/javascript">
 			shortstravel = {};
 			<cfoutput>shortstravel.shortsAPIURL = '#rc.shortsAPIURL#';</cfoutput>
