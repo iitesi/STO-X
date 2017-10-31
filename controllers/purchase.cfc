@@ -851,7 +851,7 @@
 					<cfif FindNoCase('C278',local.vehicleResponse)> 
 						<cfset VehicleClass=Vehicle.getVehicleClass() & Vehicle.getCategory() />
 						<cfset vendorCode = Vehicle.getvendorCode()> 
-						<cfset structDelete(session.searches[rc.SearchID].stCars[#VehicleClass#], vendorCode)> 
+						<cfset structDelete(session.searches[rc.SearchID].stCars[VehicleClass], vendorCode)> 
 						<cfset variables.fw.redirect('car.availability?searchID=#rc.searchID#&carAvailabilityError=1')> 
 					</cfif>
 					<cfset Vehicle.setProviderLocatorCode('')>
