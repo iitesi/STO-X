@@ -22,8 +22,10 @@ OR NOT rc.Filter.getAir()>
 	</cfif>
 	<cfif ( rc.acctID EQ 469 )>
 		<div class="alert alert-info"><b>IMPORTANT:</b> If requesting an <b>Enterprise car delivery</b> prior to 9:00am local time, please contact the Enterprise location with your confirmation number and request a <b>"Quick Start"</b> delivery, the Enterprise location will deliver the car to the Grange location the evening prior and leave the keys with Security.</div>
-	</cfif>
-
+	</cfif> 
+	<cfif structKeyExists(rc, "carAvailabilityError")>
+		<div class="alert alert-info"><b>IMPORTANT:</b> The car you chose is no longer available</div>
+	</cfif> 
 	<div>
 		<cfoutput>
 			#view('car/search')#
@@ -67,7 +69,7 @@ OR NOT rc.Filter.getAir()>
 
 					</th>
 				</cfloop>
-			</thead>
+			</thead> 
 			<tbody>
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
