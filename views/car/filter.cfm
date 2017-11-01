@@ -72,7 +72,7 @@
 					|| ((($("#fltrCarCategorySelectAll").val() == 'false') && ($( "#fltrCategory" + car[1] ).is(':checked') == true))
 						&& (($("#fltrVendorSelectAll").val() == 'true')
 							|| ($("#fltrVendorSelectAll").val() == 'false') && ($( "#fltrVendor" + car[2] ).is(':checked') == true))))
-					&& inpolicy) {
+					) {
 					$( "#" + car[0] ).removeClass('hidden');//.css('display','table-cell');
 					nCount++;
 				}

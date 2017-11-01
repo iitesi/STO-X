@@ -845,6 +845,15 @@
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, specialCarReservation = specialCarReservation
 																									)>
+					<!---
+					<cfset local.vehicleResponse = '<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/"><SOAP:Body><SOAP:Fault><faultcode>Server.Application</faultcode><faultstring>C278 MESSAGE FROM LINK VENDOR: NO VALID PRODUCTS *</faultstring><detail><common_v33_0:ErrorInfo xmlns:common_v33_0="http://www.travelport.com/schema/common_v33_0"><common_v33_0:Code>3100</common_v33_0:Code><common_v33_0:Service>SYSTEM</common_v33_0:Service><common_v33_0:Type>Application</common_v33_0:Type><common_v33_0:Description>General Failure:(Unmapped error): C278</common_v33_0:Description><common_v33_0:TransactionId>6E4260B30A07406C1D1A90893C651D39</common_v33_0:TransactionId></common_v33_0:ErrorInfo></detail></SOAP:Fault></SOAP:Body></SOAP:Envelope>'> --->
+
+					<cfif FindNoCase('C278',local.vehicleResponse)> 
+						<cfset VehicleClass=Vehicle.getVehicleClass() & Vehicle.getCategory() />
+						<cfset vendorCode = Vehicle.getvendorCode()> 
+						<cfset structDelete(session.searches[rc.SearchID].stCars[VehicleClass], vendorCode)> 
+						<cfset variables.fw.redirect('car.availability?searchID=#rc.searchID#&carAvailabilityError=1')> 
+					</cfif>
 					<cfset Vehicle.setProviderLocatorCode('')>
 					<cfset Vehicle.setUniversalLocatorCode('')>
 					<!--- Parse the vehicle --->
