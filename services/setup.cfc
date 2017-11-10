@@ -297,6 +297,8 @@
 				, ConfirmationMessage_Required
 				, QueueToCompleat
 				, CompleatUse
+				, searchModeDefault
+				, carInPolicyDefault
 				, (SELECT SecurityCode
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS SecurityCode

@@ -131,7 +131,13 @@
 
 			return nCount;
 		}
-		</script>
+		</script> 
+		<!--- Set the CARINPOLICYDEFAULT javascript variable before calling filter.js which uses this variable --->
+		<cfoutput> 
+			<script type="text/javascript">
+        		var carInPolicyDefault = '#rc.account.carInPolicyDefault#';
+    		</script>
+    	</cfoutput>
 		<script type='text/javascript' src='assets/js/car/filter.js'></script>
 		<link rel='stylesheet' type='text/css' href='assets/css/datepicker.css' />
 		<link rel='stylesheet' type='text/css' href='assets/css/select2.css' />
