@@ -1,12 +1,14 @@
 $(document).ready(function() {
 	// Get the total number of records before any filtering and set the numTotal value
-	var numTotal = filterCar();
+	var numTotal = filterCar();  
 	$("#numTotal").text(numTotal);
 	$("#numFiltered").text(numTotal);
 
 	// Make In Policy an active state by default when page loads
-	$("#btnPolicy").parent().addClass('active');
-
+	// If Account is configured as carInPolicyDefault = 1
+	if (carInPolicyDefault == 1) {
+		$("#btnPolicy").parent().addClass('active');
+	}
 	// Get the total number of filtered records and set the numFiltered value
 	var numFiltered = filterCar();
 	$("#numFiltered").text(numFiltered);
