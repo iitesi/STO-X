@@ -99,7 +99,7 @@
 									Changes USD #stTrip.changePenalty# for reissue
 								</cfif>
 							" href="##"/>
-							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#
+							#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#<cfif stTrip.changePenalty GT 0>*</cfif>
 						</span>
 						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
 							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" href="##" />UNUSED TKT AVAIL</span>
