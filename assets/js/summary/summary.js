@@ -88,6 +88,7 @@ $(document).ready(function(){
 						, userID : $( "#userID" ).val()
 						, valueID : valueID
 						, arrangerID : arrangerID
+						, vendor : $( "#vendor" ).val()
 					},
 			dataType: 'json',
 			success:function(traveler) {
