@@ -107,6 +107,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="Summary" class="booking.services.summary">
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
 		<constructor-arg name="corporateProductionDSN"><bean factory-bean="EnvironmentService" factory-method="getCorporateProductionDSN" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="confirmation" class="booking.services.confirmation" />

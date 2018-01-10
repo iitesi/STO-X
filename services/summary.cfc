@@ -2,13 +2,16 @@
 
 	<cfproperty name="BookingDSN" />
 	<cfproperty name="CorporateProductionDSN" />
+	<cfproperty name="KrakenService">
 
 	<cffunction name="init" returntype="any" access="public" output="false">
 		<cfargument name="BookingDSN" type="any" required="true"/>
 		<cfargument name="CorporateProductionDSN" type="any" required="true"/>
+		<cfargument name="KrakenService">
 
 		<cfset setBookingDSN( arguments.BookingDSN ) />
 		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
+		<cfset setKrakenService(arguments.KrakenService)>
 
 		<cfreturn this />
 	</cffunction>
@@ -1093,5 +1096,27 @@
 
 		<cfreturn session.searches[newFormData.searchID].travelers[newFormData.travelerNumber] />
 	</cffunction>
-
+	<cffunction name="getDuplicatePNRs" access="public"> 
+		<cfargument name="Acct_ID" required="true">
+		<cfargument name="LastName" required="true">
+		<cfargument name="FirstName" required="true">
+		<cfargument name="MiddleName" required="true">
+		<cfargument name="Carrier" required="true">
+		<cfargument name="Flight" required="true">
+		<cfargument name="DepTime" required="true">
+		<cfargument name="DepCity" required="true">
+		<cfargument name="ArvTime" required="true">
+		<cfargument name="ArvCity" required="true">  
+		<cfset local.duplicatePNRQuery = getKrakenService().getDuplicatePNRs(Acct_ID = arguments.Acct_ID
+																		,LastName = arguments.LastName
+																		,FirstName = arguments.FirstName
+																		,MiddleName = arguments.MiddleName
+																		,Carrier = arguments.Carrier
+																		,Flight = arguments.Flight
+																		,DepTime = arguments.DepTime
+																		,DepCity = arguments.DepCity
+																		,ArvTime = arguments.ArvTime
+																		,ArvCity = arguments.ArvCity)>
+		<cfreturn local.duplicatePNRQuery>
+	</cffunction>
 </cfcomponent>
