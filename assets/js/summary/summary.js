@@ -85,8 +85,7 @@ $(document).ready(function(){
 			url: 'RemoteProxy.cfc?method=loadFullUser',
 			data: 	{
 						  acctID : acctID
-						, userID : $( "#userID" ).val()
-						, valueID : valueID
+						, userID : $( "#userID" ).val() 
 						, arrangerID : arrangerID
 						, vendor : $( "#vendor" ).val()
 					},
