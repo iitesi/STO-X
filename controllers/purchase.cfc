@@ -12,7 +12,7 @@
 			<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
 			<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')> 
 			<cfif isStruct(local.Air) AND structKeyExists(local.Air, 'Groups')>
-				<!--- Check each segment for existing PNRs for traveler with same itinerary ---> 
+				<!--- Check each segment for existing PNRs for traveler with same itinerary --->  
 				<cfloop collection="#Air.Groups#" item="group" index="groupIndex">
 					<cfloop collection="#group.segments#" item="segment">  
 							<cfset var dupPNR = fw.getBeanFactory().getBean('Summary').getDuplicatePNRs(
@@ -27,7 +27,7 @@
 																		,ArvTime = group.segments[segment].ArrivalTime
 																		,ArvCity = group.segments[segment].Destination)>
 							<cfif dupPNR.recordcount gt 0>
-							<cfset local.segmentMessages = local.segmentMessages & '<div>You already a have reservation booked for #Traveler.getFirstName()# #Traveler.getMiddleName()# #Traveler.getLastName()# on <strong>#group.segments[segment].Carrier# #group.segments[segment].FlightNumber# on #DateFormat(group.segments[segment].DepartureTime,'MMM/DD/YYYY')# at #TimeFormat(group.segments[segment].DepartureTime,'hh:mm tt')#</strong>.</div>'>
+							<cfset local.segmentMessages = local.segmentMessages & '<div>You already a have reservation booked for #Traveler.getFirstName()# #Traveler.getMiddleName()# #Traveler.getLastName()# on <strong>#group.segments[segment].Carrier# #group.segments[segment].FlightNumber# on #DateFormat(group.segments[segment].DepartureTime,'MMM/DD/YYYY')# at #TimeFormat(group.segments[segment].DepartureTime,'hh:mm tt')#</strong>.</div><p>Please choose another flight or contact your travel agent.</p>'>
 							</cfif>	 			
 					</cfloop>
 				</cfloop> 
