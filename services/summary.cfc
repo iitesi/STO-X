@@ -1107,7 +1107,7 @@
 		<cfargument name="DepCity" required="true">
 		<cfargument name="ArvTime" required="true">
 		<cfargument name="ArvCity" required="true">  
-		<cfset duplicatePNRQuery = getKrakenService().getDuplicatePNRs(Acct_ID = arguments.Acct_ID
+		<cfset var duplicatePNRQuery = getKrakenService().getDuplicatePNRs(Acct_ID = arguments.Acct_ID
 																		,LastName = arguments.LastName
 																		,FirstName = arguments.FirstName
 																		,MiddleName = arguments.MiddleName
@@ -1117,6 +1117,6 @@
 																		,DepCity = arguments.DepCity
 																		,ArvTime = arguments.ArvTime
 																		,ArvCity = arguments.ArvCity)>
-		<cfreturn duplicatePNRQuery>
+		<cfreturn local.duplicatePNRQuery>
 	</cffunction>
 </cfcomponent>
