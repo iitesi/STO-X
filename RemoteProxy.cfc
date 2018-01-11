@@ -28,15 +28,13 @@
 
 <cffunction name="loadFullUser" returntype="any" access="remote" output="false" hint="" returnformat="json">
 	<cfargument name="userID" type="numeric" required="true"/>
-	<cfargument name="acctID" type="numeric" required="true"/>
-    <cfargument name="valueID" type="numeric" required="true"/>
+	<cfargument name="acctID" type="numeric" required="true"/> 
     <cfargument name="arrangerID" type="numeric" required="true"/>
     <cfargument name="vendor" type="string" required="false" default=""/>
 
 	<cftry>
 		<cfset local.Traveler = getBean( "UserService" ).loadFullUser( userID = arguments.userId
-																	, acctID = arguments.acctID
-																	, valueID = arguments.valueID
+																	, acctID = arguments.acctID 
 																	, arrangerID = arguments.arrangerID
 																	, vendor = arguments.vendor)>
 		<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
