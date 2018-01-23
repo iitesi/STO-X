@@ -15,6 +15,7 @@
 				<!--- Check each segment for existing PNRs for traveler with same itinerary --->  
 				<cfloop collection="#Air.Groups#" item="group" index="groupIndex">
 					<cfloop collection="#group.segments#" item="segment">  
+						<cftry>
 							<cfset var dupPNR = fw.getBeanFactory().getBean('Summary').getDuplicatePNRs(
 																		Acct_ID = rc.filter.getAcctID()
 																		,LastName = Traveler.getLastName()
@@ -28,7 +29,10 @@
 																		,ArvCity = group.segments[segment].Destination)>
 							<cfif dupPNR.recordcount gt 0>
 							<cfset local.segmentMessages = local.segmentMessages & '<div>You already a have reservation booked for #Traveler.getFirstName()# #Traveler.getMiddleName()# #Traveler.getLastName()# on <strong>#group.segments[segment].Carrier# #group.segments[segment].FlightNumber# on #DateFormat(group.segments[segment].DepartureTime,'MMM/DD/YYYY')# at #TimeFormat(group.segments[segment].DepartureTime,'hh:mm tt')#</strong>.</div><p>Please choose another flight or contact your travel agent.</p>'>
-							</cfif>	 			
+							</cfif>	
+						<cfcatch>
+						</cfcatch>
+						</cftry> 			
 					</cfloop>
 				</cfloop> 
 			</cfif>
