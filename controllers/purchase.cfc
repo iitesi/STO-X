@@ -31,6 +31,7 @@
 							<cfset local.segmentMessages = local.segmentMessages & '<div>You already a have reservation booked for #Traveler.getFirstName()# #Traveler.getMiddleName()# #Traveler.getLastName()# on <strong>#group.segments[segment].Carrier# #group.segments[segment].FlightNumber# on #DateFormat(group.segments[segment].DepartureTime,'MMM/DD/YYYY')# at #TimeFormat(group.segments[segment].DepartureTime,'hh:mm tt')#</strong>.</div><p>Please choose another flight or contact your travel agent.</p>'>
 							</cfif>	
 						<cfcatch>
+							<cflog file="service-error" text="getDuplicatePNRs falied: #CFCATCH.message#">
 						</cfcatch>
 						</cftry> 			
 					</cfloop>
