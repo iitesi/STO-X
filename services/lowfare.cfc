@@ -190,7 +190,7 @@
 				local.stTrips[local.route]["Segments"] = structNew('linked');
 
 
-				if (arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
+				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
 
 						local.refundableTrips = arraynew(1);
 						local.nonRefundableTrips = arraynew(1);
