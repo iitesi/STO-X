@@ -689,7 +689,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 				<cfset var returnList = 'JFK,JRA,JRB,LGA,NBP,NES,NWK,NWS,QNY,ZME,ZRP,ZYP'>
 			</cfcase>
 			<cfcase value="WAS">
-				<cfset var returnList = 'BOF,GBO,IAD,MTN,ZBP,ZRZ,ZWU'>
+				<cfset var returnList = 'BOF,GBO,IAD,MTN,ZBP,ZRZ,ZWU,DCA,BWI'>
 			</cfcase>
 			<cfcase value="DFW">
 				<cfset var returnList = 'ADS,AFW,DAL,DFW,FWH,JDB,RBD'>
