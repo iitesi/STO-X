@@ -264,7 +264,9 @@
 					"2G9P" = "P2768970",
 					"2G1A" = "P2596168",
 					"2GD0" = "P2812614",
-					"2H1B" = "P2860532"
+					"2H1B" = "P2860532",
+					"2H9U" = "P3161929",
+					"2I3I" = "P3156934"
 				}>
 
 
@@ -732,7 +734,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="authorizeRequest" output="false">	 
+	<cffunction name="authorizeRequest" output="false">
 		<cfif NOT findNoCase( ".cfc", cgi.script_name )>
 			<cfif NOT structKeyExists( session, "isAuthorized" ) OR session.isAuthorized NEQ TRUE>
 
@@ -766,7 +768,7 @@
 				<cfset apiURL = replace( replace( apiURL, "http://", "" ), "https://", "") />
 				<cfif structKeyExists(request.context, 'date')>
 					<cfset session.cookieDate = request.context.date>
-					<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />								
+					<cfcookie domain="#cgi.http_host#" secure="yes" name="date" value="#request.context.date#" />
 					<cfif apiURL NEQ cgi.http_host>
 						<cfcookie domain="#apiURL#" secure="yes" name="date" value="#request.context.date#" />
 					</cfif>

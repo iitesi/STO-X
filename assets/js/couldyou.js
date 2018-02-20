@@ -18,8 +18,8 @@ shortstravel.couldyou = {
 			var originalDepart = new Date( Search.carPickupDateTime );
 			var originalReturn = new Date( Search.carDropoffDateTime );
 		}
-		originalDepart.setHours( 0,0,0,0 );
-		originalReturn.setHours( 0,0,0,0 );
+		originalDepart.setHours( 12,0,0,0 );
+		originalReturn.setHours( 12,0,0,0 );
 
 		var tripLength = Math.floor( (originalReturn.getTime() - originalDepart.getTime())/(1000*60*60*24) );
 
@@ -35,27 +35,27 @@ shortstravel.couldyou = {
 
 		var preStart = new Date( dates.originalDepart );
 		preStart.setDate( preStart.getDate() - 4);
-		preStart.setHours( 0,0,0,0 );
+		preStart.setHours( 12,0,0,0 );
 		if( preStart.getTime() < new Date().getTime() ){
 			preStart = new Date();
-			preStart.setHours( 0,0,0,0 );
+			preStart.setHours( 12,0,0,0 );
 			preStart.setDate( preStart.getDate() + 1 );
 		}
 		dates.preStart = preStart;
 
 		var preEnd = new Date( dates.originalDepart );
 		preEnd.setDate( preEnd.getDate() - 1);
-		preStart.setHours( 0,0,0,0 );
+		preStart.setHours( 12,0,0,0 );
 		dates.preEnd = preEnd;
 
 		var postStart = new Date( dates.originalDepart );
 		postStart.setDate( postStart.getDate() + 1);
-		postStart.setHours( 0,0,0,0 );
+		postStart.setHours( 12,0,0,0 );
 		dates.postStart = postStart;
 
 		var postEnd = new Date( dates.originalDepart );
 		postEnd.setDate( postEnd.getDate() + 4);
-		postEnd.setHours( 0,0,0,0 );
+		postEnd.setHours( 12,0,0,0 );
 		dates.postEnd = postEnd;
 
 		return dates;
@@ -74,11 +74,11 @@ shortstravel.couldyou = {
 		for( var i=preTripOffsetDays; i<=4; i++ ){
 			var dayData = {};
 			var departureDate = new Date( dates.originalDepart );
-			departureDate.setHours( 0,0,0,0 );
+			departureDate.setHours( 12,0,0,0 );
 			departureDate.setDate( departureDate.getDate() + i );
 
 			var returnDate = new Date( departureDate );
-			returnDate.setHours( 0,0,0,0 );
+			returnDate.setHours( 12,0,0,0 );
 			returnDate.setDate( returnDate.getDate() + dates.tripLength );
 
 			dayData.dataLoaded = false;
@@ -425,14 +425,13 @@ shortstravel.couldyou = {
 
 			if( !$( this ).hasClass( 'fc-notAvailable' ) ){
 				var dateParts = $( this ).attr( 'id' ).split('-');
-				var d = new Date( dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0);
+				var d = new Date( dateParts[0], dateParts[1]-1, dateParts[2], 12, 0, 0);
 				shortstravel.couldyou.changeDate( d );
 			};
 		})
 	},
 
-	changeDate: function( newDate ){
-
+	changeDate: function( newDate ){ 
 		var foundTrip = false;
 
 		for( var i=0; i<shortstravel.couldyou.data.length; i++ ){
