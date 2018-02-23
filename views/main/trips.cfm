@@ -18,6 +18,14 @@
 									<p style="font-size:13px;padding:0 0 5px 0;">
 										#TravelerDisplay#
 									</p>
+									<cfif faredifference NEQ 0>
+										<cfset symbol = newfare GT oldfare ? '+' : '-'>
+										<div>
+											<h3 class="panel-title">RATE AUDIT</h3>
+											TICKETED: #dollarFormat(oldfare)# (#dateFormat(invoicedate, 'mm/dd/yyyy')#)<br>
+											#dateFormat(time_stamp, 'mm/dd/yyyy')#: #dollarFormat(newfare)# (#symbol##dollarFormat(faredifference)#)
+										</div>
+									</cfif>
 									<cfif Ticketed eq "TICKETED">
 										<p style="font-size:11px;padding:0 0 5px 0;">
 											<img src="/booking/assets/img/airlines/#trim(VendorCode)#_sm.png"/>
