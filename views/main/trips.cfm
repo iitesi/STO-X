@@ -1,3 +1,7 @@
+<style type="text/css">
+.rateAudit {background-color: #F4F3F4; padding: 5px; max-width: 480px; }
+.auditTitle {font-size: 13px; color: black; font-weight: bold !important; display:block; padding: 5px 0px;}
+</style>
 <cfset qryFutureTrips = application.fw.factory.getBean("TripManager").getFutureTrips(userId=session.userId)/>
 <div class="container-fluid" id="Main">
 	<div class="row">
@@ -20,8 +24,8 @@
 									</p>
 									<cfif faredifference NEQ 0>
 										<cfset symbol = newfare GT oldfare ? '+' : '-'>
-										<div>
-											<h3 class="panel-title">RATE AUDIT</h3>
+										<div class="rateAudit">
+											<span class="auditTitle">RATE AUDIT</span>
 											TICKETED: #dollarFormat(oldfare)# (#dateFormat(invoicedate, 'mm/dd/yyyy')#)<br>
 											#dateFormat(time_stamp, 'mm/dd/yyyy')#: #dollarFormat(newfare)# (#symbol##dollarFormat(faredifference)#)
 										</div>
