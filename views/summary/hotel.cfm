@@ -127,7 +127,8 @@
 							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 							(#nights# NIGHT<cfif nights GT 1>S</cfif>)
 						</strong>
-
+						<a onclick="javascript:$( '##rateComment' ).toggle();">View Rate Breakdown</a>
+						<div id="rateComment" style="display: none;">#Replace(rc.Hotel.getRooms()[1].getrateComment(),'+','<br>','all')#</div>
 					</div>
 
 					<div class="col-sm-3 col-xs-12">
