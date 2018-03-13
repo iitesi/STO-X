@@ -127,7 +127,7 @@
 							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 							(#nights# NIGHT<cfif nights GT 1>S</cfif>)
 						</strong>
-						<a onclick="javascript:$( '##rateComment' ).toggle();">View Rate Breakdown</a>
+						<a id="breakdown"><span id="view">View</span> Rate Breakdown</a>
 						<div id="rateComment" style="display: none;">#Replace(rc.Hotel.getRooms()[1].getrateComment(),'+','<br>','all')#</div>
 					</div>
 
@@ -302,5 +302,12 @@
 			</div> <!-- / displayHotelCancellationPolicy -->
 	</cfif>
 </cfoutput>
-
+<script>
+$(document).ready(function () {
+    $('#breakdown').click(function () {
+       $( '#rateComment' ).toggle();
+       $('#view').text($('#view').text() == 'View' ? 'Hide' : 'View');
+    });
+});
+</script>
 <!--- <cfdump var="#rc.Hotel#"> --->
