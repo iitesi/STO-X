@@ -1061,10 +1061,7 @@
 																										, response = passiveResponse )>
 						</cfif>
 					<!--- If a Travelport hotel --->
-					<cfelse>
-<!--- <cfdump var="#hotel#" label="hotel">
-<cfdump var="#profile#" label="profile">
-<cfdump var="#rc#" abort="true"> --->
+					<cfelse> 
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
