@@ -352,8 +352,24 @@
                                     </div>
 
                                   <!--<div class="col-xs-12"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></div>-->
+                                    <div class="col-xs-12" ng-hide="room.rateChange != 'Yes'">
+                                        <div>
+                                            <span ng-show="viewRates">
+                                                <a ng-click="showrateComment=false;viewRates=!viewRates">Hide Daily Rates</a>
+                                            </span>
+                                            <span ng-show="!viewRates">
+                                                <a ng-click="showrateComment=true;viewRates=!viewRates">View Daily Rates</a>
+                                            </span> 
+                                        </div>
+                                        <div ng-show="showrateComment">
+                                            <div ng-repeat="i in room.rateCommentArray">
+                                                {{i}}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div> <!-- /.row -->
                               </div> <!-- /showRooms -->
+                              
                             </div> <!-- /.hotel -->
                         </div>
 
