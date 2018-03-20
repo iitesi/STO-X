@@ -127,8 +127,10 @@
 							<cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
 							(#nights# NIGHT<cfif nights GT 1>S</cfif>)
 						</strong>
+						<cfif rc.Hotel.getRooms()[1].getrateChange()>
 						<a id="breakdown"><span id="view">View</span> Rate Breakdown</a>
-						<div id="rateComment" style="display: none;">#Replace(rc.Hotel.getRooms()[1].getrateComment(),'+','<br>','all')#</div>
+							<div id="rateComment" style="display: none;">#Replace(rc.Hotel.getRooms()[1].getrateComment(),'+','<br>','all')#</div>
+						</cfif>
 					</div>
 
 					<div class="col-sm-3 col-xs-12">
