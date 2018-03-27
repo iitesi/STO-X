@@ -346,13 +346,13 @@
                                         <button
                                             ng-class="{'btn': true, 'btn-default': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
                                             ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.rateChange != 'Yes'">*</span><span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
+                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.rateChange != 'Yes' || room.rateCommentArray.length == 1">*</span><span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                         </button>
                                         <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
                                     </div>
 
                                   <!--<div class="col-xs-12"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></div>-->
-                                    <div class="col-xs-12" ng-hide="room.rateChange != 'Yes'">
+                                    <div class="col-xs-12" ng-hide="room.rateChange != 'Yes' || room.rateCommentArray.length == 1">
                                         <div>
                                             <span ng-show="viewRates">
                                                 <a ng-click="showrateComment=false;viewRates=!viewRates">Hide Daily Rates</a>
