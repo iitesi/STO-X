@@ -140,6 +140,7 @@
 					<li  ng-repeat="i in numberToArray( calculatePages() )" ng-class="{'active': filterItems.currentPage == $index+1}"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
+                <span style="text-align: right; float: right; padding-top:10px;">* Average per night</span>
 			</nav>
 
             <div class="hotel-results">
@@ -345,14 +346,30 @@
                                         <button
                                             ng-class="{'btn': true, 'btn-default': true, 'btn-success': room.ratePlanType == ratePlanType, 'btn-primary': room.ratePlanType != ratePlanType && room.isInPolicy}"
                                             ng-click="$parent.$parent.selectRoom( $parent.item.hotel, room )">
-                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
+                                            <span class="medium bold"><span ng-show="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'">$</span>{{room.dailyRate}}<span ng-hide="room.rateChange != 'Yes' || room.rateCommentArray.length == 1">*</span><span ng-hide="room.totalForStayCurrency == 'USD' || room.dailyRateCurrency == 'USD'"> {{room.dailyRateCurrency}}</span></span>
                                         </button>
                                         <span ng-show="room.finditMessage != ''" class="small red bold"><br />{{room.finditMessage}}</span>
                                     </div>
 
                                   <!--<div class="col-xs-12"><a href="javascript:void(0);" ng-click="$parent.$parent.showCancellationPolicy(item.hotel,room)">Cancellation Policy</a></div>-->
+                                    <div class="col-xs-12" ng-hide="room.rateChange != 'Yes' || room.rateCommentArray.length == 1">
+                                        <div>
+                                            <span ng-show="viewRates">
+                                                <a ng-click="showrateComment=false;viewRates=!viewRates">Hide Daily Rates</a>
+                                            </span>
+                                            <span ng-show="!viewRates">
+                                                <a ng-click="showrateComment=true;viewRates=!viewRates">View Daily Rates</a>
+                                            </span> 
+                                        </div>
+                                        <div ng-show="showrateComment">
+                                            <div ng-repeat="i in room.rateCommentArray">
+                                                {{i}}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div> <!-- /.row -->
                               </div> <!-- /showRooms -->
+                              
                             </div> <!-- /.hotel -->
                         </div>
 
@@ -368,7 +385,8 @@
 					<li ng-repeat="i in numberToArray( calculatePages() )"><a href="javascript: void(0)" ng-click="$parent.filterItems.currentPage=$index+1" ng-bind="$index+1"></a></li>
 					<li ng-hide="filterItems.currentPage >= calculatePages()"><a  href="javascript: void(0)" ng-click="filterItems.currentPage = filterItems.currentPage + 1">&raquo;</a></li>
 				</ul>
-			</nav>
+                <span style="text-align: right; float: right; padding-top:10px;">* Average per night</span>
+			</nav>  
 		</div>
 
     </div>
