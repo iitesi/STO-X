@@ -1061,7 +1061,7 @@
 																										, response = passiveResponse )>
 						</cfif>
 					<!--- If a Travelport hotel --->
-					<cfelse>
+					<cfelse> 
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -1083,7 +1083,13 @@
 						<!--- Parse sell results --->
 						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel
 																								, response = hotelResponse )>
-
+						<cfset local.associatedRemarkResponse = fw.getBeanFactory().getBean('HotelAdapter').addAssociatedRemark( targetBranch = rc.Account.sBranch
+							, Filter = rc.Filter
+							, providerLocatorCode = providerLocatorCode
+							, universalLocatorCode = universalLocatorCode
+							, version = version
+							, Hotel = Hotel
+							)> 
 						<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
 						<cfif Hotel.getSimultChgsError()>
 							<cfset Hotel.setError( false ) />
