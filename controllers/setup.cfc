@@ -188,6 +188,13 @@ setApplication
 		<cfset variables.fw.setView('main.policy')/>
 	</cffunction>
 
+	<cffunction name="resetAirports" output="false">
+		<cfargument name="rc">
+		<cfset application.stAirports = StructNew()>
+		<cfset variables.bf.getBean("setup").setAirports()>
+		<cfset variables.fw.setView('main.reload')/>
+	</cffunction>
+
 	<cffunction name="setGroup" output="false">
 		<cfargument name="rc">
 
