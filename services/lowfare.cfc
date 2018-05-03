@@ -111,7 +111,7 @@
 		<cfargument name="sCabins" default="">
 
 		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
-
+		<cfset local.classOfService = (len(arguments.sCabins)) ? arguments.sCabins : (len(arguments.Filter.getClassOfService()) ? arguments.Filter.getClassOfService() : 'Y')>
 		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0>
 			<cfset local.Refundable = true>
 		</cfif>
@@ -123,7 +123,7 @@
 			local.key = getKrakenService().getKey(OnlyRefundableFares = local.Refundable,
 																					  Filter = arguments.Filter,
 																					  Account = arguments.Account,
-																					  sCabins = arguments.sCabins);
+																					  sCabins = local.classOfService);
 
 			if ( NOT(StructKeyExists(session, "KrakenSearchResults")) OR
 					 NOT(StructKeyExists(session.KrakenSearchResults, "key")) OR
@@ -141,7 +141,7 @@
 				local.requestBody = getKrakenService().getRequestSearchBody( OnlyRefundableFares  = local.Refundable,
 																																		 Filter = arguments.Filter,
 																																		 Account = arguments.Account,
-																																		 sCabins = arguments.sCabins,
+																																		 sCabins = local.classOfService,
 																																		 airlines = local.airlines );
 
 				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
