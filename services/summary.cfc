@@ -555,9 +555,8 @@
 					AND len(trim( local.OU.getValueReport() )) GT 0>
 					<cfset local.patternCharacter = ''>
 					<cfset local.stringCharacter = ''>
-					<cfset local.stringLen = len(trim( local.OU.getValueReport() ))>
 
-					<cfloop from="1" to="#stringLen#" index="local.character">
+					<cfloop from="1" to="#len(local.OU.getOUPattern())#" index="local.character">
 						<cfset local.patternCharacter = mid(local.OU.getOUPattern(), local.character, 1)>
 						<cfset local.stringCharacter = mid(local.OU.getValueReport(), local.character, 1)>
 						<cfif (isNumeric(local.patternCharacter) AND NOT isNumeric(local.stringCharacter))
@@ -568,11 +567,11 @@
 							<cfbreak>
 						</cfif>
 					</cfloop>
-				</cfif>
-				<cfif len(trim( local.OU.getValueReport() )) GT 0
-					AND (len(trim( local.OU.getValueReport() )) GT local.OU.getOUMax()
-					OR len(trim( local.OU.getValueReport() )) LT local.OU.getOUMin())>
-					<cfset local.error[field] = '' />
+					<cfif len(trim( local.OU.getValueReport() )) GT 0
+						AND (len(trim( local.OU.getValueReport() )) GT local.OU.getOUMax()
+						OR len(trim( local.OU.getValueReport() )) LT local.OU.getOUMin())>
+						<cfset local.error[field] = '' />
+					</cfif>
 				</cfif>
 			</cfif>
 		</cfloop>
