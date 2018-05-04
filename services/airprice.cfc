@@ -324,6 +324,7 @@
 		<cfset airArgs.nCouldYou = dateDiff( 'd', originalDepartDate, newDepartDate ) />
 		<cfset airArgs.bRefundable = session.searches[ arguments.Search.getSearchId() ].stItinerary.Air.ref />
 		<cfset airArgs.findIt = session.filters[ arguments.Search.getSearchId() ].getFindIt() />
+		<cfset airArgs.sCabin = len(session.filters[ arguments.Search.getSearchId() ].getClassOfService()) ? session.filters[ arguments.Search.getSearchId() ].getClassOfService() : 'Y'>
 
 		<!--- Don't want to overwrite the air details for the flight originally selected (price may change during this AirPrice call) --->
 		<cfif airArgs.nCouldYou NEQ 0>
