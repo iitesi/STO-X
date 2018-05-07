@@ -61,7 +61,9 @@
 			<cfset controller('setup.setAccount')/>
 		<cfelse>
 			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy'>
-			<cfif request.context.action EQ 'setup.resetAirports'>
+			<cfif request.context.action EQ 'setup.resetPolicy'>
+				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
+			<cfelseif request.context.action EQ 'setup.resetAirports'>
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 			<cfelseif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))

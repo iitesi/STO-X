@@ -158,7 +158,7 @@
 
 		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
 
-		<cfset local.stTrips = parseTrips(local.Refundable)>
+		<cfset local.stTrips = parseTrips(local.Refundable,arguments.Policy)>
 
 		<cfset local.stTrips = getAirParse().addGroups( stTrips = local.stTrips, Filter=arguments.Filter )>
 
@@ -179,16 +179,18 @@
 
 	<cffunction name="parseTrips" output="false" returntype="struct" access="private">
 			<cfargument name="Refundable" required="true">
-
+			<cfargument name="Policy" required="false">
 			<cfscript>
 
 				local.stTrips = structNew('linked');
 				local.route = 0;
 				local.j = 1;
 
+				local.allowRefundable = IsStruct(arguments.Policy) ? arguments.Policy.Policy_AirRefRule : true;
+				local.allowNonRefundable = IsStruct(arguments.Policy) ? arguments.Policy.Policy_AirNonRefRule : true;
+
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
-
 
 				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
 
@@ -196,60 +198,37 @@
 						local.nonRefundableTrips = arraynew(1);
 
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
-
 								if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
-
 									ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-
+									arraySort(local.refundableTrips,
+							 			function (e1, e2) {
+							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+							 				else return 1;
+							 			}
+							 		);
 								} else {
-
 									ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-
+									arraySort(local.nonRefundableTrips,
+							 			function (e1, e2) {
+							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+							 				else return 1;
+							 			}
+							 		);
 								}
 						}
-
-
-						if( arraylen(local.refundableTrips) LTE application.lowFareResultsLimit ) {
-
-							if ( arraylen(local.nonRefundableTrips) LTE application.lowFareResultsLimit - arraylen(local.refundableTrips) ) {
-
-								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
-
-							} else {
-
-								arraySort(local.nonRefundableTrips,
-									function (e1, e2) {
-										if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-										else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-										else return 1;
-									}
-								);
-
-								local.nonRefundableTrips = ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit - arraylen(local.refundableTrips));
-
-								local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
-
-							}
-
-						} else {
-
-							arraySort(local.refundableTrips,
-								function (e1, e2) {
-									if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-									else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-									else return 1;
-								}
-							);
-
-							local.sliceArray = ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
-
+						if(local.allowRefundable AND local.allowNonRefundable){
+							local.refundableTrips = (ArrayLen(local.refundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,Int(application.lowFareResultsLimit/2));
+							local.nonRefundableTrips = (ArrayLen(local.nonRefundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,Int(application.lowFareResultsLimit/2));
+							local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
 						}
-
-				}	else {
-
+						else if(local.allowRefundable)
+							local.sliceArray = (ArrayLen(local.refundableTrips) LTE application.lowFareResultsLimit) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
+						else if(local.allowNonRefundable)
+							local.sliceArray = (ArrayLen(local.nonRefundableTrips) LTE application.lowFareResultsLimit) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit);
+				}	else
 					local.sliceArray = [];
-
-				}
 
 				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
 
