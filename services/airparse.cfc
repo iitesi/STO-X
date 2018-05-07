@@ -1230,7 +1230,7 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 					<cfset arrayAppend( local.aPolicy, local.policyResults.message )>
 					<cfset local.bActive = local.policyResults.active>
 				</cfif>
-				<!--- UP fares --->
+				<!--- UP fares--->
 				<cfset local.policyResults = policyUpFares( Policy = arguments.Policy
 															, refundable = local.stTrip.Ref
 															, class = local.stTrip.Class )>
@@ -1492,13 +1492,13 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 
 		<cfif len(trim(arguments.class))><!--- The legacy class argument passed by FindIt --->
 			<cfif arguments.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
-	-			<cfset local.policy.message = "Cannot book first class"/>
-	-			<cfset local.policy.policy = 0/>
-	-			<cfset local.policy.active = 0/>
+				<cfset local.policy.message = "Cannot book first class"/>
+				<cfset local.policy.policy = 0/>
+				<cfset local.policy.active = 0/>
 			<cfelseif arguments.class EQ "C" AND !val(arguments.Policy.Policy_AirBusinessClass)>
-	-			<cfset local.policy.message = "Cannot book business class"/>
-	-			<cfset local.policy.policy = 0/>
-	-			<cfset local.policy.active = 0/>
+				<cfset local.policy.message = "Cannot book business class"/>
+				<cfset local.policy.policy = 0/>
+				<cfset local.policy.active = 0/>
 			</cfif>
 		<cfelseif structCount(arguments.stTrip)>
 			<cfif arguments.stTrip.class EQ "F" AND !val(arguments.Policy.Policy_AirFirstClass)>
