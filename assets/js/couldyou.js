@@ -223,8 +223,8 @@ shortstravel.couldyou = {
 			total = total + hotelTotal;
 		}
 
-		//Get vehicle total
-		if( shortstravel.search.car == 1 && selectedDate.vehicle != "" ){
+		//Get vehicle total 
+		if( shortstravel.search.car == 1 && typeof selectedDate.vehicle !== "undefined" ){
 			var vehicleTotal = selectedDate.vehicle.estimatedTotalAmount;
 			if( typeof vehicleTotal != 'number' ){
 				vehicleTotal = parseFloat( vehicleTotal );
@@ -287,9 +287,9 @@ shortstravel.couldyou = {
 				dateCell.removeClass('ui-widget-content' ).addClass('fc-notAvailable');
 			} else {
 				var selectedDayTotal = shortstravel.itinerary.total;
-				var dailyTotal = selectedDate.total;
-
+				var dailyTotal = selectedDate.total; 
 				if( Math.round( dailyTotal ) >= Math.round( selectedDayTotal ) && selectedDate.departureDate.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
+					
 					var ev = {
 						title: selectedDate.message.toString(),
 						allDay: true,
