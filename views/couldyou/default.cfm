@@ -6,7 +6,7 @@
 		<script src="/booking/assets/js/fullcalendar.min.js"></script>
 		<script src="/booking/assets/js/purl.js"></script>
 		<script src="/booking/assets/js/date.format.js"></script>
-		<script src="/booking/assets/js/couldyou.js?v=20180220"></script>
+		<script src="/booking/assets/js/couldyou.js?v=20180507"></script>
 		<script type="text/javascript">
 			<cfoutput>shortstravel.search = #serializeJSON( rc.Filter )#;</cfoutput>
 			<cfoutput>shortstravel.itinerary = #serializeJSON( session.searches[ rc.searchID ].stItinerary )#;</cfoutput>

@@ -199,7 +199,7 @@ shortstravel.couldyou = {
 
 		var total = 0;
 		//Get air total
-		if( shortstravel.search.air == 1 && selectedDate.air !== "undefined" ){
+		if( shortstravel.search.air == 1 && selectedDate.air != "" ){
 			for( tripId in selectedDate.air ){
 				var airTotal = selectedDate.air[ tripId ].Total;
 				console.log(airTotal);
@@ -223,8 +223,8 @@ shortstravel.couldyou = {
 			total = total + hotelTotal;
 		}
 
-		//Get vehicle total
-		if( shortstravel.search.car == 1 && selectedDate.vehicle != "" ){
+		//Get vehicle total 
+		if( shortstravel.search.car == 1 && typeof selectedDate.vehicle !== "undefined" ){
 			var vehicleTotal = selectedDate.vehicle.estimatedTotalAmount;
 			if( typeof vehicleTotal != 'number' ){
 				vehicleTotal = parseFloat( vehicleTotal );
