@@ -199,7 +199,7 @@ shortstravel.couldyou = {
 
 		var total = 0;
 		//Get air total
-		if( shortstravel.search.air == 1 && selectedDate.air != "" ){
+		if( shortstravel.search.air == 1 && selectedDate.air !== "undefined" ){
 			for( tripId in selectedDate.air ){
 				var airTotal = selectedDate.air[ tripId ].Total;
 				console.log(airTotal);
@@ -289,13 +289,9 @@ shortstravel.couldyou = {
 				var selectedDayTotal = shortstravel.itinerary.total;
 				var dailyTotal = selectedDate.total; 
 				if( Math.round( dailyTotal ) >= Math.round( selectedDayTotal ) && selectedDate.departureDate.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
-					if(selectedDate.message) {
-						title = selectedDate.message.toString();
-					} else {
-						title = '';
-					}
+					
 					var ev = {
-						title: title,
+						title: selectedDate.message.toString(),
 						allDay: true,
 						start: selectedDate.departureDate,
 						color: '#fcefef',
