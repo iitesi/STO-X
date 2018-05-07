@@ -15,7 +15,7 @@
 	<div id="seatcontent">
 		<cfif rc.Group EQ ''>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
-				<cfloop collection="#session.searches[rc.SearchID].stTrips[rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+				<cfloop collection="#session.searches[rc.SearchID].stTrips[rc.nTripID].Groups[1].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
 					<cfbreak>
 				</cfloop>
@@ -23,7 +23,7 @@
 			<cfset stGroups = session.searches[rc.SearchID].stTrips[rc.nTripID].Groups>
 		<cfelse>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
-				<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID].Groups[0].Segments#" index="local.nSegment">
+				<cfloop collection="#session.searches[rc.SearchID].stAvailTrips[rc.Group][rc.nTripID].Groups[1].Segments#" index="local.nSegment">
 					<cfset rc.nSegment = nSegment>
 					<cfbreak>
 				</cfloop>
@@ -34,6 +34,9 @@
 		<!--- get the current segment --->
 		<cfset rc.nSegment = replace(rc.nSegment, " ", "+", "ALL") />
 		<cfset currentSegment = structFindKey(stGroups,rc.nSegment)[1].value>
+        <cfif StructKeyExists(currentSegment,"Segments")>
+            <cfset currentSegment = currentSegment.Segments[1]> 
+        </cfif>    
 
 		<!--- get how many segments there are in this trip --->
 		<cfset segmentCount = 0>
