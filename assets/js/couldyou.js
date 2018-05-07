@@ -287,11 +287,15 @@ shortstravel.couldyou = {
 				dateCell.removeClass('ui-widget-content' ).addClass('fc-notAvailable');
 			} else {
 				var selectedDayTotal = shortstravel.itinerary.total;
-				var dailyTotal = selectedDate.total;
-
+				var dailyTotal = selectedDate.total; 
 				if( Math.round( dailyTotal ) >= Math.round( selectedDayTotal ) && selectedDate.departureDate.getTime() != shortstravel.couldyou.dates.originalDepart.getTime() ){
+					if(selectedDate.message) {
+						title = selectedDate.message.toString();
+					} else {
+						title = '';
+					}
 					var ev = {
-						title: selectedDate.message.toString(),
+						title: title,
 						allDay: true,
 						start: selectedDate.departureDate,
 						color: '#fcefef',
