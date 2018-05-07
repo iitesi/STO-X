@@ -124,7 +124,7 @@ shortstravel.couldyou = {
 				url: '/booking/RemoteProxy.cfc?method=couldYou&searchID=' + searchId + '&requestedDate=' + requestedDate.departureDate,
 				dataType: 'json',
 				success: function( data ){
-
+					console.log(data);
 					requestedDate.air = data.Air;
 					requestedDate.hotel = data.Hotel;
 					requestedDate.vehicle = data.Car;
@@ -224,7 +224,8 @@ shortstravel.couldyou = {
 		}
 
 		//Get vehicle total
-		if( shortstravel.search.car == 1 && selectedDate.vehicle != "" ){
+		console.log(shortstravel.search.car);
+		if( shortstravel.search.car == 1 && typeof selectedDate.vehicle !== "undefined"){
 			var vehicleTotal = selectedDate.vehicle.estimatedTotalAmount;
 			if( typeof vehicleTotal != 'number' ){
 				vehicleTotal = parseFloat( vehicleTotal );

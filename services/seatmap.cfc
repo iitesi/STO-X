@@ -57,10 +57,10 @@
 					</cfloop>
 				</cfloop>
 			</cfif>
-		<cfelse>
+		<cfelse> 
 			<cfif arguments.nSegment EQ ''>
-				<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[0].Segments#" index="local.nSegment">
-					<cfset local.stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[0].Segments[local.nSegment]>
+				<cfloop collection="#session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[1].Segments#" index="local.nSegment">
+					<cfset local.stSegment = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID].Groups[1].Segments[local.nSegment]>
 					<cfbreak>
 				</cfloop>
 			<cfelse>
