@@ -221,11 +221,11 @@
 						if(local.allowRefundable AND local.allowNonRefundable){
 							local.refundableTrips = (ArrayLen(local.refundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,Int(application.lowFareResultsLimit/2));
 							local.nonRefundableTrips = (ArrayLen(local.nonRefundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,Int(application.lowFareResultsLimit/2));
-							local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+							local.sliceArray = ArrayMerge(local.nonRefundableTrips,local.refundableTrips);
 						}
 						else if(local.allowRefundable)
 							local.sliceArray = (ArrayLen(local.refundableTrips) LTE application.lowFareResultsLimit) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
-						else if(local.allowNonRefundable)
+						else
 							local.sliceArray = (ArrayLen(local.nonRefundableTrips) LTE application.lowFareResultsLimit) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit);
 				}	else
 					local.sliceArray = [];
@@ -238,7 +238,7 @@
 					local.Taxes = local.sliceArray[t].Taxes.Value;
 					local.Total = local.sliceArray[t].TotalFare.Value;
 					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
-					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
+					local.RequestedRefundable = arguments.Refundable;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
