@@ -81,10 +81,10 @@
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 						<ul class="nav navbar-nav">
 							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <b class="caret"></b></a></li>
-							<cfif rc.action NEQ 'air.availability'>
+							<!--- <cfif rc.action NEQ 'air.availability'>
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <b class="caret"></b></a></li>
 								<li><a href="#" class="filterby" id="farebtn" title="Click to view/hide filters">Fares <b class="caret"></b></a></li>
-							</cfif>
+							</cfif> --->
 
 							<!--- 2:03 PM Wednesday, April 09, 2014 - Jim Priest - priest@thecrumb.com
 							only show sliders for one-way and round-trip
@@ -104,6 +104,12 @@
 							</li>
 							<li><a href="#" id="inpolicybtn" title="Click to view/hide in-policy flights">In Policy</a></li>
 							<li><a href="#" id="singlecarrierbtn" title="Click to view/hide single carrier flights">1 Carrier</a></li>
+							<cfoutput>
+							<cfset nonrefURL = buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=0')>
+							<cfset refURL = buildURL('air.lowfare&SearchID=#rc.SearchID#&bRefundable=1')>
+							<cfif rc.viewNonRefundable AND rc.viewRefundable><li <cfif !rc.bRefundable>class="active"</cfif>><a <cfif rc.bRefundable>href="#nonrefURL#"<cfelse>href="##"</cfif> id="nonrefbutton" title="View Non-Refundable Fares">Non-Refundable</a></li></cfif>
+							<cfif rc.viewRefundable AND rc.viewNonRefundable><li <cfif rc.bRefundable>class="active"</cfif>><a <cfif !rc.bRefundable>href="#refURL#"<cfelse>href="##"</cfif> id="refbutton" title="View Refundable Fares">Refundable</a></li></cfif>
+							</cfoutput>
 							<li>
 								<div class="input-group" id="flightnumber-filter-container">
 							      <input type="text" class="form-control" placeholder="Flight #" name="flightnumber" id="flightnumber">
@@ -199,7 +205,7 @@
 										</cfif>
 									</div>
 
-									<div class="filtergroup"  id="fares">
+									<!---<div class="filtergroup"  id="fares">
 
 										<!--- 1 = nonrefundable --->
 										<cfif structKeyExists(session.searches[rc.SearchID].stLowFareDetails.stResults, "0")
@@ -230,7 +236,7 @@
 												<a href="#buildURL(refundableURL)#" title="Click to find more refundable fares" class="airModal" data-modal="... more refundable fares."><i class="fa fa-plus"></i> More Refundable</a>
 											</div>
 										</cfif>
-									</div>
+									</div>--->
 								</cfif>
 							</cfoutput>
 
