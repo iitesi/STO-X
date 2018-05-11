@@ -184,10 +184,7 @@
 
 				local.stTrips = structNew('linked');
 				local.route = 0;
-				local.j = 1;
-
-				local.allowRefundable = IsStruct(arguments.Policy) ? arguments.Policy.Policy_AirRefRule : true;
-				local.allowNonRefundable = IsStruct(arguments.Policy) ? arguments.Policy.Policy_AirNonRefRule : true;
+				local.j = 1;			
 
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
@@ -199,34 +196,62 @@
 
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
 								if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
-									ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-									arraySort(local.refundableTrips,
-							 			function (e1, e2) {
-							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-							 				else return 1;
-							 			}
-							 		);
+									ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);									
 								} else {
-									ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-									arraySort(local.nonRefundableTrips,
-							 			function (e1, e2) {
-							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-							 				else return 1;
-							 			}
-							 		);
+									ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);									
 								}
 						}
-						if(local.allowRefundable AND local.allowNonRefundable){
-							local.refundableTrips = (ArrayLen(local.refundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,Int(application.lowFareResultsLimit/2));
-							local.nonRefundableTrips = (ArrayLen(local.nonRefundableTrips) LT Int(application.lowFareResultsLimit/2)) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,Int(application.lowFareResultsLimit/2));
-							local.sliceArray = ArrayMerge(local.refundableTrips,local.nonRefundableTrips);
+
+						arraySort(local.refundableTrips,
+							 			function (e1, e2) {
+							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+							 				else return 1;
+							 			}
+							 		);
+						arraySort(local.nonRefundableTrips,
+							 			function (e1, e2) {
+							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+							 				else return 1;
+							 			}
+							 		);
+
+						if(arguments.Refundable)
+						{	
+							local.refundableTripsLength = ArrayLen(local.refundableTrips);
+							local.sliceArray = (local.refundableTripsLength LT application.lowFareResultsLimit) ? ArrayMerge(local.refundableTrips,ArraySlice(local.nonRefundableTrips, 1, application.lowFareResultsLimit - local.refundableTripsLength)) : ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
+						}							
+						else 
+						{								
+							/*if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 1)
+							{
+								local.sliceArray = arraynew(1);
+
+								for(; ( arraylen(local.refundableTrips) GT 0 OR arrayLen(local.nonRefundableTrips) GT 0) AND ArrayLen(local.sliceArray) LT application.lowFareResultsLimit; )
+								{
+									if(arraylen(local.refundableTrips) GT 0)
+									{
+										arrayAppend(local.sliceArray, local.refundableTrips[1]);
+										arrayDeleteAt(local.refundableTrips, 1);
+									}
+									
+									if(arrayLen(local.nonRefundableTrips) GT 0) 
+									{
+										arrayAppend(local.sliceArray, local.nonRefundableTrips[1]);
+										arrayDeleteAt(local.nonRefundableTrips, 1);
+									}
+								}
+
+							} else {*/
+
+								local.nonRefundableTripsLength = ArrayLen(local.nonRefundableTrips);
+								local.sliceArray = (local.nonRefundableTripsLength LT application.lowFareResultsLimit) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit);
+
+							/*}	*/					
+							
 						}
-						else if(local.allowRefundable)
-							local.sliceArray = (ArrayLen(local.refundableTrips) LTE application.lowFareResultsLimit) ? local.refundableTrips : ArraySlice(local.refundableTrips,1,application.lowFareResultsLimit);
-						else if(local.allowNonRefundable)
-							local.sliceArray = (ArrayLen(local.nonRefundableTrips) LTE application.lowFareResultsLimit) ? local.nonRefundableTrips : ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit);
+						
 				}	else
 					local.sliceArray = [];
 
@@ -238,7 +263,7 @@
 					local.Taxes = local.sliceArray[t].Taxes.Value;
 					local.Total = local.sliceArray[t].TotalFare.Value;
 					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
-					local.RequestedRefundable = arguments.Refundable ? arguments.Refundable : local.Ref;
+					local.RequestedRefundable = arguments.Refundable;
 					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
 					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
 					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
