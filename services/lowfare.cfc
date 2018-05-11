@@ -198,10 +198,20 @@
 
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) {
                 if(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){
-									if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
-										ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+									if(arguments.Refundable) {
+										if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
+											ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										} else {
+											ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										}
 									} else {
-										ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										if( StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable ) {
+											session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable = false;
+											ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										} else {
+											session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable = true;
+											ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										}
 									}
 								}
 						}
@@ -220,6 +230,26 @@
 							 				else return 1;
 							 			}
 							 		);
+									
+									if(arraylen(local.refundableTrips) GT 0 AND arraylen(local.nonRefundableTrips) GT 0)
+									{
+										if(local.refundableTrips[1].TotalFare.Value LT local.nonRefundableTrips[1].TotalFare.Value)
+										{
+											for(local.t=1; local.t <= arraylen(local.refundableTrips); local.t++)
+											{
+												local.refundableTrips[local.t].IsRefundable = false;
+											}
+
+											for(local.t=1; local.t <= arraylen(local.nonRefundableTrips); local.t++)
+											{
+												local.nonRefundableTrips[local.t].IsRefundable = true;
+											}
+
+											local.temp = local.refundableTrips;
+											local.refundableTrips = local.nonRefundableTrips;
+											local.nonRefundableTrips = local.temp;
+										}
+									}
 
 						if(arguments.Refundable)
 						{
