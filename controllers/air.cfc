@@ -10,7 +10,20 @@
 
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
+		<cfset rc.viewRefundable = false>
+		<cfset rc.viewNonRefundable = true>
+		<cfif !StructKeyExists(rc,'bRefundable')>
+			<cfset rc.bRefundable = 0>
+		</cfif>
 		<cfset doUnusedTicketSetup(arguments.rc)>
+		<cfif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1 AND rc.Policy.Policy_AirNonRefRule EQ 0>
+			<cfset rc.bRefundable = 1>
+			<cfset rc.viewRefundable = true>
+			<cfset rc.viewNonRefundable = false>
+		<cfelseif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1>
+			<cfset rc.viewRefundable = true>
+		</cfif>
+
 		<cfif structKeyExists(arguments.rc, "airlines")
 			AND arguments.rc.airlines EQ 1>
 			<cfset rc.filter.setAirlines("")>
@@ -68,6 +81,9 @@
 	<cffunction name="availability" output="false" hint="I get info on legs when button is clicked on search results.">
 		<cfargument name="rc">
 
+		<cfset rc.viewRefundable = false>
+		<cfset rc.viewNonRefundable = true>
+		<cfset rc.bRefundable = 0>
 
 		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
 			<cfset doUnusedTicketSetup(arguments.rc)>
