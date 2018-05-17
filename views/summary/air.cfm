@@ -158,7 +158,7 @@
 	<!--- seats --->
 								<div class="col-lg-2 col-sm-3" id="#totalCount#">
 									<cfif NOT listFind('WN,F9', segment.Carrier)><!--- Exclude Southwest and Frontier --->
-										<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#segmentIndex#&amp;sClass=#segment.Class#&amp;nTotalCount=#totalCount#'>
+										<cfset sURL = 'SearchID=#rc.SearchID#&amp;nTripID=#rc.air.nTrip#&amp;nSegment=#totalCount#&amp;sClass=#segment.Class#&amp;nTotalCount=#totalCount#'>
 										<a href="?action=air.summarypopup&amp;sDetails=seatmap&amp;summary=true&amp;#sURL#" class="summarySeatMapModal" data-toggle="modal" data-target="##popupModal" title="Select a seat for this flight">Seat Map</a>
 										&nbsp; <span class="label label-success" id="segment_#totalCount#_display"></span>
 										<input type="hidden" name="segment_#totalCount#" id="segment_#totalCount#" value="">
