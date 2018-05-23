@@ -79,7 +79,7 @@
 																																				, date = arguments.Filter.getCarPickupDateTime()
 																																				, airport = arguments.Filter.getCarPickupAirport()
 																																				, Filter = arguments.Filter
-																																				, carPrefDisp = arguments.Policy.Policy_CarPrefDisp
+																																				, carPrefDisp = (StructKeyExists(arguments.Policy,'Policy_CarPrefDisp') ? arguments.Policy.Policy_CarPrefDisp : 0)
 																																				, preferredCars = arguments.Account.aPreferredCar )>
 			</cfif>
 
@@ -88,7 +88,7 @@
 																																				, date = arguments.Filter.getCarPickupDateTime()
 																																				, airport = arguments.Filter.getCarDropoffAirport()
 																																				, Filter = arguments.Filter
-																																				, carPrefDisp = arguments.Policy.Policy_CarPrefDisp
+																																				, carPrefDisp = (StructKeyExists(arguments.Policy,'Policy_CarPrefDisp') ? arguments.Policy.Policy_CarPrefDisp : 0)
 																																				, preferredCars = arguments.Account.aPreferredCar )>
 			</cfif>
 
@@ -289,7 +289,8 @@
 				<cfif arguments.Policy.Policy_CarPrefRule EQ 1
 				AND NOT ArrayFindNoCase(arguments.Account.aPreferredCar, local.sVendor)>
 					<cfset ArrayAppend(local.aPolicy, 'Not a preferred vendor')>
-					<cfif arguments.Policy.Policy_CarPrefDisp EQ 1>
+					<cfset local.dispCarPref = StructKeyExists(arguments.Policy,'Policy_CarPrefDisp') ? arguments.Policy.Policy_CarPrefDisp : 0>
+					<cfif local.dispCarPref EQ 1>
 						<cfset local.bActive = 0>
 					</cfif>
 				</cfif>
