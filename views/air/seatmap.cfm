@@ -9,9 +9,9 @@
 	<cfset nSegmentCount = 0>
 	<cfset breadCount = 0>
 	<cfset nTotalCount = 0>
-</cfsilent>
-
-<cfoutput>
+</cfsilent> 
+<cftry>
+<cfoutput> 
 	<div id="seatcontent">
 		<cfif rc.Group EQ ''>
 			<cfif NOT StructKeyExists(rc, 'nSegment')>
@@ -320,3 +320,17 @@
 	</script>
 
 </cfoutput>
+	<cfcatch type="any">
+		<cfif rc.action eq "air.popup">
+			<strong>Seat Map not available at this time. Please select seats on the upcoming summary page.</strong>
+		<cfelse>
+			<cfoutput>
+			 	<cfsavecontent variable="catchvar">
+			 		Message: #cfcatch.Message# 
+			 		Raw_Trace: #cfcatch.TagContext[1].Raw_Trace#
+			 	</cfsavecontent>
+			 </cfoutput> 
+			<cfthrow message="#catchvar#">
+		</cfif>
+	</cfcatch>
+</cftry>
