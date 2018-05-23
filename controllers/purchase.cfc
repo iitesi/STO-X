@@ -10,17 +10,17 @@
 		<cfset local.segmentMessages = ''>
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 			<cfset local.itinerary = session.searches[rc.searchID].stItinerary>
-			<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')> 
+			<cfset local.Air = (structKeyExists(itinerary, 'Air') ? itinerary.Air : '')>
 			<cfif isStruct(local.Air) AND structKeyExists(local.Air, 'Groups')>
-				<!--- Check each segment for existing PNRs for traveler with same itinerary --->  
+				<!--- Check each segment for existing PNRs for traveler with same itinerary --->
 				<cfloop collection="#Air.Groups#" item="group" index="groupIndex">
-					<cfloop collection="#group.segments#" item="segment">  
+					<cfloop collection="#group.segments#" item="segment">
 						<cftry>
 							<cfset var dupPNR = fw.getBeanFactory().getBean('Summary').getDuplicatePNRs(
 																		Acct_ID = rc.filter.getAcctID()
 																		,LastName = Traveler.getLastName()
 																		,FirstName = Traveler.getFirstName()
-																		,MiddleName = Traveler.getMiddleName() 
+																		,MiddleName = Traveler.getMiddleName()
 																		,Carrier = group.segments[segment].Carrier
 																		,Flight = group.segments[segment].FlightNumber
 																		,DepTime = group.segments[segment].DepartureTime
@@ -29,19 +29,19 @@
 																		,ArvCity = group.segments[segment].Destination)>
 							<cfif dupPNR.recordcount gt 0>
 							<cfset local.segmentMessages = local.segmentMessages & '<div>You already a have reservation booked for #Traveler.getFirstName()# #Traveler.getMiddleName()# #Traveler.getLastName()# on <strong>#group.segments[segment].Carrier# #group.segments[segment].FlightNumber# on #DateFormat(group.segments[segment].DepartureTime,'MMM/DD/YYYY')# at #TimeFormat(group.segments[segment].DepartureTime,'hh:mm tt')#</strong>.</div><p>Please choose another flight or contact your travel agent.</p>'>
-							</cfif>	
+							</cfif>
 						<cfcatch>
 							<cflog file="service-error" text="getDuplicatePNRs falied: #CFCATCH.message#">
 						</cfcatch>
-						</cftry> 			
+						</cftry>
 					</cfloop>
-				</cfloop> 
+				</cfloop>
 			</cfif>
-		</cfloop>  
+		</cfloop>
 		<cfif Len(local.segmentMessages)>
 			<cfset rc.message.addError('<h2>A reservation already exists for one or more segments on this trip</h2>#local.segmentmessages#')>
 			<cfset variables.fw.redirect('summary?searchID=#rc.searchID#')>
-		</cfif>   
+		</cfif>
 		<cfloop collection="#session.searches[rc.searchID].Travelers#" index="local.travelerNumber" item="local.Traveler">
 			<cfif arrayIsEmpty(errorMessage) AND NOT Traveler.getBookingDetail().getPurchaseCompleted()>
 				<cfset local.providerLocatorCode = ''>
@@ -345,7 +345,7 @@
 									</cfif>
 								</cfloop>
 							</cfif>
-							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) /> 
+							<cfset local.cardNumber = right(Traveler.getBookingDetail().getAirCCNumber(), 4) />
 
 							 <cfset local.airResponse = fw.getBeanFactory().getBean('AirAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
@@ -364,7 +364,7 @@
 																										, airFOPID = local.airFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
-																									 )> 
+																									 )>
 
 							<!--- Passing off Air.total value into local scope before resetting it in case there is an
 							airSegment error and the user is sent back to the lowfare search page, the price won't get set to 0 --->
@@ -486,7 +486,7 @@
 																							, response = airResponse )>
 							<cfif Air.segmentError>
 								<cflog text="Air.segmentError for #rc.filter.getProfileUsername()# #rc.searchID#" file="sto-purchase-log">
-								<cfset cancelResponse(rc, air, local.version)>
+								<cfset cancelAirResponse(rc, air, local.version)>
 								<cfset rc.message.addError(air.segmentErrorMessage)>
 								<cfset Air.Total = local.Total>
 								<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&requery=true')>
@@ -1061,7 +1061,7 @@
 																										, response = passiveResponse )>
 						</cfif>
 					<!--- If a Travelport hotel --->
-					<cfelse> 
+					<cfelse>
 						<cfset local.hotelResponse = fw.getBeanFactory().getBean('HotelAdapter').create( targetBranch = rc.Account.sBranch
 																										, bookingPCC = rc.Account.PCC_Booking
 																										, Traveler = Traveler
@@ -1089,7 +1089,7 @@
 							, universalLocatorCode = universalLocatorCode
 							, version = version
 							, Hotel = Hotel
-							)> 
+							)>
 						<!--- If simultaneous changes occurred, clear the errors and run HotelCreate again --->
 						<cfif Hotel.getSimultChgsError()>
 							<cfset Hotel.setError( false ) />
@@ -1515,16 +1515,16 @@
 
 	</cffunction>
 
-	<cffunction name="cancelResponse" output="false">
+	<cffunction name="cancelAirResponse" output="false">
 		<cfargument name="rc">
 		<cfargument name="air">
 		<cfargument name="version">
 		<cfif len(arguments.Air.UniversalLocatorCode)>
-			<cfset cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
+			<cfset local.cancelResponse = fw.getBeanFactory().getBean('UniversalAdapter').cancelUR( targetBranch = arguments.rc.Account.sBranch
 																									, universalRecordLocatorCode = arguments.Air.UniversalLocatorCode
 																									, Filter = arguments.rc.Filter
 																									, Version = arguments.version )>
-			<cfif cancelResponse.status>
+			<cfif local.cancelResponse.status>
 				<cfset fw.getBeanFactory().getBean('Purchase').cancelInvoice( searchID = arguments.rc.Filter.getSearchID()
 																		, urRecloc = arguments.Air.UniversalLocatorCode )>
 			</cfif>
