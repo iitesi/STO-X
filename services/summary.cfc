@@ -989,6 +989,18 @@
 				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCMonth( unencryptedCCData.ccMonth ) />
 				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelCCYear( unencryptedCCData.ccYear ) />
 				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setHotelBillingName( unencryptedCCData.billingName ) />
+			<cfelseif unencryptedCCData.paymentType IS 'serviceFee'>
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewServiceFeeCC( local.newCC ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setNewServiceFeeCCID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeFOPID( unencryptedCCData.pciID ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCName( unencryptedCCData.cardName ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCType( unencryptedCCData.cardType ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCNumber( local.cardNumber ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCNumberRight4( unencryptedCCData.cardNumberRight4 ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCExpiration( unencryptedCCData.ccExpiration ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCMonth( unencryptedCCData.ccMonth ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeCCYear( unencryptedCCData.ccYear ) />
+				<cfset session.searches[arguments.searchID].Travelers[unencryptedCCData.travelerNumber].getBookingDetail().setServiceFeeBillingName( unencryptedCCData.billingName ) />	
 			</cfif>
 		<cfelse>
 			<cfdump var="#local.response#" label="local.response">

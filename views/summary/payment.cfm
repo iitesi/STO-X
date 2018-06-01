@@ -1,7 +1,6 @@
 <cfoutput>
 	<input type="hidden" name="priceQuotedError" value="#rc.priceQuotedError#">
 	<h2>PAYMENT</h2>
-
 	<cfif rc.airSelected>
 		<div id="airPayment">
 
@@ -116,7 +115,6 @@
 
 		</div>
 	</cfif>
-
 	<cfif !rc.airSelected>
 		<div id="serviceFeePayment">
 
@@ -133,8 +131,8 @@
 			<div id="addServiceFeeCC" class="col-sm-offset-4 col-sm-8">
 				<label class="control-label" for="addServiceFeeCC"><input type="button" name="displayPaymentModal" class="btn btn-primary displayPaymentModal" value="ENTER NEW CARD" data-toggle="modal" data-backdrop="static" data-paymentType="serviceFee"></label>
 			</div>
-			<div id="removeAirCC" class="hide col-sm-offset-4 col-sm-8">
-				<label class="control-label" for="removeAirCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="serviceFee" data-id="#rc.Traveler.getBookingDetail().getAirFOPID()#"></label>
+			<div id="removeServiceFeeCC" class="hide col-sm-offset-4 col-sm-8">
+				<label class="control-label" for="removeServiceFeeCC"><input type="button" name="removePaymentModal" class="btn btn-primary removePaymentModal" value="REMOVE CARD" data-toggle="modal" data-backdrop="static" data-paymentType="serviceFee" data-id="#rc.Traveler.getBookingDetail().getServiceFeeFOPID()#"></label>
 			</div>
 			<input type="hidden" name="newServiceFeeCC" id="newServiceFeeCC" />
 			<input type="hidden" name="newServiceFeeCCID" id="newServiceFeeCCID" />
@@ -145,7 +143,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeCCNumber') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeCCNumber">Card Number *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirCCNumber()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeCCNumber()#</label>
 					<input type="hidden" name="serviceFeeCCName" id="serviceFeeCCName">
 					<input type="hidden" name="serviceFeeCCType" id="serviceFeeCCType">
 					<input type="hidden" name="serviceFeeCCNumber" id="serviceFeeCCNumber">
@@ -156,8 +154,8 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeCCExpiration') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeCCMonth">Expiration *</label>
 				<div class="controls col-sm-8">
-					<cfset serviceFeeMonthAsString = (len(rc.Traveler.getBookingDetail().getAirCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getAirCCMonth()) : '') />
-					<label class="form-control">#serviceFeeMonthAsString# #rc.Traveler.getBookingDetail().getAirCCYear()#</label>
+					<cfset serviceFeeMonthAsString = (len(rc.Traveler.getBookingDetail().getServiceFeeCCMonth()) ? monthAsString(rc.Traveler.getBookingDetail().getServiceFeeCCMonth()) : '') />
+					<label class="form-control">#serviceFeeMonthAsString# #rc.Traveler.getBookingDetail().getServiceFeeCCYear()#</label>
 					<input type="hidden" name="serviceFeeCCExpiration" id="serviceFeeCCExpiration">
 					<input type="hidden" name="serviceFeeCCMonth" id="serviceFeeCCMonth">
 					<input type="hidden" name="serviceFeeCCMonthDisplay" id="serviceFeeCCMonthDisplay">
@@ -168,7 +166,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeCCCVV') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeCCCVV">CVV Security Code *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirCCCVV()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeCCCVV()#</label>
 					<input type="hidden" name="serviceFeeCCCVV" id="serviceFeeCCCVV">
 				</div>
 			</div>
@@ -176,7 +174,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeBillingName') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeBillingName">Name on Card *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingName()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeBillingName()#</label>
 					<input type="hidden" name="serviceFeeBillingName" id="serviceFeeBillingName">
 				</div>
 			</div>
@@ -184,7 +182,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeBillingAddress') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeBillingAddress">Billing Address *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingAddress()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeBillingAddress()#</label>
 					<input type="hidden" name="serviceFeeBillingAddress" id="serviceFeeBillingAddress">
 				</div>
 			</div>
@@ -192,7 +190,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeBillingCity') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeBillingCity">City *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingCity()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeBillingCity()#</label>
 					<input type="hidden" name="serviceFeeBillingCity" id="serviceFeeBillingCity" maxlength="50">
 				</div>
 			</div>
@@ -200,7 +198,7 @@
 			<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeBillingState') ? 'error' : '')#">
 				<label class="control-label col-sm-4" for="serviceFeeBillingState">State, Zip *</label>
 				<div class="controls col-sm-8">
-					<label class="form-control">#rc.Traveler.getBookingDetail().getAirBillingState()# #rc.Traveler.getBookingDetail().getAirBillingZip()#</label>
+					<label class="form-control">#rc.Traveler.getBookingDetail().getServiceFeeBillingState()# #rc.Traveler.getBookingDetail().getServiceFeeBillingZip()#</label>
 					<input type="hidden" name="serviceFeeBillingState" id="serviceFeeBillingState">
 					<input type="hidden" name="serviceFeeBillingZip" id="serviceFeeBillingZip">
 				</div>
