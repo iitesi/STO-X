@@ -188,135 +188,133 @@
 
 				local.stTrips[local.route] = structNew();
 				local.stTrips[local.route]["Segments"] = structNew('linked');
-				local.classOfService = arguments.classOfService;				
+				local.classOfService = arguments.classOfService;
+				local.allTrips = arraynew(1);
+				local.contractedTrips = arraynew(1);
+				local.nonstop = arraynew(1);	
+				local.twoSegments = arraynew(1);	
+				local.threeSegments = arraynew(1);	
+				local.fourSegments = arraynew(1);					
 
-				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) {
-						local.refundableTrips = arraynew(1);
-						local.nonRefundableTrips = arraynew(1);	
-						local.allTrips = arraynew(1);
-						local.nonstop = arraynew(1);	
-						local.twoSegments = arraynew(1);	
-						local.threeSegments = arraynew(1);	
-						local.fourSegments = arraynew(1);	
+				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) { 
 						// Loop over the Flight Search Results object
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) { 
             				if (session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){
             					// Create Array of all trips
-            					// If arguments.Refundable, only add refundable flights to the alltrips array  
+            					// If arguments.Refundable, only add refundable flights to the alltrips array   
 								if (arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) {		
 		            				// Append Flight Result to allTrips array
-		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);								
+		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);	
+		            				// Append to contractedTrips array if this is a private fare				
+		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
+		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
 		            				// Create a UUID as a unique identifier to be attached to each flight result
-		            				local.uuid = CreateUUID();
-		            				local.allTrips[t].uniquekey = local.uuid;
-									// I don't think we need a separate arry for refundable and nonrefundable
-									//ArrayAppend(local.refundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										local.segmentCount = 1;
-									// Loop over TripSegments
-									for (local.flightIndex = 1; local.flightIndex <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); local.flightIndex++) {
-										// Set temp segment count to the current number of segments for group
-										local.tempsegmentCount = arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[flightIndex].Flights);
-									// Set Segment Count to the greatest of arraylen of Flights
-									// If the latest segment count is larger than the previous segment count, then update segment count
-									// This will get the largest segment count in the flights
-									local.segmentCount = (local.tempsegmentCount > local.segmentCount ? local.tempsegmentCount : local.segmentCount);
-									
-									} // end for loop over TripSegments
+		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();  
+									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
+									local.allTrips[t].segmentCount = local.segmentCount;
+									// Add Flight to corresponding segment count array
+									switch (local.segmentCount) {
+										case "1" : 
+										ArrayAppend(local.nonstop,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "2" : 
+										ArrayAppend(local.twoSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "3" : 
+										ArrayAppend(local.threeSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "4" : 
+										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+									}
 
-								} else if (!(arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable)) {
-	            				// Append Flight Result to allTrips array
-	            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);			
-	            				// Create a UUID as a unique identifier to be attached to each flight result
-	            				local.uuid = CreateUUID();
-	            				local.allTrips[t].uniquekey = local.uuid; 
-	            				// I don't think we need a separate arry for refundable and nonrefundable
-									//ArrayAppend(local.nonRefundableTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										local.segmentCount = 1;
-									// Loop over TripSegments
-									for (local.flightIndex = 1; local.flightIndex <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); local.flightIndex++) {
-										// Set temp segment count to the current number of segments for group
-										local.tempsegmentCount = arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[flightIndex].Flights);
-										// Set Segment Count to the greatest of arraylen of Flights
-										// If the latest segment count is larger than the previous segment count, then update segment count
-										// This will get the largest segment count in the flights
-										local.segmentCount = (local.tempsegmentCount > local.segmentCount ? local.tempsegmentCount : local.segmentCount);
-										
-									} // end for loop over TripSegements
-
+								} else if (!arguments.Refundable AND !(StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable)) {
+		            				// Append Flight Result to allTrips array
+		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);		
+		            				// Append to contractedTrips array if this is a private fare
+		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
+		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);			
+		            				// Create a UUID as a unique identifier to be attached to each flight result 
+		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();  
+									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
+									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
+									// Add Flight to corresponding segment count array
+									switch (local.segmentCount) {
+										case "1" : 
+										ArrayAppend(local.nonstop,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "2" : 
+										ArrayAppend(local.twoSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "3" : 
+										ArrayAppend(local.threeSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+										case "4" : 
+										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
+										break;
+									}
 								} // end else if not refundable
-								// Add Flight to corresponding segment count array
-								if (local.segmentCount == 1) {
-									local.allTrips[t].segmentCount = 1;
-									ArrayAppend(local.nonstop,local.allTrips[t]);
-								}
-								else if (local.segmentCount == 2) {
-									local.allTrips[t].segmentCount = 2;
-									ArrayAppend(local.twoSegments,local.allTrips[t]);
-								}
-								else if (local.segmentCount == 3) {
-									local.allTrips[t].segmentCount = 3;
-									ArrayAppend(local.threeSegments,local.allTrips[t]);
-								}
-								else if (local.segmentCount == 4) {
-									local.allTrips[t].segmentCount = 4;
-									ArrayAppend(local.fourSegments,local.allTrips[t]);
-								}
-							} // end if cabin class	
+							} // end if cabin class	 
 						} // end if there is an arraylen of flight results 
-Writedump(arraylen(nonstop));
+Writedump(arraylen(contractedTrips)); 
 writedump(arraylen(twoSegments));
 writedump(arraylen(threeSegments));
-writedump(arraylen(fourSegments));
-writedump(segmentCount);   
-//writeDump(allTrips);
+writedump(arraylen(fourSegments));  
+//writedump(local.twoSegments[1]); abort;  
+writeDump(allTrips); //abort;
+					// Sort arrays
+						arraySort(local.nonstop,
+						 			function (e1, e2) {
+						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+						 				else return 1;
+						 			}
+						 		);
+						arraySort(local.twoSegments,
+						 			function (e1, e2) {
+						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+						 				else return 1;
+						 			}
+						 		);
+						arraySort(local.threeSegments,
+						 			function (e1, e2) {
+						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+						 				else return 1;
+						 			}
+						 		);
+						arraySort(local.fourSegments,
+						 			function (e1, e2) {
+						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+						 				else return 1;
+						 			}
+						 		); 
 						// Remove multiple connection flights
-						if (arraylen(nonstop) || arraylen(twoSegments)) {
-							for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {  
-								ArrayDelete(local.allTrips, threeSegments[local.i] );
-							}
-							for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {  
-								ArrayDelete(local.allTrips, fourSegments[local.i] );
-							}
-						}				
-
+						if (arraylen(nonstop) && arraylen(twoSegments)) {
+							local.allTrips = ArrayMerge(local.nonStop, local.twoSegments);
+						}
+							else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {
+							local.allTrips = ArrayMerge(local.twoSegments, local.threeSegments); 
+						}	
+Writedump(arraylen(allTrips));		
+					// Remove NONContracted Trips from all arrays of trips
+					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){
+						local.nonContracted = local.contractedTrips[ct];
+					 	local.nonContracted.IsPrivateFare = false;
+					 	arrayDelete(local.allTrips, local.nonContracted); 
+					}
+Writedump(arraylen(allTrips));	abort;
 						arraySort(local.allTrips,
 							 			function (e1, e2) {
 							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
 							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
 							 				else return 1;
 							 			}
-							 		);
-						// Sort nonstop array descending so that when appended to alltrips sort will be ascending
-							arraySort(local.nonstop,
-							 			function (e1, e2) {
-							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return 1;
-							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-							 				else return -1;
-							 			}
-							 		);
-						// Move all nonstop flights to front of array
-						for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
-								ArrayDelete(local.allTrips, nonstop[local.i] );
-								ArrayPrepend(local.allTrips, nonstop[local.i] );
-							}
-writeDump(arraylen(allTrips));		
-					/* 	arraySort(local.nonRefundableTrips,
-							 			function (e1, e2) {
-							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-							 				else return 1;
-							 			}
-							 		); */
-									
-						/* if(arguments.Refundable)
-						{ */
-							local.sliceArray = arraylen(local.allTrips) GT application.lowFareResultsLimit ? ArraySlice(local.allTrips,1,application.lowFareResultsLimit) : local.allTrips;
-						/* }
-						else
-						{
-							local.sliceArray =  arraylen(local.nonRefundableTrips) GT application.lowFareResultsLimit ? ArraySlice(local.nonRefundableTrips,1,application.lowFareResultsLimit) : local.nonRefundableTrips;
-						} */
-
+							 		); 
+writeDump(arraylen(allTrips));		 
+							local.sliceArray = arraylen(local.allTrips) GT application.lowFareResultsLimit ? ArraySlice(local.allTrips,1,application.lowFareResultsLimit) : local.allTrips; 
 				}	else
 					local.sliceArray = []; 
 writeDump(sliceArray); 
@@ -450,5 +448,21 @@ writeDump(sliceArray);
 			</cfscript>
 
 	</cffunction>
-
+	<cffunction name="getSegmentCount" output="false" returntype="numeric" access = "private">
+		<cfargument name="TripSegments" type="array" required="true">
+		<cfscript>
+			local.segmentCount = 1;
+			// Loop over TripSegments
+			for (local.flightIndex = 1; local.flightIndex <= arrayLen(arguments.TripSegments); local.flightIndex++) {
+				// Set temp segment count to the current number of segments for group
+				local.tempsegmentCount = arrayLen(arguments.TripSegments[flightIndex].Flights);
+				// Set Segment Count to the greatest of arraylen of Flights
+				// If the latest segment count is larger than the previous segment count, then update segment count
+				// This will get the largest segment count in the flights
+				local.segmentCount = (local.tempsegmentCount > local.segmentCount ? local.tempsegmentCount : local.segmentCount);
+				
+			} // end for loop over TripSegements
+			return local.segmentCount;
+		</cfscript>
+	</cffunction>
 </cfcomponent>
