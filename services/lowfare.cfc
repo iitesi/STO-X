@@ -194,22 +194,30 @@
 				local.nonstop = arraynew(1);	
 				local.twoSegments = arraynew(1);	
 				local.threeSegments = arraynew(1);	
-				local.fourSegments = arraynew(1);					
-
+				local.fourSegments = arraynew(1);	
+				local.SegmentIDArray = arraynew(1);		
 				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) { 
 						// Loop over the Flight Search Results object
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) { 
-            				if (session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){
-            					// Create Array of all trips
+            				if (session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){ 
             					// If arguments.Refundable, only add refundable flights to the alltrips array   
-								if (arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) {		
+								if (arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) {	
+									// Initialize segmentIDList with the boolean value of IsPrivateFare 
+									local.segmentIDList = session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare;
+									// Loop over trip segments and create an list of all segment IDs for TripSegment
+									for (x =1; x <=arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); x++){ 
+											local.segmentIDList = ListAppend(local.segmentIDList,session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[x].SegmentId); 
+									} 
+									//Append the segmentIDList to SegmentIDArray; This array is a pointer to allTrips
+									ArrayAppend(local.SegmentIDArray,local.segmentIDList);	
 		            				// Append Flight Result to allTrips array
 		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);	
 		            				// Append to contractedTrips array if this is a private fare				
 		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
 		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
 		            				// Create a UUID as a unique identifier to be attached to each flight result
-		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();  
+		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
+		            				// set segmentCount to largest number of segments of all legs
 									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
 									local.allTrips[t].segmentCount = local.segmentCount;
 									// Add Flight to corresponding segment count array
@@ -227,17 +235,25 @@
 										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
 										break;
 									}
-
 								} else if (!arguments.Refundable AND !(StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable)) {
+									// Initialize segmentIDList with the boolean value of IsPrivateFare 
+									local.segmentIDList = session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare;
+									// Loop over trip segments and create an list of all segment IDs for TripSegment
+									for (x =1; x <=arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); x++){ 
+											local.segmentIDList = ListAppend(local.segmentIDList,session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[x].SegmentId); 
+									} 
+									//Append the segmentIDList to SegmentIDArray; This array is a pointer to allTrips
+									ArrayAppend(local.SegmentIDArray,local.segmentIDList);	
 		            				// Append Flight Result to allTrips array
-		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);		
-		            				// Append to contractedTrips array if this is a private fare
+		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);	
+		            				// Append to contractedTrips array if this is a private fare				
 		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
-		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);			
-		            				// Create a UUID as a unique identifier to be attached to each flight result 
-		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();  
+		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
+		            				// Create a UUID as a unique identifier to be attached to each flight result
+		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
+		            				// set segmentCount to largest number of segments of all legs
 									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
-									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
+									local.allTrips[t].segmentCount = local.segmentCount;
 									// Add Flight to corresponding segment count array
 									switch (local.segmentCount) {
 										case "1" : 
@@ -256,12 +272,6 @@
 								} // end else if not refundable
 							} // end if cabin class	 
 						} // end if there is an arraylen of flight results 
-Writedump(arraylen(contractedTrips)); 
-writedump(arraylen(twoSegments));
-writedump(arraylen(threeSegments));
-writedump(arraylen(fourSegments));  
-//writedump(local.twoSegments[1]); abort;  
-writeDump(allTrips); //abort;
 					// Sort arrays
 						arraySort(local.nonstop,
 						 			function (e1, e2) {
@@ -291,34 +301,45 @@ writeDump(allTrips); //abort;
 						 				else return 1;
 						 			}
 						 		); 
+					// Remove NONContracted Trips from all arrays of trips
+					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){ 
+						local.segmentIDList = 'false'; 
+ 							// Loop over trip segments and create an object of all segment IDs
+ 							for (x =1; x <=arrayLen(contractedTrips[ct].TripSegments); x++){ 
+ 									local.segmentIDList = ListAppend(segmentIDList,contractedTrips[ct].TripSegments[x].SegmentId);  
+ 							}
+						local.arrayPosition = ArrayFind(local.SegmentIDArray,local.segmentIDList);
+						if (local.arrayPosition gt 0) { 
+ 					 		arrayDeleteAt(local.allTrips, local.arrayPosition); 
+ 					 		arrayDeleteAt(local.SegmentIDArray, local.arrayPosition); 
+ 					 	}
+					}  
+
 						// Remove multiple connection flights
 						if (arraylen(nonstop) && arraylen(twoSegments)) {
-							local.allTrips = ArrayMerge(local.nonStop, local.twoSegments);
+							for (local.i = 1; local.i <= arraylen(twoSegments); local.i++) {
+                                ArrayDelete(local.allTrips, twoSegments[local.i] );
+
+                            }
+
 						}
-							else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {
-							local.allTrips = ArrayMerge(local.twoSegments, local.threeSegments); 
-						}	
-Writedump(arraylen(allTrips));		
-					// Remove NONContracted Trips from all arrays of trips
-					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){
-						local.nonContracted = local.contractedTrips[ct];
-					 	local.nonContracted.IsPrivateFare = false;
-					 	arrayDelete(local.allTrips, local.nonContracted); 
-					}
-Writedump(arraylen(allTrips));	abort;
+						else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {							
+							for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
+                                 ArrayDelete(local.allTrips, threeSegments[local.i] );
+
+                            }
+						}	 
+					
 						arraySort(local.allTrips,
 							 			function (e1, e2) {
 							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
 							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
 							 				else return 1;
 							 			}
-							 		); 
-writeDump(arraylen(allTrips));		 
+							 		);  
 							local.sliceArray = arraylen(local.allTrips) GT application.lowFareResultsLimit ? ArraySlice(local.allTrips,1,application.lowFareResultsLimit) : local.allTrips; 
 				}	else
-					local.sliceArray = []; 
-writeDump(sliceArray); 
-//abort; 
+					local.sliceArray = [];  
 							
 				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
 
