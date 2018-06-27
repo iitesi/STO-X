@@ -201,7 +201,9 @@
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) { 
             				if (session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){ 
             					// If arguments.Refundable, only add refundable flights to the alltrips array   
-								if (arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) {	
+								if ((arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) 
+									OR 
+										(!arguments.Refundable AND !(StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable))) {	
 									// Initialize segmentIDList with the boolean value of IsPrivateFare 
 									local.segmentIDList = session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare;
 									// Loop over trip segments and create an list of all segment IDs for TripSegment
@@ -235,41 +237,7 @@
 										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
 										break;
 									}
-								} else if (!arguments.Refundable AND !(StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable)) {
-									// Initialize segmentIDList with the boolean value of IsPrivateFare 
-									local.segmentIDList = session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare;
-									// Loop over trip segments and create an list of all segment IDs for TripSegment
-									for (x =1; x <=arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); x++){ 
-											local.segmentIDList = ListAppend(local.segmentIDList,session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[x].SegmentId); 
-									} 
-									//Append the segmentIDList to SegmentIDArray; This array is a pointer to allTrips
-									ArrayAppend(local.SegmentIDArray,local.segmentIDList);	
-		            				// Append Flight Result to allTrips array
-		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);	
-		            				// Append to contractedTrips array if this is a private fare				
-		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
-		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-		            				// Create a UUID as a unique identifier to be attached to each flight result
-		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
-		            				// set segmentCount to largest number of segments of all legs
-									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
-									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
-									// Add Flight to corresponding segment count array
-									switch (local.segmentCount) {
-										case "1" : 
-										ArrayAppend(local.nonstop,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "2" : 
-										ArrayAppend(local.twoSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "3" : 
-										ArrayAppend(local.threeSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "4" : 
-										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-									}
-								} // end else if not refundable
+								} // end if refundable/nonrefundable
 							} // end if cabin class	 
 						} // end if there is an arraylen of flight results 
 					// Sort arrays
@@ -335,7 +303,7 @@
 							 				else return 1;
 							 			}
 							 		);  
-						
+
                     // Move all nonstop flights to front of array
                     for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
                             ArrayDelete(local.allTrips, nonstop[local.i] );
