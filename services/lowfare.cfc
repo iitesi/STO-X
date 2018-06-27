@@ -219,7 +219,7 @@
 		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
 		            				// set segmentCount to largest number of segments of all legs
 									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
-									local.allTrips[t].segmentCount = local.segmentCount;
+									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
 									// Add Flight to corresponding segment count array
 									switch (local.segmentCount) {
 										case "1" : 
@@ -253,7 +253,7 @@
 		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
 		            				// set segmentCount to largest number of segments of all legs
 									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
-									local.allTrips[t].segmentCount = local.segmentCount;
+									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
 									// Add Flight to corresponding segment count array
 									switch (local.segmentCount) {
 										case "1" : 
@@ -301,7 +301,7 @@
 						 				else return 1;
 						 			}
 						 		); 
-					// Remove NONContracted Trips from all arrays of trips
+ 					// Remove NONContracted Trips from all arrays of trips
 					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){ 
 						local.segmentIDList = 'false'; 
  							// Loop over trip segments and create an object of all segment IDs
@@ -313,8 +313,7 @@
  					 		arrayDeleteAt(local.allTrips, local.arrayPosition); 
  					 		arrayDeleteAt(local.SegmentIDArray, local.arrayPosition); 
  					 	}
-					}  
-
+					}   
 						// Remove multiple connection flights
 						if (arraylen(nonstop) && arraylen(twoSegments)) {
 							for (local.i = 1; local.i <= arraylen(twoSegments); local.i++) {
@@ -328,8 +327,7 @@
                                  ArrayDelete(local.allTrips, threeSegments[local.i] );
 
                             }
-						}	 
-					
+						}	  
 						arraySort(local.allTrips,
 							 			function (e1, e2) {
 							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
@@ -337,6 +335,13 @@
 							 				else return 1;
 							 			}
 							 		);  
+						
+                    // Move all nonstop flights to front of array
+                    for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
+                            ArrayDelete(local.allTrips, nonstop[local.i] );
+                            ArrayPrepend(local.allTrips, nonstop[local.i] );
+                        }
+
 							local.sliceArray = arraylen(local.allTrips) GT application.lowFareResultsLimit ? ArraySlice(local.allTrips,1,application.lowFareResultsLimit) : local.allTrips; 
 				}	else
 					local.sliceArray = [];  
