@@ -284,15 +284,19 @@
 					}   
 						// Remove multiple connection flights
 						if (arraylen(nonstop) && arraylen(twoSegments)) {
-							for (local.i = 1; local.i <= arraylen(twoSegments); local.i++) {
-                                ArrayDelete(local.allTrips, twoSegments[local.i] );
+							for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
+                                ArrayDelete(local.allTrips, threeSegments[local.i] );
+
+                            }							
+							for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
+                                 ArrayDelete(local.allTrips, fourSegments[local.i] );
 
                             }
 
 						}
 						else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {							
-							for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
-                                 ArrayDelete(local.allTrips, threeSegments[local.i] );
+							for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
+                                 ArrayDelete(local.allTrips, fourSegments[local.i] );
 
                             }
 						}	  
