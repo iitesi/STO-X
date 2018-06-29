@@ -241,34 +241,10 @@
 							} // end if cabin class	 
 						} // end if there is an arraylen of flight results 
 					// Sort arrays
-						arraySort(local.nonstop,
-						 			function (e1, e2) {
-						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-						 				else return 1;
-						 			}
-						 		);
-						arraySort(local.twoSegments,
-						 			function (e1, e2) {
-						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-						 				else return 1;
-						 			}
-						 		);
-						arraySort(local.threeSegments,
-						 			function (e1, e2) {
-						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-						 				else return 1;
-						 			}
-						 		);
-						arraySort(local.fourSegments,
-						 			function (e1, e2) {
-						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-						 				else return 1;
-						 			}
-						 		); 
+					local.nonstop = SortArray(local.nonstop); 
+					local.twoSegments = SortArray(local.twoSegments); 
+					local.threeSegments = SortArray(local.threeSegments); 
+					local.fourSegments = SortArray(local.fourSegments); 
  					// Remove NONContracted Trips from all arrays of trips
 					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){ 
 						local.segmentIDList = 'false'; 
@@ -300,14 +276,7 @@
 
                             }
 						}	  
-						arraySort(local.allTrips,
-							 			function (e1, e2) {
-							 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-							 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-							 				else return 1;
-							 			}
-							 		);  
-
+					local.allTrips = SortArray(local.allTrips); 
                     // Move all nonstop flights to front of array
                     for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
                             ArrayDelete(local.allTrips, nonstop[local.i] );
@@ -461,6 +430,20 @@
 				
 			} // end for loop over TripSegements
 			return local.segmentCount;
+		</cfscript>
+	</cffunction>	
+	<cffunction name="SortArray" output="false" returntype="array" access="private">
+		<cfargument name="ArrayToSort" type="array" array="required">
+		<cfscript> 
+		local.sortedArray = arguments.ArrayToSort
+		arraySort(local.sortedArray,
+						 			function (e1, e2) {
+						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
+						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
+						 				else return 1;
+						 			}
+						 		);
+		return local.sortedArray;
 		</cfscript>
 	</cffunction>
 </cfcomponent>
