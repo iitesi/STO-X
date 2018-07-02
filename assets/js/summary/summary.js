@@ -11,7 +11,7 @@ $(document).ready(function(){
 		carriers = $.parseJSON(carriers);
 	}
 	var hotelSelected = $( "#hotelSelected" ).val();
-	var seriveFeesSelected = !airSelected;
+	var serviceFeesSelected = !airSelected;
 	var chainCode = $( "#chainCode" ).val();
 	var masterChainCode = $( "#masterChainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
@@ -65,7 +65,7 @@ $(document).ready(function(){
 					showUnusedTickets(traveler.unusedTicket, traveler.bookingDetail.unusedTickets);
 					$( "#airSpinner" ).hide();
 				}
-				if (seriveFeesSelected == 'true') {
+				if (serviceFeesSelected == 'true') {
 					loadPayments(traveler, 'serviceFee');
 					$( "#serviceFeeSpinner" ).hide();
 				}
