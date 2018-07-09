@@ -60,16 +60,7 @@
 																			, hostToken = arguments.hostToken
 																			, pnr = arguments.providerLocatorCode
 																			, searchID = arguments.searchID )>
-				<cfif NOT arguments.airSelected>
-					<!---
-					Add form of payment to non air booked PNRs
-					Command = F-CK
-					--->
-					<cfset TerminalEntry.addFOPCheckAuxSegments( targetBranch = arguments.targetBranch
-																, hostToken = arguments.hostToken
-																, searchID = arguments.searchID )>
-				</cfif>
-
+				<!--- PRS-405 Removed call to addFOPCheckAuxSegments invoking terminal command to change form of payment to F-CK if not airSelected ---> 
 				<cfif NOT displayPNRResponse.error>
 					<!---
 					Read the PAR into the terminal session for the move

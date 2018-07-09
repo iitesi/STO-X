@@ -11,7 +11,13 @@ $(document).ready(function(){
 		carriers = $.parseJSON(carriers);
 	}
 	var hotelSelected = $( "#hotelSelected" ).val();
-	var serviceFeesSelected = !airSelected;
+
+	if ($('#airSelected').val() == 'false'){
+		var serviceFeesSelected = 'true';
+	}
+	else {
+		var serviceFeesSelected = 'false';
+	}	
 	var chainCode = $( "#chainCode" ).val();
 	var masterChainCode = $( "#masterChainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();

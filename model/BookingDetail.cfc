@@ -51,6 +51,7 @@
 	<cfproperty name="hotelFF" />
 	<cfproperty name="hotelSpecialRequests" />
 	<cfproperty name="hotelFOPID" />
+	<cfproperty name="serviceFeeFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="hotelWhereStaying" />
 	<cfproperty name="serviceFeeNeeded" />
@@ -62,6 +63,7 @@
 	<cfproperty name="serviceFeeCCNumberRight4" />
 	<cfproperty name="serviceFeeCCType" />
 	<cfproperty name="serviceFeeCCYear" />
+	<!--- PRS-405 --->
 	<cfproperty name="serviceFeeFOPID" />
 	<cfproperty name="serviceFeeReasonCode" />
 	<cfproperty name="serviceFeeCCCVV" />
@@ -149,6 +151,8 @@
 		<cfset setHotelFF( '' )>
 		<cfset setHotelSpecialRequests( '' )>
 		<cfset setHotelFOPID( '' )>
+		<!--- PRS-405 --->
+		<cfset setserviceFeeFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
 		<cfset setServiceFeeNeeded( false )>
 		<cfset setServiceFeeBillingName( '' )>
