@@ -115,7 +115,7 @@
 
 		</div>
 	</cfif>
-	<cfif !rc.airSelected>
+	<cfif !rc.airSelected AND rc.account.Require_Hotel_Car_Fee>
 		<div id="serviceFeePayment">
 
 		<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeFOPID') ? 'error' : '')#">

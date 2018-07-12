@@ -825,7 +825,7 @@
 					<cfset local.corporateDiscountNumber = ''>
 					<cfset local.directBillType = ''>
 					<!--- PRS-405 Determine if the Form Of Payment should be passed with the Vehicle XML - if there is no air or hotel selected--->
-					<cfset local.SendFOPWithVehicle = (!local.airSelected AND !local.hotelSelected)>
+					<cfset local.SendFOPWithVehicle = (!local.airSelected AND !local.hotelSelected AND rc.account.Require_Hotel_Car_Fee)>
 					<cfset local.ServiceFeeFOPID = Traveler.getBookingDetail().getServiceFeeFOPID()/>
 					<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
 						<cfif payment.getCarUse() EQ 1>
@@ -985,7 +985,7 @@
 					<!--- PRS-405 --->
 					<cfset local.ServiceFeeFOPID = Traveler.getBookingDetail().getServiceFeeFOPID()/>
 					<cfset local.hotelFOPID = Traveler.getBookingDetail().getHotelFOPID() />
-					<cfset local.SendFOPWithHotel = !local.airSelected>
+					<cfset local.SendFOPWithHotel = (!local.airSelected AND rc.account.Require_Hotel_Car_Fee)>
 					<!--- If the hotel form of payment details were copied from air --->
 					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
 						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />

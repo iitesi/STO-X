@@ -12,7 +12,7 @@ $(document).ready(function(){
 	}
 	var hotelSelected = $( "#hotelSelected" ).val();
 
-	if ($('#airSelected').val() == 'false'){
+	if ($('#airSelected').val() == 'false' && $('#requireHotelCarFee').val() == 1){
 		var serviceFeesSelected = 'true';
 	}
 	else {
