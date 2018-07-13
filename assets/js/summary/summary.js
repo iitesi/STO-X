@@ -92,6 +92,7 @@ $(document).ready(function(){
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
 		$( "#carSpinner" ).show();
+		$( "#serviceFeeSpinner" ).show();
 		$.ajax({type:"POST",
 			url: 'RemoteProxy.cfc?method=loadFullUser',
 			data: 	{
@@ -125,6 +126,10 @@ $(document).ready(function(){
 				if (vehicleSelected == 'true') {
 					loadCarPayments(traveler);
 					$( "#carSpinner" ).hide();
+				}
+				if (serviceFeesSelected == 'true') {
+					loadPayments(traveler, 'serviceFee');
+					$( "#serviceFeeSpinner" ).hide();
 				}
 			}
 		});

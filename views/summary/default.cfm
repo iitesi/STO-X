@@ -172,7 +172,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			    </div>
 			</div>
-			<script src="assets/js/summary/summary.js?v=20180712"></script>
+			<script src="assets/js/summary/summary.js?v=20180713"></script>
 		</form>
 	</div>
 
