@@ -196,6 +196,7 @@
 				local.threeSegments = arraynew(1);	
 				local.fourSegments = arraynew(1);	
 				local.SegmentIDArray = arraynew(1);		
+				local.nonStopSegmentIDArray = arraynew(1);		
 				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) { 
 						// Loop over the Flight Search Results object
 						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) { 
@@ -225,6 +226,8 @@
 									// Add Flight to corresponding segment count array
 									switch (local.segmentCount) {
 										case "1" : 
+										//Append the segmentIDList to nonStopSegmentIDArray; This array is a pointer to nonStop
+										ArrayAppend(local.nonStopSegmentIDArray,local.segmentIDList);	
 										ArrayAppend(local.nonstop,session.KrakenSearchResults.trips.FlightSearchResults[t]);
 										break;
 										case "2" : 
@@ -240,11 +243,6 @@
 								} // end if refundable/nonrefundable
 							} // end if cabin class	 
 						} // end if there is an arraylen of flight results 
-					// Sort arrays
-					local.nonstop = SortArray(local.nonstop); 
-					local.twoSegments = SortArray(local.twoSegments); 
-					local.threeSegments = SortArray(local.threeSegments); 
-					local.fourSegments = SortArray(local.fourSegments); 
  					// Remove NONContracted Trips from all arrays of trips
 					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){ 
 						local.segmentIDList = 'false'; 
@@ -253,29 +251,39 @@
  									local.segmentIDList = ListAppend(segmentIDList,contractedTrips[ct].TripSegments[x].SegmentId);  
  							}
 						local.arrayPosition = ArrayFind(local.SegmentIDArray,local.segmentIDList);
+						local.arrayPositionNonStop = ArrayFind(local.nonStopSegmentIDArray,local.segmentIDList);
 						if (local.arrayPosition gt 0) { 
  					 		arrayDeleteAt(local.allTrips, local.arrayPosition); 
  					 		arrayDeleteAt(local.SegmentIDArray, local.arrayPosition); 
  					 	}
-					}   
-						// Remove multiple connection flights
-						if (arraylen(nonstop) && arraylen(twoSegments)) {
-							for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
-                                ArrayDelete(local.allTrips, threeSegments[local.i] );
+ 					 	if (local.arrayPositionNonStop gt 0) { 	 
+ 					 		arrayDeleteAt(local.nonStop, local.arrayPositionNonStop); 
+ 					 		arrayDeleteAt(local.nonStopSegmentIDArray, local.arrayPositionNonStop); 
+ 					 	}
+					}    
+					// Sort arrays
+					local.nonstop = SortArray(local.nonstop); 
+					local.twoSegments = SortArray(local.twoSegments); 
+					local.threeSegments = SortArray(local.threeSegments); 
+					local.fourSegments = SortArray(local.fourSegments); 
+					// Remove multiple connection flights
+					if (arraylen(nonstop) && arraylen(twoSegments)) {
+						for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
+                            ArrayDelete(local.allTrips, threeSegments[local.i] );
 
-                            }							
-							for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
-                                 ArrayDelete(local.allTrips, fourSegments[local.i] );
+                        }							
+						for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
+                             ArrayDelete(local.allTrips, fourSegments[local.i] );
 
-                            }
+                        }
 
-						}
-						else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {							
-							for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
-                                 ArrayDelete(local.allTrips, fourSegments[local.i] );
+					}
+					else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {							
+						for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
+                             ArrayDelete(local.allTrips, fourSegments[local.i] );
 
-                            }
-						}	  
+                        }
+					}	  
 					local.allTrips = SortArray(local.allTrips); 
                     // Move all nonstop flights to front of array
                     for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
