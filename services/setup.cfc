@@ -301,6 +301,7 @@
 				, CompleatUse
 				, searchModeDefault
 				, carInPolicyDefault
+				, IsNull(Require_Hotel_Car_Fee,0) as Require_Hotel_Car_Fee
 				, (SELECT SecurityCode
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS SecurityCode

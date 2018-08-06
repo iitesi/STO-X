@@ -51,14 +51,34 @@
 	<cfproperty name="hotelFF" />
 	<cfproperty name="hotelSpecialRequests" />
 	<cfproperty name="hotelFOPID" />
+	<cfproperty name="serviceFeeFOPID" />
 	<cfproperty name="hotelReasonCode" />
 	<cfproperty name="hotelWhereStaying" />
+	<cfproperty name="serviceFeeNeeded" />
+	<cfproperty name="serviceFeeBillingName" />
+	<cfproperty name="serviceFeeCCExpiration" />
+	<cfproperty name="serviceFeeCCMonth" />
+	<cfproperty name="serviceFeeCCName" />
+	<cfproperty name="serviceFeeCCNumber" />
+	<cfproperty name="serviceFeeCCNumberRight4" />
+	<cfproperty name="serviceFeeCCType" />
+	<cfproperty name="serviceFeeCCYear" />
+	<!--- PRS-405 --->
+	<cfproperty name="serviceFeeFOPID" />
+	<cfproperty name="serviceFeeReasonCode" />
+	<cfproperty name="serviceFeeCCCVV" />
+	<cfproperty name="serviceFeeBillingAddress" />
+	<cfproperty name="serviceFeeBillingCity" />
+	<cfproperty name="serviceFeeBillingState" />
+	<cfproperty name="serviceFeeBillingZip" />
 	<cfproperty name="lostSavings" />
 	<cfproperty name="nameChange" />
 	<cfproperty name="newAirCC" />
 	<cfproperty name="newAirCCID" />
 	<cfproperty name="newHotelCC" />
 	<cfproperty name="newHotelCCID" />
+	<cfproperty name="newServiceFeeCC" />
+	<cfproperty name="newServiceFeeCCID" />
 	<cfproperty name="password" />
 	<cfproperty name="preTrip" />
 	<cfproperty name="purchaseCompleted" />
@@ -89,8 +109,6 @@
 		<cfset setApprovers( '' )>
 		<cfset setAirNeeded( false )>
 		<cfset setAirBillingAddress( '' )>
-		<cfset setAirBillingCity( '' )>
-		<cfset setAirBillingName( '' )>
 		<cfset setAirBillingCity( '' )>
 		<cfset setAirBillingName( '' )>
 		<cfset setAirBillingState( '' )>
@@ -133,7 +151,25 @@
 		<cfset setHotelFF( '' )>
 		<cfset setHotelSpecialRequests( '' )>
 		<cfset setHotelFOPID( '' )>
+		<!--- PRS-405 --->
+		<cfset setserviceFeeFOPID( '' )>
 		<cfset setHotelReasonCode( '' )>
+		<cfset setServiceFeeNeeded( false )>
+		<cfset setServiceFeeBillingName( '' )>
+		<cfset setServiceFeeCCExpiration( '' )>
+		<cfset setServiceFeeCCMonth( '' )>
+		<cfset setServiceFeeCCName( '' )>
+		<cfset setServiceFeeCCNumber( '' )>
+		<cfset setServiceFeeCCNumberRight4( '' )>
+		<cfset setServiceFeeCCType( '' )>
+		<cfset setServiceFeeCCYear( '' )>
+		<cfset setServiceFeeFOPID( '' )>
+		<cfset setServiceFeeReasonCode( '' )>
+		<cfset setServiceFeeCCCVV( '' )>
+		<cfset setServiceFeeBillingAddress( '' )>
+		<cfset setServiceFeeBillingCity( '' )>
+		<cfset setServiceFeeBillingState( '' )>
+		<cfset setServiceFeeBillingZip( '' )>
 		<cfset setHotelWhereStaying( '' )>
 		<cfset setLostSavings( '' )>
 		<cfset setNameChange( false )>
@@ -141,6 +177,8 @@
 		<cfset setNewAirCCID( 0 )>
 		<cfset setNewHotelCC( 0 )>
 		<cfset setNewHotelCCID( 0 )>
+		<cfset setNewServiceFeeCC( 0 )>
+		<cfset setNewServiceFeeCCID( 0 )>
 		<cfset setPassword( '' )>
 		<cfset setPreTrip( false )>
 		<cfset setPurchaseCompleted( false )>

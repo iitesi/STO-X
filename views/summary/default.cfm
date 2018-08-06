@@ -95,8 +95,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					</cfif>
 				</div>
 			</div>
-		</cfif>
-
+		</cfif> 
 			<cfparam name="rc.showAll" default="0">
 			<input type="hidden" name="searchID" id="searchID" value="#rc.searchID#">
 			<input type="hidden" name="acctID" id="acctID" value="#rc.Filter.getAcctID()#">
@@ -108,6 +107,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="arrangerSTMEmployee" id="arrangerSTMEmployee" value="#rc.Filter.getSTMEmployee()#">
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
+			<input type="hidden" name="requireHotelCarFee" id="requireHotelCarFee" value="#rc.account.Require_Hotel_Car_Fee#">
 			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
 			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air.platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
@@ -172,7 +172,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			    </div>
 			</div>
-			<script src="assets/js/summary/summary.js?v=20180103"></script>
+			<script src="assets/js/summary/summary.js?v=20180713"></script>
 		</form>
 	</div>
 

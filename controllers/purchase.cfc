@@ -824,6 +824,9 @@
 					<cfset local.directBillNumber = ''>
 					<cfset local.corporateDiscountNumber = ''>
 					<cfset local.directBillType = ''>
+					<!--- PRS-405 Determine if the Form Of Payment should be passed with the Vehicle XML - if there is no air or hotel selected--->
+					<cfset local.SendFOPWithVehicle = (!local.airSelected AND !local.hotelSelected AND rc.account.Require_Hotel_Car_Fee)>
+					<cfset local.ServiceFeeFOPID = Traveler.getBookingDetail().getServiceFeeFOPID()/>
 					<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
 						<cfif payment.getCarUse() EQ 1>
 							<cfif len(payment.getDirectBillNumber()) GT 0
@@ -878,6 +881,10 @@
 																										, lowestRateOffered = lowestRateOffered
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, specialCarReservation = specialCarReservation
+																										, SendFOPWithVehicle = local.SendFOPWithVehicle
+																										, serviceFeeFOPID = local.serviceFeeFOPID
+																										, datetimestamp = local.datetimestamp
+																										, token = local.token
 																									)>
 					<!---
 					<cfset local.vehicleResponse = '<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/"><SOAP:Body><SOAP:Fault><faultcode>Server.Application</faultcode><faultstring>C278 MESSAGE FROM LINK VENDOR: NO VALID PRODUCTS *</faultstring><detail><common_v33_0:ErrorInfo xmlns:common_v33_0="http://www.travelport.com/schema/common_v33_0"><common_v33_0:Code>3100</common_v33_0:Code><common_v33_0:Service>SYSTEM</common_v33_0:Service><common_v33_0:Type>Application</common_v33_0:Type><common_v33_0:Description>General Failure:(Unmapped error): C278</common_v33_0:Description><common_v33_0:TransactionId>6E4260B30A07406C1D1A90893C651D39</common_v33_0:TransactionId></common_v33_0:ErrorInfo></detail></SOAP:Fault></SOAP:Body></SOAP:Envelope>'> --->
@@ -969,14 +976,16 @@
 					</cfif>
 					<!--- Update session with new Vehicle record --->
 					<cfset session.searches[rc.SearchID].stItinerary.Vehicle = Vehicle>
-				</cfif>
-
+				</cfif> 
 				<!--- Sell Hotel --->
 				 <cfif hotelSelected
 					AND Traveler.getBookingDetail().getHotelNeeded()
 					AND arrayIsEmpty(errorMessage)>
 					<!--- Sell hotel --->
+					<!--- PRS-405 --->
+					<cfset local.ServiceFeeFOPID = Traveler.getBookingDetail().getServiceFeeFOPID()/>
 					<cfset local.hotelFOPID = Traveler.getBookingDetail().getHotelFOPID() />
+					<cfset local.SendFOPWithHotel = (!local.airSelected AND rc.account.Require_Hotel_Car_Fee)>
 					<!--- If the hotel form of payment details were copied from air --->
 					<cfif (NOT len(hotelFOPID) OR hotelFOPID EQ 0) AND isNumeric(Traveler.getBookingDetail().getAirFOPID())>
 						<cfset local.hotelFOPID = Traveler.getBookingDetail().getAirFOPID() />
@@ -1077,8 +1086,10 @@
 																										, profileFound = profileFound
 																										, developer =  (listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID()) ? true : false)
 																										, hotelFOPID = local.hotelFOPID
+																										, serviceFeeFOPID = local.serviceFeeFOPID
 																										, datetimestamp = local.datetimestamp
 																										, token = local.token
+																										, SendFOPWithHotel = local.SendFOPWithHotel
 																									)>
 						<!--- Parse sell results --->
 						<cfset Hotel = fw.getBeanFactory().getBean('HotelAdapter').parseHotelRsp( Hotel = Hotel

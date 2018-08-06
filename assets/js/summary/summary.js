@@ -11,6 +11,13 @@ $(document).ready(function(){
 		carriers = $.parseJSON(carriers);
 	}
 	var hotelSelected = $( "#hotelSelected" ).val();
+
+	if ($('#airSelected').val() == 'false' && $('#requireHotelCarFee').val() == 1){
+		var serviceFeesSelected = 'true';
+	}
+	else {
+		var serviceFeesSelected = 'false';
+	}	
 	var chainCode = $( "#chainCode" ).val();
 	var masterChainCode = $( "#masterChainCode" ).val();
 	var vehicleSelected = $( "#vehicleSelected" ).val();
@@ -64,6 +71,10 @@ $(document).ready(function(){
 					showUnusedTickets(traveler.unusedTicket, traveler.bookingDetail.unusedTickets);
 					$( "#airSpinner" ).hide();
 				}
+				if (serviceFeesSelected == 'true') {
+					loadPayments(traveler, 'serviceFee');
+					$( "#serviceFeeSpinner" ).hide();
+				}
 				if (hotelSelected == 'true') {
 					loadPayments(traveler, 'hotel');
 					$( "#hotelSpinner" ).hide();
@@ -81,6 +92,7 @@ $(document).ready(function(){
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
 		$( "#carSpinner" ).show();
+		$( "#serviceFeeSpinner" ).show();
 		$.ajax({type:"POST",
 			url: 'RemoteProxy.cfc?method=loadFullUser',
 			data: 	{
@@ -114,6 +126,10 @@ $(document).ready(function(){
 				if (vehicleSelected == 'true') {
 					loadCarPayments(traveler);
 					$( "#carSpinner" ).hide();
+				}
+				if (serviceFeesSelected == 'true') {
+					loadPayments(traveler, 'serviceFee');
+					$( "#serviceFeeSpinner" ).hide();
 				}
 			}
 		});
@@ -514,6 +530,7 @@ $(document).ready(function(){
 		}
 		var personalCardOnFile = 0
 		for( var i=0, l=traveler.payment.length; i<l; i++ ) {
+			console.log(traveler.payment[i]);
 			if (traveler.payment[i][typeOfService + 'Use'] == true) {
 				if (traveler.payment[i].fopDescription == '') {
 					traveler.payment[i].fopDescription = traveler.firstName + ' ' + traveler.lastName;
@@ -523,7 +540,9 @@ $(document).ready(function(){
 				if (traveler.payment[i].acctNum4 != '') {
 					endingIn = ' ending in ' + traveler.payment[i].acctNum4;
 				}
+				console.log(traveler.payment[i]);
 				if (traveler.payment[i].btaID !== '') {
+					console.log(typeOfService);
 					$( "#" + typeOfService + "FOPID" ).append('<option value="bta_' + traveler.payment[i].pciID + '">' + traveler.payment[i].fopDescription + endingIn + '</option>')
 					if (acctID != 255) {
 						if (traveler.payment[i].btaAirUse == 'R') {
@@ -531,6 +550,9 @@ $(document).ready(function(){
 						}
 						if (traveler.payment[i].btaHotelUse == 'R') {
 							$( "#addHotelCC" ).hide();
+						}
+						if (traveler.payment[i].btaServiceFeeUse == 'R') {
+							$( "#addServiceFeeCC" ).hide();
 						}
 					}
 				}
