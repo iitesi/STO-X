@@ -60,7 +60,7 @@
 																			, hostToken = arguments.hostToken
 																			, pnr = arguments.providerLocatorCode
 																			, searchID = arguments.searchID )>
-				<cfif NOT arguments.airSelected AND NOT rc.account.Require_Hotel_Car_Fee>
+				<cfif NOT arguments.airSelected AND NOT arguments.Account.Require_Hotel_Car_Fee>
 					<!---
 					Add form of payment to non air booked PNRs
 					Command = F-CK
@@ -68,7 +68,7 @@
 					<cfset TerminalEntry.addFOPCheckAuxSegments( targetBranch = arguments.targetBranch
 																, hostToken = arguments.hostToken
 																, searchID = arguments.searchID )>
-				</cfif> 
+				</cfif>
 
 				<cfif NOT displayPNRResponse.error>
 					<!---
