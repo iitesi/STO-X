@@ -56,11 +56,11 @@
 		</cfif>
 		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
 
-		<cfif listFind("main.logout,main.login,dycom.login",request.context.action)>
+		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
 		<cfelse>
-			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,dycom.policy,setup.resetPolicy,setup.setPolicy'>
+			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,setup.resetPolicy,setup.setPolicy'>
 			<cfif request.context.action EQ 'setup.resetPolicy'>
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 			<cfelseif request.context.action EQ 'setup.resetAirports'>
