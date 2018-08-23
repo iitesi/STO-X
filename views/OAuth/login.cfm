@@ -1,8 +1,13 @@
 <cfscript> 
-	session.acct_id = 1; 
+	param name="session.userID" default="0";
+	param name="variables.auth.securityCode" default="";
+	// allow params to passed by form or url
+	structAppend(variables.auth,url,true);
+	structAppend(variables.auth,form,true);
 	variables.auth.account = application.fw.factory.getBean("AuthService").init( 
 		secureAuthRedirectUri = '' 
-	).getAccountInfo(session.acct_id);  
+	).getAccountInfo(variables.auth.securityCode); 
+	session.acct_id = variables.auth.account.acct_id;  
 	// default auth params (set for portal)
 	param name="variables.auth.code" default="";
 	param name="variables.auth.baseUri" default="http#iif(cgi.https eq 'off',de(''),de('s'))#://#cgi.server_name#/travelportalv2/";
@@ -17,9 +22,6 @@
 	param name="variables.auth.client_secret" default="#variables.auth.account.clientSecret#";
 	param name="variables.auth.providerAuthURL" default="#variables.auth.account.providerAuthURL#";
  	param name="variables.auth.scopeURL" default = "https://www.googleapis.com/auth/userinfo.email";
-	// allow params to passed by form or url
-	structAppend(variables.auth,url,true);
-	structAppend(variables.auth,form,true);
 	// service handles auth and redirects
 	application.fw.factory.getBean("AuthService").init(
 		tokenURL = variables.auth.tokenURL,
@@ -100,4 +102,4 @@
 			</div>
 		</footer>
 	</body>
-</html>
+</html> 
