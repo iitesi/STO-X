@@ -14,7 +14,7 @@
 	param name="variables.auth.redirectUri" default="#variables.auth.account.providerSTORedirectURL#";
 	param name="variables.auth.onSuccessUri" default="#variables.auth.baseUri#?Display=Home/index.cfm";
 	param name="variables.auth.onErrorUri" default="#variables.auth.baseUri#auth/oauth/?invalidLogin"; 
-	if (auth.account.sso_idp == 'Google') {		
+	if (Trim(auth.account.sso_idp) == 'Google') {		
 		param name="variables.auth.tokenURL" default="https://accounts.google.com/o/oauth2/token";
 		param name="variables.auth.ssoIdentifier" default="email";
 	}
@@ -27,8 +27,7 @@
 		tokenURL = variables.auth.tokenURL,
 		ssoIdentifier = variables.auth.ssoIdentifier
 	).authenticate(session.acct_id,variables.auth.code); 
-</cfscript> 
-
+</cfscript>  
 <!doctype html>
 <html lang="en">
 	<head>
