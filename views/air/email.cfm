@@ -14,7 +14,7 @@
 		<div class="control-group">
 			<label class="control-label" for="Email_Address">Your email</label>
 			<div class="controls">
-				<input type="text" disabled id="Email_Address" name="Email_Address" placeholder="Your email" value="#rc.qUser.Email#" <cfif isValid('email', rc.qUser.Email)>class="uneditable-input"</cfif>>
+				<input type="text" readonly id="Email_Address" name="Email_Address" placeholder="Your email" value="#rc.qUser.Email#" <cfif isValid('email', rc.qUser.Email)>class="uneditable-input"</cfif>>
 				<cfif isValid('email', rc.qUser.Email)>
 					<span class="help-inline"><small>Your email is pulled from our system and cannot be changed.</small></span>
 				</cfif>
