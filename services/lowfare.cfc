@@ -144,7 +144,7 @@
 																																		 sCabins = local.classOfService,
 																																		 airlines = local.airlines );
 
-				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody);
+				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody,arguments.SearchID);
 
 
 
