@@ -71,6 +71,7 @@ OR NOT rc.Filter.getAir()>
 				</cfloop>
 			</thead> 
 			<tbody>
+				<cfset local.carAssetPath = Replace(getDirectoryFromPath(getCurrentTemplatePath()),'\views\car\','')> 
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 
@@ -88,7 +89,9 @@ OR NOT rc.Filter.getAir()>
 											<span class="carType">#vehicleClass#</span><br />
 
 											<!--- Had to add the style width below for IE. --->
-											<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
+											<cfif FileExists(expandPath('#local.carAssetPath#\assets\img\cars\#sCategory#.jpg'))>
+												<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
+											</cfif>
 											<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
 												<br /><small class="green">PREFERRED</small>
 											</cfif>
