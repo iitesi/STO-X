@@ -27,23 +27,26 @@
 			<cfset local.ccAddress = arguments.cc_address>
 		</cfif>
 
-		<cfif len(arguments.email_Address) AND isValid("email", arguments.email_Address)>
+		<!--- PRS-1583 I commented out the following lines because it makes no sense to make the toAddress equal the Email_Address --->
+		<!--- <cfif len(arguments.email_Address) AND isValid("email", arguments.email_Address)>
 			<cfset local.toAddress = arguments.email_Address>
 		<cfelse>
 			<cfset local.toAddress = arguments.to_address>
-		</cfif>
+		</cfif> --->
 
+		<cfset local.toAddress = arguments.to_address>
 		<cfset local.subject = arguments.Email_Subject>
 		<cfif NOT Len(local.subject)>
 			<cfset local.subject = "Tentative itinerary">
 		</cfif>
 
 		<cfmail
-			from="#arguments.Email_Address#"
+			from="noreply@shortstravel.com"
 			to="#local.toAddress#"
 			cc="#local.ccAddress#"
 			subject="#local.subject#"
 			type="HTML">
+		<cfmailparam name="Reply-To" value="#arguments.Email_Address#"> 
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>
