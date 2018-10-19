@@ -109,6 +109,7 @@
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
+		<cfargument name="SearchID" default="">
 
 		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
 		<cfset local.classOfService = (len(arguments.sCabins)) ? arguments.sCabins : (len(arguments.Filter.getClassOfService()) ? arguments.Filter.getClassOfService() : 'Y')> 
