@@ -74,6 +74,7 @@
 			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
 		</cfoutput>
 	</head>
+	<cfoutput>http://www.shortstravel.com/TravelPortalV2/Images/Clients/#Replace(rc.account.account_logo,' ','','all')#</cfoutput>
 	<body>
 		<div id="main-wrapper" class="wide">
 			<header id="main-header">
