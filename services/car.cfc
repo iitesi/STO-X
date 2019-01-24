@@ -2,14 +2,15 @@
 
 	<cfproperty name="BookingDSN">
 	<cfproperty name="VehicleAdapter">
-
+	<cfproperty name="corporateProductionDSN"/>
+	
 	<cffunction name="init" output="false">
 		<cfargument name="BookingDSN" type="string" required="true" />
 		<cfargument name="VehicleAdapter" type="any" required="true" />
-
+		<cfargument name="corporateProductionDSN" type="string" required="true" />
 		<cfset setBookingDSN( arguments.BookingDSN ) />
 		<cfset setVehicleAdapter(arguments.VehicleAdapter)>
-
+		<cfset setCorporateProductionDSN( arguments.CorporateProductionDSN ) />
 		<cfreturn this>
 	</cffunction>
 
@@ -494,7 +495,7 @@
 	<cffunction name="getCDNumber" access="public" output="false" returntype="string" hint="Receives the Vendor Code and Account ID and returns the CD Number">
 		<cfargument name="Vendor_Code" type="string" required="true" />
 		<cfargument name="Acct_ID" type="numeric" required="true" />
-		<cfquery name="local.getCDNumber" datasource="Corporate_Production">
+		<cfquery name="local.getCDNumber" datasource="#getCorporateProductionDSN()#">
 		SELECT CD_Number 
 		FROM CD_Numbers 
 		WHERE
