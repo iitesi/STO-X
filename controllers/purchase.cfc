@@ -814,7 +814,6 @@
 						</cfif>
 					</cfif>
 				</cfif>
-
 				<!--- Sell Vehicle --->
 				<cfif vehicleSelected
 					AND Traveler.getBookingDetail().getCarNeeded()
@@ -827,17 +826,16 @@
 					<!--- PRS-405 Determine if the Form Of Payment should be passed with the Vehicle XML - if there is no air or hotel selected--->
 					<cfset local.SendFOPWithVehicle = (!local.airSelected AND !local.hotelSelected AND rc.account.Require_Hotel_Car_Fee)>
 					<cfset local.ServiceFeeFOPID = Traveler.getBookingDetail().getServiceFeeFOPID()/>
+					<cfset corporateDiscountNumber = fw.getBeanFactory().getBean('car').getCDNumber(Vehicle.getVendorCode(),session.AcctID)> 
 					<cfloop array="#Traveler.getPayment()#" index="local.paymentIndex" item="local.payment">
 						<cfif payment.getCarUse() EQ 1>
 							<cfif len(payment.getDirectBillNumber()) GT 0
 								AND Traveler.getBookingDetail().getCarFOPID() EQ 'DB_'&payment.getDirectBillNumber()>
-								<cfset directBillNumber = payment.getDirectBillNumber()>
-								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+								<cfset directBillNumber = payment.getDirectBillNumber()> 
 								<cfset directBillType = payment.getDirectBillType()>
 							<cfelseif len(payment.getCorporateDiscountNumber()) GT 0
 								AND Traveler.getBookingDetail().getCarFOPID() EQ 'CD_'&payment.getCorporateDiscountNumber()>
-								<cfset directBillNumber = ''>
-								<cfset corporateDiscountNumber = payment.getCorporateDiscountNumber()>
+								<cfset directBillNumber = ''> 
 								<cfset directBillType = payment.getDirectBillType()>
 							</cfif>
 						</cfif>

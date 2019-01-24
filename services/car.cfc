@@ -491,4 +491,19 @@
 
 		<cfreturn car />
 	</cffunction>
+	<cffunction name="getCDNumber" access="public" output="false" returntype="string" hint="Receives the Vendor Code and Account ID and returns the CD Number">
+		<cfargument name="Vendor_Code" type="string" required="true" />
+		<cfargument name="Acct_ID" type="numeric" required="true" />
+		<cfquery name="local.getCDNumber" datasource="Corporate_Production">
+		SELECT CD_Number 
+		FROM CD_Numbers 
+		WHERE
+			Vendor_Type = 'C'
+		AND
+			Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
+		AND
+			Vendor_Code = <cfqueryparam value="#arguments.Vendor_Code#" cfsqltype="cf_sql_char" />
+		</cfquery>
+		<cfreturn local.getCDNumber.CD_Number>
+	</cffunction>
 </cfcomponent>
