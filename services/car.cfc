@@ -500,37 +500,52 @@
 		<cfargument name="Value_ID" type="numeric" required="false" default="0" />
 		<cfif arguments.OU_ID gt 0 AND arguments.Value_ID gt 0>
 			<cfquery name="local.getCDNumber" datasource="#getCorporateProductionDSN()#">
-			SELECT CD_Number 
-			FROM CD_Numbers 
-			WHERE
-				Vendor_Type = 'C'
-			AND
-				Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
-			AND
-				Vendor_Code = <cfqueryparam value="#arguments.Vendor_Code#" cfsqltype="cf_sql_char" />
-			AND
-				OU_ID = <cfqueryparam value="#arguments.OU_ID#" cfsqltype="cf_sql_numeric" />
-			AND
-				Value_ID = <cfqueryparam value="#arguments.Value_ID#" cfsqltype="cf_sql_numeric" />
+				SELECT CD_Number 
+				FROM CD_Numbers 
+				WHERE
+					Vendor_Type = 'C'
+				AND
+					Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
+				AND
+					Vendor_Code = <cfqueryparam value="#arguments.Vendor_Code#" cfsqltype="cf_sql_char" />
+				AND
+					OU_ID = <cfqueryparam value="#arguments.OU_ID#" cfsqltype="cf_sql_numeric" />
+				AND
+					Value_ID = <cfqueryparam value="#arguments.Value_ID#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
 		<cfelse>
 			<cfquery name="local.getCDNumber" datasource="#getCorporateProductionDSN()#">
 				SELECT CD_Numbers.CD_Number
 				FROM CD_Numbers INNER JOIN
                     OU_Users ON CD_Numbers.Value_ID = OU_Users.Value_ID AND CD_Numbers.OU_ID = OU_Users.OU_ID
-                WHERE User_ID = <cfqueryparam value="#arguments.User_ID#" cfsqltype="cf_sql_numeric" />
+                    INNER JOIN OUs 
+                    ON OUs.OU_ID = OU_Users.OU_ID
+                WHERE 
+					Vendor_Type = 'C'
+				AND 
+					OUs.OU_STO = 1
+				<cfif arguments.User_ID gt 0>
+					AND 
+						User_ID = <cfqueryparam value="#arguments.User_ID#" cfsqltype="cf_sql_numeric" />
+				<cfelse>
+					AND 1 = 2
+				</cfif>
 			</cfquery>
 		</cfif>
 		<cfif local.getCDNumber.recordcount eq 0>
 			<cfquery name="local.getCDNumber" datasource="#getCorporateProductionDSN()#">
-			SELECT CD_Number 
-			FROM CD_Numbers 
-			WHERE
-				Vendor_Type = 'C'
-			AND
-				Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
-			AND
-				Vendor_Code = <cfqueryparam value="#arguments.Vendor_Code#" cfsqltype="cf_sql_char" />
+				SELECT CD_Number 
+				FROM CD_Numbers 
+				WHERE
+					Vendor_Type = 'C'
+				AND
+					Acct_ID = <cfqueryparam value="#arguments.Acct_ID#" cfsqltype="cf_sql_numeric" />
+				AND
+					Vendor_Code = <cfqueryparam value="#arguments.Vendor_Code#" cfsqltype="cf_sql_char" />
+				AND
+					OU_ID IS NULL
+				AND
+					Value_ID IS NULL
 			</cfquery>
 		</cfif>
 		<cfreturn local.getCDNumber.CD_Number>
