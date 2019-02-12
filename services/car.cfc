@@ -100,7 +100,7 @@
 			<cfif isStruct(CDNumbers)
 				AND NOT structIsEmpty(CDNumbers)>
 				<cfset local.threadNames = 'corporateRates'>
-				<cfset local.corporateRates = ''>
+				<cfset local.corporateRates = ''>      
 				<cfthread
 					name="corporateRates"
 					Filter="#arguments.Filter#"
@@ -126,7 +126,7 @@
 																			, couldYou = arguments.nCouldYou
 																			, corporateDiscount = CDNumbers
 																			, carChain = arguments.sCarChain
-																			, carType = arguments.sCarType) />
+																			, carType = arguments.sCarType ) />
 					</cfif>
 					<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(response)>
 					<cfif len(arguments.sCarType)>
@@ -166,7 +166,48 @@
 																		, pickUpLocation = arguments.pickUpLocation
 																		, dropOffLocation = arguments.dropOffLocation
 																		, carChain = arguments.sCarChain
-																		, carType = arguments.sCarType) />
+																		, carType = arguments.sCarType ) />
+				</cfif>
+				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(local.response)>
+				<cfif len(arguments.sCarType)>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, false, arguments.sCarType) />
+				<cfelse>
+					<cfset local.stCars = VehicleAdapter.parseVehicles(response, vehicleLocations, false) />
+				</cfif>
+				<cfif arguments.nCouldYou EQ 0>
+					<cfset local.stCars = checkPolicy(local.stCars, arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+				</cfif>
+				<cfset thread.stCars = addJavascript(local.stCars)>
+			</cfthread> 
+			<!--- Get Trucks --->
+			<cfset local.threadNames = listAppend(local.threadNames, 'Trucks')> 
+			<cfset local.Trucks = ''>
+			<cfthread
+				name="Trucks"
+				Filter="#arguments.Filter#"
+				Account="#arguments.Account#"
+				Policy="#arguments.Policy#"
+				nCouldYou="#arguments.nCouldYou#"
+				sCarChain="#arguments.sCarChain#"
+				sCarType="#arguments.sCarType#"
+				pickUpLocation="#arguments.pickUpLocation#"
+				dropOffLocation="#arguments.dropOffLocation#">
+
+				<cfif arguments.nCouldYou EQ 0>
+					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																		, Account = arguments.Account
+																		, pickUpLocation = arguments.pickUpLocation
+																		, dropOffLocation = arguments.dropOffLocation
+																		, Trucks = 1 ) />
+				<cfelse>
+					<cfset local.response = VehicleAdapter.getVehicles( Filter = arguments.Filter
+																		, Account = arguments.Account
+																		, couldYou = arguments.nCouldYou
+																		, pickUpLocation = arguments.pickUpLocation
+																		, dropOffLocation = arguments.dropOffLocation
+																		, carChain = arguments.sCarChain
+																		, carType = arguments.sCarType
+																		, Trucks = 1) />
 				</cfif>
 				<cfset local.vehicleLocations = VehicleAdapter.parseVendorLocations(local.response)>
 				<cfif len(arguments.sCarType)>
@@ -179,7 +220,7 @@
 				</cfif>
 				<cfset thread.stCars = addJavascript(local.stCars)>
 			</cfthread>
-
+ 
 			<cfif arguments.sPriority EQ 'HIGH'
 				OR arguments.nCouldYou NEQ 0
 				OR arguments.nFromHotel NEQ 0>
@@ -197,7 +238,7 @@
 					<cfabort>
 				</cfif>
 
-				<cfset local.stCars = mergeCars((structKeyExists(cfthread, 'corporateRates') AND structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''))>
+				<cfset local.stCars = mergeCars((structKeyExists(cfthread, 'corporateRates') AND structKeyExists(cfthread.corporateRates, 'stCars') ? cfthread.corporateRates.stCars : ''), (structKeyExists(cfthread.publicRates, 'stCars') ? cfthread.publicRates.stCars : ''), (structKeyExists(cfthread.Trucks, 'stCars') ? cfthread.Trucks.stCars : ''))>
 				<cfif arguments.nCouldYou EQ 0>
 					<cfset session.searches[SearchID].stCarVendors = getVendors(local.stCars, arguments.Account)>
 					<cfset session.searches[SearchID].stCarCategories = getCategories(local.stCars)>
@@ -228,9 +269,10 @@
 	<cffunction name="mergeCars" output="false">
 		<cfargument name="corporateRates">
 		<cfargument name="publicRates">
-
+		<cfargument name="Trucks"> 
 		<cfset local.corporateRates = arguments.corporateRates>
 		<cfset local.cars = arguments.publicRates>
+		<cfset local.trucks = arguments.Trucks>
 		<!---If they are both structs that contain values--->
 		<cfif isStruct(local.corporateRates) AND isStruct(local.cars)>
 			<!---Loop through the corporate struct --->
@@ -250,10 +292,25 @@
 		<cfelseif isStruct(local.corporateRates)>
 			<cfset local.cars = local.corporateRates>
 		</cfif>
+		<cfif isStruct(local.trucks)>
+			<!---Loop through the trucks struct --->
+			<cfloop collection="#local.trucks#" item="local.classItem" index="local.truckClass">
+				<!---If the car category already exists--->
+				<cfif structKeyExists(local.cars, local.truckClass)>
+					<!---Loop through each vendor--->
+					<cfloop collection="#local.classItem#" item="local.vendorItem" index="local.truckVendor">
+						<!---If the new one is a truck rate, just add/override it.--->
+						<cfset local.cars[local.truckClass][local.truckVendor] = local.vendorItem>
+					</cfloop>
+				<!---If the car category doesn't exists just add the whole struct for that category--->
+				<cfelse>
+					<cfset local.cars[local.truckClass] = local.classItem>
+				</cfif>
+			</cfloop>
+		</cfif>
 		<cfif NOT isStruct(local.cars)>
 			<cfset local.cars = {}>
-		</cfif>
-
+		</cfif> 
 		<cfreturn local.cars/>
 	</cffunction>
 
@@ -396,7 +453,7 @@
 		<cfset local.stCars = arguments.stCars>
 		<cfset local.stCarCategories = StructNew('linked')>
 		<!--- If you update this list, update it in parseCars too --->
-		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV','StandardRegularCabPickup','PremiumRegularCabPickup','StandardExtendedCabPickup','PremiumExtendedCabPickup']>
+		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV','StandardRegularCabPickup','IntermediateRegularCabPickup','PremiumRegularCabPickup','StandardExtendedCabPickup','IntermediateExtendedCabPickup','PremiumExtendedCabPickup']>
 		<cfloop array="#local.aClassCategories#" index="local.sCategory">
 			<cfif StructKeyExists(local.stCars, local.sCategory)>
 				<cfset local.stCarCategories[local.sCategory] = ''>
