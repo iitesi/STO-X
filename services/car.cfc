@@ -453,7 +453,7 @@
 		<cfset local.stCars = arguments.stCars>
 		<cfset local.stCarCategories = StructNew('linked')>
 		<!--- If you update this list, update it in parseCars too --->
-		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV','StandardRegularCabPickup','IntermediateRegularCabPickup','PremiumRegularCabPickup','StandardExtendedCabPickup','IntermediateExtendedCabPickup','PremiumExtendedCabPickup']>
+		<cfset local.aClassCategories = ['EconomyCar','CompactCar','IntermediateCar','StandardCar','FullsizeCar','LuxuryCar','PremiumCar','SpecialCar','MiniVan','MinivanVan','StandardVan','FullsizeVan','LuxuryVan','PremiumVan','SpecialVan','OversizeVan','TwelvePassengerVanVan','FifteenPassengerVanVan','SmallSUVSUV','MediumSUVSUV','IntermediateSUV','StandardSUV','FullsizeSUV','LargeSUVSUV','LuxurySUV','PremiumSUV','SpecialSUV','OversizeSUV','StandardRegularCabPickup','IntermediateRegularCabPickup','PremiumRegularCabPickup','StandardExtendedCabPickup','IntermediateExtendedCabPickup','PremiumExtendedCabPickup','FullsizeRegularCabPickup','FullsizeExtendedCabPickup']>
 		<cfloop array="#local.aClassCategories#" index="local.sCategory">
 			<cfif StructKeyExists(local.stCars, local.sCategory)>
 				<cfset local.stCarCategories[local.sCategory] = ''>
