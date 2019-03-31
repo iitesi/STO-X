@@ -50,7 +50,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-5 viewToggle">
+			<!---<div class="col-xs-5 viewToggle">
 
 					 <div class="pull-right">
 
@@ -62,7 +62,7 @@
 						 </div>
 
 				</div>
-			</div>
+			</div>--->
 
 
 		<div class="col-xs-12 filterbar respFilter">

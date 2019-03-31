@@ -292,9 +292,11 @@ $(document).ready(function(){
 	// over the initial values of the filter bar
 	//------------------------------------------------------------------------------
 	filterAir();
+	/*
 	$('.grid-view,.list-view').removeClass('hidden');
 
 	var view = Cookies.get('sto-view-pref')
+
 	if(!view || view == 'grid') {
 		// Default to grid-view
 		$('.showGridView').addClass('active');
@@ -312,6 +314,7 @@ $(document).ready(function(){
 		Cookies.set('sto-view-pref', viewSelected);
 
 	});
+	*/
 
 }); // end of $(document).ready(function()
 
