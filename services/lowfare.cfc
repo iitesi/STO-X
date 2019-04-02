@@ -88,17 +88,42 @@
 		<cfargument name="Policy" required="true">
 		<cfargument name="sCabins" default="">
 		<cfargument name="reQuery" default="false">
+		<cfargument name="allCabinClasses" required="false" default="false">
 
-		<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
+		<cfif arguments.allCabinClasses>
+
+			<cfset arguments.sCabins = 'Y'>
+			<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
+
+			<cfset arguments.sCabins = 'C'>
+			<cfset local.stCTrips = getLowFareResultsNew(argumentcollection=arguments)>
+			<cfset local.structCount = structCount(local.stTrips)>
+			<cfloop collection="#local.stCTrips#" index="local.tripIndex" item="local.tripItem">
+				<cfset local.structCount++>
+				<cfset local.stTrips[local.structCount] = local.tripItem>
+			</cfloop>
+
+			<cfset arguments.sCabins = 'F'>
+			<cfset local.stFTrips = getLowFareResultsNew(argumentcollection=arguments)>
+			<cfloop collection="#local.stFTrips#" index="local.tripIndex" item="local.tripItem">
+				<cfset local.structCount++>
+				<cfset local.stTrips[local.structCount] = local.tripItem>
+			</cfloop>
+
+		<cfelse>
+			<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
+		</cfif>
 
 		<!---Merge any selected / 'priced' trips from indv leg selection--->
 		<cfif StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stPricedTrips') AND StructCount(session.searches[arguments.Filter.getSearchID()].stPricedTrips) GT 0>
 			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, session.searches[arguments.Filter.getSearchID()].stPricedTrips)>
 		</cfif>
 
-		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = local.stTrips>
+		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = addTripIDstTrips(stTrips = local.stTrips)>
+		
 		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
 		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
+
 		<cfreturn />
 	</cffunction>
 
@@ -176,7 +201,6 @@
 		<cfreturn local.stTrips>
 
  	</cffunction>
-
 
 	<cffunction name="parseTrips" output="false" returntype="struct" access="private">
 			<cfargument name="Refundable" required="true">
@@ -408,6 +432,23 @@
 
 			<cfreturn local.stTrips>
 
+	</cffunction>
+
+	<cffunction name="addTripIDstTrips" output="false">
+		<cfargument name="stTrips" required="true">
+
+		<!--- Add a tripID to each group of each trip --->
+		<cfloop collection="#arguments.stTrips#" index="local.tripIndex" item="local.tripItem">
+			<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
+				<cfset local.tripID = ''>
+				<cfloop collection="#local.groupItem.Segments#" index="local.segmentIndex" item="local.segmentItem">
+					<cfset local.tripID = listAppend(local.tripID, local.segmentItem.Carrier&local.segmentItem.FlightNumber&' '&local.segmentItem.Origin&'-'&local.segmentItem.Destination, ',')>
+				</cfloop>
+				<cfset arguments.stTrips[local.tripIndex].Groups[local.groupIndex].tripID = local.tripID>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn arguments.stTrips/>
 	</cffunction>
 
 	<cffunction name ="addPricePerMinute" output="false" returnType = "struct" access="private">

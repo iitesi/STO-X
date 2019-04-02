@@ -145,9 +145,10 @@
 						</div>
 					</cfloop>
 				</div>
-				<div class="col-sm-4 center price">
+				<div class="col-sm-4">
 					<cfset btnClass = "">
-					<cfif bDisplayFare>
+					<cfif bDisplayFare
+						AND NOT isDefined("tripID")>
 						<cfif stTrip.policy EQ 1>
 							<cfset btnClass = "btn-primary">
 						</cfif>
@@ -185,6 +186,35 @@
 						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
 							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" href="##" />UNUSED TKT AVAIL</span>
 						</cfif>
+					<cfelseif isDefined("tripID")>
+<!---Remove table.  Sloppy coding, tired of fighting with the divs!! --->
+						<table width="100%">
+						<td width="25%">
+							<cfif structKeyExists(stLowFareAvail, 'Economy')>
+								$#numberFormat(stLowFareAvail.Economy.Total, '_,___')#<br>
+								<small>Economy</small>
+							</cfif>	
+						</td>
+						<td width="25%">
+							<cfif structKeyExists(stLowFareAvail, 'Branded')>
+								$#numberFormat(stLowFareAvail.Branded.Total, '_,___')#<br>
+								<small>Branded</small>
+							</cfif>	
+						</td>
+						<td width="25%">
+							<cfif structKeyExists(stLowFareAvail, 'Business')>
+								$#numberFormat(stLowFareAvail.Business.Total, '_,___')#<br>
+								<small>Business</small>
+							</cfif>	
+						</td>
+						<td width="25%">
+							<cfif structKeyExists(stLowFareAvail, 'First')>
+								$#numberFormat(stLowFareAvail.First.Total, '_,___')#<br>
+								<small>First</small>
+							</cfif>
+						</td>
+						</table>
+						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitLowFareAvail(#nTripKey#);" title="Click to select this flight.">
 					<cfelse>
 						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);" title="Click to select this flight.">
 					</cfif>

@@ -10,6 +10,13 @@ function submitAvailability (nTripKey) {
 	$("#availabilityForm").submit();
 }
 /*
+	Submits the air.availability form.
+*/
+function submitLowFareAvail (nTripKey) {
+	$("#nTrip").val(nTripKey);
+	$("#lowfareavailForm").submit();
+}
+/*
 	Submits the air.lowfare form.
 */
 function submitLowFare (nTripKey) {
