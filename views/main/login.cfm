@@ -1,8 +1,10 @@
 <cfscript>
+	// service handles auth and redirects
 	application.fw.factory.getBean("AuthService").authenticate(
 		data = form
 	);
 </cfscript>
+
 <div id="Main">
 	<br class="hidden-xs">
 	<br>
