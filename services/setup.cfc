@@ -271,7 +271,6 @@
 					"19XQ" = "P3312083"
 				}>
 
-
 			<cfquery name="local.qAccount" datasource="#getBookingDSN()#">
 				SELECT Acct_ID
 				, Account_Name

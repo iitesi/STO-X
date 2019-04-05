@@ -282,16 +282,19 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	</bean>
 
 	<bean id="SecureAuthService" class="com.auth.SecureAuthService">
-        <constructor-arg name="secureAuthRedirectUri"><bean factory-bean="EnvironmentService" factory-method="getSecureAuthRedirectUri" /></constructor-arg>
+    <constructor-arg name="secureAuthRedirectUri"><bean factory-bean="EnvironmentService" factory-method="getSecureAuthRedirectUri" /></constructor-arg>
   </bean>
 
 	<bean id="KrakenService" class="com.kraken.KrakenService">
-        <constructor-arg name="krakenFlightSearchUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenFlightSearchUri" /></constructor-arg>
-				<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
-				<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
+		<constructor-arg name="krakenLoginUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenLoginUri" /></constructor-arg>
+		<constructor-arg name="krakenFlightSearchUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenFlightSearchUri" /></constructor-arg>
+		<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
+		<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
   </bean>
 
-	<bean id="AuthService" class="com.auth.AuthService" />
+	<bean id="AuthService" class="com.auth.AuthService">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+	</bean>
 
 	<bean id="EmailService" class="com.shortstravel.email.emailService" />
 
