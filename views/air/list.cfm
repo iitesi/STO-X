@@ -1,292 +1,221 @@
-<cfparam name="variables.minheight" default="50"/>
-<cfset ribbonClass = "">
-<cfset carrierList = []>
-<cfset thisSelectedLeg = "">
-<cfsavecontent variable="sBadge" trim="#true#">
+<!--- set unique data-attributes for each badge for filtering by time
 <cfscript>
-	/* create ribbon
-		Note: Please do not display "CONTRACTED" flag on search results for Southwest.
-	*/
-
-	if(bDisplayFare AND stTrip.PrivateFare AND stTrip.preferred EQ 1) {
-		if(stTrip.Carriers[1] EQ "WN") {
-			if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")
-				ribbonClass = "ribbon-l-pref-govt";
-			else
-				ribbonClass = "ribbon-l-pref";
-		}
-		else ribbonClass = "ribbon-l-pref-cont";
-	}
-	else if(stTrip.preferred EQ 1) {
-		if(structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST")
-			ribbonClass = "ribbon-l-pref-govt";
-		else
-			ribbonClass = "ribbon-l-pref";
-	}
-	else if(bDisplayFare AND stTrip.PrivateFare AND stTrip.Carriers[1] NEQ "WN")
-		ribbonClass = "ribbon-l-cont";
-	else if(bDisplayFare AND (structKeyExists(stTrip, "PTC") AND stTrip.PTC EQ "GST"))
-		ribbonClass = "ribbon-l-govt";
-
-	// finally add default 'ribbon' class
-	if(Len(ribbonClass))
-		ribbonClass = "ribbon ribbon-adjusted " & ribbonClass;
-
-	if(len(rc.Group) AND structKeyExists(session.searches[rc.SearchID].stSelected[rc.Group], "nTripKey")){
-		bSelected = false;
-		thisSelectedLeg = session.searches[rc.SearchID].stSelected[rc.Group].nTripKey;
-		if(nTripKey EQ thisSelectedLeg)
-			bSelected = true;
-	}
-</cfscript>
+dataString = [];
+loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
+	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
+}
+loop collection="#stTrip.Carriers#" item="carrierItem" index="carrierIndex" {
+	arrayAppend(dataString, "data-carrier" & '="#carrierItem#"');
+}
+arrayAppend(dataString, "data-stops" & '="#stops#"');
+arrayAppend(dataString, "data-preferred" & '="#stTrip.Preferred#"');
+arrayAppend(dataString, "data-carriercount" & '="#arrayLen(stTrip.Carriers)#"');
+arrayAppend(dataString, "data-refundable" & '="#stTrip.ref#"');
+arrayAppend(dataString, "data-duration" & '="#stTrip.duration#"');
+</cfscript> --->
 <cfoutput>
-	<!--<div class="screenbadge badge"> -->
-	<div class="panel panel-default">
+	<div class="panel panel-default trip" 
+		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
+		data-duration="#Segment.TotalTravelTimeInMinutes#" 
+		data-carriercount="#Segment.CarrierCode EQ 'Multi' ? 2 : 1#" 
+		data-departure="#dateTimeFormat(createODBCDateTime(Segment.DepartureTime), 'yyyymmddHHnn')#"
+		data-arrival="#dateTimeFormat(createODBCDateTime(Segment.ArrivalTime), 'yyyymmddHHnn')#"
+		data-economy="#structKeyExists(SegmentFares, 'Economy') ? SegmentFares.Economy.TotalFare : 1000000#"
+		data-business="#structKeyExists(SegmentFares, 'Business') ? SegmentFares.Business.TotalFare : 1000000#"
+		data-first="#structKeyExists(SegmentFares, 'First') ? SegmentFares.First.TotalFare : 1000000#">
+		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
 	  	<div class="panel-body">
-	  		<div class="row" style="vertical-align: middle;">
-				<!--- TODO: uncomment for debugging - this will display on each badge!
-				<cfif IsLocalHost(cgi.local_addr)>
-							<p align="center">DEBUGGING: #nTripKey# | Policy: #stTrip.Policy# | #ncount# [ #stTrip.preferred# | #bDisplayFare# | <cfif structKeyExists(stTrip,"privateFare")>#stTrip.PrivateFare#</cfif> ] </p>
-				</cfif>
-				--->
-<!--- Logic --->				
-				<cfscript>
-					flightnumbers = [];
-					carriernames = '';
-					loop collection="#stTrip.Groups#" index="groupIndex" item="stGroup" {
-						loop collection="#stGroup.Segments#" item="nSegment" {
-							//stSegment = stGroup.Segments[nSegment];
-							arrayAppend(flightnumbers, stGroup.Segments[nSegment].flightNumber);
-							carriernames = carriernames&', '&application.stAirVendors[stTrip.Carriers[1]].Name;
-						}
-					}
-					gCnt = 0;
-					carriernames = listRemoveDuplicates(carriernames);
-				</cfscript>
-				<cfset groupCount = structCount(stTrip.Groups)>
-				<cfloop collection="#stTrip.Groups#" index="groupIndex" item="stGroup">
-					<cfset nCnt = 0>
-					<cfset details = "">
-					<cfset aKeys = structKeyArray(stGroup.Segments)>
-					<cfloop collection="#stGroup.Segments#" item="nSegment" >
-						<cfscript>
-							nCnt++;
-							stSegment = stGroup.Segments[nSegment];
-
-							if(NOT arrayFind(carrierList, stSegment.Carrier))
-								arrayAppend(carrierList, stSegment.Carrier);
-							//if(len(details))
-							//	details = details & '<br />';
-							//details = details & '<strong>' & application.stAirVendors[stSegment.Carrier].Name & ' ' & stSegment.FlightNumber & '</strong> - ' & stSegment.Origin & ' to ' & stSegment.Destination & ' ('& int(stSegment.FlightTime/60) &'h '&stSegment.FlightTime%60&'m)';
-							if( nCnt LT ArrayLen(aKeys)	AND stGroup.Segments[aKeys[nCnt+1]].Group EQ groupIndex) {
-								minites = DateDiff('n', stSegment.ArrivalTime, stGroup.Segments[aKeys[nCnt+1]].DepartureTime);
-								details = details & "<br /><i class='fa fa-clock-o'></i> " & int(minites/60) & 'h ' & minites%60 & 'm layover in ' & stSegment.Destination;
-							}
-
-							if (nCnt eq 1 AND structKeyExists(stSegment,"Source")) {
-								variables.tripSource = stSegment.Source;
-							}
-						</cfscript>
-						<cfif nCnt EQ 1>
-							<cfset nFirstSeg = nSegment>
-							<cfset sClass = (bDisplayFare ? Left((structKeyExists(stSegment,'CabinClass') ? stSegment.CabinClass : findClass(stTrip.Class)),4) : 'Y') />
-						</cfif>
-						<span class="flightNumberFilter" style="display:none;">#reReplace(stSegment.FlightNumber,"^\D+","all")#</span>
-					</cfloop>
-					<cfscript>
-					gCnt++;
-					// set times for badges, and get total times so we can set time sliders in filter
-					departureTime = (hour(stGroup.DepartureTime)*60) + (minute(stGroup.DepartureTime));
-					arrivalTime = (hour(stGroup.ArrivalTime)*60) + (minute(stGroup.ArrivalTime));
-					timeFilter["departureTime#groupIndex#"] = departureTime;
-					timeFilter["arrivalTime#groupIndex#"] = arrivalTime;
-					variables.tripSource = "";
-					</cfscript>
-				</cfloop>
-<!--- Display --->	
-				<span class="#ribbonclass#"></span>		
-				<div class="col-sm-6">
-					<cfloop collection="#stTrip.Groups#" index="groupIndex" item="stGroup">
-						<cfset stops = structCount(stGroup.Segments)-1>
-						<div class="row">
-							<div class="col-sm-2">
-								<cfif ArrayLen(stTrip.Carriers) EQ 1>
-									<img class="carrierimg" src="assets/img/airlines/#stTrip.Carriers[1]#.png" title="#application.stAirVendors[stTrip.Carriers[1]].Name#" width="60">
-								<cfelse>
-									<img class="carrierimg" src="assets/img/airlines/Mult.png" width="75%">
+	  		<div class="row">
+	  			<div class="container">
+		  			<div class="row">
+						<!---<span class="#ribbonclass#"></span>--->		
+						<div class="col-sm-1 center">
+							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
+							<small>
+								<a data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
+									Details
+								</a>
+								<cfif Segment.IsPoorSegment>
+									<i class="material-icons" data-toggle="tooltip" title="Better economy fare and travel times are available" style="font-size:16px;color:##E3132C;">error</i>
 								</cfif>
-							</div>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-sm-5 bold">
-										#timeFormat(stGroup.DepartureTime, 'h:mm tt')# - #timeFormat(stGroup.ArrivalTime, 'h:mm tt')#
-									</div>
-									<div class="col-sm-3 bold">
-										#stGroup.TravelTime#
-									</div>
-									<div class="col-sm-2 bold">
-										<cfif stops EQ 0>Nonstop<cfelseif stops EQ 1>1 stop<cfelse>#stops# stops</cfif>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-5">
-										#carriernames#
-									</div>
-									<div class="col-sm-3">
-										#stGroup.Origin#-#stGroup.Destination#
-									</div>
-									<div class="col-sm-4">
-										<cfloop collection="#stGroup.Segments#" item="stSegment" index="segmentIndex">
-											<cfif stGroup.Destination NEQ stSegment.Destination>#stSegment.Destination#</cfif>
-										</cfloop>
-									</div>
-								</div>
-							</div>
+							</small>
 						</div>
-					</cfloop>
-				</div>
-				<div class="col-sm-4">
-					<cfset btnClass = "">
-					<cfif bDisplayFare
-						AND NOT isDefined("tripID")>
-						<cfif stTrip.policy EQ 1>
-							<cfset btnClass = "btn-primary">
-						</cfif>
-						<cfif bSelected>
-							<cfset btnClass = "btn-success">
-						</cfif>
-						<input type="submit" class="btn #btnClass# btnmargin" value="$#NumberFormat(stTrip.Total)# - #findClass(stTrip.Class)#" onClick="submitLowFare(#nTripKey#);" title="Click to purchase!">
-						<br>
-						<cfif bSelected OR !stTrip.Policy>
-							<tr align="center">
-								<td colspan="2">#(NOT bSelected ? '' : '<span class="medium green bold">SELECTED</span><br/>')#</td>
-								<td colspan="2">
-									<span rel="tooltip" class="popuplink" title="#Replace(ArrayToList(stTrip.aPolicies), ",", ", ")#"><small>#(stTrip.Policy ? '' : 'OUT OF POLICY<br/>')#</small></span>
-								</td>
-							</tr>
-						</cfif>
-						<span rel="popover" class="popuplink" data-original-title="Flight Change / Cancellation Policy"
-							data-content="
-								Ticket is
-								<cfif stTrip.ref eq 0>
-									non-refundable
-								<cfelse>
-									refundable
-								</cfif>
-								<br>
-								<cfif listFind('DL',stTrip.platingCarrier) AND val(stTrip.ref) EQ 0 AND val(stTrip.changePenalty) EQ 0>
-									Changes are not permitted<br>
-									No pre-reserved seats
-								<cfelse>
-									Changes USD #stTrip.changePenalty# for reissue
-								</cfif>
-							" href="##"/>
-							<small>#(stTrip.Ref EQ 0 ? 'NO REFUNDS' : 'REFUNDABLE')#</small>
-						</span>
-						<cfif arrayFind( structKeyArray(rc.Filter.getUnusedTicketCarriers()), stTrip.platingCarrier )>
-							<br><span rel="popover" class="popuplink" style="width:1000px" data-original-title="UNUSED TICKETS - #application.stAirVendors[stTrip.platingCarrier].Name#" data-content="#rc.Filter.getUnusedTicketCarriers()[stTrip.platingCarrier]#" href="##" />UNUSED TKT AVAIL</span>
-						</cfif>
-					<cfelseif isDefined("tripID")>
-<!---Remove table.  Sloppy coding, tired of fighting with the divs!! --->
-						<table width="100%">
-						<td width="25%">
-							<cfif structKeyExists(stLowFareAvail, 'Economy')>
-								$#numberFormat(stLowFareAvail.Economy.Total, '_,___')#<br>
-								<small>Economy</small>
-							</cfif>	
-						</td>
-						<td width="25%">
-							<cfif structKeyExists(stLowFareAvail, 'Branded')>
-								$#numberFormat(stLowFareAvail.Branded.Total, '_,___')#<br>
-								<small>Branded</small>
-							</cfif>	
-						</td>
-						<td width="25%">
-							<cfif structKeyExists(stLowFareAvail, 'Business')>
-								$#numberFormat(stLowFareAvail.Business.Total, '_,___')#<br>
-								<small>Business</small>
-							</cfif>	
-						</td>
-						<td width="25%">
-							<cfif structKeyExists(stLowFareAvail, 'First')>
-								$#numberFormat(stLowFareAvail.First.Total, '_,___')#<br>
-								<small>First</small>
+						<div class="col-sm-5">
+							<div class="row">
+								<div class="col-sm-5">
+									<span class="bold">#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#</span>
+									<cfif Segment.Days NEQ 0>
+										<small class="red">+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#</small>
+									</cfif>
+								</div>
+								<div class="col-sm-3 bold">
+									#Segment.TravelTime#
+								</div>
+								<div class="col-sm-2 bold">
+									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5">
+									<small>#Segment.FlightNumbers#</small>
+								</div>
+								<div class="col-sm-3">
+									<small>#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#</small>
+								</div>
+								<div class="col-sm-4">
+									<small>#Segment.Connections#</small>
+								</div>
+							</div>
+							<cfif Segment.Codeshare NEQ ''>
+								<div class="row">
+									<div class="col-sm-12" style="color:##BBBBBB;">
+										<small>OPERATED BY #Segment.Codeshare#</small>
+									</div>
+								</div>
 							</cfif>
-						</td>
-						</table>
-						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitLowFareAvail(#nTripKey#);" title="Click to select this flight.">
-					<cfelse>
-						<input type="submit" class="btn btn-primary btnmargin" value="Select" onClick="submitAvailability(#nTripKey#);" title="Click to select this flight.">
-					</cfif>
-					<!--- set bag fee into var so we can display in a tooltip below --->
-					<cfsavecontent variable="tooltip">
-						<cfloop array="#carrierList#" item="carrier">
-							#application.stAirVendors[Carrier].Name#:&nbsp;<span class='pull-right'><i class='fa fa-suitcase'></i> = $#application.stAirVendors[Carrier].Bag1#&nbsp;&nbsp;<i class='fa fa-suitcase'></i>&nbsp;<i class='fa fa-suitcase'></i> = $#application.stAirVendors[Carrier].Bag2#</span><br>
-						</cfloop>
-					</cfsavecontent>
-				<div>
-				<small>
-					<cfset sURL = 'SearchID=#rc.SearchID#&nTripID=#nTripKey#&Group=#nDisplayGroup#'>
-					<a data-url="?action=air.popup&sDetails=details&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-						Details
-						<span class="divider">/</span>
-					</a>
-					<cftry>
-						<cfif NOT ArrayFind(stTrip.Carriers, 'WN') AND NOT ArrayFind(stTrip.Carriers, 'FL')>
-							<a data-url="?action=air.popup&sDetails=seatmap&#sURL#&sClass=#sClass#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-								Seats
-								<span class="divider">/</span>
-							</a>
-						</cfif>
-						<cfcatch type="any"></cfcatch>
-					</cftry>
-					<a data-url="?action=air.popup&sDetails=baggage&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal" rel="poptop" data-placement="top" data-content="#tooltip#" data-original-title="Baggage Fees">
-						Bags
-						<span class="divider">/</span>
-					</a>
-					<a data-url="?action=air.popup&sDetails=email&#sURL#" class="popupModal" data-toggle="modal" data-target="##popupModal">
-						Email
-					</a>
-					<!---<cfif structKeyExists(variables,"tripSource") AND application.es.getCurrentEnvironment() NEQ "prod">
-						<div style="padding:20px;">
-							<span class="trip-source" style="background-color:##FFFFE0">#tripSource#</span>
 						</div>
-					</cfif>--->
-				</small>
+						<div class="col-sm-6">
+							<div class="container container-fluid">
+								<div class="row">
+									<cfset BrandedFareIds = ''>
+									<cfloop list="Economy,Business,First" index="CabinClass">
+										<cfif structKeyExists(SegmentFares, CabinClass)>
+											<cfloop collection="#SegmentFares[CabinClass]#" index="brandedFareName" item="brandedFare">
+												<cfif brandedFareName NEQ 'TotalFare'
+													AND brandedFareName NEQ 'SegmentFareId'
+													AND brandedFareName NEQ 'SegmentId'>
+													<cfset BrandedFareIds = listAppend(BrandedFareIds, brandedFare.brandedFareID)>
+													<div data-refundable="#brandedFare.Refundable#" style="display:inline;float:left;min-width:125px;text-align:center;" class="fares">
+														<span class="bold">$#numberFormat(brandedFare.TotalFare, '_,___')#</span>
+														<cfif brandedFare.OutOfPolicy>
+															<i class="material-icons" data-toggle="tooltip" title="#arrayToList(brandedFare.OutOfPolicyReason)#" style="font-size:16px;color:##E3132C;">priority_high</i>
+														</cfif>
+														<br>
+														<small>#CabinClass#</small><br>
+														<cfif CabinClass NEQ brandedFareName><small>#brandedFareName#</small></cfif><br>
+														<cfif brandedFare.Bookable>
+															<cfset key = hash(Segment.SegmentId&CabinClass&SegmentFares[CabinClass].SegmentFareId&brandedFare.Refundable)>
+															<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+															<button type="button" class="btn btn-sm" onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#brandedFare.Refundable#','#key#');">Select</button>
+														</cfif>
+													</div>
+												</cfif>
+											</cfloop>
+
+										<cfelse>
+											<div style="display:inline;float:left;min-width:125px;text-align:center;">
+												<br>
+												<small>#CabinClass#</small><br>
+												<br>
+												<cfset key = hash(Segment.SegmentId&CabinClass&0)>
+												<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+												<button type="button" class="btn btn-sm" onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');">Select</button>
+											</div>
+										</cfif>
+									</cfloop>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div> <!-- /.price -->
-			</div> <!-- /.row -->
-		</div> <!-- /.panel-body -->
-	</div> <!-- / .panel -->
+					<div class="row">
+						<div class="collapse" id="details#cleanedSegmentId#" style="padding-left: 50px;padding-right: 50px;padding-top: 50px;">
+							<cfset count = 0>
+							<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
+								<cfset count++>
+								<cfif count NEQ 1>
+									<cfset layover = dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime)>
+									<div class="alert alert-secondary" role="alert" style="width:400px;">
+										#int(layover/60)#H #layover%60#M
+										in 
+										#application.stAirports[previousFlight.DestinationAirportCode].Airport# 
+										(#previousFlight.DestinationAirportCode#)<br>
+									</div>
+								</cfif>
+
+								<h3 class="bold">
+									#dateTimeFormat(Flight.DepartureTime, 'h:mm tt - ddd, mmm d')#  #repeatString('&nbsp;', 5)#
+									#application.stAirports[Flight.OriginAirportCode].Airport# 
+									(#Flight.OriginAirportCode#)<br>
+								</h3>
+
+								 #repeatString('&nbsp;', 5)#Flight Time:  #Flight.FlightTime#<br>
+
+								<h3 class="bold">
+									#dateTimeFormat(Flight.ArrivalTime, 'h:mm tt - ddd, mmm d')#  #repeatString('&nbsp;', 5)#
+									#application.stAirports[Flight.DestinationAirportCode].Airport# 
+									(#Flight.DestinationAirportCode#)<br>
+								</h3>
+								
+								#application.stAirVendors[Flight.CarrierCode].Name# #repeatString('&nbsp;', 5)#
+								#structKeyExists(application.stEquipment, Flight.Equipment) ? application.stEquipment[Flight.Equipment] : Flight.Equipment# #repeatString('&nbsp;', 5)#
+								#Flight.CarrierCode##Flight.FlightNumber#<br>
+
+								<cfif structKeyExists(Flight, 'CodeshareInfo')>
+									OPERATED BY #Flight.CodeshareInfo.Value#<br>
+								</cfif>
+
+								<cfset previousFlight = Flight>
+							</cfloop>
+
+							<cfloop list="#BrandedFareIds#" index="BrandedFareId">
+								<cfif BrandedFareId NEQ 0>
+									<div>
+										<hr>
+										<span class="bold">#BrandedFares[BrandedFareId].Name#</span> :
+										<cfif len(BrandedFares[BrandedFareId].LongDescription) GT 0>
+											#BrandedFares[BrandedFareId].LongDescription#<br>
+										<cfelse>
+											#BrandedFares[BrandedFareId].ShortDescription#<br>
+										</cfif>
+									</div>
+								</cfif>
+							</cfloop>
+
+							<div>
+								<hr>
+								<cfset Carriers = ''>
+								<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
+									<cfif NOT listFind(Carriers, Flight.CarrierCode)>
+										<cfset Carriers = listAppend(Carriers, Flight.CarrierCode)>
+										<table class="table table-hover table-condensed">
+										<thead>
+										<tr>
+											<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
+											<td class="bold">Paid at online check-in</td>
+											<td class="bold">Paid at airport check-in</td>
+										</tr>
+										</thead>
+										<tbody>
+										<tr>
+											<td>1st Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
+										</tr>
+										<tr>
+											<td>2nd Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>Total for 2 Bags (each way)</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>3+ or Oversized Bags</td>
+											<td colspan="2">Additional Fees Apply</td>
+										</tr>
+										</tbody>
+										</table>
+									</cfif>
+								</cfloop>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </cfoutput>
-</cfsavecontent>
-
-
-<!--- set unique data-attributes for each badge for filtering by time --->
-<cftry>
-	<cfscript>
-	dataString = [];
-	loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
-		arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
-	}
-	</cfscript>
-	<cfcatch type="any"></cfcatch>
-</cftry>
-
-<!--- display badge --->
-<cfoutput>
-	<div class="flight#nTripKey#" #dataString.toList(' ')# class="">#sBadge#</div>
-</cfoutput>
-
-<cffunction name="findClass">
-	<cfargument name="classOfService" required="true"/>
-	<cfif ListFindNoCase('y,x',classOfService) GT 0>
-		<cfreturn 'Economy'/>
-	<cfelseif ListFindNoCase('f',classOfService) GT 0>
-		<cfreturn 'First'/>
-	<cfelseif ListFindNoCase('c',classOfService) GT 0>
-		<cfreturn 'Business'/>
-	<cfelse>
-		<cfreturn 'Economy'/>
-	</cfif>
-</cffunction>
+<!---<cfdump var=#Flight#>--->

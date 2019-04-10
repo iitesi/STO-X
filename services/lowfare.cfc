@@ -4,17 +4,20 @@
 	<cfproperty name="uAPISchemas">
 	<cfproperty name="AirParse">
 	<cfproperty name="KrakenService">
+	<cfproperty name="Storage">
 
 	<cffunction name="init" output="false" hint="Init method.">
 		<cfargument name="UAPIFactory">
 		<cfargument name="uAPISchemas">
 		<cfargument name="AirParse">
 		<cfargument name="KrakenService">
+		<cfargument name="Storage">
 
 		<cfset setUAPIFactory(arguments.UAPIFactory)>
 		<cfset setUAPISchemas(arguments.uAPISchemas)>
 		<cfset setAirParse(arguments.AirParse)>
 		<cfset setKrakenService(arguments.KrakenService)>
+		<cfset setStorage(arguments.Storage)>
 
 		<cfreturn this>
 	</cffunction>
@@ -78,422 +81,401 @@
 		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)>
 	</cffunction>
 
-	<cffunction name="threadLowFare" output="false">
-		<!--- arguments getting passed in from RC --->
-		<cfargument name="sPriority" required="false" default="HIGH">
-		<cfargument name="bRefundable" required="false" default="false">
-		<cfargument name="Filter" required="false" default="X">
-		<cfargument name="stPricing" required="true">
+	<cffunction name="doAirSearch" output="false">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
-		<cfargument name="sCabins" default="">
-		<cfargument name="reQuery" default="false">
-		<cfargument name="allCabinClasses" required="false" default="false">
-
-		<cfif arguments.allCabinClasses>
-
-			<cfset arguments.sCabins = 'Y'>
-			<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
-
-			<cfset arguments.sCabins = 'C'>
-			<cfset local.stCTrips = getLowFareResultsNew(argumentcollection=arguments)>
-			<cfset local.structCount = structCount(local.stTrips)>
-			<cfloop collection="#local.stCTrips#" index="local.tripIndex" item="local.tripItem">
-				<cfset local.structCount++>
-				<cfset local.stTrips[local.structCount] = local.tripItem>
-			</cfloop>
-
-			<cfset arguments.sCabins = 'F'>
-			<cfset local.stFTrips = getLowFareResultsNew(argumentcollection=arguments)>
-			<cfloop collection="#local.stFTrips#" index="local.tripIndex" item="local.tripItem">
-				<cfset local.structCount++>
-				<cfset local.stTrips[local.structCount] = local.tripItem>
-			</cfloop>
-
-		<cfelse>
-			<cfset local.stTrips = getLowFareResultsNew(argumentcollection=arguments)>
-		</cfif>
-
-		<!---Merge any selected / 'priced' trips from indv leg selection--->
-		<cfif StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stPricedTrips') AND StructCount(session.searches[arguments.Filter.getSearchID()].stPricedTrips) GT 0>
-			<cfset local.stTrips = getAirParse().mergeTrips(local.stTrips, session.searches[arguments.Filter.getSearchID()].stPricedTrips)>
-		</cfif>
-
-		<cfset session.searches[arguments.Filter.getSearchID()].stTrips = addTripIDstTrips(stTrips = local.stTrips)>
-		
-		<!--- Finish up the results - finishLowFare sets data into session.searches[searchid] --->
-		<cfset getAirParse().finishLowFare(arguments.Filter.getSearchID(), arguments.Account, arguments.Policy)>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="getLowFareResultsNew" output="false">
-		<cfargument name="sPriority" required="false" default="HIGH">
-		<cfargument name="bRefundable" required="false" default="false">
 		<cfargument name="Filter" required="false" default="X">
-		<cfargument name="Account" required="true">
-		<cfargument name="Policy" required="true">
-		<cfargument name="sCabins" default="">
 		<cfargument name="SearchID" default="">
+		<cfargument name="Group" default="">
+		<cfargument name="SelectedTrip" default="">
+		<cfargument name="refundable" required="false" default="false">
+		<cfargument name="cabins" default="">
 
-		<cfset local.Refundable = (arguments.bRefundable NEQ 'X' AND arguments.bRefundable) ? true : false>
-		<cfset local.classOfService = (len(arguments.sCabins)) ? arguments.sCabins : (len(arguments.Filter.getClassOfService()) ? arguments.Filter.getClassOfService() : 'Y')> 
-		<cfif arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0>
-			<cfset local.Refundable = true>
-		</cfif>
+		<cfset start = getTickCount()>
+		<cfset local.ScheduleResponse = doAirSchedule(Account = arguments.Account,
+												Filter = arguments.Filter,
+												SearchID = arguments.SearchID,
+												Group = arguments.Group )>
+		<cfset trips.Profiling.KrakenFlightSearchAvailability = (getTickCount() - start) / 1000>
 
-		<cfscript>
+		<cfset start = getTickCount()>
+		<cfset local.LowFareResponse = doAirLowFare(Account = arguments.Account,
+												Policy = arguments.Policy,
+												Filter = arguments.Filter,
+												SearchID = arguments.SearchID,
+												Group = arguments.Group,
+												SelectedTrip = arguments.SelectedTrip,
+												refundable = arguments.refundable )>
+		<cfset trips.Profiling.KrakenFlightSearchByTrip = (getTickCount() - start) / 1000>
 
-			local.mergedTrips = {};
+		<cfset start = getTickCount()>
+		<cfset trips.BrandedFares = parseBrandedFares( response = local.LowFareResponse )>
+		<cfset trips.Profiling.BrandedFares = (getTickCount() - start) / 1000>
 
-			local.key = getKrakenService().getKey(OnlyRefundableFares = local.Refundable,
-																					  Filter = arguments.Filter,
-																					  Account = arguments.Account,
-																					  sCabins = local.classOfService);
+		<cfset start = getTickCount()>
+		<cfset trips.Segments = parseLowFareSegments( 	response = local.LowFareResponse,
+														Group = arguments.Group )>
+		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
-			if ( NOT(StructKeyExists(session, "KrakenSearchResults")) OR
-					 NOT(StructKeyExists(session.KrakenSearchResults, "key")) OR
-					 session.KrakenSearchResults.key NEQ local.key ) {
+		<!---<cfset start = getTickCount()>
+		<cfset trips.Segments = parseScheduleSegments( 	Segments = trips.Segments,
+														response = local.ScheduleResponse,
+														Group = arguments.Group )>
+		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>--->
 
-				if (len(trim(arguments.Filter.getAirlines()))) {
+		<cfset start = getTickCount()>
+		<cfset trips.Fares = parseFares( response = local.LowFareResponse,
+										BrandedFares = trips.BrandedFares )>
+		<cfset trips.Profiling.Fares = (getTickCount() - start) / 1000>
 
-					local.airlines = [arguments.Filter.getAirlines()];
+		<cfset start = getTickCount()>
+		<cfset trips.SegmentFares = parseSegmentFares(	response = local.LowFareResponse,
+													Fares = trips.Fares,
+													Group = arguments.Group,
+													SelectedTrip = arguments.SelectedTrip )>
+		<cfset trips.Profiling.SegmentFares = (getTickCount() - start) / 1000>
 
-				} else {
+		<cfset start = getTickCount()>
+		<cfset trips.Segments = parsePoorSegments(	Segments = trips.Segments,
+													SegmentFares = trips.SegmentFares,
+													Group = arguments.Group )>
+		<cfset trips.Profiling.SegmentFares = (getTickCount() - start) / 1000>
 
-					local.airlines = ['ALL'];
-				}
-
-				local.requestBody = getKrakenService().getRequestSearchBody( OnlyRefundableFares  = local.Refundable,
-																																		 Filter = arguments.Filter,
-																																		 Account = arguments.Account,
-																																		 sCabins = local.classOfService,
-																																		 airlines = local.airlines );
-
-				local.mergedTrips = getKrakenService().FlightSearch(local.requestBody,arguments.SearchID);
-
-
-
-				session.KrakenSearchResults = StructNew();
-				session.KrakenSearchResults.trips = local.mergedTrips;
-				session.KrakenSearchResults.key = getKrakenService().hashNumeric(local.key);
-
-			}
-
-		</cfscript>
-
-		<cfset local.BlackListedCarrierPairing = application.BlackListedCarrierPairing>
-
-		<cfset local.stTrips = parseTrips(local.Refundable,arguments.Policy,local.classOfService)>
-
-		<cfset local.stTrips = getAirParse().addGroups( stTrips = local.stTrips, Filter=arguments.Filter )>
-
-		<cfset local.stTrips = addPricePerMinute(local.stTrips)>
-
-		<cfset local.stTrips = getAirParse().removeInvalidTrips(trips=local.stTrips, filter=arguments.Filter)>
-
-		<cfset local.stTrips = getAirParse().removeBlackListedCarrierPairings( trips = local.stTrips, blackListedCarriers = local.blackListedCarrierPairing )>
-
-		<cfset local.stTrips = getAirParse().removeMultiCarrierPrivateFares( trips = local.stTrips )>
-
-		<cfset local.stTrips = getAirParse().addPreferred( stTrips = local.stTrips, Account = arguments.Account)>
-
-		<cfreturn local.stTrips>
-
+		<cfreturn trips>
  	</cffunction>
 
-	<cffunction name="parseTrips" output="false" returntype="struct" access="private">
-			<cfargument name="Refundable" required="true">
-			<cfargument name="Policy" required="false">
-			<cfargument name="classOfService" required="false">
-			<cfscript> 
-				local.stTrips = structNew('linked');
-				local.route = 0;
-				local.j = 1;
+	<cffunction name="doAirLowFare" output="false">
+		<cfargument name="Account" required="true">
+		<cfargument name="Policy" required="true">
+		<cfargument name="Filter" required="false" default="X">
+		<cfargument name="SearchID" default="">
+		<cfargument name="Group" default="">
+		<cfargument name="SelectedTrip" default="">
 
-				local.stTrips[local.route] = structNew();
-				local.stTrips[local.route]["Segments"] = structNew('linked');
-				local.classOfService = arguments.classOfService;
-				local.allTrips = arraynew(1);
-				local.contractedTrips = arraynew(1);
-				local.nonstop = arraynew(1);	
-				local.twoSegments = arraynew(1);	
-				local.threeSegments = arraynew(1);	
-				local.fourSegments = arraynew(1);	
-				local.SegmentIDArray = arraynew(1);		
-				local.nonStopSegmentIDArray = arraynew(1);		
-				if (structKeyExists(session.KrakenSearchResults.trips,"FlightSearchResults") AND arrayLen(session.KrakenSearchResults.trips.FlightSearchResults) GT 0) { 
-						// Loop over the Flight Search Results object
-						for (local.t = 1; local.t <= arrayLen(session.KrakenSearchResults.trips.FlightSearchResults); local.t++) { 
-            				if (session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[1].FLights[1].cabinClass EQ getKrakenService().CabinClassMap(local.classOfService,false)){ 
-            					// If arguments.Refundable, only add refundable flights to the alltrips array   
-								if ((arguments.Refundable AND StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable) 
-									OR 
-										(!arguments.Refundable AND !(StructKeyExists(session.KrakenSearchResults.trips.FlightSearchResults[t], "IsRefundable") AND session.KrakenSearchResults.trips.FlightSearchResults[t].IsRefundable))) {	
-									// Initialize segmentIDList with the boolean value of IsPrivateFare 
-									local.segmentIDList = session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare;
-									// Loop over trip segments and create an list of all segment IDs for TripSegment
-									for (x =1; x <=arrayLen(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments); x++){ 
-											local.segmentIDList = ListAppend(local.segmentIDList,session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments[x].SegmentId); 
-									} 
-									//Append the segmentIDList to SegmentIDArray; This array is a pointer to allTrips
-									ArrayAppend(local.SegmentIDArray,local.segmentIDList);	
-		            				// Append Flight Result to allTrips array
-		            				ArrayAppend(local.allTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);	
-		            				// Append to contractedTrips array if this is a private fare				
-		            				if 	(session.KrakenSearchResults.trips.FlightSearchResults[t].IsPrivateFare) 
-		            					ArrayAppend(local.contractedTrips, session.KrakenSearchResults.trips.FlightSearchResults[t]);
-		            				// Create a UUID as a unique identifier to be attached to each flight result
-		            				local.allTrips[arraylen(local.allTrips)].uniquekey = CreateUUID();   
-		            				// set segmentCount to largest number of segments of all legs
-									local.segmentCount = getSegmentCount(session.KrakenSearchResults.trips.FlightSearchResults[t].TripSegments);
-									local.allTrips[arraylen(local.allTrips)].segmentCount = local.segmentCount;
-									// Add Flight to corresponding segment count array
-									switch (local.segmentCount) {
-										case "1" : 
-										//Append the segmentIDList to nonStopSegmentIDArray; This array is a pointer to nonStop
-										ArrayAppend(local.nonStopSegmentIDArray,local.segmentIDList);	
-										ArrayAppend(local.nonstop,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "2" : 
-										ArrayAppend(local.twoSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "3" : 
-										ArrayAppend(local.threeSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-										case "4" : 
-										ArrayAppend(local.fourSegments,session.KrakenSearchResults.trips.FlightSearchResults[t]);
-										break;
-									}
-								} // end if refundable/nonrefundable
-							} // end if cabin class	 
-						} // end if there is an arraylen of flight results 
- 					// Remove NONContracted Trips from all arrays of trips
-					for (local.ct=1; ct <=arraylen(local.contractedTrips); ct++){ 
-						local.segmentIDList = 'false'; 
- 							// Loop over trip segments and create an object of all segment IDs
- 							for (x =1; x <=arrayLen(contractedTrips[ct].TripSegments); x++){ 
- 									local.segmentIDList = ListAppend(segmentIDList,contractedTrips[ct].TripSegments[x].SegmentId);  
- 							}
-						local.arrayPosition = ArrayFind(local.SegmentIDArray,local.segmentIDList);
-						local.arrayPositionNonStop = ArrayFind(local.nonStopSegmentIDArray,local.segmentIDList);
-						if (local.arrayPosition gt 0) { 
- 					 		arrayDeleteAt(local.allTrips, local.arrayPosition); 
- 					 		arrayDeleteAt(local.SegmentIDArray, local.arrayPosition); 
- 					 	}
- 					 	if (local.arrayPositionNonStop gt 0) { 	 
- 					 		arrayDeleteAt(local.nonStop, local.arrayPositionNonStop); 
- 					 		arrayDeleteAt(local.nonStopSegmentIDArray, local.arrayPositionNonStop); 
- 					 	}
-					}    
-					// Sort arrays
-					local.nonstop = SortArray(local.nonstop); 
-					local.twoSegments = SortArray(local.twoSegments); 
-					local.threeSegments = SortArray(local.threeSegments); 
-					local.fourSegments = SortArray(local.fourSegments); 
-					// Remove multiple connection flights
-					if (arraylen(nonstop) && arraylen(twoSegments)) {
-						for (local.i = 1; local.i <= arraylen(threeSegments); local.i++) {
-                            ArrayDelete(local.allTrips, threeSegments[local.i] );
+		<cfset local.requestBody = getKrakenService().getFlightSearchRequest( 	Policy = arguments.Policy,
+																				Filter = arguments.Filter )>
 
-                        }							
-						for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
-                             ArrayDelete(local.allTrips, fourSegments[local.i] );
+		<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
+															request = local.requestBody )>
 
-                        }
+		<cfif structIsEmpty(local.response)>
+			<cfset local.response = getKrakenService().FlightSearch(	body = local.requestBody,
+																		SearchID = arguments.SearchID,
+																		Group = arguments.Group,
+																		SelectedTrip = arguments.SelectedTrip )>
 
-					}
-					else if (arraylen(local.twoSegments) && arraylen(local.threeSegments)) {							
-						for (local.i = 1; local.i <= arraylen(fourSegments); local.i++) {
-                             ArrayDelete(local.allTrips, fourSegments[local.i] );
+			<cfset getStorage().storeAir(	searchID = arguments.searchID,
+											request = local.requestBody,
+											storage = local.response )>
+		</cfif>
 
-                        }
-					}	  
-					local.allTrips = SortArray(local.allTrips); 
-                    // Move all nonstop flights to front of array
-                    for (local.i = 1; local.i <= arraylen(nonstop); local.i++) {  
-                            ArrayDelete(local.allTrips, nonstop[local.i] );
-                            ArrayPrepend(local.allTrips, nonstop[local.i] );
-                        }
+		<cfreturn local.response>
+ 	</cffunction>
 
-							local.sliceArray = arraylen(local.allTrips) GT application.lowFareResultsLimit ? ArraySlice(local.allTrips,1,application.lowFareResultsLimit) : local.allTrips; 
-				}	else
-					local.sliceArray = [];  
-							
-				for (local.t = 1; local.t <= arrayLen(local.sliceArray); local.t++) {
+	<cffunction name="doAirSchedule" output="false">
+		<cfargument name="Account" required="true">
+		<cfargument name="Filter" required="false" default="X">
+		<cfargument name="SearchID" default="">
+		<cfargument name="Group" default="">
 
-					local.sourceX = local.sliceArray[t].FlightSearchResultSource;
-					local.Base = local.sliceArray[t].BaseFare.Value;
-					local.ApproximateBase = local.sliceArray[t].ApproximateBaseFare.Value;
-					local.Taxes = local.sliceArray[t].Taxes.Value;
-					local.Total = local.sliceArray[t].TotalFare.Value;
-					local.Ref = StructKeyExists(local.sliceArray[t], "IsRefundable") ? local.sliceArray[t].IsRefundable  : 0;
-					local.RequestedRefundable = arguments.Refundable;
-					local.privateFare = StructKeyExists(local.sliceArray[t], "IsPrivateFare") ? local.sliceArray[t].IsPrivateFare : false;
-					local.cabinClass = local.sliceArray[t].TripSegments[1].FLights[1].cabinClass;
-					local.Class = getKrakenService().CabinClassMap(local.cabinClass,true);
-					local.Key = StructKeyExists(local.sliceArray[t], "TripPricingKey") ? local.sliceArray[t].TripPricingKey : "";
-					local.changePenalty = StructKeyExists(local.sliceArray[t], "changePenalty") ? local.sliceArray[t].changePenalty.Value : 0;
-					local.PTC = StructKeyExists(local.sliceArray[t], "PassengerType") ? local.sliceArray[t].PassengerType : "ADT";
+		<cfset local.requestBody = getKrakenService().getFlightSearchAvailabilityRequest( 	Filter = arguments.Filter,
+																							Group = arguments.Group )>
 
-					local.stTrips[local.route].Base = local.Base;
-					local.stTrips[local.route].ApproximateBase = local.ApproximateBase;
-					local.stTrips[local.route].Taxes = local.Taxes;
-					local.stTrips[local.route].Total = local.Total;
-					local.stTrips[local.route].cabinClass = local.cabinClass;
-					local.stTrips[local.route].Class = local.Class;
-					local.stTrips[local.route].Key = local.Key;
-					local.stTrips[local.route].privateFare = local.privateFare;
-					local.stTrips[local.route].changePenalty = local.changePenalty;
-					local.stTrips[local.route].PTC = local.PTC;
-					local.stTrips[local.route].Ref = local.Ref;
-					local.stTrips[local.route].RequestedRefundable = local.RequestedRefundable;
-					local.stTrips[local.route].TotalBag = 0;
-					local.stTrips[local.route].TotalBag2 = 0;
-					local.stTrips[local.route].Xml = "";
+		<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
+															request = local.requestBody )>
 
-					for (var s = 1; s <= arrayLen(local.sliceArray[t].TripSegments); s++) {
+		<cfif structIsEmpty(local.response)>
+			<cfset local.response = getKrakenService().FlightSearchAvailability(body = local.requestBody,
+																				SearchID = arguments.SearchID,
+																				Group = arguments.Group)>
 
-						local.Group = local.sliceArray[t].TripSegments[s].Group;
+			<cfset getStorage().storeAir(	searchID = arguments.searchID,
+											request = local.requestBody,
+											storage = local.response )>
+		</cfif>
 
-						local.TravelTime = local.sliceArray[t].TripSegments[s].TotalTravelTimeInMinutes;
+		<cfreturn local.response>
+ 	</cffunction>
 
-						for (var f = 1; f <= arrayLen(local.sliceArray[t].TripSegments[s].Flights); f++) {
+	<cffunction name="parseBrandedFares" returnType="struct" access="public">
+		<cfargument name="response" type="any" required="true">
 
-							local.flight = local.sliceArray[t].TripSegments[s].FLights[f];
+		<cfset var index = ''>
+		<cfset var item = ''>
+		<cfset var BrandedFares = {}>
 
-							local.cabinClass = local.flight.cabinClass;
-							local.BookingCode = local.flight.BookingCode;
-							local.ChangeOfPlane = local.flight.ChangeOfPlane;
+		<!--- response.brandedfarenames : Create a lookup table for branded fare names. --->
+		<!--- response.brandedfarenames[207174] = Branded Fare Details --->
+		<cfset BrandedFares[0].Name = ''>
+		<cfset BrandedFares[0].LongDescription = ''>
+		<cfset BrandedFares[0].ShortDescription = ''>
+		<cfloop collection="#arguments.response.BrandedFareDetails#" index="index" item="item">
+			<cfset BrandedFares[item.BrandId] = item>
+		</cfloop>
 
-							local.dArrival = local.flight.ArrivalTime;
-							local.dArrivalGMT = this.getAirParse().fromGMTStringToDateObj(local.dArrival);
+		<!--- <cfdump var=#BrandedFares# abort> --->
 
-							if(Find("+", local.dArrival)) {
-								local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"+"),"+"));
-							} else {
-								local.dArrivalTime = parseDateTime(ListDeleteAt(local.dArrival, listLen(local.dArrival,"-"),"-"));
-							}
-
-							local.dDeparture = local.flight.DepartureTime;
-							local.dDepartureGMT = this.getAirParse().fromGMTStringToDateObj(local.dDeparture);
-
-							if(Find("+", local.dDeparture)) {
-								local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"+"),"+"));
-							} else {
-								local.dDepartureTime =  parseDateTime(ListDeleteAt(local.dDeparture, listLen(local.dDeparture,"-"),"-"));
-							}
-
-							local.stTrips[local.route]["Segments"][local.j] = {
-								Arrival			: local.dArrival,
-								ArrivalTime		: local.dArrivalTime,
-								ArrivalGMT		: local.dArrivalGMT,
-								Carrier 		: local.flight.CarrierCode,
-								ChangeOfPlane	: local.ChangeOfPlane,
-								Departure		: local.dDeparture,
-								DepartureTime	: local.dDepartureTime,
-								DepartureGMT	: local.dDepartureGMT,
-								Destination		: local.flight.DestinationAirportCode,
-								Equipment		: local.flight.Equipment,
-								FlightNumber	: local.flight.FlightNumber,
-								FlightTime		: local.flight.FlightDurationInMinutes,
-								TravelTime		: local.TravelTime,
-								Cabin		: local.cabinClass,
-								Group			: local.Group,
-								Origin			: local.flight.OriginAirportCode,
-								PolledAvailabilityOption: '',
-								Class: local.BookingCode,
-								Xml: '',
-								Source 			: local.sourceX
-							};
-
-							local.j++;
-						}
-
-					}
-
-					if (arraylen(structKeyArray(local.stTrips[local.route]["Segments"])) GT 0) {
-							 local.route++;
-							 local.j = 1;
-							 local.stTrips[local.route] = structNew('linked');
-							 local.stTrips[local.route]["Segments"] = structNew('linked');
-					}
-				}
-
-				if (arraylen(structKeyArray(local.stTrips[local.route]["Segments"])) EQ 0) {
-
-					structDelete(local.stTrips, local.route);
-
-				}
-
-			</cfscript>
-
-
-
-			<cfreturn local.stTrips>
-
+		<cfreturn BrandedFares>
 	</cffunction>
 
-	<cffunction name="addTripIDstTrips" output="false">
-		<cfargument name="stTrips" required="true">
+	<cffunction name="parseLowFareSegments" returnType="struct" access="public">
+		<cfargument name="response" type="any" required="true">
+		<cfargument name="Group" type="any" required="true">
 
-		<!--- Add a tripID to each group of each trip --->
-		<cfloop collection="#arguments.stTrips#" index="local.tripIndex" item="local.tripItem">
-			<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
-				<cfset local.tripID = ''>
-				<cfloop collection="#local.groupItem.Segments#" index="local.segmentIndex" item="local.segmentItem">
-					<cfset local.tripID = listAppend(local.tripID, local.segmentItem.Carrier&local.segmentItem.FlightNumber&' '&local.segmentItem.Origin&'-'&local.segmentItem.Destination, ',')>
-				</cfloop>
-				<cfset arguments.stTrips[local.tripIndex].Groups[local.groupIndex].tripID = local.tripID>
+		<cfset var tripIndex = ''>
+		<cfset var tripItem = ''>
+		<cfset var segmentIndex = ''>
+		<cfset var segmentItem = ''>
+		<cfset var flightIndex = ''>
+		<cfset var flightItem = ''>
+		<cfset var segmentCount = ''>
+		<cfset var Carrier = ''>
+		<cfset var Connections = ''>
+		<cfset var FlightNumbers = ''>
+		<cfset var Segments = {}>
+
+		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
+		<!--- response.Segments[G0-B6.124] = Full segment structure --->
+		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
+			<cfloop collection="#tripItem.TripSegments#" index="segmentIndex" item="segmentItem">
+				<cfif segmentItem.Group EQ arguments.Group>
+					<cfset segmentCount = arrayLen(segmentItem.Flights)>
+					<!--- Replace the structure with the SegmentId. --->
+					<cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId>
+					<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
+					<cfset Segments[segmentItem.SegmentId] 						= segmentItem>
+					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= segmentItem.Flights[1].DepartureTime>
+					<cfset Segments[segmentItem.SegmentId].OriginAirportCode 	= segmentItem.Flights[1].OriginAirportCode>
+					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= segmentItem.Flights[segmentCount].ArrivalTime>
+					<cfset Segments[segmentItem.SegmentId].DestinationAirportCode = segmentItem.Flights[segmentCount].DestinationAirportCode>
+					<cfset Segments[segmentItem.SegmentId].TravelTime 			= int(segmentItem.TotalTravelTimeInMinutes/60) &'H '&segmentItem.TotalTravelTimeInMinutes%60&'M'>
+					<cfset Segments[segmentItem.SegmentId].Stops 				= segmentCount-1>
+					<cfset Segments[segmentItem.SegmentId].Days 				= dateDiff('d', segmentItem.Flights[1].DepartureTime, segmentItem.Flights[segmentCount].ArrivalTime)>
+					<cfset Segments[segmentItem.SegmentId].PlatingCarrier		= structKeyExists(tripItem.AvailableFareOptions[1], 'PlatingCarrier') ? tripItem.AvailableFareOptions[1].PlatingCarrier : segmentItem.Flights[1].CarrierCode>
+					<!--- Determine the overall carrier(s) and connection(s). --->
+					<cfset Carrier = ''>
+					<cfset Connections = ''>
+					<cfset FlightNumbers = ''>
+					<cfset Codeshare = ''>
+					<cfloop collection="#segmentItem.Flights#" index="flightIndex" item="flightItem">
+						<cfset Carrier = listAppend(Carrier, flightItem.CarrierCode)>
+						<cfif structKeyExists(flightItem, 'CodeshareInfo')>
+							<cfset Codeshare = listAppend(Codeshare, flightItem.CodeshareInfo.Value)>
+						</cfif>
+						<cfif segmentCount NEQ flightIndex>
+							<cfset Connections = listAppend(Connections, flightItem.DestinationAirportCode)>
+						</cfif>
+						<cfset flightItem.FlightTime = int(flightItem.FlightDurationInMinutes/60) &'H '&flightItem.FlightDurationInMinutes%60&'M'>
+						<cfset structDelete(flightItem, 'DepartureTimeString')>
+						<cfset structDelete(flightItem, 'ArrivalTimeString')>
+						<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.CarrierCode&flightItem.FlightNumber)>
+					</cfloop>
+					<cfset Carrier = listRemoveDuplicates(Carrier)>
+					<cfset Segments[segmentItem.SegmentId].CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
+					<cfset Segments[segmentItem.SegmentId].Codeshare = listRemoveDuplicates(Codeshare)>
+					<cfset Segments[segmentItem.SegmentId].Connections = replace(Connections, ',', ', ', 'ALL')>
+					<cfset Segments[segmentItem.SegmentId].FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
+					<cfset Segments[segmentItem.SegmentId].IsPoorSegment = false>
+					<!--- <cfdump var=#Segments[segmentItem.SegmentId]# abort> --->
+				</cfif>
 			</cfloop>
 		</cfloop>
 
-		<cfreturn arguments.stTrips/>
+		<cfreturn Segments>
 	</cffunction>
 
-	<cffunction name ="addPricePerMinute" output="false" returnType = "struct" access="private">
-		<cfargument name="stTrips" type="struct" required="true">
+	<cffunction name="parseFares" returnType="struct" access="public">
+		<cfargument name="response" type="any" required="true">
+		<cfargument name="BrandedFares" type="any" required="true">
 
-			<cfscript>
+		<cfset var tripIndex = ''>
+		<cfset var tripItem = ''>
+		<cfset var fareIndex = ''>
+		<cfset var fareItem = ''>
+		<cfset var bookingIndex = ''>
+		<cfset var bookingItem = ''>
+		<cfset var groupIndex = ''>
+		<cfset var groupItem = ''>
+		<cfset var flightIndex = ''>
+		<cfset var flightItem = ''>
+		<cfset var segmentCount = ''>
+		<cfset var Carrier = ''>
+		<cfset var Connections = ''>
+		<cfset var FlightNumbers = ''>
+		<cfset var SegmentFareId = ''>
+		<cfset var BookingDetails = {}>
+		<cfset var CabinDetails = {}>
+		<cfset var Details = {}>
+		<cfset var Fares = {}>
 
-				for(key in arguments.stTrips) {
-					arguments.stTrips[key].pricePerMinute = arguments.stTrips[key].Total / arguments.stTrips[key].Duration;
-				}
+		<!--- response.Fares : Create a distinct structure of available fares by reference key. --->
+		<!--- response.Fares[G0-B6.124.S|G1-B6.23.S] = Full fare structure. --->
+		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
+			<cfloop collection="#tripItem.AvailableFareOptions#" index="fareIndex" item="fareItem">
+				<cfset BookingDetails = structNew('linked')>
+				<cfset CabinDetails = structNew()>
+				<cfloop collection="#fareItem.BookingDetails#" index="bookingIndex" item="bookingItem">
+					<cfset bookingItem.PartOfSegmentFareId = bookingItem.CarrierCode&'.'&bookingItem.FlightNumber&'.'&bookingItem.BookingCode>
+					<cfset bookingItem.PartOfSegmentId = bookingItem.CarrierCode&'.'&bookingItem.FlightNumber>
+					<cfparam name="BookingDetails[#bookingItem.Group#]" default="#structNew('linked')#">
+					<cfparam name="CabinDetails[#bookingItem.Group#].CabinCodes" default="">
+					<cfparam name="CabinDetails[#bookingItem.Group#].BrandedFareNames" default="">
+					<cfparam name="CabinDetails[#bookingItem.Group#].SegmentId" default="">
+					<cfparam name="CabinDetails[#bookingItem.Group#].BrandedFareIds" default="">
+					<cfset BookingDetails[bookingItem.Group][bookingItem.PartOfSegmentFareId] = bookingItem>
+					<cfset BrandedFareBrandId = structKeyExists(bookingItem, 'BrandedFareBrandId') ? bookingItem.BrandedFareBrandId : 0>
+					<cfset BookingDetails[bookingItem.Group][bookingItem.PartOfSegmentFareId].BrandedFareName = arguments.BrandedFares[BrandedFareBrandId].Name>
+					<cfset CabinDetails[bookingItem.Group].CabinCodes = listAppend(CabinDetails[bookingItem.Group].CabinCodes, bookingItem.CabinClass)>
+					<cfset CabinDetails[bookingItem.Group].BrandedFareNames = listAppend(CabinDetails[bookingItem.Group].BrandedFareNames, arguments.BrandedFares[BrandedFareBrandId].Name)>
+					<cfset CabinDetails[bookingItem.Group].BrandedFareIds = listAppend(CabinDetails[bookingItem.Group].BrandedFareIds, BrandedFareBrandId)>
+					<cfset CabinDetails[bookingItem.Group].SegmentId = listAppend(CabinDetails[bookingItem.Group].SegmentId, bookingItem.PartOfSegmentId, '-')>
+				</cfloop>
+				<cfset Details = structNew('linked')>
+				<cfloop collection="#BookingDetails#" index="groupIndex" item="groupItem">
+					<cfset SegmentFareId = 'G#groupIndex#-'&structKeyList(groupItem, '-')>
+					<cfset Details[SegmentFareId].Details = []>
+					<cfloop collection="#groupItem#" index="flightIndex" item="flightItem">
+						<cfset arrayAppend(Details[SegmentFareId].Details, flightItem)>
+					</cfloop>
+					<cfset Details[SegmentFareId].CabinCode = listRemoveDuplicates(CabinDetails[groupIndex].CabinCodes)>
+					<cfset Details[SegmentFareId].BrandedFareName = listRemoveDuplicates(CabinDetails[groupIndex].BrandedFareNames)>
+					<cfset Details[SegmentFareId].BrandedFareId = listRemoveDuplicates(CabinDetails[groupIndex].BrandedFareIds)>
+					<cfset Details[SegmentFareId].SegmentId = 'G#groupIndex#-'&CabinDetails[groupIndex].SegmentId>
+				</cfloop>
+				<cfset structDelete(fareItem, 'SegmentFareIds')>
+				<cfset structDelete(fareItem, 'BookingDetails')>
+				<cfset FareKey = structKeyList(Details, '|')>
+				<cfset Fares[FareKey] = fareItem>
+				<cfset Fares[FareKey].BookingDetails = Details>
+			</cfloop>
+		</cfloop>
 
-				return arguments.stTrips;
+		<!--- <cfdump var=#Fares# abort> --->
 
-			</cfscript>
-
+		<cfreturn Fares>
 	</cffunction>
-	<cffunction name="getSegmentCount" output="false" returntype="numeric" access = "private">
-		<cfargument name="TripSegments" type="array" required="true">
-		<cfscript>
-			local.segmentCount = 1;
-			// Loop over TripSegments
-			for (local.flightIndex = 1; local.flightIndex <= arrayLen(arguments.TripSegments); local.flightIndex++) {
-				// Set temp segment count to the current number of segments for group
-				local.tempsegmentCount = arrayLen(arguments.TripSegments[flightIndex].Flights);
-				// Set Segment Count to the greatest of arraylen of Flights
-				// If the latest segment count is larger than the previous segment count, then update segment count
-				// This will get the largest segment count in the flights
-				local.segmentCount = (local.tempsegmentCount > local.segmentCount ? local.tempsegmentCount : local.segmentCount);
-				
-			} // end for loop over TripSegements
-			return local.segmentCount;
-		</cfscript>
-	</cffunction>	
-	<cffunction name="SortArray" output="false" returntype="array" access="private">
-		<cfargument name="ArrayToSort" type="array" array="required">
-		<cfscript> 
-		local.sortedArray = arguments.ArrayToSort
-		arraySort(local.sortedArray,
-						 			function (e1, e2) {
-						 				if(e1.TotalFare.Value LT e2.TotalFare.Value) return -1;
-						 				else if(e1.TotalFare.Value EQ e2.TotalFare.Value) return 0;
-						 				else return 1;
-						 			}
-						 		);
-		return local.sortedArray;
-		</cfscript>
+
+	<cffunction name="parseSegmentFares" returnType="struct" access="public">
+		<cfargument name="response" type="any" required="true">
+		<cfargument name="Fares" type="any" required="true">
+		<cfargument name="Group" type="any" required="true">
+		<cfargument name="SelectedTrip" type="any" required="true">
+
+		<cfset var fareIndex = ''>
+		<cfset var fareItem = ''>
+		<cfset var groupIndex = ''>
+		<cfset var groupItem = ''>
+		<cfset var SegmentFares = {}>
+
+		<cfset SelectedSegmentFareID = ''>
+		<cfset SelectedSegmentID = ''>
+		<cfset SelectedRefundable = ''>
+		<cfloop collection="#arguments.SelectedTrip#" index="selectedGroupIndex" item="selectedGroupItem">
+			<cfset SelectedSegmentFareID = listAppend(SelectedSegmentFareID, selectedGroupItem.SegmentFareID, '|')>
+			<cfset SelectedSegmentID = listAppend(SelectedSegmentID, selectedGroupItem.SegmentID, '|')>
+			<cfset SelectedRefundable = selectedGroupItem.Refundable>
+		</cfloop>
+		<!--- response.SegmentFares : Create a table for G0 lowest fares by cabin and branded fare. --->
+		<!--- response.SegmentFares[AS.2289,AS.1076][Economy][RefundableMain][TotalFare] = 1369.6 --->
+		<cfset var SegmentFares = {}>
+		<!--- <cfset SelectedSegmentFareId = 'G0-AS.2075.B-AS.1424.B-AS.6308.B'> --->
+		<!--- G0-AS.2289.B-AS.442.H-AS.4624.H --->
+		<cfif arguments.Group EQ 0
+			OR SelectedSegmentFareID NEQ ''>
+			<cfloop collection="#arguments.Fares#" index="fareIndex" item="fareItem">
+				<cfif fareIndex CONTAINS SelectedSegmentFareID>
+					<cfloop collection="#fareItem.BookingDetails#" index="groupIndex" item="groupItem">
+						<cfif left(groupIndex, 2) EQ 'G#arguments.Group#'
+							AND (SelectedRefundable EQ ''
+									OR SelectedRefundable EQ fareItem.IsRefundable ? 1 : 0)>
+							<!--- Branded fare level : Lowest economy comfort prices. --->
+							<cfif NOT structKeyExists(SegmentFares, groupItem.SegmentId)
+								OR NOT structKeyExists(SegmentFares[groupItem.SegmentId], groupItem.CabinCode)
+								OR NOT structKeyExists(SegmentFares[groupItem.SegmentId][groupItem.CabinCode], groupItem.BrandedFareName)
+								OR ( SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].TotalFare GT fareItem.TotalFare.Value
+									AND fareItem.IsBookable )>
+
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].TotalFare = fareItem.TotalFare.Value>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Refundable = fareItem.IsRefundable ? 1 : 0>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].PrivateFare = fareItem.IsPrivateFare>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].OutOfPolicy = fareItem.OutOfPolicy>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].OutOfPolicyReason = fareItem.OutOfPolicyReason>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].BrandedFareId = groupItem.BrandedFareId>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Bookable = fareItem.IsBookable>
+							</cfif>
+							<!--- Cabin level : Lowest economy/business/first prices. --->
+							<cfif NOT structKeyExists(SegmentFares, groupItem.SegmentId)
+								OR NOT structKeyExists(SegmentFares[groupItem.SegmentId], groupItem.CabinCode)
+								OR NOT structKeyExists(SegmentFares[groupItem.SegmentId][groupItem.CabinCode], 'TotalFare')
+								OR ( SegmentFares[groupItem.SegmentId][groupItem.CabinCode].TotalFare GT fareItem.TotalFare.Value
+									AND fareItem.IsBookable )>
+
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode].TotalFare = fareItem.TotalFare.Value>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode].SegmentFareId = groupIndex>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode].SegmentId = groupItem.SegmentId>
+
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfreturn SegmentFares>
 	</cffunction>
+
+	<cffunction name="parsePoorSegments" returnType="struct" access="public">
+		<cfargument name="Segments" type="any" required="true">
+		<cfargument name="SegmentFares" type="any" required="true">
+		<cfargument name="Group" type="any" required="true">
+
+		<cfset var fareIndex = ''>
+		<cfset var fareItem = ''>
+		<cfset var cabinIndex = ''>
+		<cfset var cabinItem = ''>
+		<cfset var segmentIndex = ''>
+		<cfset var segmentItem = ''>
+		<cfset var SegmentIdAlt = ''>
+		<cfset var TempSegments = {}>
+		<cfset var Economy = {}>
+		<cfset var Lowest = {}>
+
+		<cfloop collection="#arguments.SegmentFares#" index="fareIndex" item="fareItem">
+			<cfif structKeyExists(fareItem, 'Economy')>
+				<cfset Economy = {}>
+				<cfset Economy.TotalFare = fareItem.Economy.TotalFare>
+				<cfset Economy.TotalTravelTimeInMinutes = Segments[fareItem.Economy.SegmentId].TotalTravelTimeInMinutes>
+				<cfset Economy.CarrierCode =Segments[fareItem.Economy.SegmentId].CarrierCode>
+				<cfset Economy.SegmentId = fareItem.Economy.SegmentId>
+				<cfset DepartureTime = Segments[fareItem.Economy.SegmentId].DepartureTime>
+				<cfparam name="TempSegments['#Segments[#fareItem.Economy.SegmentId#].DepartureTime&Economy.CarrierCode#']" default="#arrayNew()#">
+				<cfset arrayAppend(TempSegments[Segments[fareItem.Economy.SegmentId].DepartureTime&Economy.CarrierCode], Economy)>
+			</cfif>
+		</cfloop>
+
+		<cfloop collection="#TempSegments#" index="depatureIndex" item="depatureItem">
+			<cfloop collection="#depatureItem#" index="segmentIndex" item="segmentItem">
+				<cfif NOT structKeyExists(Lowest, depatureIndex)
+					OR Lowest[depatureIndex].TotalFare GT segmentItem.TotalFare>
+					<cfset Lowest[depatureIndex].TotalFare = segmentItem.TotalFare>
+					<cfset Lowest[depatureIndex].TotalTravelTimeInMinutes = segmentItem.TotalTravelTimeInMinutes>
+					<cfset Lowest[depatureIndex].SegmentId = segmentItem.SegmentId>
+				</cfif>
+			</cfloop>
+		</cfloop>
+
+		<cfloop collection="#arguments.SegmentFares#" index="segmentIndex" item="segmentItem">
+			<cfif structKeyExists(segmentItem, 'Economy')>
+				<cfset departureIndex = Segments[segmentItem.Economy.SegmentId].DepartureTime&Segments[segmentItem.Economy.SegmentId].CarrierCode>
+				<cfif structKeyExists(segmentItem, 'Economy')
+					AND Lowest[departureIndex].TotalFare LT segmentItem.Economy.TotalFare
+					AND Lowest[departureIndex].TotalTravelTimeInMinutes LT Segments[segmentItem.Economy.SegmentId].TotalTravelTimeInMinutes>
+					<cfset arguments.Segments[segmentItem.Economy.SegmentId].IsPoorSegment = true>
+				</cfif>
+			</cfif>
+		</cfloop>
+
+		<cfreturn arguments.Segments>
+	</cffunction>
+ 	
 </cfcomponent>

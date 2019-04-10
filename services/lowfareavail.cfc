@@ -24,7 +24,9 @@
 		<cfargument name="stAvailTrips" required="true">
 		<cfargument name="Group" required="true">
 
-		<cfset local.stLowFareAvail = createstLowFareAvail(stTrips = arguments.stTrips, stAvailTrips = arguments.stAvailTrips, Group = arguments.Group)>
+		<cfset local.stLowFareAvail = createstLowFareAvail(	stTrips = arguments.stTrips,
+															stAvailTrips = arguments.stAvailTrips, 
+															Group = arguments.Group)>
 
 		<cfreturn local.stLowFareAvail/>
 	</cffunction>
@@ -38,36 +40,41 @@
 
 		<!--- Create a new structure that is a link between stTrips and stAvailTrips with a common key and all price information --->
 		<cfloop collection="#arguments.stTrips#" index="local.tripIndex" item="local.tripItem">
-			<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
-				<cfif NOT structKeyExists(local.stLowFareAvail, local.groupIndex)
-					OR NOT structKeyExists(local.stLowFareAvail[local.groupIndex], local.groupItem.tripID)
-					OR NOT structKeyExists(local.stLowFareAvail[local.groupIndex][local.groupItem.tripID], local.tripItem.cabinClass)
-					OR NOT local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Total GT local.tripItem.Total>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].stTrips = local.tripIndex>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Base = local.tripItem.Base>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].ApproximateBase = local.tripItem.ApproximateBase>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Taxes = local.tripItem.Taxes>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Total = local.tripItem.Total>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].CabinClass = local.tripItem.CabinClass>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].PrivateFare = local.tripItem.PrivateFare>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].ChangePenalty = local.tripItem.ChangePenalty>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].PTC = local.tripItem.PTC>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Ref = local.tripItem.Ref>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].TotalBag = local.tripItem.TotalBag>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].TotalBag2 = local.tripItem.TotalBag2>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].Policy = local.tripItem.Policy>
-					<cfset local.stLowFareAvail[local.groupIndex][local.groupItem.tripID][local.tripItem.cabinClass].aPolicies = local.tripItem.aPolicies>
-				</cfif>
+
+			<cfset local.tripID = tripItem.Groups[arguments.group].tripID>
+
+			<cfif NOT structKeyExists(local.stLowFareAvail, arguments.group)
+				OR NOT structKeyExists(local.stLowFareAvail[arguments.group], local.tripID)
+				OR NOT structKeyExists(local.stLowFareAvail[arguments.group][local.tripID], local.tripItem.cabinClass)
+				OR NOT local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Total GT local.tripItem.Total>
+
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].stTrips = local.tripIndex>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Base = local.tripItem.Base>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].ApproximateBase = local.tripItem.ApproximateBase>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Taxes = local.tripItem.Taxes>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Total = local.tripItem.Total>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].CabinClass = local.tripItem.CabinClass>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].PrivateFare = local.tripItem.PrivateFare>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].ChangePenalty = local.tripItem.ChangePenalty>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].PTC = local.tripItem.PTC>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Ref = local.tripItem.Ref>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].TotalBag = local.tripItem.TotalBag>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].TotalBag2 = local.tripItem.TotalBag2>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].Policy = local.tripItem.Policy>
+				<cfset local.stLowFareAvail[arguments.group][local.tripID][local.tripItem.cabinClass].aPolicies = local.tripItem.aPolicies>
+
+			</cfif>
+		</cfloop>
+
+		<!---<cfdump var=#arguments.stAvailTrips# abort>--->
+
+		<cfloop collection="#arguments.stAvailTrips#" index="local.tripIndex" item="local.tripItem">
+			<cfloop collection="#local.tripItem.Groups#" index="arguments.group" item="local.groupItem">
+				<cfset local.stLowFareAvail[arguments.group][local.groupItem.tripID].stAvailTrips = local.tripIndex>
 			</cfloop>
 		</cfloop>
 
-		<cfloop collection="#arguments.stAvailTrips#" index="local.overallGroupIndex" item="local.overallGroupItem">
-			<cfloop collection="#local.overallGroupItem#" index="local.tripIndex" item="local.tripItem">
-				<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
-					<cfset local.stLowFareAvail[local.overallGroupIndex][local.groupItem.tripID].stAvailTrips = local.tripIndex>
-				</cfloop>
-			</cfloop>
-		</cfloop>
+		<!---<cfdump var="#local.stLowFareAvail#" abort="true">--->
 
 		<cfreturn local.stLowFareAvail/>
 	</cffunction>

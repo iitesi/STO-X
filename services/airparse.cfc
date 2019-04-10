@@ -53,8 +53,8 @@
 			<cfset session.searches[arguments.SearchID].stTrips = addJavascript(session.searches[arguments.SearchID].stTrips)><!--- Policy needs to be checked prior --->
 
 			<!--- Sort the results --->
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Arrival')>
-			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Depart')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortArrival = StructSort(session.searches[arguments.SearchID].stTrips, 'text', 'asc', 'Arrival')>
+			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortDepart = StructSort(session.searches[arguments.SearchID].stTrips, 'text', 'asc', 'Depart')>
 			<cfset session.searches[arguments.SearchID].stLowFareDetails.aSortDuration = StructSort(session.searches[arguments.SearchID].stTrips, 'numeric', 'asc', 'Duration')>
 
 			<!--- price, price + 1 bag, price + 2 bags --->
@@ -85,9 +85,6 @@
 
 				<cfloop array="#local.stAirSegmentList.XMLChildren#" index="local.stAirSegment">
 					<cfset local.XML = (arguments.attachXML ? local.stAirSegment : "attachXML need to be true to dump XML used to create segments")>
-					<cfset local.dArrivalGMT = local.stAirSegment.XMLAttributes.ArrivalTime>
-					<cfset local.dArrivalTime = GetToken(local.dArrivalGMT, 1, '.')>
-					<cfset local.dArrivalOffset = GetToken(GetToken(local.dArrivalGMT, 2, '-'), 1, ':')>
 
 					<!--- this is some ugly nested looping to get flightDetailsRef key so we can pull travelTime from flightDetails --->
 					<cfloop array="#local.stAirSegment.xmlChildren#" index="local.key1">
@@ -112,11 +109,9 @@
 					<cfset local.tempKey = getUAPI().hashNumeric(local.stAirSegment.XMLAttributes.Key)>
 					<cfset local.stSegments[local.tempKey] = {
 						ArrivalTime : ParseDateTime(local.dArrivalTime),
-						ArrivalGMT : ParseDateTime(DateAdd('h', local.dArrivalOffset, local.dArrivalTime)),
 						Carrier : local.stAirSegment.XMLAttributes.Carrier,
 						ChangeOfPlane : local.stAirSegment.XMLAttributes.ChangeOfPlane EQ 'true',
 						DepartureTime : ParseDateTime(GetToken(local.stAirSegment.XMLAttributes.DepartureTime, 1, '.')),
-						DepartureGMT : dateConvert('local2Utc', local.stAirSegment.XMLAttributes.DepartureTime),
 						Destination : local.stAirSegment.XMLAttributes.Destination,
 						Equipment : (StructKeyExists(local.stAirSegment.XMLAttributes, 'Equipment') ? local.stAirSegment.XMLAttributes.Equipment : ''),
 						FlightNumber : local.stAirSegment.XMLAttributes.FlightNumber,
@@ -1187,7 +1182,8 @@ GET CHEAPEST OF LOOP. MULTIPLE AirPricingInfo
 		<cfset local.bActive = 1>
 		<cfset local.bBlacklisted = (ArrayLen(arguments.Account.aNonPolicyAir) GT 0 ? 1 : 0)>
 		<cfif arguments.sType EQ 'Fare'>
-			<cfset local.nLowFare = local.stTrips[arguments.nLowFareTripKey].Total>
+			<!---<cfset local.nLowFare = local.stTrips[arguments.nLowFareTripKey].Total>dohmen - fix --->
+			<cfset local.nLowFare = 400><!---dohmen - fix --->
 		</cfif>
 
 		<!--- check if the flight is out of policy based on advance purchase rules --->

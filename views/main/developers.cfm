@@ -50,6 +50,9 @@
 					</li>
 					<li class="divider"></li>
 					<li>
+						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=storage')#" target="_blank">View Storage</a>
+					</li>
+					<li>
 						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=trips')#" target="_blank">View Trips</a>
 					</li>
 					<li>

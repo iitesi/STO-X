@@ -1,6 +1,12 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
 
-	<cffunction name="init" output="false">
+	<cfproperty name="UnusedTicketService">
+
+	<cffunction name="init" output="false" hint="Init method.">
+		<cfargument name="UnusedTicketService">
+
+		<cfset setUnusedTicketService(arguments.UnusedTicketService)>
+
 		<cfreturn this>
 	</cffunction>
 
@@ -32,4 +38,37 @@
 		</cfquery>
 		<cfreturn getTrip />
 	</cffunction>
+
+	<cffunction name="getUnusedTickets">
+		<cfargument name="ProfileId" required="true">
+
+		<cfset local.unusedTicketStruct = {}>
+		<cfif arguments.ProfileID NEQ 0>
+
+			<cfset local.UnusedTickets = UnusedTicketService.getUnusedTickets( userID = arguments.ProfileID ) />
+
+			<cfloop array="#local.UnusedTickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
+				<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
+					<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
+					<cfloop array="#local.UnusedTickets#" index="local.subUnusedTicketIndex" item="local.subUnusedTicketItem">
+						<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
+							<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
+																										Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
+																										Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
+																										Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
+																										Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
+																										Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
+																									</tr>">
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfloop>
+			<cfset local.unusedTicketStruct>
+		<cfelse>
+			<cfset local.unusedTicketStruct = [] />
+		</cfif>
+
+		<cfreturn local.unusedTicketStruct />
+	</cffunction>
+
 </cfcomponent>

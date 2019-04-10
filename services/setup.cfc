@@ -477,11 +477,20 @@
 		<cfloop query="local.qAirVendors">
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Name = local.qAirVendors.ShortName>
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag1 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].CheckInBag1 = 0>
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag2 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].CheckInBag2 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].BaggageLink = ''>
 		</cfloop>
+		<cfset local.stTemp.Mult.Name = 'Multiple Carriers'>
+		<cfset local.stTemp.Mult.Bag1 = 0>
+		<cfset local.stTemp.Mult.CheckInBag1 = 0>
+		<cfset local.stTemp.Mult.Bag2 = 0>
+		<cfset local.stTemp.Mult.CheckInBag2 = 0>
+		<cfset local.stTemp.Mult.BaggageLink = ''>
 
 		<cfquery name="local.qBagFees" datasource="Corporate_Production">
-			SELECT ShortCode, OnlineDomBag1, OnlineDomBag2
+			SELECT ShortCode, OnlineDomBag1, DomBag1, OnlineDomBag2, DomBag2, Baggage_Link
 			FROM OnlineCheckIn_Links, Suppliers
 			WHERE OnlineCheckIn_Links.AccountID = Suppliers.AccountID
 				AND (OnlineDomBag1 IS NOT NULL AND OnlineDomBag1 <> 0)
@@ -490,7 +499,10 @@
 
 		<cfloop query="local.qBagFees">
 			<cfset local.stTemp[local.qBagFees.ShortCode].Bag1 = local.qBagFees.OnlineDomBag1>
+			<cfset local.stTemp[local.qBagFees.ShortCode].CheckInBag1 = local.qBagFees.DomBag1>
 			<cfset local.stTemp[local.qBagFees.ShortCode].Bag2 = local.qBagFees.OnlineDomBag2>
+			<cfset local.stTemp[local.qBagFees.ShortCode].CheckInBag2 = local.qBagFees.DomBag2>
+			<cfset local.stTemp[local.qBagFees.ShortCode].BaggageLink = local.qBagFees.Baggage_Link>
 		</cfloop>
 
 		<cfset application.stAirVendors = local.stTemp>

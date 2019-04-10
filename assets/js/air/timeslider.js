@@ -8,6 +8,7 @@
 // ===============================================
 
 $(document).ready(function () {
+
 	var mintime = 0;
 	var maxtime = 1440;
 	var steptime = 30;

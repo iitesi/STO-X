@@ -10,6 +10,36 @@
 	<cfhtmlhead text="#filterHeader#" />
 </cfsilent>
 
+
+
+
+
+<div class="nav">
+    <a href="#" onclick="
+    	$('#listcontainer > div').hide();
+    	$('#listcontainer > div[data-category-carrier=DL]').show();">show delta</a>
+</a>
+
+<script type=text/javascript">
+    console.log('hi');
+
+
+    $('#listcontainer > div').hide();
+$('.nav a').on('click', function (e) {
+    e.preventDefault();
+    var cust = 'DL';
+    $('#listcontainer > div').hide();
+    $('#listcontainer > div[data-category-carrier="'+cust+'"]').show();
+    console.log('hi');
+    
+});
+</script>
+
+
+
+
+
+
 <!--- hide the filter bar with a loading message until the page has fully rendered --->
 <div id="filterbarloading" class="alert alert-block">
 	<i class="fa fa-spinner fa-spin"></i> Waiting for all results to display before filtering is active

@@ -19,59 +19,6 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="threadAvailability" output="false">
-		<cfargument name="bRefundable" required="false" default="false">
-		<cfargument name="Filter" required="true">
-		<cfargument name="Account" required="true">
-		<cfargument name="Policy" required="true">
-		<cfargument name="Group" required="false">
-		<cfargument name="sCabins" required="false">
-		<cfargument name="reQuery" default="false">
-
-		<cfset local.sPriority = ''>
-		<cfset local.stTrips = {}>
-		<cfif IsNumeric(arguments.Group)>
-			<cfif arguments.reQuery OR !StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stAvailTrips')
-						OR (StructKeyExists(session.searches[arguments.Filter.getSearchID()],'stAvailTrips') AND !StructKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailTrips,arguments.Group))
-						OR (StructKeyExists(session.searches[arguments.Filter.getSearchID()].stAvailTrips,arguments.Group) AND !StructCount(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group]))>
-
-				<!--- Create a thread for every leg. Give priority to the group specifically selected. --->
-				<cfif arguments.Filter.getClassOfService() EQ ''>
-					<cfset local.aCabins = ['X']>
-				<cfelseif Len(arguments.sCabins)>
-					<!--- if find more class is clicked from filter bar - arguments.sCabins (from rc.cabins) will exist --->
-					<cfset local.aCabins = [arguments.sCabins]>
-				<cfelse>
-					<!--- otherwise get the class/cabin passed from the widget --->
-					<cfset local.aCabins = [arguments.Filter.getClassOfService()]>
-				</cfif>
-
-				<cfset local.stTrips = doAvailabilityNew( Refundable = arguments.bRefundable,
-													Filter = arguments.Filter
-													, Group = arguments.Group
-													, Account = arguments.Account
-													, Policy = arguments.Policy
-													, sPriority = 'HIGH'
-													, sCabins = local.aCabins)>
-
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group] = getAirParse().mergeTrips(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], local.stTrips)>
-				<!--- Add list of available carriers per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stCarriers[arguments.Group] = getAirParse().getCarriers(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group])>
-				<!--- Add sorting per leg --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepart[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Depart')>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrival[arguments.Group] = StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Arrival')>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDuration[arguments.Group]	= StructSort(session.searches[arguments.Filter.getSearchID()].stAvailTrips[arguments.Group], 'numeric', 'asc', 'Duration')>
-				<!--- Sorting with preferred departure or arrival time taken into account --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortDepartPreferred[arguments.Group] = sortByPreferredTime("aSortDepart", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
-				<!--- Mark this leg as priced --->
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
-				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips = addTripIDstAvailTrips(stAvailTrips = session.searches[arguments.Filter.getSearchID()].stAvailTrips)>
-			</cfif>
-		</cfif>
-		<cfreturn />
-	</cffunction>
-
 	<cffunction name = "parseConnections" returnType = "struct" access="private">
 			<cfargument name="legs">
 
@@ -103,15 +50,13 @@
 		<cfargument name="stAvailTrips" required="true">
 
 		<!--- Add a tripID to each each trip --->
-		<cfloop collection="#arguments.stAvailTrips#" index="local.overallGroupIndex" item="local.overallGroupItem">
-			<cfloop collection="#local.overallGroupItem#" index="local.tripIndex" item="local.tripItem">
-				<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
-					<cfset local.tripID = ''>
-					<cfloop collection="#local.groupItem.Segments#" index="local.segmentIndex" item="local.segmentItem">
-						<cfset local.tripID = listAppend(local.tripID, local.segmentItem.Carrier&local.segmentItem.FlightNumber&' '&local.segmentItem.Origin&'-'&local.segmentItem.Destination, ',')>
-					</cfloop>
-					<cfset arguments.stAvailTrips[overallGroupIndex][local.tripIndex].Groups[local.groupIndex].tripID = local.tripID>
+		<cfloop collection="#arguments.stAvailTrips#" index="local.tripIndex" item="local.tripItem">
+			<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
+				<cfset local.tripID = ''>
+				<cfloop collection="#local.groupItem.Segments#" index="local.segmentIndex" item="local.segmentItem">
+					<cfset local.tripID = listAppend(local.tripID, local.segmentItem.Carrier&local.segmentItem.FlightNumber&' '&local.segmentItem.Origin&'-'&local.segmentItem.Destination, ',')>
 				</cfloop>
+				<cfset arguments.stAvailTrips[local.tripIndex].Groups[local.groupIndex].tripID = local.tripID>
 			</cfloop>
 		</cfloop>
 

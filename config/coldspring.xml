@@ -98,6 +98,10 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
 	</bean>
 
+	<bean id="Storage" class="booking.services.Storage" >
+		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+	</bean>
+
 	<bean id="purchase" class="booking.services.purchase" >
 		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
 		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
@@ -112,7 +116,9 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 
 	<bean id="confirmation" class="booking.services.confirmation" />
 
-	<bean id="general" class="booking.services.general" />
+	<bean id="general" class="booking.services.general">
+		<constructor-arg name="UnusedTicketService"><ref bean="UnusedTicketService" /></constructor-arg>
+	</bean>
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
 		<constructor-arg name="LocationManager"><ref bean="LocationManager" /></constructor-arg>
@@ -244,6 +250,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>
 
 	<bean id="lowfareavail" class="booking.services.lowfareavail">
@@ -258,13 +265,14 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>
 
-	<bean id="AirPrice" class="booking.services.airprice" >
+	<bean id="AirPrice" class="booking.services.airprice">
 		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
 		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
-		<constructor-arg name="AirAdapter"><ref bean="AirAdapter" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>
 
 	<bean id="car" class="booking.services.car" >
