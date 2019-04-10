@@ -21,3 +21,5 @@ p2/org.eclipse.equinox.p2.engine/profileRegistry/profile.profile/state.propertie
 atlassian-ide-plugin.xml
 booking.iml
 views/main/dan.cfm
+server.json
+site-config-ip.txt
