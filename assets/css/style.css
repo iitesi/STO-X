@@ -559,6 +559,23 @@ ul.tabs li a.active {
 	color: white;
 }
 
+.fare-wrapper {
+	display: flex;
+	justify-content: flex-start;
+	align-items: stretch;
+}
+
+.fare-wrapper .panel {
+	width: 23.6785%;
+	margin-right: 1.3215%;
+}
+
+.fare-wrapper .panel:hover {
+	cursor: pointer;
+	background: #2E76CF;
+	color: white;
+}
+
 @media (min-width: 768px) {
 	.flight-result-warning {
 		position: absolute;
