@@ -105,6 +105,14 @@
 			$(this).parents(".panel.trip").toggleClass("active");
 		});  
 
+		$('#listcontainer').on('dblclick touchstart', '.panel.trip', function (e) {
+			var $target = $(e.target);
+			if(!$target.closest(".fare-wrapper").length){
+				$(this).find('.flight-expand-details').trigger('click');
+			}
+		});  
+		
+
 	</script>
 	
 	<div class="row">

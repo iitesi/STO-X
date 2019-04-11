@@ -566,8 +566,9 @@ ul.tabs li a.active {
 }
 
 .fare-wrapper .panel {
-	width: 23.6785%;
+	width: 23.3785%;
 	margin-right: 1.3215%;
+	margin-bottom: 0;
 }
 
 .fare-wrapper .panel:hover {
