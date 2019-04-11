@@ -100,6 +100,11 @@
 			$('.fares').hide();
 			$('.fares[data-refundable="'+refundable+'"]').show();
 		}
+
+		$('.flight-expand-details').click(function () {
+			$(this).parents(".panel.trip").toggleClass("active");
+		});  
+
 	</script>
 	
 	<div class="row">

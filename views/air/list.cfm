@@ -15,49 +15,77 @@
 		  			<div class="row">
 						<!---<span class="#ribbonclass#"></span>--->		
 						<div class="col-sm-1 center">
-							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
-							<small>
-								<a data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-									Details
-								</a>
-								<cfif Segment.IsPoorSegment>
-									<i class="material-icons" data-toggle="tooltip" title="Better economy fare and travel times are available" style="font-size:16px;color:##E3132C;">error</i>
-								</cfif>
-							</small>
-						</div>
-						<div class="col-sm-5">
 							<div class="row">
-								<div class="col-sm-5">
-									<span class="bold">#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#</span>
-									<cfif Segment.Days NEQ 0>
-										<small class="red">+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#</small>
+								<div class="col-sm-3 col-md-12">
+									<cfif Segment.IsPoorSegment>
+										<span role="button" class="badge badge-pill warning flight-result-warning" data-toggle="tooltip" title="Better economy fare and travel times are available">
+											<i class="fa fas fa-exclamation" aria-hidden="true"></i>
+										</span>
 									</cfif>
 								</div>
-								<div class="col-sm-3 bold">
-									#Segment.TravelTime#
+								<div class="col-sm-6 col-md-12">
+									<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
+							
 								</div>
-								<div class="col-sm-2 bold">
-									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-5">
-									<small>#Segment.FlightNumbers#</small>
-								</div>
-								<div class="col-sm-3">
-									<small>#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#</small>
-								</div>
-								<div class="col-sm-4">
-									<small>#Segment.Connections#</small>
-								</div>
-							</div>
-							<cfif Segment.Codeshare NEQ ''>
-								<div class="row">
-									<div class="col-sm-12" style="color:##BBBBBB;">
-										<small>OPERATED BY #Segment.Codeshare#</small>
+								<div class="col-sm-3 col-md-12">
+									<div class="row">
+										<div class="col-sm-12">
+											<a class="flight-expand-details" data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
+												<i class="fa fa-caret-down" aria-hidden="true"></i>
+											</a>
+										</div>
 									</div>
 								</div>
+							</div>
+						</div>
+						<div class="col-sm-3 ">
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
+								</div>	
+							</div>
+							<cfif Segment.Days NEQ 0>
+							<div class="row">
+								<div class="col-sm-12 fs-1 red">
+									+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#
+								</div>	
+							</div>
 							</cfif>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-1">
+									#Segment.FlightNumbers#
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-s">
+									OPERATED BY #Segment.Codeshare#
+								</div>	
+							</div>							
+						</div>
+						<div class="col-sm-1">
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									#Segment.TravelTime#
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-1">
+									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
+								</div>	
+							</div>
+						</div>
+						<div class="col-sm-1">
+
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 fs-1 text-muted">
+									#Segment.Connections#
+								</div>	
+							</div>
 						</div>
 						<div class="col-sm-6">
 							<div class="container container-fluid">
@@ -102,6 +130,7 @@
 							</div>
 						</div>
 					</div>
+					
 					<div class="row">
 						<div class="collapse" id="details#cleanedSegmentId#" style="padding-left: 50px;padding-right: 50px;padding-top: 50px;">
 							<cfset count = 0>
