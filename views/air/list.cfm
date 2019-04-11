@@ -1,18 +1,3 @@
-<!--- set unique data-attributes for each badge for filtering by time
-<cfscript>
-dataString = [];
-loop collection="#timeFilter#" item="timeFilterItem" index="timeFilterIndex" {
-	arrayAppend(dataString, "data-" & timeFilterIndex & '="#timeFilterItem#"');
-}
-loop collection="#stTrip.Carriers#" item="carrierItem" index="carrierIndex" {
-	arrayAppend(dataString, "data-carrier" & '="#carrierItem#"');
-}
-arrayAppend(dataString, "data-stops" & '="#stops#"');
-arrayAppend(dataString, "data-preferred" & '="#stTrip.Preferred#"');
-arrayAppend(dataString, "data-carriercount" & '="#arrayLen(stTrip.Carriers)#"');
-arrayAppend(dataString, "data-refundable" & '="#stTrip.ref#"');
-arrayAppend(dataString, "data-duration" & '="#stTrip.duration#"');
-</cfscript> --->
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
