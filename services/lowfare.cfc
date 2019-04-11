@@ -22,65 +22,6 @@
 		<cfreturn this>
 	</cffunction>
 
-	<cffunction name="removeFlight" output="false" hint="I remove a flight from the session based on searchID.">
-		<cfargument name="searchID">
-
-		<cfset StructDelete(session.searches, arguments.searchID)>
-		<cfset StructDelete(session.filters, arguments.searchID)>
-
-		<cfreturn  />
-	</cffunction>
-
-	<cffunction name="selectAir" output="false" hint="I set stItinerary into the session scope.">
-		<cfargument name="SearchID">
-		<cfargument name="nTrip">
-
-		<!--- Initialize or overwrite the CouldYou air section --->
-		<cfset session.searches[arguments.SearchID].CouldYou.Air = {} />
-		<cfset session.searches[arguments.SearchID]['Air'] = true />
-		<!--- Move over the information into the stItinerary --->
-		<cfset session.searches[arguments.SearchID].stItinerary.Air = session.searches[arguments.SearchID].stTrips[arguments.nTrip]>
-
-		<cfquery datasource="booking">
-			INSERT INTO Logs
-				( Search_ID
-				, ElapsedTime
-				, Service
-				, Request
-				, Response
-				, Timestamp )
-			VALUES
-				( #arguments.searchID#
-				, 0
-				, 'A'
-				, 'Selection for lowfare'
-				, '#serializeJSON(session.searches[arguments.SearchID].stItinerary.Air)#'
-				, getDate() )
-		</cfquery>
-
-		<cfset session.searches[arguments.SearchID].stItinerary.Air.nTrip = arguments.nTrip>
-		<cfset session.searches[arguments.SearchID].RequestedRefundable = session.searches[arguments.SearchID].stItinerary.Air.RequestedRefundable />
-		<cfset session.searches[arguments.SearchID].PassedRefCheck = 0 />
-		<!--- Loop through the searches structure and delete all other searches --->
-		<cfloop collection="#session.searches#" index="local.nKey">
-			<cfif IsNumeric(local.nKey) AND local.nKey NEQ arguments.SearchID>
-				<cfset StructDelete(session.searches, local.nKey)>
-			</cfif>
-		</cfloop>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="unSelectAir" output="false">
-		<cfargument name="SearchID">
-		<cfargument name="nTrip">
-		<cfset session.searches[arguments.SearchID].stItinerary.Air = "">
-		<cfset session.searches[arguments.SearchID]['Air'] = false />
-		<cfset StructDelete(session.searches[arguments.searchID].stTrips,arguments.nTrip)>
-		<cfset StructDelete(session.searches[arguments.searchID],"stPricedTrips")>
-		<cfset StructDelete(session.searches[arguments.searchID].stLowFareDetails.stPriced,arguments.nTrip)>
-	</cffunction>
-
 	<cffunction name="doAirSearch" output="false">
 		<cfargument name="Account" required="true">
 		<cfargument name="Policy" required="true">
@@ -117,11 +58,11 @@
 														Group = arguments.Group )>
 		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
-		<!---<cfset start = getTickCount()>
+		<cfset start = getTickCount()>
 		<cfset trips.Segments = parseScheduleSegments( 	Segments = trips.Segments,
 														response = local.ScheduleResponse,
 														Group = arguments.Group )>
-		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>--->
+		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
 		<cfset start = getTickCount()>
 		<cfset trips.Fares = parseFares( response = local.LowFareResponse,
@@ -279,6 +220,91 @@
 					<!--- <cfdump var=#Segments[segmentItem.SegmentId]# abort> --->
 				</cfif>
 			</cfloop>
+		</cfloop>
+
+		<cfreturn Segments>
+	</cffunction>
+
+	<cffunction name="parseScheduleSegments" returnType="struct" access="public">
+		<cfargument name="Segments" type="any" required="true">
+		<cfargument name="response" type="any" required="true">
+		<cfargument name="Group" type="any" required="true">
+
+		<cfset var tripIndex = ''>
+		<cfset var tripItem = ''>
+		<cfset var segmentIndex = ''>
+		<cfset var segmentItem = ''>
+		<cfset var flightIndex = ''>
+		<cfset var flightItem = ''>
+		<cfset var segmentCount = ''>
+		<cfset var Carrier = ''>
+		<cfset var Connections = ''>
+		<cfset var FlightNumbers = ''>
+		<cfset var Segments = arguments.Segments>
+
+		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
+		<!--- response.Segments[G0-B6.124] = Full segment structure --->
+		<cfloop collection="#arguments.response.Results#" index="segmentIndex" item="segmentItem">
+			<cfset local.SegmentId = ''>
+			<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
+				<cfset SegmentId = listAppend(SegmentId, flightItem.Carrier&'.'&flightItem.FlightNumber, '-')>
+			</cfloop>
+			<cfset SegmentId = 'G'&arguments.Group&'-'&SegmentId>
+			<cfif NOT structKeyExists(Segments, SegmentId)>
+				<cfset local.flightCount = arrayLen(segmentItem)>
+				<cfset local.Segment = {}>
+				<cfset Segment.Flights = []>
+				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
+				<cfset Segment.DepartureTime 		= segmentItem[1].DepartureTime>
+				<cfset Segment.OriginAirportCode 	= segmentItem[1].Origin>
+				<cfset Segment.ArrivalTime 			= segmentItem[flightCount].ArrivalTime>
+				<cfset Segment.DestinationAirportCode = segmentItem[flightCount].Destination>
+				<cfset Segment.TravelTime 			= int(segmentItem[1].TravelTime/60) &'H '&segmentItem[1].TravelTime%60&'M'>
+				<cfset Segment.TotalTravelTimeInMinutes = segmentItem[1].TravelTime>
+				<cfset Segment.Stops 				= flightCount-1>
+	<!--- <cfset Segment.Days 				= dateDiff('d', segmentItem[1].DepartureTime, segmentItem[segmentCount].ArrivalTime)> --->
+				<cfset local.Carrier = ''>
+				<cfset local.Connections = ''>
+				<cfset local.FlightNumbers = ''>
+				<cfset local.Codeshare = ''>
+				<!--- <cfset Segment.PlatingCarrier		= structKeyExists(tripItem.AvailableFareOptions[1], 'PlatingCarrier') ? tripItem.AvailableFareOptions[1].PlatingCarrier : segmentItem.Flights[1].CarrierCode> --->
+				<!--- Determine the overall carrier(s) and connection(s). --->
+				<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
+					<cfset local.Flight.OriginAirportCode = flightItem.Origin>
+					<cfset Flight.DepartureTime = flightItem.DepartureTime>
+					<cfset Flight.DestinationAirportCode = flightItem.Destination>
+					<cfset Flight.ArrivalTime = flightItem.ArrivalTime>
+					<cfset Flight.FlightDurationInMinutes = flightItem.FlightTime>
+					<cfset Flight.FlightNumber = flightItem.FlightNumber>
+					<cfset Flight.CarrierCode = flightItem.Carrier>
+					<cfset Flight.IsPreferred = ''>
+					<cfset Flight.Equipment = flightItem.Equipment>
+					<cfset Flight.CabinClass = ''>
+					<cfset Flight.ChangeOfPlane = arrayLen(flightItem.FlightDetails) EQ 1 ? true : false>
+					<cfset Flight.BookingCode = ''>
+					<cfset Flight.OutOfPolicy = false>
+					<cfset Flight.OutOfPolicyReason = []>
+					<cfset Flight.FlightId = flightItem.Carrier&'.'&flightItem.FlightNumber>
+					<cfset Flight.FlightTime = int(flightItem.FlightTime/60) &'H '&flightItem.FlightTime%60&'M'>
+					<cfset Carrier = listAppend(Carrier, flightItem.Carrier)>
+					<cfif structKeyExists(flightItem, 'CodeshareInfo')>
+						<cfset Codeshare = listAppend(Codeshare, flightItem.CodeshareInfo.Value)>
+					</cfif>
+					<cfif flightCount NEQ flightIndex>
+						<cfset Connections = listAppend(Connections, flightItem.Destination)>
+					</cfif>
+					<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.Carrier&flightItem.FlightNumber)>
+					<cfset arrayAppend(Segment.Flights, Flight)>
+				</cfloop>
+				<cfset Carrier = listRemoveDuplicates(Carrier)>
+				<cfset Segments.CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
+				<cfset Segment.Codeshare = listRemoveDuplicates(Codeshare)>
+				<cfset Segment.Connections = replace(Connections, ',', ', ', 'ALL')>
+				<cfset Segment.FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
+				<cfset Segment.IsPoorSegment = false>
+				<cfset Segment.Group = arguments.Group>
+				<cfdump var=#Segment# abort>
+			</cfif>
 		</cfloop>
 
 		<cfreturn Segments>
