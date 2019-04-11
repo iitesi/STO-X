@@ -117,7 +117,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="confirmation" class="booking.services.confirmation" />
 
 	<bean id="general" class="booking.services.general">
-		<constructor-arg name="UnusedTicketService"><ref bean="UnusedTicketService" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="LocationService" class="com.shortstravel.location.locationService">
@@ -301,7 +301,6 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
   </bean>
 
 	<bean id="KrakenService" class="com.kraken.KrakenService">
-		<constructor-arg name="krakenLoginUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenLoginUri" /></constructor-arg>
 		<constructor-arg name="krakenFlightSearchUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenFlightSearchUri" /></constructor-arg>
 		<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
 		<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
