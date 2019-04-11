@@ -495,18 +495,38 @@ ul.tabs li a.active {
 #listcontainer .trip {
 	margin-bottom:0;
 	border-radius: 0;
-	border-bottom-width: 0px;
+	border-top-width: 0px;
 	-webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+  	-moz-transition: all 0.5s ease;
+  	-o-transition: all 0.5s ease;
+  	transition: all 0.5s ease;
+}
+
+#listcontainer .trip:first-child {
+	border-radius: 8px 8px 0 0;
+	border-top-width: 1px;
+}
+
+#listcontainer .trip:last-child {
+	border-radius: 0 0  8px 8px;
 }
 
 #listcontainer .trip.active {
-	margin-bottom:10px;
-	margin-top:10px;
+	margin-bottom:15px;
+	margin-top:15px;
 	border-radius: 8px;
-	border-bottom-width: 1px;
+	border-top-width: 1px;
+	-webkit-box-shadow: 0px 1px 8px 1px rgba(0,0,0,0.25);
+	-moz-box-shadow: 0px 1px 8px 1px rgba(0,0,0,0.25);
+	box-shadow: 0px 1px 8px 1px rgba(0,0,0,0.25);
+}
+
+#listcontainer .trip.active + .trip {
+	border-top-width: 1px;
+}
+
+#listcontainer .trip:first-child.active {
+	margin-top:0;
 }
 
 .flight-result-warning {

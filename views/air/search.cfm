@@ -101,7 +101,7 @@
 			$('.fares[data-refundable="'+refundable+'"]').show();
 		}
 
-		$('.flight-expand-details').click(function () {
+		$('#listcontainer').on('click', '.flight-expand-details', function () {
 			$(this).parents(".panel.trip").toggleClass("active");
 		});  
 
