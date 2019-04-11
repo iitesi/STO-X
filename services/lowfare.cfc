@@ -217,6 +217,7 @@
 					<cfset Segments[segmentItem.SegmentId].Connections = replace(Connections, ',', ', ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].IsPoorSegment = false>
+					<cfset Segments[segmentItem.SegmentId].Results = 'LowFare'>
 					<!--- <cfdump var=#Segments[segmentItem.SegmentId]# abort> --->
 				</cfif>
 			</cfloop>
@@ -262,7 +263,7 @@
 				<cfset Segment.TravelTime 			= int(segmentItem[1].TravelTime/60) &'H '&segmentItem[1].TravelTime%60&'M'>
 				<cfset Segment.TotalTravelTimeInMinutes = segmentItem[1].TravelTime>
 				<cfset Segment.Stops 				= flightCount-1>
-	<!--- <cfset Segment.Days 				= dateDiff('d', segmentItem[1].DepartureTime, segmentItem[segmentCount].ArrivalTime)> --->
+				<cfset Segment.Days 				= dateDiff('d', segmentItem[1].DepartureTime, segmentItem[flightCount].ArrivalTime)>
 				<cfset local.Carrier = ''>
 				<cfset local.Connections = ''>
 				<cfset local.FlightNumbers = ''>
@@ -297,13 +298,17 @@
 					<cfset arrayAppend(Segment.Flights, Flight)>
 				</cfloop>
 				<cfset Carrier = listRemoveDuplicates(Carrier)>
-				<cfset Segments.CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
+				<cfset Segment.CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
 				<cfset Segment.Codeshare = listRemoveDuplicates(Codeshare)>
 				<cfset Segment.Connections = replace(Connections, ',', ', ', 'ALL')>
 				<cfset Segment.FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
 				<cfset Segment.IsPoorSegment = false>
 				<cfset Segment.Group = arguments.Group>
-				<cfdump var=#Segment# abort>
+				<cfset Segment.Results = 'Availability'>
+				<cfset Segment.SegmentId = SegmentId>
+				<cfset Segments[SegmentId] = Segment>
+			<cfelse>
+				<cfset Segments[SegmentId].ScheduleOnly = 'Both'>
 			</cfif>
 		</cfloop>
 
@@ -397,9 +402,11 @@
 		<cfset SelectedSegmentID = ''>
 		<cfset SelectedRefundable = ''>
 		<cfloop collection="#arguments.SelectedTrip#" index="selectedGroupIndex" item="selectedGroupItem">
-			<cfset SelectedSegmentFareID = listAppend(SelectedSegmentFareID, selectedGroupItem.SegmentFareID, '|')>
-			<cfset SelectedSegmentID = listAppend(SelectedSegmentID, selectedGroupItem.SegmentID, '|')>
-			<cfset SelectedRefundable = selectedGroupItem.Refundable>
+			<cfif NOT structIsEmpty(selectedGroupItem)>
+				<cfset SelectedSegmentFareID = listAppend(SelectedSegmentFareID, selectedGroupItem.SegmentFareID, '|')>
+				<cfset SelectedSegmentID = listAppend(SelectedSegmentID, selectedGroupItem.SegmentID, '|')>
+				<cfset SelectedRefundable = selectedGroupItem.Refundable>
+			</cfif>
 		</cfloop>
 		<!--- response.SegmentFares : Create a table for G0 lowest fares by cabin and branded fare. --->
 		<!--- response.SegmentFares[AS.2289,AS.1076][Economy][RefundableMain][TotalFare] = 1369.6 --->
