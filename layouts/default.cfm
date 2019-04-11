@@ -36,6 +36,7 @@
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
+			<link href="assets/css/bootstrap-drawer.min.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/layout.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/style.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css?v=#application.staticAssetVersion#" rel="stylesheet" media="print">
@@ -72,6 +73,7 @@
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
 		</cfoutput>
 	</head>
@@ -208,7 +210,8 @@
 
 			<section id="main-content">
 				<cfoutput>
-					<div class="container">
+					#view( "cart/drawer" )#
+					<div id="page-content-wrapper" class="container">
 						#view( "helpers/messages" )#
 						<!--- Simple test to see if session still exists. --->
 						<cfif Len(session.userID) AND StructKeyExists(session, "searches")>
