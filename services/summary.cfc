@@ -286,12 +286,14 @@
 
 				<cfset local.cities = {}>
 				<cfset local.segmentCount = 0>
-				<cfloop collection="#arguments.Air.Groups#" item="local.group" index="local.groupIndex">
-					<cfloop collection="#group.Segments#" item="local.segment" index="local.segmentIndex">
-						<cfset local.cities[local.segment.Origin] = ''>
-						<cfset local.cities[local.segment.Destination] = ''>
-						<cfset local.segmentCount++>
-					</cfloop>
+				<cfloop collection="#arguments.Air#" item="local.group" index="local.groupIndex">
+					<cfif NOT structIsEmpty(group)>
+						<cfloop collection="#group.Flights#" item="local.flight" index="local.segmentIndex">
+							<cfset local.cities[local.flight.OriginAirportCode] = ''>
+							<cfset local.cities[local.flight.DestinationAirportCode] = ''>
+							<cfset local.segmentCount++>
+						</cfloop>
+					</cfif>
 				</cfloop>
 
 				<cfquery name="local.qSearch" datasource="#getBookingDSN()#">
@@ -399,27 +401,29 @@
 		<cfset local.KTAirports[3] = '' />
 
 		<!--- Loop through all air segments --->
-		<cfloop collection="#arguments.Air.Groups#" index="local.groupIndex" item="local.group">
+		<cfloop collection="#arguments.Air#" index="local.groupIndex" item="local.group">
 			<cfset counter = 1 />
-			<cfloop collection="#group.segments#" index="local.segmentStructIndex" item="local.segmentStruct">
-				<!--- If the departure airport in any group is a designated TSA Precheck airport AND the departing airline is a designated TSA Precheck airline --->
-				<cfif counter EQ 1 AND listFindNoCase(application.stKTPrograms[1].airports, segmentStruct.origin) AND listFindNoCase(application.stKTPrograms[1].airlines, segmentStruct.carrier)>
-					<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.origin) />
-				</cfif>
-				<!--- If an international flight --->
-				<cfif (application.stAirports[segmentStruct.destination].countryCode IS 'US' AND application.stAirports[segmentStruct.origin].countryCode IS NOT 'US')
-					OR (application.stAirports[segmentStruct.destination].countryCode IS NOT 'US' AND application.stAirports[segmentStruct.origin].countryCode IS 'US')>
-					<!--- If an international flight and any arrival airport (including connections) is a designated Global Entry airport --->
-					<cfif listFindNoCase(application.stKTPrograms[2].airports, segmentStruct.destination)>
-						<cfset local.KTAirports[2] = listAppend(local.KTAirports[2], segmentStruct.destination) />
+			<cfif NOT structIsEmpty(group)>
+				<cfloop collection="#group.Flights#" index="local.segmentStructIndex" item="local.segmentStruct">
+					<!--- If the departure airport in any group is a designated TSA Precheck airport AND the departing airline is a designated TSA Precheck airline --->
+					<cfif counter EQ 1 AND listFindNoCase(application.stKTPrograms[1].airports, segmentStruct.OriginAirportCode) AND listFindNoCase(application.stKTPrograms[1].airlines, segmentStruct.CarrierCode)>
+						<cfset local.KTAirports[1] = listAppend(local.KTAirports[1], segmentStruct.OriginAirportCode) />
 					</cfif>
-					<!--- If an international flight and any arrival airport (including connections) is a designated NEXUS airport --->
-					<cfif listFindNoCase(application.stKTPrograms[3].airports, segmentStruct.destination)>
-						<cfset local.KTAirports[3] = listAppend(local.KTAirports[3], segmentStruct.destination) />
+					<!--- If an international flight --->
+					<cfif (application.stAirports[segmentStruct.DestinationAirportCode].countryCode IS 'US' AND application.stAirports[segmentStruct.OriginAirportCode].countryCode IS NOT 'US')
+						OR (application.stAirports[segmentStruct.DestinationAirportCode].countryCode IS NOT 'US' AND application.stAirports[segmentStruct.OriginAirportCode].countryCode IS 'US')>
+						<!--- If an international flight and any arrival airport (including connections) is a designated Global Entry airport --->
+						<cfif listFindNoCase(application.stKTPrograms[2].airports, segmentStruct.DestinationAirportCode)>
+							<cfset local.KTAirports[2] = listAppend(local.KTAirports[2], segmentStruct.DestinationAirportCode) />
+						</cfif>
+						<!--- If an international flight and any arrival airport (including connections) is a designated NEXUS airport --->
+						<cfif listFindNoCase(application.stKTPrograms[3].airports, segmentStruct.DestinationAirportCode)>
+							<cfset local.KTAirports[3] = listAppend(local.KTAirports[3], segmentStruct.DestinationAirportCode) />
+						</cfif>
 					</cfif>
-				</cfif>
-				<cfset counter++ />
-			</cfloop>
+					<cfset counter++ />
+				</cfloop>
+			</cfif>
 		</cfloop>
 
 		<cfloop from="1" to="3" index="local.airportList">
