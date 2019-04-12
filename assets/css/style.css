@@ -479,6 +479,11 @@ ul.tabs li a.active {
 	text-align: center;
 }
 
+.overflow-ellipse {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
 
 .badge-pill {
@@ -521,6 +526,42 @@ ul.tabs li a.active {
 	box-shadow: 0px 1px 8px 1px rgba(0,0,0,0.25);
 }
 
+.results_collapsed {
+	position: absolute;
+	/* display: flex; */
+	opacity: 1; 
+	-webkit-transition: all 0.2s ease-out;
+  	-moz-transition: all 0.2s ease-out;
+  	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;
+	height: 55px;
+}
+
+.results_expanded {
+	position: absolute;
+	/* display: none; */
+	opacity: 0; 
+	-webkit-transition: all 0.2s ease-out;
+  	-moz-transition: all 0.2s ease-out;
+  	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;
+	height: 55px;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
+}
+
+#listcontainer .trip.active .results_collapsed {
+	/* display: none; */
+	opacity: 0; 
+}
+
+#listcontainer .trip.active .results_expanded {
+	/* display: flex; */
+	opacity: 1; 
+}
+
 #listcontainer .trip.active + .trip {
 	border-top-width: 1px;
 }
@@ -533,25 +574,43 @@ ul.tabs li a.active {
 	font-size: 11px;
 }
 
-.flight-expand-details {
-	width: 100%;
-	height: 30px;
+.detail-expander {
+	opacity: 0.3;
+}
+
+.detail-expander i {
 	font-size: 2.5rem;
-	margin: 0 auto;
-	display: block;
-	text-align: center;
-	position: relative;
-	bottom: -25px;
 	color: #212121;
-	opacity: 0.4;
 }
 
-.panel.trip.active .flight-expand-details {
-	opacity: 1;
+.flight-details-header {
+	border-bottom: 1px transparent;
+	display: flex;
+    flex-flow: row;
 }
 
-.flight-expand-details:hover, .flight-expand-details:active {
-	opacity: 1;
+.flight-details-container {
+	-webkit-transition: all 0.2s ease-out;
+  	-moz-transition: all 0.2s ease-out;
+  	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;
+}
+
+.panel.trip.active .flight-details-header {
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.panel.trip.active .detail-expander {
+	opacity: 0.6;
+	-webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.detail-expander:hover, .detail-expander:active {
+	opacity: 0.6;
 }
 
 .badge-pill.warning {
@@ -566,14 +625,21 @@ ul.tabs li a.active {
 }
 
 .fare-wrapper .panel {
+	height: 100%;
+	display: flex;
 	width: 23.3785%;
 	margin-right: 1.3215%;
 	margin-bottom: 0;
 }
 
 .fare-wrapper .panel .panel-body {
+	width: 100%;
 	padding: 15px 0 0 0;
 	margin: 0;
+	-webkit-transition: all 0.2s ease-out;
+  	-moz-transition: all 0.2s ease-out;
+  	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;
 }
 
 .cabin-class {
@@ -581,6 +647,10 @@ ul.tabs li a.active {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+.branded-fare-class {
+	height: 30px;
 }
 
 .cabin-class > div {
@@ -598,7 +668,11 @@ ul.tabs li a.active {
 	flex-grow: 3;
 	min-height: 65px;
 	justify-content: center;
-    align-items: center;
+	align-items: center;
+	-webkit-transition: min-height 0.2s ease;
+  	-moz-transition: min-height 0.2s ease;
+  	-o-transition: min-height 0.2s ease;
+	transition: min-height 0.2s ease;
 }
 
 .cabin-class .policy-error {
@@ -607,6 +681,16 @@ ul.tabs li a.active {
 	height: 3px;
 	line-height: 3px;
 	opacity: 0.85;
+	align-self: baseline;
+}
+
+.cabin-class .policy-error-hidden {
+	background-color: transparent;
+	text-align: center;
+	height: 3px;
+	line-height: 3px;
+	opacity: 0;
+	align-self: baseline;
 }
 
 .cabin-class .policy-error .badge-pill {
@@ -640,7 +724,9 @@ ul.tabs li a.active {
 }
 
 .airline-col {
-	height: 120px;
+	display: flex;
+	flex-flow: column;
+	align-content: stretch;
 }
 
 .airline-col > .row {
@@ -648,23 +734,47 @@ ul.tabs li a.active {
   	min-height: 100%;
 	display: flex;
 	flex-direction: column;
+	align-content: stretch;
 }
 
 .airline-col > .row > div {
-	flex-grow: 1;
+	/* flex-grow: 1; */
 }
 
+.airline-col > .row > div:nth-child(2) {
+	flex: 2;
+}
+
+
 .airline-col > .row > div:last-child {
-	flex-grow: 4;
-	display: flex;
-	align-items: baseline;
-	align-content: center;
+	align-self: baseline;
+	height: 20px;
 }
 
 .fare-wrapper .panel:hover {
 	cursor: pointer;
 	background: #2E76CF;
 	color: white;
+}
+
+#listcontainer .trip.active .cabin-class .fare-display {
+	min-height: 30px;
+	padding-bottom: 10px;
+}
+
+#listcontainer .trip.active .fare-wrapper > .panel > .panel-body {
+	padding-top: 2px;
+}
+
+/* #listcontainer .trip.active .cabin-class + .fs-s {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+} */
+
+.cabin-class .cabin-class {
+	font-weight: 700;
+	font-size: 14px;
 }
 
 @media (min-width: 768px) {

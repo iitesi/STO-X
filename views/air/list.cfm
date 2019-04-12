@@ -10,77 +10,84 @@
 		data-first="#structKeyExists(SegmentFares, 'First') ? SegmentFares.First.TotalFare : 1000000#">
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
 	  	<div class="panel-body">
-			<div class="row">
+			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
 				<div class="col-sm-1 center airline-col">
 					<div class="row">
-						<div class="col-sm-3 col-md-12">
+						<div class="col-sm-6 col-md-12">
 							<cfif Segment.IsPoorSegment>
 								<span role="button" class="badge badge-pill warning flight-result-warning" 
 									data-placement="right" data-toggle="tooltip" title="Better economy fare and travel times are available">
 									<i class="fa fas fa-exclamation" aria-hidden="true"></i>
 								</span>
 							</cfif>
-						</div>
-						<div class="col-sm-6 col-md-12">
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>
-						<div class="col-sm-3 col-md-12">
-							<a class="flight-expand-details" data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-								<i class="fa fa-caret-down" aria-hidden="true"></i>
-							</a>
+						<div class="col-sm-3 col-md-12">&nbsp;</div>
+						<div class="col-sm-3 col-md-12 detail-expander"
+							data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
+							<i class="fa fa-caret-down" aria-hidden="true"></i>
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-3 ">
-					<div class="row">
+				<div class="col-sm-5">
+					<div class="row results_collapsed">
+						<div class="col-sm-6 ">
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
+								</div>	
+							</div>
+							<cfif Segment.Days NEQ 0>
+							<div class="row">
+								<div class="col-sm-12 fs-1 red">
+									+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#
+								</div>	
+							</div>
+							</cfif>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-1">
+									#Segment.FlightNumbers#
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-s overflow-ellipse">
+									OPERATED BY #Segment.Codeshare#
+								</div>	
+							</div>							
+						</div>
+						<div class="col-sm-3">
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									#Segment.TravelTime#
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 text-muted fs-1">
+									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
+								</div>	
+							</div>
+						</div>
+						<div class="col-sm-3">		
+							<div class="row">
+								<div class="col-sm-12 fs-2">
+									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
+								</div>	
+							</div>
+							<div class="row">
+								<div class="col-sm-12 fs-1 text-muted">
+									#Segment.Connections#
+								</div>	
+							</div>
+						</div>
+					</div>
+					<div class="row results_expanded">
 						<div class="col-sm-12 fs-2">
-							#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
-						</div>	
-					</div>
-					<cfif Segment.Days NEQ 0>
-					<div class="row">
-						<div class="col-sm-12 fs-1 red">
-							+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#
-						</div>	
-					</div>
-					</cfif>
-					<div class="row">
-						<div class="col-sm-12 text-muted fs-1">
-							#Segment.FlightNumbers#
-						</div>	
-					</div>
-					<div class="row">
-						<div class="col-sm-12 text-muted fs-s">
-							OPERATED BY #Segment.Codeshare#
-						</div>	
-					</div>							
-				</div>
-				<div class="col-sm-1">
-					<div class="row">
-						<div class="col-sm-12 fs-2">
-							#Segment.TravelTime#
-						</div>	
-					</div>
-					<div class="row">
-						<div class="col-sm-12 text-muted fs-1">
-							#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
+							Departing &middot; #dateTimeFormat(createODBCDateTime(Segment.DepartureTime), 'EEE, mmm dd')#
 						</div>	
 					</div>
 				</div>
-				<div class="col-sm-1">
-
-					<div class="row">
-						<div class="col-sm-12 fs-2">
-							<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
-						</div>	
-					</div>
-					<div class="row">
-						<div class="col-sm-12 fs-1 text-muted">
-							#Segment.Connections#
-						</div>	
-					</div>
-				</div>
+				
 				<div class="col-sm-6">
 
 					<div class="row fare-wrapper">
@@ -106,7 +113,7 @@
 													<div class="col-sm-12 fs-1 cabin-class">
 														#CabinClass#
 													</div>
-													<div class="col-sm-12 fs-s">
+													<div class="col-sm-12 fs-s branded-fare-class">
 														<cfif CabinClass NEQ brandedFareName>#brandedFareName#<cfelse>&nbsp;</cfif>
 													</div>
 													<div class="col-sm-12 fs-2 fare-display">
@@ -128,7 +135,6 @@
 										</div>
 									</cfif>
 								</cfloop>
-
 							<cfelse>
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
@@ -140,10 +146,13 @@
 											<div class="col-sm-12 fs-1 cabin-class">
 												#CabinClass#
 											</div>
-											<div class="col-sm-12 fs-s">
+											<div class="col-sm-12 fs-s branded-fare-class">
 												&nbsp;
 											</div>
 											<div class="col-sm-12 fs-2 fare-display">
+												<div>&nbsp;</div>
+											</div>
+											<div class="col-sm-12 fs-s policy-error-hidden">
 												&nbsp;
 											</div>
 										</div>												
@@ -155,9 +164,9 @@
 
 				</div>
 			</div>
-			
+				
 			<div class="row">
-				<div class="collapse" id="details#cleanedSegmentId#" style="padding-left: 50px;padding-right: 50px;padding-top: 50px;">
+				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>
@@ -252,6 +261,7 @@
 
 				</div>
 			</div>
+
 		</div>
 	</div>
 </cfoutput>
