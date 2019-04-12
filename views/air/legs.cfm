@@ -8,7 +8,7 @@
 		</ul>
 	<cfelse>
 		<h1>
-			<a href="#buildURL('air.lowfare&SearchID=#rc.SearchID#')#">
+			<a href="#buildURL('air.search&SearchID=#rc.SearchID#')#">
 				#ListFirst(rc.Filter.getAirHeading(), "::")#
 				<small>:: #ListLast(rc.Filter.getAirHeading(), "::")#</small>
 			</a>
@@ -64,16 +64,16 @@
 	<cfif structKeyExists(rc, "group") AND Len(rc.group)>
 		<cfset popoverTitle = "">
 		<cfset popoverContent = "Click to return to main search results">
-		<cfset popoverLink = "index.cfm?action=air.lowfare&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
+		<cfset popoverLink = "index.cfm?action=air.search&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
 		<cfset popoverButtonClass = "">
 	</cfif>
 
 	<cfif StructKeyExists(rc, "clearSelected") AND rc.clearSelected EQ 1>
-		<cfset session.searches[rc.SearchID].Selected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[rc.SearchID].Selected[0] = {}>
-		<cfset session.searches[rc.SearchID].Selected[1] = {}>
-		<cfset session.searches[rc.SearchID].Selected[2] = {}>
-		<cfset session.searches[rc.SearchID].Selected[3] = {}>
+		<cfset session.searches[rc.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
+		<cfset session.searches[rc.SearchID].stSelected[0] = {}>
+		<cfset session.searches[rc.SearchID].stSelected[1] = {}>
+		<cfset session.searches[rc.SearchID].stSelected[2] = {}>
+		<cfset session.searches[rc.SearchID].stSelected[3] = {}>
 	</cfif>
 </cfsilent>
 
@@ -88,8 +88,8 @@
 				<cfelse>
 					<li role="presentation"><a href="#buildURL('air.search?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
 						<!--- Show icon indicating this is the leg they selected --->
-						<cfif structKeyExists(session.searches[rc.SearchID].Selected, nLegIndex-1)
-							AND NOT StructIsEmpty(session.searches[rc.SearchID].Selected[nLegIndex-1])>
+						<cfif structKeyExists(session.searches[rc.SearchID].stSelected, nLegIndex-1)
+							AND NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])>
 							<i class="icon-ok"></i>
 						</cfif>
 						#nLegItem#</a>

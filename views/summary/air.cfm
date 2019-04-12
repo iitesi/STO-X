@@ -9,7 +9,7 @@
 
 		<cfif NOT rc.filter.getFindIt()
 			OR rc.policy.Policy_FindItChangeAir>
-			<div class="pull-right"><a href="#buildURL('air.lowfare?SearchID=#rc.searchID#')#" style="color:##666">change <span class="fa fa-times"></a></div><br>
+			<div class="pull-right"><a href="#buildURL('air.search?SearchID=#rc.searchID#')#" style="color:##666">change <span class="fa fa-times"></a></div><br>
 		</cfif>
 
 
