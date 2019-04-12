@@ -170,70 +170,75 @@
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>
-						<div class="segment-details">
-							<div>
-								<cfif count NEQ 1>
-									<cfset layover = dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime)>
-									<div class="segment-stopover">
-										<div class="segment-stopover-row">
-											<div>#int(layover/60)#H #layover%60#M</div>
-											<div></div>
-											<div>
-												<div>
-													<span>#application.stAirports[previousFlight.DestinationAirportCode].Airport# </span>
-													<span>&nbsp;</span><span>#previousFlight.DestinationAirportCode#</span></span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</cfif>		
-		
-								<div class="segment-leg">
-									<div class="segment-leg-connector">icon</div>
-									<div class="segment-leg-details">
-										<div class="segment-leg-time"><span>#dateTimeFormat(Flight.DepartureTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
-										<div class="segment-middot">*</div>
-										<div class="segment-leg-airport">
-											<span>#application.stAirports[Flight.OriginAirportCode].Airport#</span>
-											<span>#Flight.OriginAirportCode#</span>
-										</div>
-									</div>
-									<div class="segment-leg-time-inair">
-										<div>Flight time:&nbsp;<span>#Flight.FlightTime#</span></div>
-									</div>
-									<div class="segment-leg-details segment-leg-arrival">
-										<div class="segment-leg-time"><span>#dateTimeFormat(Flight.ArrivalTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
-										<div class="segment-middot">*</div>
-										<div class="segment-leg-airport">
-											<!---span>#application.stAirports[Flight.ArrivalAirportCode].Airport#</span>
-											<span>#Flight.ArrivalAirportCode#</span--->
-										</div>
-									</div>
-								</div>
-								<div class="segment-leg-operation-details">
-									<div class="segment-leg-operation-vendor">#application.stAirVendors[Flight.CarrierCode].Name#</div>
-									<span>*</span>
-									<div class="segment-leg-operation-equipment">
-										<div><span>#structKeyExists(application.stEquipment, Flight.Equipment) ? application.stEquipment[Flight.Equipment] : Flight.Equipment#</span></div>
-										<!--div>Basic Economy</div-->
-									</div>
-									<div class="segment-leg-operation-codes">
-										<div>*</div>
-										<!--div><span>Embraer RJ-175</span><span></span></div-->
-										<span><span>#Flight.CarrierCode#</span>&nbsp;<span>#Flight.FlightNumber#</span></span>
-									</div>
-								</div>
-								<div class="segment-leg-operation-operatedby">
+
+						<cfif count NEQ 1>
+							<cfset layover = dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime)>
+							<div class="segment-stopover">
+								<div class="segment-stopover-row">
+									<div>#int(layover/60)#H #layover%60#M layover</div>
+									<div class="segment-middot">&middot;</div>
 									<div>
-										<div>
-											<cfif structKeyExists(Flight, 'CodeshareInfo')>
-												<span>OPERATED BY <span>#Flight.CodeshareInfo.Value#</span></span>
-											</cfif>
-										</div>
+										<span>#application.stAirports[previousFlight.DestinationAirportCode].Airport# </span>
+										<span>&nbsp;</span>
+										<span>(#previousFlight.DestinationAirportCode#)</span></span>
 									</div>
 								</div>
 							</div>
-							<!--div>
+						</cfif>		
+
+						<div class="segment-details">
+							<div class="segment-details-flights">
+								
+		
+								<div class="segment-leg">
+									<div class="segment-leg-inner">
+										<div class="segment-leg-connector"></div>
+										<div class="segment-leg-details fs-s1">
+											<div class="segment-leg-time"><span>#dateTimeFormat(Flight.DepartureTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
+											<div class="segment-middot">&middot;</div>
+											<div class="segment-leg-airport">
+												<span>#application.stAirports[Flight.OriginAirportCode].Airport#</span>
+												<span>&nbsp;</span>
+												<span>(#Flight.OriginAirportCode#)</span>
+											</div>
+										</div>
+										<div class="segment-leg-time-inair fs-1">
+											<div>Flight time:&nbsp;<span>#Flight.FlightTime#</span></div>
+										</div>
+										<div class="segment-leg-details segment-leg-arrival fs-s1">
+											<div class="segment-leg-time"><span>#dateTimeFormat(Flight.ArrivalTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
+											<div class="segment-middot">&middot;</div>
+											<div class="segment-leg-airport">
+												<span>#application.stAirports[Flight.DestinationAirportCode].Airport#</span>
+												<span>&nbsp;</span>
+												<span>(#Flight.DestinationAirportCode#)</span>
+											</div>
+										</div>
+									</div>
+									<div class="segment-leg-operation-details fs-1">
+										<div class="segment-leg-operation-vendor">#application.stAirVendors[Flight.CarrierCode].Name#</div>
+										<span class="segment-middot-sm">&middot;</span>
+										<div class="segment-leg-operation-equipment">
+											<div><span>#structKeyExists(application.stEquipment, Flight.Equipment) ? application.stEquipment[Flight.Equipment] : Flight.Equipment#</span></div>
+											<!--div>Basic Economy</div-->
+										</div>
+										<div class="segment-leg-operation-codes">
+											<span class="segment-middot-sm">&middot;</span>
+											<!--div><span>Embraer RJ-175</span><span></span></div-->
+											<span><span>#Flight.CarrierCode#</span>&nbsp;<span>#Flight.FlightNumber#</span></span>
+										</div>
+									</div>
+									<div class="segment-leg-operation-operatedby fs-s overflow-ellipse">
+										<cfif structKeyExists(Flight, 'CodeshareInfo')>
+											OPERATED BY #Flight.CodeshareInfo.Value#
+										</cfif>
+									</div>
+								</div>
+
+
+							</div>
+							<div class="segment-details-extras">
+								<!--- TODO Hide for now? --->
 								<ul>
 									<li><span></span> <span> Carry-on bags restricted </span>
 									</li>
@@ -242,7 +247,7 @@
 									<li> In-seat power outlet</li>
 									<li> Stream media to your device</li>
 								</ul>
-							</div-->
+							</div>
 						</div>
 						<cfset previousFlight = Flight>
 					</cfloop>
