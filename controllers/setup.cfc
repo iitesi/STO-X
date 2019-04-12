@@ -71,6 +71,21 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
+
+	<cffunction name="cleanOutOldSearchIDs" output="false" hint="I set the search ID.">
+		<cfargument name="rc">
+
+		<cfif structCount(session.searches) GT 1>
+			<cfloop collection="#structKeyList(session.searches)#" index="local.SearchId">
+				<cfif searchId NEQ arguments.rc.SearchID>
+					<cfset structDelete(session.searches, searchId)>
+				</cfif>
+			</cfloop>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
+
 	<cffunction name="setFilter" output="false" hint="Move the search into the rc scope so it is always available.">
 		<cfargument name="rc">
 		<cfif StructKeyExists(session, 'Filters')
