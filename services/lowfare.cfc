@@ -308,7 +308,7 @@
 				<cfset Segment.SegmentId = SegmentId>
 				<cfset Segments[SegmentId] = Segment>
 			<cfelse>
-				<cfset Segments[SegmentId].ScheduleOnly = 'Both'>
+				<cfset Segments[SegmentId].Results = 'Both'>
 			</cfif>
 		</cfloop>
 
@@ -402,7 +402,8 @@
 		<cfset SelectedSegmentID = ''>
 		<cfset SelectedRefundable = ''>
 		<cfloop collection="#arguments.SelectedTrip#" index="selectedGroupIndex" item="selectedGroupItem">
-			<cfif NOT structIsEmpty(selectedGroupItem)>
+			<cfif NOT structIsEmpty(selectedGroupItem)
+				AND selectedGroupIndex LT arguments.Group>
 				<cfset SelectedSegmentFareID = listAppend(SelectedSegmentFareID, selectedGroupItem.SegmentFareID, '|')>
 				<cfset SelectedSegmentID = listAppend(SelectedSegmentID, selectedGroupItem.SegmentID, '|')>
 				<cfset SelectedRefundable = selectedGroupItem.Refundable>
