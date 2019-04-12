@@ -20,7 +20,8 @@
 		<cfset tripTotal = 0>
 		<cfset tripCurrency = 'USD'>
 
-		<cfif rc.airSelected>
+		<!--- Dohmen to do --->
+		<!---<cfif rc.airSelected>
 
 			<div class="row text-right" id="airTotalRow">
 				<div class="col-xs-3">Flight</div>
@@ -35,7 +36,7 @@
 			<cfset tripTotal = tripTotal + rc.Air.Total>
 			<cfset tripCurrency = 'USD'>
 
-		</cfif>
+		</cfif>--->
 		<cfif rc.hotelSelected>
 
 			<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
