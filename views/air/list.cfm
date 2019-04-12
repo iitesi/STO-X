@@ -234,7 +234,7 @@
 										</cfif>
 									</div>
 								</div>
-
+								#count == 0 ? active : ''#
 
 							</div>
 							<div class="segment-details-extras">
@@ -251,59 +251,73 @@
 						</div>
 						<cfset previousFlight = Flight>
 					</cfloop>
-
-					<cfloop list="#BrandedFareIds#" index="BrandedFareId">
-						<cfif BrandedFareId NEQ 0>
-							<div>
-								<hr>
-								<span class="bold">#BrandedFares[BrandedFareId].Name#</span> :
-								<cfif len(BrandedFares[BrandedFareId].LongDescription) GT 0>
-									#BrandedFares[BrandedFareId].LongDescription#<br>
-								<cfelse>
-									#BrandedFares[BrandedFareId].ShortDescription#<br>
-								</cfif>
-							</div>
-						</cfif>
-					</cfloop>
-
-					<div>
-						<hr>
-						<cfset Carriers = ''>
-						<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
-							<cfif NOT listFind(Carriers, Flight.CarrierCode)>
-								<cfset Carriers = listAppend(Carriers, Flight.CarrierCode)>
-								<table class="table table-hover table-condensed">
-								<thead>
-								<tr>
-									<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
-									<td class="bold">Paid at online check-in</td>
-									<td class="bold">Paid at airport check-in</td>
-								</tr>
-								</thead>
-								<tbody>
-								<tr>
-									<td>1st Checked Bag</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
-								</tr>
-								<tr>
-									<td>2nd Checked Bag</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-								</tr>
-								<tr>
-									<td>Total for 2 Bags (each way)</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-									<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-								</tr>
-								<tr>
-									<td>3+ or Oversized Bags</td>
-									<td colspan="2">Additional Fees Apply</td>
-								</tr>
-								</tbody>
-								</table>
+					<div class="segment-details-footer">
+						<div>
+							<cfif len(BrandedFareIds) GT 0>
+								<cfset paneldetails = "">
+								<ul class="nav nav-tabs" role="tablist">
+								<cfset count = 0>
+								<cfloop list="#BrandedFareIds#" index="BrandedFareId">
+									<cfif BrandedFareId NEQ 0>
+										<cfset cabinuuid = "f#createUUID()#">
+										<li role="presentation" class="#count == 0 ? 'active' : ''#">
+											<a href="###cabinuuid#" aria-controls="#cabinuuid#" role="tab" data-toggle="tab">#BrandedFares[BrandedFareId].Name#</a>
+										</li>
+										<cfsavecontent variable="subdetail"><div role="tabpanel" class="tab-pane #count == 0 ? 'active' : ''#" id="#cabinuuid#">
+											<cfif len(BrandedFares[BrandedFareId].LongDescription) GT 0>
+												<cfset fareString = BrandedFares[BrandedFareId].LongDescription.split("•")>
+												<ul><cfloop array="#fareString#" index="line" ><li>#line#</li></cfloop></ul>
+											<cfelse>
+												#BrandedFares[BrandedFareId].ShortDescription#
+											</cfif>
+										</div></cfsavecontent>
+										<cfset paneldetails = "#paneldetails##subdetail#">
+										<cfset count++>
+									</cfif>
+								</cfloop>
+								</ul>
+								<div class="tab-content branded-cabin-details">#paneldetails#</div>
 							</cfif>
-						</cfloop>
+					  	  </div>
+						  <div>
+							<h3>Baggage Fees</h3>
+							<cfset Carriers = ''>
+							<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
+								<cfif NOT listFind(Carriers, Flight.CarrierCode)>
+									<cfset Carriers = listAppend(Carriers, Flight.CarrierCode)>
+								<table class="table table-hover table-condensed baggage-fees">
+									<thead>
+									<tr>
+										<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
+										<td class="bold">Paid at online check-in</td>
+										<td class="bold">Paid at airport check-in</td>
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td>1st Checked Bag</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
+									</tr>
+									<tr>
+										<td>2nd Checked Bag</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+									</tr>
+									<tr>
+										<td>Total for 2 Bags (each way)</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+									</tr>
+									<tr>
+										<td>3+ or Oversized Bags</td>
+										<td colspan="2">Additional Fees Apply</td>
+									</tr>
+									</tbody>
+									</table>
+								</cfif>
+							</cfloop>
+						</div>
 					</div>
 
 				</div>
