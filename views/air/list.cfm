@@ -26,7 +26,7 @@
 						<div class="col-sm-3 col-md-12">&nbsp;</div>
 						<div class="col-sm-3 col-md-12 detail-expander"
 							data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-							<i class="fa fa-caret-down" aria-hidden="true"></i>
+							<i class="fa fa-caret-down" aria-hidden="true"></i>(#Segment.Results#)
 						</div>
 					</div>
 				</div>
@@ -92,7 +92,7 @@
 
 					<div class="row fare-wrapper">
 						<cfset BrandedFareIds = ''>
-						<cfloop list="Economy,Business,First" index="CabinClass">
+						<cfloop list="Economy,PremiumEconomy,Business,First" index="CabinClass">
 							<cfif structKeyExists(SegmentFares, CabinClass)>
 								<cfloop collection="#SegmentFares[CabinClass]#" index="brandedFareName" item="brandedFare">
 									<cfif brandedFareName NEQ 'TotalFare'
@@ -111,7 +111,7 @@
 											<div class="panel-body">
 												<div class="row cabin-class">
 													<div class="col-sm-12 fs-1 cabin-class">
-														#CabinClass#
+														#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 													</div>
 													<div class="col-sm-12 fs-s branded-fare-class">
 														<cfif CabinClass NEQ brandedFareName>#brandedFareName#<cfelse>&nbsp;</cfif>
@@ -144,7 +144,7 @@
 									<div class="panel-body">
 										<div class="row cabin-class">
 											<div class="col-sm-12 fs-1 cabin-class">
-												#CabinClass#
+												#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 											</div>
 											<div class="col-sm-12 fs-s branded-fare-class">
 												&nbsp;

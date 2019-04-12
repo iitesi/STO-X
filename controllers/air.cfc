@@ -60,18 +60,12 @@
 	<cffunction name="review" output="false">
 		<cfargument name="rc">
 
-		<!--- <cfset var Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
+		<cfset rc.Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
 															Policy = arguments.rc.Policy,
 															Filter = arguments.rc.Filter,
 															SearchID = SearchID,
 															Group = arguments.rc.Group,
-															Selected = session.searches[SearchID].Selected,
-															Pricing = [],
-															CabinClass = '')>
-
-		<cfdump var=#serializeJSON(local.Pricing)# abort> --->
-
-		<cfset rc.Pricing = '[{"TotalFare":"USD532.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"}],"Refundable":false},{"TotalFare":"USD625.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"}],"Refundable":false},{"TotalFare":"USD840.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"}],"Refundable":false},{"TotalFare":"USD532.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"}],"Refundable":false},{"TotalFare":"USD625.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"}],"Refundable":false},{"TotalFare":"USD840.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"}],"Refundable":false},{"TotalFare":"USD532.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"}],"Refundable":false},{"TotalFare":"USD625.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"}],"Refundable":false},{"TotalFare":"USD840.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"}],"Refundable":false},{"TotalFare":"USD532.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"},{"CabinClass":"Economy","BookingCode":"V"}],"Refundable":false},{"TotalFare":"USD625.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"},{"CabinClass":"PremiumEconomy","BookingCode":"W"}],"Refundable":false},{"TotalFare":"USD840.00","PlatingCarrier":"DL","BookingInfo":[{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"},{"CabinClass":"First","BookingCode":"Z"}],"Refundable":false}]'>
+															Selected = session.searches[SearchID].stSelected)>
 
 		<cfreturn />
 	</cffunction>

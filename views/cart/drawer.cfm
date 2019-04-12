@@ -44,9 +44,10 @@ $('#main-content').toggleClass('toggled');
 <cfset ordering = structNew()>
 <cfset maxAirFlights = 0>
 <cfif rc.airSelected>
-    <cfloop collection="#session.searches[rc.searchId].stItinerary.Air#" item="group" index="i">
-        <cfif NOT structIsEmpty(group)>
-            <cfset ordering[i] = createODBCDateTime(Group.DepartureTime)>
+    <cfloop collection="#session.searches[rc.searchId].stItinerary.Air#" item="Segment" index="i">
+        <cfif NOT structIsEmpty(Segment)
+            AND structKeyExists(Segment, 'DepartureTime')>
+            <cfset ordering[i] = createODBCDateTime(Segment.DepartureTime)>
             <cfset maxAirFlights = i>
         </cfif>
     </cfloop>
