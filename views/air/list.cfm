@@ -110,7 +110,7 @@
 										>
 											<div class="panel-body">
 												<div class="row cabin-class">
-													<div class="col-sm-12 fs-1 cabin-class">
+													<div class="col-sm-12 fs-1 cabin-description">
 														#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 													</div>
 													<div class="col-sm-12 fs-s branded-fare-class">
@@ -121,13 +121,21 @@
 													</div>
 													<cfif brandedFare.OutOfPolicy>
 														<div class="col-sm-12 fs-s policy-error">
-															<span role="button" 
+															<div class="fare-warning"
+																role="button"
+																data-placement="top" 
+																data-toggle="tooltip" 
+																title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
+															</div>
+															<!--
+															<span  role="button" 
 																class="badge badge-pill warning fare-warning"
 																data-placement="top" 
 																data-toggle="tooltip" 
 																title="#arrayToList(brandedFare.OutOfPolicyReason)#">
 																<i class="fa fas fa-exclamation" aria-hidden="true"></i>
 															</span>
+														-->
 														</div>
 													</cfif>
 												</div>												
@@ -143,7 +151,7 @@
 								>
 									<div class="panel-body">
 										<div class="row cabin-class">
-											<div class="col-sm-12 fs-1 cabin-class">
+											<div class="col-sm-12 fs-1 cabin-description">
 												#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 											</div>
 											<div class="col-sm-12 fs-s branded-fare-class">
