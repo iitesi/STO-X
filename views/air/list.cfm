@@ -12,11 +12,12 @@
 	  	<div class="panel-body">
 			<div class="row">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-sm-1 center">
+				<div class="col-sm-1 center airline-col">
 					<div class="row">
 						<div class="col-sm-3 col-md-12">
 							<cfif Segment.IsPoorSegment>
-								<span role="button" class="badge badge-pill warning flight-result-warning" data-toggle="tooltip" title="Better economy fare and travel times are available">
+								<span role="button" class="badge badge-pill warning flight-result-warning" 
+									data-placement="right" data-toggle="tooltip" title="Better economy fare and travel times are available">
 									<i class="fa fas fa-exclamation" aria-hidden="true"></i>
 								</span>
 							</cfif>
@@ -25,13 +26,9 @@
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>
 						<div class="col-sm-3 col-md-12">
-							<div class="row">
-								<div class="col-sm-12">
-									<a class="flight-expand-details" data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-										<i class="fa fa-caret-down" aria-hidden="true"></i>
-									</a>
-								</div>
-							</div>
+							<a class="flight-expand-details" data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
+								<i class="fa fa-caret-down" aria-hidden="true"></i>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -105,14 +102,28 @@
 											</cfif>
 										>
 											<div class="panel-body">
-												<span class="bold">$#numberFormat(brandedFare.TotalFare, '_,___')#</span>
-												<cfif brandedFare.OutOfPolicy>
-													<i class="material-icons" data-toggle="tooltip" title="#arrayToList(brandedFare.OutOfPolicyReason)#" style="font-size:16px;color:##E3132C;">priority_high</i>
-												</cfif>
-												<br>
-												<small>#CabinClass#</small><br>
-												<cfif CabinClass NEQ brandedFareName><small>#brandedFareName#</small></cfif><br>
-												
+												<div class="row cabin-class">
+													<div class="col-sm-12 fs-1 cabin-class">
+														#CabinClass#
+													</div>
+													<div class="col-sm-12 fs-s">
+														<cfif CabinClass NEQ brandedFareName>#brandedFareName#<cfelse>&nbsp;</cfif>
+													</div>
+													<div class="col-sm-12 fs-2 fare-display">
+														<div>$#numberFormat(brandedFare.TotalFare, '_,___')#</div>
+													</div>
+													<cfif brandedFare.OutOfPolicy>
+														<div class="col-sm-12 fs-s policy-error">
+															<span role="button" 
+																class="badge badge-pill warning fare-warning"
+																data-placement="top" 
+																data-toggle="tooltip" 
+																title="#arrayToList(brandedFare.OutOfPolicyReason)#">
+																<i class="fa fas fa-exclamation" aria-hidden="true"></i>
+															</span>
+														</div>
+													</cfif>
+												</div>												
 											</div>
 										</div>
 									</cfif>
@@ -124,9 +135,19 @@
 								<div class="col-sm-3 panel panel-default"
 									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 								>
-									<br>
-									<small>#CabinClass#</small><br>
-									<br>
+									<div class="panel-body">
+										<div class="row cabin-class">
+											<div class="col-sm-12 fs-1 cabin-class">
+												#CabinClass#
+											</div>
+											<div class="col-sm-12 fs-s">
+												&nbsp;
+											</div>
+											<div class="col-sm-12 fs-2 fare-display">
+												&nbsp;
+											</div>
+										</div>												
+									</div>
 								</div>
 							</cfif>
 						</cfloop>

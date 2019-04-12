@@ -111,6 +111,13 @@
 				$(this).find('.flight-expand-details').trigger('click');
 			}
 		});  
+
+		$('[data-toggle="tooltip"].flight-result-warning').tooltip({
+			template: '<div class="tooltip flight-warning" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		});
+		$('[data-toggle="tooltip"].fare-warning').tooltip({
+			template: '<div class="tooltip faretooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		}); 
 		
 
 	</script>
