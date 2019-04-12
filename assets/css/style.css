@@ -590,6 +590,8 @@ ul.tabs li a.active {
 }
 
 .flight-details-container {
+	/* display: flex;
+	flex-direction: column; */
 	-webkit-transition: all 0.2s ease-out;
   	-moz-transition: all 0.2s ease-out;
   	-o-transition: all 0.2s ease-out;
@@ -775,6 +777,70 @@ ul.tabs li a.active {
 .cabin-class .cabin-class {
 	font-weight: 700;
 	font-size: 14px;
+}
+
+.segment-details {
+	display: flex
+}
+
+.segment-stopover {
+	
+}
+
+.segment-stopover-row {
+
+}
+
+.segment-leg {
+
+}
+
+.segment-leg-connector {
+
+}
+
+.segment-leg-details {
+
+}
+
+.segment-leg-arrival {
+
+}
+
+.segment-leg-time {
+
+}
+
+.segment-middot {
+
+}
+
+.segment-leg-airport {
+
+}
+
+.segment-leg-time-inair {
+
+}
+
+.segment-leg-operation-details {
+
+}
+
+.segment-leg-operation-vendor {
+
+}
+
+.segment-leg-operation-equipment {
+
+}
+
+.segment-leg-operation-codes {
+
+}
+
+.segment-leg-operation-operatedby {
+
 }
 
 @media (min-width: 768px) {
