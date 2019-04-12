@@ -1,11 +1,10 @@
 <cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
-
-	<cfproperty name="UnusedTicketService">
+	<cfproperty name="KrakenService">
 
 	<cffunction name="init" output="false" hint="Init method.">
-		<cfargument name="UnusedTicketService">
+		<cfargument name="KrakenService">
 
-		<cfset setUnusedTicketService(arguments.UnusedTicketService)>
+		<cfset setKrakenService(arguments.KrakenService)>
 
 		<cfreturn this>
 	</cffunction>
@@ -39,14 +38,13 @@
 		<cfreturn getTrip />
 	</cffunction>
 
-	<cffunction name="getUnusedTickets">
+	<!--- <cffunction name="getUnusedTickets">
 		<cfargument name="ProfileId" required="true">
 
 		<cfset local.unusedTicketStruct = {}>
 		<cfif arguments.ProfileID NEQ 0>
-
-			<cfset local.UnusedTickets = UnusedTicketService.getUnusedTickets( userID = arguments.ProfileID ) />
-
+			<cfset local.UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = #arguments.ProfileId# ) />
+<cfdump var=#local.UnusedTickets# abort>
 			<cfloop array="#local.UnusedTickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
 				<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
 					<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
@@ -67,8 +65,8 @@
 		<cfelse>
 			<cfset local.unusedTicketStruct = [] />
 		</cfif>
-
+<cfdump var=#local.unusedTicketStruct# abort>
 		<cfreturn local.unusedTicketStruct />
-	</cffunction>
+	</cffunction> --->
 
 </cfcomponent>
