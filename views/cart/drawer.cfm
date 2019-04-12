@@ -55,7 +55,7 @@ $('#main-content').toggleClass('toggled');
     <cfset ordering['Hotel'] = createDateTime(year(rc.filter.getCheckInDate()), month(rc.filter.getCheckInDate()), day(rc.filter.getCheckInDate()), 23, 59)>
 </cfif>
 <cfif rc.vehicleSelected AND isDate(rc.Filter.getCarPickUpDateTime())>
-    <cfset ordering['Car'] = rc.Filter.getCarPickUpDateTime()>
+    <cfset ordering['Car'] = createODBCDateTime(rc.Filter.getCarPickUpDateTime())>
 </cfif>
 <cfset itineraryOrder = structSort(ordering)>
 
@@ -78,9 +78,6 @@ $('#main-content').toggleClass('toggled');
                             <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
                             <a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
                         </div>
-                        <div class="row cart-row">
-                            <br>
-                        </div>
                     </cfif>
                     <cfif NOT rc.vehicleSelected AND rc.Filter.getCar() AND showCarTab>
                         <!---Car--->
@@ -89,9 +86,6 @@ $('#main-content').toggleClass('toggled');
                             <cfif rc.action CONTAINS 'car.'>In progress<cfelse>Up next</cfif>
                             <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
                             <a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
-                        </div>
-                        <div class="row cart-row">
-                            <br>
                         </div>
                     </cfif>
                     <cfif rc.filter.getPassthrough() NEQ 1 AND NOT (structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO") AND rc.Filter.getAir() EQ 1 AND NOT rc.airSelected>
