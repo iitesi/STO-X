@@ -473,6 +473,12 @@ ul.tabs li a.active {
 	text-align: center;
 }
 
+.fs-s1 {
+	font-size: 14px;
+	font-weight: 600;
+	text-align: center;
+}
+
 .fs-s {
 	font-size: 10px;
 	font-weight: 400;
@@ -527,6 +533,7 @@ ul.tabs li a.active {
 }
 
 .results_collapsed {
+	width: 100%;
 	position: absolute;
 	/* display: flex; */
 	opacity: 1; 
@@ -538,6 +545,7 @@ ul.tabs li a.active {
 }
 
 .results_expanded {
+	width: 100%;
 	position: absolute;
 	/* display: none; */
 	opacity: 0; 
@@ -590,6 +598,8 @@ ul.tabs li a.active {
 }
 
 .flight-details-container {
+	/* display: flex;
+	flex-direction: column; */
 	-webkit-transition: all 0.2s ease-out;
   	-moz-transition: all 0.2s ease-out;
   	-o-transition: all 0.2s ease-out;
@@ -753,6 +763,9 @@ ul.tabs li a.active {
 
 .fare-wrapper .panel:hover {
 	cursor: pointer;
+}
+
+.fare-wrapper .panel.fares:hover {
 	background: #2E76CF;
 	color: white;
 }
@@ -775,6 +788,130 @@ ul.tabs li a.active {
 .cabin-class .cabin-class {
 	font-weight: 700;
 	font-size: 14px;
+}
+
+.segment-details:first-child {
+	padding-top: 15px;
+}
+
+.segment-details {
+	display: flex;
+}
+
+.segment-details-flights {
+	flex: 4;
+	display: flex;
+	flex-flow: column;
+}
+
+.segment-details-extras {
+	padding-right: 90px;
+}
+
+.segment-details-extras ul {
+
+}
+
+.segment-details-extras ul li {
+	font-size: 12px;
+	line-height: 14px;
+}
+
+.segment-stopover {
+	margin: 25px 0;
+	padding-left: 90px;
+}
+
+.segment-stopover-row {
+	display: flex;
+	padding: 20px 0;
+	border-top: 1px solid #eeeeee;
+	border-bottom: 1px solid #eeeeee;
+}
+
+.segment-leg {
+	flex: 1 0 auto;
+	padding-right: 20px;
+}
+
+.segment-leg-inner {
+	position: relative;
+	padding-left: 90px;
+}
+
+/** TODO placeholder.. come up with own graphic here **/
+.segment-leg-connector {
+    background: url(//www.gstatic.com/flights/app/1x/dotted_flight_80dp.png) no-repeat 0 5px;
+    height: 85px;
+    left: 63px;
+    position: absolute;
+    width: 12px;
+}
+
+.segment-leg-details {
+	display: flex;
+	white-space: nowrap;
+	letter-spacing: 0.3px;
+}
+
+.segment-leg-arrival {
+	padding-top: 48px;
+}
+
+.segment-leg-time {
+
+}
+
+.segment-middot {
+    padding: 0 12px;
+    font-size: 25px;
+    line-height: 21px;
+}
+
+.segment-middot-sm {
+    padding: 0 8px;
+    font-size: 18px;
+    line-height: 12px;
+}
+
+.segment-leg-airport {
+	display: flex;
+}
+
+.segment-leg-time-inair {
+	display: flex;
+	white-space: nowrap;
+	position: absolute;
+	top: 36px;
+	letter-spacing: 0.2px;
+	font-size: 14px;
+}
+
+.segment-leg-operation-details {
+	display: flex;
+	padding-left: 90px;
+	margin-top: 10px;
+	color: #52575d
+}
+
+.segment-leg-operation-vendor {
+	display: flex;
+}
+
+.segment-leg-operation-equipment {
+	display: flex;
+}
+
+.segment-leg-operation-codes {
+	display: flex;
+}
+
+.segment-leg-operation-operatedby {
+	display: flex;
+	padding-left: 90px;
+	margin-top: 3px;
+	color: #a1a1a1;
+	letter-spacing: 0.5px;
 }
 
 @media (min-width: 768px) {
