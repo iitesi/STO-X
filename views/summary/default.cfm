@@ -108,8 +108,9 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="requireHotelCarFee" id="requireHotelCarFee" value="#rc.account.Require_Hotel_Car_Fee#">
-			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
-			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air.platingCarrier : '')#>
+			<!--- Dohmen to do --->
+			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air[1].Flights[1].CarrierCode) : '')#>
+			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air[1].platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getChainCode() : '')#">
 			<input type="hidden" name="masterChainCode" id="masterChainCode" value="#(rc.hotelSelected ? rc.Hotel.getMasterChainCode() : '')#">
@@ -136,7 +137,8 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 					<div class="summarydiv container-fluid">
 						<div id="airDiv" class="clearfix">
-							#View('summary/air')#
+							<!--- #View('summary/air')# --->
+							<!--- Dohmen To Do --->
 						</div>
 						<div id="hotelDiv" class="clearfix">
 							#View('summary/hotel')#

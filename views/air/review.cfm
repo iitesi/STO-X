@@ -10,4 +10,4 @@
 	</div>
 </cfoutput>
 
-<cfdump var=#session.Searches[rc.SearchID].Selected#>
+<cfdump var=#session.Searches[rc.SearchID].stSelected#>

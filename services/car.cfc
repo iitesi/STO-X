@@ -51,7 +51,7 @@
 				OR arguments.Filter.getDepartDateTime() EQ arguments.Filter.getCarPickupDateTime()
 				OR arguments.Filter.getDepartDateTime() GT arguments.Filter.getCarPickupDateTime())>
 
-			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air.Groups[0].ArrivalTime )>
+			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air[0].ArrivalTime )>
 		</cfif>
 
 		<cfif arguments.Filter.getAir()
@@ -61,7 +61,7 @@
 				OR arguments.Filter.getArrivalDateTime() LT arguments.Filter.getCarDropoffDateTime())
 			AND arguments.Filter.getAirType() EQ 'RT'>
 
-			<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air.Groups[1].DepartureTime )>
+			<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air[1].DepartureTime )>
 		</cfif>
 
 		<cfset session.Filters[ searchID ] = arguments.Filter>

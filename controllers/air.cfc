@@ -7,37 +7,37 @@
 	<cfproperty name="general" setter="true" getter="false">
 	<cfproperty name="lowFare" setter="true" getter="false">
 	<cfproperty name="lowFareavail" setter="true" getter="false">
+	<cfproperty name="Itinerary" setter="true" getter="false">
 
 	<cffunction name="search" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
 		<cfset var SearchID = SearchID>
-
-		<cfparam name="arguments.rc.Group" default="0">
-		<cfparam name="session.searches[#SearchID#].Selected" default="#structNew('linked')#">
-		<!--- <cfset session.searches[#SearchID#].Selected = {}> --->
+		<cfset var Group = structKeyExists(arguments.rc, 'Group') AND arguments.rc.Group NEQ '' ? arguments.rc.Group : 0>
 
 		<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
-			<cfif SegmentIndex-1 GTE arguments.rc.Group>
-				<cfset structDelete(session.searches[SearchID].Selected, SegmentIndex-1)>
+			<cfif SegmentIndex-1 GTE Group>
+				<cfset session.searches[SearchID].stSelected[SegmentIndex-1] = {}>
 			</cfif>
 		</cfloop>
 
 		<cfif structKeyExists(rc, 'FlightSelected')>
-			<cfset session.searches[SearchID].Selected[arguments.rc.Group] = deserializeJSON(form.Segment)>
-			<cfset session.searches[SearchID].Selected[arguments.rc.Group].SegmentId = SegmentID>
-			<cfset session.searches[SearchID].Selected[arguments.rc.Group].CabinClass = form.CabinClass>
-			<cfset session.searches[SearchID].Selected[arguments.rc.Group].SegmentFareId = form.SegmentFareId>
-			<cfset session.searches[SearchID].Selected[arguments.rc.Group].Refundable = form.Refundable>
+
+			<cfset session.searches[SearchID].stSelected = Itinerary.selectAir(	form = form,
+																				stSelected = session.searches[#SearchID#].stSelected,
+																				Group = Group,
+																				Groups = arrayLen(arguments.rc.Filter.getLegsForTrip()))>
 
 			<!--- <cfdump var=#session.searches[SearchID].Selected# abort> --->
 			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
-				<cfif arguments.rc.Group+2 EQ local.SegmentIndex>
+				<cfif Group+2 EQ local.SegmentIndex>
 					<cfset fw.redirect('air.search?SearchID=#arguments.rc.SearchID#&Group=#SegmentIndex-1#')>
 				</cfif>
 			</cfloop>
 
 			<!--- <cfdump var=#session.searches[SearchID].Selected# abort> --->
+			<cfset session.Filters[SearchID].setAir(true)>
+			<cfset session.searches[rc.SearchID].stItinerary.Air = session.searches[SearchID].stSelected>
 			<cfset variables.fw.redirect('air.review?SearchID=#arguments.rc.SearchID#')>
 		</cfif>
 
@@ -50,8 +50,8 @@
 														Policy = arguments.rc.Policy,
 														Filter = arguments.rc.Filter,
 														SearchID = SearchID,
-														Group = arguments.rc.Group,
-														SelectedTrip = session.searches[SearchID].Selected,
+														Group = Group,
+														SelectedTrip = session.searches[SearchID].stSelected,
 														cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
 
 		<cfreturn />
@@ -68,33 +68,6 @@
 															Selected = session.searches[SearchID].Selected,
 															Pricing = [],
 															CabinClass = '')>
-
-		<cfset var Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
-															Policy = arguments.rc.Policy,
-															Filter = arguments.rc.Filter,
-															SearchID = SearchID,
-															Group = arguments.rc.Group,
-															Selected = session.searches[SearchID].Selected,
-															Pricing = Pricing,
-															CabinClass = 'Economy')>
-
-		<cfset var Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
-															Policy = arguments.rc.Policy,
-															Filter = arguments.rc.Filter,
-															SearchID = SearchID,
-															Group = arguments.rc.Group,
-															Selected = session.searches[SearchID].Selected,
-															Pricing = Pricing,
-															CabinClass = 'Business')>
-
-		<cfset var Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
-															Policy = arguments.rc.Policy,
-															Filter = arguments.rc.Filter,
-															SearchID = SearchID,
-															Group = arguments.rc.Group,
-															Selected = session.searches[SearchID].Selected,
-															Pricing = Pricing,
-															CabinClass = 'First')>
 
 		<cfdump var=#serializeJSON(local.Pricing)# abort> --->
 

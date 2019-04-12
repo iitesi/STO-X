@@ -15,7 +15,7 @@ Show Air Tab(s)
 		<cfloop array="#StructKeyArray(session.searches)#" index="SearchID">
 			<cfif rc.Filter.getAir()>
 				<!--- <cfif rc.action CONTAINS 'air.' AND rc.SearchID EQ SearchID>selected</cfif> --->
-				<a href="#buildURL('air.lowfare?SearchID=#SearchID#')#">
+				<a href="#buildURL('air.search?SearchID=#SearchID#')#">
 					#UCase(rc.Filter.getHeading())#
 				</a>
 						<!--- <cfif ArrayLen(StructKeyArray(session.searches)) GT 1>
@@ -64,7 +64,7 @@ Summary
 <!---
 Reload Air
 --->
-	<a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#&bReloadAir=')#">
+	<a href="#buildURL('air.search?SearchID=#rc.SearchID#&bReloadAir=')#">
 		Reload Air
 	</a>
 </cfoutput>
