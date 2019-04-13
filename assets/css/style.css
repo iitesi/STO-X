@@ -657,6 +657,7 @@ ul.tabs li a.active {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	
 }
 
 .branded-fare-class {
@@ -668,15 +669,16 @@ ul.tabs li a.active {
 	text-align: center;
 }
 
-.cabin-class .cabin-class {
+.cabin-class .cabin-description {
 	font-weight: 700;
 	font-size: 14px;
+	height: 40px;
 }
 
 .cabin-class .fare-display {
 	display: flex;
 	flex-grow: 3;
-	min-height: 65px;
+	min-height: 55px;
 	justify-content: center;
 	align-items: center;
 	-webkit-transition: min-height 0.2s ease;
@@ -693,6 +695,15 @@ ul.tabs li a.active {
 	opacity: 0.85;
 	align-self: baseline;
 }
+
+.cabin-class .policy-error > div[role=button] {
+	height: 40px;
+	top: -40px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+}
+
 
 .cabin-class .policy-error-hidden {
 	background-color: transparent;
@@ -912,6 +923,43 @@ ul.tabs li a.active {
 	margin-top: 3px;
 	color: #a1a1a1;
 	letter-spacing: 0.5px;
+}
+
+.segment-details-footer {
+	display: flex;
+	flex-flow: row;
+	margin-top: 60px;
+	justify-content: center;
+	margin-bottom: 15px;
+}
+
+.segment-details-footer .nav-tabs {
+	font-size: 12px;
+}
+
+.segment-details-footer > div {
+	flex: 1;
+	margin: 0 60px;
+}
+.segment-details-footer > div:first-child {
+	margin-right: 0;
+}
+
+.branded-cabin-details.tab-content {
+	font-size: 12px;
+	border: 1px solid #ddd;
+	border-top: none;
+	border-radius: 4px;
+	padding: 15px;
+	margin-top:0 !important;
+}
+
+.branded-cabin-details.tab-content ul {
+	padding-left: 20px;
+}
+
+.baggage-fees {
+	font-size: 10px;
 }
 
 @media (min-width: 768px) {
