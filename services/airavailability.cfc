@@ -31,18 +31,6 @@ component name="AirAvailability" extends="airavailability_old" accessors=true ou
 		return this;
 	}
 
-	public void function selectLeg (
-
-		required numeric Group,
-		required numeric SearchId,
-		required any nTrip
-
-	) {
-
-		session.searches[arguments.SearchId].stSelected[arguments.Group] = session.searches[arguments.SearchId].stAvailTrips[arguments.Group][arguments.nTrip];
-
-	}
-
 	public struct function doAvailabilityNew (
 
 		required any Filter,
