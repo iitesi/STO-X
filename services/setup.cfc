@@ -216,10 +216,6 @@
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
 				<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
-				<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
 		<cfelse>

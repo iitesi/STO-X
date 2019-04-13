@@ -123,6 +123,6 @@
 	</script>
 	
 	<div class="row">
-	<cfdump var=#session.Searches[rc.SearchID].stSelected#>
+	<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
 	<cfdump var=#rc.trips.Profiling#>
 	</div>

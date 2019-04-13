@@ -7,33 +7,33 @@
 
 	<cffunction name="selectAir" output="false">
 		<cfargument name="form" required="true">
-		<cfargument name="stSelected" required="true">
+		<cfargument name="stItinerary" required="true">
 		<cfargument name="Group" required="false" default="">
 		<cfargument name="Groups" required="false" default="">
 
 		<cfset var form = arguments.form>
-		<cfset var stSelected = arguments.stSelected>
+		<cfset var stItinerary = arguments.stItinerary>
 		<cfset var Group = arguments.Group>
 		<cfset var Groups = arguments.Groups>
 
 		<cfset var Air = {}>
 
 		<cfset Air = deserializeJSON(form.Segment)>
-		<cfloop list="#arguments.form.fieldnames#" index="local.fieldname">
+		<cfloop list="#form.fieldnames#" index="local.fieldname">
 			<cfif fieldname NEQ 'fieldnames'
 				AND fieldname NEQ 'Segment'>
 				<cfset Air[fieldname] = arguments.form[fieldname]>
 			</cfif>
 		</cfloop>
-		<cfset stSelected[Group] = Air>
+		<cfset stItinerary.Air[Group] = Air>
 		<cfloop from="0" to="#arguments.Groups-1#" index="local.Count">
 			<cfif Count GT Group>
-				<cfset stSelected[Count] = {}>
+				<cfset stItinerary.Air[Count] = {}>
 			</cfif>
 		</cfloop>
-		<!--- <cfset stSelected = orderItinerary(stSelected)> --->
-
-		<cfreturn stSelected />
+		<!--- <cfset stItinerary = orderItinerary(stItinerary)> --->
+		
+		<cfreturn stItinerary />
  	</cffunction>
 
 	<!--- <cffunction name="removeSegment" output="false">

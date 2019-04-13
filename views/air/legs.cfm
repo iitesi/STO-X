@@ -67,14 +67,6 @@
 		<cfset popoverLink = "index.cfm?action=air.search&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
 		<cfset popoverButtonClass = "">
 	</cfif>
-
-	<cfif StructKeyExists(rc, "clearSelected") AND rc.clearSelected EQ 1>
-		<cfset session.searches[rc.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[rc.SearchID].stSelected[0] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[1] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[2] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[3] = {}>
-	</cfif>
 </cfsilent>
 
 <cfoutput>
@@ -96,11 +88,6 @@
 					</li>
 				</cfif>
 			</cfloop>
-		</cfif>
-		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
-			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
-			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" <cfif popoverButtonClass EQ 'active'>class=" legbtn"<cfelse>class="airModal legbtn"</cfif> rel="poptop" data-modal="Roundtrip Flights" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
 		</ul>
 	</div>

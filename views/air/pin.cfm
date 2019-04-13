@@ -1,6 +1,7 @@
 <cfoutput>
-	<cfloop collection="#session.searches[rc.SearchID].stSelected#" index="index" item="Segment">
-		<cfif NOT structIsEmpty(Segment)>
+	<cfloop collection="#session.searches[rc.SearchID].stItinerary.Air#" index="index" item="Segment">
+		<cfif NOT structIsEmpty(Segment)
+			AND index LT Group>
 			<div class="panel panel-default">
 			  	<div class="panel-body alert-success">
 			  		<div class="row">
