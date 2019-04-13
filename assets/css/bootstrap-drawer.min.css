@@ -75,11 +75,12 @@
 /*       cart-icon-Cross         */
 /*-------------------------------*/
 
-#main-content.toggled .cart-icon {
-    margin-right: 330px;
+#main-content.toggled .cart-open-icon {
+    /* margin-right: 330px; */
+    opacity: 0;
 }
 
-.cart-icon {
+.cart-open-icon {
   position: absolute;
   top: 15px;  
   right:15px;
@@ -90,13 +91,32 @@
   margin-right: 15px;
   background: transparent;
   border: none;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+  opacity: 1;
+  -webkit-transition: all 0.8s ease;
+  -moz-transition: all 0.8s ease;
+  -o-transition: all 0.8s ease;
+  transition: all 0.8s ease;
 }
-.cart-icon:hover,
-.cart-icon:focus,
-.cart-icon:active {
+.cart-open-icon:hover,
+.cart-open-icon:focus,
+.cart-open-icon:active {
   outline: none;
 }
+
+.cart-close-icon {
+    position: absolute;
+    top: 2px;  
+    right:2px;
+    z-index: 999;
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    background: transparent;
+    border: none;
+  }
+  .cart-close-icon:hover,
+  .cart-close-icon:focus,
+  .cart-close-icon:active {
+    outline: none;
+  }

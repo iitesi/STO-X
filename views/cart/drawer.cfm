@@ -132,7 +132,7 @@ $('#main-content').toggleClass('toggled');
 <cfdump var="#rc.Filter#">
 --->
 <cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
-    <button type="button" class="cart-icon is-closed" data-toggle="offcanvas">
+    <button type="button" class="cart-open-icon is-closed" data-toggle="offcanvas">
         <i class="material-icons">shopping_cart</i>
     </button>
 
@@ -141,8 +141,19 @@ $('#main-content').toggleClass('toggled');
         <ul class="nav sidebar-nav container">
             <cfoutput>
                 <li class="sidebar-header">
-                    Itinerary for<br>
-                    #rc.Filter.getProfileUsername()#
+                    <div class="row">
+                        <div class="col-sm-10">Itinerary for</div>
+                        <div class="col-sm-2">
+                            <button type="button" class="cart-close-icon" data-toggle="offcanvas">
+                                <i class="material-icons">close</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">#rc.Filter.getProfileUsername()#</div>
+                    </div>
+                    <br>
+                    
                 </li>
                 <cfif displayCart>
                     <cfloop array="#itineraryOrder#" index="segment">
