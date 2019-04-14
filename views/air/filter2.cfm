@@ -65,25 +65,25 @@
 					<ul class="dropdown-menu dropdown-menu-right">
 						<li>
 							<div class="md-radio">
-								<input id="stops-a" checked class="singlefilter" type="radio" name="stops" data-value="-1" data-title="Any number of stops" title="Any number of stops">
+								<input id="stops-a" checked class="singlefilter" type="radio" name="stops" value="-1" data-title="Any number of stops" title="Any number of stops">
 								<label for="stops-a">Any Number of Stops</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-0" class="singlefilter" type="radio" name="stops" data-value="0" data-title="Nonstop" title="Nonstop flights">
+								<input id="stops-0" class="singlefilter" type="radio" name="stops" value="0" data-title="Nonstop" title="Nonstop flights">
 								<label for="stops-0">Nonstop</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-1" class="singlefilter" type="radio" name="stops" data-value="1" data-title="1 Stop" title="Flights with one stop">
+								<input id="stops-1" class="singlefilter" type="radio" name="stops" value="1" data-title="1 Stop" title="Flights with one stop">
 								<label for="stops-1">1 Stop</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-2" class="singlefilter" type="radio" name="stops" data-value="2" data-title="2+ Stop" title="Flights with two or more stops">
+								<input id="stops-2" class="singlefilter" type="radio" name="stops" value="2" data-title="2+ Stop" title="Flights with two or more stops">
 								<label for="stops-2">2+ Stops</label>
 							</div>
 						</li>
@@ -94,19 +94,19 @@
 					<ul class="dropdown-menu dropdown-menu-right">
 						<li>
 							<div class="md-radio">
-								<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="-1" data-title="Any Fare Type" title="Any Fare Type">
+								<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
 								<label for="refundable-a">Any Fare Type</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="refundable-0" class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="0" data-title="0" title="Non Refundable">
+								<input id="refundable-0" class="singlefilter" type="radio" name="refundable" data-element="fares" value="0" data-title="0" title="Non Refundable">
 								<label for="refundable-0">Non Refundable</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="refundable-1" class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="1" data-title="1" title="Refundable">
+								<input id="refundable-1" class="singlefilter" type="radio" name="refundable" data-element="fares" value="1" data-title="1" title="Refundable">
 								<label for="refundable-1">Refundable</label>
 							</div>
 						</li>

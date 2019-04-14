@@ -74,41 +74,7 @@
 			$("#Segment").val($("#fare"+Key).val());
 			$("#lowfareavailForm").submit();
 		}
-		$('.singlefilter').on('change', function (e) {
-			e.preventDefault();
-			preFilter();
-			var $input = $(this);
-			var name = $input.attr('name');
-			var value = $input.data('value');
-			var element = $input.data('element');
-
-			switch (element) {
-				case "fares": {
-					$('#listcontainer .fares').each(function(){
-						var $this = $(this);
-						if (value == -1 || $this.data(name) == value){
-							$this.show();
-						}
-						else {
-							$this.hide();
-						}
-					});
-					break;
-				}
-				default: {
-					$('#listcontainer > div').each(function(){
-						var $this = $(this);
-						if (value == -1 || $this.data(name) == value){
-							$this.show();
-						}
-						else {
-							$this.hide();
-						}
-					});
-				}
-			}
-			postFilter();
-		});
+		
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
 			divList.sort(function(a, b){
@@ -159,7 +125,7 @@
 		$('.singlefilter').each(function(){
 			var $input = $(this);
 			var name = $input.attr('name');
-			var value = $input.data('value');
+			var value = $input.val();
 			var element = $input.data('element');
 			var $matches;
 
@@ -230,39 +196,89 @@
 				$(this).prop('checked',$(this).val()==value);
 			});
 
-			$('#listcontainer > div').each(function(){
-				var $this = $(this);
-				var flightValues = $this.attr('data-' + name);
-				flightValues.includes(value) ? $this.show() : $this.hide();
-			});
-
+			doFilter();
 			postFilter();
 		});
 
 		$('#filterbar').on('click', '.multifilter', function (e) {
 			preFilter();
-			var $input = $(this);
-			var name = $input.attr('name');
-			var value = $input.val();
-			var checked = $input.is(':checked');
-			$('#listcontainer > div').each(function(){
-				var $this = $(this);
-				var flightValues = $this.attr('data-' + name);
-				if (flightValues.includes(value)){
-					checked ? $this.show() : $this.hide();
-				}
-			});
+			doFilter();
 			postFilter();
 		});
+
+		$('#filterbar').on('change', '.singlefilter', function (e) {
+			preFilter();
+			doFilter();
+			postFilter();
+		});
+
+		var preFilter = function(){
+			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
+		}
+
+		var doFilter = function(){
+			var filters = {
+				stops: getGroupValue('stops'),
+				refundable: getGroupValue('refundable'),
+				connection: getGroupValue('connection')
+			};
+			var filterKeys = Object.keys(filters);
+			$('#listcontainer > div').each(function(){
+				var $this = $(this);
+
+				const matches = filterKeys.every(function(key){
+					try {
+						if (filters[key] == -1) {
+							return true;
+						}
+						switch(key){
+							case 'stops': {
+								return $this.data('stops') == filters[key];
+								break;
+							}
+							case 'refundable': {
+							// TODO show/hide the cabin
+								return true;
+								break;
+							}
+							case 'connection': {
+								var airports = $this.data('connection');
+								var airportArray = airports.replace(/ /gi, '').split(',');
+								return airportArray.every(function(code){
+									return filters[key].includes(code);
+								});
+								break;
+							}
+						}
+					}
+					catch(e){
+						return true;
+					}
+				});
+				matches ? $this.show() : $this.hide();
+			});
+		}
 
 		var postFilter = function(){
 			$('#listcontainer > div').removeClass('first-visible-child').removeClass('last-visible-child');
 			$('#listcontainer > div:visible:first').addClass('first-visible-child');
 			$('#listcontainer > div:visible:last').addClass('last-visible-child');
+			// TODO cleanup the available values in other selections now.  i.e., filtering to 1 stop
+			// should affect the valid values in the connecting airports drop down.  Need to disable
+			// or enable ones that are/aren't valid now
 		}
 
-		var preFilter = function(){
-			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
+		var getGroupValue = function(name){
+			var $item = $('input[name='+name+']:first','#filterbar');
+			var type = $item.attr('type');
+			if ( type == 'radio'){
+				return $('input[name='+name+']:checked','#filterbar').val()
+			}
+			else if ( type == 'checkbox'){
+				return $('input[name='+name+']:checked','#filterbar').map(function(){
+					return $(this).val();
+				}).get();
+			}
 		}
 
 		postFilter();
