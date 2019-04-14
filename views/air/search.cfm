@@ -76,7 +76,7 @@
 		}
 		$('.singlefilter').on('change', function (e) {
 			e.preventDefault();
-
+			preFilter();
 			var $input = $(this);
 			var name = $input.attr('name');
 			var value = $input.data('value');
@@ -107,6 +107,7 @@
 					});
 				}
 			}
+			postFilter();
 		});
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
@@ -208,13 +209,38 @@
 
 			for(var x = 0; x < finalValues.length; x++){
 				var value = finalValues[x];
-				var $input = $('<li><div class="md-checkbox"><input id="'+name+'-'+x+'" checked class="multifilter" type="checkbox" name="'+name+'" value="'+value+'" data-title="'+value+'" title="'+value+'"><label for="'+name+'-'+x+'">'+value+'</label></div></li>')
+				var $input = $('<li><div class="md-checkbox"><input id="'+name+'-'+x+'" checked class="multifilter" type="checkbox" name="'+
+				name+'" value="'+value+'" data-title="'+value+'" title="'+value+'"><label for="'+
+				name+'-'+x+'">'+value+'</label><div data-multiselect-only>only</div></div></li>')
 				$wrapper.append($input);
 			}
 
 		});
 
+		$('#filterbar').on('click', '[data-multiselect-only]', function (e) {
+			e.stopImmediatePropagation();
+			preFilter();
+			var $link = $(this);
+			var $input = $link.parent().find('input[type=checkbox]')
+			var $wrapper = $link.parents('.multifilterwrapper');
+			var name = $input.attr('name');
+			var value = $input.val();
+			
+			$wrapper.find('.multifilter').each(function(){
+				$(this).prop('checked',$(this).val()==value);
+			});
+
+			$('#listcontainer > div').each(function(){
+				var $this = $(this);
+				var flightValues = $this.attr('data-' + name);
+				flightValues.includes(value) ? $this.show() : $this.hide();
+			});
+
+			postFilter();
+		});
+
 		$('#filterbar').on('click', '.multifilter', function (e) {
+			preFilter();
 			var $input = $(this);
 			var name = $input.attr('name');
 			var value = $input.val();
@@ -226,10 +252,20 @@
 					checked ? $this.show() : $this.hide();
 				}
 			});
-
-
+			postFilter();
 		});
 
+		var postFilter = function(){
+			$('#listcontainer > div').removeClass('first-visible-child').removeClass('last-visible-child');
+			$('#listcontainer > div:visible:first').addClass('first-visible-child');
+			$('#listcontainer > div:visible:last').addClass('last-visible-child');
+		}
+
+		var preFilter = function(){
+			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
+		}
+
+		postFilter();
 	</script>
 	
 	<div class="row">
