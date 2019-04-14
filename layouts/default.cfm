@@ -37,6 +37,7 @@
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
 			<link href="assets/css/bootstrap-drawer.min.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
+			<link href="assets/css/ion.rangeSlider.min.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/layout.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/style.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css?v=#application.staticAssetVersion#" rel="stylesheet" media="print">
@@ -77,6 +78,7 @@
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/ion.rangeSlider.min.js?v=201703094"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
 		</cfoutput>
 	</head>

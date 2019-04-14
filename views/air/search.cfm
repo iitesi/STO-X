@@ -24,16 +24,30 @@
 				<!--- Needs to be in the variables scope to be passed into the view. --->
 				<cfset variables.trips = rc.trips>
 				<div class="list-view col-sm-12" id="listcontainer">
+					<cfscript>
+						connectingAirports = {};
+					</cfscript>
 					<cfloop collection="#rc.trips.Segments#" index="segmentIndex" item="variables.Segment">
+						<cfscript>
+							if( structKeyExists(variables.Segment, 'Connections')){
+								connectionCodes = listToArray(variables.Segment.Connections);
+								for (i=1; i <= arrayLen(connectionCodes);i=i+1) {
+									airportCode = trim(connectionCodes[i])
+									if(!structKeyExists(connectingAirports,airportCode) AND structKeyExists(application.stAirports, airportCode)){
+										structInsert(connectingAirports, airportCode, application.stAirports[airportCode].City)
+									}
+								}
+							}							
+						</cfscript>
 						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
 						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
 							#View('air/list')#
 						</cfif>
 					</cfloop>
-					<div class="col-sm-12 noFlightsFound panel panel-default">
-						<h1>No Flights Available</h1>
-						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
-					</div>
+				</div>
+				<div class="col-sm-12 noFlightsFound panel panel-default">
+					<h1>No Flights Available</h1>
+					<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 				</div>
 			<cfelse>
 				<div class="container">
@@ -62,6 +76,9 @@
 	</cfoutput>
 	
 	<script type="application/javascript">
+
+		var airportCities = <cfoutput>#serializeJSON(connectingAirports)#</cfoutput>;
+
 		function submitSegment(SegmentId,CabinClass,SegmentFareId,Refundable,Key) {
 			$("#SegmentId").val(SegmentId);
 			$("#CabinClass").val(CabinClass);
@@ -143,6 +160,13 @@
 			}
 		});
 
+		var multiFilterLabel = function(name,value){
+			if(name=='connection'){
+				return airportCities[value] + " (" + value + ")";
+			}
+			return value;
+		}
+
 		$('.multifilterwrapper').each(function(){
 			var $wrapper = $(this);
 			var name = $wrapper.data('name');
@@ -173,11 +197,56 @@
 				var value = finalValues[x];
 				var $input = $('<li><div class="md-checkbox"><input id="'+name+'-'+x+'" checked class="multifilter" type="checkbox" name="'+
 				name+'" value="'+value+'" data-title="'+value+'" title="'+value+'"><label for="'+
-				name+'-'+x+'">'+value+'</label><div data-multiselect-only>only</div></div></li>')
+				name+'-'+x+'">'+multiFilterLabel(name,value)+'</label><div data-multiselect-only>only</div></div></li>')
 				$wrapper.append($input);
 			}
 
 		});
+
+		var connectingSliderValues = function(times){
+			var min = times[0];
+			var max = times[times.length-1];
+			var total = max - min;
+			var hours = Math.ceil(total / 60);
+			var spots = [];
+			var start = Math.floor(min / 60);
+
+			for (var x = 0; x < hours; x++){
+				spots.push(start + x + 'h');
+				spots.push(start + x + 'h 30m');
+			}
+
+			spots.push(hours + 'h');
+			return spots;
+		}
+		
+
+		var updateConnectingSlider = function(){
+			var $layovers = $('#listcontainer').find('.segment-stopover');
+			var times = $layovers.map(function(){return $(this).data('minutes') - 0;}).get();
+			var sorted = times.sort(function(a,b){return a-b});
+			var customValues = connectingSliderValues(sorted);
+			var $input = $("input[name='layover-range']");
+			var slider = $input.data('ionRangeSlider');
+			if (slider){
+				slider.destroy();
+			}
+
+			$("input[name='layover-range']").ionRangeSlider({
+				skin: "round",
+				type: "double",			
+				from: 0,
+				to: customValues.length - 1,
+				values: customValues,
+				onFinish: function (data) {
+					preFilter();
+					doFilter();
+					postFilter();
+				},
+			});
+
+		}
+		
 
 		$('#filterbar').on('click', '[data-multiselect-only]', function (e) {
 			e.stopImmediatePropagation();
@@ -190,6 +259,20 @@
 			
 			$wrapper.find('.multifilter').each(function(){
 				$(this).prop('checked',$(this).val()==value);
+			});
+
+			doFilter();
+			postFilter();
+		});
+
+		$('#filterbar').on('click', '#connection-all', function (e) {
+			e.stopImmediatePropagation();
+			preFilter();
+			var $item = $(this);
+			var $wrapper = $item.parents('.multifilterwrapper');
+			
+			$wrapper.find('.multifilter').each(function(){
+				$(this).prop('checked',$item.is(':checked'));
 			});
 
 			doFilter();
@@ -212,11 +295,36 @@
 			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
 		}
 
+		var getMinutesFromString = function(str){
+			var values = str.split(' ');
+			if ( values.length == 1 ){
+				return Number(values[0].replace(/[^0-9]/g,'') * 60);
+			}
+			if ( values.length == 2 ){
+				var hours = Number(values[0].replace(/[^0-9]/g,''));
+				var minutes = Number(values[1].replace(/[^0-9]/g,''));
+				return (hours * 60) + minutes
+			}
+		}
+		var layoverDetails = function(){
+			try {
+				var data = $("input[name='layover-range']").data('ionRangeSlider').result;
+				var values = [];
+				values.push(getMinutesFromString(data.from_value));
+				values.push(getMinutesFromString(data.to_value));
+				return values;
+			}
+			catch(e){
+			}
+			return [0,9999];
+		}
+
 		var doFilter = function(){
 			var filters = {
 				stops: getGroupValue('stops'),
 				refundable: getGroupValue('refundable'),
-				connection: getGroupValue('connection')
+				connection: getGroupValue('connection'),
+				layover: layoverDetails()
 			};
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
@@ -224,7 +332,7 @@
 
 				const matches = filterKeys.every(function(key){
 					try {
-						if (filters[key] == -1) {
+						if (!Array.isArray(filters[key]) && filters[key] == -1) {
 							return true;
 						}
 						switch(key){
@@ -240,10 +348,24 @@
 							case 'connection': {
 								var airports = $this.data('connection');
 								var airportArray = airports.replace(/ /gi, '').split(',');
-								return airportArray.every(function(code){
-									return filters[key].includes(code);
-								});
+								for (var a=0;a<airportArray.length;a++){
+									if(filters[key].includes(airportArray[a])){
+										return true;
+									}
+								}
+								return false;
 								break;
+							}
+							case 'layover' : {
+								var $layovers = $this.find('.segment-stopover');
+								if (!$layovers.length) {
+									return true;
+								}
+								var matches = true;
+								var times = $layovers.map(function(){return $(this).data('minutes') - 0;}).get();
+								return times.every(function(time){
+									return time >= filters.layover[0] && time <= filters.layover[1];
+								});
 							}
 						}
 					}
@@ -256,8 +378,10 @@
 		}
 
 		var postFilter = function(){
-			var visibleTrips = $('#listcontainer > div:visible').length;
-			!visibleTrips ? $('#listcontainer > .noFlightsFound').show() : $('#listcontainer > .noFlightsFound').hide();
+			setTimeout(function(){
+				var visibleTrips = $('#listcontainer > div.trip:visible').length;
+				visibleTrips <= 0 ? $('#listcontainer + .noFlightsFound').show() : $('#listcontainer + .noFlightsFound').hide();
+			},400);
 
 			$('#listcontainer > div').removeClass('first-visible-child').removeClass('last-visible-child');
 			$('#listcontainer > div:visible:first').addClass('first-visible-child');
@@ -280,6 +404,8 @@
 			}
 		}
 
+		updateConnectingSlider();
+		sortTrips('economy');
 		postFilter();
 	</script>
 	

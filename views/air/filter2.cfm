@@ -115,6 +115,14 @@
 				<li role="presentation" class="dropdown" id="filterConnecting">
 					<a href="#" class="dropdown-toggle">Connecting Airports <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="connection">
+						<li class="with-irs">
+							<div class="irs-title">Layover Duration</div>
+							<input type="text" class="js-range-slider" name="layover-range" value="" />
+						</li>
+						<li>
+							<input type="checkbox" checked id="connection-all" name="connection-all" class="switch-input">
+							<label for="connection-all" class="switch-label">All Connecting Airports</label>
+						</li>
 					</ul>
 				</li>
 				<!---

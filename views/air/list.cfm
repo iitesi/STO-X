@@ -187,7 +187,7 @@
 
 						<cfif count NEQ 1>
 							<cfset layover = dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime)>
-							<div class="segment-stopover">
+							<div class="segment-stopover" data-minutes="#layover#">
 								<div class="segment-stopover-row">
 									<div>#int(layover/60)#H #layover%60#M layover</div>
 									<div class="segment-middot">&middot;</div>
