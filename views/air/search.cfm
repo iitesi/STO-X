@@ -30,15 +30,11 @@
 							#View('air/list')#
 						</cfif>
 					</cfloop>
-				</div>
-	<!---
-				<div class="clearfix"></div>
-				<div class="noFlightsFound">
-					<div class="container">
-					<h1>No Flights Available</h1>
-					<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
+					<div class="col-sm-12 noFlightsFound panel panel-default">
+						<h1>No Flights Available</h1>
+						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
-				</div>--->
+				</div>
 			<cfelse>
 				<div class="container">
 					<h3>No Flights Returned</h2>
@@ -260,6 +256,9 @@
 		}
 
 		var postFilter = function(){
+			var visibleTrips = $('#listcontainer > div:visible').length;
+			!visibleTrips ? $('#listcontainer > .noFlightsFound').show() : $('#listcontainer > .noFlightsFound').hide();
+
 			$('#listcontainer > div').removeClass('first-visible-child').removeClass('last-visible-child');
 			$('#listcontainer > div:visible:first').addClass('first-visible-child');
 			$('#listcontainer > div:visible:last').addClass('last-visible-child');
@@ -288,10 +287,3 @@
 	<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
 	<cfdump var=#rc.trips.Profiling#>
 	</div>
-
-	<li>
-		<div class="md-checkbox">
-			<input id="connection-a" class="multifilter" type="checkbox" name="conection" data-value="-1" data-title="Any Connecting Airports" title="Any Connecting Airports">
-			<label for="connection-a">Any Connecting Airports</label>
-		</div>
-	</li>
