@@ -18,10 +18,14 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-12">
 							<cfif Segment.IsPoorSegment>
-								<span role="button" class="badge badge-pill warning flight-result-warning" 
+								<span role="button" 
+									data-placement="right" 
+									data-toggle="tooltip" title="Better economy fare and travel times are available"
+									class="mdi mdi-alert flight-result-warning"></span>
+								<!---span role="button" class="badge badge-pill warning flight-result-warning" 
 									data-placement="right" data-toggle="tooltip" title="Better economy fare and travel times are available">
 									<i class="fa fas fa-exclamation" aria-hidden="true"></i>
-								</span>
+								</span--->
 							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>

@@ -584,7 +584,10 @@ ul.tabs li a.active {
 }
 
 .flight-result-warning {
-	font-size: 11px;
+	font-size: 20px;
+	background-color: white;
+	color: #f1d645;
+	line-height: 25px;
 }
 
 .detail-expander {
@@ -1216,8 +1219,7 @@ ul.tabs li a.active {
 	.flight-result-warning {
 		position: absolute;
 		margin-left: -10px;
-		font-size: 11px;
-		top: 10%;
+		top: 10px;
 		left: 0;
 	}
 	.fs-2 {

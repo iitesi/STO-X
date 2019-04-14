@@ -42,6 +42,7 @@
 			<link href="assets/css/print.css?v=#application.staticAssetVersion#" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 			<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+			<link href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" rel="stylesheet">
 
 			<!--- override header colors for TMC so their light logos will display properly --->
 			<cfif structKeyExists(rc,"account") AND StructKeyExists(rc.account,"tmc") AND rc.account.tmc.getIsExternal() EQ 1>
