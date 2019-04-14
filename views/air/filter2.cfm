@@ -7,7 +7,7 @@
 </style>
 
 <div id="filterbar">
-	<div class="navbar navbar-default">
+	<div class="navbar">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
@@ -15,31 +15,106 @@
 					<span class="glyphicon glyphicon-filter"></span>
 				</button>
 			</div>
-			<ul class="nav navbar-nav">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Sort <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#" id="sortbyprice" title="Sort by price" onClick="sortTrips('economy');">Economy Class Fares</a></li>
-						<li><a href="#" id="sortbyprice" title="Sort by price" onClick="sortTrips('business');">Business Class Fares</a></li>
-						<li><a href="#" id="sortbyprice" title="Sort by price" onClick="sortTrips('first');">First Class Fares</a></li>
-						<li><a href="#" id="sortbyduration" title="Sort by duration" onClick="sortTrips('duration');">Duration</a></li>
-						<li><a href="#" id="sortbydeparture" title="Sort by departure" onClick="sortTrips('departure');">Departure</a></li>
-						<li><a href="#" id="sortbyarrival" title="Sort by arrival" onClick="sortTrips('arrival');">Arrival</a></li>
+			<ul class="nav nav-pills">
+				<li role="presentation" class="dropdown" id="filterSort">
+					<a role="button" href="#" class="dropdown-toggle" aria-haspopup="true">
+						<span>Sort</span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li>
+							<div class="md-radio">
+								<input id="sortbyprice-a" checked type="radio" name="sort" title="Sort by price" onClick="sortTrips('economy');">
+								<label for="sortbyprice-a">Economy Class Fares</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="sortbyprice-b" type="radio" name="sort" title="Sort by price" onClick="sortTrips('business');">
+								<label for="sortbyprice-b">Business Class Fares</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="sortbyprice-c" type="radio" name="sort" title="Sort by price" onClick="sortTrips('first');">
+								<label for="sortbyprice-c">First Class Fares</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="sortbyduration" type="radio" name="sort" title="Sort by duration" onClick="sortTrips('duration');">
+								<label for="sortbyduration">Duration</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="sortbydeparture" type="radio" name="sort" title="Sort by departure" onClick="sortTrips('departure');">
+								<label for="sortbydeparture">Departure</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="sortbyarrival" type="radio" name="sort" title="Sort by arrival" onClick="sortTrips('arrival');">
+								<label for="sortbyarrival">Arrival</label>
+							</div>
+						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Stops <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#" class="filteroption" data-stops="0" data-title="Nonstop" title="Nonstop flights">Nonstop</a></li>
-						<li><a href="#" class="filteroption" data-stops="1" data-title="1 Stop" title="Flights with one stop">1 Stop</a></li>
-						<li><a href="#" class="filteroption" data-stops="2" data-title="2+ Stops" title="Flights with two or more stops">2+ Stops</a></li>
+				<li role="presentation" class="dropdown" id="filterStops">
+					<a href="#" class="dropdown-toggle">Stops <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li>
+							<div class="md-radio">
+								<input id="stops-a" checked class="singlefilter" type="radio" name="stops" data-value="-1" data-title="Any number of stops" title="Any number of stops">
+								<label for="stops-a">Any Number of Stops</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="stops-0" class="singlefilter" type="radio" name="stops" data-value="0" data-title="Nonstop" title="Nonstop flights">
+								<label for="stops-0">Nonstop</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="stops-1" class="singlefilter" type="radio" name="stops" data-value="1" data-title="1 Stop" title="Flights with one stop">
+								<label for="stops-1">1 Stop</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="stops-2" class="singlefilter" type="radio" name="stops" data-value="2" data-title="2+ Stop" title="Flights with two or more stops">
+								<label for="stops-2">2+ Stops</label>
+							</div>
+						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Fare Type <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#" data-refundable="0" data-title="0" title="Non Refundable" onclick="refundable(0)">Non Refundable</a></li>
-						<li><a href="#" data-refundable="1" data-title="1" title="Refundable" onclick="refundable(1)">Refundable</a></li>
+				<li role="presentation" class="dropdown" id="filterFares">
+					<a href="#" class="dropdown-toggle">Fare Type <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li>
+							<div class="md-radio">
+								<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="-1" data-title="Any Fare Type" title="Any Fare Type">
+								<label for="refundable-a">Any Fare Type</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="refundable-0" class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="0" data-title="0" title="Non Refundable">
+								<label for="refundable-0">Non Refundable</label>
+							</div>
+						</li>
+						<li>
+							<div class="md-radio">
+								<input id="refundable-1" class="singlefilter" type="radio" name="refundable" data-element="fares" data-value="1" data-title="1" title="Refundable">
+								<label for="refundable-1">Refundable</label>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li role="presentation" class="dropdown" id="filterConnecting">
+					<a href="#" class="dropdown-toggle">Connecting Airports <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="connection">
 					</ul>
 				</li>
 				<!---

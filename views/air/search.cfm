@@ -74,20 +74,39 @@
 			$("#Segment").val($("#fare"+Key).val());
 			$("#lowfareavailForm").submit();
 		}
-		$('.filteroption').on('click', function (e) {
+		$('.singlefilter').on('change', function (e) {
 			e.preventDefault();
-			// set variables.
-			var stops = $(this).data('stops');
-			//var carriers = [];
-			//$.each($("input[name='carrier']:checked"), function(){            
-			//	carriers.push($(this).val());
-			//});
-			// hide all
-			$('#listcontainer > div').hide();
-			// display appropriate divs
-			$('#listcontainer > div[data-stops="'+stops+'"]').show();
-			console.log(stops);
-			//console.log(carriers);
+
+			var $input = $(this);
+			var name = $input.attr('name');
+			var value = $input.data('value');
+			var element = $input.data('element');
+
+			switch (element) {
+				case "fares": {
+					$('#listcontainer .fares').each(function(){
+						var $this = $(this);
+						if (value == -1 || $this.data(name) == value){
+							$this.show();
+						}
+						else {
+							$this.hide();
+						}
+					});
+					break;
+				}
+				default: {
+					$('#listcontainer > div').each(function(){
+						var $this = $(this);
+						if (value == -1 || $this.data(name) == value){
+							$this.show();
+						}
+						else {
+							$this.hide();
+						}
+					});
+				}
+			}
 		});
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
@@ -95,10 +114,6 @@
 				return $(a).data(dataelement)-$(b).data(dataelement)
 			});
 			$("#listcontainer").html(divList);
-		}
-		function refundable(refundable) {
-			$('.fares').hide();
-			$('.fares[data-refundable="'+refundable+'"]').show();
 		}
 
 		$('#listcontainer').on('click', '.detail-expander', function () {
@@ -120,9 +135,111 @@
 		}); 
 		
 
+		$('#filterbar a.dropdown-toggle').on('click', function (e) {
+			var $target = $(e.target);
+			var $ddown = $target.parent();
+			var $others = $('#filterbar a.dropdown-toggle').parent().filter(function(){
+				return $(this).attr('id') != $ddown.attr('id');
+			})
+			$others.removeClass('open')
+			$(this).parent().toggleClass('open');
+		});
+
+		$('body').on('click', function (e) {
+			var $target = $(e.target);
+			var $ddown = $target.closest('.dropdown');
+			if (!$ddown.length){
+				$('#filterbar .dropdown.open').removeClass('open')
+			}
+		});
+
+
+		/* Setup the filters, and do any validation prior to use */
+		$('.singlefilter').each(function(){
+			var $input = $(this);
+			var name = $input.attr('name');
+			var value = $input.data('value');
+			var element = $input.data('element');
+			var $matches;
+
+			if(value == -1) return;
+
+			if ("fares" == element){
+				$matches = $('#listcontainer .fares[data-'+name+'="'+value+'"]');
+			}
+			else {
+				$matches = $('#listcontainer > div[data-'+name+'="'+value+'"]');
+			}
+
+			if (!$matches.length){
+				$input.prop('disabled', true);
+				$input.parent().addClass('disabled');
+			}
+			else{
+				$input.next().html( $input.next().html() + " <span>(" + $matches.length + ")</span>")
+			}
+		});
+
+		$('.multifilterwrapper').each(function(){
+			var $wrapper = $(this);
+			var name = $wrapper.data('name');
+			var type = $wrapper.data('type');
+			var element = $wrapper.data('element');
+			var $matches;
+			
+			if ("fares" == element){
+				$matches = $('#listcontainer .fares[data-'+name+']');
+			}
+			else {
+				$matches = $('#listcontainer > div[data-'+name+']');
+			}
+			var values = [];
+			$matches.each(function(){
+				var data = $(this).data(name);
+				var items = data.replace(/ /gi,'').split(',');
+				for(var i=0;i<items.length;i++){
+					var item = $.trim(items[i]);
+					if(!values.includes(item)){
+						values.push(item);
+					}
+				}
+			});
+			var finalValues = values.sort();
+
+			for(var x = 0; x < finalValues.length; x++){
+				var value = finalValues[x];
+				var $input = $('<li><div class="md-checkbox"><input id="'+name+'-'+x+'" checked class="multifilter" type="checkbox" name="'+name+'" value="'+value+'" data-title="'+value+'" title="'+value+'"><label for="'+name+'-'+x+'">'+value+'</label></div></li>')
+				$wrapper.append($input);
+			}
+
+		});
+
+		$('#filterbar').on('click', '.multifilter', function (e) {
+			var $input = $(this);
+			var name = $input.attr('name');
+			var value = $input.val();
+			var checked = $input.is(':checked');
+			$('#listcontainer > div').each(function(){
+				var $this = $(this);
+				var flightValues = $this.attr('data-' + name);
+				if (flightValues.includes(value)){
+					checked ? $this.show() : $this.hide();
+				}
+			});
+
+
+		});
+
 	</script>
 	
 	<div class="row">
 	<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
 	<cfdump var=#rc.trips.Profiling#>
 	</div>
+
+	<li>
+		<div class="md-checkbox">
+			<input id="connection-a" class="multifilter" type="checkbox" name="conection" data-value="-1" data-title="Any Connecting Airports" title="Any Connecting Airports">
+			<label for="connection-a">Any Connecting Airports</label>
+		</div>
+	</li>
