@@ -1110,6 +1110,11 @@ ul.tabs li a.active {
 	padding: 0 0 0 30px;
 }
 
+#filterAirline .dropdown-menu{
+	width: 220px;
+	padding: 0 0 0 30px;
+}
+
  #filterFares label {
 	width: 200px;
 	padding: 0 0 0 30px;
@@ -1130,6 +1135,9 @@ ul.tabs li a.active {
 	padding: 0 0 0 30px;
 }
 
+#resultsCount span {
+	margin-right: 10px;
+}
 
 .md-checkbox {
 	position: relative;

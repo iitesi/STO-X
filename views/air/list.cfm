@@ -9,6 +9,7 @@
 		data-business="#structKeyExists(SegmentFares, 'Business') ? SegmentFares.Business.TotalFare : 1000000#"
 		data-first="#structKeyExists(SegmentFares, 'First') ? SegmentFares.First.TotalFare : 1000000#"
 		data-connection="#Segment.Connections#"
+		data-airline="#Segment.CarrierCode#"
 		>
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
 	  	<div class="panel-body">

@@ -60,6 +60,15 @@
 						</li>
 					</ul>
 				</li>
+				<li role="presentation" class="dropdown" id="filterAirline">
+					<a href="#" class="dropdown-toggle">Arlines <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="airline">
+						<li>
+							<input type="checkbox" checked id="airline-all" name="airline-all" class="switch-input">
+							<label for="airline-all" class="switch-label">All Airlines</label>
+						</li>
+					</ul>
+				</li>
 				<li role="presentation" class="dropdown" id="filterStops">
 					<a href="#" class="dropdown-toggle">Stops <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right">
@@ -124,6 +133,9 @@
 							<label for="connection-all" class="switch-label">All Connecting Airports</label>
 						</li>
 					</ul>
+				</li>
+				<li role="presentation" class="dropdown" id="resultsCount">
+					<a href="#" class="dropdown-toggle"><span>29</span> Results</b></a>
 				</li>
 				<!---
 				<li class="dropdown">

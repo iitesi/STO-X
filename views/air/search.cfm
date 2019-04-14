@@ -25,6 +25,7 @@
 				<cfset variables.trips = rc.trips>
 				<div class="list-view col-sm-12" id="listcontainer">
 					<cfscript>
+						airlines = {};
 						connectingAirports = {};
 					</cfscript>
 					<cfloop collection="#rc.trips.Segments#" index="segmentIndex" item="variables.Segment">
@@ -37,7 +38,13 @@
 										structInsert(connectingAirports, airportCode, application.stAirports[airportCode].City)
 									}
 								}
-							}							
+							}		
+							if( structKeyExists(variables.Segment, 'CarrierCode')){
+								carrierCode = variables.Segment.CarrierCode;
+								if(!structKeyExists(airlines,carrierCode) AND structKeyExists(application.stAirVendors, carrierCode)){
+									structInsert(airlines, carrierCode, application.stAirVendors[carrierCode].Name)
+								}
+							}						
 						</cfscript>
 						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
 						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
@@ -78,6 +85,7 @@
 	<script type="application/javascript">
 
 		var airportCities = <cfoutput>#serializeJSON(connectingAirports)#</cfoutput>;
+		var airlines = <cfoutput>#serializeJSON(airlines)#</cfoutput>;
 
 		function submitSegment(SegmentId,CabinClass,SegmentFareId,Refundable,Key) {
 			$("#SegmentId").val(SegmentId);
@@ -163,6 +171,9 @@
 		var multiFilterLabel = function(name,value){
 			if(name=='connection'){
 				return airportCities[value] + " (" + value + ")";
+			}
+			if(name=='airline'){
+				return airlines[value];
 			}
 			return value;
 		}
@@ -254,9 +265,12 @@
 			var $link = $(this);
 			var $input = $link.parent().find('input[type=checkbox]')
 			var $wrapper = $link.parents('.multifilterwrapper');
+			var $switch = $wrapper.find('.switch-input');
 			var name = $input.attr('name');
 			var value = $input.val();
 			
+			$switch.prop('checked',false);
+
 			$wrapper.find('.multifilter').each(function(){
 				$(this).prop('checked',$(this).val()==value);
 			});
@@ -265,7 +279,7 @@
 			postFilter();
 		});
 
-		$('#filterbar').on('click', '#connection-all', function (e) {
+		$('#filterbar').on('click', '.switch-label', function (e) {
 			e.stopImmediatePropagation();
 			preFilter();
 			var $item = $(this);
@@ -281,6 +295,17 @@
 
 		$('#filterbar').on('click', '.multifilter', function (e) {
 			preFilter();
+
+			var $link = $(this);
+			var $wrapper = $link.parents('.multifilterwrapper');
+			var $inputs = $wrapper.find('input[type=checkbox].multifilter');
+			var $checkedInputs = $wrapper.find('input[type=checkbox].multifilter:checked');
+			var $switch = $wrapper.find('.switch-input');
+			if($switch.length){
+				var switchOn = $checkedInputs.length == 0 ? false : $checkedInputs.length == $inputs.length ? true : false;
+				$switch.prop('checked', switchOn);
+			}
+
 			doFilter();
 			postFilter();
 		});
@@ -324,7 +349,8 @@
 				stops: getGroupValue('stops'),
 				refundable: getGroupValue('refundable'),
 				connection: getGroupValue('connection'),
-				layover: layoverDetails()
+				layover: layoverDetails(),
+				airline: getGroupValue('airline')
 			};
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
@@ -356,6 +382,10 @@
 								return false;
 								break;
 							}
+							case 'airline': {
+								return filters[key].includes($this.data('airline'));
+								break;
+							}
 							case 'layover' : {
 								var $layovers = $this.find('.segment-stopover');
 								if (!$layovers.length) {
@@ -380,6 +410,7 @@
 		var postFilter = function(){
 			setTimeout(function(){
 				var visibleTrips = $('#listcontainer > div.trip:visible').length;
+				$("#resultsCount span").html(visibleTrips);
 				visibleTrips <= 0 ? $('#listcontainer + .noFlightsFound').show() : $('#listcontainer + .noFlightsFound').hide();
 			},400);
 
