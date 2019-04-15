@@ -102,6 +102,7 @@
 				return $(a).data(dataelement)-$(b).data(dataelement)
 			});
 			$("#listcontainer").html(divList);
+			postFilter();
 		}
 
 		$('#listcontainer').on('click', '.detail-expander', function () {
