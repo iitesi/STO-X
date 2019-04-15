@@ -983,7 +983,7 @@ ul.tabs li a.active {
 
 #filterbar .navbar .dropdown-menu {
 	border-radius: 8px;
-	padding: 12px;
+	padding: 20px 30px;
 	margin-top: 10px;
 }
 
@@ -1095,9 +1095,9 @@ ul.tabs li a.active {
 	border: 2px solid #b9b9b9 !important;
 }	
 
+
 #filterStops .dropdown-menu{
 	width: 250px;
-	padding: 0 0 0 30px;
 }
 
  #filterStops label {
@@ -1107,12 +1107,10 @@ ul.tabs li a.active {
 
 #filterFares .dropdown-menu{
 	width: 250px;
-	padding: 0 0 0 30px;
 }
 
 #filterAirline .dropdown-menu{
 	width: 220px;
-	padding: 0 0 0 30px;
 }
 
  #filterFares label {
@@ -1122,7 +1120,6 @@ ul.tabs li a.active {
 
 #filterSort .dropdown-menu{
 	width: 250px;
-	padding: 0 0 0 30px;
 }
 
  #filterSort label {
@@ -1132,16 +1129,14 @@ ul.tabs li a.active {
 
 #filterConnecting .dropdown-menu {
 	width: 250px;
-	padding: 0 0 0 30px;
 }
 
 #resultsCount span {
 	margin-right: 10px;
 }
 
-#filterDuration .dropdown-menu {
+#filterDuration .dropdown-menu, #filterTimes .dropdown-menu {
 	width: 300px;
-	padding: 0 0 0 30px;
 }
 
 .md-checkbox {
@@ -1301,7 +1296,22 @@ ul.tabs li a.active {
 }
 
 .irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
-    background-color: #337ab7;
+	background-color: #337ab7;
+	font-size: 10px;
+}
+
+.irs-title .mdi {
+	font-size: 20px;
+    margin-right: 11px;
+    opacity: 0.6;
+}
+
+.irs--round .irs-min, .irs--round .irs-max {
+	font-size: 10px;
+}
+
+li.time-slider:first-child {
+	padding-bottom: 20px;
 }
 
 #filterConnecting li.with-irs {
@@ -1310,7 +1320,7 @@ ul.tabs li a.active {
     margin-bottom: 15px;
 }
 
-#filterConnecting li.with-irs .irs-title {
+li.with-irs .irs-title {
 	text-align: center;
 }
 

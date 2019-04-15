@@ -121,6 +121,23 @@
 						</li>
 					</ul>
 				</li>
+				<li role="presentation" class="dropdown" id="filterTimes">
+					<a href="#" class="dropdown-toggle">Times <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li class="with-irs time-slider" data-name="duration" data-selector="trip" data-datafield="departure">
+							<div class="irs-title">
+								<span class="mdi mdi-airplane-takeoff"></span> Departure Time
+							</div>
+							<input type="text" class="js-range-slider" name="departure-range" value="" />
+						</li>
+						<li class="with-irs time-slider" data-name="duration" data-selector="trip" data-datafield="arrival">
+							<div class="irs-title">
+								<span class="mdi mdi-airplane-landing"></span>Arrival time
+							</div>
+							<input type="text" class="js-range-slider" name="arrival-range" value="" />
+						</li>
+					</ul>
+				</li>
 				<li role="presentation" class="dropdown" id="filterDuration">
 					<a href="#" class="dropdown-toggle">Trip Length <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right range-slider" data-type="checkbox" data-name="duration" data-selector="trip" data-datafield="duration">

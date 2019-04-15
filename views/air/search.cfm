@@ -259,6 +259,51 @@
 			});
 		});
 
+		$(".time-slider").each(function(){
+			var $ul = $(this);
+			var $input = $ul.find('.js-range-slider');
+			var slider = $input.data('ionRangeSlider');
+			if (slider){
+				slider.destroy();
+			}
+
+			var customValues = [];
+			// customValues.push('12:00 am');
+
+			for (var a = 0; a <= 24; a++){
+				var h = a % 12 || 12;
+				var ampm = (a < 12 || a === 24) ? "am" : "pm";
+				customValues.push( h + ':00 ' + ampm);
+			}
+
+			$input.ionRangeSlider({
+				skin: "round",
+				type: "double",			
+				from: 0,
+				to: customValues.length - 1,
+				values: customValues,
+				onFinish: function (data) {
+					preFilter();
+					doFilter();
+					postFilter();
+				},
+			});
+
+
+			$input.ionRangeSlider({
+				skin: "round",
+				type: "double",			
+				from: 0,
+				to: customValues.length - 1,
+				values: customValues,
+				onFinish: function (data) {
+					preFilter();
+					doFilter();
+					postFilter();
+				},
+			});
+		});
+
 		$('#filterbar').on('click', '[data-multiselect-only]', function (e) {
 			e.stopImmediatePropagation();
 			preFilter();
@@ -346,6 +391,19 @@
 			return [0,9999];
 		}
 
+		var rangeRawValue = function(field){
+			try {
+				var data = $("input[name='"+field+"-range']").data('ionRangeSlider').result;
+				var values = [];
+				values.push(data.from);
+				values.push(data.to);
+				return values;
+			}
+			catch(e){
+			}
+			return [0,9999];
+		}
+
 		var doFilter = function(){
 			var filters = {
 				stops: getGroupValue('stops'),
@@ -353,8 +411,11 @@
 				connection: getGroupValue('connection'),
 				layover: rangeDetails('layover'),
 				duration: rangeDetails('duration'),
-				airline: getGroupValue('airline')
+				airline: getGroupValue('airline'),
+				departure : rangeRawValue('departure'),
+				arrival : rangeRawValue('arrival')
 			};
+			// console.log(filters)
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
 				var $this = $(this);
@@ -385,6 +446,14 @@
 								return false;
 								break;
 							}
+							case 'departure': {
+							}
+							case 'arrival': {
+								var timestamp = $this.data(key);
+								var dtime = moment(timestamp,'YYYYMMDDHHmm');
+								return dtime.hour() >= filters[key][0] && dtime.hour() <= filters[key][1]
+								break;
+							}
 							case 'airline': {
 								return filters[key].includes($this.data('airline'));
 								break;
@@ -403,6 +472,9 @@
 								return times.every(function(time){
 									return time >= filters.layover[0] && time <= filters.layover[1];
 								});
+							}
+							default: {
+								return true;
 							}
 						}
 					}
