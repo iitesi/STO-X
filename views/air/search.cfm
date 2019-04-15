@@ -115,10 +115,12 @@
 			}
 		});  
 
-		$('[data-toggle="tooltip"].flight-result-warning').tooltip({
+		$('body').tooltip({
+			selector: '[data-toggle="tooltip"].flight-result-warning',
 			template: '<div class="tooltip flight-warning" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		});
-		$('[data-toggle="tooltip"].fare-warning').tooltip({
+		$('#listcontainer').tooltip({
+			selector: '[data-toggle="tooltip"].fare-warning',
 			template: '<div class="tooltip faretooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
 		
