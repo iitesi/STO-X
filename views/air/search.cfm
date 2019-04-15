@@ -282,11 +282,12 @@
 		$('#filterbar').on('click', '.switch-label', function (e) {
 			e.stopImmediatePropagation();
 			preFilter();
-			var $item = $(this);
+			var $label = $(this);
+			var $item = $label.prev();
 			var $wrapper = $item.parents('.multifilterwrapper');
 			
 			$wrapper.find('.multifilter').each(function(){
-				$(this).prop('checked',$item.is(':checked'));
+				$(this).prop('checked',!$item.is(':checked'));
 			});
 
 			doFilter();
