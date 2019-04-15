@@ -134,7 +134,7 @@
 																data-toggle="tooltip" 
 																title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
 															</div>
-															<!--
+															<!---
 															<span  role="button" 
 																class="badge badge-pill warning fare-warning"
 																data-placement="top" 
@@ -142,8 +142,10 @@
 																title="#arrayToList(brandedFare.OutOfPolicyReason)#">
 																<i class="fa fas fa-exclamation" aria-hidden="true"></i>
 															</span>
-														-->
+														--->
 														</div>
+													<cfelse>
+														<div class="col-sm-12 fs-s policy-error-hidden"></div>
 													</cfif>
 												</div>												
 											</div>

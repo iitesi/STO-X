@@ -214,11 +214,11 @@
 
 		});
 
-		var connectingSliderValues = function(times){
+		var sliderMinMaxValues = function(times){
 			var min = times[0];
 			var max = times[times.length-1];
 			var total = max - min;
-			var hours = Math.ceil(total / 60);
+			var hours = Math.ceil(total / 60) + 1;
 			var spots = [];
 			var start = Math.floor(min / 60);
 
@@ -230,20 +230,22 @@
 			spots.push(hours + 'h');
 			return spots;
 		}
-		
 
-		var updateConnectingSlider = function(){
-			var $layovers = $('#listcontainer').find('.segment-stopover');
-			var times = $layovers.map(function(){return $(this).data('minutes') - 0;}).get();
+		$(".range-slider").each(function(){
+			var $ul = $(this);
+			var selector = $ul.data('selector');
+			var datafield = $ul.data('datafield');
+			var $trips = $('#listcontainer').find('.' + selector);
+			var times = $trips.map(function(){return $(this).data(datafield) - 0;}).get();
 			var sorted = times.sort(function(a,b){return a-b});
-			var customValues = connectingSliderValues(sorted);
-			var $input = $("input[name='layover-range']");
+			var customValues = sliderMinMaxValues(sorted);
+			var $input = $ul.find('.js-range-slider');
 			var slider = $input.data('ionRangeSlider');
 			if (slider){
 				slider.destroy();
 			}
 
-			$("input[name='layover-range']").ionRangeSlider({
+			$input.ionRangeSlider({
 				skin: "round",
 				type: "double",			
 				from: 0,
@@ -255,9 +257,7 @@
 					postFilter();
 				},
 			});
-
-		}
-		
+		});
 
 		$('#filterbar').on('click', '[data-multiselect-only]', function (e) {
 			e.stopImmediatePropagation();
@@ -332,9 +332,10 @@
 				return (hours * 60) + minutes
 			}
 		}
-		var layoverDetails = function(){
+
+		var rangeDetails = function(field){
 			try {
-				var data = $("input[name='layover-range']").data('ionRangeSlider').result;
+				var data = $("input[name='"+field+"-range']").data('ionRangeSlider').result;
 				var values = [];
 				values.push(getMinutesFromString(data.from_value));
 				values.push(getMinutesFromString(data.to_value));
@@ -350,7 +351,8 @@
 				stops: getGroupValue('stops'),
 				refundable: getGroupValue('refundable'),
 				connection: getGroupValue('connection'),
-				layover: layoverDetails(),
+				layover: rangeDetails('layover'),
+				duration: rangeDetails('duration'),
 				airline: getGroupValue('airline')
 			};
 			var filterKeys = Object.keys(filters);
@@ -386,6 +388,10 @@
 							case 'airline': {
 								return filters[key].includes($this.data('airline'));
 								break;
+							}
+							case 'duration' : {
+								var time = $this.data('duration');
+								return time >= filters.duration[0] && time <= filters.duration[1];
 							}
 							case 'layover' : {
 								var $layovers = $this.find('.segment-stopover');
@@ -436,7 +442,6 @@
 			}
 		}
 
-		updateConnectingSlider();
 		sortTrips('economy');
 		postFilter();
 	</script>

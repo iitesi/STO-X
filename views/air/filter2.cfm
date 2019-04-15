@@ -61,7 +61,7 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterAirline">
-					<a href="#" class="dropdown-toggle">Arlines <b class="caret"></b></a>
+					<a href="#" class="dropdown-toggle">Airlines <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="airline">
 						<li>
 							<input type="checkbox" checked id="airline-all" name="airline-all" class="switch-input">
@@ -121,9 +121,18 @@
 						</li>
 					</ul>
 				</li>
+				<li role="presentation" class="dropdown" id="filterDuration">
+					<a href="#" class="dropdown-toggle">Trip Length <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right range-slider" data-type="checkbox" data-name="duration" data-selector="trip" data-datafield="duration">
+						<li class="with-irs">
+							<div class="irs-title">Trip Length</div>
+							<input type="text" class="js-range-slider" name="duration-range" value="" />
+						</li>
+					</ul>
+				</li>
 				<li role="presentation" class="dropdown" id="filterConnecting">
 					<a href="#" class="dropdown-toggle">Connecting Airports <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="connection">
+					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper range-slider" data-type="checkbox" data-name="connection" data-selector="segment-stopover" data-datafield="minutes">
 						<li class="with-irs">
 							<div class="irs-title">Layover Duration</div>
 							<input type="text" class="js-range-slider" name="layover-range" value="" />

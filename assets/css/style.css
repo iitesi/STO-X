@@ -1139,6 +1139,11 @@ ul.tabs li a.active {
 	margin-right: 10px;
 }
 
+#filterDuration .dropdown-menu {
+	width: 300px;
+	padding: 0 0 0 30px;
+}
+
 .md-checkbox {
 	position: relative;
   	padding: 0;
