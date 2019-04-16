@@ -60,7 +60,9 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12 text-muted fs-s overflow-ellipse">
-									OPERATED BY #Segment.Codeshare#
+									<cfif Segment.Codeshare NEQ ''>
+										OPERATED BY #Segment.Codeshare#
+									</cfif>
 								</div>	
 							</div>							
 						</div>
@@ -135,7 +137,7 @@
 																data-toggle="tooltip" 
 																title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
 															</div>
-															<!---
+															
 															<span  role="button" 
 																class="badge badge-pill warning fare-warning"
 																data-placement="top" 
@@ -143,7 +145,7 @@
 																title="#arrayToList(brandedFare.OutOfPolicyReason)#">
 																<i class="fa fas fa-exclamation" aria-hidden="true"></i>
 															</span>
-														--->
+														
 														</div>
 													<cfelse>
 														<div class="col-sm-12 fs-s policy-error-hidden"></div>
@@ -153,7 +155,9 @@
 										</div>
 									</cfif>
 								</cfloop>
-							<cfelse>
+							<cfelseif structKeyExists(Segment, 'Availability')
+								AND structKeyExists(Segment.Availability, CabinClass)>
+
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 								<div class="col-sm-3 panel panel-default"
@@ -165,7 +169,13 @@
 												#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 											</div>
 											<div class="col-sm-12 fs-s branded-fare-class">
-												&nbsp;
+												<cfif structKeyExists(Segment.Availability, CabinClass)
+													AND Segment.Availability[CabinClass].Count>
+													Click to price
+												<cfelseif structKeyExists(Segment.Availability, CabinClass)
+													AND NOT Segment.Availability[CabinClass].Count>
+													Unavailable
+												</cfif>
 											</div>
 											<div class="col-sm-12 fs-2 fare-display">
 												<div>&nbsp;</div>
@@ -185,12 +195,14 @@
 				
 			<div class="row">
 				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
+					<!--- <cfdump var=#Segment# abort> --->
 					<!--- Shane - New code, please fix :) --->
 					<cfset key = hash(Segment.SegmentId)>
 					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 					<div class="col-sm-3 panel panel-default" onclick="sendEmail('#key#');" >
 						Send Email
 					</div>
+					<br>
 
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
@@ -281,7 +293,8 @@
 					</cfloop>
 					<div class="segment-details-footer">
 						<div>
-							<cfif len(BrandedFareIds) GT 0>
+							<cfif len(BrandedFareIds) GT 0
+								OR structKeyExists(Segment, 'Availability')>
 								<cfset paneldetails = "">
 								<ul class="nav nav-tabs" role="tablist">
 								<cfset count = 0>
@@ -303,6 +316,18 @@
 										<cfset count++>
 									</cfif>
 								</cfloop>
+								<cfif structKeyExists(Segment, 'Availability')>
+									<cfset cabinuuid = "f#createUUID()#">
+									<li role="presentation" class="#count == 0 ? 'active' : ''#">
+										<a href="###cabinuuid#" aria-controls="#cabinuuid#" role="tab" data-toggle="tab">Availability</a>
+									</li>
+									<cfsavecontent variable="subdetail"><div role="tabpanel" class="tab-pane #count == 0 ? 'active' : ''#" id="#cabinuuid#">
+										<cfloop collection="#Segment.Availability#" index="CabinName" item="CabinItem">
+											<strong>#CabinName NEQ 'PremiumEconomy' ? CabinName : 'Premium Economy'#</strong> - #CabinItem.String#<br><br>
+										</cfloop>
+									</div></cfsavecontent>
+									<cfset paneldetails = "#paneldetails##subdetail#">
+								</cfif>
 								</ul>
 								<div class="tab-content branded-cabin-details">#paneldetails#</div>
 							</cfif>
