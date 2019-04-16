@@ -95,22 +95,37 @@
 		<cfargument name="Group" default="">
 		<cfargument name="SelectedTrip" default="">
 
-		<cfset local.requestBody = getKrakenService().getFlightSearchRequest( 	Policy = arguments.Policy,
-																				Filter = arguments.Filter )>
+		<cftry>
+			<cfset local.requestBody = getKrakenService().getFlightSearchRequest( 	Policy = arguments.Policy,
+																					Filter = arguments.Filter )>
 
-		<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
-															request = local.requestBody )>
+			<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
+																request = local.requestBody )>
 
-		<cfif structIsEmpty(local.response)>
-			<cfset local.response = getKrakenService().FlightSearch(	body = local.requestBody,
-																		SearchID = arguments.SearchID,
-																		Group = arguments.Group,
-																		SelectedTrip = arguments.SelectedTrip )>
+			<cfif structIsEmpty(local.response)>
+				<cfset local.response = getKrakenService().FlightSearch(	body = local.requestBody,
+																			SearchID = arguments.SearchID,
+																			Group = arguments.Group,
+																			SelectedTrip = arguments.SelectedTrip )>
 
-			<cfset getStorage().storeAir(	searchID = arguments.searchID,
-											request = local.requestBody,
-											storage = local.response )>
-		</cfif>
+				<cfif structIsEmpty(response)>
+					If you get this error, please send it to Chrissy.  Trying to figure out the 'BrandedFareName' error.  :)  Send screenshot and copy/paste the first string.  Thank you!
+					<cfdump var=#serializeJSON(local.requestBody)#>
+					<cfdump var=#local.requestBody#>
+					<cfdump var=#local.response# abort>
+				</cfif>
+
+				<cfset getStorage().storeAir(	searchID = arguments.searchID,
+												request = local.requestBody,
+												storage = local.response )>
+			</cfif>
+			<cfcatch>
+				If you get this error, please send it to Chrissy.  Trying to figure out the 'BrandedFareName' error.  :)  Send screenshot and copy/paste the first string.  Thank you!
+				<cfdump var=#serializeJSON(local.requestBody)#>
+				<cfdump var=#local.requestBody#>
+				<cfdump var=#local.response# abort>
+			</cfcatch>
+		</cftry>
 
 		<cfreturn local.response>
  	</cffunction>
@@ -147,14 +162,20 @@
 		<cfset var item = ''>
 		<cfset var BrandedFares = {}>
 
-		<!--- response.brandedfarenames : Create a lookup table for branded fare names. --->
-		<!--- response.brandedfarenames[207174] = Branded Fare Details --->
-		<cfset BrandedFares[0].Name = ''>
-		<cfset BrandedFares[0].LongDescription = ''>
-		<cfset BrandedFares[0].ShortDescription = ''>
-		<cfloop collection="#arguments.response.BrandedFareDetails#" index="index" item="item">
-			<cfset BrandedFares[item.BrandId] = item>
-		</cfloop>
+		<cftry>
+			<!--- response.brandedfarenames : Create a lookup table for branded fare names. --->
+			<!--- response.brandedfarenames[207174] = Branded Fare Details --->
+			<cfset BrandedFares[0].Name = ''>
+			<cfset BrandedFares[0].LongDescription = ''>
+			<cfset BrandedFares[0].ShortDescription = ''>
+			<cfloop collection="#arguments.response.BrandedFareDetails#" index="index" item="item">
+				<cfset BrandedFares[item.BrandId] = item>
+			</cfloop>
+			<cfcatch>
+				<cfdump var=#serializeJSON(response)#>
+				<cfdump var=#response# abort>
+			</cfcatch>
+		</cftry>
 
 		<!--- <cfdump var=#BrandedFares# abort> --->
 
@@ -250,6 +271,8 @@
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
 		<!--- response.Segments[G0-B6.124] = Full segment structure --->
 		<cfloop collection="#arguments.response.Results#" index="segmentIndex" item="segmentItem">
+			<cfset Segment.DepartureTime = left(segmentItem[1].DepartureTime, 19)>
+			<!--- <cfdump var=#segmentItem# abort> --->
 			<cfset local.SegmentId = ''>
 			<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
 				<cfset SegmentId = listAppend(SegmentId, flightItem.Carrier&'.'&flightItem.FlightNumber, '-')>
@@ -275,6 +298,7 @@
 				<!--- <cfset Segment.PlatingCarrier		= structKeyExists(tripItem.AvailableFareOptions[1], 'PlatingCarrier') ? tripItem.AvailableFareOptions[1].PlatingCarrier : segmentItem.Flights[1].CarrierCode> --->
 				<!--- Determine the overall carrier(s) and connection(s). --->
 				<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
+					<cfset local.Flight = {}>
 					<cfset local.Flight.OriginAirportCode = flightItem.Origin>
 					<cfset Flight.DepartureTime = left(flightItem.DepartureTime, 19)>
 					<cfset Flight.DestinationAirportCode = flightItem.Destination>
@@ -311,10 +335,24 @@
 				<cfset Segment.Results = 'Availability'>
 				<cfset Segment.SegmentId = SegmentId>
 				<cfset Segments[SegmentId] = Segment>
+				<!--- <cfif SegmentId CONTAINS '1957'>
+					<cfdump var=#segmentItem#>
+					<cfdump var=#Segments[SegmentId]#>
+				</cfif> --->
 			<cfelse>
 				<cfset Segments[SegmentId].Results = 'Both'>
 			</cfif>
+			<cfloop collection="#SegmentItem[1].AvailabilityInfos[1].BookingCodeInfos#" index="local.bookingCodeIndex" item="local.BookingCode">
+				<cfset Segments[SegmentId].Availability[BookingCode.CabinClass].String = replace(arrayToList(BookingCode.BookingCounts), ',', ', ', 'ALL')>
+				<cfset Segments[SegmentId].Availability[BookingCode.CabinClass].Count = false>
+				<cfloop collection="#BookingCode.BookingCounts#" index="local.codeIndex" item="local.codeItem">
+					<cfif right(codeItem, 1) GT 0>
+						<cfset Segments[SegmentId].Availability[BookingCode.CabinClass].Count = true>
+					</cfif>
+				</cfloop>
+			</cfloop>
 		</cfloop>
+		<!--- <cfabort> --->
 
 		<cfreturn Segments>
 	</cffunction>
