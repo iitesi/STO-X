@@ -49,6 +49,8 @@
 												refundable = arguments.refundable )>
 		<cfset trips.Profiling.KrakenFlightSearchByTrip = (getTickCount() - start) / 1000>
 
+		<!--- <cfdump var=#local.LowFareResponse.FlightSearchResults[1]# abort> --->
+
 		<cfset start = getTickCount()>
 		<cfset trips.BrandedFares = parseBrandedFares( response = local.LowFareResponse )>
 		<cfset trips.Profiling.BrandedFares = (getTickCount() - start) / 1000>
@@ -185,9 +187,9 @@
 					<cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId>
 					<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
 					<cfset Segments[segmentItem.SegmentId] 						= segmentItem>
-					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= segmentItem.Flights[1].DepartureTime>
+					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= left(segmentItem.Flights[1].DepartureTime, 19)>
 					<cfset Segments[segmentItem.SegmentId].OriginAirportCode 	= segmentItem.Flights[1].OriginAirportCode>
-					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= segmentItem.Flights[segmentCount].ArrivalTime>
+					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= left(segmentItem.Flights[segmentCount].ArrivalTime, 19)>
 					<cfset Segments[segmentItem.SegmentId].DestinationAirportCode = segmentItem.Flights[segmentCount].DestinationAirportCode>
 					<cfset Segments[segmentItem.SegmentId].TravelTime 			= int(segmentItem.TotalTravelTimeInMinutes/60) &'H '&segmentItem.TotalTravelTimeInMinutes%60&'M'>
 					<cfset Segments[segmentItem.SegmentId].Stops 				= segmentCount-1>
@@ -210,6 +212,8 @@
 						<cfset structDelete(flightItem, 'DepartureTimeString')>
 						<cfset structDelete(flightItem, 'ArrivalTimeString')>
 						<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.CarrierCode&flightItem.FlightNumber)>
+						<cfset flightItem.DepartureTime 		= left(flightItem.DepartureTime, 19)>
+						<cfset flightItem.ArrivalTime 			= left(flightItem.ArrivalTime, 19)>
 					</cfloop>
 					<cfset Carrier = listRemoveDuplicates(Carrier)>
 					<cfset Segments[segmentItem.SegmentId].CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
@@ -256,9 +260,9 @@
 				<cfset local.Segment = {}>
 				<cfset Segment.Flights = []>
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
-				<cfset Segment.DepartureTime 		= segmentItem[1].DepartureTime>
+				<cfset Segment.DepartureTime 		= left(segmentItem[1].DepartureTime, 19)>
 				<cfset Segment.OriginAirportCode 	= segmentItem[1].Origin>
-				<cfset Segment.ArrivalTime 			= segmentItem[flightCount].ArrivalTime>
+				<cfset Segment.ArrivalTime 			= left(segmentItem[flightCount].ArrivalTime, 19)>
 				<cfset Segment.DestinationAirportCode = segmentItem[flightCount].Destination>
 				<cfset Segment.TravelTime 			= int(segmentItem[1].TravelTime/60) &'H '&segmentItem[1].TravelTime%60&'M'>
 				<cfset Segment.TotalTravelTimeInMinutes = segmentItem[1].TravelTime>
@@ -272,9 +276,9 @@
 				<!--- Determine the overall carrier(s) and connection(s). --->
 				<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
 					<cfset local.Flight.OriginAirportCode = flightItem.Origin>
-					<cfset Flight.DepartureTime = flightItem.DepartureTime>
+					<cfset Flight.DepartureTime = left(flightItem.DepartureTime, 19)>
 					<cfset Flight.DestinationAirportCode = flightItem.Destination>
-					<cfset Flight.ArrivalTime = flightItem.ArrivalTime>
+					<cfset Flight.ArrivalTime = left(flightItem.ArrivalTime, 19)>
 					<cfset Flight.FlightDurationInMinutes = flightItem.FlightTime>
 					<cfset Flight.FlightNumber = flightItem.FlightNumber>
 					<cfset Flight.CarrierCode = flightItem.Carrier>

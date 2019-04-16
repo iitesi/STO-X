@@ -1,3 +1,4 @@
+<!--- <cfdump var=#session.Filters[rc.SearchID].getUserID()# abort> --->
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
@@ -184,6 +185,13 @@
 				
 			<div class="row">
 				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
+					<!--- Shane - New code, please fix :) --->
+					<cfset key = hash(Segment.SegmentId)>
+					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+					<div class="col-sm-3 panel panel-default" onclick="sendEmail('#key#');" >
+						Send Email
+					</div>
+
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>
@@ -211,7 +219,7 @@
 									<div class="segment-leg-inner">
 										<div class="segment-leg-connector"></div>
 										<div class="segment-leg-details fs-s1">
-											<div class="segment-leg-time"><span>#dateTimeFormat(Flight.DepartureTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
+											<div class="segment-leg-time"><span>#timeFormat(Flight.DepartureTime, 'h:mm tt')# - #dateFormat(Flight.DepartureTime, 'ddd, mmm d')#</span></span></div>
 											<div class="segment-middot">&middot;</div>
 											<div class="segment-leg-airport">
 												<span>#application.stAirports[Flight.OriginAirportCode].Airport#</span>
@@ -223,7 +231,7 @@
 											<div>Flight time:&nbsp;<span>#Flight.FlightTime#</span></div>
 										</div>
 										<div class="segment-leg-details segment-leg-arrival fs-s1">
-											<div class="segment-leg-time"><span>#dateTimeFormat(Flight.ArrivalTime, 'h:mm tt - ddd, mmm d')#</span></span></div>
+											<div class="segment-leg-time"><span>#timeFormat(Flight.ArrivalTime, 'h:mm tt')# - #dateFormat(Flight.ArrivalTime, 'ddd, mmm d')#</span></span></div>
 											<div class="segment-middot">&middot;</div>
 											<div class="segment-leg-airport">
 												<span>#application.stAirports[Flight.DestinationAirportCode].Airport#</span>
@@ -252,7 +260,10 @@
 									</div>
 								</div>
 								#count == 0 ? active : ''#
-
+								<!--- <cfif Segment.SegmentId EQ 'G0-DL.2544-DL.2342'>
+									<cfdump var=#Segment# abort>
+								</cfif>
+								#Segment.SegmentId# --->
 							</div>
 							<div class="segment-details-extras">
 								<!--- TODO Hide for now? --->

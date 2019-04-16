@@ -95,6 +95,10 @@
 			$("#Segment").val($("#fare"+Key).val());
 			$("#lowfareavailForm").submit();
 		}
+
+		function sendEmail(Key) {
+			$("#Email_Segment").val($("#fare"+Key).val());
+		}
 		
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
@@ -603,7 +607,14 @@
 		postFilter();
 	</script>
 	
-	<div class="row">
+<div class="row">
+	<cfoutput>
+		#View('air/email')#
+	</cfoutput>
+</div>
+	
+<div class="row">
+	<cfdump var=#structKeyList(rc.trips)#>
 	<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
 	<cfdump var=#rc.trips.Profiling#>
-	</div>
+</div>
