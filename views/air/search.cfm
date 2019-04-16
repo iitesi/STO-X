@@ -23,6 +23,48 @@
 				<cfset variables.BrandedFares = rc.trips.BrandedFares>
 				<!--- Needs to be in the variables scope to be passed into the view. --->
 				<cfset variables.trips = rc.trips>
+				<div class="col-sm-12 listcontainer-header">
+					<div class="panel panel-default">
+						<div class="row">
+							<div class="col-sm-1">
+								&nbsp;
+							</div>
+							<div class="col-sm-5">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="row">
+											<div class="col-sm-1">&nbsp;</div>
+											<div class="col-sm-4 pl0" role="button" onClick="sortTrips('departure');">
+												<div class="header-column">
+													Depart <span class="caret" rel="departure"></span>
+												</div>
+												
+											</div>
+											<div class="col-sm-4 pl0" role="button"  onClick="sortTrips('arrival');">
+												<div class="header-column">
+													Arrive <span class="caret" rel="arrival"></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3 pl20" role="button" onClick="sortTrips('duration');">
+										<div class="header-column">
+											Length <span class="caret" rel="duration"></span>
+										</div>
+									</div>
+									<div class="col-sm-3" role="button" onClick="sortTrips('stops');">
+										<div class="header-column">
+											Stops <span class="caret" rel="stops"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+							&nbsp;
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="list-view col-sm-12" id="listcontainer">
 					<cfscript>
 						airlines = {};
@@ -102,8 +144,31 @@
 		
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
+			var direction = 0;
+			var c = $('.listcontainer-header').find('[rel='+dataelement+']');
+			if(c.length){
+				direction = c.hasClass('sorted') ? c.hasClass('reverse') ? 1 : 0 : 0;
+				if(!c.hasClass('sorted')){
+					c.addClass('sorted');
+				}
+				if (direction==0){
+					if(!c.hasClass('reverse')){
+						c.addClass('reverse');
+					}
+				}
+				else {
+					c.removeClass('reverse');
+				}
+			} 
+
 			divList.sort(function(a, b){
-				return $(a).data(dataelement)-$(b).data(dataelement)
+				if(direction){
+					return $(a).data(dataelement)-$(b).data(dataelement)
+				}
+				else {
+					return $(b).data(dataelement)-$(a).data(dataelement)
+				}
+				
 			});
 			$("#listcontainer").html(divList);
 			postFilter();
@@ -133,7 +198,6 @@
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			preFilter();
-			console.log('hi')
 			var $link = $(this);
 			var $filter = $link.parents('li.dropdown');
 			var $multi = $filter.find('.multifilterwrapper');

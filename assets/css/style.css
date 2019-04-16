@@ -513,8 +513,42 @@ ul.tabs li a.active {
   	transition: all 0.5s ease;
 }
 
-#listcontainer .trip.first-visible-child {
+.listcontainer-header > .panel {
 	border-radius: 8px 8px 0 0;
+	border: 1px solid #ddd;
+	border-bottom-width: 0px;
+	margin-bottom: 0;
+	background-color: #ddd;
+}
+
+.listcontainer-header .header-column {
+	padding: 8px 0;
+	font-size: 12px;
+	display: flex;
+	word-wrap: none;
+}
+
+.listcontainer-header .header-column .caret {
+	align-self: center;
+	margin-left: 5px;
+}
+.listcontainer-header .header-column .caret.reverse {
+	-webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.pl0 {
+	padding-left: 0;
+}
+.pl20 {
+	padding-left: 20px;
+}
+
+#listcontainer .trip.first-visible-child {
+	/* border-radius: 8px 8px 0 0; */
+	border-radius: 0;
 	border-top-width: 1px;
 }
 
