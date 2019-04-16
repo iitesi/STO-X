@@ -53,6 +53,9 @@
 														SelectedTrip = session.searches[SearchID].stItinerary.Air,
 														cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
 
+		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
+		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>
+
 		<cfreturn />
 	</cffunction>
 
@@ -65,6 +68,22 @@
 															SearchID = SearchID,
 															Group = arguments.rc.Group,
 															Selected = session.searches[SearchID].stItinerary.Air)>
+
+		<cfreturn />
+	</cffunction>
+
+	<cffunction name="email" output="false">
+		<cfargument name="rc">
+
+		<cfset variables.email.doEmail(	Email_Segment = form.Email_Segment,
+										Email_Name = form.Email_Name,
+										Email_Address = form.Email_Address,
+										Email_To = form.Email_To,
+										Email_CC = form.Email_CC,
+										Email_Message = form.Email_Message,
+										Email_Subject = form.Email_Subject)>
+
+		<cfset fw.redirect('air.search?SearchID=#arguments.rc.SearchID#&Group=#arguments.rc.Group#')>
 
 		<cfreturn />
 	</cffunction>

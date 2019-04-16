@@ -184,6 +184,13 @@
 				
 			<div class="row">
 				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
+					<!--- Shane - New code, please fix :) --->
+					<cfset key = hash(Segment.SegmentId)>
+					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+					<div class="col-sm-3 panel panel-default" onclick="sendEmail('#key#');" >
+						Send Email
+					</div>
+
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>

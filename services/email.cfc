@@ -1,127 +1,92 @@
 <cfcomponent accessors="true">
 
-	<cfproperty name="assetURL" type="string">
-
 	<cffunction name="init" returntype="any" access="public" output="false" hint="I init stuff...">
-		<cfargument name="assetURL" type="any" required="true"/>
-		<cfset setAssetURL( arguments.assetURL) />
 		<cfreturn this />
 	</cffunction>
 
 	<cffunction name="doEmail" output="false" hint="Send email">
-		<cfargument name="SearchID">
-		<cfargument name="nTripID">
-		<cfargument name="Group">
+		<cfargument name="Email_Segment">
 		<cfargument name="Email_Name">
 		<cfargument name="Email_Address">
-		<cfargument name="To_Address">
-		<cfargument name="CC_Address">
+		<cfargument name="Email_To">
+		<cfargument name="Email_CC">
 		<cfargument name="Email_Subject">
 		<cfargument name="Email_Message">
 
-		<cfset local.assetURL = getAssetURL()>
 
-		<cfset local.ccAddress = "">
-		<!--- Adding a CF email validity check. If this continues to generate errors, will change to regex. --->
-		<cfif len(arguments.cc_address) AND isValid("email", arguments.cc_address)>
-			<cfset local.ccAddress = arguments.cc_address>
+		<cfset local.Segment = deserializeJSON(arguments.Email_Segment)>
+
+		<cfset local.Email_CC = "">
+		<cfif len(arguments.Email_CC) AND isValid("email", arguments.Email_CC)>
+			<cfset Email_CC = arguments.Email_CC>
 		</cfif>
 
-		<!--- PRS-1583 I commented out the following lines because it makes no sense to make the toAddress equal the Email_Address --->
-		<!--- <cfif len(arguments.email_Address) AND isValid("email", arguments.email_Address)>
-			<cfset local.toAddress = arguments.email_Address>
-		<cfelse>
-			<cfset local.toAddress = arguments.to_address>
-		</cfif> --->
-
-		<cfset local.toAddress = arguments.to_address>
-		<cfset local.subject = arguments.Email_Subject>
-		<cfif NOT Len(local.subject)>
-			<cfset local.subject = "Tentative itinerary">
+		<cfset local.Email_Subject = arguments.Email_Subject>
+		<cfif NOT Len(Email_Subject)>
+			<cfset Email_Subject = "Tentative itinerary">
 		</cfif>
 
 		<cfmail
 			from="noreply@shortstravel.com"
-			to="#local.toAddress#"
-			cc="#local.ccAddress#"
-			subject="#local.subject#"
+			to="#arguments.Email_To#"
+			cc="#local.Email_CC#"
+			subject="#local.Email_Subject#"
 			type="HTML">
 		<cfmailparam name="Reply-To" value="#arguments.Email_Address#"> 
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>STO .:. The New Generation of Corporate Online Booking</title>
-		<style type="text/css" media="screen">
-			body, table, tr, td {
-				font-family:Arial,Helvetica,Verdana,sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-	<cfif arguments.Group EQ ''>
-		<cfset local.stTrip = session.searches[arguments.SearchID].stTrips[arguments.nTripID]>
-	<cfelse>
-		<cfset local.stTrip = session.searches[arguments.SearchID].stAvailTrips[arguments.Group][arguments.nTripID]>
-	</cfif>
-		<img src="#local.assetURL#/img/logos/shorts-logo.png" alt="Please enable images in your email client" title="Short's Travel Management">
-		<br><br>
-				<table border="0" width="600">
-						<tr>
-							<td colspan="6">
-								Here is your itinerary! Please note, this itinerary is not confirmed.
-								<br><br>
-								Rates and availability are subject to change until booked. You will need to return to the website and perform your search again when you are ready to book.
-								<br><br>
-							</td>
-						</tr>
-					<cfif arguments.Email_Message NEQ ''>
-						<tr>
-							<td colspan="6">
-								Your message:<br>
-								<hr>#arguments.Email_Message#<hr></td>
-						</tr>
-					</cfif>
+
+			<table border="0" width="600">
+			<tr>
+				<td colspan="6">
+					Here is your itinerary! Please note, this itinerary is not confirmed.
+					<br><br>
+					Rates and availability are subject to change until booked. You will need to return to the website and perform your search again when you are ready to book.
+					<br><br>
+				</td>
+			</tr>
+			<cfif arguments.Email_Message NEQ ''>
+				<tr>
+					<td colspan="6">
+						Your message:<br>
+						<hr>#arguments.Email_Message#<hr></td>
+				</tr>
+			</cfif>
+			<tr>
+				<td colspan="6"><h3>Itinerary</h3></td>
+			</tr>
+			<tr>
+				<td colspan="6">&nbsp;</td>
+			</tr>
+			<cfoutput>
+				<tr>
+					<td colspan="6"><strong>#DateFormat(Segment.DepartureTime, 'ddd, mmm d, yyyy')#</strong></td>
+				</tr>
+				<cfloop collection="#Segment.Flights#" index="local.flightIndex" item="local.flight">
 					<tr>
-						<td colspan="6"><h3>Itinerary</h3></td>
+						<td>#flight.CarrierCode##flight.FlightNumber#</td>
+						<td>#flight.OriginAirportCode#</td>
+						<td>#flight.DestinationAirportCode#</td>
+						<td>#TimeFormat(flight.DepartureTime, 'h:mmt')#</td>
+						<td>#TimeFormat(flight.ArrivalTime, 'h:mmt')#</td>
 					</tr>
-					<cfloop collection="#local.stTrip.Groups#" item="local.group" >
-						<cfset local.stGroup = local.stTrip.Groups[local.Group]>
-						<tr>
-							<td colspan="6">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="6"><strong>#DateFormat(stGroup.DepartureTime, 'ddd, mmm d, yyyy')#</strong></td>
-						</tr>
-						<cfloop collection="#local.stGroup.Segments#" item="local.nSegment">
-							<tr>
-								<td>#local.stGroup.Segments[local.nSegment].Carrier##local.stGroup.Segments[local.nSegment].FlightNumber#</td>
-								<td>#local.stGroup.Segments[local.nSegment].Origin#</td>
-								<td>#local.stGroup.Segments[local.nSegment].Destination#</td>
-								<td>#TimeFormat(local.stGroup.Segments[local.nSegment].DepartureTime, 'h:mmt')#</td>
-								<td>#TimeFormat(local.stGroup.Segments[local.nSegment].ArrivalTime, 'h:mmt')#</td>
-								<cfif arguments.Group EQ ''>
-									<td>#local.stGroup.Segments[local.nSegment].Cabin#</td>
-								</cfif>
-							</tr>
-						</cfloop>
-					</cfloop>
-					<tr>
-						<td colspan="6">
-						<br><br>
-						Thanks,<br>
-						Short's Travel Management</td>
-					</tr>
-					<tr>
-						<td colspan="6" style="font-size: 11px; color:##999999;">
-						<br><br>
-						This is an automatic e-mail message generated by our system. Please DO NOT REPLY to this e-mail, the mail box is not attended by a live person.
-						</td>
-					</tr>
-					</table>
-				</body>
-				</html>
-			</cfmail>
+				</cfloop>
+			</cfoutput>
+			<tr>
+				<td colspan="6">
+				<br><br>
+				Thanks,<br>
+				Short's Travel Management</td>
+			</tr>
+			<tr>
+				<td colspan="6" style="font-size: 11px; color:##999999;">
+				<br><br>
+				This is an automatic e-mail message generated by our system. Please DO NOT REPLY to this e-mail, the mail box is not attended by a live person.
+				</td>
+			</tr>
+			</table>
+
+		</cfmail>
+		
 		<cfreturn />
 	</cffunction>
+
 </cfcomponent>
