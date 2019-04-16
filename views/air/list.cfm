@@ -186,6 +186,10 @@
 										</div>												
 									</div>
 								</div>
+							<cfelse>
+								<div class="col-sm-3 panel panel-default" style="border:0"><!--- Shane - Sorry for the inline.  :)  Please fix.  --->
+									&nbsp;
+								</div>
 							</cfif>
 						</cfloop>
 					</div>
