@@ -16,6 +16,9 @@
 				</button>
 			</div>
 			<ul class="nav nav-pills">
+				<li role="presentation" class="dropdown" id="resultsCount">
+					<a href="#" class="dropdown-toggle"><span>29</span> Results</b></a>
+				</li>
 				<li role="presentation" class="dropdown" id="filterSort">
 					<a role="button" href="#" class="dropdown-toggle" aria-haspopup="true">
 						<span>Sort</span>
@@ -61,7 +64,7 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterAirline">
-					<a href="#" class="dropdown-toggle">Airlines <b class="caret"></b></a>
+					<a href="#" class="dropdown-toggle" data-dflt="Airlines">Airlines <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper" data-type="checkbox" data-name="airline">
 						<li>
 							<input type="checkbox" checked id="airline-all" name="airline-all" class="switch-input">
@@ -70,8 +73,8 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterStops">
-					<a href="#" class="dropdown-toggle">Stops <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right">
+					<a href="#" class="dropdown-toggle" data-dflt="Stops">Stops <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right singlefilterwrapper">
 						<li>
 							<div class="md-radio">
 								<input id="stops-a" checked class="singlefilter" type="radio" name="stops" value="-1" data-title="Any number of stops" title="Any number of stops">
@@ -80,27 +83,27 @@
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-0" class="singlefilter" type="radio" name="stops" value="0" data-title="Nonstop" title="Nonstop flights">
+								<input id="stops-0" class="singlefilter" type="radio" name="stops" value="0" data-title="Nonstop" title="Nonstop">
 								<label for="stops-0">Nonstop</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-1" class="singlefilter" type="radio" name="stops" value="1" data-title="1 Stop" title="Flights with one stop">
+								<input id="stops-1" class="singlefilter" type="radio" name="stops" value="1" data-title="1 Stop" title="1 Stop">
 								<label for="stops-1">1 Stop</label>
 							</div>
 						</li>
 						<li>
 							<div class="md-radio">
-								<input id="stops-2" class="singlefilter" type="radio" name="stops" value="2" data-title="2+ Stop" title="Flights with two or more stops">
+								<input id="stops-2" class="singlefilter" type="radio" name="stops" value="2" data-title="2+ Stop" title="2+ Stops">
 								<label for="stops-2">2+ Stops</label>
 							</div>
 						</li>
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterFares">
-					<a href="#" class="dropdown-toggle">Fare Type <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right">
+					<a href="#" class="dropdown-toggle" data-dflt="Fare Type">Fare Type <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right singlefilterwrapper">
 						<li>
 							<div class="md-radio">
 								<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
@@ -122,7 +125,7 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterTimes">
-					<a href="#" class="dropdown-toggle">Times <b class="caret"></b></a>
+					<a href="#" class="dropdown-toggle" data-dflt="Times">Times <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right">
 						<li class="with-irs time-slider" data-name="duration" data-selector="trip" data-datafield="departure">
 							<div class="irs-title">
@@ -139,7 +142,7 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterDuration">
-					<a href="#" class="dropdown-toggle">Trip Length <b class="caret"></b></a>
+					<a href="#" class="dropdown-toggle" data-dflt="Trip Length">Trip Length <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right range-slider" data-type="checkbox" data-name="duration" data-selector="trip" data-datafield="duration">
 						<li class="with-irs">
 							<div class="irs-title">Trip Length</div>
@@ -148,7 +151,7 @@
 					</ul>
 				</li>
 				<li role="presentation" class="dropdown" id="filterConnecting">
-					<a href="#" class="dropdown-toggle">Connecting Airports <b class="caret"></b></a>
+					<a href="#" class="dropdown-toggle" data-dflt="Connecting Airports">Connecting Airports <b class="caret"></b></a>
 					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper range-slider" data-type="checkbox" data-name="connection" data-selector="segment-stopover" data-datafield="minutes">
 						<li class="with-irs">
 							<div class="irs-title">Layover Duration</div>
@@ -160,9 +163,7 @@
 						</li>
 					</ul>
 				</li>
-				<li role="presentation" class="dropdown" id="resultsCount">
-					<a href="#" class="dropdown-toggle"><span>29</span> Results</b></a>
-				</li>
+				
 				<!---
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Carrier <b class="caret"></b></a>

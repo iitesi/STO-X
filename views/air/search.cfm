@@ -125,8 +125,30 @@
 			template: '<div class="tooltip faretooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
 		
+		$('#filterbar').on('click', 'a.dropdown-toggle .mdi-close', function (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			preFilter();
+			console.log('hi')
+			var $link = $(this);
+			var $filter = $link.parents('li.dropdown');
+			var $multi = $filter.find('.multifilterwrapper');
+			var $single = $filter.find('.singlefilterwrapper');
 
-		$('#filterbar a.dropdown-toggle').on('click', function (e) {
+			if($multi.length){
+				$multi.find('input[type=checkbox]').prop('checked',true);
+			}
+
+			if($single.length){
+				$single.find('input[type=radio]:first').prop('checked',true);
+			}
+
+			doFilter();
+			postFilter();
+		});
+
+
+		$('#filterbar').on('click', 'a.dropdown-toggle', function (e) {
 			var $target = $(e.target);
 			var $ddown = $target.parent();
 			var $others = $('#filterbar a.dropdown-toggle').parent().filter(function(){
@@ -181,6 +203,16 @@
 			return value;
 		}
 
+		var humanReadableLabel = function(name,value){
+			if(name=='connection'){
+				return airportCities[value];
+			}
+			if(name=='airline'){
+				return airlines[value];
+			}
+			return value;
+		}
+
 		$('.multifilterwrapper').each(function(){
 			var $wrapper = $(this);
 			var name = $wrapper.data('name');
@@ -210,7 +242,7 @@
 			for(var x = 0; x < finalValues.length; x++){
 				var value = finalValues[x];
 				var $input = $('<li><div class="md-checkbox"><input id="'+name+'-'+x+'" checked class="multifilter" type="checkbox" name="'+
-				name+'" value="'+value+'" data-title="'+value+'" title="'+value+'"><label for="'+
+				name+'" value="'+value+'" data-title="'+value+'" title="'+value+'" data-hrv="'+humanReadableLabel(name,value)+'"><label for="'+
 				name+'-'+x+'">'+multiFilterLabel(name,value)+'</label><div data-multiselect-only>only</div></div></li>')
 				$wrapper.append($input);
 			}
@@ -327,6 +359,7 @@
 			postFilter();
 		});
 
+		
 		$('#filterbar').on('click', '.switch-label', function (e) {
 			e.stopImmediatePropagation();
 			preFilter();
@@ -354,7 +387,7 @@
 				var switchOn = $checkedInputs.length == 0 ? false : $checkedInputs.length == $inputs.length ? true : false;
 				$switch.prop('checked', switchOn);
 			}
-
+			
 			doFilter();
 			postFilter();
 		});
@@ -502,6 +535,55 @@
 			// TODO cleanup the available values in other selections now.  i.e., filtering to 1 stop
 			// should affect the valid values in the connecting airports drop down.  Need to disable
 			// or enable ones that are/aren't valid now
+
+
+			var filters = $('#filterbar li.dropdown');
+			filters.each(function(){
+				var $filter = $(this);
+				var $anchor = $filter.find('a.dropdown-toggle');
+				var $multi = $filter.find('ul.multifilterwrapper');
+				var $single = $filter.find('ul.singlefilterwrapper');
+
+				if ($multi.length){
+					var $inputs = $multi.find('input[type=checkbox].multifilter');
+					var $checkedInputs = $multi.find('input[type=checkbox].multifilter:checked');
+					if($checkedInputs.length===0){
+						if(!$anchor.hasClass('filtered')){
+							$anchor.addClass('filtered');
+						}
+						$anchor.html('None');
+					}
+					else if($checkedInputs.length===$inputs.length){
+						$anchor.removeClass('filtered');
+						$anchor.html($anchor.data('dflt')).append($('<b class="caret"/>'));
+					}
+					else if($checkedInputs.length>=1){
+						if(!$anchor.hasClass('filtered')){
+							$anchor.addClass('filtered');
+						}
+						var name = $checkedInputs.first().data('hrv')
+						if($checkedInputs.length>1){
+							name = name + " +" + ($checkedInputs.length - 1);
+						}
+						$anchor.html(name).append($('<i class="mdi mdi-close"/>'));
+					}
+				}
+				else if ($single.length){
+					var $selected = $single.find('input[type=radio]:checked');
+					if ($selected.val() == -1){
+						$anchor.removeClass('filtered');
+						$anchor.html($anchor.data('dflt')).append($('<b class="caret"/>'));
+					}
+					else {
+						if (!$anchor.hasClass('filtered')){
+							$anchor.addClass('filtered');
+						}
+						var name = $selected.attr('title')
+						$anchor.html(name).append($('<i class="mdi mdi-close"/>'));
+					}
+				}
+			});
+
 		}
 
 		var getGroupValue = function(name){
