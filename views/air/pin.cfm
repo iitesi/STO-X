@@ -10,11 +10,6 @@
 								<!---<span class="#ribbonclass#"></span>--->		
 								<div class="col-sm-1 center">
 									<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
-									<small>
-										<cfif Segment.IsPoorSegment>
-											<i class="material-icons" data-toggle="tooltip" title="Better economy fare and travel times are available" style="font-size:16px;color:##E3132C;">error</i>
-										</cfif>
-									</small>
 								</div>
 								<div class="col-sm-5">
 									<div class="row">

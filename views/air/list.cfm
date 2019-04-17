@@ -19,15 +19,17 @@
 				<div class="col-sm-1 center airline-col">
 					<div class="row">
 						<div class="col-sm-6 col-md-12">
-							<cfif Segment.IsPoorSegment>
+							<cfif Segment.IsLongAndExpensive>
 								<span role="button" 
 									data-placement="right" 
-									data-toggle="tooltip" title="Better economy fare and travel times are available"
+									data-toggle="tooltip" title="Better economy fare and shorter travel times available."
 									class="mdi mdi-alert flight-result-warning"></span>
-								<!---span role="button" class="badge badge-pill warning flight-result-warning" 
-									data-placement="right" data-toggle="tooltip" title="Better economy fare and travel times are available">
-									<i class="fa fas fa-exclamation" aria-hidden="true"></i>
-								</span--->
+							</cfif>
+							<cfif Segment.IsLongSegment>
+								<span role="button" 
+									data-placement="right" 
+									data-toggle="tooltip" title="Segment is twice as long as the shortest travel time."
+									class="mdi mdi-alert flight-result-warning"></span>
 							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>
@@ -201,12 +203,12 @@
 				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					<!--- <cfdump var=#Segment# abort> --->
 					<!--- Shane - New code, please fix :) --->
-					<cfset key = hash(Segment.SegmentId)>
+					<!--- <cfset key = hash(Segment.SegmentId)>
 					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 					<div class="col-sm-3 panel panel-default" onclick="sendEmail('#key#');" >
 						Send Email
 					</div>
-					<br>
+					<br> --->
 
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
