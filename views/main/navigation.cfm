@@ -54,7 +54,7 @@
 				<cfif showAirTab>
 					<!---Air--->
 					<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
-						<a href="#buildURL('air.search?SearchID=#rc.SearchID#')#">Air</a>
+						<a href="#buildURL('air?SearchID=#rc.SearchID#')#">Air</a>
 					</li>
 				<cfelseif rc.filter.getPassthrough() NEQ 1 AND NOT (structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO")>
 					<!---Air--->

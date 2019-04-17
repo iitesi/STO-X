@@ -5,7 +5,7 @@
 		<cfif structKeyExists(arguments.rc, 'Filter') AND IsObject(arguments.rc.Filter)>
 
 			<cfif arguments.rc.Filter.getAir()>
-				<cfset variables.fw.redirect('air.search?SearchID=#arguments.rc.SearchID#&group=0')>
+				<cfset variables.fw.redirect('air?SearchID=#arguments.rc.SearchID#&group=0')>
 			</cfif>
 
 			<cfif arguments.rc.Filter.getHotel()>

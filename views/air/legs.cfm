@@ -8,7 +8,7 @@
 		</ul>
 	<cfelse>
 		<h1>
-			<a href="#buildURL('air.search&SearchID=#rc.SearchID#')#">
+			<a href="#buildURL('air&SearchID=#rc.SearchID#')#">
 				#ListFirst(rc.Filter.getAirHeading(), "::")#
 				<small>:: #ListLast(rc.Filter.getAirHeading(), "::")#</small>
 			</a>
@@ -64,7 +64,7 @@
 	<cfif structKeyExists(rc, "group") AND Len(rc.group)>
 		<cfset popoverTitle = "">
 		<cfset popoverContent = "Click to return to main search results">
-		<cfset popoverLink = "index.cfm?action=air.search&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
+		<cfset popoverLink = "index.cfm?action=air&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
 		<cfset popoverButtonClass = "">
 	</cfif>
 </cfsilent>
@@ -78,7 +78,7 @@
 				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 					<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
 				<cfelse>
-					<li role="presentation"><a href="#buildURL('air.search?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+					<li role="presentation"><a href="#buildURL('air?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
 						<!--- Show icon indicating this is the leg they selected --->
 						<cfif structKeyExists(session.searches[rc.SearchID].stSelected, nLegIndex-1)
 							AND NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])>

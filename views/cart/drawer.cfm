@@ -166,7 +166,7 @@ $('#main-content').toggleClass('toggled');
 										<li>
 											<div class="row">
 												<div class="col-sm-12">
-													<a href="#buildURL('air.search?SearchID=#rc.SearchID#&Group=#i#')#"><i class="material-icons">local_airport</i></a><br>
+													<a href="#buildURL('air?SearchID=#rc.SearchID#&Group=#i#')#"><i class="material-icons">local_airport</i></a><br>
 													#group.OriginAirportCode# - #group.DestinationAirportCode#<br>
 													#DateFormat(group.DepartureTime, 'DDD, MMM d, yyyy')#<br>
 													#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#
