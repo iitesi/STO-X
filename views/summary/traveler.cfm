@@ -101,7 +101,8 @@
 		</div>
 	</div>
 
-	<cfif rc.airSelected>
+	<cfif rc.airSelected
+		OR rc.vehicleSelected>
 		<div class="form-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="month">Birth Date *</label>
 			<div class="controls">
@@ -131,7 +132,9 @@
 				</div>
 			</div>
 		</div>
-
+	</cfif>
+	
+	<cfif rc.airSelected>
 		<div class="form-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="gender">Gender *</label>
 			 <div class="col-sm-8 col-xs-12">
