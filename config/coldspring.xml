@@ -105,9 +105,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	</bean>
 
 	<bean id="purchase" class="booking.services.purchase" >
-		<constructor-arg name="TerminalEntry"><ref bean="TerminalEntry" /></constructor-arg>
-		<constructor-arg name="UniversalAdapter"><ref bean="UniversalAdapter" /></constructor-arg>
-		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="Summary" class="booking.services.summary">
@@ -247,18 +245,23 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="searchService"><ref bean="SearchService" /></constructor-arg>
 	</bean>
 
+	<bean id="air" class="booking.services.air">
+		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
+		<constructor-arg name="availability"><ref bean="availability" /></constructor-arg>
+		<constructor-arg name="rail"><ref bean="rail" /></constructor-arg>
+	</bean>
+
 	<bean id="lowfare" class="booking.services.lowfare">
-		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
-		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>
 
-	<bean id="airavailability" class="booking.services.airavailability" >
-		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
-		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
-		<constructor-arg name="AirParse"><ref bean="AirParse" /></constructor-arg>
+	<bean id="availability" class="booking.services.availability">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+	</bean>
+
+	<bean id="rail" class="booking.services.rail">
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>

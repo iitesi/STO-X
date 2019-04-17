@@ -1,7 +1,7 @@
 <cfcomponent extends="abstract" accessors="true">
 
 	<!--- // DEPENDENCY INJECTION --->
-	<cfproperty name="airAvailability" setter="true" getter="false">
+	<cfproperty name="Air" setter="true" getter="false">
 	<cfproperty name="airPrice" setter="true" getter="false">
 	<cfproperty name="email" setter="true" getter="false">
 	<cfproperty name="general" setter="true" getter="false">
@@ -9,7 +9,7 @@
 	<cfproperty name="lowFareavail" setter="true" getter="false">
 	<cfproperty name="Itinerary" setter="true" getter="false">
 
-	<cffunction name="search" output="false" hint="I assemble low fares for display.">
+	<cffunction name="default" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
 		<cfset var SearchID = SearchID>
@@ -31,7 +31,7 @@
 			<!--- <cfdump var=#session.searches[SearchID].stItinerary# abort> --->
 			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
 				<cfif Group+2 EQ local.SegmentIndex>
-					<cfset fw.redirect('air.search?SearchID=#arguments.rc.SearchID#&Group=#SegmentIndex-1#')>
+					<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#SegmentIndex-1#')>
 				</cfif>
 			</cfloop>
 
@@ -45,13 +45,13 @@
 			<cfdump var=#session.Filters[SearchID].getUnusedTicketCarriers()# abort>
 		</cfif> --->
 
-		<cfset rc.trips = variables.lowfare.doAirSearch(Account = arguments.rc.Account,
-														Policy = arguments.rc.Policy,
-														Filter = arguments.rc.Filter,
-														SearchID = SearchID,
-														Group = Group,
-														SelectedTrip = session.searches[SearchID].stItinerary.Air,
-														cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
+		<cfset rc.trips = variables.air.doSearch(Account = arguments.rc.Account,
+												Policy = arguments.rc.Policy,
+												Filter = arguments.rc.Filter,
+												SearchID = SearchID,
+												Group = Group,
+												SelectedTrip = session.searches[SearchID].stItinerary.Air,
+												cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
 
 		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
 		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>
@@ -83,7 +83,7 @@
 										Email_Message = form.Email_Message,
 										Email_Subject = form.Email_Subject)>
 
-		<cfset fw.redirect('air.search?SearchID=#arguments.rc.SearchID#&Group=#arguments.rc.Group#')>
+		<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#arguments.rc.Group#')>
 
 		<cfreturn />
 	</cffunction>
