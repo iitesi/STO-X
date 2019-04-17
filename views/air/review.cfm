@@ -43,7 +43,28 @@
 						</cfloop>
 					</cfif>
 				</cfloop>
-				<cfloop collection="#rc.Pricing.AirPriceSegments#" index="index" item="Fares">
+				<!--- <input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+				<div class="col-sm-3 panel panel-default"
+					onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
+				>
+					<div class="panel-body">
+						<div class="row cabin-class">
+							<div class="col-sm-12 fs-1 cabin-description">
+								#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
+							</div>
+							<div class="col-sm-12 fs-s branded-fare-class">
+								&nbsp;
+							</div>
+							<div class="col-sm-12 fs-2 fare-display">
+								<div>&nbsp;</div>
+							</div>
+							<div class="col-sm-12 fs-s policy-error-hidden">
+								&nbsp;
+							</div>
+						</div>												
+					</div>
+				</div> --->
+				<!--- <cfloop collection="#rc.Pricing.AirPriceSegments#" index="index" item="Fares">
 					<cfloop collection="#Fares.AirPriceFares#" index="index" item="Fare">
 						<hr>
 						#Fare.CabinClass# -
@@ -54,7 +75,7 @@
 						#Fare.TotalFare.Currency EQ 'USD' ? '$' : Fare.TotalFare.Currency##NumberFormat(Fare.TotalFare.Value, '0')#
 						<!--- <cfdump var=#Fare#> --->
 					</cfloop>
-				</cfloop>
+				</cfloop> --->
 			</div>
 		</div>
 	</div>

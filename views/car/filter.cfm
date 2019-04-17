@@ -266,12 +266,12 @@
 											<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
 												<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 												</option>
-											<cfelse>
+											<!--- <cfelse>
 												<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
 												<cfset application.fw.factory.getBean('EmailService').send( developer = false
 														, toAddress = 'weberrors@shortstravel.com;kgoblirsch@shortstravel.com'
 														, subject = 'STO: Missing Car Vendor'
-														, body = emailHTML ) />
+														, body = emailHTML ) /> --->
 											</cfif>
 										</cfif>
 									</cfloop>
