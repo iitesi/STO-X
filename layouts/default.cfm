@@ -135,7 +135,7 @@
 								<cfelse>
 									<a class="navbar-brand" id="mainlogo"  href="#application.sPortalURL#" title="Home">
 								</cfif>
-									<cfhttp url="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" method="get" timeout="5" result="local.logo" cachedwithin="#createtimespan(0,1,0,0)#"> 
+									<cfhttp url="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" method="get" timeout="5" result="local.logo"> 
 									<cfif structKeyExists(rc, "account")
 										AND isStruct(rc.account)
 										AND NOT structIsEmpty(rc.account)
