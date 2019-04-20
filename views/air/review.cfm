@@ -1,4 +1,5 @@
 <cfoutput>
+	<!--- <cfdump var=#rc.Solutions# abort> --->
 	<!--- #view('air/unusedtickets')# --->
 	<div class="page-header">
 		#View('air/legs')#
@@ -43,43 +44,49 @@
 						</cfloop>
 					</cfif>
 				</cfloop>
-				<!--- <input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-				<div class="col-sm-3 panel panel-default"
-					onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
-				>
-					<div class="panel-body">
-						<div class="row cabin-class">
-							<div class="col-sm-12 fs-1 cabin-description">
-								#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
-							</div>
-							<div class="col-sm-12 fs-s branded-fare-class">
-								&nbsp;
-							</div>
-							<div class="col-sm-12 fs-2 fare-display">
-								<div>&nbsp;</div>
-							</div>
-							<div class="col-sm-12 fs-s policy-error-hidden">
-								&nbsp;
-							</div>
-						</div>												
-					</div>
-				</div> --->
-				<!--- <cfloop collection="#rc.Pricing.AirPriceSegments#" index="index" item="Fares">
-					<cfloop collection="#Fares.AirPriceFares#" index="index" item="Fare">
-						<hr>
-						#Fare.CabinClass# -
-						#Fare.BrandedFare# -
-						Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
-						Bookable:  #YesNoFormat(Fare.IsBookable)# -
+				<cfloop collection="#rc.Solutions#" index="index" item="Fare">
+					<hr>
+					<strong>
+						#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass# -
+						#Fare.BrandedFare CONTAINS ',' ? 'Mixed Branded Fares' : Fare.BrandedFare#<br>
+						<cfif listLen(Fare.CabinClass) GT 1>
+							<cfloop collection="#Fare.Flights#" index="i" item="Flight">
+								#Flight.CabinClass# - #Flight.BrandedFare# : #Flight.Carrier##Flight.FlightNumber# #Flight.Origin#-#Flight.Destination#<br>
+							</cfloop>
+						</cfif>
+						<!--- Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
+						Bookable:  #YesNoFormat(Fare.IsBookable)# - --->
 						 <!---<cfdump var="#Fare.OutOfPolicyReason#"> --->
-						#Fare.TotalFare.Currency EQ 'USD' ? '$' : Fare.TotalFare.Currency##NumberFormat(Fare.TotalFare.Value, '0')#
-						<!--- <cfdump var=#Fare#> --->
-					</cfloop>
-				</cfloop> --->
+						#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
+					</strong>
+					<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
+						<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
+					</cfloop><br>
+					
+					<cfset key = createUUID()>
+					<div onclick="submitSegment('#key#');">
+						<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
+						Select Fare
+					</div>
+
+				</cfloop>
 			</div>
 		</div>
 	</div>
+
+	<form method="post" action="##" id="selectFare">
+		<input type="hidden" name="FareSelected" value="1">
+		<input type="text" name="Fare" id="Fare" value="">
+	</form>
+
 </cfoutput>
 
+<script type="application/javascript">
+	function submitSegment(Key) {
+		$("#Fare").val($("#Fare"+Key).val());
+		$("#selectFare").submit();
+	}
+</script>		
+
 <cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
-<cfdump var=#rc.Pricing#>
+<cfdump var=#rc.Solutions#>

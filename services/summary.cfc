@@ -636,11 +636,15 @@
 				</cfif>
 
 				<!--- To Do: Pass variables in --->
-				<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
-				<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total />
+			<!--- 	<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
+				<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total /> --->
+				<!--- Dohmen to do --->
+				<cfset local.lowestFareTripID = 0 />
+				<cfset local.lowestFare = 200 />
 				<!--- To Do: Pass variables in --->
 
-				<cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)>
+				<!--- Dohmen to do --->
+				<!--- <cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)> --->
 				<!--- If NASCAR --->
 				<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0>
 					<cfif arguments.acctID EQ 348
@@ -658,19 +662,21 @@
 						<cfset local.error.hotelNotBooked = ''>
 					</cfif>
 				</cfif>
-				<cfif NOT inPolicy
+				<!--- Dohmen to do --->
+				<!--- <cfif NOT inPolicy
 					AND arguments.Policy.Policy_AirReasonCode EQ 1>
 					<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>
 						<cfset local.error.airReasonCode = ''>
 					</cfif>
-				</cfif>
-				<cfif arguments.Air.Total GT lowestFare
+				</cfif> --->
+				<!--- Dohmen to do --->
+				<!--- <cfif arguments.Air.Total GT lowestFare
 					AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
 					AND arguments.Policy.Policy_AirLostSavings EQ 1>
 					<cfif arguments.Traveler.getBookingDetail().getLostSavings() EQ ''>
 						<cfset local.error.lostSavings = ''>
 					</cfif>
-				</cfif>
+				</cfif> --->
 				<cfif arguments.acctID EQ 235>
 					<cfif arguments.Traveler.getBookingDetail().getUDID113() EQ ''>
 						<cfset local.error.udid113 = ''>

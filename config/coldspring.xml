@@ -267,8 +267,6 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	</bean>
 
 	<bean id="AirPrice" class="booking.services.airprice">
-		<constructor-arg name="UAPIFactory"><ref bean="UAPIFactory" /></constructor-arg>
-		<constructor-arg name="uAPISchemas"><bean factory-bean="EnvironmentService" factory-method="getUAPISchemas" /></constructor-arg>
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
 	</bean>

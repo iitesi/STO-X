@@ -109,8 +109,10 @@
 					<!--- <cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId> --->
 					<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
 					<cfset Segments[segmentItem.SegmentId] 						= segmentItem>
+					<cfset Segments[segmentItem.SegmentId].DepartureTimeGMT 	= segmentItem.Flights[1].DepartureTime>
 					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= left(segmentItem.Flights[1].DepartureTime, 19)>
 					<cfset Segments[segmentItem.SegmentId].OriginAirportCode 	= segmentItem.Flights[1].OriginAirportCode>
+					<cfset Segments[segmentItem.SegmentId].ArrivalTimeGMT 		= segmentItem.Flights[segmentCount].ArrivalTime>
 					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= left(segmentItem.Flights[segmentCount].ArrivalTime, 19)>
 					<cfset Segments[segmentItem.SegmentId].DestinationAirportCode = segmentItem.Flights[segmentCount].DestinationAirportCode>
 					<cfset Segments[segmentItem.SegmentId].TravelTime 			= int(segmentItem.TotalTravelTimeInMinutes/60) &'H '&segmentItem.TotalTravelTimeInMinutes%60&'M'>
@@ -134,7 +136,9 @@
 						<cfset structDelete(flightItem, 'DepartureTimeString')>
 						<cfset structDelete(flightItem, 'ArrivalTimeString')>
 						<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.CarrierCode&flightItem.FlightNumber)>
+						<cfset flightItem.DepartureTimeGMT		= flightItem.DepartureTime>
 						<cfset flightItem.DepartureTime 		= left(flightItem.DepartureTime, 19)>
+						<cfset flightItem.ArrivalTimeGMT		= flightItem.ArrivalTime>
 						<cfset flightItem.ArrivalTime 			= left(flightItem.ArrivalTime, 19)>
 					</cfloop>
 					<cfset Carrier = listRemoveDuplicates(Carrier)>
@@ -180,10 +184,13 @@
 		<!--- response.Fares : Create a distinct structure of available fares by reference key. --->
 		<!--- response.Fares[G0-B6.124.S|G1-B6.23.S] = Full fare structure. --->
 		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
+
 			<cfloop collection="#tripItem.AvailableFareOptions#" index="fareIndex" item="fareItem">
+
 				<cfset BookingDetails = structNew('linked')>
 				<cfset CabinDetails = structNew()>
 				<cfloop collection="#fareItem.BookingDetails#" index="bookingIndex" item="bookingItem">
+
 					<cfset bookingItem.PartOfSegmentFareId = bookingItem.CarrierCode&'.'&bookingItem.FlightNumber&'.'&bookingItem.BookingCode>
 					<cfset bookingItem.PartOfSegmentId = bookingItem.CarrierCode&'.'&bookingItem.FlightNumber>
 					<cfparam name="BookingDetails[#bookingItem.Group#]" default="#structNew('linked')#">
@@ -198,28 +205,34 @@
 					<cfset CabinDetails[bookingItem.Group].BrandedFareNames = listAppend(CabinDetails[bookingItem.Group].BrandedFareNames, arguments.BrandedFares[BrandedFareBrandId].Name)>
 					<cfset CabinDetails[bookingItem.Group].BrandedFareIds = listAppend(CabinDetails[bookingItem.Group].BrandedFareIds, BrandedFareBrandId)>
 					<cfset CabinDetails[bookingItem.Group].SegmentId = listAppend(CabinDetails[bookingItem.Group].SegmentId, bookingItem.PartOfSegmentId, '-')>
+
 				</cfloop>
 				<cfset Details = structNew('linked')>
 				<cfloop collection="#BookingDetails#" index="groupIndex" item="groupItem">
+
 					<cfset SegmentFareId = 'G#groupIndex#-'&structKeyList(groupItem, '-')>
 					<cfset Details[SegmentFareId].Details = []>
 					<cfloop collection="#groupItem#" index="flightIndex" item="flightItem">
+
 						<cfset arrayAppend(Details[SegmentFareId].Details, flightItem)>
+
 					</cfloop>
 					<cfset Details[SegmentFareId].CabinCode = listRemoveDuplicates(CabinDetails[groupIndex].CabinCodes)>
 					<cfset Details[SegmentFareId].BrandedFareName = listRemoveDuplicates(CabinDetails[groupIndex].BrandedFareNames)>
 					<cfset Details[SegmentFareId].BrandedFareId = listRemoveDuplicates(CabinDetails[groupIndex].BrandedFareIds)>
 					<cfset Details[SegmentFareId].SegmentId = 'G#groupIndex#-'&CabinDetails[groupIndex].SegmentId>
+					<cfset Details[SegmentFareId].SegmentFareId = SegmentFareId>
+
 				</cfloop>
 				<cfset structDelete(fareItem, 'SegmentFareIds')>
 				<cfset structDelete(fareItem, 'BookingDetails')>
 				<cfset FareKey = structKeyList(Details, '|')>
 				<cfset Fares[FareKey] = fareItem>
 				<cfset Fares[FareKey].BookingDetails = Details>
-			</cfloop>
-		</cfloop>
 
-		<!--- <cfdump var=#Fares# abort> --->
+			</cfloop>
+
+		</cfloop>
 
 		<cfreturn Fares>
 	</cffunction>
@@ -252,11 +265,18 @@
 		<cfset var SegmentFares = {}>
 		<!--- <cfset SelectedSegmentFareId = 'G0-AS.2075.B-AS.1424.B-AS.6308.B'> --->
 		<!--- G0-AS.2289.B-AS.442.H-AS.4624.H --->
+		<!--- <cfdump var=#SelectedSegmentFareID# abort> --->
 		<cfif arguments.Group EQ 0
 			OR SelectedSegmentFareID NEQ ''>
 			<cfloop collection="#arguments.Fares#" index="fareIndex" item="fareItem">
+				<!--- <cfif fareIndex CONTAINS 'DL.3862'
+					AND fareIndex CONTAINS 'DL.3513'>
+					<cfdump var=#fareIndex#>
+					<cfdump var=#fareItem#>
+				</cfif> --->
 				<cfif fareIndex CONTAINS SelectedSegmentFareID>
 					<cfloop collection="#fareItem.BookingDetails#" index="groupIndex" item="groupItem">
+
 						<cfif left(groupIndex, 2) EQ 'G#arguments.Group#'
 							AND (SelectedRefundable EQ ''
 									OR SelectedRefundable EQ fareItem.IsRefundable ? 1 : 0)>
@@ -266,7 +286,6 @@
 								OR NOT structKeyExists(SegmentFares[groupItem.SegmentId][groupItem.CabinCode], groupItem.BrandedFareName)
 								OR ( SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].TotalFare GT fareItem.TotalFare.Value
 									AND fareItem.IsBookable )>
-
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].TotalFare = fareItem.TotalFare.Value>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Refundable = fareItem.IsRefundable ? 1 : 0>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].PrivateFare = fareItem.IsPrivateFare>
@@ -274,6 +293,8 @@
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].OutOfPolicyReason = fareItem.OutOfPolicyReason>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].BrandedFareId = groupItem.BrandedFareId>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Bookable = fareItem.IsBookable>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].SegmentFareId = groupItem.SegmentFareId>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Details = groupItem.Details>
 							</cfif>
 							<!--- Cabin level : Lowest economy/business/first prices. --->
 							<cfif NOT structKeyExists(SegmentFares, groupItem.SegmentId)
@@ -288,6 +309,7 @@
 
 							</cfif>
 						</cfif>
+
 					</cfloop>
 				</cfif>
 			</cfloop>

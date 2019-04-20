@@ -28,7 +28,7 @@
 							<cfif Segment.IsLongSegment>
 								<span role="button" 
 									data-placement="right" 
-									data-toggle="tooltip" title="Segment is twice as long as the shortest travel time."
+									data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
 									class="mdi mdi-alert flight-result-warning"></span>
 							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
@@ -106,14 +106,17 @@
 						<cfset BrandedFareIds = ''>
 						<cfloop list="Economy,PremiumEconomy,Business,First" index="CabinClass">
 							<cfif structKeyExists(SegmentFares, CabinClass)>
+								<!--- <cfdump var=#SegmentFares[CabinClass]# abort> --->
 								<cfloop collection="#SegmentFares[CabinClass]#" index="brandedFareName" item="brandedFare">
 									<cfif brandedFareName NEQ 'TotalFare'
 										AND brandedFareName NEQ 'SegmentFareId'
 										AND brandedFareName NEQ 'SegmentId'>
+										<!--- <cfdump var=#brandedFare# abort> --->
 										<cfset BrandedFareIds = listAppend(BrandedFareIds, brandedFare.brandedFareID)>
 										<cfif brandedFare.Bookable>
 											<cfset key = hash(Segment.SegmentId&CabinClass&SegmentFares[CabinClass].SegmentFareId&brandedFare.Refundable)>
-											<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+											<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+											<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(brandedFare))#">
 										</cfif>
 										<div class="fares col-sm-3 panel panel-default" data-refundable="#brandedFare.Refundable#"
 											<cfif brandedFare.Bookable>
@@ -123,10 +126,9 @@
 											<div class="panel-body">
 												<div class="row cabin-class">
 													<div class="col-sm-12 fs-1 cabin-description">
-														#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
+														<cfif brandedFareName NEQ ''>#brandedFareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
 													</div>
 													<div class="col-sm-12 fs-s branded-fare-class">
-														<cfif CabinClass NEQ brandedFareName>#brandedFareName#<cfelse>&nbsp;</cfif>
 													</div>
 													<div class="col-sm-12 fs-2 fare-display">
 														<div>$#numberFormat(brandedFare.TotalFare, '_,___')#</div>
@@ -161,7 +163,8 @@
 								AND structKeyExists(Segment.Availability, CabinClass)>
 
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
-								<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+								<input type="hidden" id="fare#key#" value="">
 								<div class="col-sm-3 panel panel-default"
 									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 								>

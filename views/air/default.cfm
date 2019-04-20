@@ -89,8 +89,11 @@
 							}						
 						</cfscript>
 						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
+						<cfset variables.Fares = structKeyExists(rc.trips.Fares, segmentIndex) ? rc.trips.Fares[segmentIndex] : {}>
 						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
-							#View('air/list')#
+							<cfif NOT Segment.IsLongAndExpensive AND NOT Segment.IsLongSegment>
+								#View('air/list')#
+							</cfif>
 						</cfif>
 					</cfloop>
 				</div>
@@ -118,6 +121,7 @@
 			<input type="hidden" name="SegmentFareId" id="SegmentFareId" value="">
 			<input type="hidden" name="Refundable" id="Refundable" value="">
 			<input type="hidden" name="Segment" id="Segment" value="">
+			<input type="hidden" name="Fare" id="Fare" value="">
 		</form>
 		<!---#View('modal/popup')#--->
 	
@@ -134,7 +138,8 @@
 			$("#CabinClass").val(CabinClass);
 			$("#SegmentFareId").val(SegmentFareId);
 			$("#Refundable").val(Refundable);
-			$("#Segment").val($("#fare"+Key).val());
+			$("#Segment").val($("#segment"+Key).val());
+			$("#Fare").val($("#fare"+Key).val());
 			$("#lowfareavailForm").submit();
 		}
 

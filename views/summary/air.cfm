@@ -1,9 +1,14 @@
 <cfoutput>
 
 	<cfif rc.airSelected>
-		<cfset lowestFareTripID = session.searches[rc.searchid].stLowFareDetails.aSortFare[1] />
-		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total />
-		<cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)>
+		<!--- <cfset lowestFareTripID = session.searches[rc.searchid].stLowFareDetails.aSortFare[1] />
+		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total /> --->
+		<!--- Dohmen to do --->
+<!--- <cfdump var=#rc.Air# abort> --->
+		<cfset lowestFare = 200>
+		<!--- Dohmen to do --->
+		<!--- <cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)> --->
+		<cfset inPolicy =true>
 
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">
 
@@ -15,33 +20,7 @@
 
 		<div class="tripsummary-detail">
 			<div class="row">
-				<div class="col-xs-12">
-					<!--- create ribbon
-					Note: Please do not display "CONTRACTED" flag on search results for Southwest.
-					--->
-					<cfif rc.Air.privateFare AND rc.Air.preferred>
-						<cfif rc.Air.Carriers[1] EQ "WN">
-							<cfif rc.Air.PTC EQ "GST">
-								<span class="ribbon ribbon-l-pref-govt"></span>
-							<cfelse>
-								<span class="ribbon ribbon-l-pref"></span>
-							</cfif>
-						<cfelseif rc.acctId EQ 532>
-							<span class="ribbon ribbon-l-pref"></span>
-						<cfelse>
-							<span class="ribbon ribbon-l-pref-cont"></span>
-						</cfif>
-					<cfelseif rc.Air.preferred>
-						<cfif rc.Air.PTC EQ "GST">
-							<span class="ribbon ribbon-l-pref-govt"></span>
-						<cfelse>
-							<span class="ribbon ribbon-l-pref"></span>
-						</cfif>
-					<cfelseif rc.Air.privateFare AND rc.Air.Carriers[1] NEQ "WN">
-						<span class="ribbon ribbon-l-cont"></span>
-					<cfelseif rc.Air.PTC EQ "GST">
-						<span class="ribbon ribbon-l-govt"></span>
-					</cfif>
+				<div class="col-xs-12">					
 					<h2>FLIGHT</h2>
 				</div>
 			</div> <!-- ./row -->
@@ -71,12 +50,14 @@
 					AND they are in policy OR the above drop down isn't showing
 					AND they want to capture lost savings
 					--->
-					<cfif rc.showAll
+					<!--- Dohmen to do
+						<cfif rc.showAll
 						OR (rc.Air.Total GT lowestFare
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
-						AND rc.Policy.Policy_AirLostSavings EQ 1)>
-
-						<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span>
+						AND rc.Policy.Policy_AirLostSavings EQ 1)> --->
+					<cfif true>
+						<!--- Dohmen to do --->
+						<!--- <span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span> --->
 
 						<select name="lostSavings" id="lostSavings" class="input-xlarge #(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
 						<option value="">Select Reason for Not Booking the Lowest Fare</option>
@@ -115,7 +96,7 @@
 
 				</div>
 			</div> <!-- /.row -->
-			<div class="row">
+			<!--- <div class="row">
 				<div class="col-sm-2 col-xs-4">
 					<img class="img-responsive carrierimg" src="assets/img/airlines/#(ArrayLen(rc.Air.Carriers) EQ 1 ? rc.Air.Carriers[1] : 'Mult')#.png"><br>
 
@@ -126,6 +107,7 @@
 					<cfset seatFieldNames = ''>
 					<cfset totalCount = 0>
 					<div class="container-fluid">
+						<cfdump var=#rc.Air# abort>
 					<cfloop collection="#rc.Air.Groups#" item="group" index="groupIndex">
 						<cfset tripLength = rc.airhelpers.getTripDays(group.DepartureTime, group.ArrivalTime)>
 						<cfset count = 0>
@@ -176,22 +158,18 @@
 					</cfloop>
 					</div>
 				</div>
-				<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#">
+				<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#"> --->
 
 				<div class="col-sm-3 col-xs-12">
 					<span class="blue bold large">
-						<cfif NOT structKeyExists(rc.Air, 'PricingSolution')
-							OR NOT isObject(rc.Air.PricingSolution)>
-							#dollarFormat(rc.Air.Total)#
-						<cfelse>
-							#replace(rc.Air.PricingSolution.getPricingInfo()[1].getTotalPrice(), 'USD', '$')#
-						</cfif>
+						#dollarFormat(rc.Air[0].TotalPrice)#
 						<br>
 					</span>
 
 					Total including taxes and refunds<br>
-					#(rc.air.ref ? 'Refundable' : 'No Refunds')#<br>
-					<span class="blue bold">
+					#(rc.air[0].Refundable ? 'Refundable' : 'No Refunds')#<br>
+					<!--- Dohmen To Do --->
+					<!--- <span class="blue bold">
 						<a rel="popover" data-original-title="Flight Change / Cancellation Policy"
 							data-content="
 								Ticket is
@@ -211,7 +189,7 @@
 							" href="##"/>
 							Flight change/cancellation policy
 						</a>
-					</span>
+					</span> --->
 
 					<span class="red bold">
 						TICKET NOT YET ISSUED.<br />AIRFARE QUOTED IN ITINERARY IS NOT GUARANTEED UNTIL TICKETS ARE ISSUED.
@@ -226,13 +204,11 @@
 				<!---
 				FREQUENT PROGRAM NUMBER
 				--->
-								<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-									<div class="form-group">
-										<label for="airFF#sCarrier#">#sCarrier# Frequent Flyer ##</label>
-										<input type="text" name="airFF#sCarrier#" id="airFF#sCarrier#" maxlength="20" class="form-control">
-									</div>
+								<div class="form-group">
+									<label for="airFF#rc.Air[0].PlatingCarrier#">#rc.Air[0].PlatingCarrier# Frequent Flyer ##</label>
+									<input type="text" name="airFF#rc.Air[0].PlatingCarrier#" id="airFF#rc.Air[0].PlatingCarrier#" maxlength="20" class="form-control">
+								</div>
 
-								</cfloop>
 				<!---
 				ADDITIONAL REQUESTS
 				--->
@@ -250,12 +226,12 @@
 				<!---
 				GENERAL SEATS
 				--->
+								<!--- 
+								Dohmen To Do
 								<cfset showWindowAisle = false />
-								<cfloop array="#rc.Air.Carriers#" item="sCarrier">
-									<cfif NOT listFind('WN,F9', sCarrier)>
-										<cfset showWindowAisle = true />
-									</cfif>
-								</cfloop>
+								<cfif NOT listFind('WN,F9', rc.Air[0].PlatingCarrier)>
+									<cfset showWindowAisle = true />
+								</cfif>
 								<cfif showWindowAisle>
 									<div class="form-group">
 										<label for="windowAisle"  >Seats</label>
@@ -265,14 +241,15 @@
 											<option value="Aisle">AISLE</option>
 										</select>
 									</div>
-								</cfif>
+								</cfif> --->
 
 				</div> <!-- / .form-inline -->
 			</div> <!-- /.col-xs-12 -->
 			<!---
 			SPECIAL REQUEST
 			--->
-				<cfif rc.showAll
+				<!--- Dohmen to do --->
+				<!--- <cfif rc.showAll
 					OR rc.Policy.Policy_AllowRequests>
 					<div class="col-xs-12">
 						<div class="form-group">
@@ -280,7 +257,7 @@
 							<input name="specialRequests" id="specialRequests" class="form-control" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)#(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')#" >
 						</div>
 					</div>
-				</cfif>
+				</cfif> --->
 		</div> <!-- / .row -->
 	</div> <!-- / .tripsummary-detail -->
 

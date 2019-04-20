@@ -23,10 +23,10 @@
 
 		<cfif structKeyExists(rc, 'FlightSelected')>
 
-			<cfset session.searches[SearchID].stItinerary = Itinerary.selectAir(	form = form,
-																					stItinerary = session.searches[SearchID].stItinerary,
-																					Group = Group,
-																					Groups = arrayLen(arguments.rc.Filter.getLegsForTrip()))>
+			<cfset session.searches[SearchID].stItinerary = Itinerary.selectAir(form = form,
+																				Itinerary = session.searches[SearchID].stItinerary,
+																				Group = Group,
+																				Groups = arrayLen(arguments.rc.Filter.getLegsForTrip()))>
 
 			<!--- <cfdump var=#session.searches[SearchID].stItinerary# abort> --->
 			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
@@ -38,6 +38,7 @@
 			<!--- <cfdump var=#session.searches[SearchID].Selected# abort> --->
 			<cfset session.Filters[SearchID].setAir(true)>
 			<cfset variables.fw.redirect('air.review?SearchID=#arguments.rc.SearchID#')>
+
 		</cfif>
 
 		<!--- <cfif structKeyExists(session.searches[SearchID], 'unusedtickets')>
@@ -62,12 +63,56 @@
 	<cffunction name="review" output="false">
 		<cfargument name="rc">
 
-		<cfset rc.Pricing = variables.airprice.doAirPrice(	Account = arguments.rc.Account,
-															Policy = arguments.rc.Policy,
-															Filter = arguments.rc.Filter,
-															SearchID = SearchID,
-															Group = arguments.rc.Group,
-															Selected = session.searches[SearchID].stItinerary.Air)>
+		<cfif structKeyExists(rc, 'FareSelected')>
+
+			<cfset session.searches[SearchID].stItinerary.Air = Itinerary.selectFare(Fare = form.Fare,
+																					Itinerary = session.searches[SearchID].stItinerary.Air)>
+
+			<cfif arguments.rc.Filter.getHotel()>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
+			</cfif>
+
+			<cfif arguments.rc.Filter.getCar()>
+				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.SearchID#')>
+			</cfif>
+
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
+
+		</cfif>
+
+		<cfset var Solutions = []>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = '')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'Economy')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'PremiumEconomy')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'Business')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'First')>
+
+		<cfset rc.Solutions = Solutions>
 
 		<cfreturn />
 	</cffunction>

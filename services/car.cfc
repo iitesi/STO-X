@@ -52,6 +52,7 @@
 				OR arguments.Filter.getDepartDateTime() GT arguments.Filter.getCarPickupDateTime())>
 
 			<cfset arguments.Filter.setCarPickupDateTime( session.searches[SearchID].stItinerary.Air[0].ArrivalTime )>
+
 		</cfif>
 
 		<cfif arguments.Filter.getAir()

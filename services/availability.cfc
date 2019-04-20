@@ -58,6 +58,7 @@
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
 		<!--- response.Segments[G0-B6.124] = Full segment structure --->
 		<cfloop collection="#arguments.response.Results#" index="segmentIndex" item="segmentItem">
+			<cfset Segment.DepartureTimeGMT = segmentItem[1].DepartureTime>
 			<cfset Segment.DepartureTime = left(segmentItem[1].DepartureTime, 19)>
 			<!--- <cfdump var=#segmentItem# abort> --->
 			<cfset local.SegmentId = ''>
@@ -70,8 +71,10 @@
 				<cfset local.Segment = {}>
 				<cfset Segment.Flights = []>
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
+				<cfset Segment.DepartureTimeGMT 	= segmentItem[1].DepartureTime>
 				<cfset Segment.DepartureTime 		= left(segmentItem[1].DepartureTime, 19)>
 				<cfset Segment.OriginAirportCode 	= segmentItem[1].Origin>
+				<cfset Segment.ArrivalTimeGMT		= segmentItem[flightCount].ArrivalTime>
 				<cfset Segment.ArrivalTime 			= left(segmentItem[flightCount].ArrivalTime, 19)>
 				<cfset Segment.DestinationAirportCode = segmentItem[flightCount].Destination>
 				<cfset Segment.TravelTime 			= int(segmentItem[1].TravelTime/60) &'H '&segmentItem[1].TravelTime%60&'M'>
@@ -87,8 +90,10 @@
 				<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
 					<cfset local.Flight = {}>
 					<cfset local.Flight.OriginAirportCode = flightItem.Origin>
+					<cfset Flight.DepartureTimeGMT = flightItem.DepartureTime>
 					<cfset Flight.DepartureTime = left(flightItem.DepartureTime, 19)>
 					<cfset Flight.DestinationAirportCode = flightItem.Destination>
+					<cfset Flight.ArrivalTimeGMT = flightItem.ArrivalTime>
 					<cfset Flight.ArrivalTime = left(flightItem.ArrivalTime, 19)>
 					<cfset Flight.FlightDurationInMinutes = flightItem.FlightTime>
 					<cfset Flight.FlightNumber = flightItem.FlightNumber>
