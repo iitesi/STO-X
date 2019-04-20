@@ -513,6 +513,8 @@ ul.tabs li a.active {
   	transition: all 0.5s ease;
 }
 
+
+
 .listcontainer-header > .panel {
 	border-radius: 8px 8px 0 0;
 	border: 1px solid #ddd;
@@ -571,6 +573,10 @@ ul.tabs li a.active {
 	box-shadow: 0px 1px 8px 1px rgba(0,0,0,0.25);
 }
 
+.results-info-wrapper {
+	height: 75px;
+}
+
 .results_collapsed {
 	width: 100%;
 	position: absolute;
@@ -580,7 +586,7 @@ ul.tabs li a.active {
   	-moz-transition: all 0.2s ease-out;
   	-o-transition: all 0.2s ease-out;
 	transition: all 0.2s ease-out;
-	height: 55px;
+	height: 100%;
 }
 
 .results_expanded {
@@ -635,8 +641,8 @@ ul.tabs li a.active {
 
 .flight-details-header {
 	border-bottom: 1px transparent;
-	display: flex;
-    flex-flow: row;
+	/* display: flex;
+    flex-flow: row; */
 }
 
 .flight-details-container {
@@ -650,7 +656,7 @@ ul.tabs li a.active {
 
 .panel.trip.active .flight-details-header {
 	border-bottom: 1px solid #e0e0e0;
-	padding-bottom: 15px;
+	/* padding-bottom: 15px; */
 }
 
 .panel.trip.active .detail-expander {
@@ -673,21 +679,23 @@ ul.tabs li a.active {
 
 .fare-wrapper {
 	display: flex;
-	justify-content: flex-start;
+	/* justify-content: flex-start; */
 	align-items: stretch;
 }
 
 .fare-wrapper .panel {
 	height: 100%;
 	display: flex;
-	width: 23.3785%;
-	margin-right: 1.3215%;
+	/* width: 23.3785%; */
+	/* margin-right: 1.3215%; */
 	margin-bottom: 0;
+	flex: 1;
 }
 
 .fare-wrapper .panel .panel-body {
 	width: 100%;
-	padding: 15px 0 0 0;
+	padding-top: 15px;
+	padding-bottom: 0;
 	margin: 0;
 	-webkit-transition: all 0.2s ease-out;
   	-moz-transition: all 0.2s ease-out;
@@ -700,11 +708,43 @@ ul.tabs li a.active {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	
+	width: 100%;
+    overflow: hidden;
 }
+
+.fare-wrapper .spacer {
+	/* border: 0px; */
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	background-color: #eee;
+}
+
+/** TESTING **/
+#listcontainer .trip > .panel-body {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	/* background-color: #ddd; */
+}
+.fare-wrapper {
+	height: 100%;
+}
+.fare-wrapper .fares, .fare-wrapper .spacer {
+	height: 100%;
+	display: flex;
+	width: 20%;
+	margin: 0;
+	border-right: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	border-radius: 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+/** END TESTING **/
 
 .branded-fare-class {
 	height: 30px;
+	width: 100%;
 }
 
 .cabin-class > div {
@@ -716,6 +756,8 @@ ul.tabs li a.active {
 	font-weight: 700;
 	font-size: 14px;
 	height: 40px;
+	width: 100%;
+	padding-top: 10px;
 }
 
 .cabin-class .fare-display {
@@ -728,6 +770,7 @@ ul.tabs li a.active {
   	-moz-transition: min-height 0.2s ease;
   	-o-transition: min-height 0.2s ease;
 	transition: min-height 0.2s ease;
+	width: 100%;
 }
 
 .cabin-class .policy-error {
@@ -815,11 +858,11 @@ ul.tabs li a.active {
 	height: 20px;
 }
 
-.fare-wrapper .panel:hover {
+.fare-wrapper .fares:hover {
 	cursor: pointer;
 }
 
-.fare-wrapper .panel.fares:hover {
+.fare-wrapper .fares:hover {
 	background: #2E76CF;
 	color: white;
 }
@@ -829,9 +872,6 @@ ul.tabs li a.active {
 	padding-bottom: 10px;
 }
 
-#listcontainer .trip.active .fare-wrapper > .panel > .panel-body {
-	padding-top: 2px;
-}
 
 /* #listcontainer .trip.active .cabin-class + .fs-s {
 	overflow: hidden;
@@ -1375,29 +1415,131 @@ li.with-irs .irs-title {
 	margin-bottom: 15px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
+	.flight-details-header {
+		display: flex;
+		flex-flow: row;
+	}
+	.results-info-wrapper {
+		height: unset;
+		border-right: 1px solid #ddd;
+		padding-top: 10px;
+	}
+	.fare-wrapper .fares, .fare-wrapper .spacer {
+		border-bottom: none;
+	}
+	.fare-wrapper .fare-block:last-child {
+		/* border-right: none; */
+	}
+	.results_collapsed {
+		height: 55px;
+	}
+	.cabin-class {
+		overflow: visible;
+	}
 	.flight-result-warning {
 		position: absolute;
 		margin-left: -10px;
 		top: 10px;
 		left: 0;
 	}
-	.fs-2 {
+	.fs-2, .fs-lg-2 {
 		font-size: 16px;
 		font-weight: 600;
 		text-align: left;
 	}
 	
-	.fs-1 {
+	.fs-1, .fs-lg-1 {
 		font-size: 12px;
 		font-weight: 500;
 		text-align: left;
 	}
 	
-	.fs-s {
+	.fs-s, .fs-lg-s {
 		font-size: 10px;
 		font-weight: 400;
 		text-align: left;
+	}
+}
+
+@media (min-width: 300px) and (max-width: 1023px) {
+	#listcontainer .trip {
+		border-top-width: 1px;
+		margin-top: 5px;
+		box-shadow: none;
+		-webkit-box-shadow: none;
+	}
+	.fare-wrapper {
+		/* margin-left: 0;
+		margin-right: 0; */
+		height: 68px;
+	}
+	.fare-wrapper .fares, .fare-wrapper .spacer {
+		border: none;
+		border-top: 1px solid #ddd;
+		border-right: 1px solid #ddd;
+		border-bottom: 1px solid #ddd;
+		width: 20%;
+	}
+	.fare-wrapper .fares:last-child {
+		border-right-width: 0px!important;
+	}
+		
+	.fare-wrapper .col-sm-3 {
+		width:25%;
+	}
+
+	.fare-wrapper .fares .cabin-class .cabin-description {
+		font-weight: 500;
+		font-size: 12px;
+		height: 20px;
+	}
+	.fare-wrapper .fares .cabin-class .branded-fare-class {
+		height: 15px;
+		margin: 0 5px;
+	}
+	.fare-wrapper .fares .cabin-class .fare-display {
+		min-height: 25px;
+		font-size: 13px;
+	}
+	.fare-wrapper .fares .cabin-class .policy-error {
+		height: 2px;
+		line-height: 2px;
+	}
+	
+	.flight-result-warning {
+		position: absolute;
+		bottom: -20px;
+		left: 30px;
+	}
+	.results-info-wrapper {
+		padding-top: 5px;
+	}
+	img.carrierimg {
+		width: 50px!important;
+	}
+	.fs-xs-2 {
+		font-size: 14px !important;
+		font-weight: 600;
+	}
+	
+	.fs-xs-1 {
+		font-size: 12px;
+		font-weight: 500;
+	}
+	
+	.fs-xs-s {
+		font-size:8px;
+		font-weight: 400;
+	}
+	.p-xs-0 {
+		padding: 0;
+	}
+	.pl-xs-15 {
+		padding-left: 15px!important;
+	}
+	.pr-xs-15 {
+		padding-right: 15px!important;
 	}
 }
 

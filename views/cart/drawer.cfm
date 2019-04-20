@@ -1,5 +1,5 @@
 <script type="">
-$('#main-content').toggleClass('toggled');
+// $('#main-content').toggleClass('toggled');
 </script><cfset rc.itinerary = session.searches[rc.searchID].stItinerary />
 <cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false) />
 <cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '') />

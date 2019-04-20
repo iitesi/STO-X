@@ -23,7 +23,7 @@
 				<cfset variables.BrandedFares = rc.trips.BrandedFares>
 				<!--- Needs to be in the variables scope to be passed into the view. --->
 				<cfset variables.trips = rc.trips>
-				<div class="col-sm-12 listcontainer-header">
+				<div class="col-lg-12 hidden-xs visible-lg-block listcontainer-header">
 					<div class="panel panel-default">
 						<div class="row">
 							<div class="col-sm-1">
@@ -183,7 +183,7 @@
 			$(this).parents(".panel.trip").toggleClass("active");
 		});  
 
-		$('#listcontainer').on('dblclick touchstart', '.panel.trip', function (e) {
+		$('#listcontainer').on('dblclick', '.panel.trip', function (e) {
 			var $target = $(e.target);
 			if(!$target.closest(".fare-wrapper").length){
 				$(this).find('.detail-expander').trigger('click');

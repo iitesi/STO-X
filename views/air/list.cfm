@@ -16,10 +16,9 @@
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-sm-1 center airline-col">
+				<div class="col-xs-2 col-lg-1 center airline-col">
 					<div class="row">
-						<div class="col-sm-6 col-md-12">
-							<cfif Segment.IsLongAndExpensive>
+						<div class="col-xs-12">
 								<span role="button" 
 									data-placement="right" 
 									data-toggle="tooltip" title="Better economy fare and shorter travel times available."
@@ -33,74 +32,71 @@
 							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>
-						<div class="col-sm-3 col-md-12">&nbsp;</div>
-						<div class="col-sm-3 col-md-12 detail-expander"
+						<div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div>
+						<div class="col-xs-12 detail-expander hidden-xs visible-lg-block"
 							data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-							<i class="fa fa-caret-down" aria-hidden="true"></i>(#Segment.Results#)
+							<i class="fa fa-caret-down" aria-hidden="true"></i>
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-5">
+				<div class="col-xs-10 col-lg-5 results-info-wrapper">
 					<div class="row results_collapsed">
-						<div class="col-sm-6 ">
+						<div class="col-xs-12 col-lg-6 ">
 							<div class="row">
-								<div class="col-sm-12 fs-2">
+								<div class="col-xs-12 fs-2 fs-xs-2">
 									#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
 								</div>	
 							</div>
 							<cfif Segment.Days NEQ 0>
 							<div class="row">
-								<div class="col-sm-12 fs-1 red">
+								<div class="col-xs-12 fs-1 red">
 									+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#
 								</div>	
 							</div>
 							</cfif>
 							<div class="row">
-								<div class="col-sm-12 text-muted fs-1">
+								<div class="col-xs-12 text-muted fs-1">
 									#Segment.FlightNumbers#
 								</div>	
 							</div>
 							<div class="row">
-								<div class="col-sm-12 text-muted fs-s overflow-ellipse">
+								<div class="col-xs-12 text-muted fs-xs-s fs-s overflow-ellipse">
 									<cfif Segment.Codeshare NEQ ''>
 										OPERATED BY #Segment.Codeshare#
 									</cfif>
 								</div>	
 							</div>							
 						</div>
-						<div class="col-sm-3">
+						<div class="clearfix visible-xs-block"></div>
+						<div class="col-xs-6 col-lg-3">
 							<div class="row">
-								<div class="col-sm-12 fs-2">
+								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									#Segment.TravelTime#
 								</div>	
-							</div>
-							<div class="row">
-								<div class="col-sm-12 text-muted fs-1">
+								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">
 									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
 								</div>	
 							</div>
 						</div>
-						<div class="col-sm-3">		
+						<div class="col-xs-6 col-lg-3">		
 							<div class="row">
-								<div class="col-sm-12 fs-2">
+								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
 								</div>	
-							</div>
-							<div class="row">
-								<div class="col-sm-12 fs-1 text-muted">
+								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 pr-xs-15">
 									#Segment.Connections#
 								</div>	
 							</div>
 						</div>
 					</div>
 					<div class="row results_expanded">
-						<div class="col-sm-12 fs-2">
+						<div class="col-xs-12 fs-2">
 							Departing &middot; #dateTimeFormat(createODBCDateTime(Segment.DepartureTime), 'EEE, mmm dd')#
 						</div>	
 					</div>
 				</div>
-				
-				<div class="col-sm-6">
+				<div class="clearfix visible-xs-block"></div>
+				<div class="col-xs-12 col-lg-6">
 
 					<div class="row fare-wrapper">
 						<cfset BrandedFareIds = ''>
@@ -118,44 +114,42 @@
 											<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 											<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(brandedFare))#">
 										</cfif>
-										<div class="fares col-sm-3 panel panel-default" data-refundable="#brandedFare.Refundable#"
+										<div class="fares fare-block" data-refundable="#brandedFare.Refundable#"
 											<cfif brandedFare.Bookable>
 												onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#brandedFare.Refundable#','#key#');"
 											</cfif>
 										>
-											<div class="panel-body">
-												<div class="row cabin-class">
-													<div class="col-sm-12 fs-1 cabin-description">
-														<cfif brandedFareName NEQ ''>#brandedFareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
-													</div>
-													<div class="col-sm-12 fs-s branded-fare-class">
-													</div>
-													<div class="col-sm-12 fs-2 fare-display">
-														<div>$#numberFormat(brandedFare.TotalFare, '_,___')#</div>
-													</div>
-													<cfif brandedFare.OutOfPolicy>
-														<div class="col-sm-12 fs-s policy-error">
-															<div class="fare-warning"
-																role="button"
-																data-placement="top" 
-																data-toggle="tooltip" 
-																title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
-															</div>
-															
-															<span  role="button" 
-																class="badge badge-pill warning fare-warning"
-																data-placement="top" 
-																data-toggle="tooltip" 
-																title="#arrayToList(brandedFare.OutOfPolicyReason)#">
-																<i class="fa fas fa-exclamation" aria-hidden="true"></i>
-															</span>
+											<div class="cabin-class">
+												<div class="fs-1 cabin-description overflow-ellipse">
+													<cfif brandedFareName NEQ ''>#brandedFareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
+												</div>
+												<div class="fs-2 fare-display">
+													<div class="overflow-ellipse">$#numberFormat(brandedFare.TotalFare, '_,___')#</div>
+												</div>
+												<cfif brandedFare.OutOfPolicy>
+													<div class="col-xs-12 fs-s policy-error">
+														<div class="fare-warning"
+															role="button"
+															data-placement="top" 
+															data-toggle="tooltip" 
+															title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
 														
 														</div>
-													<cfelse>
-														<div class="col-sm-12 fs-s policy-error-hidden"></div>
-													</cfif>
-												</div>												
-											</div>
+														<!---
+														<span  role="button" 
+															class="badge badge-pill warning fare-warning"
+															data-placement="top" 
+															data-toggle="tooltip" 
+															title="#arrayToList(brandedFare.OutOfPolicyReason)#">
+															<i class="fa fas fa-exclamation" aria-hidden="true"></i>
+														</span>
+													--->
+													
+													</div>
+												<cfelse>
+													<div class="fs-s policy-error-hidden"></div>
+												</cfif>
+											</div>												
 										</div>
 									</cfif>
 								</cfloop>
@@ -165,34 +159,32 @@
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 								<input type="hidden" id="fare#key#" value="">
-								<div class="col-sm-3 panel panel-default"
+								<div class="nopprice-fares  fare-block"
 									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 								>
-									<div class="panel-body">
-										<div class="row cabin-class">
-											<div class="col-sm-12 fs-1 cabin-description">
-												#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
-											</div>
-											<div class="col-sm-12 fs-s branded-fare-class">
-												<cfif structKeyExists(Segment.Availability, CabinClass)
-													AND Segment.Availability[CabinClass].Count>
-													Click to price
-												<cfelseif structKeyExists(Segment.Availability, CabinClass)
-													AND NOT Segment.Availability[CabinClass].Count>
-													Unavailable
-												</cfif>
-											</div>
-											<div class="col-sm-12 fs-2 fare-display">
-												<div>&nbsp;</div>
-											</div>
-											<div class="col-sm-12 fs-s policy-error-hidden">
-												&nbsp;
-											</div>
-										</div>												
-									</div>
+									<div class="cabin-class">
+										<div class="fs-1 cabin-description">
+											#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
+										</div>
+										<div class="col-xs-12 fs-s branded-fare-class">
+											<cfif structKeyExists(Segment.Availability, CabinClass)
+												AND Segment.Availability[CabinClass].Count>
+												Click to price
+											<cfelseif structKeyExists(Segment.Availability, CabinClass)
+												AND NOT Segment.Availability[CabinClass].Count>
+												Unavailable
+											</cfif>
+										</div>
+										<div class="fs-2 fare-display">
+											<div>&nbsp;</div>
+										</div>
+										<div class="fs-s policy-error-hidden">
+											&nbsp;
+										</div>
+									</div>												
 								</div>
 							<cfelse>
-								<div class="col-sm-3 panel panel-default" style="border:0"><!--- Shane - Sorry for the inline.  :)  Please fix.  --->
+								<div class="spacer fare-block">
 									&nbsp;
 								</div>
 							</cfif>
@@ -202,13 +194,13 @@
 				</div>
 			</div>
 				
-			<div class="row">
-				<div class="col-sm-12 collapse flight-details-container" id="details#cleanedSegmentId#">
+			<div class="row hidden-xs visible-lg-block">
+				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					<!--- <cfdump var=#Segment# abort> --->
 					<!--- Shane - New code, please fix :) --->
 					<!--- <cfset key = hash(Segment.SegmentId)>
 					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-					<div class="col-sm-3 panel panel-default" onclick="sendEmail('#key#');" >
+					<div class="col-xs-3 panel panel-default" onclick="sendEmail('#key#');" >
 						Send Email
 					</div>
 					<br> --->
