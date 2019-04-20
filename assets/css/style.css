@@ -716,7 +716,7 @@ ul.tabs li a.active {
 	/* border: 0px; */
 	-webkit-box-shadow: none;
 	box-shadow: none;
-	background-color: #eee;
+	background-color: #eeeeeead;
 }
 
 /** TESTING **/
@@ -728,7 +728,7 @@ ul.tabs li a.active {
 .fare-wrapper {
 	height: 100%;
 }
-.fare-wrapper .fares, .fare-wrapper .spacer {
+.fare-wrapper .fare-block {
 	height: 100%;
 	display: flex;
 	width: 20%;
@@ -754,7 +754,7 @@ ul.tabs li a.active {
 
 .cabin-class .cabin-description {
 	font-weight: 700;
-	font-size: 14px;
+	font-size: 11px;
 	height: 40px;
 	width: 100%;
 	padding-top: 10px;
@@ -858,7 +858,7 @@ ul.tabs li a.active {
 	height: 20px;
 }
 
-.fare-wrapper .fares:hover {
+.fare-wrapper .fare-block:hover {
 	cursor: pointer;
 }
 
@@ -1425,7 +1425,7 @@ li.with-irs .irs-title {
 		border-right: 1px solid #ddd;
 		padding-top: 10px;
 	}
-	.fare-wrapper .fares, .fare-wrapper .spacer {
+	.fare-wrapper .fare-block, .fare-wrapper .spacer {
 		border-bottom: none;
 	}
 	.fare-wrapper .fare-block:last-child {
@@ -1465,23 +1465,23 @@ li.with-irs .irs-title {
 @media (min-width: 300px) and (max-width: 1023px) {
 	#listcontainer .trip {
 		border-top-width: 1px;
-		margin-top: 5px;
-		box-shadow: none;
-		-webkit-box-shadow: none;
+		margin-top: 10px;
+		/* box-shadow: none;
+		-webkit-box-shadow: none; */
 	}
 	.fare-wrapper {
 		/* margin-left: 0;
 		margin-right: 0; */
 		height: 68px;
 	}
-	.fare-wrapper .fares, .fare-wrapper .spacer {
+	.fare-wrapper .fare-block {
 		border: none;
 		border-top: 1px solid #ddd;
 		border-right: 1px solid #ddd;
 		border-bottom: 1px solid #ddd;
 		width: 20%;
 	}
-	.fare-wrapper .fares:last-child {
+	.fare-wrapper .fare-block:last-child {
 		border-right-width: 0px!important;
 	}
 		
@@ -1489,20 +1489,20 @@ li.with-irs .irs-title {
 		width:25%;
 	}
 
-	.fare-wrapper .fares .cabin-class .cabin-description {
+	.fare-wrapper .fare-block .cabin-class .cabin-description {
 		font-weight: 500;
 		font-size: 12px;
-		height: 20px;
+		/* height: 20px; */
 	}
-	.fare-wrapper .fares .cabin-class .branded-fare-class {
+	.fare-wrapper .fare-block .cabin-class .branded-fare-class {
 		height: 15px;
 		margin: 0 5px;
 	}
-	.fare-wrapper .fares .cabin-class .fare-display {
+	.fare-wrapper .fare-block .cabin-class .fare-display {
 		min-height: 25px;
 		font-size: 13px;
 	}
-	.fare-wrapper .fares .cabin-class .policy-error {
+	.fare-wrapper .fare-block .cabin-class .policy-error {
 		height: 2px;
 		line-height: 2px;
 	}
