@@ -1214,7 +1214,7 @@ a.dropdown-toggle .mdi {
 	padding: 0 0 0 30px;
 }
 
-#filterConnecting .dropdown-menu {
+#filterConnecting .dropdown-menu  {
 	width: 250px;
 }
 
@@ -1222,7 +1222,7 @@ a.dropdown-toggle .mdi {
 	margin-right: 10px;
 }
 
-#filterDuration .dropdown-menu, #filterTimes .dropdown-menu {
+#filterDuration .dropdown-menu, #filterTimes .dropdown-menu, #filterMore .dropdown-menu {
 	width: 300px;
 }
 

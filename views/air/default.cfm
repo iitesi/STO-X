@@ -330,12 +330,10 @@
 			var spots = [];
 			var start = Math.floor(min / 60);
 
-			for (var x = 0; x < hours; x++){
+			for (var x = 0; x < hours + 1; x++){
 				spots.push(start + x + 'h');
 				spots.push(start + x + 'h 30m');
 			}
-
-			spots.push(hours + 'h');
 			return spots;
 		}
 
@@ -360,6 +358,7 @@
 				to: customValues.length - 1,
 				values: customValues,
 				onFinish: function (data) {
+										console.log(data)
 					preFilter();
 					doFilter();
 					postFilter();
@@ -489,13 +488,14 @@
 
 		var rangeDetails = function(field){
 			try {
-				var data = $("input[name='"+field+"-range']").data('ionRangeSlider').result;
+				var data = $("#"+field+"-range-slider").data('ionRangeSlider').result;
 				var values = [];
 				values.push(getMinutesFromString(data.from_value));
 				values.push(getMinutesFromString(data.to_value));
 				return values;
 			}
 			catch(e){
+				// console.log(e)
 			}
 			return [0,9999];
 		}
@@ -524,7 +524,7 @@
 				departure : rangeRawValue('departure'),
 				arrival : rangeRawValue('arrival')
 			};
-			// console.log(filters)
+			console.log(filters)
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
 				var $this = $(this);

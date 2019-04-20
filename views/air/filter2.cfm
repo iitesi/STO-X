@@ -101,9 +101,44 @@
 						</li>
 					</ul>
 				</li>
-				<li role="presentation" class="dropdown" id="filterFares">
-					<a href="#" class="dropdown-toggle" data-dflt="Fare Type">Fare Type <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right singlefilterwrapper">
+				<li role="presentation" class="dropdown" id="filterTimes">
+					<a href="#" class="dropdown-toggle" data-dflt="Times">Times <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li class="with-irs time-slider" data-name="departure" data-selector="trip" data-datafield="departure">
+							<div class="irs-title">
+								<span class="mdi mdi-airplane-takeoff"></span> Departure Time
+							</div>
+							<input type="text" class="js-range-slider" name="departure-range" value="" />
+						</li>
+						<li class="with-irs time-slider" data-name="arrival" data-selector="trip" data-datafield="arrival">
+							<div class="irs-title">
+								<span class="mdi mdi-airplane-landing"></span>Arrival time
+							</div>
+							<input type="text" class="js-range-slider" name="arrival-range" value="" />
+						</li>
+					</ul>
+				</li>
+				<li role="presentation" class="dropdown" id="filterConnecting">
+					<a href="#" class="dropdown-toggle" data-dflt="Connecting Airports">Connecting Airports <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper range-slider" data-type="checkbox" data-name="connection" data-selector="segment-stopover" data-datafield="minutes">
+						<li class="with-irs">
+							<div class="irs-title">Layover Duration</div>
+							<input type="text" class="js-range-slider" id="layover-range-slider" name="layover-range" value="" />
+						</li>
+						<li>
+							<input type="checkbox" checked id="connection-all" name="connection-all" class="switch-input">
+							<label for="connection-all" class="switch-label">All Connecting Airports</label>
+						</li>
+					</ul>
+				</li>
+
+				<li role="presentation" class="dropdown" id="filterMore">
+					<a href="#" class="dropdown-toggle" data-dflt="More">More <b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-menu-right singlefilterwrapper range-slider" data-type="checkbox" data-name="duration" data-selector="trip" data-datafield="duration">
+						<li class="with-irs">
+							<div class="irs-title">Trip Length</div>
+							<input type="text" class="js-range-slider" id="duration-range-slider" name="duration-range" value="" />
+						</li>	
 						<li>
 							<div class="md-radio">
 								<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
@@ -124,46 +159,6 @@
 						</li>
 					</ul>
 				</li>
-				<li role="presentation" class="dropdown" id="filterTimes">
-					<a href="#" class="dropdown-toggle" data-dflt="Times">Times <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right">
-						<li class="with-irs time-slider" data-name="duration" data-selector="trip" data-datafield="departure">
-							<div class="irs-title">
-								<span class="mdi mdi-airplane-takeoff"></span> Departure Time
-							</div>
-							<input type="text" class="js-range-slider" name="departure-range" value="" />
-						</li>
-						<li class="with-irs time-slider" data-name="duration" data-selector="trip" data-datafield="arrival">
-							<div class="irs-title">
-								<span class="mdi mdi-airplane-landing"></span>Arrival time
-							</div>
-							<input type="text" class="js-range-slider" name="arrival-range" value="" />
-						</li>
-					</ul>
-				</li>
-				<li role="presentation" class="dropdown" id="filterDuration">
-					<a href="#" class="dropdown-toggle" data-dflt="Trip Length">Trip Length <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right range-slider" data-type="checkbox" data-name="duration" data-selector="trip" data-datafield="duration">
-						<li class="with-irs">
-							<div class="irs-title">Trip Length</div>
-							<input type="text" class="js-range-slider" name="duration-range" value="" />
-						</li>
-					</ul>
-				</li>
-				<li role="presentation" class="dropdown" id="filterConnecting">
-					<a href="#" class="dropdown-toggle" data-dflt="Connecting Airports">Connecting Airports <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-menu-right multifilterwrapper range-slider" data-type="checkbox" data-name="connection" data-selector="segment-stopover" data-datafield="minutes">
-						<li class="with-irs">
-							<div class="irs-title">Layover Duration</div>
-							<input type="text" class="js-range-slider" name="layover-range" value="" />
-						</li>
-						<li>
-							<input type="checkbox" checked id="connection-all" name="connection-all" class="switch-input">
-							<label for="connection-all" class="switch-label">All Connecting Airports</label>
-						</li>
-					</ul>
-				</li>
-				
 				<!---
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Carrier <b class="caret"></b></a>
