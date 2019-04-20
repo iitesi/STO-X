@@ -19,6 +19,7 @@
 				<div class="col-xs-2 col-lg-1 center airline-col">
 					<div class="row">
 						<div class="col-xs-12">
+							<cfif Segment.IsLongAndExpensive>
 								<span role="button" 
 									data-placement="right" 
 									data-toggle="tooltip" title="Better economy fare and shorter travel times available."
@@ -159,24 +160,23 @@
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 								<input type="hidden" id="fare#key#" value="">
-								<div class="nopprice-fares  fare-block"
+								<div class="nopprice-fares fare-block"
 									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 								>
 									<div class="cabin-class">
-										<div class="fs-1 cabin-description">
+										<div class="fs-1 cabin-description overflow-ellipse">
 											#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
 										</div>
-										<div class="col-xs-12 fs-s branded-fare-class">
-											<cfif structKeyExists(Segment.Availability, CabinClass)
+										<div class="fs-2 fare-display">
+											<div class="overflow-ellipse fs-s">
+												<cfif structKeyExists(Segment.Availability, CabinClass)
 												AND Segment.Availability[CabinClass].Count>
 												Click to price
 											<cfelseif structKeyExists(Segment.Availability, CabinClass)
 												AND NOT Segment.Availability[CabinClass].Count>
 												Unavailable
 											</cfif>
-										</div>
-										<div class="fs-2 fare-display">
-											<div>&nbsp;</div>
+											</div>
 										</div>
 										<div class="fs-s policy-error-hidden">
 											&nbsp;

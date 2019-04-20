@@ -21,72 +21,7 @@
 		<cfargument name="Group" default="">
 		<cfargument name="SelectedTrip" default="">
 
-		<cfset start = getTickCount()>
-		<cfset local.ScheduleResponse = doAirSchedule(Account = arguments.Account,
-												Filter = arguments.Filter,
-												SearchID = arguments.SearchID,
-												Group = arguments.Group )>
-		<cfset trips.Profiling.KrakenFlightSearchAvailability = (getTickCount() - start) / 1000>
-
-		<cfset start = getTickCount()>
-		<cfset local.LowFareResponse = doAirLowFare(Account = arguments.Account,
-												Policy = arguments.Policy,
-												Filter = arguments.Filter,
-												SearchID = arguments.SearchID,
-												Group = arguments.Group,
-												SelectedTrip = arguments.SelectedTrip,
-												refundable = arguments.refundable )>
-		<cfset trips.Profiling.KrakenFlightSearchByTrip = (getTickCount() - start) / 1000>
-
-		<!--- <cfdump var=#local.LowFareResponse.FlightSearchResults[1]# abort> --->
-
-		<cfset start = getTickCount()>
-		<cfset trips.BrandedFares = parseBrandedFares( response = local.LowFareResponse )>
-		<cfset trips.Profiling.BrandedFares = (getTickCount() - start) / 1000>
-
-		<cfset start = getTickCount()>
-		<cfset trips.Segments = parseLowFareSegments( 	response = local.LowFareResponse,
-														Group = arguments.Group )>
-		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
-
-		<!---
-		<cfset start = getTickCount()>
-		<cfset trips.Segments = parseScheduleSegments( 	Segments = trips.Segments,
-														response = local.ScheduleResponse,
-														Group = arguments.Group )>
-		<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
-		--->
-		
-		<cfset start = getTickCount()>
-		<cfset trips.Fares = parseFares( response = local.LowFareResponse,
-										BrandedFares = trips.BrandedFares )>
-		<cfset trips.Profiling.Fares = (getTickCount() - start) / 1000>
-
-		<cfset start = getTickCount()>
-		<cfset trips.SegmentFares = parseSegmentFares(	response = local.LowFareResponse,
-													Fares = trips.Fares,
-													Group = arguments.Group,
-													SelectedTrip = arguments.SelectedTrip )>
-		<cfset trips.Profiling.SegmentFares = (getTickCount() - start) / 1000>
-
-		<cfset start = getTickCount()>
-		<cfset trips.Segments = parsePoorSegments(	Segments = trips.Segments,
-													SegmentFares = trips.SegmentFares,
-													Group = arguments.Group )>
-		<cfset trips.Profiling.SegmentFares = (getTickCount() - start) / 1000>
-
-		<cfreturn trips>
- 	</cffunction>
-
-	<cffunction name="doAirLowFare" output="false">
-		<cfargument name="Account" required="true">
-		<cfargument name="Policy" required="true">
-		<cfargument name="Filter" required="false" default="X">
-		<cfargument name="SearchID" default="">
-		<cfargument name="Group" default="">
-		<cfargument name="SelectedTrip" default="">
-
-		<cftry>
+		<!--- <cftry> --->
 			<cfset local.requestBody = getKrakenService().getFlightSearchRequest( 	Policy = arguments.Policy,
 																					Filter = arguments.Filter )>
 
