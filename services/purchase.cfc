@@ -28,14 +28,19 @@
 																			Air = Air,
 																			Hotel = Hotel,
 																			Vehicle = Vehicle)>
+
 		<cfset TravelPurchase.OrgUnits = createOrgUnits(Traveler = Traveler)>
+
 		<cfset TravelPurchase.Identity = createIdentity(Filter = Filter)>
+
 		<cfset TravelPurchase.FlightPurchaseRequest = createFlightPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
 																		Air = Air)>
+
 		<cfset TravelPurchase.HotelPurchaseRequest = createHotelPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
 																		Hotel = Hotel)>
+
 		<cfset TravelPurchase.VehiclePurchaseRequest = createVehiclePurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
 																		Vehicle = Vehicle)>
@@ -43,11 +48,7 @@
 		<cfset var Response = getKrakenService().TravelPurchase(body = TravelPurchase,
 																searchId = Filter.getSearchId())>
 
-		<cfdump var=#Response# abort>
-
-		<cfset rc.Messages = ParsePurchase(Response = Response)>
-
-		<cfreturn this>
+		<cfreturn Response>
 	</cffunction>
 
 	<cffunction name="createTravelerSharedData" output="false">
@@ -56,15 +57,17 @@
 		<cfargument name="Hotel" requred="false" />
 		<cfargument name="Vehicle" requred="false" />
 
-		<cfset var AirFF = ''>
-		<cfloop collection="#Traveler.getLoyaltyProgram()#" index="local.index" item="local.FFAccount">
-			<cfif FFAccount.getShortCode() EQ Air[0].PlatingCarrier
-				AND FFAccount.getCustType() EQ 'A'>
-				
-				<cfset AirFF = FFAccount.getAcctNum()>
+		<cfif NOT structIsEmpty(arguments.Air)>
+			<cfset var AirFF = ''>
+			<cfloop collection="#Traveler.getLoyaltyProgram()#" index="local.index" item="local.FFAccount">
+				<cfif FFAccount.getShortCode() EQ Air[0].PlatingCarrier
+					AND FFAccount.getCustType() EQ 'A'>
+					
+					<cfset AirFF = FFAccount.getAcctNum()>
 
-			</cfif>
-		</cfloop>
+				</cfif>
+			</cfloop>
+		</cfif>
 
 		<cfscript>
 			var Traveler = arguments.Traveler;
@@ -97,7 +100,7 @@
 				KnownTravelerNumber : Traveler.getTravelNumber()
 			};
 
-			if (NOT structIsEmpty(Air)) {
+			if (NOT structIsEmpty(Air) AND len(AirFF)) {
 				TravelerSharedData.FrequentFlyerDetailsCard = {
 					VendorCode : Air[0].PlatingCarrier,
 					Number : AirFF,
@@ -105,7 +108,7 @@
 				};
 			};
 
-			if (NOT structIsEmpty(Hotel)) {
+			if (NOT structIsEmpty(Hotel) AND len(Traveler.getBookingDetail().getHotelFF())) {
 				TravelerSharedData.HotelLoyaltyCard = {
 					VendorCode : Hotel.getChainCode(),
 					Number : Traveler.getBookingDetail().getHotelFF(),
@@ -113,7 +116,7 @@
 				};
 			};
 
-			if (NOT structIsEmpty(Vehicle)) {
+			if (NOT structIsEmpty(Vehicle) AND len(Traveler.getBookingDetail().getCarFF())) {
 				TravelerSharedData.VehicleLoyaltyCard = {
 					VendorCode : Vehicle.getVendorCode(),
 					Number : Traveler.getBookingDetail().getCarFF(),
@@ -122,6 +125,8 @@
 			};
 
 		</cfscript>
+
+		<!--- <cfdump var=#TravelerSharedData# abort> --->
 
 		<cfreturn TravelerSharedData>
 	</cffunction>
@@ -175,6 +180,7 @@
 		<cfset var Flights = {}>
 		<cfset var FlightsArray = []>
 		<cfset var FlightStruct = {}>
+		<cfset var FlightPurchaseRequest = {}>
 
 		<cfloop collection="#Air#" index="local.GroupIndex" item="local.Group">
 
@@ -316,6 +322,27 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Vehicle" requred="true" />
 
+<!--- 
+
+	<cfif arguments.Vehicle.getPickUpLocationType() NEQ 'Airport'
+		AND arguments.Vehicle.getPickUpLocationType() NEQ 'Terminal'
+		AND arguments.Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport'>
+
+		PickupLocationType="#arguments.Vehicle.getPickUpLocationType()#"
+		PickupLocationNumber="#arguments.Vehicle.getPickUpLocationID()#"
+
+	</cfif>
+
+		<cfif arguments.Vehicle.getDropOffLocationType() NEQ 'Airport'
+			AND arguments.Vehicle.getDropOffLocationType() NEQ 'Terminal'
+			AND arguments.Vehicle.getDropOffLocationType() NEQ 'ShuttleOffAirport'>
+
+			ReturnLocationType="#arguments.Vehicle.getDropOffLocationType()#"
+			ReturnLocationNumber="#arguments.Vehicle.getDropOffLocationID()#"
+
+		</cfif>
+ --->
+
 		<cfscript>
 			var Filter = arguments.Filter;
 			var Traveler = arguments.Traveler;
@@ -330,18 +357,19 @@
 					VehicleClass : Vehicle.getVehicleClass(),
 					VendorCode : Vehicle.getVendorCode(),
 					RateCode : Vehicle.getRateCode(),
+					IsContractedRate : Vehicle.getCorporate(),
 					PickUpDateTime : dateFormat(Filter.getCarPickUpDateTime(), 'yyyy-mm-dd')&'T'&timeFormat(Filter.getCarPickUpDateTime(), 'HH:mm:00'),
 					DropOffDateTime : dateFormat(Filter.getCarDropOffDateTime(), 'yyyy-mm-dd')&'T'&timeFormat(Filter.getCarDropOffDateTime(), 'HH:mm:00'),
 					PickUpLocation : {
 						IataCode : {
 							Code :  len(Vehicle.getPickUpLocation()) GT 0 ? Vehicle.getPickUpLocation() : Filter.getCarPickupAirport(),
-							IsCity : len(Vehicle.getPickUpLocation()) ? false : true
+							IsCity : false//len(Vehicle.getPickUpLocation()) ? false : true
 						},
 					},
 					DropOffLocation : {
 						IataCode : {
 							Code :  len(Vehicle.getDropOffLocation()) GT 0 ? Vehicle.getDropOffLocation() : Filter.getCarDropOffAirport(),
-							IsCity : len(Vehicle.getDropOffLocation()) ? false : true
+							IsCity : false//len(Vehicle.getDropOffLocation()) ? false : true
 						},
 					},
 					VehicleOutOfPolicyReasonCode : Traveler.getBookingDetail().getCarReasonCode(),
@@ -349,18 +377,52 @@
 					Carrier : '',
 					FlightNumber : ''
 				};
+
+				if (len(Vehicle.getPickUpLocationID()) AND Vehicle.getPickUpLocationType() NEQ 'Airport' AND Vehicle.getPickUpLocationType() NEQ 'Terminal' AND Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport') {
+					var VendorLocation = {
+						ProviderCode : "1V",
+						Vendor : {
+							Code : Vehicle.getVendorCode()
+						},
+						VendorLocationId: Vehicle.getPickUpLocationID(),
+						LocationCode : len(Vehicle.getPickUpLocation()) GT 0 ? Vehicle.getPickUpLocation() : Filter.getCarPickupAirport(),
+						LocationType : Vehicle.getPickUpLocationType()
+					};
+					VehiclePurchaseRequest.PickUpLocation.VendorLocation = VendorLocation;
+				};
+
+				if (len(Vehicle.getDropOffLocationID()) AND Vehicle.getDropOffLocationType() NEQ 'Airport' AND Vehicle.getDropOffLocationType() NEQ 'Terminal' AND Vehicle.getDropOffLocationType() NEQ 'ShuttleOffAirport') {
+					var VendorLocation = {
+						ProviderCode : "1V",
+						Vendor : {
+							Code : Vehicle.getVendorCode()
+						},
+						VendorLocationId: Vehicle.getDropOffLocationID(),
+						LocationCode : len(Vehicle.getDropOffLocation()) GT 0 ? Vehicle.getDropOffLocation() : Filter.getCarDropOffAirport(),
+						LocationType : Vehicle.getDropOffLocationType()
+					};
+					VehiclePurchaseRequest.DropOffLocation.VendorLocation = VendorLocation;
+				};
+
 			}
 		</cfscript>
+
+		<!--- <cfdump var=#Vehicle# abort> --->
+		<!--- <cfdump var=#VehiclePurchaseRequest# abort> --->
 
 		<cfreturn VehiclePurchaseRequest>
 	</cffunction>
 
-	<cffunction name="parsePurchase" output="false">
-		<cfargument name="Response" requred="true" />
+	<cffunction name="CancelTrip" output="false">
+		<cfargument name="AcctId" requred="true" />
+		<cfargument name="UniversalRecordLocatorCode" requred="true" />
+		<cfargument name="SearchId" requred="true" />
 
-		<cfdump var=#Response# abort label="Ready to parse">
-
-		<cfreturn />
+		<cfset var Response = getKrakenService().CancelTrip(AcctId = arguments.AcctId,
+															UniversalRecordLocatorCode = arguments.UniversalRecordLocatorCode,
+															SearchId = arguments.SearchId)>
+		
+		<cfreturn Response>
 	</cffunction>
 
 </cfcomponent>
