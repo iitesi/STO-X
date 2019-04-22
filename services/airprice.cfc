@@ -110,7 +110,7 @@
 											Destination="#Segment.DestinationAirportCode#" 
 											DepartureTime="#dateFormat(Segment.DepartureTime, 'yyyy-mm-dd')#T#timeFormat(Segment.DepartureTime, 'HH:mm:mm')#" 
 											ArrivalTime="#dateFormat(Segment.ArrivalTime, 'yyyy-mm-dd')#T#timeFormat(Segment.ArrivalTime, 'HH:mm:mm')#"
-											BookingCode="#structKeyExists(BookingCode, FlightCount) ? BookingCode[FlightCount] : ''#" 
+											ClassOfService="#structKeyExists(BookingCode, FlightCount) ? BookingCode[FlightCount] : ''#" 
 											FareBasis="#structKeyExists(FareBasis, FlightCount) ? FareBasis[FlightCount] : ''#" 
 											CabinClass="#structKeyExists(CabinClass, FlightCount) ? CabinClass[FlightCount] : ''#" />
 									</cfloop>
@@ -140,16 +140,15 @@
 									</air:AccountCodes>
 								</cfif>
 							</air:AirPricingModifiers>
-							<!--- <cfif arguments.bGovtRate>
+							<!--- <cfif Account.Gov_Rates>
 								<com:SearchPassenger Code="GST" PricePTCOnly="true" Key="1">
 									<com:PersonalGeography>
 										<com:CityCode>DFW</com:CityCode>
 									</com:PersonalGeography>
 								</com:SearchPassenger>
-							<cfelse>
+							<cfelse> --->
 								<com:SearchPassenger Code="ADT" PricePTCOnly="false" Key="1" />
-							</cfif> --->
-							<com:SearchPassenger Code="ADT" Key="1" />
+							<!--- </cfif> --->
 							<air:AirPricingCommand>
 								<cfif BookingCodeCount EQ FlightCount>
 									<cfloop from="1" to="#FlightCount#" index="local.Flight">
@@ -287,7 +286,7 @@
 										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin>
 										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Destination = Flights[BookingInfo.XMLAttributes.SegmentRef].Destination>
 										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Wifi = structKeyExists(Flights[BookingInfo.XMLAttributes.SegmentRef], 'Wifi') ? true : false>
-										<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] = Fares[BookingInfo.XMLAttributes.FareInfoRef].Description>
+										<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] =  structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'Description') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].Description : ''>
 										<cfset Solution.CabinClass = listAppend(Solution.CabinClass, BookingInfo.XMLAttributes.CabinClass)>
 										<cfset Solution.BrandedFare = listAppend(Solution.BrandedFare, Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare)>
 
