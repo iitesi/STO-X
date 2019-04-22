@@ -2,6 +2,7 @@
 
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
+		
 		<cfif structKeyExists(arguments.rc, 'Filter') AND IsObject(arguments.rc.Filter)>
 
 			<cfif arguments.rc.Filter.getAir()>

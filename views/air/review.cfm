@@ -44,35 +44,38 @@
 						</cfloop>
 					</cfif>
 				</cfloop>
-				<cfloop collection="#rc.Solutions#" index="index" item="Fare">
-					<hr>
-					<strong>
-						#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass# -
-						#Fare.BrandedFare CONTAINS ',' ? 'Mixed Branded Fares' : Fare.BrandedFare#<br>
-						<cfif listLen(Fare.CabinClass) GT 1>
-							<cfloop collection="#Fare.Flights#" index="i" item="Flight">
-								#Flight.CabinClass# - #Flight.BrandedFare# : #Flight.Carrier##Flight.FlightNumber# #Flight.Origin#-#Flight.Destination#<br>
-							</cfloop>
-						</cfif>
-						<!--- Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
-						Bookable:  #YesNoFormat(Fare.IsBookable)# - --->
-						 <!---<cfdump var="#Fare.OutOfPolicyReason#"> --->
-						#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
-					</strong>
-					<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
-						<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
-					</cfloop><br>
-					
-					<cfset key = createUUID()>
-					<div onclick="submitSegment('#key#');">
-						<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
-						Select Fare
-					</div>
-
-				</cfloop>
 			</div>
 		</div>
 	</div>
+	<cfloop collection="#rc.Solutions#" index="index" item="Fare">
+		<hr>
+		<strong>
+			#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass# -
+			#Fare.BrandedFare CONTAINS ',' ? 'Mixed Branded Fares' : Fare.BrandedFare#<br>
+			<cfif listLen(Fare.CabinClass) GT 1>
+				<cfloop collection="#Fare.Flights#" index="i" item="Flight">
+					#Flight.CabinClass# - #Flight.BrandedFare# : #Flight.Carrier##Flight.FlightNumber# #Flight.Origin#-#Flight.Destination#<br>
+				</cfloop>
+			</cfif>
+			<!--- Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
+			Bookable:  #YesNoFormat(Fare.IsBookable)# - --->
+			 <!---<cfdump var="#Fare.OutOfPolicyReason#"> --->
+			#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
+			<cfloop collection="#Fare.Flights#" index="i" item="Flight">
+				#Flight.FareBasis#<br>
+			</cfloop>
+		</strong>
+		<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
+			<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
+		</cfloop><br>
+		
+		<cfset key = createUUID()>
+		<div onclick="submitSegment('#key#');">
+			<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
+			Select Fare
+		</div>
+
+	</cfloop>
 
 	<form method="post" action="##" id="selectFare">
 		<input type="hidden" name="FareSelected" value="1">

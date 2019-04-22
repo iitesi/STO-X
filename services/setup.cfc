@@ -452,8 +452,6 @@
 				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].DBType = local.qCDNumbers.DB_Type>
 			</cfloop>
 
-
-
 			<cfset application.Policies[arguments.policyID] = local.stTemp>
 		</cfif>
 
