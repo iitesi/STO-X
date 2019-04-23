@@ -4,17 +4,20 @@
 	<cfproperty name="uAPISchemas" />
 	<cfproperty name="AirParse" />
 	<cfproperty name="AirAdapter" />
+	<cfproperty name="KrakenService" />
 
     <cffunction name="init" access="public" output="false" returntype="any" hint="I initialize this component" >
     	<cfargument name="UAPIFactory" type="any" required="true" />
     	<cfargument name="uAPISchemas" type="any" required="true" />
     	<cfargument name="AirParse" type="any" required="false" default="" />
     	<cfargument name="AirAdapter" type="any" required="false" default="" />
+			<cfargument name="KrakenService" type="any" required="true">
 
     	<cfset setUAPIFactory( arguments.UAPIFactory ) />
     	<cfset setUAPISchemas( arguments.uAPISchemas ) />
     	<cfset setAirParse( arguments.AirParse ) />
     	<cfset setAirAdapter( arguments.AirAdapter ) />
+			<cfset setKrakenService(arguments.KrakenService)>
 
       <cfreturn this />
 
