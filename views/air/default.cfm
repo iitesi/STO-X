@@ -91,9 +91,9 @@
 						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
 						<cfset variables.Fares = structKeyExists(rc.trips.Fares, segmentIndex) ? rc.trips.Fares[segmentIndex] : {}>
 						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
-							<cfif NOT Segment.IsLongAndExpensive AND NOT Segment.IsLongSegment>
+							<!--- <cfif NOT Segment.IsLongAndExpensive AND NOT Segment.IsLongSegment> --->
 								#View('air/list')#
-							</cfif>
+							<!--- </cfif> --->
 						</cfif>
 					</cfloop>
 				</div>

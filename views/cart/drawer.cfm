@@ -1,4 +1,6 @@
-<cfif rc.action NEQ 'main.login'>
+<cfif rc.action NEQ 'main.login'
+    AND rc.action NEQ 'main.menu'
+    AND rc.action NEQ 'main.search'>
     <script type="">
     // $('#main-content').toggleClass('toggled');
     </script><cfset rc.itinerary = session.searches[rc.searchID].stItinerary />

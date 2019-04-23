@@ -9,11 +9,17 @@
 
 		<!--- <cfdump var=#session.searches[rc.SearchID].stItinerary# abort> --->
 
-		<cfset session.searches[SearchId].Sell = purchase.doPurchase(Filter = session.filters[rc.SearchID],
+		<cfset var Sell = purchase.doPurchase(Filter = session.filters[rc.SearchID],
 																	Traveler = session.searches[rc.searchID].Travelers[TravelerNumber],
 																	Itinerary = session.searches[rc.SearchID].stItinerary)>
+
+		<cfset session.searches[SearchId].Sell = Sell>
 		
-		<cfset fw.redirect('confirmation?SearchID=#arguments.rc.SearchID#')>
+		<cfif Sell.Messages.HasErrors>
+			<cfset fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
+		<cfelse>
+			<cfset fw.redirect('confirmation?SearchID=#arguments.rc.SearchID#')>
+		</cfif>
 
 	</cffunction>
 
@@ -21,6 +27,7 @@
 		<cfargument name="rc">
 
 		<cfset rc.Sell = session.searches[SearchId].Sell>
+		<cfset var cancelled = false>
 
 		<cfif structKeyExists(rc, 'CancelTrip')
 			AND rc.CancelTrip EQ rc.Sell.RecordLocator.UniversalRecordLocatorCode>
@@ -32,18 +39,18 @@
 			<cfif structKeyExists(CancelResponse, 'IsSuccessfullyCancelled')
 			AND CancelResponse.IsSuccessfullyCancelled>
 
-				<cfset var cancelled = true>
+				<cfset cancelled = true>
 
 			<cfelse>
 
-				<cfset var cancelled = CancelResponse.CancellationDetail>
+				<cfset cancelled = CancelResponse.CancellationDetail>
 				<cfdump var=#CancelResponse# abort>
 
 			</cfif>
 
 		</cfif>
 		
-		<cfset fw.redirect('confirmation?SearchID=#arguments.rc.SearchID#')>
+		<cfset fw.redirect('confirmation?SearchID=#arguments.rc.SearchID#&cancelled=#cancelled#')>
 
 	</cffunction>
 

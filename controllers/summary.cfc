@@ -28,6 +28,13 @@
 		<cfparam name="rc.passwordConfirm" default="" />
 		<cfparam name="rc.priceQuotedError" default="0">
 
+		<cfif structKeyExists(session.searches[SearchId], 'Sell')
+			AND session.searches[SearchId].Sell.Messages.HasErrors>
+			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell.Messages.Errors>
+		<cfelse>
+			<cfset rc.SellErrorMessages = {}>
+		</cfif>
+
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>
