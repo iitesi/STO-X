@@ -6,7 +6,89 @@
 	<cfproperty name="email" setter="true" getter="false">
 	<cfproperty name="general" setter="true" getter="false">
 	<cfproperty name="lowFare" setter="true" getter="false">
+	<cfproperty name="lowFareavail" setter="true" getter="false">
 
+	<cffunction name="lowfareavail" output="false" hint="I assemble low fares for display.">
+		<cfargument name="rc">
+
+		<cfset rc.viewRefundable = false>
+		<cfset rc.viewNonRefundable = true>
+		<cfif !StructKeyExists(rc,'bRefundable')>
+			<cfset rc.bRefundable = 0>
+		</cfif>
+		<cfif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1 AND rc.Policy.Policy_AirNonRefRule EQ 0>
+			<cfset rc.bRefundable = 1>
+			<cfset rc.viewRefundable = true>
+			<cfset rc.viewNonRefundable = false>
+		<cfelseif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1>
+			<cfset rc.viewRefundable = true>
+		</cfif>
+
+		<cfif structKeyExists(arguments.rc, "airlines")
+			AND arguments.rc.airlines EQ 1>
+			<cfset rc.filter.setAirlines("")>
+		</cfif>
+
+		<cfset doUnusedTicketSetup(arguments.rc)>
+		<!---??????<cfif StructKeyExists(arguments.rc,"SoldOutTrip")>
+			<cfset variables.lowfare.unSelectAir(arguments.rc.searchID,arguments.rc.SoldOutTrip)>
+		</cfif>--->
+
+		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
+		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
+
+			<cfif NOT structKeyExists(arguments.rc, 'bSelect')> <!---IF WE HAVEN'T SELECTED A FLIGHT--->
+				<!--- throw out threads and get lowfare pricing--->
+				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
+				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
+				<cfset arguments.rc.allCabinClasses = true>
+				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
+				<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
+				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
+					<cfset sleep(10000)>
+					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
+				</cfif>			
+				<!--- Throw out a threads and get availability --->
+				<cfset rc.stLowFareAvail =  variables.lowfareavail.createLowFareAvail(	stTrips = session.searches[rc.searchid].stTrips,
+																						stAvailTrips = session.searches[rc.SearchID].stAvailTrips,
+																						Group = rc.Group )>
+			<cfelse>
+				<!--- Select --->
+				<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
+			</cfif>
+
+			<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
+			<cfset checkFilterStatus(arguments.rc)>
+
+		</cfif>
+
+		<cfset rc.totalFlights = structCount(session.searches[rc.SearchID].stAvailTrips[rc.Group])>
+
+		<cfif structKeyExists(arguments.rc, 'bSelect')>
+
+			<!--- need to set a flag for the first group added and then check it for
+				NW flights, which can't be combined with other carriers --->
+			<cfif NOT structKeyExists(arguments.rc, "firstSelectedGroup")>
+				<cfset rc.southWestMatch = false>
+				<cfset rc.firstSelectedGroup = arguments.rc.group>
+				<cfif session.searches[arguments.rc.SearchID].stSelected[arguments.rc.group].carriers[1] EQ "WN">
+					<cfset rc.southWestMatch = true>
+				</cfif>
+			</cfif>
+
+			<!--- continue looping over legs and populating stSelected --->
+			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.nLeg" index="local.nLegIndex">
+				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[local.nLegIndex-1])>
+					<cfset variables.fw.redirect(action='air.lowfareavail', queryString='SearchID=#arguments.rc.SearchID#&Group=#local.nLegIndex-1#'
+						, preserve='firstSelectedGroup,southWestMatch')>
+				</cfif>
+			</cfloop>
+
+			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
+		</cfif>
+
+		<cfreturn />
+	</cffunction>
 
 	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
@@ -124,7 +206,7 @@
 				</cfif>
 			</cfloop>
 
-			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
+			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#&lowfareavail=')>
 		</cfif>
 
 		<cfreturn />

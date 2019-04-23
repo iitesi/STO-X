@@ -15,55 +15,8 @@
 	<i class="fa fa-spinner fa-spin"></i> Waiting for all results to display before filtering is active
 </div>
 
-<div id="filterbar" class="filter airfilterbar container">
+<div id="filterbar" class="filter airfilterbar container" style="font-size:12px">
 	 <div class="row">
-		<div class="col-xs-7 sortby respFilter">
-
-				<div class="navbar navbar-default">
-					<div class="container-fluid">
-						<div class="navbar-header">
-						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sort-navbar-collapse-1" aria-expanded="false">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="glyphicon glyphicon-sort"></span>
-
-
-						  </button>
-						  <a class="navbar-brand" href="#">Sort</a>
-						</div>
-						<div class="collapse navbar-collapse" id="sort-navbar-collapse-1">
-						<ul class="nav navbar-nav">
-							<cfif rc.action NEQ 'air.availability'>
-								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Price <b class="caret"></b></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
-										<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 Bag</a></li>
-										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 Bags</a></li>
-									</ul>
-								</li>
-							</cfif>
-							<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
-							<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
-							<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
-						</ul>
-					</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-5 viewToggle">
-
-					 <div class="pull-right">
-
-						 <div class="navbar-text navbar-left">
-							 <div class="btn-group" role="group" >
-								  <button type="button" class="btn btn-default showGridView" data-view="grid"><i class="fa fa-th" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;Grid View</span></button>
-								  <button type="button" class="btn btn-default showListView" data-view="list"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs">&nbsp;&nbsp;List View</span></button>
-								</div>
-						 </div>
-
-				</div>
-			</div>
-
 
 		<div class="col-xs-12 filterbar respFilter">
 
@@ -76,10 +29,22 @@
 
 
 							  </button>
-							  <a class="navbar-brand" href="#">Filter</a>
 							</div>
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 						<ul class="nav navbar-nav">
+							<li class="dropdown">
+								<a href="#" id="stopdropdown" class="dropdown-toggle" data-toggle="dropdown">Sort <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<cfif rc.action NEQ 'air.availability'>
+										<li><a href="#" id="sortbyprice" title="Sort by price">Price</a></li>
+										<li><a href="#" id="sortbyprice1bag" title="Sort by price with 1 bag">Price + 1 bag</a></li>
+										<li><a href="#" id="sortbyprice2bag" title="Sort by price with 2 bags">Price + 2 bags</a></li>
+									</cfif>
+									<li><a href="#" id="sortbyduration" title="Sort by duration">Duration</a></li>
+									<li><a href="#" id="sortbydeparture" title="Sort by departure">Departure</a></li>
+									<li><a href="#" id="sortbyarrival" title="Sort by arrival">Arrival</a></li>
+								</ul>
+							</li>
 							<li><a href="#" class="filterby" id="airlinebtn" title="Click to view/hide filters">Airlines <b class="caret"></b></a></li>
 							<!--- <cfif rc.action NEQ 'air.availability'>
 								<li><a href="#" class="filterby" id="classbtn" title="Click to view/hide filters">Class <b class="caret"></b></a></li>

@@ -70,7 +70,7 @@
 		</cfif>
 
 		<cfset variables.nCount = 0>
-		<div class="grid-view container hidden">
+		<!---<div class="grid-view container hidden">
 		<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 			<cfset variables.nCount = 0>
 
@@ -104,9 +104,9 @@
 
 			</cfif>
 		</cfloop>
-		</div> <!-- //.container -->
+		</div> <!-- //.container -->--->
 
-		<div class="list-view container hidden">
+		<div class="list-view container">
 			<br />
 			<cfloop array="#arrayToLoop#" index="variables.nTripKey">
 				<cfset variables.nCount = 0>

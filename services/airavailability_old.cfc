@@ -66,6 +66,7 @@
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.aSortArrivalPreferred[arguments.Group] = sortByPreferredTime("aSortArrival", arguments.Filter.getSearchID(), arguments.Group, arguments.Filter) />
 				<!--- Mark this leg as priced --->
 				<cfset session.searches[arguments.Filter.getSearchID()].stAvailDetails.stGroups[arguments.Group] = 1>
+				<cfset session.searches[arguments.Filter.getSearchID()].stAvailTrips = addTripIDstAvailTrips(stAvailTrips = session.searches[arguments.Filter.getSearchID()].stAvailTrips)>
 			</cfif>
 		</cfif>
 		<cfreturn />
@@ -96,6 +97,25 @@
 
 			<cfreturn local.stTrips />
 
+	</cffunction>
+
+	<cffunction name="addTripIDstAvailTrips" output="false">
+		<cfargument name="stAvailTrips" required="true">
+
+		<!--- Add a tripID to each each trip --->
+		<cfloop collection="#arguments.stAvailTrips#" index="local.overallGroupIndex" item="local.overallGroupItem">
+			<cfloop collection="#local.overallGroupItem#" index="local.tripIndex" item="local.tripItem">
+				<cfloop collection="#local.tripItem.Groups#" index="local.groupIndex" item="local.groupItem">
+					<cfset local.tripID = ''>
+					<cfloop collection="#local.groupItem.Segments#" index="local.segmentIndex" item="local.segmentItem">
+						<cfset local.tripID = listAppend(local.tripID, local.segmentItem.Carrier&local.segmentItem.FlightNumber&' '&local.segmentItem.Origin&'-'&local.segmentItem.Destination, ',')>
+					</cfloop>
+					<cfset arguments.stAvailTrips[overallGroupIndex][local.tripIndex].Groups[local.groupIndex].tripID = local.tripID>
+				</cfloop>
+			</cfloop>
+		</cfloop>
+
+		<cfreturn arguments.stAvailTrips/>
 	</cffunction>
 
 	<cffunction name="sortByPreferredTime" output="false" hint="I take the depart/arrival sorts and weight the legs closest to requested departure or arrival time.">
