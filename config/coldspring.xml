@@ -98,6 +98,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="userService"><ref bean="UserService" /></constructor-arg>
 		<constructor-arg name="PolicyService"><ref bean="PolicyService" /></constructor-arg>
 		<constructor-arg name="PaymentService"><ref bean="PaymentService" /></constructor-arg>
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 	</bean>
 
 	<bean id="Storage" class="booking.services.Storage" >

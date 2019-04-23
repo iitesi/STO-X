@@ -41,11 +41,6 @@
 
 		</cfif>
 
-		<!--- <cfif structKeyExists(session.searches[SearchID], 'unusedtickets')>
-			<cfset session.Filters[SearchID].setUnusedTicketCarriers( variables.general.getUnusedTickets( ProfileID = arguments.rc.Filter.getProfileID() ) )>
-			<cfdump var=#session.Filters[SearchID].getUnusedTicketCarriers()# abort>
-		</cfif> --->
-
 		<cfset rc.trips = variables.air.doSearch(Account = arguments.rc.Account,
 												Policy = arguments.rc.Policy,
 												Filter = arguments.rc.Filter,

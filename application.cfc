@@ -21,7 +21,7 @@
 		password = 'true',
 		preserveKeyURLKey = 'fw1pk',
 		reload = 'reload',
-		reloadApplicationOnEveryRequest = true,
+		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? true : false),
 		SESOmitIndex = false,
 		siteWideLayoutSubsystem = 'common',
 		subsystemDelimiter = ':',
@@ -209,7 +209,6 @@
 
 		<cfreturn />
 	</cffunction>
-
 	<cffunction name="setupApplicationVariables" output="false">
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />

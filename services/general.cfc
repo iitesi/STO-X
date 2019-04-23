@@ -38,35 +38,4 @@
 		<cfreturn getTrip />
 	</cffunction>
 
-	<!--- <cffunction name="getUnusedTickets">
-		<cfargument name="ProfileId" required="true">
-
-		<cfset local.unusedTicketStruct = {}>
-		<cfif arguments.ProfileID NEQ 0>
-			<cfset local.UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = #arguments.ProfileId# ) />
-<cfdump var=#local.UnusedTickets# abort>
-			<cfloop array="#local.UnusedTickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
-				<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
-					<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
-					<cfloop array="#local.UnusedTickets#" index="local.subUnusedTicketIndex" item="local.subUnusedTicketItem">
-						<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
-							<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
-																										Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
-																										Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
-																										Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
-																										Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
-																										Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
-																									</tr>">
-						</cfif>
-					</cfloop>
-				</cfif>
-			</cfloop>
-			<cfset local.unusedTicketStruct>
-		<cfelse>
-			<cfset local.unusedTicketStruct = [] />
-		</cfif>
-<cfdump var=#local.unusedTicketStruct# abort>
-		<cfreturn local.unusedTicketStruct />
-	</cffunction> --->
-
 </cfcomponent>

@@ -102,6 +102,7 @@
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
 		<!--- response.Segments[G0-B6.124] = Full segment structure --->
 		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
+
 			<cfloop collection="#tripItem.TripSegments#" index="segmentIndex" item="segmentItem">
 				<cfif segmentItem.Group EQ arguments.Group>
 					<cfset segmentCount = arrayLen(segmentItem.Flights)>

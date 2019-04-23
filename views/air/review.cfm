@@ -14,6 +14,10 @@
 							<div class="col-sm-1 center">
 								<img class="carrierimg" src="assets/img/airlines/#Flight.CarrierCode#.png" title="#application.stAirVendors[Flight.CarrierCode].Name#" width="60">
 							</div>
+							<!--- <cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
+								Shane Pitts - Notification for unused tickets UI.
+								<i class="material-icons">notifications</i>
+							</cfif> --->
 							<div class="col-sm-11">
 								<div class="row">
 									<div class="col-sm-5">

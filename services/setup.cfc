@@ -11,6 +11,7 @@
 	<cfproperty name="userService" />
 	<cfproperty name="PolicyService" />
 	<cfproperty name="PaymentService" />
+	<cfproperty name="KrakenService" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="assetURL" type="string" required="true" />
@@ -24,6 +25,7 @@
 		<cfargument name="userService" />
 		<cfargument name="PolicyService" />
 		<cfargument name="PaymentService" />
+		<cfargument name="KrakenService" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -36,6 +38,7 @@
 		<cfset setUserService( arguments.userService ) />
 		<cfset setPolicyService( arguments.PolicyService ) />
 		<cfset setPaymentService( arguments.PaymentService ) />
+		<cfset setKrakenService( arguments.KrakenService ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -197,6 +200,8 @@
 			<cfset session.AcctID = local.getSearch.Acct_ID>
 			<cfset session.policyID = local.getSearch.Policy_ID>
 			<cfset session.DepartmentPreferences = getUserService().getUserDepartment( session.UserID, session.AcctID ) />
+			<cfset local.searchfilter.setUnusedTickets( getUnusedTickets( local.getsearch.Profile_Id ) ) />
+			<cfset local.searchfilter.setUnusedTicketCarriers( getUnusedTicketCarriers( local.getsearch.Profile_Id ) ) />
 
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
 			<cfif NOT arguments.requery
@@ -223,6 +228,39 @@
 		</cfif>
 
 		<cfreturn local.searchfilter/>
+	</cffunction>
+
+	<cffunction name="getUnusedTickets">
+		<cfargument name="ProfileId" required="true">
+
+		<cfset var UnusedTickets = []>
+
+		<cfif arguments.ProfileID NEQ 0>
+
+			<cfset UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = arguments.ProfileId ) />
+
+		</cfif>
+
+		<cfreturn UnusedTickets />
+	</cffunction>
+
+	<cffunction name="getUnusedTicketCarriers">
+		<cfargument name="ProfileId" required="true">
+
+		<cfset var UnusedTicketCarriers = {}>
+
+		<cfif arguments.ProfileID NEQ 0>
+
+			<cfset var UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = arguments.ProfileId ) />
+
+			<cfloop array="#UnusedTickets#" index="local.index" item="local.UnusedTicket">
+
+				<cfset UnusedTicketCarriers[UnusedTicket.Carrier] = ''>
+
+			</cfloop>
+		</cfif>
+
+		<cfreturn UnusedTicketCarriers />
 	</cffunction>
 
 	<cffunction name="setAccount" output="false">

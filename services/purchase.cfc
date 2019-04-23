@@ -238,7 +238,7 @@
 					FlightPricingSegments : FlightPricingSegments,
 					SearchId : Filter.getSearchId(),
 					AirLowestFare : 338.37,
-					ApplyUnusedTickets : false,
+					ApplyUnusedTickets : structKeyExists(Filter.getUnusedTicketCarriers(), Air[0].PlatingCarrier),
 					AirOutOfPolicyReasonCode : "",
 					HotelNotBookedReasonCode : Traveler.getBookingDetail().getHotelNotBooked(),
 					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getAirFOPID()) ? Traveler.getBookingDetail().getAirFOPID() : getToken(Traveler.getBookingDetail().getAirFOPID(), 2, '_')
@@ -247,8 +247,6 @@
 			};
 		</cfscript>
 
-		<!--- Dohmen to do - ApplyUnusedTickets --->
-		<!--- Dohmen to do - ApplyUnusedTickets --->
 		<!--- Dohmen to do - AirOutOfPolicyReasonCode --->
 		<!--- Dohmen to do - HotelNotBookedReasonCode --->
 

@@ -31,6 +31,10 @@
 									data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
 									class="mdi mdi-alert flight-result-warning"></span>
 							</cfif>
+							<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
+								<!--- Shane Pitts - Notification for unused tickets UI. --->
+								<i class="material-icons">notifications</i>
+							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
 						</div>
 						<div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div>
