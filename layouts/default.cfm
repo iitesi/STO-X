@@ -142,15 +142,13 @@
 									<a class="navbar-brand" id="mainlogo"  href="#rc.filter.getSiteUrl()#" title="Home">
 								<cfelse>
 									<a class="navbar-brand" id="mainlogo"  href="#application.sPortalURL#" title="Home">
-								</cfif>
-									<cfhttp url="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" method="get" timeout="5" result="local.logo"> 
+								</cfif> 
 									<cfif structKeyExists(rc, "account")
 										AND isStruct(rc.account)
 										AND NOT structIsEmpty(rc.account)
 										AND rc.account.acct_ID NEQ 1
-										AND len(trim(rc.account.account_logo))
-										AND local.logo.status_Code eq '200'>
-										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" alt="#rc.account.account_name#"/>
+										AND len(trim(rc.account.account_logo)) >
+										<img src="https://www.shortstravel.com/TravelPortalV2/Images/Clients/#rc.account.account_logo#" onerror="this.src='/booking/assets/img/clients/STO-Logo.png';" /> 
 									<cfelse> 
 										<img src="/booking/assets/img/clients/STO-Logo.png" alt="Short's Travel Management" />
 									</cfif>
