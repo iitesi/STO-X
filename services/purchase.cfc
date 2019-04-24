@@ -258,9 +258,6 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Hotel" requred="true" />
 
-		<!--- Dohmen Multiple hotel rooms?
-		arguments.Traveler.getBookingDetail().getHotelSpecialRequests(),"[^0-9A-Za-z\s]","","all")) --->
-
 		<cfscript>
 			var Filter = arguments.Filter;
 			var Traveler = arguments.Traveler;
@@ -321,27 +318,6 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Vehicle" requred="true" />
 
-<!--- 
-
-	<cfif arguments.Vehicle.getPickUpLocationType() NEQ 'Airport'
-		AND arguments.Vehicle.getPickUpLocationType() NEQ 'Terminal'
-		AND arguments.Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport'>
-
-		PickupLocationType="#arguments.Vehicle.getPickUpLocationType()#"
-		PickupLocationNumber="#arguments.Vehicle.getPickUpLocationID()#"
-
-	</cfif>
-
-		<cfif arguments.Vehicle.getDropOffLocationType() NEQ 'Airport'
-			AND arguments.Vehicle.getDropOffLocationType() NEQ 'Terminal'
-			AND arguments.Vehicle.getDropOffLocationType() NEQ 'ShuttleOffAirport'>
-
-			ReturnLocationType="#arguments.Vehicle.getDropOffLocationType()#"
-			ReturnLocationNumber="#arguments.Vehicle.getDropOffLocationID()#"
-
-		</cfif>
- --->
-
 		<cfscript>
 			var Filter = arguments.Filter;
 			var Traveler = arguments.Traveler;
@@ -374,7 +350,9 @@
 					VehicleOutOfPolicyReasonCode : Traveler.getBookingDetail().getCarReasonCode(),
 					// Dohmen To Do
 					Carrier : '',
-					FlightNumber : ''
+					FlightNumber : '',
+					HotelNotBookedReasonCode = Traveler.getBookingDetail().getHotelNotBooked(),
+					HotelWhereStayingNotOnItinerary = Traveler.getBookingDetail().getHotelWhereStaying()
 				};
 
 				if (len(Vehicle.getPickUpLocationID()) AND Vehicle.getPickUpLocationType() NEQ 'Airport' AND Vehicle.getPickUpLocationType() NEQ 'Terminal' AND Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport') {
