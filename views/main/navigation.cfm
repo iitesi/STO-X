@@ -34,6 +34,26 @@
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
 			<ul class="nav navbar-nav navbar-right">
+				<cfif structKeyExists(session, 'Filters')
+					AND structKeyExists(session.Filters, rc.SearchId)
+					AND arrayLen(session.Filters[rc.SearchId].getUnusedTickets())>
+
+					<!--- Shane Pitts - Notification for unused tickets UI. --->
+					<!--- 
+					Hover over should read...
+					Unused Ticket(s)
+					* $346 expiring Apr 6, 2020 on United Airlines.
+					* $632 expiring Jul 7, 2020 on American Airlines.
+					<cfloop array="#session.filters[rc.SearchId].getUnusedTickets()#" index="UnusedTicketIndex" item="UnusedTicketItem">
+						<li>$#Round(UnusedTicketItem.Airfare)# expiring #DateFormat(UnusedTicketItem.ExpirationDate, 'mmm d, yyyy')# on #UnusedTicketItem.CarrierName#</li>
+					</cfloop>
+					--->
+
+					<li>
+						<span class="badge badge-notify">#arrayLen(session.Filters[rc.SearchId].getUnusedTickets())#</span>
+					</li>
+
+				</cfif>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<!---Menu-for mobile STO --->
 					<li>
@@ -54,7 +74,7 @@
 				<cfif showAirTab>
 					<!---Air--->
 					<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
-						<a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Air</a>
+						<a href="#buildURL('air?SearchID=#rc.SearchID#')#">Air</a>
 					</li>
 				<cfelseif rc.filter.getPassthrough() NEQ 1 AND NOT (structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO")>
 					<!---Air--->

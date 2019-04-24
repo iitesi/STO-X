@@ -11,6 +11,7 @@
 	<cfproperty name="userService" />
 	<cfproperty name="PolicyService" />
 	<cfproperty name="PaymentService" />
+	<cfproperty name="KrakenService" />
 
 	<cffunction name="init" output="false">
 		<cfargument name="assetURL" type="string" required="true" />
@@ -24,6 +25,7 @@
 		<cfargument name="userService" />
 		<cfargument name="PolicyService" />
 		<cfargument name="PaymentService" />
+		<cfargument name="KrakenService" />
 
 		<cfset setAssetURL( arguments.AssetURL ) />
 		<cfset setBookingDSN( arguments.bookingDSN ) />
@@ -36,6 +38,7 @@
 		<cfset setUserService( arguments.userService ) />
 		<cfset setPolicyService( arguments.PolicyService ) />
 		<cfset setPaymentService( arguments.PaymentService ) />
+		<cfset setKrakenService( arguments.KrakenService ) />
 
 		<cfreturn this>
 	</cffunction>
@@ -197,6 +200,8 @@
 			<cfset session.AcctID = local.getSearch.Acct_ID>
 			<cfset session.policyID = local.getSearch.Policy_ID>
 			<cfset session.DepartmentPreferences = getUserService().getUserDepartment( session.UserID, session.AcctID ) />
+			<cfset local.searchfilter.setUnusedTickets( getUnusedTickets( local.getsearch.Profile_Id ) ) />
+			<cfset local.searchfilter.setUnusedTicketCarriers( getUnusedTicketCarriers( local.getsearch.Profile_Id ) ) />
 
 			<!--- If coming from any of the change search forms, don't wipe out other (air, hotel, or car) data --->
 			<cfif NOT arguments.requery
@@ -216,10 +221,6 @@
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.aCarriers = {}>
 				<cfset session.searches[arguments.SearchID].stLowFareDetails.stResults = {}>
 				<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
-				<cfset session.searches[arguments.SearchID].stSelected[0] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[1] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[2] = {}>
-				<cfset session.searches[arguments.SearchID].stSelected[3] = {}>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
 		<cfelse>
@@ -227,6 +228,39 @@
 		</cfif>
 
 		<cfreturn local.searchfilter/>
+	</cffunction>
+
+	<cffunction name="getUnusedTickets">
+		<cfargument name="ProfileId" required="true">
+
+		<cfset var UnusedTickets = []>
+
+		<cfif arguments.ProfileID NEQ 0>
+
+			<cfset UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = arguments.ProfileId ) />
+
+		</cfif>
+
+		<cfreturn UnusedTickets />
+	</cffunction>
+
+	<cffunction name="getUnusedTicketCarriers">
+		<cfargument name="ProfileId" required="true">
+
+		<cfset var UnusedTicketCarriers = {}>
+
+		<cfif arguments.ProfileID NEQ 0>
+
+			<cfset var UnusedTickets = getKrakenService().getUnusedTickets( ProfileId = arguments.ProfileId ) />
+
+			<cfloop array="#UnusedTickets#" index="local.index" item="local.UnusedTicket">
+
+				<cfset UnusedTicketCarriers[UnusedTicket.Carrier] = ''>
+
+			</cfloop>
+		</cfif>
+
+		<cfreturn UnusedTicketCarriers />
 	</cffunction>
 
 	<cffunction name="setAccount" output="false">
@@ -456,8 +490,6 @@
 				<cfset local.stTemp.CDNumbers[local.qCDNumbers.Value_ID][local.qCDNumbers.Vendor_Code].DBType = local.qCDNumbers.DB_Type>
 			</cfloop>
 
-
-
 			<cfset application.Policies[arguments.policyID] = local.stTemp>
 		</cfif>
 
@@ -477,11 +509,20 @@
 		<cfloop query="local.qAirVendors">
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Name = local.qAirVendors.ShortName>
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag1 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].CheckInBag1 = 0>
 			<cfset local.stTemp[local.qAirVendors.VendorCode].Bag2 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].CheckInBag2 = 0>
+			<cfset local.stTemp[local.qAirVendors.VendorCode].BaggageLink = ''>
 		</cfloop>
+		<cfset local.stTemp.Mult.Name = 'Multiple Carriers'>
+		<cfset local.stTemp.Mult.Bag1 = 0>
+		<cfset local.stTemp.Mult.CheckInBag1 = 0>
+		<cfset local.stTemp.Mult.Bag2 = 0>
+		<cfset local.stTemp.Mult.CheckInBag2 = 0>
+		<cfset local.stTemp.Mult.BaggageLink = ''>
 
 		<cfquery name="local.qBagFees" datasource="Corporate_Production">
-			SELECT ShortCode, OnlineDomBag1, OnlineDomBag2
+			SELECT ShortCode, OnlineDomBag1, DomBag1, OnlineDomBag2, DomBag2, Baggage_Link
 			FROM OnlineCheckIn_Links, Suppliers
 			WHERE OnlineCheckIn_Links.AccountID = Suppliers.AccountID
 				AND (OnlineDomBag1 IS NOT NULL AND OnlineDomBag1 <> 0)
@@ -490,7 +531,10 @@
 
 		<cfloop query="local.qBagFees">
 			<cfset local.stTemp[local.qBagFees.ShortCode].Bag1 = local.qBagFees.OnlineDomBag1>
+			<cfset local.stTemp[local.qBagFees.ShortCode].CheckInBag1 = local.qBagFees.DomBag1>
 			<cfset local.stTemp[local.qBagFees.ShortCode].Bag2 = local.qBagFees.OnlineDomBag2>
+			<cfset local.stTemp[local.qBagFees.ShortCode].CheckInBag2 = local.qBagFees.DomBag2>
+			<cfset local.stTemp[local.qBagFees.ShortCode].BaggageLink = local.qBagFees.Baggage_Link>
 		</cfloop>
 
 		<cfset application.stAirVendors = local.stTemp>

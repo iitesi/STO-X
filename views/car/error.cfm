@@ -7,7 +7,7 @@
 <ul>
 <cfoutput>
 	<cfif rc.Filter.getAir()>
-        <li><a href="#buildURL('air.lowfare?SearchID=#rc.SearchID#')#">Search for air</a></li>
+        <li><a href="#buildURL('air?SearchID=#rc.SearchID#')#">Search for air</a></li>
 	</cfif>
 </cfoutput>
 </ul>

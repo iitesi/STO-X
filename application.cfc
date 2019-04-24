@@ -85,6 +85,8 @@
 				<cfset controller('setup.setBlackListedCarrierPairing')/>
 			</cfif>
 		</cfif>
+		<cfset controller('setup.cleanOutOldSearchIDs')/>
+
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">

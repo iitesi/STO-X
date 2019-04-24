@@ -1,3 +1,33 @@
+<cfoutput>
+	<cfif rc.filter.getAirType() IS "MD">
+		<h1>#rc.Filter.getAirHeading()#</h1>
+		<ul class="unstyled">
+			<cfloop array="#rc.filter.getLegsHeader()#" item="nLegItem" index="nLegIndex">
+				<li><h2>#ListFirst(nLegItem, '::')# <small>:: #ListLast(nLegItem, "::")#</small></h2></li>
+			</cfloop>
+		</ul>
+	<cfelse>
+		<h1>
+			<a href="#buildURL('air&SearchID=#rc.SearchID#')#">
+				#ListFirst(rc.Filter.getAirHeading(), "::")#
+				<small>:: #ListLast(rc.Filter.getAirHeading(), "::")#</small>
+			</a>
+		</h1>
+	</cfif>
+
+	<cfif structKeyExists(session, 'cookieToken')
+		AND structKeyExists(session, 'cookieDate')>
+		<cfif listFindNoCase("beta,beta.shortstravel.com", cgi.server_name)>
+			<cfset frameSrc ="https://beta.shortstravel.com/search/index.cfm?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#">
+		<cfelseif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1 AND len(trim(rc.filter.getWidgetUrl()))>
+			<cfset frameSrc = (cgi.https EQ 'on' ? 'https' : 'http')&'://'&cgi.Server_Name&'/search/index.cfm?'&rc.filter.getWidgetUrl()&'&token=#session.cookieToken#&date=#session.cookieDate#' />
+		<cfelse>
+			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
+		</cfif>
+		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
+	</cfif>
+</cfoutput>
+
 <cfsilent>
 
 	<cfset buttonPrice = "">
@@ -34,16 +64,8 @@
 	<cfif structKeyExists(rc, "group") AND Len(rc.group)>
 		<cfset popoverTitle = "">
 		<cfset popoverContent = "Click to return to main search results">
-		<cfset popoverLink = "index.cfm?action=air.lowfare&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
+		<cfset popoverLink = "index.cfm?action=air&SearchID=#rc.searchID#&clearSelected=1"> <!--- back to price page --->
 		<cfset popoverButtonClass = "">
-	</cfif>
-
-	<cfif StructKeyExists(rc, "clearSelected") AND rc.clearSelected EQ 1>
-		<cfset session.searches[rc.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[rc.SearchID].stSelected[0] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[1] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[2] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[3] = {}>
 	</cfif>
 </cfsilent>
 
@@ -56,17 +78,16 @@
 				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 					<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
 				<cfelse>
-					<li role="presentation"><a href="#buildURL('air.availability?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
-					<!--- Show icon indicating this is the leg they selected --->
-					<cfif NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])><i class="icon-ok"></i></cfif>
-					#nLegItem#</a></li>
+					<li role="presentation"><a href="#buildURL('air?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+						<!--- Show icon indicating this is the leg they selected --->
+						<cfif structKeyExists(session.searches[rc.SearchID].stSelected, nLegIndex-1)
+							AND NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])>
+							<i class="icon-ok"></i>
+						</cfif>
+						#nLegItem#</a>
+					</li>
 				</cfif>
 			</cfloop>
-		</cfif>
-		<cfif structKeyExists(session.searches[rc.SearchID], "stTrips")
-			AND structKeyExists(session.searches[rc.SearchID], "stLowFareDetails")
-			ANd structKeyExists(session.searches[rc.SearchID].stLowFareDetails, "aSortFare")>
-			<li role="presentation" class="#popoverButtonClass#"><a href="#popoverLink#" <cfif popoverButtonClass EQ 'active'>class=" legbtn"<cfelse>class="airModal legbtn"</cfif> rel="poptop" data-modal="Roundtrip Flights" data-original-title="#popoverTitle#" data-content="#popoverContent#">#buttonText#</a></li>
 		</cfif>
 		</ul>
 	</div>

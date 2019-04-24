@@ -36,11 +36,14 @@
 			<!--[if IE 7]>
 				<link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css" media="screen">
 			<![endif]-->
+			<link href="assets/css/bootstrap-drawer.min.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
+			<link href="assets/css/ion.rangeSlider.min.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/layout.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/style.css?v=#application.staticAssetVersion#" rel="stylesheet" media="screen">
 			<link href="assets/css/print.css?v=#application.staticAssetVersion#" rel="stylesheet" media="print">
 			<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 			<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+			<link href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" rel="stylesheet">
 
 			<!--- override header colors for TMC so their light logos will display properly --->
 			<cfif structKeyExists(rc,"account") AND StructKeyExists(rc.account,"tmc") AND rc.account.tmc.getIsExternal() EQ 1>
@@ -64,14 +67,18 @@
 				<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 			<![endif]-->
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-			<script src="https://use.fontawesome.com/4ba3a7fb90.js"></script>
 			<script src="assets/js/jquery.plugins.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+			<script src="https://use.fontawesome.com/4ba3a7fb90.js"></script>
+			
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/ion.rangeSlider.min.js?v=201703094"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
 		</cfoutput>
 	</head>
@@ -207,7 +214,8 @@
 
 			<section id="main-content">
 				<cfoutput>
-					<div class="container">
+					#view( "cart/drawer" )#
+					<div id="page-content-wrapper" class="container">
 						#view( "helpers/messages" )#
 						<!--- Simple test to see if session still exists. --->
 						<cfif Len(session.userID) AND StructKeyExists(session, "searches")>

@@ -67,6 +67,17 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 		<h1>Purchase Reservation</h1>
 
+		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
+		<cfif NOT structIsEmpty(rc.SellErrorMessages)>
+			<cfloop list="#structKeyList(rc.SellErrorMessages)#" index="i">
+				<cfif isArray(rc.SellErrorMessages[i]) AND arrayLen(rc.SellErrorMessages[i])>
+					<cfloop array="#rc.SellErrorMessages[i]#" index="MessageIndex" item="Message">
+						#Message#<br>
+					</cfloop>
+				</cfif>
+			</cfloop>
+		</cfif>
+
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#"> 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
@@ -108,8 +119,9 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="requireHotelCarFee" id="requireHotelCarFee" value="#rc.account.Require_Hotel_Car_Fee#">
-			<input type="hidden" name="carriers" id="carriers" value=#(rc.airSelected ? serializeJSON(rc.Air.Carriers) : '')#>
-			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air.platingCarrier : '')#>
+			<!--- Dohmen to do --->
+			<input type="hidden" name="carriers" id="carriers" value='[#(rc.airSelected ? '"'&rc.Air[0].PlatingCarrier&'"' : '')#]'>
+			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air[1].platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
 			<input type="hidden" name="chainCode" id="chainCode" value="#(rc.hotelSelected ? rc.Hotel.getChainCode() : '')#">
 			<input type="hidden" name="masterChainCode" id="masterChainCode" value="#(rc.hotelSelected ? rc.Hotel.getMasterChainCode() : '')#">
@@ -119,6 +131,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="airFee" id="airFee" value="#rc.fees.airFee#">
 			<input type="hidden" name="requestFee" id="requestFee" value="#rc.fees.requestFee#">
 			<input type="hidden" name="errors" id="errors" value="#structKeyList(rc.errors)#">
+			<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="">
 
 			<div id="traveler" class="tab_content">
 				<p>

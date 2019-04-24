@@ -1,7 +1,3 @@
-<style type="text/css">
-.rateAudit {background-color: #F4F3F4; padding: 5px; max-width: 480px; }
-.auditTitle {font-size: 13px; color: black; font-weight: bold !important; display:block; padding: 5px 0px;}
-</style>
 <cfset qryFutureTrips = application.fw.factory.getBean("TripManager").getFutureTrips(userId=session.userId)/>
 <div class="container-fluid" id="Main">
 	<div class="row">
@@ -22,14 +18,6 @@
 									<p style="font-size:13px;padding:0 0 5px 0;">
 										#TravelerDisplay#
 									</p>
-									<cfif faredifference NEQ 0>
-										<cfset symbol = newfare GT oldfare ? '+' : '-'>
-										<div class="rateAudit">
-											<span class="auditTitle">RATE AUDIT</span>
-											TICKETED: #dollarFormat(oldfare)# (#dateFormat(invoicedate, 'mm/dd/yyyy')#)<br>
-											#dateFormat(time_stamp, 'mm/dd/yyyy')#: #dollarFormat(newfare)# (#symbol##dollarFormat(faredifference)#)
-										</div>
-									</cfif>
 									<cfif Ticketed eq "TICKETED">
 										<p style="font-size:11px;padding:0 0 5px 0;">
 											<img src="/booking/assets/img/airlines/#trim(VendorCode)#_sm.png"/>

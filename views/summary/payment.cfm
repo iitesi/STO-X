@@ -93,7 +93,8 @@
 		</div>
 
 		<div class="blue bold text-right">
-			<a rel="popover" data-original-title="Flight change/cancellation policy"
+			<!--- Dohmen to do --->
+			<!--- <a rel="popover" data-original-title="Flight change/cancellation policy"
 				data-content="
 					Ticket is
 					<cfif val(rc.Air.ref) eq 0>
@@ -110,7 +111,7 @@
 					</cfif>
 				" href="##"/>
 				Flight change/cancellation policy
-			</a>
+			</a> --->
 		</div>
 
 		</div>

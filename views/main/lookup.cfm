@@ -1,4 +1,5 @@
-<cfif listFind(application.es.getDeveloperIDs(), rc.Filter.getUserID())>
+<cfdump var="#rc.Filter.getUserID()#">
+
 	<cftry>
 		<cfif rc.view EQ 'trips'>
 			<cfdump var="#session.searches[rc.searchID].stTrips#">
@@ -7,6 +8,9 @@
 			<cfdump var="#structKeyList(session.searches[rc.searchID].stAvailTrips[1])#" label="Group 1 keys">
 			<cfdump var="#structKeyList(session.searches[rc.searchID].stAvailTrips[2])#" label="Group 2 keys">
 			<cfdump var="#structKeyList(session.searches[rc.searchID].stAvailTrips[3])#" label="Group 3 keys">
+		<cfelseif rc.view EQ 'storage'>
+			<cfdump var="#structKeyList(session.storage)#" label="Storage">
+			<cfdump var="#session.storage#" label="Storage">
 		<cfelseif rc.view EQ 'cars'>
 			<cfdump var="#session.searches[rc.searchID].stCars#">
 		<cfelseif rc.view EQ 'travelers'>
@@ -19,4 +23,3 @@
 		View not found
 	</cfcatch>
 	</cftry>
-</cfif>

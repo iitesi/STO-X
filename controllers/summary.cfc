@@ -28,6 +28,13 @@
 		<cfparam name="rc.passwordConfirm" default="" />
 		<cfparam name="rc.priceQuotedError" default="0">
 
+		<cfif structKeyExists(session.searches[SearchId], 'Sell')
+			AND session.searches[SearchId].Sell.Messages.HasErrors>
+			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell.Messages.Errors>
+		<cfelse>
+			<cfset rc.SellErrorMessages = {}>
+		</cfif>
+
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>
@@ -607,10 +614,10 @@
 			<cfset local.originalHotelFOPID = rc.Traveler.getBookingDetail().getHotelFOPID() />
 			<cfif internalTMC>
 				<cfset rc.Traveler = fw.getBeanFactory().getBean('UserService').loadFullUser(userID = rc.userID
-					, acctID = rc.Filter.getAcctID()
-					, valueID = rc.Filter.getValueID()
-					, arrangerID = rc.Filter.getUserID()
-					, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
+																							, acctID = rc.Filter.getAcctID()
+																							, valueID = rc.Filter.getValueID()
+																							, arrangerID = rc.Filter.getUserID()
+																							, vendor = (rc.vehicleSelected ? rc.Vehicle.getVendorCode() : ''))>
 				<cfset local.BookingDetail = createObject('component', 'booking.model.BookingDetail').init()>
 				<cfset rc.Traveler.setBookingDetail( BookingDetail )>
 				<cfset session.searches[rc.SearchID].travelers[rc.travelerNumber] = rc.Traveler>
@@ -656,23 +663,21 @@
 			<!--- <cfdump var="#rc.Traveler.getBookingDetail().getUnusedTickets()#" /><cfabort /> --->
 			<cfif rc.airSelected>
 				<cfset local.airFound = false>
-				<cfloop array="#rc.Air.Carriers#" item="local.carrier">
-					<cfset local.airFound = false>
-					<cfloop array="#rc.Traveler.getLoyaltyProgram()#" item="local.program" index="local.programIndex">
-						<cfif program.getShortCode() EQ carrier
-							AND program.getCustType() EQ 'A'>
-							<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc['airFF#carrier#'] )>
-							<cfset local.airFound = true>
-						</cfif>
-					</cfloop>
-					<cfif NOT local.airFound>
-						<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
-						<cfset rc.LoyaltyProgram.setShortCode( carrier )>
-						<cfset rc.LoyaltyProgram.setCustType( 'A' )>
-						<cfset rc.LoyaltyProgram.setAcctNum( rc['airFF#carrier#'] )>
-						<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+				<cfset local.airFound = false>
+				<cfloop array="#rc.Traveler.getLoyaltyProgram()#" item="local.program" index="local.programIndex">
+					<cfif program.getShortCode() EQ rc.Air[0].PlatingCarrier
+						AND program.getCustType() EQ 'A'>
+						<cfset rc.Traveler.getLoyaltyProgram()[local.programIndex].setAcctNum( rc['airFF#rc.Air[0].PlatingCarrier#'] )>
+						<cfset local.airFound = true>
 					</cfif>
 				</cfloop>
+				<cfif NOT local.airFound>
+					<cfset rc.LoyaltyProgram = fw.getBeanFactory().getBean('LoyaltyProgramService').new()>
+					<cfset rc.LoyaltyProgram.setShortCode( rc.Air[0].PlatingCarrier )>
+					<cfset rc.LoyaltyProgram.setCustType( 'A' )>
+					<cfset rc.LoyaltyProgram.setAcctNum( rc['airFF#rc.Air[0].PlatingCarrier#'] )>
+					<cfset arrayAppend( rc.Traveler.getLoyaltyProgram(), rc.LoyaltyProgram )>
+				</cfif>
 				<cfset local.seats = {}>
 				<cfloop list="#rc.seatFieldNames#" index="local.seat">
 					<cfset local.seats[local.seat] = uCase( rc[local.seat] )>

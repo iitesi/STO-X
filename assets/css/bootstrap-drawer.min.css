@@ -1,0 +1,122 @@
+#main-header .navbar {
+    margin-bottom: 0;
+}
+
+.nav .open > a, 
+.nav .open > a:hover, 
+.nav .open > a:focus {background-color: transparent;}
+
+/*-------------------------------*/
+/*           Wrappers            */
+/*-------------------------------*/
+
+#main-content {
+    position: relative;
+}
+
+#sidebar-wrapper {
+    position: absolute;
+    z-index: 1000;
+    right: 330px;
+    width: 0;
+    height: 100%;
+    margin-right: -330px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #fff;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    border-radius: 0;
+    border-left:1px solid #fff;
+}
+
+#sidebar-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+#main-content.toggled #sidebar-wrapper {
+    width: 330px;
+    border-left:1px solid #ababab;
+    -webkit-box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.08);
+    box-shadow: -5px 0px 5px 0px rgba(0,0,0,0.08);
+}
+
+
+/*-------------------------------*/
+/*     Sidebar nav styles        */
+/*-------------------------------*/
+
+.sidebar-nav {
+    position: relative;
+    top: 0;
+    width: 330px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    position: relative; 
+    line-height: 20px;
+    display: inline-block;
+    width: 100%;
+    padding: 7px 15px;
+}
+
+.sidebar-nav > .sidebar-header {
+    height: 65px;
+    font-size: 20px;
+    line-height: 44px;
+}
+
+/*-------------------------------*/
+/*       cart-icon-Cross         */
+/*-------------------------------*/
+
+#main-content.toggled .cart-open-icon {
+    /* margin-right: 330px; */
+    opacity: 0;
+}
+
+.cart-open-icon {
+  position: absolute;
+  top: 15px;  
+  right:15px;
+  z-index: 999;
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin-right: 15px;
+  background: transparent;
+  border: none;
+  opacity: 1;
+  -webkit-transition: all 0.8s ease;
+  -moz-transition: all 0.8s ease;
+  -o-transition: all 0.8s ease;
+  transition: all 0.8s ease;
+}
+.cart-open-icon:hover,
+.cart-open-icon:focus,
+.cart-open-icon:active {
+  outline: none;
+}
+
+.cart-close-icon {
+    position: absolute;
+    top: 2px;  
+    right:2px;
+    z-index: 999;
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    background: transparent;
+    border: none;
+  }
+  .cart-close-icon:hover,
+  .cart-close-icon:focus,
+  .cart-close-icon:active {
+    outline: none;
+  }

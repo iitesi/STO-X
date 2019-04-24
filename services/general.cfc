@@ -1,6 +1,11 @@
-<cfcomponent output="false">
+<cfcomponent output="false" accessors="true" extends="com.shortstravel.AbstractService">
+	<cfproperty name="KrakenService">
 
-	<cffunction name="init" output="false">
+	<cffunction name="init" output="false" hint="Init method.">
+		<cfargument name="KrakenService">
+
+		<cfset setKrakenService(arguments.KrakenService)>
+
 		<cfreturn this>
 	</cffunction>
 
@@ -32,4 +37,5 @@
 		</cfquery>
 		<cfreturn getTrip />
 	</cffunction>
+
 </cfcomponent>

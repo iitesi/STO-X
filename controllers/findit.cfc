@@ -20,12 +20,6 @@
 
 		<cfset local.trip = deserializeJSON(local.getTrip.tripData)>
 
-		<cfset local.stSelected = structNew("linked")>
-		<cfset local.stSelected[0].Groups = structNew("linked")>
-		<cfset local.stSelected[1].Groups = structNew("linked")>
-		<cfset local.stSelected[2].Groups = structNew("linked")>
-		<cfset local.stSelected[3].Groups = structNew("linked")>
-
 		<cfloop from="0" to="#arrayLen(structKeyArray(local.trip.Groups))-1#" index="local.index">
 			<cfset local.stSelected[local.index].Groups[0].segments = structNew("linked")>
 			<cfloop collection="#local.trip.Groups[local.index].segments#" index="local.segmentIndex" item="local.segment">

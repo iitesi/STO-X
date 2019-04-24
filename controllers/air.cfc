@@ -1,411 +1,131 @@
 <cfcomponent extends="abstract" accessors="true">
 
 	<!--- // DEPENDENCY INJECTION --->
-	<cfproperty name="airAvailability" setter="true" getter="false">
+	<cfproperty name="Air" setter="true" getter="false">
 	<cfproperty name="airPrice" setter="true" getter="false">
 	<cfproperty name="email" setter="true" getter="false">
 	<cfproperty name="general" setter="true" getter="false">
 	<cfproperty name="lowFare" setter="true" getter="false">
 	<cfproperty name="lowFareavail" setter="true" getter="false">
+	<cfproperty name="Itinerary" setter="true" getter="false">
 
-	<cffunction name="lowfareavail" output="false" hint="I assemble low fares for display.">
+	<cffunction name="default" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
-		<cfset rc.viewRefundable = false>
-		<cfset rc.viewNonRefundable = true>
-		<cfif !StructKeyExists(rc,'bRefundable')>
-			<cfset rc.bRefundable = 0>
-		</cfif>
-		<cfif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1 AND rc.Policy.Policy_AirNonRefRule EQ 0>
-			<cfset rc.bRefundable = 1>
-			<cfset rc.viewRefundable = true>
-			<cfset rc.viewNonRefundable = false>
-		<cfelseif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1>
-			<cfset rc.viewRefundable = true>
-		</cfif>
+		<cfset var SearchID = SearchID>
+		<cfset var Group = structKeyExists(arguments.rc, 'Group') AND arguments.rc.Group NEQ '' ? arguments.rc.Group : 0>
 
-		<cfif structKeyExists(arguments.rc, "airlines")
-			AND arguments.rc.airlines EQ 1>
-			<cfset rc.filter.setAirlines("")>
-		</cfif>
-
-		<cfset doUnusedTicketSetup(arguments.rc)>
-		<!---??????<cfif StructKeyExists(arguments.rc,"SoldOutTrip")>
-			<cfset variables.lowfare.unSelectAir(arguments.rc.searchID,arguments.rc.SoldOutTrip)>
-		</cfif>--->
-
-		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
-		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
-
-			<cfif NOT structKeyExists(arguments.rc, 'bSelect')> <!---IF WE HAVEN'T SELECTED A FLIGHT--->
-				<!--- throw out threads and get lowfare pricing--->
-				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
-				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-				<cfset arguments.rc.allCabinClasses = true>
-				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
-				<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
-				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
-					<cfset sleep(10000)>
-					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
-				</cfif>			
-				<!--- Throw out a threads and get availability --->
-				<cfset rc.stLowFareAvail =  variables.lowfareavail.createLowFareAvail(	stTrips = session.searches[rc.searchid].stTrips,
-																						stAvailTrips = session.searches[rc.SearchID].stAvailTrips,
-																						Group = rc.Group )>
-			<cfelse>
-				<!--- Select --->
-				<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
+		<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
+			<cfif SegmentIndex-1 GTE Group>
+				<cfset session.searches[SearchID].stItinerary.Air[SegmentIndex-1] = {}>
 			</cfif>
-
-			<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
-			<cfset checkFilterStatus(arguments.rc)>
-
-		</cfif>
-
-		<cfset rc.totalFlights = structCount(session.searches[rc.SearchID].stAvailTrips[rc.Group])>
-
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-
-			<!--- need to set a flag for the first group added and then check it for
-				NW flights, which can't be combined with other carriers --->
-			<cfif NOT structKeyExists(arguments.rc, "firstSelectedGroup")>
-				<cfset rc.southWestMatch = false>
-				<cfset rc.firstSelectedGroup = arguments.rc.group>
-				<cfif session.searches[arguments.rc.SearchID].stSelected[arguments.rc.group].carriers[1] EQ "WN">
-					<cfset rc.southWestMatch = true>
-				</cfif>
-			</cfif>
-
-			<!--- continue looping over legs and populating stSelected --->
-			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.nLeg" index="local.nLegIndex">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[local.nLegIndex-1])>
-					<cfset variables.fw.redirect(action='air.lowfareavail', queryString='SearchID=#arguments.rc.SearchID#&Group=#local.nLegIndex-1#'
-						, preserve='firstSelectedGroup,southWestMatch')>
-				</cfif>
-			</cfloop>
-
-			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#')>
-		</cfif>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="lowfare" output="false" hint="I assemble low fares for display.">
-		<cfargument name="rc">
-		<cfset rc.viewRefundable = false>
-		<cfset rc.viewNonRefundable = true>
-		<cfif !StructKeyExists(rc,'bRefundable')>
-			<cfset rc.bRefundable = 0>
-		</cfif>
-		<cfset doUnusedTicketSetup(arguments.rc)>
-		<cfif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1 AND rc.Policy.Policy_AirNonRefRule EQ 0>
-			<cfset rc.bRefundable = 1>
-			<cfset rc.viewRefundable = true>
-			<cfset rc.viewNonRefundable = false>
-		<cfelseif IsStruct(rc.Policy) AND rc.Policy.Policy_AirRefRule EQ 1>
-			<cfset rc.viewRefundable = true>
-		</cfif>
-
-		<cfif structKeyExists(arguments.rc, "airlines")
-			AND arguments.rc.airlines EQ 1>
-			<cfset rc.filter.setAirlines("")>
-		</cfif>
-		<cfif StructKeyExists(arguments.rc,"SoldOutTrip")>
-			<cfset variables.lowfare.unSelectAir(arguments.rc.searchID,arguments.rc.SoldOutTrip)>
-		</cfif>
-		<!--- Even though measures are in place on the search widget to prevent users from selecting a start date that is earlier than now, a few users have gotten through --->
-		<cfif structKeyExists(arguments.rc, "filter")	AND dateDiff('d', now(), arguments.rc.filter.getDepartDateTime()) GTE 0>
-			<cfif NOT structKeyExists(arguments.rc, 'bSelect')> <!---IF WE HAVEN'T SELECTED A FLIGHT--->
-				<!--- throw out threads and get lowfare pricing
-				<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>--->
-				<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-				<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
-
-
-					<!--- if we're coming from FindIt we need to run the search (above) then pass it along to selectAir with our nTripKey --->
-				<cfif structKeyExists(arguments.rc, "findIt") AND arguments.rc.findIt EQ 1>
-					<cfset sleep(10000)>
-					<cfset variables.lowfare.selectAir(argumentcollection=arguments.rc)>
-				</cfif>
-			<cfelse>
-				<!---IF WE HAVE(?) SELECTED A FLIGHT--->
-				<cfset variables.lowfare.selectAir( searchID = rc.searchID, nTrip = rc.nTrip )>
-				<cfset session.searches[rc.searchID].stCars = {}>
-			</cfif>
-
-			<!--- Setup some session flags to save if the user has clicked on any of the "find more " links in the filter --->
-			<cfset checkFilterStatus(arguments.rc)>
-			<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
-
-			<cfif structKeyExists(arguments.rc, 'bSelect')>
-				<cfset removeOtherFlights(arguments.rc)>
-
-				<cfif arguments.rc.Filter.getHotel()
-					AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Hotel')>
-					<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.Filter.getSearchID()#')>
-				</cfif>
-				<cfif arguments.rc.Filter.getCar()
-					AND NOT StructKeyExists(session.searches[arguments.rc.Filter.getSearchID()].stItinerary, 'Vehicle')>
-					<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.Filter.getSearchID()#')>
-				</cfif>
-				<cfif rc.Account.couldYou EQ 1
-					AND rc.Filter.getUserID() NEQ 3605><!--- Turning off for Chris due to testing purchase a lot :) --->
-					<cfset variables.fw.redirect('couldYou?SearchID=#arguments.rc.Filter.getSearchID()#')>
-				</cfif>
-
-				<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.Filter.getSearchID()#')>
-			</cfif>
-		</cfif>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="availability" output="false" hint="I get info on legs when button is clicked on search results.">
-		<cfargument name="rc">
-
-		<cfset rc.viewRefundable = false>
-		<cfset rc.viewNonRefundable = true>
-		<cfset rc.bRefundable = 0>
-
-		<cfif NOT structKeyExists(arguments.rc, 'bSelect')>
-			<cfset doUnusedTicketSetup(arguments.rc)>
-			<cfset arguments.rc.sPriority = 'LOW'>
-			<!--- Throw out a threads and get availability --->
-			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
-			<cfset rc.stPricing = session.searches[arguments.rc.SearchID].stLowFareDetails.stPricing>
-			<cfset variables.lowfare.threadLowFare(argumentcollection=arguments.rc)>
-		<cfelse>
-			<!--- Select --->
-			<cfset arguments.rc.reQuery = true>
-			<cfset variables.airavailability.threadAvailability(argumentcollection=arguments.rc)>
-			<cfset variables.airavailability.selectLeg(argumentcollection=arguments.rc)>
-		</cfif>
-
-		<!--- TODO: need to refactor this count as it doesn't accurately show leg/schedule counts
-			* might just need to count in badges?
-		--->
-		<cfset rc.totalFlights = getTotalFlights(arguments.rc)>
-
-		<cfif structKeyExists(arguments.rc, 'bSelect')>
-
-			<!--- need to set a flag for the first group added and then check it for
-				NW flights, which can't be combined with other carriers --->
-			<cfif NOT structKeyExists(arguments.rc, "firstSelectedGroup")>
-				<cfset rc.southWestMatch = false>
-				<cfset rc.firstSelectedGroup = arguments.rc.group>
-				<cfif session.searches[arguments.rc.SearchID].stSelected[arguments.rc.group].carriers[1] EQ "WN">
-					<cfset rc.southWestMatch = true>
-				</cfif>
-			</cfif>
-
-			<!--- continue looping over legs and populating stSelected --->
-			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" item="local.nLeg" index="local.nLegIndex">
-				<cfif structIsEmpty(session.searches[arguments.rc.SearchID].stSelected[local.nLegIndex-1])>
-					<cfset variables.fw.redirect(action='air.availability', queryString='SearchID=#arguments.rc.SearchID#&Group=#local.nLegIndex-1#'
-						, preserve='firstSelectedGroup,southWestMatch')>
-				</cfif>
-			</cfloop>
-
-			<cfset variables.fw.redirect('air.price?SearchID=#arguments.rc.SearchID#&lowfareavail=')>
-		</cfif>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="price" output="false" hint="I run doAirPrice.">
-		<cfargument name="rc">
-
-		<cfset variables.AirPrice.doAirPrice(argumentcollection=arguments.rc)>
-
-		<cfset session.searches[rc.SearchID].stSelected = StructNew('linked')><!--- Place holder for selected legs --->
-		<cfset session.searches[rc.SearchID].stSelected[0] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[1] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[2] = {}>
-		<cfset session.searches[rc.SearchID].stSelected[3] = {}>
-
-		<cfset variables.fw.redirect('air.lowfare?SearchID=#rc.SearchID#&filter=all')>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="popup" output="false" hint="I get details, seats, bags and for modal popup for each badge.">
-		<cfargument name="rc">
-
-		<!--- seatmap --->
-		<cfset rc.nTripID = arguments.rc.nTripID>
-		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-
-		<!---details: do nothing --->
-
-		<!--- baggage --->
-		<cfset variables.fw.service('baggage.baggage', 'qBaggage')>
-
-		<!--- email --->
-		<cfset local.userID = session.userID>
-		<cfset rc.qUser = variables.general.getUser( local.userID )>
-		<cfset local.userID = session.filters[arguments.rc.searchID].getProfileID()>
-		<cfset rc.qProfile = variables.general.getUser( local.userID )>
-
-		<!--- TO DO: Update this logic once a flag is built into the system.  Also update the
-		code above to pull from the com object verses the general service. --->
-		<cfif rc.qUser.First_Name EQ 'STODefaultUser'>
-			<cfset rc.qUser = variables.general.getUser( 0 )>
-			<cfset rc.qProfile = variables.general.getUser( 0 )>
-		</cfif>
-
-		<cfset variables.fw.setLayout("popup")>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="summarypopup" output="false" hint="I get seat map for modal popup for summary page.">
-		<cfargument name="rc">
-
-		<cfset rc.nTripID = arguments.rc.nTripID>
-		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-		<cfset variables.fw.setLayout("popup")>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="seatmap" output="false" hint="I get data to make a seat map.">
-		<cfargument name="rc">
-
-		<cfset rc.nTripID = arguments.rc.nTripID>
-		<cfset rc.nSegment = arguments.rc.nSegment>
-		<cfset variables.fw.service('seatmap.doSeatMap', 'stSeats')>
-		<cfset request.layout = false>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="email" output="false" hint="I send an email">
-		<cfargument name="rc">
-
-		<cfset rc.bSuppress = 1>
-		<cfset variables.email.doEmail( argumentcollection = arguments.rc )>
-
-		<cfset rc.message.AddInfo("Your email has been sent.")>
-		<cfset variables.fw.redirect('air.lowfare?SearchID=#arguments.rc.SearchID#')>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="removeflight" output="false" hint="I take a searchID and remove a flight from the session.">
-		<cfargument name="rc">
-
-		<cfset local.newSearchID = "">
-		<cfset variables.lowfare.removeFlight( arguments.rc.searchID )>
-
-		<cfset local.newSearchID = ListLast( StructKeyList(session.searches) )>
-		<cfset rc.message.AddInfo("Saved search deleted successfully!")>
-		<cfset variables.fw.redirect( action="air.lowfare", queryString="searchid=#newSearchID#" )>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="addAir" output="false" hint="I give users the chance to search for air even if air wasn't selected in the original search.">
-		<cfargument name="rc">
-
-		<cfreturn />
-	</cffunction>
-
-<!--- PRIVATE METHODS --->
-	<cffunction name="removeOtherFlights" access="private" output="false" hint="I take a searchID and remove all other flights from the session.">
-		<cfargument name="rc">
-
-		<cfset local.flightsToDelete =  StructKeyArray(session.filters)>
-		<cfset  ArrayDeleteAt(local.flightsToDelete, ArrayFind(local.flightsToDelete, arguments.rc.searchID))>
-
-		<cfloop array="#local.flightsToDelete#" item="local.searchID">
-			<cfset StructDelete(session.filters, searchID)>
-			<cfset StructDelete(session.searches, searchID)>
 		</cfloop>
 
+		<cfif structKeyExists(rc, 'FlightSelected')>
+
+			<cfset session.searches[SearchID].stItinerary = Itinerary.selectAir(form = form,
+																				Itinerary = session.searches[SearchID].stItinerary,
+																				Group = Group,
+																				Groups = arrayLen(arguments.rc.Filter.getLegsForTrip()))>
+
+			<!--- <cfdump var=#session.searches[SearchID].stItinerary# abort> --->
+			<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
+				<cfif Group+2 EQ local.SegmentIndex>
+					<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#SegmentIndex-1#')>
+				</cfif>
+			</cfloop>
+
+			<!--- <cfdump var=#session.searches[SearchID].Selected# abort> --->
+			<cfset session.Filters[SearchID].setAir(true)>
+			<cfset variables.fw.redirect('air.review?SearchID=#arguments.rc.SearchID#')>
+
+		</cfif>
+
+		<cfset rc.trips = variables.air.doSearch(Account = arguments.rc.Account,
+												Policy = arguments.rc.Policy,
+												Filter = arguments.rc.Filter,
+												SearchID = SearchID,
+												Group = Group,
+												SelectedTrip = session.searches[SearchID].stItinerary.Air,
+												cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
+
+		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
+		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>
+
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="checkFilterStatus" access="private" output="false" hint="Setup some session flags to save if the user has clicked on any of the 'find more' links in the filter">
+	<cffunction name="review" output="false">
 		<cfargument name="rc">
 
-		<!--- run on first search --->
-		<!--- reset filterStatus if new search is created --->
-		<cfif NOT structKeyExists(session, "filterStatus")
-				OR NOT IsStruct(session.filterStatus)
-				OR NOT structKeyExists(session.filterStatus, "searchID")
-				OR arguments.rc.searchID NEQ session.filterStatus.searchID>
+		<cfif structKeyExists(rc, 'FareSelected')>
 
-			<cfset session.filterStatus = {}>
-			<cfset session.filterStatus.searchID = arguments.rc.searchID>
-			<cfset session.filterStatus.airlines = 0>
-			<cfset session.filterStatus.refundableSearch = 0>
-			<cfset session.filterStatus.cabinSearch = {}>
-			<cfset session.filterStatus.cabinSearch.C = 0>
-			<cfset session.filterStatus.cabinSearch.F = 0>
+			<cfset session.searches[SearchID].stItinerary.Air = Itinerary.selectFare(Fare = form.Fare,
+																					Itinerary = session.searches[SearchID].stItinerary.Air)>
+
+			<cfif arguments.rc.Filter.getHotel()>
+				<cfset variables.fw.redirect('hotel.search?SearchID=#arguments.rc.SearchID#')>
+			</cfif>
+
+			<cfif arguments.rc.Filter.getCar()>
+				<cfset variables.fw.redirect('car.availability?SearchID=#arguments.rc.SearchID#')>
+			</cfif>
+
+			<cfset variables.fw.redirect('summary?SearchID=#arguments.rc.SearchID#')>
 
 		</cfif>
 
-		<!--- update filterStatus if 'find more' fares/class/airlines is clicked in filter --->
-		<cfif StructKeyExists(arguments.rc, "bRefundable") and arguments.rc.bRefundable EQ 1>
-			<cfset session.filterStatus.refundableSearch = 1>
-		</cfif>
-		<cfif StructKeyExists(arguments.rc, "sCabins") and arguments.rc.sCabins EQ "C">
-			<cfset session.filterStatus.cabinSearch.C = 1>
-		</cfif>
-		<cfif StructKeyExists(arguments.rc, "sCabins") and arguments.rc.sCabins EQ "F">
-			<cfset session.filterStatus.cabinSearch.F = 1>
-		</cfif>
-		<cfif StructKeyExists(arguments.rc, "airlines") and arguments.rc.airlines EQ "1">
-			<cfset session.filterStatus.airlines = 1>
-		</cfif>
+		<cfset var Solutions = []>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = '')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'Economy')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'PremiumEconomy')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'Business')>
+
+		<cfset Solutions = variables.airprice.doAirPrice(TMC = session.TMC,
+														Account = application.Accounts[arguments.rc.Filter.getAcctId()],
+														Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														CabinClass = 'First')>
+
+		<cfset rc.Solutions = Solutions>
+
+		<cfreturn />
 	</cffunction>
 
-	<cffunction name="getTotalFlights" access="private" hint="I pull the total number of flights out of the session scope.">
-		<cfargument name="rc" required="true">
+	<cffunction name="email" output="false">
+		<cfargument name="rc">
 
-		<cfset local.errorMessage = "">
-		<cfset local.totalFlights = 0>
+		<cfset variables.email.doEmail(	Email_Segment = form.Email_Segment,
+										Email_Name = form.Email_Name,
+										Email_Address = form.Email_Address,
+										Email_To = form.Email_To,
+										Email_CC = form.Email_CC,
+										Email_Message = form.Email_Message,
+										Email_Subject = form.Email_Subject)>
 
-		<cfif structKeyExists(session.searches[arguments.rc.SearchID], "stLowFareDetails")
-				AND structKeyExists(session.searches[arguments.rc.SearchID].stLowFareDetails, "aSortFare")>
-			<cfset local.totalFlights = arrayLen(session.searches[arguments.rc.SearchID].stLowFareDetails.aSortFare)>
-		<cfelse>
-			<!--- <cfif IsLocalHost(cgi.remote_addr)>
-				<cfset local.errorMessage = "stLowFareDetails.aSortFare is empty which usually indicates an issue with Travelport returning a faultcode in availability or lowfare. Check the uAPI logs with SearchID: #arguments.rc.SearchID#.">
-			</cfif>
-			<cfthrow message="There was a problem retrieving flights from Travelport. (#local.errorMessage#)"/> --->
-		</cfif>
+		<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#arguments.rc.Group#')>
 
-		<cfreturn local.totalFlights>
-	</cffunction>
-
-	<cffunction name="doUnusedTicketSetup">
-		<cfargument name="rc" required="true">
-		<cfif NOT structKeyExists(session.searches[rc.searchID], 'unusedtickets')>
-			<cfset local.unusedTicketStruct = {}>
-			<cfif arguments.rc.Filter.getProfileID() NEQ 0>
-				<cfset session.searches[rc.searchID].unusedtickets = fw.getBeanFactory().getBean( "UnusedTicketService" ).getUnusedTickets( userID = arguments.rc.Filter.getProfileID() ) />
-				<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.unusedTicketIndex" item="local.unusedTicketItem">
-					<cfif NOT structKeyExists(local.unusedTicketStruct, local.unusedTicketItem.getCarrier())>
-						<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = ''>
-						<cfloop array="#session.searches[rc.searchID].unusedtickets#" index="local.subUnusedTicketIndex" item="local.subUnusedTicketItem">
-							<cfif local.unusedTicketItem.getCarrier() EQ local.subUnusedTicketItem.getCarrier()>
-								<cfset local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ] = local.unusedTicketStruct[ local.unusedTicketItem.getCarrier() ]&'
-									Airline:  #local.subUnusedTicketItem.getCarrierName()#<br>
-									Ticket Number:  #local.subUnusedTicketItem.getTicketNumber()#<br>
-									Credit:  #dollarFormat(local.subUnusedTicketItem.getAirfare())#<br>
-									Expiration:  #dateFormat(local.subUnusedTicketItem.getExpirationDate(), 'm/d/yyyy')#<br>
-									Original Ticket Issued to:  #local.subUnusedTicketItem.getLastName()#/#local.subUnusedTicketItem.getFirstName()#<br><br>'>
-								</tr>">
-							</cfif>
-						</cfloop>
-					</cfif>
-				</cfloop>
-				<cfset rc.Filter.setUnusedTicketCarriers( local.unusedTicketStruct )>
-			<cfelse>
-				<cfset session.searches[rc.searchID].unusedtickets = [] />
-			</cfif>
-		</cfif>
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>

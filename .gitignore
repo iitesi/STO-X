@@ -23,3 +23,6 @@ booking.iml
 views/main/dan.cfm
 server.json
 site-config-ip.txt
+\.DS_Store
+
+assets/\.DS_Store
