@@ -46,8 +46,7 @@
 												Filter = arguments.rc.Filter,
 												SearchID = SearchID,
 												Group = Group,
-												SelectedTrip = session.searches[SearchID].stItinerary.Air,
-												cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
+												SelectedTrip = session.searches[SearchID].stItinerary.Air)><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
 
 		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
 		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>

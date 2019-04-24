@@ -19,8 +19,8 @@
 		<cfargument name="SearchID" default="">
 		<cfargument name="Group" default="">
 
-		<cfset local.requestBody = getKrakenService().getFlightSearchAvailabilityRequest( 	Filter = arguments.Filter,
-																							Group = arguments.Group )>
+		<cfset local.requestBody = getFlightSearchAvailabilityRequest( 	Filter = arguments.Filter,
+																		Group = arguments.Group )>
 
 		<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
 															request = local.requestBody )>
@@ -37,6 +37,84 @@
 
 		<cfreturn local.response>
  	</cffunction>
+
+	<cffunction name="getFlightSearchAvailabilityRequest" returnType="struct" access="public">
+		<cfargument name="Filter" type="struct" required="yes">
+		<cfargument name="Group" type="numeric" required="yes">
+
+		<cfscript>
+			var requestBody = {};
+			var leg = {};
+			if (len(trim(arguments.Filter.getAirlines()))) {
+				local.airlines = arguments.airlines;
+			}	else {
+				local.airlines = [];
+			}
+			requestBody["Identity"]["AccountId"] = arguments.Filter.getAcctID();
+			requestBody["FlightSearchOptions"] = {};
+			if(arraylen(local.airlines)	EQ 1) {
+				requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
+			}
+			requestBody["Leg"] = [];
+			arrayappend(requestBody["Leg"], getLeg(arguments.Filter, arguments.Group) );
+		</cfscript>
+
+		<cfreturn requestBody>
+	</cffunction>
+
+	<cffunction name="getLeg" returnType="struct" access="public">
+		<cfargument name="Filter" type="struct" required="yes">
+		<cfargument name="legIndex" type="numeric" required="yes">
+
+		<cfscript>
+
+			var leg = {};
+
+			if (arguments.LegIndex EQ 0) {
+
+				leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+
+				if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+
+				} else {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+
+				}
+
+				leg["OriginAirportCode"] = { "Code": arguments.Filter.getDepartCity(), "IsCity": isBoolean(arguments.filter.getAirFromCityCode()) && arguments.filter.getAirFromCityCode() ? true : false};
+				leg["DestinationAirportCode"] = { "Code": arguments.Filter.getArrivalCity(), "IsCity": isBoolean(arguments.filter.getAirToCityCode()) && arguments.filter.getAirToCityCode() ? true : false};
+
+			} else {
+
+				leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+
+				if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+
+				} else {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+					leg["TimeRangeEnd"] = dateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+
+				}
+
+				leg["OriginAirportCode"] = { "Code" :arguments.Filter.getArrivalCity(), "IsCity": isBoolean(arguments.filter.getAirToCityCode()) && arguments.filter.getAirToCityCode() ? true : false};
+				leg["DestinationAirportCode"] = { "Code" :arguments.Filter.getDepartCity(), "IsCity": isBoolean(arguments.filter.getAirFromCityCode()) && arguments.filter.getAirFromCityCode() ? true : false};
+
+			}
+
+		</cfscript>
+
+		<cfreturn leg>
+
+	</cffunction>
 
 	<cffunction name="parseSegments" returnType="struct" access="public">
 		<cfargument name="Segments" type="any" required="true">
@@ -57,7 +135,7 @@
 
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
 		<!--- response.Segments[G0-B6.124] = Full segment structure --->
-		<cfloop collection="#arguments.response.Results#" index="segmentIndex" item="segmentItem">
+		<cfloop collection="#arguments.response[arguments.Group+1].Results#" index="segmentIndex" item="segmentItem">
 			<cfset Segment.DepartureTimeGMT = segmentItem[1].DepartureTime>
 			<cfset Segment.DepartureTime = left(segmentItem[1].DepartureTime, 19)>
 			<!--- <cfdump var=#segmentItem# abort> --->
@@ -108,8 +186,11 @@
 					<cfset Flight.FlightId = flightItem.Carrier&'.'&flightItem.FlightNumber>
 					<cfset Flight.FlightTime = int(flightItem.FlightTime/60) &'H '&flightItem.FlightTime%60&'M'>
 					<cfset Carrier = listAppend(Carrier, flightItem.Carrier)>
-					<cfif structKeyExists(flightItem, 'CodeshareInfo')>
+					<cfif structKeyExists(flightItem, 'CodeshareInfo')
+						AND structKeyExists(flightItem.CodeshareInfo, 'Value')>
 						<cfset Codeshare = listAppend(Codeshare, flightItem.CodeshareInfo.Value)>
+					<cfelse>
+						<cfset Codeshare = ''>
 					</cfif>
 					<cfif flightCount NEQ flightIndex>
 						<cfset Connections = listAppend(Connections, flightItem.Destination)>
@@ -119,7 +200,7 @@
 				</cfloop>
 				<cfset Carrier = listRemoveDuplicates(Carrier)>
 				<cfset Segment.CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
-				<cfset Segment.Codeshare = listRemoveDuplicates(Codeshare)>
+				<cfset Segment.Codeshare = replace(listRemoveDuplicates(Codeshare), ',', ', ', 'ALL')>
 				<cfset Segment.Connections = replace(Connections, ',', ', ', 'ALL')>
 				<cfset Segment.FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
 				<cfset Segment.IsLongAndExpensive = false>

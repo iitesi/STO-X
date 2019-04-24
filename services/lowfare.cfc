@@ -21,40 +21,161 @@
 		<cfargument name="Group" default="">
 		<cfargument name="SelectedTrip" default="">
 
-		<!--- <cftry> --->
-			<cfset local.requestBody = getKrakenService().getFlightSearchRequest( 	Policy = arguments.Policy,
-																					Filter = arguments.Filter )>
+		<cfset local.requestBody = getFlightSearchRequest( 	Policy = arguments.Policy,
+															Filter = arguments.Filter )>
 
-			<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
-																request = local.requestBody )>
+		<cfset local.response = getStorage().getStorage(	searchID = arguments.searchID,
+															request = local.requestBody )>
 
-			<cfif structIsEmpty(local.response)>
-				<cfset local.response = getKrakenService().FlightSearch(	body = local.requestBody,
-																			SearchID = arguments.SearchID,
-																			Group = arguments.Group,
-																			SelectedTrip = arguments.SelectedTrip )>
+		<cfif structIsEmpty(local.response)>
+			<cfset local.response = getKrakenService().FlightSearch(	body = local.requestBody,
+																		SearchID = arguments.SearchID,
+																		Group = arguments.Group,
+																		SelectedTrip = arguments.SelectedTrip )>
 
-				<cfif structIsEmpty(response)>
-					If you get this error, please send it to Chrissy.  Trying to figure out the 'BrandedFareName' error.  :)  Send screenshot and copy/paste the first string.  Thank you!
-					<cfdump var=#serializeJSON(local.requestBody)#>
-					<cfdump var=#local.requestBody#>
-					<cfdump var=#local.response# abort>
-				</cfif>
-
-				<cfset getStorage().storeAir(	searchID = arguments.searchID,
-												request = local.requestBody,
-												storage = local.response )>
-			</cfif>
-			<!--- <cfcatch>
-				If you get this error, please send it to Chrissy.  Trying to figure out the 'BrandedFareName' error.  :)  Send screenshot and copy/paste the first string.  Thank you!
+			<cfif structIsEmpty(response)>
+				Known error.  Waiting on log access before this can be fixed.
 				<cfdump var=#serializeJSON(local.requestBody)#>
 				<cfdump var=#local.requestBody#>
 				<cfdump var=#local.response# abort>
-			</cfcatch>
-		</cftry> --->
+			</cfif>
+
+			<cfset getStorage().storeAir(	searchID = arguments.searchID,
+											request = local.requestBody,
+											storage = local.response )>
+		</cfif>
 
 		<cfreturn local.response>
  	</cffunction>
+
+	<cffunction name="getFlightSearchRequest" returnType="struct" access="public">
+		<cfargument name="Policy" type="struct" required="yes">
+		<cfargument name="Filter" type="struct" required="yes">
+
+		<cfscript>
+			var requestBody = {};
+			var leg = {};
+
+			if (len(trim(arguments.Filter.getAirlines()))) {
+				local.airlines = arguments.airlines;
+			}	else {
+				local.airlines = [];
+			}
+
+			local.Refundable = false;
+			if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0) {
+				local.Refundable = true;
+			}
+
+			requestBody["TravelerAccountId"] = arguments.Filter.getAcctID();
+			requestBody["TravelerName"]="John Doe";
+			requestBody["FlightSearchOptions"] = {};
+
+			if(arraylen(local.airlines)	EQ 1) {
+				requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
+			}
+
+			requestBody["FlightSearchOptions"]["OnlyRefundableFares"] = local.Refundable;
+			//requestBody["FlightSearchOptions"]["PreferredCabinClass"] = (arraylen(local.aCabins) GT 0) ? CabinClassMap(local.aCabins[1]) : "Economy";
+			requestBody["Legs"] = [];
+
+			if (arguments.Filter.getAirType() EQ 'OW') {
+
+				arrayappend(requestBody["Legs"],getLeg(arguments.Filter,0));
+
+			} else if (arguments.Filter.getAirType() EQ 'RT') {
+
+				arrayappend(requestBody["Legs"],getLeg(arguments.Filter,0));
+				arrayappend(requestBody["Legs"],getLeg(arguments.Filter,1));
+
+			} else if (arguments.Filter.getAirType() EQ 'MD') {
+
+				local.qLegs = arguments.filter.getLegs()[1];
+
+				for (var i = 1; i <= local.qLegs.recordCount; i++) {
+
+					leg = {};
+
+					leg["TimeRangeType"]="DepartureTime";
+
+					if (local.qLegs["Depart_DateTimeActual"][i] EQ "Anytime") {
+
+						leg["TimeRangeStart"] =	dateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T00:00:00.000Z";
+						leg["TimeRangeEnd"] =	dateFormat(local.qLegs["Depart_DateTime"][i], 'yyyy-mm-dd') & "T23:59:00.000Z";
+
+					} else {
+
+						leg["TimeRangeStart"] =	dateFormat(local.qLegs["Depart_DateTimeStart"][i], 'yyyy-mm-dd') & 'T' & timeFormat(local.qLegs["Depart_DateTimeStart"][i], 'HH:mm:ss.lll') & "Z";
+						leg["TimeRangeEnd"] =	dateFormat(local.qLegs["Depart_DateTimeEnd"][i], 'yyyy-mm-dd') & 'T' & timeFormat(local.qLegs["Depart_DateTimeEnd"][i], 'HH:mm:ss.lll') & "Z";
+					}
+
+					leg["OriginAirportCode"] = { "Code" : local.qLegs["Depart_City"][i] , "IsCity": local.qLegs["airFrom_CityCode"][i] ? true : false};
+					leg["DestinationAirportCode"] = { "Code" : local.qLegs["Arrival_City"][i] , "IsCity": local.qLegs["airTo_CityCode"][i] ? true : false};
+
+					arrayAppend(requestBody["Legs"], leg);
+
+				}
+
+			}
+
+		</cfscript>
+
+		<cfreturn requestBody>
+	</cffunction>
+
+	<cffunction name="getLeg" returnType="struct" access="public">
+		<cfargument name="Filter" type="struct" required="yes">
+		<cfargument name="legIndex" type="numeric" required="yes">
+
+		<cfscript>
+
+			var leg = {};
+
+			if (arguments.LegIndex EQ 0) {
+
+				leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+
+				if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+
+				} else {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getDepartDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getDepartDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getDepartDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+
+				}
+
+				leg["OriginAirportCode"] = { "Code": arguments.Filter.getDepartCity(), "IsCity": isBoolean(arguments.filter.getAirFromCityCode()) && arguments.filter.getAirFromCityCode() ? true : false};
+				leg["DestinationAirportCode"] = { "Code": arguments.Filter.getArrivalCity(), "IsCity": isBoolean(arguments.filter.getAirToCityCode()) && arguments.filter.getAirToCityCode() ? true : false};
+
+			} else {
+
+				leg["TimeRangeType"]	= arguments.filter.getDepartTimeType() EQ "A" ? "ArrivalTime" : "DepartureTime";
+
+				if (arguments.filter.getDepartDateTimeActual() EQ "Anytime") {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T00:00:00.000Z";
+					leg["TimeRangeEnd"] =	dateFormat(arguments.filter.getArrivalDateTime(), 'yyyy-mm-dd') & "T23:59:00.000Z";
+
+				} else {
+
+					leg["TimeRangeStart"] =	dateFormat(arguments.filter.getArrivalDateTimeStart(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeStart(), 'HH:mm:ss.lll') & "Z";
+					leg["TimeRangeEnd"] = dateFormat(arguments.filter.getArrivalDateTimeEnd(), 'yyyy-mm-dd') & 'T' & timeFormat(arguments.filter.getArrivalDateTimeEnd(), 'HH:mm:ss.lll') & "Z";
+
+				}
+
+				leg["OriginAirportCode"] = { "Code" :arguments.Filter.getArrivalCity(), "IsCity": isBoolean(arguments.filter.getAirToCityCode()) && arguments.filter.getAirToCityCode() ? true : false};
+				leg["DestinationAirportCode"] = { "Code" :arguments.Filter.getDepartCity(), "IsCity": isBoolean(arguments.filter.getAirFromCityCode()) && arguments.filter.getAirFromCityCode() ? true : false};
+
+			}
+
+		</cfscript>
+
+		<cfreturn leg>
+
+	</cffunction>
 
 	<cffunction name="parseBrandedFares" returnType="struct" access="public">
 		<cfargument name="response" type="any" required="true">
@@ -127,8 +248,11 @@
 					<cfset Codeshare = ''>
 					<cfloop collection="#segmentItem.Flights#" index="flightIndex" item="flightItem">
 						<cfset Carrier = listAppend(Carrier, flightItem.CarrierCode)>
-						<cfif structKeyExists(flightItem, 'CodeshareInfo')>
+						<cfif structKeyExists(flightItem, 'CodeshareInfo')
+							AND structKeyExists(flightItem.CodeshareInfo, 'Value')>
 							<cfset Codeshare = listAppend(Codeshare, flightItem.CodeshareInfo.Value)>
+						<cfelse>
+							<cfset Codeshare = ''>
 						</cfif>
 						<cfif segmentCount NEQ flightIndex>
 							<cfset Connections = listAppend(Connections, flightItem.DestinationAirportCode)>
@@ -144,7 +268,7 @@
 					</cfloop>
 					<cfset Carrier = listRemoveDuplicates(Carrier)>
 					<cfset Segments[segmentItem.SegmentId].CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
-					<cfset Segments[segmentItem.SegmentId].Codeshare = listRemoveDuplicates(Codeshare)>
+					<cfset Segments[segmentItem.SegmentId].Codeshare = replace(listRemoveDuplicates(Codeshare), ',', ', ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].Connections = replace(Connections, ',', ', ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].IsLongAndExpensive = false>

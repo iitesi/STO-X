@@ -249,7 +249,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="air" class="booking.services.air">
 		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
 		<constructor-arg name="availability"><ref bean="availability" /></constructor-arg>
-		<constructor-arg name="rail"><ref bean="rail" /></constructor-arg>
+		<constructor-arg name="airsearch"><ref bean="airsearch" /></constructor-arg>
 	</bean>
 
 	<bean id="lowfare" class="booking.services.lowfare">
@@ -260,6 +260,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="availability" class="booking.services.availability">
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+	</bean>
+
+	<bean id="airsearch" class="booking.services.airsearch">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
 	</bean>
 
 	<bean id="rail" class="booking.services.rail">
