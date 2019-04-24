@@ -303,6 +303,7 @@
 					},
 					SearchId : Filter.getSearchId(),
 					HotelOutOfPolicyReasonCode : Traveler.getBookingDetail().getHotelReasonCode(),
+					SpecialRequest = Traveler.getBookingDetail().getHotelSpecialRequests(),
 					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getHotelFOPID()) ? Traveler.getBookingDetail().getHotelFOPID() : getToken(Traveler.getBookingDetail().getHotelFOPID(), 2, '_')
 				};
 
