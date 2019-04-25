@@ -101,6 +101,7 @@
 						</div>	
 					</div>
 				</div>
+
 				<div class="clearfix visible-xs-block"></div>
 				<div class="col-xs-12 col-lg-6">
 
@@ -175,10 +176,10 @@
 										<div class="fs-2 fare-display">
 											<div class="overflow-ellipse fs-s">
 												<cfif structKeyExists(Segment.Availability, CabinClass)
-												AND Segment.Availability[CabinClass].Count>
+												AND Segment.Availability[CabinClass].Available>
 												Click to price
 											<cfelseif structKeyExists(Segment.Availability, CabinClass)
-												AND NOT Segment.Availability[CabinClass].Count>
+												AND NOT Segment.Availability[CabinClass].Available>
 												Unavailable
 											</cfif>
 											</div>
@@ -271,11 +272,11 @@
 											<span><span>#Flight.CarrierCode#</span>&nbsp;<span>#Flight.FlightNumber#</span></span>
 										</div>
 									</div>
-									<div class="segment-leg-operation-operatedby fs-s overflow-ellipse">
+									<!--- <div class="segment-leg-operation-operatedby fs-s overflow-ellipse">
 										<cfif structKeyExists(Flight, 'CodeshareInfo')>
 											OPERATED BY #Flight.CodeshareInfo.Value#
 										</cfif>
-									</div>
+									</div> --->
 								</div>
 								#count == 0 ? active : ''#
 								<!--- <cfif Segment.SegmentId EQ 'G0-DL.2544-DL.2342'>
@@ -329,7 +330,13 @@
 									</li>
 									<cfsavecontent variable="subdetail"><div role="tabpanel" class="tab-pane #count == 0 ? 'active' : ''#" id="#cabinuuid#">
 										<cfloop collection="#Segment.Availability#" index="CabinName" item="CabinItem">
-											<strong>#CabinName NEQ 'PremiumEconomy' ? CabinName : 'Premium Economy'#</strong> - #CabinItem.String#<br><br>
+											<cfloop collection="#CabinItem#" index="FlightNumber" item="FlightItem">
+
+												<cfif FlightNumber NEQ 'Available'>
+													<strong>#CabinName NEQ 'PremiumEconomy' ? CabinName : 'Premium Economy'# on #Replace(FlightNumber, '.', '')#</strong> - #FlightItem.String#<br><br>
+												</cfif>
+
+											</cfloop>
 										</cfloop>
 									</div></cfsavecontent>
 									<cfset paneldetails = "#paneldetails##subdetail#">
