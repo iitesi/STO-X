@@ -75,6 +75,7 @@
 				<cfset FlightCount++>
 				<cfset Carrier = listAppend(Carrier, Segment.CarrierCode)>
 				<cfif NOT len(CabinClass) 
+					AND structKeyExists(Itinerary[GroupIndex], 'Fare')
 					AND isStruct(Itinerary[GroupIndex].Fare)>
 
 					<cfset BookingCodeCount++>
@@ -277,18 +278,23 @@
 
 									<cfelseif BookingInfo.XMLName EQ 'air:BookingInfo'>
 
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].CabinClass = BookingInfo.XMLAttributes.CabinClass>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].BookingCode = BookingInfo.XMLAttributes.BookingCode>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].FareBasis = Fares[BookingInfo.XMLAttributes.FareInfoRef].FareBasis>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].BrandedFare = Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Carrier = Flights[BookingInfo.XMLAttributes.SegmentRef].Carrier>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].FlightNumber = Flights[BookingInfo.XMLAttributes.SegmentRef].FlightNumber>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Destination = Flights[BookingInfo.XMLAttributes.SegmentRef].Destination>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Wifi = structKeyExists(Flights[BookingInfo.XMLAttributes.SegmentRef], 'Wifi') ? true : false>
-										<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] =  structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'Description') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].Description : ''>
+										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId] = {
+											CabinClass = BookingInfo.XMLAttributes.CabinClass,
+											BookingCode = BookingInfo.XMLAttributes.BookingCode,
+											FareBasis = Fares[BookingInfo.XMLAttributes.FareInfoRef].FareBasis,
+											BrandedFare = structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'BrandedFare') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare : '',
+
+											Carrier = Flights[BookingInfo.XMLAttributes.SegmentRef].Carrier,
+											FlightNumber = Flights[BookingInfo.XMLAttributes.SegmentRef].FlightNumber,
+											Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin,
+											Destination = Flights[BookingInfo.XMLAttributes.SegmentRef].Destination,
+											Wifi = structKeyExists(Flights[BookingInfo.XMLAttributes.SegmentRef], 'Wifi') ? true : false
+										}>
+										<cfif structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'BrandedFare')>
+											<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] =  structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'Description') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].Description : ''>
+											<cfset Solution.BrandedFare = listAppend(Solution.BrandedFare, Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare)>
+										</cfif>
 										<cfset Solution.CabinClass = listAppend(Solution.CabinClass, BookingInfo.XMLAttributes.CabinClass)>
-										<cfset Solution.BrandedFare = listAppend(Solution.BrandedFare, Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare)>
 
 									<cfelseif BookingInfo.XMLName EQ 'air:PassengerType'>
 
