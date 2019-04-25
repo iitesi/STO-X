@@ -1,9 +1,10 @@
-<cfif rc.action NEQ 'main.login'
-    AND rc.action NEQ 'main.menu'
-    AND rc.action NEQ 'main.search'>
+<cfif structKeyExists(session, 'SearchId')
+    AND structKeyExists(session, 'Searches')
+    AND structKeyExists(session.Searches, session.SearchId)>
     <script type="">
     // $('#main-content').toggleClass('toggled');
-    </script><cfset rc.itinerary = session.searches[rc.searchID].stItinerary />
+    </script>
+    <cfset rc.itinerary = session.searches[rc.searchID].stItinerary />
     <cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false) />
     <cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '') />
     <cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'Hotel') ? true : false) />
@@ -56,7 +57,7 @@
         </cfloop>
     </cfif>
     <cfif rc.hotelSelected AND isDate(rc.filter.getCheckInDate())>
-        <cfset ordering['Hotel'] = createDateTime(year(rc.filter.getCheckInDate()), month(rc.filter.getCheckInDate()), day(rc.filter.getCheckInDate()), 23, 59)>
+        <cfset ordering['Hotel'] = createDateTime(year(rc.filter.getCheckInDate()), month(rc.filter.getCheckInDate()), day(rc.filter.getCheckInDate()), 23, 59, 00)>
     </cfif>
     <cfif rc.vehicleSelected AND isDate(rc.Filter.getCarPickUpDateTime())>
         <cfset ordering['Car'] = createODBCDateTime(rc.Filter.getCarPickUpDateTime())>
