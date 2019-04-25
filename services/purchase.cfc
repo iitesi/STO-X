@@ -248,7 +248,6 @@
 		</cfscript>
 
 		<!--- Dohmen to do - AirOutOfPolicyReasonCode --->
-		<!--- Dohmen to do - HotelNotBookedReasonCode --->
 
 		<cfreturn FlightPurchaseRequest>
 	</cffunction>
