@@ -304,8 +304,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
   </bean>
 
 	<bean id="KrakenService" class="com.kraken.KrakenService">
-		<constructor-arg name="krakenLoginUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenLoginUri" /></constructor-arg>
-		<constructor-arg name="krakenFlightSearchUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenFlightSearchUri" /></constructor-arg>
+		<constructor-arg name="krakenBaseUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenBaseUrl" /></constructor-arg>
+		<constructor-arg name="krakenAuthenticationUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenAuthenticationUrl" /></constructor-arg>
+		<constructor-arg name="krakenTravelSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenTravelSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenHotelSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenHotelSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenVehicleSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenVehicleSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenPurchaseUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenPurchaseUrl" /></constructor-arg>
 		<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
 		<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
   </bean>
