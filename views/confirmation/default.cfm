@@ -59,10 +59,23 @@
 
 <cfoutput>
 	
-	<cfif structKeyExists(rc.Sell, 'RecordLocator')
-		AND structKeyExists(rc.Sell.RecordLocator, 'UniversalRecordLocatorCode')
-		AND structKeyExists(rc.Sell, 'HasErrors')
-		AND NOT rc.Sell.HasErrors>
+	<cfset display = false>
+
+	<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+
+		<cfif structKeyExists(rc.Sell[TravelerIndex], 'RecordLocator')
+			AND structKeyExists(rc.Sell[TravelerIndex].RecordLocator, 'UniversalRecordLocatorCode')
+			AND NOT rc.Sell[TravelerIndex].Cancelled
+			AND structKeyExists(rc.Sell[TravelerIndex], 'HasErrors')
+			AND NOT rc.Sell[TravelerIndex].HasErrors>
+
+			<cfset display = true>
+
+		</cfif>
+
+	</cfloop>
+
+	<cfif display>
 
 		<div class="confirmation-x ">
 			<br><br>
@@ -73,7 +86,14 @@
 			</svg>
 			<p>
 				<br>
-				Trip Reference ## #rc.Sell.RecordLocator.UniversalRecordLocatorCode#
+
+				<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+					Trip Record Locator #Sell.RecordLocator.ProviderRecordLocatorCode# 
+					<cfif structCount(session.searches[rc.SearchId].Sell) GT 1>
+						for #session.searches[rc.SearchID].Travelers[TravelerIndex].getFirstName()# #session.searches[rc.SearchID].Travelers[TravelerIndex].getLastName()#<br>
+					</cfif>
+				</cfloop>
+
 			</p>
 			<p>
 				<br>
@@ -84,14 +104,35 @@
 			</p>
 			<p>
 				<br>
-				<a class="btn btn-primary btn-lg" href="https://viewtrip.travelport.com/itinerary?loc=#rc.Sell.RecordLocator.ProviderRecordLocatorCode#&lName=#session.searches[rc.searchID].Travelers[1].getLastName()#" target="_blank">View Your Trip</a>
-				<a class="btn btn-secondary btn-lg" href="#buildURL('purchase.canceltrip?SearchId=#SearchId#&CancelTrip=#rc.Sell.RecordLocator.UniversalRecordLocatorCode#')#">Cancel Trip</a>
+				<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+					<cfif structCount(session.searches[rc.SearchId].Sell) GT 1>
+						#session.searches[rc.SearchID].Travelers[TravelerIndex].getFirstName()# #session.searches[rc.SearchID].Travelers[TravelerIndex].getLastName()# - 
+					</cfif>
+					<a class="btn btn-primary btn-lg" href="https://viewtrip.travelport.com/itinerary?loc=#Sell.RecordLocator.ProviderRecordLocatorCode#&lName=#session.searches[rc.searchID].Travelers[TravelerIndex].getLastName()#" target="_blank">View Your Trip</a>
+					<a class="btn btn-secondary btn-lg" href="#buildURL('purchase.canceltrip?SearchId=#SearchId#&CancelTrip=#Sell.RecordLocator.UniversalRecordLocatorCode#&TravelerNumber=#TravelerIndex#')#">Cancel Trip</a>
+					<br>
+				</cfloop>
 			</p>
 		</div>
 
 	<cfelse>
 
 		Your trip has been cancelled.
+
+		<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+
+			<cfif NOT Sell.Cancelled>
+
+				<a class="btn btn-secondary btn-lg" href="#buildURL('purchase.canceltrip?SearchId=#SearchId#&CancelTrip=#Sell.RecordLocator.UniversalRecordLocatorCode#&TravelerNumber=#TravelerIndex#')#">Cancel Trip</a>
+				<cfif structCount(session.searches[rc.SearchId].Sell) GT 1>
+					for #session.searches[rc.SearchID].Travelers[TravelerIndex].getFirstName()# #session.searches[rc.SearchID].Travelers[TravelerIndex].getLastName()#<br>
+				</cfif>
+
+			</cfif>
+
+			<a class="btn btn-primary btn-lg" href="https://viewtrip.travelport.com/itinerary?loc=#Sell.RecordLocator.ProviderRecordLocatorCode#&lName=#session.searches[rc.searchID].Travelers[TravelerIndex].getLastName()#" target="_blank">View Your Trip</a>
+
+		</cfloop>
 
 	</cfif>
 

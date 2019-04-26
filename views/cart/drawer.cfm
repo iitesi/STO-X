@@ -1,5 +1,5 @@
-<cfif structKeyExists(rc, "SearchId")
-    AND structKeyExists(session, 'Searches')
+<cfif structKeyExists(session, 'Searches')
+    AND structKeyExists(rc, 'SearchId')
     AND structKeyExists(session.Searches, rc.SearchId)>
 
     <script type="text/javascript">
@@ -114,7 +114,8 @@
     													#group.OriginAirportCode# - #group.DestinationAirportCode#<br>
     													#DateFormat(group.DepartureTime, 'DDD, MMM d, yyyy')#<br>
     													#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#
-                                                        <cfif structCount(rc.Air) EQ i+1>
+                                                        <cfif structCount(rc.Air) EQ i+1
+                                                            AND structKeyExists(rc.Air[0], 'TotalPrice')>
                                                             <br>
                                                             #numberFormat(rc.Air[0].TotalPrice, '____.__')#
                                                             <cfset tripTotal = tripTotal + rc.Air[0].TotalPrice>

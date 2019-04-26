@@ -23,7 +23,7 @@
 		<cfargument name="SearchID" default="">
 		<cfargument name="Group" default="">
 		<cfargument name="SelectedTrip" default="">
-		<cfargument name="SearchType" default="LowFare"><!--- Options:  AirSearch, LowFare, Availability, Both --->
+		<cfargument name="SearchType" default="AirSearch"><!--- Options:  AirSearch, LowFare, Availability, Both --->
 		<cfargument name="refundable" required="false" default="false">
 
 		<cfset var start = 0>
@@ -71,7 +71,7 @@
 															refundable = arguments.refundable )>
 			<cfset trips.Profiling.KrakenAirSearch = (getTickCount() - start) / 1000>
 
-			<cfset AvailabilityResponse.response = AirSearchResponse.AirAvailabilityResponses.response[arguments.Group+1]>
+			<cfset AvailabilityResponse = AirSearchResponse.AirAvailabilityResponses[arguments.Group+1]>
 			<cfset LowFareResponse = AirSearchResponse.LowFareResponse>
 
 		</cfif>
