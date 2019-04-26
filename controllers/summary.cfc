@@ -756,7 +756,8 @@
 																			, searchID = rc.searchID
 																			, password = rc.password
 																			, passwordConfirm = rc.passwordConfirm
-																			, action = rc.trigger )>
+																			, action = rc.trigger
+																			, TravelerNumber = rc.TravelerNumber )>
 			<cfif structIsEmpty(rc.errors)>
 				<cfif isNumeric(left(rc.trigger, 1))>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#(left(rc.trigger, 1))#')>
