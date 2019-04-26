@@ -67,9 +67,18 @@
 				local.Refundable = true;
 			}
 
-			requestBody["TravelerAccountId"] = arguments.Filter.getAcctID();
-			requestBody["TravelerName"]="John Doe";
-			requestBody["FlightSearchOptions"] = {};
+			requestBody.Identity = {
+				ArrangerId = Filter.getUserID(),
+				TravelerName = Filter.getProfileUsername(),
+				SearchId = Filter.getSearchID(),
+				AccountId = Filter.getAcctID(),
+				TravelerId = Filter.getProfileID(),
+				IsGuestTraveler = Filter.getProfileID() EQ 0 ? true : false,
+				GuestTravelerDepartmentId = Filter.getValueID(),
+				//CandidateTravelerId = '',
+				//CandidateTravelerDepartmentId = '',
+				TravelerDepartmentId = Filter.getValueID()
+			};
 
 			if(arraylen(local.airlines)	EQ 1) {
 				requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
