@@ -522,5 +522,30 @@
 
 		<cfreturn arguments.Segments>
 	</cffunction>
+
+	<cffunction name="getLowestFare" returnType="any" access="public">
+		<cfargument name="SegmentFares" type="any" required="true">
+
+		<cfset var SegmentFares = arguments.SegmentFares>
+		<cfset var LowestFare = 1000000>
+		<cfset var TripIndex = ''>
+		<cfset var TripItem = ''>
+		<cfset var CabinIndex = ''>
+		<cfset var CabinItem = ''>
+
+		<cfloop collection="#SegmentFares#" index="TripIndex" item="TripItem">
+
+			<cfloop collection="#TripItem#" index="CabinIndex" item="CabinItem">
+
+				<cfif CabinItem.TotalFare LTE LowestFare>
+					<cfset LowestFare = CabinItem.TotalFare>
+				</cfif>
+
+			</cfloop>
+
+		</cfloop>
+
+		<cfreturn LowestFare />
+	</cffunction>
  	
 </cfcomponent>
