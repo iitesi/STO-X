@@ -56,6 +56,15 @@
 		</cfif>
 		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
 
+		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
+			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
+			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
+			<cfset request.tokenResponse = request.krakenService.refreshToken(session.StmUserToken)/>
+			<cfif request.tokenResponse.IsValid EQ True>
+				<cfset session.StmUserToken = request.tokenResponse.StmUserToken/>
+			</cfif>
+		</cfif>
+
 		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
