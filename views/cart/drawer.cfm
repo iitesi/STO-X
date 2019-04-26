@@ -1,9 +1,10 @@
-<cfif structKeyExists(session, 'SearchId')
-    AND structKeyExists(session, 'Searches')
-    AND structKeyExists(session.Searches, session.SearchId)>
-    <script type="">
-    // $('#main-content').toggleClass('toggled');
+<cfif structKeyExists(session, 'Searches')
+    AND structKeyExists(session.Searches, rc.SearchId)>
+
+    <script type="text/javascript">
+        $('#main-content').toggleClass('toggled');
     </script>
+
     <cfset rc.itinerary = session.searches[rc.searchID].stItinerary />
     <cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false) />
     <cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '') />
@@ -73,68 +74,6 @@
         <cfset displayCart = false>
     </cfif>
 
-
-                   <!---  <cfif tripTotal NEQ 0>
-                        <cfif NOT rc.hotelSelected AND rc.Filter.getHotel() AND showHotelTab>
-                            <!---Hotel--->
-                            <div class="row cart-row">
-                                <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#"><i class="material-icons">hotel</i></a>
-                                <cfif rc.action CONTAINS 'hotel.'>In progress<cfelse>Up next</cfif>
-                                <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-                                <a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
-                            </div>
-                        </cfif>
-                        <cfif NOT rc.vehicleSelected AND rc.Filter.getCar() AND showCarTab>
-                            <!---Car--->
-                            <div class="row cart-row">
-                                <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#"><i class="material-icons">directions_car</i></a>
-                                <cfif rc.action CONTAINS 'car.'>In progress<cfelse>Up next</cfif>
-                                <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-                                <a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
-                            </div>
-                        </cfif>
-                        <cfif rc.filter.getPassthrough() NEQ 1 AND NOT (structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO") AND rc.Filter.getAir() EQ 1 AND NOT rc.airSelected>
-                            <div class="row cart-row blue bold">
-                                <i class="material-icons">local_airport</i> <a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Add air</a>
-                            </div>
-                            <div class="row cart-row">
-                                <br>
-                            </div>
-                        </cfif>
-                        <cfif NOT rc.hotelSelected AND rc.Filter.getHotel() EQ 0>
-                            <div class="row cart-row">
-                                <i class="material-icons blue bold">hotel</i> <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#">Add a hotel</a>
-                            </div>
-                            <div class="row cart-row">
-                                <br>
-                            </div>
-                        </cfif>
-                        <cfif NOT rc.vehicleSelected AND rc.Filter.getCar() EQ 0>
-                            <div class="row cart-row">
-                                <i class="material-icons blue bold">directions_car</i> <a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">Add a car</a>
-                            </div>
-                            <div class="row cart-row">
-                                <br>
-                            </div>
-                        </cfif>
-                        <cfif rc.action DOES NOT CONTAIN 'summary'>
-                            <div class="row cart-row center">
-                                <a href="#buildURL('summary?searchID=#rc.searchID#')#" class="btn btn-primary">CHECKOUT #(tripCurrency EQ '' ? '$'&numberFormat(tripTotal) : '')#</a>
-                            </div>
-                        </cfif>
-                    </cfif>
-                <cfelse>
-                    <div class="row cart-row bold center">
-                        Booking in progress
-                    </div>
-                </cfif>
-            </div><!-- /.navbar-collapse -->
-        </cfif>
-    </cfoutput> --->
-    <!---
-    <cfdump var="#session.searches[rc.searchId].stItinerary.Hotel#">
-    <cfdump var="#rc.Filter#">
-    --->
     <cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
         <button type="button" class="cart-open-icon is-closed" data-toggle="offcanvas">
             <i class="material-icons">shopping_cart</i>
@@ -164,7 +103,7 @@
                             <cfif isNumeric(segment) AND showAirTab>
                                 <!---Air--->
                                 <cfif rc.airSelected>
-                                    <cfloop collection="#session.searches[rc.searchId].stItinerary.Air#" item="group" index="i">
+                                    <cfloop collection="#rc.Air#" item="group" index="i">
                                         <cfif segment EQ i AND NOT structIsEmpty(group)>
                                             
     										<li>
@@ -174,6 +113,12 @@
     													#group.OriginAirportCode# - #group.DestinationAirportCode#<br>
     													#DateFormat(group.DepartureTime, 'DDD, MMM d, yyyy')#<br>
     													#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#
+                                                        <cfif structCount(rc.Air) EQ i+1>
+                                                            <br>
+                                                            #numberFormat(rc.Air[0].TotalPrice, '____.__')#
+                                                            <cfset tripTotal = tripTotal + rc.Air[0].TotalPrice>
+                                                            <cfset tripCurrency = listAppend(tripCurrency, 'USD')>
+                                                        </cfif>
                                             		</div>
     											</div>
     										</li>  
@@ -189,9 +134,22 @@
     										<div class="col-sm-12">
     											<a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#"><i class="material-icons">hotel</i></a><br>
     											#rc.Hotel.getPropertyName()#<br>
-    											<!--- <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    											<a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a> --->
-    											#DateFormat(rc.filter.getCheckInDate(), 'DDD, MMM d')# to #DateFormat(rc.filter.getCheckOutDate(), 'DDD, MMM d')#
+    											<a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    											<a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
+    											#DateFormat(rc.filter.getCheckInDate(), 'DDD, MMM d')# to #DateFormat(rc.filter.getCheckOutDate(), 'DDD, MMM d')#<br>
+                                                <cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
+                                                    <cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
+                                                    <cfset hotelTotal = rc.Hotel.getRooms()[1].getTotalForStay()>
+                                                <cfelseif rc.Hotel.getRooms()[1].getBaseRate() GT 0>
+                                                    <cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
+                                                    <cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
+                                                <cfelse>
+                                                    <cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
+                                                    <cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
+                                                </cfif>
+                                                #(currency EQ 'USD' ? DollarFormat(hotelTotal) : numberFormat(hotelTotal, '____.__')&' '&currency)#
+                                                <cfset tripTotal = tripTotal + hotelTotal>
+                                                <cfset tripCurrency = listAppend(tripCurrency, currency)>
     										</div>
     									</div>
     								</li>                               
@@ -205,14 +163,17 @@
     										<div class="col-sm-12">
     											<a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#"><i class="material-icons">directions_car</i></a><br>
     											#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])#<br>
-    											<!--- <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    											<a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a> --->
+    											<a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    											<a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
     											#rc.Filter.getCarPickUpAirport()#<br>
     											#DateFormat(rc.Filter.getCarPickUpDateTime(), 'ddd, mmm d')# at #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#<br>
     											<cfif rc.Filter.getCarDifferentLocations()>
     												#rc.Filter.getCarDropOffAirport()#<br>
     											</cfif>
-    											#DateFormat(rc.Filter.getCarDropOffDateTime(), 'ddd, mmm d')# at #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#
+    											#DateFormat(rc.Filter.getCarDropOffDateTime(), 'ddd, mmm d')# at #uCase(timeFormat(rc.Filter.getCarDropOffDateTime(), 'h:mm tt'))#<br>
+                                                #(rc.Vehicle.getCurrency() EQ 'USD' ? DollarFormat(rc.Vehicle.getEstimatedTotalAmount()) : numberFormat(rc.Vehicle.getEstimatedTotalAmount(), '____.__')&' '&rc.Vehicle.getCurrency())#
+                                                <cfset tripTotal = tripTotal + rc.Vehicle.getEstimatedTotalAmount()>
+                                                <cfset tripCurrency = listAppend(tripCurrency, rc.Vehicle.getCurrency())>
     										</div>
     									</div>
     								</li>
@@ -273,6 +234,13 @@
     						</li>
                         </cfif>                                            
                     </cfif>
+                    <li>
+                        <cfif listLen(listRemoveDuplicates(tripCurrency)) EQ 1>
+                            <button>$#numberFormat(tripTotal, '____.__')#</button>
+                        <cfelse>
+                            <button>BOOK TRIP</button>
+                        </cfif>
+                    </li>
                 </cfoutput>
             </ul>
         </nav>

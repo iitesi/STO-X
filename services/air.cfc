@@ -23,7 +23,7 @@
 		<cfargument name="SearchID" default="">
 		<cfargument name="Group" default="">
 		<cfargument name="SelectedTrip" default="">
-		<cfargument name="SearchType" default="Availability"><!--- Options:  AirSearch, LowFare, Availability, Both --->
+		<cfargument name="SearchType" default="LowFare"><!--- Options:  AirSearch, LowFare, Availability, Both --->
 		<cfargument name="refundable" required="false" default="false">
 
 		<cfset var start = 0>
@@ -137,6 +137,10 @@
 			<cfset trips.Fares = {}>
 			<cfset trips.SegmentFares = {}>
 
+		</cfif>
+
+		<cfif arguments.Group EQ 0>
+			<cfset session.LowestFare = LowFare.getLowestFare(SegmentFares = trips.SegmentFares)>
 		</cfif>
 
 		<cfreturn trips>

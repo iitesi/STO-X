@@ -52,25 +52,12 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'assetURL')>
 			<cfset application.assetURL = variables.bf.getBean("EnvironmentService").getAssetURL()>
 		</cfif>
-		<cfif NOT StructKeyExists(application, 'blackListedCarrierPairing')>
-			<cfset variables.bf.getBean("setup").setBlackListedCarrierPairing(argumentcollection=arguments.rc)>
-		</cfif>
-		<cfif NOT StructKeyExists(application, 'blacklistedCarriers')>
-			<cfset variables.bf.getBean("setup").setBlackListedCarrier(argumentcollection=arguments.rc)>
-		</cfif>
 		<cfif NOT StructKeyExists(application, 'lowFareResultsLimit')>
 			<cfset application.lowFareResultsLimit = 300><!--- cosnt limnit 300 while we figure out pagination for search results views --->
 		</cfif>
 
 		<cfreturn />
 	</cffunction>
-
-	<cffunction name="setSearchID" output="false" hint="I set the search ID.">
-		<cfargument name="rc">
-		<cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)>
-		<cfreturn />
-	</cffunction>
-
 
 	<cffunction name="cleanOutOldSearchIDs" output="false" hint="I set the search ID.">
 		<cfargument name="rc">
@@ -86,8 +73,17 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="setSearchID" output="false" hint="I set the search ID.">
+		<cfargument name="rc">
+
+		<cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)>
+		
+		<cfreturn />
+	</cffunction>
+
 	<cffunction name="setFilter" output="false" hint="Move the search into the rc scope so it is always available.">
 		<cfargument name="rc">
+
 		<cfif StructKeyExists(session, 'Filters')
 			AND StructKeyExists(session.Filters, arguments.rc.SearchID)
 			AND NOT StructKeyExists(arguments.rc, "requery")>
@@ -95,19 +91,23 @@ setApplication
 		<cfelse>
 			<cfset rc.Filter = variables.fw.getBeanFactory().getBean("setup").setFilter(argumentcollection=arguments.rc)>
 		</cfif>
+
 		<cfreturn />
 	</cffunction>
 
 	<cffunction name="setAcctID" output="false">
 		<cfargument name="rc"/>
+
 		<cfset rc.acctId = (structKeyExists(session,"acctId") ? session.acctId : 0)/>
 		<cfif rc.acctId EQ 0 AND structKeyExists(cookie,"acctId")>
 			<cfset rc.acctId = val(cookie.acctId)/>
 		</cfif>
+
 		<cfreturn/>
 	</cffunction>
 
 	<cffunction name="setAccountIds" output="false">
+
 		<cfquery name="local.getReportToIDs" datasource="corporate_production">
 			SELECT LTrim(RTrim(ReportToID)) AS ReportToID
 			  FROM Accounts_ReportToIDs, Accounts
@@ -121,6 +121,7 @@ setApplication
 		<cfelse>
 			<cfset session.accountIds = 0/>
 		</cfif>
+
 	</cffunction>
 
 	<cffunction name="setAccount" output="false">
@@ -142,28 +143,10 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="setTMC" output="false">
-		<cfargument name="rc">
-
-		<!---Move the Account into the rc scope so it is always available.--->
-		<cfif NOT StructKeyExists(session, 'TMC') OR NOT isobject(session.TMC )>
-			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
-		</cfif>
-
-		<cfreturn />
-	</cffunction>
-
-	<cffunction name="setInvoiceTableSuffix" output="false">
-		<cfquery name="local.getTableName" datasource="corporate_production">
-			SELECT Table_Name
-			  FROM Accounts
-			 WHERE Acct_ID = <cfqueryparam value="#session.acctId#" cfsqltype="cf_sql_integer">
-		</cfquery>
-		<cfset session.InvoiceTableSuffix = local.getTableName.Table_Name>
-	</cffunction>
-
 	<cffunction name="setPolicyID" output="false">
+
 		<cfset rc.PolicyID = (structKeyExists(session, 'PolicyID') ? session.PolicyID : 0)>
+
 		<cfreturn />
 	</cffunction>
 
@@ -192,24 +175,6 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="resetPolicy" output="false">
-		<cfargument name="rc">
-		<cfparam name="rc.debugPolicy" value="false" />
-		<!--- doublecheck the policyID is set --->
-		<cfif NOT structKeyExists(rc, "policyID")>
-			<cfset rc.policyID = arguments.rc.filter.getPolicyID()>
-		</cfif>
-		<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
-		<cfset variables.fw.setView('main.policy')/>
-	</cffunction>
-
-	<cffunction name="resetAirports" output="false">
-		<cfargument name="rc">
-		<cfset application.stAirports = StructNew()>
-		<cfset variables.bf.getBean("setup").setAirports()>
-		<cfset variables.fw.setView('main.reload')/>
-	</cffunction>
-
 	<cffunction name="setGroup" output="false">
 		<cfargument name="rc">
 
@@ -218,11 +183,48 @@ setApplication
 		<cfreturn />
 	</cffunction>
 
-	<cffunction name="setBlackListedCarrierPairing" output="false">
+	<cffunction name="setTMC" output="false">
 		<cfargument name="rc">
-		<cfif NOT StructKeyExists(application, 'blackListedCarrierPairing')>
-			<cfset variables.bf.getBean("setup").setBlackListedCarrierPairing(argumentcollection=arguments.rc)>
+
+		<!---Move the Account into the rc scope so it is always available.--->
+		<cfif NOT StructKeyExists(session, 'TMC') OR NOT isobject(session.TMC )>
+			<cfset session.TMC = application.Accounts[arguments.rc.AcctID].TMC />
 		</cfif>
+
 		<cfreturn />
 	</cffunction>
+
+	<cffunction name="setInvoiceTableSuffix" output="false">
+
+		<cfquery name="local.getTableName" datasource="corporate_production">
+			SELECT Table_Name
+			  FROM Accounts
+			 WHERE Acct_ID = <cfqueryparam value="#session.acctId#" cfsqltype="cf_sql_integer">
+		</cfquery>
+		<cfset session.InvoiceTableSuffix = local.getTableName.Table_Name>
+
+	</cffunction>
+
+	<cffunction name="resetPolicy" output="false">
+		<cfargument name="rc">
+
+		<cfparam name="rc.debugPolicy" value="false" />
+		<!--- doublecheck the policyID is set --->
+		<cfif NOT structKeyExists(rc, "policyID")>
+			<cfset rc.policyID = arguments.rc.filter.getPolicyID()>
+		</cfif>
+		<cfset rc.Policy = variables.bf.getBean("setup").setPolicy( argumentcollection=arguments.rc )>
+		<cfset variables.fw.setView('main.policy')/>
+
+	</cffunction>
+
+	<cffunction name="resetAirports" output="false">
+		<cfargument name="rc">
+
+		<cfset application.stAirports = StructNew()>
+		<cfset variables.bf.getBean("setup").setAirports()>
+		<cfset variables.fw.setView('main.reload')/>
+
+	</cffunction>
+	
 </cfcomponent>

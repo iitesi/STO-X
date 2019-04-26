@@ -1,14 +1,9 @@
 <cfoutput>
 
 	<cfif rc.airSelected>
-		<!--- <cfset lowestFareTripID = session.searches[rc.searchid].stLowFareDetails.aSortFare[1] />
-		<cfset lowestFare = session.searches[rc.searchid].stTrips[lowestFareTripID].Total /> --->
+		<cfset lowestFare = session.LowestFare>
 		<!--- Dohmen to do --->
-<!--- <cfdump var=#rc.Air# abort> --->
-		<cfset lowestFare = 200>
-		<!--- Dohmen to do --->
-		<!--- <cfset inPolicy = (ArrayLen(rc.Air.aPolicies) GT 0 ? false : true)> --->
-		<cfset inPolicy =true>
+		<cfset inPolicy = rc.Air[0].OutOfPolicy ? false : true>
 
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">
 
@@ -30,8 +25,9 @@
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
+					<!--- Dohmen --->
 					<cfif rc.showAll
-						OR (NOT inPolicy
+						OR (rc.Air[0].OutOfPolicy
 						AND rc.Policy.Policy_AirReasonCode EQ 1)>
 
 						<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">OUT OF POLICY *</span>
@@ -50,12 +46,10 @@
 					AND they are in policy OR the above drop down isn't showing
 					AND they want to capture lost savings
 					--->
-					<!--- Dohmen to do
-						<cfif rc.showAll
-						OR (rc.Air.Total GT lowestFare
+					<cfif rc.showAll
+						OR (rc.Air[0].TotalPrice GT lowestFare
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
-						AND rc.Policy.Policy_AirLostSavings EQ 1)> --->
-					<cfif true>
+						AND rc.Policy.Policy_AirLostSavings EQ 1)>
 						<!--- Dohmen to do --->
 						<!--- <span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span> --->
 
@@ -69,7 +63,7 @@
 					<!---
 					If the fare is the same
 					--->
-					<cfelseif rc.Air.Total EQ lowestFare>
+					<cfelseif rc.Air[0].TotalPrice EQ lowestFare>
 						<cfset defaultLostSavingsCode = "C" />
 						<!--- If Peak TMC --->
 						<cfif rc.Account.tmc.getTMCID() EQ 3>

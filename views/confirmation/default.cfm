@@ -1,4 +1,4 @@
-<!--- TODO: Move this to shared asset --->
+<!--- TODO: gkernen - I'll move this to shared static asset --->
 <style>
 
 .checkmark {
@@ -91,8 +91,7 @@
 
 	<cfelse>
 
-		Error
-		<br><br>
+		Your trip has been cancelled.
 
 	</cfif>
 

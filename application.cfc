@@ -91,9 +91,9 @@
 				<cfset controller('setup.setGroup')/>
 				<cfset controller('setup.setAccountIds')/>
 				<cfset controller('setup.setInvoiceTableSuffix')/>
-				<cfset controller('setup.setBlackListedCarrierPairing')/>
 			</cfif>
 		</cfif>
+
 		<cfset controller('setup.cleanOutOldSearchIDs')/>
 
 	</cffunction>

@@ -13,7 +13,7 @@
 	<cffunction name="doPurchase" output="false">
 		<cfargument name="Filter" requred="true" />
 		<cfargument name="Traveler" requred="true" />
-		<cfargument name="bookingDSN" requred="true" />
+		<cfargument name="LowestFare" requred="true" />
 
 		<cfset var Filter = arguments.Filter>
 		<cfset var Traveler = arguments.Traveler>
@@ -35,7 +35,8 @@
 
 		<cfset TravelPurchase.FlightPurchaseRequest = createFlightPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
-																		Air = Air)>
+																		Air = Air,
+																		LowestFare = LowestFare)>
 
 		<cfset TravelPurchase.HotelPurchaseRequest = createHotelPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
@@ -126,7 +127,7 @@
 
 		</cfscript>
 
-		<!--- <cfdump var=#TravelerSharedData# abort> --->
+		<!--- Dohmen DepartmentId --->
 
 		<cfreturn TravelerSharedData>
 	</cffunction>
@@ -190,18 +191,16 @@
 
 				<cfscript>
 					FlightStruct = { 
-						outOfPolicy : false,
+						outOfPolicy : Flight.OutOfPolicy ? false : true,
 						originAirportCode : Flight.originAirportCode,
 						destinationAirportCode : Flight.destinationAirportCode,
 						departureDateTime : Flight.DepartureTimeGMT,
 						arrivalDateTime : Flight.ArrivalTimeGMT,
 						flightNumber : Flight.flightNumber,
 						carrierCode : Flight.carrierCode,
-						//equipment : "321",
-						//changeOfPlane : false,
 						BookingCode : Flight.BookingCode,
 						CabinClass : Flight.CabinClass,
-						isPreferred : false,
+						isPreferred : Flight.IsPreferred,
 						DepartureTime : Flight.DepartureTimeGMT,
 						ArrivalTime : Flight.ArrivalTimeGMT,
 						// SeatAssignment : {
@@ -237,9 +236,9 @@
 				FlightPurchaseRequest = {
 					FlightPricingSegments : FlightPricingSegments,
 					SearchId : Filter.getSearchId(),
-					AirLowestFare : 338.37,
+					AirLowestFare : LowestFare,
 					ApplyUnusedTickets : structKeyExists(Filter.getUnusedTicketCarriers(), Air[0].PlatingCarrier),
-					AirOutOfPolicyReasonCode : "",
+					AirOutOfPolicyReasonCode : Traveler.getBookingDetail().getAirReasonCode(),
 					HotelNotBookedReasonCode : Traveler.getBookingDetail().getHotelNotBooked(),
 					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getAirFOPID()) ? Traveler.getBookingDetail().getAirFOPID() : getToken(Traveler.getBookingDetail().getAirFOPID(), 2, '_')
 				}
@@ -247,7 +246,7 @@
 			};
 		</cfscript>
 
-		<!--- Dohmen to do - AirOutOfPolicyReasonCode --->
+		<!--- Dohmen to do - IsPrivateFare --->
 
 		<cfreturn FlightPurchaseRequest>
 	</cffunction>

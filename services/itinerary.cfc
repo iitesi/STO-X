@@ -20,21 +20,22 @@
 
 		<cfset Air = deserializeJSON(form.Segment)>
 		<cfset Fare = deserializeJSON(form.Fare)>
+
 		<cfloop list="#form.fieldnames#" index="local.fieldname">
 			<cfif fieldname NEQ 'fieldnames'
 				AND fieldname NEQ 'Segment'>
 				<cfset Air[fieldname] = form[fieldname]>
 			</cfif>
 		</cfloop>
+
 		<cfset Itinerary.Air[Group] = Air>
 		<cfset Itinerary.Air[Group].Fare = Fare>
+
 		<cfloop from="0" to="#Groups-1#" index="local.Count">
 			<cfif Count GT Group>
 				<cfset Itinerary.Air[Count] = {}>
 			</cfif>
 		</cfloop>
-		
-		<!--- <cfdump var=#Itinerary# abort> --->
 		
 		<cfreturn Itinerary />
  	</cffunction>
@@ -47,6 +48,7 @@
 		<cfset var Fare = deserializeJSON(arguments.Fare)>
 		<cfset var Itinerary = arguments.Itinerary>
 		<cfset var SegmentFareId = ''>
+		<cfset var OutOfPolicy = false>
 
 		<cfloop collection="#Itinerary#" index="local.GroupKey" item="local.Group">
 
@@ -60,12 +62,20 @@
 				<cfset Flight.FareBasis = Fare.Flights[Flight.FlightId].FareBasis>
 				<cfset Flight.BookingCode = Fare.Flights[Flight.FlightId].BookingCode>
 
+				<cfif Flight.OutOfPolicy>
+					<cfset OutOfPolicy = true>
+				</cfif>
+
 			</cfloop>
 
 			<cfloop collection="#Fare#" index="local.FareKey">
 
 				<cfif FareKey NEQ 'Flights'>
 					<cfset Group[FareKey] = Fare[FareKey]>
+				</cfif>
+
+				<cfif Flight.OutOfPolicy>
+					<cfset OutOfPolicy = true>
 				</cfif>
 
 			</cfloop>
@@ -76,7 +86,9 @@
 
 		</cfloop>
 
-		<!--- <cfdump var=#Itinerary# abort> --->
+		<cfloop from="0" to="#GroupKey#" index="local.GroupIndex">
+			<cfset Itinerary[GroupIndex].OutOfPolicy = OutOfPolicy>
+		</cfloop>
 
 		<cfreturn Itinerary />
  	</cffunction>
@@ -111,7 +123,7 @@
 		<cfreturn Itinerary />
  	</cffunction> --->
 
-	<cffunction name="orderItinerary" output="false">
+	<!--- <cffunction name="orderItinerary" output="false">
 		<cfargument name="Itinerary" required="true">
 
 		<cfset var Itinerary = arguments.Itinerary>
@@ -124,13 +136,13 @@
 			    </cfif>
 		    </cfloop>
 		</cfif>
-		<!--- <cfif Itinerary.RailSelected>
+		<cfif Itinerary.RailSelected>
 		    <cfloop collection="#Itinerary.Rail#" item="local.Group" index="local.GroupIndex">
 		    	<cfif NOT structIsEmpty(Group)>
 			        <cfset Ordering['Rail#GroupIndex#'] = Group.DepartureTime>
 			    </cfif>
 		    </cfloop>
-		</cfif> --->
+		</cfif>
 		<cfif Itinerary.HotelSelected AND isDate(Itinerary.Hotel.getCheckIn())>
 		    <cfset Ordering['Hotel'] = createDateTime(year(Itinerary.Hotel.getCheckIn()), month(Itinerary.Hotel.getCheckIn()), day(Itinerary.Hotel.getCheckIn()), 23, 59)>
 		</cfif>
@@ -140,6 +152,6 @@
 		<cfset Itinerary.Order = structSort(Ordering)>
 
 		<cfreturn Itinerary />
- 	</cffunction>
+ 	</cffunction> --->
 
 </cfcomponent>
