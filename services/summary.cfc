@@ -447,6 +447,7 @@
 		<cfargument name="password" required="false" default="">
 		<cfargument name="passwordConfirm" required="false" default="">
 		<cfargument name="action" required="false" default="">
+		<cfargument name="TravelerNumber" required="false" default="">
 
 		<cfset local.error = {}>
 
@@ -636,15 +637,10 @@
 				</cfif>
 
 				<!--- To Do: Pass variables in --->
-			<!--- 	<cfset local.lowestFareTripID = session.searches[arguments.searchid].stLowFareDetails.aSortFare[1] />
-				<cfset local.lowestFare = session.searches[arguments.searchid].stTrips[lowestFareTripID].Total /> --->
-				<!--- Dohmen to do --->
-				<cfset local.lowestFareTripID = 0 />
-				<cfset local.lowestFare = 200 />
+				<cfset local.lowestFare = session.LowestFare />
 				<!--- To Do: Pass variables in --->
 
-				<!--- Dohmen to do --->
-				<!--- <cfset local.inPolicy = (ArrayLen(arguments.Air.aPolicies) GT 0 ? false : true)> --->
+				<cfset local.inPolicy = arguments.Air[0].OutOfPolicy ? false : true>
 				<!--- If NASCAR --->
 				<cfif arguments.Traveler.getBookingDetail().getHotelNeeded() EQ 0>
 					<cfif arguments.acctID EQ 348
@@ -658,25 +654,24 @@
 						</cfif>
 					<cfelseif arguments.Policy.Policy_HotelNotBooking EQ 1
 						AND arguments.Traveler.getBookingDetail().getHotelNotBooked() EQ ''
-						AND arguments.Filter.getAirType() EQ 'RT'>
+						AND arguments.Filter.getAirType() EQ 'RT'
+						AND arguments.TravelerNumber EQ 1>
 						<cfset local.error.hotelNotBooked = ''>
 					</cfif>
 				</cfif>
-				<!--- Dohmen to do --->
-				<!--- <cfif NOT inPolicy
+				<cfif NOT inPolicy
 					AND arguments.Policy.Policy_AirReasonCode EQ 1>
 					<cfif arguments.Traveler.getBookingDetail().getAirReasonCode() EQ ''>
 						<cfset local.error.airReasonCode = ''>
 					</cfif>
-				</cfif> --->
-				<!--- Dohmen to do --->
-				<!--- <cfif arguments.Air.Total GT lowestFare
+				</cfif>
+				<cfif arguments.Air[0].TotalPrice GT lowestFare
 					AND (inPolicy OR arguments.Policy.Policy_AirReasonCode EQ 0)
 					AND arguments.Policy.Policy_AirLostSavings EQ 1>
 					<cfif arguments.Traveler.getBookingDetail().getLostSavings() EQ ''>
 						<cfset local.error.lostSavings = ''>
 					</cfif>
-				</cfif> --->
+				</cfif>
 				<cfif arguments.acctID EQ 235>
 					<cfif arguments.Traveler.getBookingDetail().getUDID113() EQ ''>
 						<cfset local.error.udid113 = ''>

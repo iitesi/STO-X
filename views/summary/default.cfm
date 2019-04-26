@@ -46,25 +46,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 <cfoutput>
 	<div id="summaryForm">
 
-		<span style="float:right">
-			<cfif NOT rc.hotelSelected
-				AND rc.Filter.getAirType() NEQ 'MD'
-				AND session.DepartmentPreferences.STOHotel NEQ 0>
-				<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#">
-					<span class="fa fa-lg fa-plus"></span> Add Hotel
-				</a>&nbsp;&nbsp;&nbsp;&nbsp;
-			</cfif>
-
-			<cfif NOT rc.vehicleSelected
-				AND rc.Filter.getAirType() NEQ 'MD'
-				AND len(rc.Filter.getCarPickupAirport())
-				AND session.DepartmentPreferences.STOCar NEQ 0>
-				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
-					<span class="fa fa-lg fa-plus"></span> Add Car
-				</a>
-			</cfif>
-		</span>
-
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->

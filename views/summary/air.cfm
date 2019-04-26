@@ -25,7 +25,6 @@
 					If they are out of policy
 					AND they want to capture reason codes
 					--->
-					<!--- Dohmen --->
 					<cfif rc.showAll
 						OR (rc.Air[0].OutOfPolicy
 						AND rc.Policy.Policy_AirReasonCode EQ 1)>
@@ -50,8 +49,7 @@
 						OR (rc.Air[0].TotalPrice GT lowestFare
 						AND (inPolicy OR rc.Policy.Policy_AirReasonCode EQ 0)
 						AND rc.Policy.Policy_AirLostSavings EQ 1)>
-						<!--- Dohmen to do --->
-						<!--- <span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span> --->
+						<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air[0].OutOfPolicyReasons)#" style="float:left; width:180px;">NOT BOOKING LOWEST FARE *</span>
 
 						<select name="lostSavings" id="lostSavings" class="input-xlarge #(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
 						<option value="">Select Reason for Not Booking the Lowest Fare</option>
