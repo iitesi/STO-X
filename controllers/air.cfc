@@ -13,7 +13,12 @@
 		<cfargument name="rc">
 
 		<cfset var SearchID = SearchID>
-		<cfset var Group = structKeyExists(arguments.rc, 'Group') AND arguments.rc.Group NEQ '' ? arguments.rc.Group : 0>
+
+		<cfif NOT structKeyExists(arguments.rc, 'Group') OR arguments.rc.Group EQ ''>
+			<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=0')>
+		</cfif>
+
+		<cfset var Group = arguments.rc.Group>
 
 		<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
 			<cfif SegmentIndex-1 GTE Group>
