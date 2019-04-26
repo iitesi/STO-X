@@ -20,21 +20,22 @@
 
 		<cfset Air = deserializeJSON(form.Segment)>
 		<cfset Fare = deserializeJSON(form.Fare)>
+
 		<cfloop list="#form.fieldnames#" index="local.fieldname">
 			<cfif fieldname NEQ 'fieldnames'
 				AND fieldname NEQ 'Segment'>
 				<cfset Air[fieldname] = form[fieldname]>
 			</cfif>
 		</cfloop>
+
 		<cfset Itinerary.Air[Group] = Air>
 		<cfset Itinerary.Air[Group].Fare = Fare>
+
 		<cfloop from="0" to="#Groups-1#" index="local.Count">
 			<cfif Count GT Group>
 				<cfset Itinerary.Air[Count] = {}>
 			</cfif>
 		</cfloop>
-		
-		<!--- <cfdump var=#Itinerary# abort> --->
 		
 		<cfreturn Itinerary />
  	</cffunction>
@@ -48,7 +49,7 @@
 		<cfset var Itinerary = arguments.Itinerary>
 		<cfset var SegmentFareId = ''>
 		<cfset var OutOfPolicy = false>
-		
+
 		<cfloop collection="#Itinerary#" index="local.GroupKey" item="local.Group">
 
 			<cfset SegmentFareId = ''>
@@ -73,6 +74,10 @@
 					<cfset Group[FareKey] = Fare[FareKey]>
 				</cfif>
 
+				<cfif Flight.OutOfPolicy>
+					<cfset OutOfPolicy = true>
+				</cfif>
+
 			</cfloop>
 		
 			<cfset Itinerary[GroupKey].SegmentFareId = 'G'&GroupKey&'-'&SegmentFareId>
@@ -84,8 +89,6 @@
 		<cfloop from="0" to="#GroupKey#" index="local.GroupIndex">
 			<cfset Itinerary[GroupIndex].OutOfPolicy = OutOfPolicy>
 		</cfloop>
-
-		<!--- <cfdump var=#Itinerary# abort> --->
 
 		<cfreturn Itinerary />
  	</cffunction>

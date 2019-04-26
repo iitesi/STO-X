@@ -8,6 +8,7 @@
 	<cfproperty name="lowFare" setter="true" getter="false">
 	<cfproperty name="lowFareavail" setter="true" getter="false">
 	<cfproperty name="Itinerary" setter="true" getter="false">
+	<cfproperty name="AirPolicy" setter="true" getter="false">
 
 	<cffunction name="default" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
@@ -110,6 +111,14 @@
 														Itinerary = session.searches[SearchID].stItinerary.Air,
 														Solutions = Solutions,
 														CabinClass = 'First')>
+
+		<cfset Solutions = variables.airpolicy.checkPolicy(Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														LowestFare = session.LowestFare,
+														Account = rc.Account,
+														Policy = rc.Policy)>
+
+		<cfset Solutions = variables.airpolicy.removeDuplicates(Solutions = Solutions)>
 
 		<cfset rc.Solutions = Solutions>
 
