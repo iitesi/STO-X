@@ -47,7 +47,8 @@
 		<cfset var Fare = deserializeJSON(arguments.Fare)>
 		<cfset var Itinerary = arguments.Itinerary>
 		<cfset var SegmentFareId = ''>
-
+		<cfset var OutOfPolicy = false>
+		
 		<cfloop collection="#Itinerary#" index="local.GroupKey" item="local.Group">
 
 			<cfset SegmentFareId = ''>
@@ -59,6 +60,10 @@
 				<cfset Flight.CabinClass = Fare.Flights[Flight.FlightId].CabinClass>
 				<cfset Flight.FareBasis = Fare.Flights[Flight.FlightId].FareBasis>
 				<cfset Flight.BookingCode = Fare.Flights[Flight.FlightId].BookingCode>
+
+				<cfif Flight.OutOfPolicy>
+					<cfset OutOfPolicy = true>
+				</cfif>
 
 			</cfloop>
 
@@ -74,6 +79,10 @@
 			<cfset structDelete(Itinerary[GroupKey], 'Availability')>
 			<cfset structDelete(Itinerary[GroupKey], 'Fare')>
 
+		</cfloop>
+
+		<cfloop from="0" to="#GroupKey#" index="local.GroupIndex">
+			<cfset Itinerary[GroupIndex].OutOfPolicy = OutOfPolicy>
 		</cfloop>
 
 		<!--- <cfdump var=#Itinerary# abort> --->
@@ -111,7 +120,7 @@
 		<cfreturn Itinerary />
  	</cffunction> --->
 
-	<cffunction name="orderItinerary" output="false">
+	<!--- <cffunction name="orderItinerary" output="false">
 		<cfargument name="Itinerary" required="true">
 
 		<cfset var Itinerary = arguments.Itinerary>
@@ -124,13 +133,13 @@
 			    </cfif>
 		    </cfloop>
 		</cfif>
-		<!--- <cfif Itinerary.RailSelected>
+		<cfif Itinerary.RailSelected>
 		    <cfloop collection="#Itinerary.Rail#" item="local.Group" index="local.GroupIndex">
 		    	<cfif NOT structIsEmpty(Group)>
 			        <cfset Ordering['Rail#GroupIndex#'] = Group.DepartureTime>
 			    </cfif>
 		    </cfloop>
-		</cfif> --->
+		</cfif>
 		<cfif Itinerary.HotelSelected AND isDate(Itinerary.Hotel.getCheckIn())>
 		    <cfset Ordering['Hotel'] = createDateTime(year(Itinerary.Hotel.getCheckIn()), month(Itinerary.Hotel.getCheckIn()), day(Itinerary.Hotel.getCheckIn()), 23, 59)>
 		</cfif>
@@ -140,6 +149,6 @@
 		<cfset Itinerary.Order = structSort(Ordering)>
 
 		<cfreturn Itinerary />
- 	</cffunction>
+ 	</cffunction> --->
 
 </cfcomponent>
