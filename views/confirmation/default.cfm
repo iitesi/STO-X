@@ -1,4 +1,4 @@
-<!--- TODO: gkernen - I'll move this to shared static asset once this page is settled, have some questions about styles... --->
+<!--- TODO: gkernen - I'll move this to shared static asset --->
 <style>
 
 .checkmark {

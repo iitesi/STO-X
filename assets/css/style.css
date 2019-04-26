@@ -2687,3 +2687,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
   div#flightnumber-filter-container input#flightnumber {
   	width:75px;
   }
+
+  .mask-icon {
+	display: inline-block;
+	cursor: pointer;
+}

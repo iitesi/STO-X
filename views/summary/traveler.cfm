@@ -90,23 +90,39 @@
 	<div class="form-group #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
 		<label class="control-label col-sm-4 col-xs-12" for="email">Email *</label>
 		<div class="col-sm-8 col-xs-12">
-			<input type="email" class="form-control" name="email" id="email">
+			<input type="email" class="form-control email-vo" name="email" id="email" style="display:none;"/>
+			<i class="material-icons mask-icon email-vo" style="display:none" title="Hide"
+				onclick="$('.email-v').show();$('.email-vo').hide();">visibility_off</i>
+			<input type="email" class="form-control email-v" value="**********" readonly/>
+			<i class="material-icons mask-icon email-v" title="Show"
+				onclick="$('.email-vo').show();$('.email-v').hide();">visibility</i>
 		</div>
 	</div>
 
 	<div class="form-group #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
 		<label class="control-label col-sm-4 col-xs-12" for="ccEmails">CC Email&nbsp;&nbsp;</label>
 		<div class="col-sm-8 col-xs-12">
-			<input type="email" class="form-control" name="ccEmails" id="ccEmails">
+			<input type="email" class="form-control ccEmails-vo" name="ccEmails" id="ccEmails" style="display:none;"/>
+			<i class="material-icons mask-icon ccEmails-vo" style="display:none" title="Hide"
+				onclick="$('.ccEmails-v').show();$('.ccEmails-vo').hide();">visibility_off</i>
+			<input type="email" class="form-control ccEmails-v" value="**********" readonly/>
+			<i class="material-icons mask-icon ccEmails-v" title="Show"
+				onclick="$('.ccEmails-vo').show();$('.ccEmails-v').hide();">visibility</i>
 		</div>
 	</div>
 
-	<cfif rc.airSelected
-		OR rc.vehicleSelected>
+	<cfif rc.airSelected OR rc.vehicleSelected>
 		<div class="form-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="month">Birth Date *</label>
-			<div class="controls">
-				<div class="col-sm-3">
+			<div class="controls dob-v">
+				<div class="col-sm-8 col-xs-12">
+					<input type="text" name="dob_mask" class="form-control" value="**/**/****" readonly/>
+					<i class="material-icons mask-icon dob-v" title="Show"
+						onclick="$('.dob-vo').show();$('.dob-v').hide();">visibility</i>
+				</div>
+			</div>
+			<div class="controls dob-vo" style="display:none;">
+				<div class="col-sm-2">
 					<select name="month" id="month" class="form-control">
 					<option value=""></option>
 					<cfloop from="1" to="12" index="i">
@@ -129,6 +145,10 @@
 						<option value="#i#">#i#</option>
 					</cfloop>
 					</select>
+				</div>
+				<div class="col-sm-1">
+					<i class="material-icons mask-icon dob-vo" title="Hide"
+						onclick="$('.dob-v').show();$('.dob-vo').hide();">visibility_off</i>
 				</div>
 			</div>
 		</div>
