@@ -1,4 +1,5 @@
-<cfif structKeyExists(session, 'Searches')
+<cfif structKeyExists(rc, "SearchId")
+    AND structKeyExists(session, 'Searches')
     AND structKeyExists(session.Searches, rc.SearchId)>
 
     <script type="text/javascript">
