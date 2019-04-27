@@ -191,7 +191,7 @@
 		});  
 
 		$('body').tooltip({
-			selector: '[data-toggle="tooltip"].flight-result-warning',
+			selector: '.warning-icons [data-toggle="tooltip"]',
 			template: '<div class="tooltip flight-warning" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		});
 		$('#listcontainer').tooltip({
@@ -674,6 +674,24 @@
 
 		sortTrips('economy');
 		postFilter();
+
+
+		// hide modal window if user hits the back button
+		$(window).on("unload", function() {
+			$('#myModal').modal('hide');
+		});
+
+		// open search widget in modal / iframe
+		// url is defined in search button / link
+		$('.searchModalButton').click(function(){
+			var frameSrc = $(this).attr('data-framesrc');
+			console.log(frameSrc);
+			$('#searchModal').on('show.bs.modal', function () {
+				$('iframe').attr("src",frameSrc);
+			});
+			$('#searchModal').modal('show')
+		});
+
 	</script>
 	
 <div class="row">

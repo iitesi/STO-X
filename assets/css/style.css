@@ -622,14 +622,26 @@ ul.tabs li a.active {
 #listcontainer .trip:first-child.active {
 	margin-top:0;
 }
-
-.flight-result-warning {
-	font-size: 20px;
-	background-color: white;
-	color: #f1d645;
-	line-height: 25px;
+.warning-icons {
+	display: flex;
+	justify-content: center
 }
-
+.warning-icons > span {
+	width: 25px;
+	font-size: 16px;
+	color: #cccccc;
+	background-color: white;
+	line-height: 20px;
+}
+.flight-result-warning:hover {
+	color: #318e31;
+}
+.unused-ticket-alert:hover {
+	color: #2e6da4 ;
+}
+.long-flight-alert:hover {
+	color: #a94442;
+}
 .detail-expander {
 	opacity: 0.3;
 }
@@ -834,6 +846,7 @@ ul.tabs li a.active {
 	display: flex;
 	flex-flow: column;
 	align-content: stretch;
+	padding: 0;
 }
 
 .airline-col > .row {
@@ -1434,12 +1447,22 @@ li.with-irs .irs-title {
 	.results_collapsed {
 		height: 55px;
 	}
-	
-	.flight-result-warning {
+	.airline-col {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	.warning-icons > span {
+		width: 20px;
+		font-size: 16px;
+		height: 20px;
+	}
+	.warning-icons {
+		display: flex;
+		justify-content: center;
 		position: absolute;
-		margin-left: -10px;
-		top: 10px;
-		left: 0;
+		top: 5px;
+		left: -7px;
+		flex-direction: column;
 	}
 	.fs-2, .fs-lg-2 {
 		font-size: 16px;
@@ -1503,12 +1526,6 @@ li.with-irs .irs-title {
 	.fare-wrapper .fare-block .cabin-class .policy-error {
 		height: 2px;
 		line-height: 2px;
-	}
-	
-	.flight-result-warning {
-		position: absolute;
-		bottom: -20px;
-		left: 30px;
 	}
 	.results-info-wrapper {
 		padding-top: 5px;

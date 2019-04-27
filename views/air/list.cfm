@@ -19,23 +19,30 @@
 				<div class="col-xs-2 col-lg-1 center airline-col">
 					<div class="row">
 						<div class="col-xs-12">
-							<cfif Segment.IsLongAndExpensive>
-								<span role="button" 
-									data-placement="right" 
-									data-toggle="tooltip" title="Better economy fare and shorter travel times available."
-									class="mdi mdi-alert flight-result-warning"></span>
-							</cfif>
-							<cfif Segment.IsLongSegment>
-								<span role="button" 
-									data-placement="right" 
-									data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
-									class="mdi mdi-alert flight-result-warning"></span>
-							</cfif>
-							<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
-								<!--- Shane Pitts - Notification for unused tickets UI. --->
-								<i class="material-icons">notifications</i>
-							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
+						
+							<div class="warning-icons">
+								<cfif Segment.IsLongAndExpensive>
+									<span role="button" 
+										data-placement="right" 
+										data-toggle="tooltip" title="Better economy fare and shorter travel times available."
+										class="mdi mdi-cash-multiple flight-result-warning"></span>
+								</cfif>
+								<cfif Segment.IsLongSegment>
+									<span role="button" 
+										data-placement="right" 
+										data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
+										class="mdi mdi-timer-sand long-flight-alert"></span>
+								</cfif>
+								<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
+									<!--- Shane Pitts - Notification for unused tickets UI. --->
+									<span role="button" 
+										data-placement="right" 
+										data-toggle="tooltip" title="Unused tickets exist for this carrier."
+										class="mdi mdi-ticket-account unused-ticket-alert"></span>
+								</cfif>
+							</div>
+							
 						</div>
 						<div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div>
 						<div class="col-xs-12 detail-expander hidden-xs visible-lg-block"
@@ -200,7 +207,7 @@
 				</div>
 			</div>
 				
-			<div class="row hidden-xs visible-md-block">
+			<div class="row hidden-xs visible-md-block visible-lg-block">
 				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					<!--- <cfdump var=#Segment# abort> --->
 					<!--- Shane - New code, please fix :) --->
