@@ -709,7 +709,7 @@ ul.tabs li a.active {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .fare-wrapper .spacer {
@@ -1415,7 +1415,7 @@ li.with-irs .irs-title {
 	margin-bottom: 15px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
 	.flight-details-header {
 		display: flex;
 		flex-flow: row;
@@ -1434,9 +1434,7 @@ li.with-irs .irs-title {
 	.results_collapsed {
 		height: 55px;
 	}
-	.cabin-class {
-		overflow: visible;
-	}
+	
 	.flight-result-warning {
 		position: absolute;
 		margin-left: -10px;
@@ -1462,7 +1460,7 @@ li.with-irs .irs-title {
 	}
 }
 
-@media (min-width: 300px) and (max-width: 1023px) {
+@media (min-width: 300px) and (max-width: 1199px) {
 	#listcontainer .trip {
 		border-top-width: 1px;
 		margin-top: 10px;

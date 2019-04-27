@@ -46,7 +46,7 @@
 				</div>
 				<div class="col-xs-10 col-lg-5 results-info-wrapper">
 					<div class="row results_collapsed">
-						<div class="col-xs-12 col-lg-6 ">
+						<div class="col-xs-12 col-md-6 ">
 							<div class="row">
 								<div class="col-xs-12 fs-2 fs-xs-2">
 									#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
@@ -73,7 +73,7 @@
 							</div>							
 						</div>
 						<div class="clearfix visible-xs-block"></div>
-						<div class="col-xs-6 col-lg-3">
+						<div class="col-xs-6 col-md-3">
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									#Segment.TravelTime#
@@ -83,7 +83,7 @@
 								</div>	
 							</div>
 						</div>
-						<div class="col-xs-6 col-lg-3">		
+						<div class="col-xs-6 col-md-3">		
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
@@ -200,7 +200,7 @@
 				</div>
 			</div>
 				
-			<div class="row hidden-xs visible-lg-block">
+			<div class="row hidden-xs visible-md-block">
 				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					<!--- <cfdump var=#Segment# abort> --->
 					<!--- Shane - New code, please fix :) --->
