@@ -196,10 +196,13 @@
 			template: '<div class="tooltip flight-warning" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		});
 		$('#listcontainer').tooltip({
-			selector: '[data-toggle="tooltip"].fare-warning',
+			selector: '.fare-warning[data-toggle="tooltip"]',
 			template: '<div class="tooltip faretooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
-		
+		$('#page-content-wrapper').tooltip({
+			selector: '.long-flight-alert[data-toggle="tooltip"]',
+			template: '<div class="tooltip long-flight-alert-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		}); 
 		$('#filterbar').on('click', 'a.dropdown-toggle .mdi-close', function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();

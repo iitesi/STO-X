@@ -12,6 +12,9 @@
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
 		data-segmentid="#Segment.Segmentid#"
+		data-longsegment="#Segment.IsLongSegment#"
+		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
+		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
 		>
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
 		<input type="hidden" name="segmentJSON" value="#encodeForHTML(serializeJSON(Segment))#" />
@@ -29,12 +32,6 @@
 										data-placement="right" 
 										data-toggle="tooltip" title="Better economy fare and shorter travel times available."
 										class="mdi mdi-cash-multiple flight-result-warning"></span>
-								</cfif>
-								<cfif Segment.IsLongSegment>
-									<span role="button" 
-										data-placement="right" 
-										data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
-										class="mdi mdi-timer-sand long-flight-alert"></span>
 								</cfif>
 								<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
 									<!--- Shane Pitts - Notification for unused tickets UI. --->
@@ -85,7 +82,14 @@
 						<div class="col-xs-6 col-md-3">
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
-									#Segment.TravelTime#
+									#Segment.TravelTime# 
+									<cfif Segment.IsLongSegment>
+										<span role="button" 
+											data-placement="right" 
+											data-toggle="tooltip"
+											title="Segment is more than twice as long as the shortest travel time available."
+											class="mdi mdi-timer-sand long-flight-alert"></span>
+									</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">
 									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
@@ -149,18 +153,7 @@
 															data-placement="top" 
 															data-toggle="tooltip" 
 															title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
-														
 														</div>
-														<!---
-														<span  role="button" 
-															class="badge badge-pill warning fare-warning"
-															data-placement="top" 
-															data-toggle="tooltip" 
-															title="#arrayToList(brandedFare.OutOfPolicyReason)#">
-															<i class="fa fas fa-exclamation" aria-hidden="true"></i>
-														</span>
-													--->
-													
 													</div>
 												<cfelse>
 													<div class="fs-s policy-error-hidden"></div>

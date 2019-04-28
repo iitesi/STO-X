@@ -580,8 +580,7 @@ ul.tabs li a.active {
 .results_collapsed {
 	width: 100%;
 	position: absolute;
-	/* display: flex; */
-	opacity: 1; 
+	display: block;
 	-webkit-transition: all 0.2s ease-out;
   	-moz-transition: all 0.2s ease-out;
   	-o-transition: all 0.2s ease-out;
@@ -592,27 +591,23 @@ ul.tabs li a.active {
 .results_expanded {
 	width: 100%;
 	position: absolute;
-	/* display: none; */
-	opacity: 0; 
 	-webkit-transition: all 0.2s ease-out;
   	-moz-transition: all 0.2s ease-out;
   	-o-transition: all 0.2s ease-out;
 	transition: all 0.2s ease-out;
 	height: 55px;
-	display: flex;
+	display: none;
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
 }
 
 #listcontainer .trip.active .results_collapsed {
-	/* display: none; */
-	opacity: 0; 
+	display: none !important;
 }
 
 #listcontainer .trip.active .results_expanded {
-	/* display: flex; */
-	opacity: 1; 
+	display: flex !important;
 }
 
 #listcontainer .trip.border-top {
@@ -639,9 +634,14 @@ ul.tabs li a.active {
 .unused-ticket-alert:hover {
 	color: #2e6da4 ;
 }
-.long-flight-alert:hover {
+
+.long-flight-alert {
+	width: 25px;
+	font-size: 14px;
+	line-height: 20px;
 	color: #a94442;
 }
+
 .detail-expander {
 	opacity: 0.3;
 }
@@ -836,7 +836,12 @@ ul.tabs li a.active {
 .tooltip.faretooltip .tooltip-inner {
 	padding: 30px 15px;
 }
-
+.tooltip.long-flight-alert-tooltip {
+	width: 400px!important;
+}
+.tooltip.long-flight-alert-tooltip .tooltip-inner {
+	padding: 20px 15px;
+}
 .tooltip.flight-warning .tooltip-inner {
 	width: 200px !important;
 	padding: 15px;
