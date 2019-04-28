@@ -11,8 +11,10 @@
 		data-first="#structKeyExists(SegmentFares, 'First') ? SegmentFares.First.TotalFare : 1000000#"
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
+		data-segmentid="#Segment.Segmentid#"
 		>
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
+		<input type="hidden" name="segmentJSON" value="#encodeForHTML(serializeJSON(Segment))#" />
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
@@ -310,7 +312,7 @@
 							<cfif len(BrandedFareIds) GT 0
 								OR structKeyExists(Segment, 'Availability')>
 								<cfset paneldetails = "">
-								<ul class="nav nav-tabs" role="tablist">
+								<ul class="nav nav-tabs flight-detail-tabs" role="tablist">
 								<cfset count = 0>
 								<cfloop list="#BrandedFareIds#" index="BrandedFareId">
 									<cfif BrandedFareId NEQ 0>
@@ -348,6 +350,14 @@
 									</div></cfsavecontent>
 									<cfset paneldetails = "#paneldetails##subdetail#">
 								</cfif>
+								<li role="presentation" class="">
+									<cfset tabuuid = "f#createUUID()#">
+									<a href="###tabuuid#" aria-controls="#tabuuid#" role="tab" data-tab="emailform" data-toggle="tab">Email</a>
+								</li>
+								<cfsavecontent variable="emailtab"><div role="tabpanel" class="tab-pane" id="#tabuuid#">
+email form injects here
+								</div></cfsavecontent>
+								<cfset paneldetails = "#paneldetails##emailtab#">
 								</ul>
 								<div class="tab-content branded-cabin-details">#paneldetails#</div>
 							</cfif>

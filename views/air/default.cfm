@@ -6,7 +6,7 @@
 		</div>
 		--->
 		<div class="col-sm-12">
-			<div class="paage-header"> <!-- TODO fix styles -->
+			<div class="page-header">
 				#View('air/legs')#
 			</div>
 		</div>
@@ -675,7 +675,6 @@
 		sortTrips('economy');
 		postFilter();
 
-
 		// hide modal window if user hits the back button
 		$(window).on("unload", function() {
 			$('#myModal').modal('hide');
@@ -684,20 +683,52 @@
 		// open search widget in modal / iframe
 		// url is defined in search button / link
 		$('.searchModalButton').click(function(){
-			var frameSrc = $(this).attr('data-framesrc');
-			console.log(frameSrc);
+			const frameSrc = $(this).attr('data-framesrc');
 			$('#searchModal').on('show.bs.modal', function () {
 				$('iframe').attr("src",frameSrc);
 			});
 			$('#searchModal').modal('show')
 		});
 
-	</script>
+		$('#listcontainer').on('click', 'a[data-toggle="tab"][data-tab="emailform"]', function(e) {
+			const $this = $(this);
+			
+			if ($this.data('loaded') != 1){
+				const contentId = $this.attr('href');
+				const $trip = $this.parents('div.trip');
+				const segmentJson = $trip.find('input[name=segmentJSON]').val();
+				const $form = $('#emailcontent').clone();
+				$form.find('input[name=Email_Segment]').val(segmentJson);
+				$(contentId).html($form.html(), function(data) {
+					$this.data('loaded', 1);
+				});
+			}
+		});
+
+		const setActive = function($el, active) {
+			const formField = $el.parents('.form-field');
+			if (active) {
+				formField.addClass('form-field--is-active')
+			} else {
+				formField.removeClass('form-field--is-active')
+				$el.val() === '' ? 
+				formField.removeClass('form-field--is-filled') : 
+				formField.addClass('form-field--is-filled')
+			}
+		}
+
+		$('#listcontainer')
+		.on('blur','.form-field__input, .form-field__textarea',function(){
+			setActive($(this), false);
+		})
+		.on('focus','.form-field__input, .form-field__textarea',function(){
+			setActive($(this), true);
+		});
+
+</script>
 	
-<div class="row">
-	<cfoutput>
-		#View('air/email')#
-	</cfoutput>
+<div class="row hidden">
+	<cfoutput>#View('air/email')#</cfoutput>
 </div>
 	
 <div class="row">
