@@ -615,7 +615,7 @@ ul.tabs li a.active {
 	opacity: 1; 
 }
 
-#listcontainer .trip.active + .trip {
+#listcontainer .trip.border-top {
 	border-top-width: 1px;
 }
 

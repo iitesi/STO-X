@@ -181,6 +181,7 @@
 
 		$('#listcontainer').on('click', '.detail-expander', function () {
 			$(this).parents(".panel.trip").toggleClass("active");
+			$(this).parents(".panel.trip").nextAll( '.trip:visible:first').toggleClass("border-top");
 		});  
 
 		$('#listcontainer').on('dblclick', '.panel.trip', function (e) {
