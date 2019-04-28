@@ -2125,6 +2125,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-right: 1em;
 }
 
+.legs ul.nav {
+	display: flex;
+}
+
 
 /*
 ----------------------------------------------------------------------------------------------------------

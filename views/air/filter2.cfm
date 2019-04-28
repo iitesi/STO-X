@@ -11,7 +11,7 @@
 		<div class="filterbar-wrapper">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#filter-navbar-collapse-1" aria-expanded="false">
-					<span class="visible-xs">Toggle Filters</span>
+					<span class="visible-xs">Filter Flights</span>
 					<span class="glyphicon glyphicon-filter"></span>
 				</button>
 			</div>
