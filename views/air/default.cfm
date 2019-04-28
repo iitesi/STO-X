@@ -632,7 +632,7 @@
 					}
 					else if($checkedInputs.length===$inputs.length){
 						$anchor.removeClass('filtered');
-						$anchor.html($anchor.data('dflt')).append($('<b class="caret"/>'));
+						$anchor.html($("<span/>").html($anchor.data('dflt'))).append($('<b class="caret"/>'));
 					}
 					else if($checkedInputs.length>=1){
 						if(!$anchor.hasClass('filtered')){
@@ -642,21 +642,21 @@
 						if($checkedInputs.length>1){
 							name = name + " +" + ($checkedInputs.length - 1);
 						}
-						$anchor.html(name).append($('<i class="mdi mdi-close"/>'));
+						$anchor.html($("<span/>").html(name)).append($('<i class="mdi mdi-close"/>'));
 					}
 				}
 				else if ($single.length){
 					var $selected = $single.find('input[type=radio]:checked');
 					if ($selected.val() == -1){
 						$anchor.removeClass('filtered');
-						$anchor.html($anchor.data('dflt')).append($('<b class="caret"/>'));
+						$anchor.html($("<span/>").html($anchor.data('dflt'))).append($('<b class="caret"/>'));
 					}
 					else {
 						if (!$anchor.hasClass('filtered')){
 							$anchor.addClass('filtered');
 						}
 						var name = $selected.attr('title')
-						$anchor.html(name).append($('<i class="mdi mdi-close"/>'));
+						$anchor.html($("<span/>").html(name)).append($('<i class="mdi mdi-close"/>'));
 					}
 				}
 			});

@@ -88,7 +88,7 @@
 											data-placement="right" 
 											data-toggle="tooltip"
 											title="Segment is more than twice as long as the shortest travel time available."
-											class="mdi mdi-timer-sand long-flight-alert"></span>
+											class="hidden-xs mdi mdi-timer-sand long-flight-alert"></span>
 									</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">

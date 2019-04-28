@@ -1063,15 +1063,27 @@ ul.tabs li a.active {
 	font-size: 10px;
 }
 
-#filterbar {
 
+#filterbar .nav-pills .dropdown a.dropdown-toggle {
+	color: #a1a1a1;
+	border: 1px solid #dadce0;
+	box-sizing: border-box;
+	cursor: pointer;
+	height: 36px;
+	overflow: hidden;
+	padding-left: 12px;
+	position: relative;
 }
 
-#filterbar .navbar {
-	margin-bottom: 10px;
-    display: flex;
-    flex-direction: row;
+#filterbar a.dropdown-toggle .mdi {
+	width: 18px;
+	height: 18px;
+	margin-left: 8px;
+	font-size: 18px;
+	line-height: 19px;
 }
+
+
 
 #filterbar .navbar .dropdown-menu {
 	border-radius: 8px;
@@ -1079,40 +1091,76 @@ ul.tabs li a.active {
 	margin-top: 10px;
 }
 
-.nav-pills .dropdown a.dropdown-toggle {
-	color: #a1a1a1;
-	align-items: center;
-    border: 1px solid #dadce0;
-    border-radius: 18px;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-flex;
-    flex: 0 0 auto;
-    height: 36px;
-    overflow: hidden;
-    padding-left: 12px;
-	position: relative;
-	margin-left: 10px;
-}
-.nav-pills .dropdown a.dropdown-toggle.filtered {
-	color: #337ab7;
-	background-color: #eee;
+@media (min-width: 300px) and (max-width: 799px){
+	#filterbar .navbar {
+		min-height: 20px;
+		margin-bottom: 0;
+		border: none;
+	}
+	#filterbar .navbar-toggle {
+		padding: 0;
+		margin: 0;
+		border-radius: 0;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+		height: 25px;
+	}
+	#filterbar .navbar-toggle span.visible-xs {
+		line-height: 15px;
+		height: 25px;
+		margin-right: 10px;
+	}
+	#filterbar .nav-pills>li {
+		float: none !important;
+		margin-bottom: 3px;
+	}
+	#filterbar .navbar-collapse {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	#filterbar .nav-pills .dropdown a.dropdown-toggle {
+		text-align: right;
+	}
 }
 
-a.dropdown-toggle .mdi {
-	width: 18px;
-    height: 18px;
-    margin-left: 8px;
-    font-size: 18px;
-    line-height: 19px;
-}
+@media (min-width: 800px) {
 
-.nav-pills .dropdown a.dropdown-toggle .caret {
-	box-sizing: border-box;
-    color: #5f6368;
-    height: 4px;
-    margin: 4px 2px 4px 11px;
-    width: 9px;
+	#filterbar {
+
+	}
+
+	#filterbbar .filterbar-wrapper {
+		width: 100%;	
+	}
+
+	#filterbar .navbar {
+		margin-bottom: 10px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	#filterbar .nav-pills .dropdown a.dropdown-toggle .caret {
+		box-sizing: border-box;
+		color: #5f6368;
+		height: 4px;
+		margin: 4px 2px 4px 11px;
+		width: 9px;
+	}
+	
+	#filterbar .nav-pills .dropdown a.dropdown-toggle {
+		align-items: center;
+		border-radius: 18px;
+		display: inline-flex;
+		flex: 0 0 auto;
+		margin-left: 10px;
+	}
+	#filterbar .nav-pills .dropdown a.dropdown-toggle.filtered {
+		color: #337ab7;
+		background-color: #eee;
+	}
+
 }
 
 @keyframes ripple {
