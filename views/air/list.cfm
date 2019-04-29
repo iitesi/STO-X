@@ -12,7 +12,7 @@
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
 		data-segmentid="#Segment.Segmentid#"
-		data-iscontracted="#Segment.IsContracted#"
+		data-iscontracted="#structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true' ? 'true' : 'false'#"
 		data-longsegment="#Segment.IsLongSegment#"
 		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
 		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
