@@ -21,11 +21,17 @@
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-xs-2 col-lg-1 center airline-col">
+				<div class="col-xs-2 col-lg-1 center airline-col #structKeyExists(Segment, "iscontracted") AND Segment.isContracted EQ 'true'  ? 'iscontracted' : ''#">
 					<div class="row">
 						<div class="col-xs-12">
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
-						
+							<cfif structKeyExists(Segment, "isContracted") AND Segment.isContracted EQ 'true'>
+								<div role="button" 
+								class="contracted-after"
+								data-placement="right" 
+								title="Contracted"
+								data-toggle="tooltip"></div>
+							</cfif>
 							<div class="warning-icons">
 								<cfif Segment.IsLongAndExpensive>
 									<span role="button" 

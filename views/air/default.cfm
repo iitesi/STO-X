@@ -203,6 +203,11 @@
 			selector: '.long-flight-alert[data-toggle="tooltip"]',
 			template: '<div class="tooltip long-flight-alert-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
+		$('#main-content').tooltip({
+			selector: '.contracted-after[data-toggle="tooltip"]',
+			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		}); 
+
 		$('#filterbar').on('click', 'a.dropdown-toggle .mdi-close', function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
