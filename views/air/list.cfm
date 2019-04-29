@@ -12,6 +12,7 @@
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
 		data-segmentid="#Segment.Segmentid#"
+		data-iscontracted="#Segment.IsContracted#"
 		data-longsegment="#Segment.IsLongSegment#"
 		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
 		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
@@ -21,11 +22,17 @@
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-xs-2 col-lg-1 center airline-col">
+				<div class="col-xs-2 col-lg-1 center airline-col #structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true'  ? 'iscontracted' : ''#">
 					<div class="row">
 						<div class="col-xs-12">
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
-						
+							<cfif structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true'>
+								<div role="button" 
+								class="contracted-after"
+								data-placement="right" 
+								title="Contracted"
+								data-toggle="tooltip"></div>
+							</cfif>
 							<div class="warning-icons">
 								<cfif Segment.IsLongAndExpensive>
 									<span role="button" 
