@@ -1,6 +1,8 @@
 <cfif structKeyExists(session, 'Searches')
     AND structKeyExists(rc, 'SearchId')
-    AND structKeyExists(session.Searches, rc.SearchId)>
+    AND structKeyExists(session.Searches, rc.SearchId)
+    AND rc.action DOES NOT CONTAIN 'main'
+    AND rc.action DOES NOT CONTAIN 'confirmation'>
 
     <script type="text/javascript">
         $('#main-content').toggleClass('toggled');
