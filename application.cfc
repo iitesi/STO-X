@@ -69,17 +69,26 @@
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
 		<cfelse>
+			
 			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,setup.resetPolicy,setup.setPolicy'>
+
 			<cfif request.context.action EQ 'setup.resetPolicy'>
+
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
+
 			<cfelseif request.context.action EQ 'setup.resetAirports'>
+
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
+
 			<cfelseif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
 				AND !ListFind(local.actionList,request.context.action)>
+
 				<cfset var action = ListFirst(request.context.action,".")>
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
+
 			<cfelse>
+
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
@@ -91,6 +100,7 @@
 				<cfset controller('setup.setGroup')/>
 				<cfset controller('setup.setAccountIds')/>
 				<cfset controller('setup.setInvoiceTableSuffix')/>
+
 			</cfif>
 		</cfif>
 
@@ -99,6 +109,7 @@
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
+
 		<cfreturn view( "main/notfound" )>
 	</cffunction>
 
@@ -219,11 +230,14 @@
 		<cfreturn />
 	</cffunction>
 	<cffunction name="setupApplicationVariables" output="false">
+
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
+
 	</cffunction>
 
 	<cffunction name="transactionMonitorExists" output="false">
+
 		<cftry>
 			<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
 			<cfif !structKeyExists(application,"Monitor")>
@@ -235,5 +249,6 @@
 			<cfreturn false>
 		</cfcatch>
 	</cftry>
+	
 	</cffunction>
 </cfcomponent>
