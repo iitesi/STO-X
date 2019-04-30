@@ -85,9 +85,9 @@
 			<cfif structKeyExists(CancelResponse, 'IsSuccessfullyCancelled')
 				AND (CancelResponse.IsSuccessfullyCancelled
 				OR CancelResponse.CancellationDetail EQ 'Record Locator has already been canceled')>
-
+	
 				<cfset session.searches[SearchId].Sell[rc.TravelerNumber].Cancelled = true>
-				<cfset session.searches[SearchId].Sell[rc.TravelerNumber].CancellationDetail = CancelResponse.CancellationDetail>
+				<cfset session.searches[SearchId].Sell[rc.TravelerNumber].CancellationDetail = structKeyExists(CancelResponse, 'CancellationDetail') ? CancelResponse.CancellationDetail : ''>
 				
 			<cfelse>
 
