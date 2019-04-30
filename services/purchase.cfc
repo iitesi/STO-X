@@ -299,6 +299,7 @@
 					},
 					SearchId : Filter.getSearchId(),
 					HotelOutOfPolicyReasonCode : Traveler.getBookingDetail().getHotelReasonCode(),
+					HotelExceptionCode : Traveler.getBookingDetail().getUDID112(),
 					SpecialRequest = Traveler.getBookingDetail().getHotelSpecialRequests(),
 					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getHotelFOPID()) ? Traveler.getBookingDetail().getHotelFOPID() : getToken(Traveler.getBookingDetail().getHotelFOPID(), 2, '_')
 				};
@@ -347,6 +348,7 @@
 						},
 					},
 					VehicleOutOfPolicyReasonCode : Traveler.getBookingDetail().getCarReasonCode(),
+					VehicleExceptionCode : Traveler.getBookingDetail().getUDID111(),
 					// Dohmen To Do
 					Carrier : '',
 					FlightNumber : '',
