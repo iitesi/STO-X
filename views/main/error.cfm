@@ -17,7 +17,6 @@
 				<div class="row">
 				 <div class="col-md-7 col-md-offset-2">
 					<img class="img-portfolio img-responsive" src="assets/img/logos/shorts-logo.png">
-						<img class="img-portfolio img-responsive pull-right" src="assets/img/error.gif">
 						<h1>Don't Fly Away!</h1>
 						<p class="lead">We're sorry. It appears we've run into an error.<br />Our developers have been notified.</p>
 						<p>You may click your browsers 'back' button and try again.</p>
