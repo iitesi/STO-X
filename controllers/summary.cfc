@@ -30,7 +30,7 @@
 
 		<cfif structKeyExists(session.searches[SearchId], 'Sell')
 			AND session.searches[SearchId].Sell.Messages.HasErrors>
-			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell.Messages.Errors>
+			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell>
 		<cfelse>
 			<cfset rc.SellErrorMessages = {}>
 		</cfif>

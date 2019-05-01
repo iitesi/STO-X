@@ -49,9 +49,9 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
-		<cfif structKeyExists(rc, 'Sell')
-			AND NOT structIsEmpty(rc.Sell)>
-			<cfloop collection="#rc.Sell#" index="TravelerIndex" item="TravelerItem">
+		<cfif structKeyExists(rc, 'SellErrorMessages')
+			AND NOT structIsEmpty(rc.SellErrorMessages)>
+			<cfloop collection="#rc.SellErrorMessages#" index="TravelerIndex" item="TravelerItem">
 				<cfloop collection="#TravelerItem#" index="SellIndex" item="SellItem">
 					<cfdump var=#SellItem# abort>
 					<!--- Need an example before I can finish coding.  :(  Dohmen --->
