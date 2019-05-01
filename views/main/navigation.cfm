@@ -35,6 +35,7 @@
 		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
 			<ul class="nav navbar-nav navbar-right">
 				<cfif structKeyExists(session, 'Filters')
+					AND structKeyExists(rc, 'SearchId')
 					AND structKeyExists(session.Filters, rc.SearchId)
 					AND arrayLen(session.Filters[rc.SearchId].getUnusedTickets())>
 
