@@ -195,8 +195,6 @@
 				<!---
 				GENERAL SEATS
 				--->
-					<!--- 
-					Dohmen To Do --->
 					<cfset showWindowAisle = false />
 					<cfif NOT listFind('WN,F9', rc.Air[0].PlatingCarrier)>
 						<cfset showWindowAisle = true />
