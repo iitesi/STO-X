@@ -65,14 +65,41 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="validateSearchId" output="false">
+		<cfargument name="AcctId" required="true">
+		<cfargument name="UserId" required="true">
+		<cfargument name="SearchID" required="true">
+
+		<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
+			SELECT Search_ID
+			FROM Searches
+			WHERE Acct_ID = <cfqueryparam value="#arguments.AcctId#" cfsqltype="cf_sql_integer">
+				AND User_ID = <cfqueryparam value="#arguments.UserId#" cfsqltype="cf_sql_integer">
+				AND Search_ID = <cfqueryparam value="#arguments.SearchId#" cfsqltype="cf_sql_integer">
+		</cfquery>
+
+		<cfreturn getsearch.RecordCount ? true : false />
+	</cffunction>
+
 	<cffunction name="setFilter" output="false">
 		<cfargument name="SearchID" required="true">
-		<cfargument name="Append" 	required="false" default="0">
+		<cfargument name="AcctId" required="false" default="0">
+		<cfargument name="UserId" required="false" default="0">
+		<cfargument name="Append" required="false" default="0">
 		<cfargument name="requery" required="false" default="false">
 
 		<cfset local.searchfilter = getSearchService().load( arguments.searchId ) />
 
+		<cfif arguments.SearchId NEQ 0
+			AND NOT validateSearchId(arguments.AcctId, arguments.UserId, arguments.SearchId)>
+			<cfdump var=#arguments.AcctId#>
+			<cfdump var=#arguments.UserId#>
+			<cfdump var=#arguments.SearchId#>
+			<cfdump var='URL ID' abort>
+		</cfif>
+
 		<cfif arguments.SearchID NEQ 0>
+
 			<cfquery name="local.getsearch" datasource="#getBookingDSN()#">
 				SELECT TOP 1 Acct_ID, Search_ID, Air, Car, CarPickup_Airport, CarPickup_DateTime, CarDropoff_Airport, CarDropoff_DateTime,
 				Hotel, Policy_ID, Profile_ID, Value_ID, User_ID, Username, Air_Type, Depart_City, Depart_DateTime, Arrival_City, Arrival_DateTime,
@@ -223,9 +250,19 @@
 				<cfset session.searches[arguments.SearchID].stSelected = StructNew("linked")>
 			</cfif>
 			<cfset session.searches[arguments.SearchID].couldYou = {}>
+			<cfset session.SearchId = arguments.SearchId>
+			<cfset session.searches[arguments.SearchID].Sell = {}>
 		<cfelse>
 			<cfset local.searchfilter = getSearchService().new() />
+			<cfset session.SearchId = 0>
 		</cfif>
+
+		<!--- <cfdump var=#arguments#>
+		<cfdump var=#arguments.AcctId#>
+		<cfdump var=#arguments.UserId#>
+		<cfdump var=#arguments.SearchId#>
+		<cfdump var=# session.searches[arguments.SearchID]#>
+		<cfdump var='URL ID' abort> --->
 
 		<cfreturn local.searchfilter/>
 	</cffunction>

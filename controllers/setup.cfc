@@ -76,20 +76,43 @@ setApplication
 	<cffunction name="setSearchID" output="false" hint="I set the search ID.">
 		<cfargument name="rc">
 
-		<cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)>
+		<!--- <cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)> --->
+		<cfset var SearchID = (StructKeyExists(session, 'SearchID') ? session.SearchID : 0)>
+
+		<cfif structKeyExists(arguments.rc, 'SearchId')
+			AND SearchId NEQ arguments.rc.SearchId
+			AND arguments.rc.AcctId NEQ 0
+			AND arguments.rc.UserId NEQ 0
+			AND arguments.rc.SearchId NEQ 0
+			AND arguments.rc.Requery>
+
+			<cfset SearchID = variables.bf.getBean("setup").validateSearchId( AcctId = arguments.rc.AcctId, 
+																			UserId = arguments.rc.UserId, 
+																			SearchId = arguments.rc.SearchId)>
+
+		</cfif>
 		
-		<cfreturn />
+		<!--- <cfdump var=#arguments.rc.AcctId#>
+		<cfdump var=#arguments.rc.UserId#>
+		<cfdump var=#arguments.rc.SearchId#>
+		<cfdump var=#arguments.rc.Requery#>
+		<cfdump var=#SearchID# abort> --->
+
+		<cfreturn SearchID />
 	</cffunction>
 
 	<cffunction name="setFilter" output="false" hint="Move the search into the rc scope so it is always available.">
 		<cfargument name="rc">
 
 		<cfif StructKeyExists(session, 'Filters')
+			AND StructKeyExists(arguments.rc, 'SearchID')
 			AND StructKeyExists(session.Filters, arguments.rc.SearchID)
 			AND NOT StructKeyExists(arguments.rc, "requery")>
 			<cfset rc.Filter = session.Filters[arguments.rc.SearchID]>
-		<cfelse>
+		<cfelseif StructKeyExists(arguments.rc, 'SearchID')>
 			<cfset rc.Filter = variables.fw.getBeanFactory().getBean("setup").setFilter(argumentcollection=arguments.rc)>
+		<cfelse>
+			<cfset rc.Filter = variables.fw.getBeanFactory().getBean("setup").setFilter(0)>
 		</cfif>
 
 		<cfreturn />
