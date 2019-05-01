@@ -1635,10 +1635,10 @@ li.with-irs .irs-title {
     height: 25px;
     font-size: 23px;
 }
-.form-field--is-filled .clear_flight_number {
+.form-field--is-filled .clear_flight_number, .form-field--is-active .clear_flight_number {
 	display: block;
 }
-.form-field--is-filled .clear_flight_number:hover {
+.form-field--is-filled .clear_flight_number:hover, .form-field--is-active .clear_flight_number:hover {
 	cursor: pointer;
 }
 .form-field__label__filter {
