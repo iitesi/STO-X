@@ -216,15 +216,7 @@
 				
 			<div class="row hidden-xs visible-md-block visible-lg-block">
 				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
-					<!--- <cfdump var=#Segment# abort> --->
-					<!--- Shane - New code, please fix :) --->
-					<!--- <cfset key = hash(Segment.SegmentId)>
-					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-					<div class="col-xs-3 panel panel-default" onclick="sendEmail('#key#');" >
-						Send Email
-					</div>
-					<br> --->
-
+					
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>
