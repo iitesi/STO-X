@@ -142,11 +142,84 @@
 
 		</cfif>
 
+		<cfset trips.Segments = applyModifiers(Segments = trips.Segments,
+												Leg = Filter.getLegsForTrip()[Group+1])>
+
 		<cfif arguments.Group EQ 0>
 			<cfset session.LowestFare = LowFare.getLowestFare(SegmentFares = trips.SegmentFares)>
 		</cfif>
 
 		<cfreturn trips>
+ 	</cffunction>
+
+	<cffunction name="applyModifiers" output="false">
+		<cfargument name="Segments" required="true">
+		<cfargument name="Leg" required="true">
+
+		<cfset var Segments = arguments.Segments>
+		<cfset var Leg = arguments.Leg>
+		<cfset var HideSegments = ''>
+		<cfset var Hide = false>
+		<cfset var Count = 0>
+		<cfset var PreviousFlight = ''>
+
+		<cfloop collection="#Segments#" index="local.SegmentIndex" item="local.Segment">
+
+			<cfset Hide = false>
+
+			<!--- Hide Two Layovers/Three Flights --->
+			<cfif arrayLen(Segment.Flights) GTE 3>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Segments Over 24 Hours --->
+			<cfif NOT Hide
+				AND Segment.TotalTravelTimeInMinutes GT 1440>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Multi Carrier Segments --->
+			<cfif NOT Hide
+				AND Segment.CarrierCode EQ 'Mult'>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Layovers Longer Than 5 Hours --->
+			<cfif NOT Hide
+				AND arrayLen(Segment.Flights) GT 1>
+
+				<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
+					<cfset Count++>
+					<cfif Count NEQ 1>
+						<cfif dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime) GT 300>
+							<cfset Hide = true>
+							<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+						</cfif>
+					</cfif>
+					<cfset PreviousFlight = Flight>
+				</cfloop>
+
+			</cfif>
+
+			<!--- Hide Incorrect City Pairs --->
+			<cfif NOT Hide
+				AND Leg DOES NOT CONTAIN Segment.OriginAirportCode&' - '&Segment.DestinationAirportCode>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+		</cfloop>
+
+		<cfloop list="#HideSegments#" index="local.SegmentId" delimiters="|">
+			<cfset StructDelete(Segments, SegmentId)>
+		</cfloop>
+
+		<!--- <cfdump var=#Segments# abort> --->
+
+		<cfreturn Segments>
  	</cffunction>
  	
 </cfcomponent>
