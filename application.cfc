@@ -177,7 +177,7 @@
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
 
-		<cfif listFindNoCase('local,qa', application.fw.factory.getBean('EnvironmentService').getCurrentEnvironment())>
+		<cfif listFindNoCase('local,qa,beta', application.fw.factory.getBean('EnvironmentService').getCurrentEnvironment())>
 			<cfdump var="#local.errorException#" />
 		</cfif>
 	</cffunction>
