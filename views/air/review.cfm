@@ -51,40 +51,56 @@
 			</div>
 		</div>
 	</div>
+	<cfset ErrorMessage = ''>
+	<cfset FaresDisplayed = 0>
 	<cfloop collection="#rc.Solutions#" index="index" item="Fare">
+		<cfif IsStruct(Fare)>
+			
+			<cfset FaresDisplayed++>
+			<hr>
+			<strong>
+				#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass# -
+				#Fare.BrandedFare CONTAINS ',' ? 'Mixed Branded Fares' : Fare.BrandedFare#<br>
+				<cfif listLen(Fare.CabinClass) GT 1>
+					<cfloop collection="#Fare.Flights#" index="i" item="Flight">
+						#Flight.CabinClass# - #Flight.BrandedFare# : #Flight.Carrier##Flight.FlightNumber# #Flight.Origin#-#Flight.Destination#<br>
+					</cfloop>
+				</cfif>
+				Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
+				Bookable:  #YesNoFormat(Fare.IsBookable)# -
+				Out Of Policy Reasons:  #arrayToList(Fare.OutOfPolicyReason)#<br>
+				#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
+				<!--- <cfloop collection="#Fare.Flights#" index="i" item="Flight">
+					#Flight.FareBasis#<br>
+				</cfloop> --->
+			</strong>
+			<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
+				<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
+			</cfloop><br>
+			
+			<cfset key = createUUID()>
+			<div onclick="submitSegment('#key#');">
+				<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
+				Select Fare
+			</div>
 
-		<hr>
-		<strong>
-			#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass# -
-			#Fare.BrandedFare CONTAINS ',' ? 'Mixed Branded Fares' : Fare.BrandedFare#<br>
-			<cfif listLen(Fare.CabinClass) GT 1>
-				<cfloop collection="#Fare.Flights#" index="i" item="Flight">
-					#Flight.CabinClass# - #Flight.BrandedFare# : #Flight.Carrier##Flight.FlightNumber# #Flight.Origin#-#Flight.Destination#<br>
-				</cfloop>
-			</cfif>
-			Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
-			Bookable:  #YesNoFormat(Fare.IsBookable)# -
-			Out Of Policy Reasons:  #arrayToList(Fare.OutOfPolicyReason)#<br>
-			#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
-			<!--- <cfloop collection="#Fare.Flights#" index="i" item="Flight">
-				#Flight.FareBasis#<br>
-			</cfloop> --->
-		</strong>
-		<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
-			<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
-		</cfloop><br>
-		
-		<cfset key = createUUID()>
-		<div onclick="submitSegment('#key#');">
-			<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
-			Select Fare
-		</div>
+		<cfelse>
+
+			<cfset ErrorMessage = listAppend(ErrorMessage, Fare)>
+
+		</cfif>
 
 	</cfloop>
 
+	<cfif FaresDisplayed LTE 0>
+
+		#Replace(ListRemoveDuplicates(ErrorMessage), ',', '<br>', 'ALL')#
+
+	</cfif>
+
 	<form method="post" action="##" id="selectFare">
 		<input type="hidden" name="FareSelected" value="1">
-		<input type="text" name="Fare" id="Fare" value="">
+		<input type="hidden" name="Fare" id="Fare" value="">
 	</form>
 
 </cfoutput>

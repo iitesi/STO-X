@@ -188,6 +188,14 @@
 		<cfset Response = Response.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren>
 
 		<cfloop collection="#Response#" index="i" item="ResponseItem">
+			<cfif ResponseItem.XMLName EQ 'faultstring'>
+
+				<cfset ArrayAppend(Solutions, ResponseItem.XMLText)>
+
+			</cfif>
+		</cfloop>
+
+		<cfloop collection="#Response#" index="i" item="ResponseItem">
 			<cfif ResponseItem.XMLName EQ 'air:AirItinerary'>
 
 				<cfloop collection="#ResponseItem.XMLChildren#" index="local.SegmentIndex" item="AirItinerary">

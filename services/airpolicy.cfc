@@ -38,84 +38,88 @@
 
 		<cfloop collection="#Solutions#" index="local.SolutionIndex" item="local.SolutionItem">
 
-			<cfset IsBookable = FlightIsBookable>
-			<cfset OutOfPolicy = FlightOutOfPolicy>
-			<cfset OutOfPolicyReason = FlightOutOfPolicyReason>
+			<cfif IsStruct(SolutionItem)>
 
-			<!--- Low fare --->
-			<cfif Policy.Policy_AirLowRule EQ 1
-				AND isNumeric(Policy.Policy_AirLowPad)
-				AND SolutionItem.TotalPrice GT (LowestFare + Policy.Policy_AirLowPad)>
-				
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Not the lowest fare')>
-				<cfif Policy.Policy_AirLowDisp EQ 1>
-					<cfset IsBookable = false>
+				<cfset IsBookable = FlightIsBookable>
+				<cfset OutOfPolicy = FlightOutOfPolicy>
+				<cfset OutOfPolicyReason = FlightOutOfPolicyReason>
+
+				<!--- Low fare --->
+				<cfif Policy.Policy_AirLowRule EQ 1
+					AND isNumeric(Policy.Policy_AirLowPad)
+					AND SolutionItem.TotalPrice GT (LowestFare + Policy.Policy_AirLowPad)>
+					
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Not the lowest fare')>
+					<cfif Policy.Policy_AirLowDisp EQ 1>
+						<cfset IsBookable = false>
+					</cfif>
+
 				</cfif>
 
-			</cfif>
+				<!--- Max fare --->
+				<cfif Policy.Policy_AirMaxRule EQ 1
+					AND isNumeric(Policy.Policy_AirMaxTotal)
+					AND SolutionItem.TotalPrice GT Policy.Policy_AirMaxTotal>
 
-			<!--- Max fare --->
-			<cfif Policy.Policy_AirMaxRule EQ 1
-				AND isNumeric(Policy.Policy_AirMaxTotal)
-				AND SolutionItem.TotalPrice GT Policy.Policy_AirMaxTotal>
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Fare greater than #DollarFormat(Policy.Policy_AirMaxTotal)#')>
+					<cfif Policy.Policy_AirMaxDisp EQ 1>
+						<cfset IsBookable = false>
+					</cfif>
 
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Fare greater than #DollarFormat(Policy.Policy_AirMaxTotal)#')>
-				<cfif Policy.Policy_AirMaxDisp EQ 1>
-					<cfset IsBookable = false>
 				</cfif>
 
+				<!--- Non refundable / Refundable --->
+				<cfif Policy.Policy_AirRefRule EQ 1
+					AND Policy.Policy_AirNonRefRule EQ 0
+					AND NOT SolutionItem.Refundable>
+
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Hide non refundable fares')>
+
+				<cfelseif Policy.Policy_AirNonRefRule EQ 1
+					AND Policy.Policy_AirRefRule EQ 0
+					AND SolutionItem.Refundable>
+
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Hide refundable fares')>
+
+				</cfif>
+
+				<!--- Dohmen --->
+				<!--- Remove first refundable fares --->
+				<!--- <cfif SolutionItem.CabinClass EQ 'First'
+					AND SolutionItem.Refundable 
+					AND ((useUpPolicy AND (!Policy.Policy_AirRefRule OR !Policy.Policy_AirFirstClass))
+						OR !useUpPolicy)>
+
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Hide UP fares')>
+					<cfset IsBookable = false>
+
+				</cfif>
+
+				<!--- Remove cabin classes --->
+				<cfif SolutionItem.CabinClass EQ "First" AND !val(Policy.Policy_AirFirstClass)>
+
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Cannot book first class')>
+					<cfset IsBookable = false>
+
+				<cfelseif SolutionItem.CabinClass EQ "Business" AND !val(Policy.Policy_AirBusinessClass)>
+
+					<cfset OutOfPolicy = true>
+					<cfset arrayAppend(OutOfPolicyReason, 'Cannot book business class')>
+					<cfset IsBookable = false>
+
+				</cfif> --->
+
+				<cfset Solutions[SolutionIndex].OutOfPolicy = OutOfPolicy>
+				<cfset Solutions[SolutionIndex].OutOfPolicyReason = listToArray(listRemoveDuplicates(arrayToList(OutOfPolicyReason)))>
+				<cfset Solutions[SolutionIndex].IsBookable = IsBookable>
+
 			</cfif>
-
-			<!--- Non refundable / Refundable --->
-			<cfif Policy.Policy_AirRefRule EQ 1
-				AND Policy.Policy_AirNonRefRule EQ 0
-				AND NOT SolutionItem.Refundable>
-
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Hide non refundable fares')>
-
-			<cfelseif Policy.Policy_AirNonRefRule EQ 1
-				AND Policy.Policy_AirRefRule EQ 0
-				AND SolutionItem.Refundable>
-
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Hide refundable fares')>
-
-			</cfif>
-
-			<!--- Dohmen --->
-			<!--- Remove first refundable fares --->
-			<!--- <cfif SolutionItem.CabinClass EQ 'First'
-				AND SolutionItem.Refundable 
-				AND ((useUpPolicy AND (!Policy.Policy_AirRefRule OR !Policy.Policy_AirFirstClass))
-					OR !useUpPolicy)>
-
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Hide UP fares')>
-				<cfset IsBookable = false>
-
-			</cfif>
-
-			<!--- Remove cabin classes --->
-			<cfif SolutionItem.CabinClass EQ "First" AND !val(Policy.Policy_AirFirstClass)>
-
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Cannot book first class')>
-				<cfset IsBookable = false>
-
-			<cfelseif SolutionItem.CabinClass EQ "Business" AND !val(Policy.Policy_AirBusinessClass)>
-
-				<cfset OutOfPolicy = true>
-				<cfset arrayAppend(OutOfPolicyReason, 'Cannot book business class')>
-				<cfset IsBookable = false>
-
-			</cfif> --->
-
-			<cfset Solutions[SolutionIndex].OutOfPolicy = OutOfPolicy>
-			<cfset Solutions[SolutionIndex].OutOfPolicyReason = listToArray(listRemoveDuplicates(arrayToList(OutOfPolicyReason)))>
-			<cfset Solutions[SolutionIndex].IsBookable = IsBookable>
 
 		</cfloop>
 
@@ -133,18 +137,22 @@
 
 		<cfloop collection="#Solutions#" index="local.SolutionIndex" item="local.SolutionItem">
 
-			<cfset FareId = ''>
-			<cfloop collection="#SolutionItem.Flights#" index="local.FlightIndex" item="local.FlightItem">
-				<cfset FareId = listAppend(FareId, FlightItem.BookingCode&.&FlightItem.FareBasis, '-')>
-			</cfloop>
+			<cfif IsStruct(SolutionItem)>
 
-			<cfif NOT listFind(FareIds, FareId)>
+				<cfset FareId = ''>
+				<cfloop collection="#SolutionItem.Flights#" index="local.FlightIndex" item="local.FlightItem">
+					<cfset FareId = listAppend(FareId, FlightItem.BookingCode&.&FlightItem.FareBasis, '-')>
+				</cfloop>
 
-				<cfset FareIds = listAppend(FareIds, FareId)>
-			
-			<cfelse>
+				<cfif NOT listFind(FareIds, FareId)>
 
-				<cfset Remove = listAppend(Remove, SolutionIndex)>
+					<cfset FareIds = listAppend(FareIds, FareId)>
+				
+				<cfelse>
+
+					<cfset Remove = listAppend(Remove, SolutionIndex)>
+
+				</cfif>
 
 			</cfif>
 
