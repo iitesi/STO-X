@@ -2,7 +2,7 @@
 
 	<cfif rc.airSelected>
 		<cfset lowestFare = session.LowestFare>
-		<!--- Dohmen to do --->
+
 		<cfset inPolicy = rc.Air[0].OutOfPolicy ? false : true>
 
 		<input type="hidden" name="airLowestFare" value="#lowestFare#">

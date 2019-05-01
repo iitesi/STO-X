@@ -68,6 +68,36 @@
 			}
 			requestBody["Leg"] = [];
 			arrayappend(requestBody["Leg"], getLeg(arguments.Filter, arguments.Group) );
+
+			requestBody.FlightSearchOptions = {
+
+				DoubleInterlineCon : false,
+				DoubleOnlineCon : true,
+				MaxConnections : 1,
+				MaxStops : 1,
+				NonStopDirects : true,
+				RequireSingleCarrier : true,
+				SingleInterlineCon : true,
+				SingleOnlineCon : true,
+				StopDirects : true,
+				TripleInterlineCon : false,
+				TripleOnlineCon : false,
+				AllowChangeOfAirport : false,
+				DistanceType : "MI",
+				ExcludeGroundTransportation : false, 
+				ExcludeOpenJawAirport : false, 
+				IncludeExtraSolutions : false,
+				IncludeFlightDetails : true,
+				JetServiceOnly : false,
+				MaxConnectionTime : 300, //Conn time in minutes
+				MaxJourneyTime : 20, //Journey time in hours
+				OrderBy : "JourneyTime" , //Can be ommitted, journey time is default
+				PreferNonStop : true,
+				ProhibitMultiAirportConnection : true,
+				ProhibitOvernightLayovers : false,
+				SearchWeekends : false
+			}
+			
 		</cfscript>
 
 		<cfreturn requestBody>

@@ -49,13 +49,13 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
-		<cfif NOT structIsEmpty(rc.SellErrorMessages)>
-			<cfloop list="#structKeyList(rc.SellErrorMessages)#" index="i">
-				<cfif isArray(rc.SellErrorMessages[i]) AND arrayLen(rc.SellErrorMessages[i])>
-					<cfloop array="#rc.SellErrorMessages[i]#" index="MessageIndex" item="Message">
-						#Message#<br>
-					</cfloop>
-				</cfif>
+		<cfif structKeyExists(rc, 'SellErrorMessages')
+			AND NOT structIsEmpty(rc.SellErrorMessages)>
+			<cfloop collection="#rc.SellErrorMessages#" index="TravelerIndex" item="TravelerItem">
+				<cfloop collection="#TravelerItem#" index="SellIndex" item="SellItem">
+					<cfdump var=#SellItem# abort>
+					<!--- Need an example before I can finish coding.  :(  Dohmen --->
+				</cfloop>
 			</cfloop>
 		</cfif>
 

@@ -27,6 +27,15 @@
 			</cfif>
 		</cfloop>
 
+		<cfif Group NEQ 0
+			AND (NOT structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+			OR NOT structKeyExists(session.searches[SearchID].stItinerary.Air, Group-1)
+			OR structIsEmpty(session.searches[SearchID].stItinerary.Air[Group-1]))>
+			
+			<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#Group-1#&Order=')>
+
+		</cfif>
+
 		<cfif structKeyExists(rc, 'FlightSelected')>
 
 			<cfset session.searches[SearchID].stItinerary = Itinerary.selectAir(form = form,

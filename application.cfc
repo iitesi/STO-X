@@ -33,20 +33,23 @@
 	}>
 
 	<cffunction name="setupApplication">
-		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
-				.init( defaultProperties = { currentServerName=cgi.server_name }) />
+
+		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init( defaultProperties = { currentServerName=cgi.server_name }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 		<cfset controller('setup.setApplication')>
 		<cfset setupApplicationVariables()>
+
 	</cffunction>
 
 	<cffunction name="setupSession">
+
 		<cfset session.searches = {}/>
 		<cfset session.filters = {}/>
 		<cfset session.aMessages = []/>
 		<cfset controller('setup.setAcctID')/>
 		<cfset controller('setup.setAccount')/>
+
 	</cffunction>
 
 	<cffunction name="setupRequest">
@@ -54,15 +57,18 @@
 		<cfif transactionMonitorExists()>
 			<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
 		</cfif>
+
 		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
 
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
+
 			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
 			<cfset request.tokenResponse = request.krakenService.refreshToken(session.StmUserToken)/>
 			<cfif request.tokenResponse.IsValid EQ True>
 				<cfset session.StmUserToken = request.tokenResponse.StmUserToken/>
 			</cfif>
+
 		</cfif>
 
 		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
@@ -72,17 +78,9 @@
 			
 			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,setup.resetPolicy,setup.setPolicy'>
 
-			<cfif request.context.action EQ 'setup.resetPolicy'>
-
-				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
-
-			<cfelseif request.context.action EQ 'setup.resetAirports'>
-
-				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
-
-			<cfelseif (NOT structKeyExists(request.context, 'SearchID')
+			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
-				AND !ListFind(local.actionList,request.context.action)>
+				AND !ListFind(local.actionList, request.context.action)>
 
 				<cfset var action = ListFirst(request.context.action,".")>
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
