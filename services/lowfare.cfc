@@ -80,12 +80,6 @@
 				TravelerDepartmentId = Filter.getValueID()
 			};
 
-			if(arraylen(local.airlines)	EQ 1) {
-				requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
-			}
-
-			requestBody["FlightSearchOptions"]["OnlyRefundableFares"] = local.Refundable;
-			//requestBody["FlightSearchOptions"]["PreferredCabinClass"] = (arraylen(local.aCabins) GT 0) ? CabinClassMap(local.aCabins[1]) : "Economy";
 			requestBody["Legs"] = [];
 
 			if (arguments.Filter.getAirType() EQ 'OW') {
@@ -127,7 +121,42 @@
 
 			}
 
+			requestBody.FlightSearchOptions = {
+
+				DoubleInterlineCon : false,
+				DoubleOnlineCon : true,
+				MaxConnections : 1,
+				MaxStops : 1,
+				NonStopDirects : true,
+				RequireSingleCarrier : true,
+				SingleInterlineCon : true,
+				SingleOnlineCon : true,
+				StopDirects : true,
+				TripleInterlineCon : false,
+				TripleOnlineCon : false,
+				AllowChangeOfAirport : false,
+				DistanceType : "MI",
+				ExcludeGroundTransportation : false, 
+				ExcludeOpenJawAirport : false, 
+				IncludeExtraSolutions : false,
+				IncludeFlightDetails : true,
+				JetServiceOnly : false,
+				MaxConnectionTime : 300, //Conn time in minutes
+				MaxJourneyTime : 20, //Journey time in hours
+				OrderBy : "JourneyTime" , //Can be ommitted, journey time is default
+				PreferNonStop : true,
+				ProhibitMultiAirportConnection : true,
+				ProhibitOvernightLayovers : false,
+				SearchWeekends : false,
+				OnlyRefundableFares = local.Refundable
+			}
+
+			if (arraylen(local.airlines)	EQ 1) {
+				requestBody.FlightSearchOptions.AirLinesWhiteList = local.airlines;
+			}
 		</cfscript>
+
+		<!--- <cfdump var=#serializeJSON(requestBody)# abort> --->
 
 		<cfreturn requestBody>
 	</cffunction>
