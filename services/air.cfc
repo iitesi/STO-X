@@ -71,7 +71,9 @@
 															refundable = arguments.refundable )>
 			<cfset trips.Profiling.KrakenAirSearch = (getTickCount() - start) / 1000>
 
-			<cfset AvailabilityResponse = AirSearchResponse.AirAvailabilityResponses[arguments.Group+1]>
+			<!--- <cfdump var=#AirSearchResponse.Errors# abort>
+			<cfdump var=#structKeyList(AirSearchResponse)# abort> --->
+			<cfset AvailabilityResponse = arrayLen(AirSearchResponse.AirAvailabilityResponses) ? AirSearchResponse.AirAvailabilityResponses[arguments.Group+1] : {}>
 			<cfset LowFareResponse = AirSearchResponse.LowFareResponse>
 
 		</cfif>
@@ -98,9 +100,10 @@
 
 		</cfif>
 
-		<cfif arguments.SearchType EQ 'Availability'
+		<cfif (arguments.SearchType EQ 'Availability'
 			OR arguments.SearchType EQ 'AirSearch'
-			OR arguments.SearchType EQ 'Both'>
+			OR arguments.SearchType EQ 'Both')
+			AND NOT structIsEmpty(AvailabilityResponse)>
 
 			<cfset start = getTickCount()>
 			<cfset trips.Segments = Availability.parseSegments( Segments = trips.Segments,
