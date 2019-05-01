@@ -49,7 +49,8 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
-		<cfif structKeyExists(rc, 'SellErrorMessages')
+		<!--- Dohmen --->
+		<!--- <cfif structKeyExists(rc, 'SellErrorMessages')
 			AND NOT structIsEmpty(rc.SellErrorMessages)>
 			<cfloop collection="#rc.SellErrorMessages#" index="TravelerIndex" item="TravelerItem">
 				<cfloop collection="#TravelerItem#" index="SellIndex" item="SellItem">
@@ -57,7 +58,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 					<!--- Need an example before I can finish coding.  :(  Dohmen --->
 				</cfloop>
 			</cfloop>
-		</cfif>
+		</cfif> --->
 
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#"> 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
@@ -100,7 +101,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="requireHotelCarFee" id="requireHotelCarFee" value="#rc.account.Require_Hotel_Car_Fee#">
-			<!--- Dohmen to do --->
 			<input type="hidden" name="carriers" id="carriers" value='[#(rc.airSelected ? '"'&rc.Air[0].PlatingCarrier&'"' : '')#]'>
 			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air[1].platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">
