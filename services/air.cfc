@@ -71,9 +71,18 @@
 															refundable = arguments.refundable )>
 			<cfset trips.Profiling.KrakenAirSearch = (getTickCount() - start) / 1000>
 
-			<!--- <cfdump var=#AirSearchResponse.Errors# abort>
-			<cfdump var=#structKeyList(AirSearchResponse)# abort> --->
-			<cfset AvailabilityResponse = arrayLen(AirSearchResponse.AirAvailabilityResponses) ? AirSearchResponse.AirAvailabilityResponses[arguments.Group+1] : {}>
+			<!--- <cfdump var=#AirSearchResponse.AirAvailabilityResponses# abort> --->
+			<!--- <cfdump var=#structKeyList(AirSearchResponse)# abort> --->
+			
+			<cfset AvailabilityResponse = {}>
+			<cfif arrayLen(AirSearchResponse.AirAvailabilityResponses)>
+				<cfif IsDefined("AirSearchResponse.AirAvailabilityResponses[#arguments.Group+1#]")>
+					<cfif isStruct(AirSearchResponse.AirAvailabilityResponses[arguments.Group+1])>
+						<cfset AvailabilityResponse = AirSearchResponse.AirAvailabilityResponses[arguments.Group+1]>
+					</cfif>
+				</cfif>
+			</cfif>
+
 			<cfset LowFareResponse = AirSearchResponse.LowFareResponse>
 
 		</cfif>
@@ -207,6 +216,20 @@
 			<!--- Hide Incorrect City Pairs --->
 			<cfif NOT Hide
 				AND Leg DOES NOT CONTAIN Segment.OriginAirportCode&' - '&Segment.DestinationAirportCode>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Results In Availability Only --->
+			<cfif NOT Hide
+				AND Segment.Results EQ 'Availability'>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Results In LowFare Only --->
+			<cfif NOT Hide
+				AND Segment.Results EQ 'LowFare'>
 				<cfset Hide = true>
 				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
 			</cfif>
