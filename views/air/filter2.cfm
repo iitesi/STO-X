@@ -136,6 +136,7 @@
 						<div class="form-field form-field__filter">
 							<div class="form-field__control__filter">
 								<label for="flight_number" class="form-field__label__filter">Flight #</label>
+								<span class="mdi clear_flight_number mdi-close-circle-outline"></span>
 								<input id="flight_number" name="flight_number" type="text" class="form-field__input__filter" />
 							</div>
 						</div>

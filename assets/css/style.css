@@ -1595,6 +1595,20 @@ li.with-irs .irs-title {
     margin-left: 10px;
 }
 
+.clear_flight_number {
+	display: none;
+	position: absolute;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    font-size: 23px;
+}
+.form-field--is-filled .clear_flight_number {
+	display: block;
+}
+.form-field--is-filled .clear_flight_number:hover {
+	cursor: pointer;
+}
 .form-field__label__filter {
   display: block;
   font-size: 14px;

@@ -473,7 +473,9 @@
 		$('#filterbar').on('change', '.singlefilter', runFilters);
 		$('#filterbar').on('input', '#flight_number', _.debounce(runFilters, 200));
 
-		
+		$('#filterbar').on('click', '.clear_flight_number', function(){
+			$('#flight_number').val('').trigger('blur').trigger('input');
+		});
 
 		var getMinutesFromString = function(str){
 			var values = str.split(' ');
