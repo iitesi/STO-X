@@ -66,9 +66,9 @@
 			Bookable:  #YesNoFormat(Fare.IsBookable)# -
 			Out Of Policy Reasons:  #arrayToList(Fare.OutOfPolicyReason)#<br>
 			#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
-			<cfloop collection="#Fare.Flights#" index="i" item="Flight">
+			<!--- <cfloop collection="#Fare.Flights#" index="i" item="Flight">
 				#Flight.FareBasis#<br>
-			</cfloop>
+			</cfloop> --->
 		</strong>
 		<cfloop list="#Fare.BrandedFare#" index="BrandedFare">
 			<strong>#BrandedFare#</strong> : #Fare[BrandedFare]#<br>
@@ -96,5 +96,5 @@
 	}
 </script>		
 
-<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
-<cfdump var=#rc.Solutions#>
+<!--- <cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
+<cfdump var=#rc.Solutions#> --->
