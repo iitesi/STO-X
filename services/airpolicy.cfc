@@ -85,8 +85,9 @@
 
 			</cfif>
 
+			<!--- Dohmen --->
 			<!--- Remove first refundable fares --->
-			<cfif SolutionItem.CabinClass EQ 'First'
+			<!--- <cfif SolutionItem.CabinClass EQ 'First'
 				AND SolutionItem.Refundable 
 				AND ((useUpPolicy AND (!Policy.Policy_AirRefRule OR !Policy.Policy_AirFirstClass))
 					OR !useUpPolicy)>
@@ -110,7 +111,7 @@
 				<cfset arrayAppend(OutOfPolicyReason, 'Cannot book business class')>
 				<cfset IsBookable = false>
 
-			</cfif>
+			</cfif> --->
 
 			<cfset Solutions[SolutionIndex].OutOfPolicy = OutOfPolicy>
 			<cfset Solutions[SolutionIndex].OutOfPolicyReason = listToArray(listRemoveDuplicates(arrayToList(OutOfPolicyReason)))>
