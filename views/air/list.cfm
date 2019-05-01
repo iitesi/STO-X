@@ -173,11 +173,21 @@
 							<cfelseif structKeyExists(Segment, 'Availability')
 								AND structKeyExists(Segment.Availability, CabinClass)>
 
+								<cfif structKeyExists(Segment.Availability, CabinClass)
+									AND Segment.Availability[CabinClass].Available>
+									<cfset Status = 'Click to price'>
+								<cfelseif structKeyExists(Segment.Availability, CabinClass)
+									AND NOT Segment.Availability[CabinClass].Available>
+									<cfset Status = 'Unavailable'>
+								</cfif>
+
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 								<input type="hidden" id="fare#key#" value="">
 								<div class="nopprice-fares fare-block"
-									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
+									<cfif Status EQ 'Click to price'>
+										onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
+									</cfif>
 								>
 									<div class="cabin-class">
 										<div class="fs-1 cabin-description overflow-ellipse">
@@ -185,13 +195,7 @@
 										</div>
 										<div class="fs-2 fare-display">
 											<div class="overflow-ellipse fs-s">
-												<cfif structKeyExists(Segment.Availability, CabinClass)
-												AND Segment.Availability[CabinClass].Available>
-												Click to price
-											<cfelseif structKeyExists(Segment.Availability, CabinClass)
-												AND NOT Segment.Availability[CabinClass].Available>
-												Unavailable
-											</cfif>
+												#Status#
 											</div>
 										</div>
 										<div class="fs-s policy-error-hidden">
@@ -295,7 +299,7 @@
 								#Segment.SegmentId# --->
 							</div>
 							<div class="segment-details-extras">
-								<!--- TODO Hide for now? --->
+								<!--- TODO Hide for now?
 								<ul>
 									<li><span></span> <span> Carry-on bags restricted </span>
 									</li>
@@ -303,7 +307,7 @@
 									<li> Wi-Fi</li>
 									<li> In-seat power outlet</li>
 									<li> Stream media to your device</li>
-								</ul>
+								</ul> --->
 							</div>
 						</div>
 						<cfset previousFlight = Flight>
