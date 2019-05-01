@@ -36,6 +36,10 @@
 
 		<!--- <cfdump var=#cfhttp.filecontent#> --->
 
+		<cfif NOT structKeyExists(cfhttp, 'filecontent')>
+			<cfdump var=#cfhttp# abort>
+		</cfif>
+
 		<cfset var Solutions = parse(Itinerary = arguments.Itinerary,
 									Response = cfhttp.filecontent,
 									Solutions = arguments.Solutions)>
