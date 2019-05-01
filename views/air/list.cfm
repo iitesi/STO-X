@@ -107,11 +107,11 @@
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
-									<cfif Segment.Results NEQ 'Both'>#Segment.Results#</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 pr-xs-15">
 									#Segment.Connections#
-								</div>	
+									<font color="white">#Segment.Results#</font>
+								</div>
 							</div>
 						</div>
 					</div>
