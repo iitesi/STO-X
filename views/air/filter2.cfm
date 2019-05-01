@@ -132,6 +132,14 @@
 							</li>
 						</ul>
 					</li>
+					<li role="presentation" class="dropdown" id="filterFlightNumber">
+						<div class="form-field form-field__filter">
+							<div class="form-field__control__filter">
+								<label for="flight_number" class="form-field__label__filter">Flight #</label>
+								<input id="flight_number" name="flight_number" type="text" class="form-field__input__filter" />
+							</div>
+						</div>
+					</li>
 
 					<li role="presentation" class="dropdown" id="filterMore">
 						<a href="#" class="dropdown-toggle" data-dflt="More">More <b class="caret"></b></a>

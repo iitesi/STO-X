@@ -208,6 +208,10 @@
 			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
 
+		var preFilter = function(){
+			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
+		}
+
 		$('#filterbar').on('click', 'a.dropdown-toggle .mdi-close', function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -346,6 +350,12 @@
 			return spots;
 		}
 
+		const runFilters = function() {
+			preFilter();
+			doFilter();
+			postFilter();
+		}
+
 		$(".range-slider").each(function(){
 			var $ul = $(this);
 			var selector = $ul.data('selector');
@@ -366,12 +376,7 @@
 				from: 0,
 				to: customValues.length - 1,
 				values: customValues,
-				onFinish: function (data) {
-										console.log(data)
-					preFilter();
-					doFilter();
-					postFilter();
-				},
+				onFinish: runFilters
 			});
 		});
 
@@ -398,11 +403,7 @@
 				from: 0,
 				to: customValues.length - 1,
 				values: customValues,
-				onFinish: function (data) {
-					preFilter();
-					doFilter();
-					postFilter();
-				},
+				onFinish: runFilters
 			});
 
 
@@ -412,11 +413,7 @@
 				from: 0,
 				to: customValues.length - 1,
 				values: customValues,
-				onFinish: function (data) {
-					preFilter();
-					doFilter();
-					postFilter();
-				},
+				onFinish: runFilters
 			});
 		});
 
@@ -473,15 +470,10 @@
 			postFilter();
 		});
 
-		$('#filterbar').on('change', '.singlefilter', function (e) {
-			preFilter();
-			doFilter();
-			postFilter();
-		});
+		$('#filterbar').on('change', '.singlefilter', runFilters);
+		$('#filterbar').on('input', '#flight_number', _.debounce(runFilters, 200));
 
-		var preFilter = function(){
-			$(".trip .detail-expander[aria-expanded=true]").trigger('click');
-		}
+		
 
 		var getMinutesFromString = function(str){
 			var values = str.split(' ');
@@ -522,6 +514,11 @@
 			return [0,9999];
 		}
 
+		var getFlightNumbers = function(){
+			const numbers = $("#flight_number").val();
+			return numbers.length == 0 ? [] : numbers.split(",");
+		}
+
 		var doFilter = function(){
 			var filters = {
 				stops: getGroupValue('stops'),
@@ -531,9 +528,9 @@
 				duration: rangeDetails('duration'),
 				airline: getGroupValue('airline'),
 				departure : rangeRawValue('departure'),
-				arrival : rangeRawValue('arrival')
+				arrival : rangeRawValue('arrival'),
+				flight_number : getFlightNumbers()
 			};
-			console.log(filters)
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
 				var $this = $(this);
@@ -544,6 +541,13 @@
 							return true;
 						}
 						switch(key){
+							case 'flight_number': {
+								if(filters[key].length == 0){
+									return true;
+								}
+								return $this.data('flightnumbers').includes(filters[key]);
+								break;
+							}
 							case 'stops': {
 								return $this.data('stops') == filters[key];
 								break;
@@ -726,11 +730,11 @@
 			}
 		}
 
-		$('#listcontainer')
-		.on('blur','.form-field__input, .form-field__textarea',function(){
+		$('#page-content-wrapper')
+		.on('blur','.form-field__input__filter, .form-field__input, .form-field__textarea',function(){
 			setActive($(this), false);
 		})
-		.on('focus','.form-field__input, .form-field__textarea',function(){
+		.on('focus','.form-field__input__filter, .form-field__input, .form-field__textarea',function(){
 			setActive($(this), true);
 		});
 

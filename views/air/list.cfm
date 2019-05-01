@@ -16,6 +16,7 @@
 		data-longsegment="#Segment.IsLongSegment#"
 		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
 		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
+		data-flightnumbers="#Replace(ReReplace(Segment.FlightNumbers,"[^0-9/]","", "ALL"), "/", ",",  "ALL")#"
 		>
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
 		<input type="hidden" name="segmentJSON" value="#encodeForHTML(serializeJSON(Segment))#" />
