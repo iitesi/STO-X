@@ -99,7 +99,6 @@
                             <div class="col-sm-12">#rc.Filter.getProfileUsername()#</div>
                         </div>
                         <br>
-                        
                     </li>
                     <cfif displayCart>
                         <cfloop array="#itineraryOrder#" index="segment">
@@ -108,11 +107,10 @@
                                 <cfif rc.airSelected>
                                     <cfloop collection="#rc.Air#" item="group" index="i">
                                         <cfif segment EQ i AND NOT structIsEmpty(group)>
-                                            
     										<li>
     											<div class="row">
     												<div class="col-sm-12">
-    													<a href="#buildURL('air?SearchID=#rc.SearchID#&Group=#i#')#"><i class="material-icons">local_airport</i></a><br>
+    													<a href="#buildURL('air?SearchID=#rc.SearchID#&Group=#i#')#"><img class="carrierimg" src="assets/img/airlines/#group.CarrierCode#_sm.png" title="#application.stAirVendors[group.CarrierCode].Name#"></a><br>
     													#group.OriginAirportCode# - #group.DestinationAirportCode#<br>
     													#DateFormat(group.DepartureTime, 'DDD, MMM d, yyyy')#<br>
     													#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#
