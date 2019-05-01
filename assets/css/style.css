@@ -1146,6 +1146,38 @@ ul.tabs li a.active {
 	#filterbar .nav-pills .dropdown a.dropdown-toggle {
 		text-align: right;
 	}
+
+	#filterbar .nav-pills .form-field__filter {
+		width: 100%;
+		margin-bottom: 0;
+	}
+	#filterbar .nav-pills .form-field__control__filter {
+		border-radius: 0;
+		margin-left: 0;
+	}
+	#filterbar .nav-pills .form-field__label__filter {
+		text-align: right;
+	}
+	#filterbar .nav-pills .form-field__input__filter {
+		text-align: right;
+	}
+	#filterbar .nav-pills .form-field.form-field--is-active .form-field__label__filter,
+	#filterbar .nav-pills .form-field.form-field--is-filled .form-field__label__filter {
+		font-size: 16px;
+		transform: translateY(0);
+		transform: translateX(20px);
+		width: 75px;
+		background-color: white;
+		padding: 5px 5px 0 5px;
+	 	margin-left: 0;
+	}
+
+	#filterbar .nav-pills .form-field.form-field--is-active .clear_flight_number,
+	#filterbar .nav-pills .form-field.form-field--is-filled .clear_flight_number {
+		right: unset;
+		left: 5px;
+	}
+
 }
 
 @media (min-width: 800px) {
