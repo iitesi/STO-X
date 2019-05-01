@@ -1,10 +1,10 @@
 <cfoutput>
 	<div class="row">
-		<!--- 
-		<div class="col-sm-12">
-			#view('air/unusedtickets')# 
-		</div>
-		--->
+		<cfif structKeyExists(rc, 'Order')>
+			<div class="alert alert-warning">
+				Please select your flight in order.
+			</div>
+		</cfif>
 		<div class="col-sm-12">
 			<div class="page-header">
 				#View('air/legs')#
