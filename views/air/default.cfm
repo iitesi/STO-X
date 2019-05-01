@@ -2,7 +2,7 @@
 	<div class="row">
 		<cfif structKeyExists(rc, 'Order')>
 			<div class="alert alert-warning">
-				Please select your flight in order.
+				Please select your segments in order.
 			</div>
 		</cfif>
 		<div class="col-sm-12">
@@ -13,9 +13,9 @@
 		<div class="col-sm-12" id="aircontent">
 			<div class="row">
 			<cfif NOT structIsEmpty(rc.trips)>
-				<div class="col-sm-12">
+				<!--- <div class="col-sm-12">
 					#View('air/pin')#
-				</div>
+				</div> --->
 				<div class="col-sm-12" id="hidefilterfromprint">
 					#View('air/filter2')#
 				</div>
@@ -91,9 +91,7 @@
 						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
 						<cfset variables.Fares = structKeyExists(rc.trips.Fares, segmentIndex) ? rc.trips.Fares[segmentIndex] : {}>
 						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
-							<!--- <cfif NOT Segment.IsLongAndExpensive AND NOT Segment.IsLongSegment> --->
-								#View('air/list')#
-							<!--- </cfif> --->
+							#View('air/list')#
 						</cfif>
 					</cfloop>
 				</div>
@@ -746,8 +744,8 @@
 	<cfoutput>#View('air/email')#</cfoutput>
 </div>
 	
-<div class="row">
+<!--- <div class="row">
 	<cfdump var=#structKeyList(rc.trips)#>
 	<cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
 	<cfdump var=#rc.trips.Profiling#>
-</div>
+</div> --->
