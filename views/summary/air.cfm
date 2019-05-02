@@ -30,7 +30,7 @@
 						AND rc.Policy.Policy_AirReasonCode EQ 1)>
 
 						<div class="form-group #(structKeyExists(rc.errors, 'hotelNotBooked') ? 'error' : '')#">
-							<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air.aPolicies)#" style="float:left; width:114px;">Out Of Policy *</span>
+							<span rel="tooltip" class="outofpolicy" title="#ArrayToList(rc.Air[0].OutOfPolicyReason)#" style="float:left; width:114px;">Out Of Policy *</span>
 							<div class="controls col-sm-8 col-xs-12">
 								<select name="airReasonCode" id="airReasonCode" class="form-control #(structKeyExists(rc.errors, 'airReasonCode') ? 'error' : '')#">
 								<option value="">Select Reason for Booking Out of Policy</option>
