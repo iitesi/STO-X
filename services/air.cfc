@@ -73,7 +73,6 @@
 
 			<!--- <cfdump var=#AirSearchResponse.AirAvailabilityResponses# abort> --->
 			<!--- <cfdump var=#structKeyList(AirSearchResponse)# abort> --->
-			
 			<cfset AvailabilityResponse = {}>
 			<cfif arrayLen(AirSearchResponse.AirAvailabilityResponses)>
 				<cfif IsDefined("AirSearchResponse.AirAvailabilityResponses[#arguments.Group+1#]")>
@@ -151,8 +150,16 @@
 
 		</cfif>
 
-		<cfset trips.Segments = applyModifiers(Segments = trips.Segments,
+		<cfset local.Segments = applyModifiers(Segments = StructCopy(trips.Segments),
 												Leg = Filter.getLegsForTrip()[Group+1])>
+
+		<!--- Make sure that not all flights are cleared out. --->
+		<cfif NOT structIsEmpty(local.Segments)>
+			<cfset trips.Segments = local.Segments>
+		<cfelse>
+			<cfset trips.Segments = applyMinModifiers(Segments = StructCopy(trips.Segments),
+													Leg = Filter.getLegsForTrip()[Group+1])>
+		</cfif>
 
 		<cfif arguments.Group EQ 0>
 			<cfset session.LowestFare = LowFare.getLowestFare(SegmentFares = trips.SegmentFares)>
@@ -212,6 +219,53 @@
 				</cfloop>
 
 			</cfif>
+
+			<!--- Hide Incorrect City Pairs --->
+			<cfif NOT Hide
+				AND Leg DOES NOT CONTAIN Segment.OriginAirportCode&' - '&Segment.DestinationAirportCode>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Results In Availability Only --->
+			<cfif NOT Hide
+				AND Segment.Results EQ 'Availability'>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+			<!--- Hide Results In LowFare Only --->
+			<cfif NOT Hide
+				AND Segment.Results EQ 'LowFare'>
+				<cfset Hide = true>
+				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
+			</cfif>
+
+		</cfloop>
+
+		<cfloop list="#HideSegments#" index="local.SegmentId" delimiters="|">
+			<cfset StructDelete(Segments, SegmentId)>
+		</cfloop>
+
+		<!--- <cfdump var=#Segments# abort> --->
+
+		<cfreturn Segments>
+ 	</cffunction>
+
+	<cffunction name="applyMinModifiers" output="false">
+		<cfargument name="Segments" required="true">
+		<cfargument name="Leg" required="true">
+
+		<cfset var Segments = arguments.Segments>
+		<cfset var Leg = arguments.Leg>
+		<cfset var HideSegments = ''>
+		<cfset var Hide = false>
+		<cfset var Count = 0>
+		<cfset var PreviousFlight = ''>
+
+		<cfloop collection="#Segments#" index="local.SegmentIndex" item="local.Segment">
+
+			<cfset Hide = false>
 
 			<!--- Hide Incorrect City Pairs --->
 			<cfif NOT Hide

@@ -315,8 +315,8 @@
 				</cfloop>
 
 				<cfif (local.feeType EQ 'INTL' OR local.intl)
-					AND (ArrayLen(arguments.Air.Carriers) GT 1
-					OR arguments.Filter.getAirType() EQ 'MD'
+					AND (arguments.Filter.getAirType() EQ 'MD'
+					OR arguments.Air[0].CarrierCode EQ 'Mult'
 					OR local.segmentCount GT 6)>
 						<cfset local.fees.complex = true>
 						<cfif local.qAgentSine.AccountID NEQ ''>
