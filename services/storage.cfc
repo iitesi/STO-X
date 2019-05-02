@@ -8,7 +8,7 @@
 		<cfargument name="BookingDSN" type="any" required="true"/>
 
 		<cfset setBookingDSN( arguments.BookingDSN ) />
-		<cfset setStorageLocation('Session') /><!--- Session or Database --->
+		<cfset setStorageLocation('Database') /><!--- Session or Database --->
 		<cfset setRequery(false) /><!--- True or false--->
 
 		<cfreturn this />
@@ -25,19 +25,24 @@
 
 		<cfif structKeyExists(session.storage[arguments.searchID], local.key)
 			AND NOT getRequery()>
+
 			<cfif getStorageLocation() EQ 'Database'>
+
 				<cfquery name="local.getJSON" datasource="#getBookingDSN()#">
 					SELECT Payload
 					FROM SearchData
 					WHERE SearchId = #arguments.searchID#
 						AND SearchToken = '#local.key#'
 				</cfquery>
+
 				<cfif local.getJSON.recordCount EQ 1>
-					<cfset local.response = deserializeJSON(local.getJSON.storage)>
+					<cfset local.response = deserializeJSON(local.getJSON.Payload)>
 				</cfif>
+
 			<cfelse>
 				<cfset local.response = deserializeJSON(session.storage[arguments.searchID][local.key])>
 			</cfif>
+			
 		</cfif>
 
 		<cfreturn local.response />
