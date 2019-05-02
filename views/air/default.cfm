@@ -95,9 +95,11 @@
 						</cfif>
 					</cfloop>
 				</div>
-				<div class="col-sm-12 noFlightsFound panel panel-default">
-					<h1>No Flights Available</h1>
-					<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
+				<div class="col-sm-12 noFlightsFound">
+					<div class="panel panel-default">
+						<h1>No Flights Available</h1>
+						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
+					</div>
 				</div>
 			<cfelse>
 				<div class="container">
@@ -132,13 +134,15 @@
 		var airlines = <cfoutput>#serializeJSON(airlines)#</cfoutput>;
 
 		function submitSegment(SegmentId,CabinClass,SegmentFareId,Refundable,Key) {
-			$("#SegmentId").val(SegmentId);
-			$("#CabinClass").val(CabinClass);
-			$("#SegmentFareId").val(SegmentFareId);
-			$("#Refundable").val(Refundable);
-			$("#Segment").val($("#segment"+Key).val());
-			$("#Fare").val($("#fare"+Key).val());
-			$("#lowfareavailForm").submit();
+			if (!this.classList.contains('opacity-hidden')){
+				$("#SegmentId").val(SegmentId);
+				$("#CabinClass").val(CabinClass);
+				$("#SegmentFareId").val(SegmentFareId);
+				$("#Refundable").val(Refundable);
+				$("#Segment").val($("#segment"+Key).val());
+				$("#Fare").val($("#fare"+Key).val());
+				$("#lowfareavailForm").submit();
+			}
 		}
 
 		function sendEmail(Key) {
@@ -147,14 +151,14 @@
 		
 		function sortTrips(dataelement) {
 			var divList = $('.trip');
-			var direction = 0;
+			var direction = 1;
 			var c = $('.listcontainer-header').find('[rel='+dataelement+']');
 			if(c.length){
-				direction = c.hasClass('sorted') ? c.hasClass('reverse') ? 1 : 0 : 0;
+				direction = c.hasClass('sorted') ? !c.hasClass('reverse') ? -1 : 1 : 1;
 				if(!c.hasClass('sorted')){
 					c.addClass('sorted');
 				}
-				if (direction==0){
+				if (direction==-1){
 					if(!c.hasClass('reverse')){
 						c.addClass('reverse');
 					}
@@ -165,13 +169,7 @@
 			} 
 
 			divList.sort(function(a, b){
-				if(direction){
-					return $(a).data(dataelement)-$(b).data(dataelement)
-				}
-				else {
-					return $(b).data(dataelement)-$(a).data(dataelement)
-				}
-				
+				return ($(a).data(dataelement)-$(b).data(dataelement)) * direction;
 			});
 			$("#listcontainer").html(divList);
 			postFilter();
@@ -531,13 +529,14 @@
 				arrival : rangeRawValue('arrival'),
 				flight_number : getFlightNumbers()
 			};
+			// console.log(filters);
 			var filterKeys = Object.keys(filters);
 			$('#listcontainer > div').each(function(){
 				var $this = $(this);
 
 				const matches = filterKeys.every(function(key){
 					try {
-						if (!Array.isArray(filters[key]) && filters[key] == -1) {
+						if (key != 'refundable' && !Array.isArray(filters[key]) && filters[key] == -1) {
 							return true;
 						}
 						switch(key){
@@ -553,7 +552,18 @@
 								break;
 							}
 							case 'refundable': {
-							// TODO show/hide the cabin
+								if (filters[key] == 0) {
+									$('.fares[data-refundable=0]').removeClass('opacity-hidden');
+									$('.fares[data-refundable=1]').addClass('opacity-hidden');
+								}
+								if (filters[key] == 1) {
+									$('.fares[data-refundable=0]').addClass('opacity-hidden');
+									$('.fares[data-refundable=1]').removeClass('opacity-hidden');
+								}
+								if (filters[key] == -1) {
+									$('.fares[data-refundable=0]').removeClass('opacity-hidden');
+									$('.fares[data-refundable=1]').removeClass('opacity-hidden');
+								}
 								return true;
 								break;
 							}
@@ -684,6 +694,24 @@
 				}).get();
 			}
 		}
+
+		$('.removefilters').on('click', function(){
+			$('.multifilterwrapper input[type=checkbox]').prop('checked',true);
+			var $moreClear = $('#filterMore a.filtered .mdi-close');
+			if($moreClear.length){
+				$moreClear.trigger('click');
+			}
+			var $stopClear = $('#filterStops a.filtered .mdi-close');
+			if($stopClear.length){
+				$stopClear.trigger('click');
+			}
+			$('.js-range-slider').each(function(){
+				const rangeSlider = $(this).data("ionRangeSlider");
+				rangeSlider.reset();
+			});
+			$('#flight_number').val('').trigger('blur');
+			runFilters();
+		});
 
 		sortTrips('economy');
 		postFilter();

@@ -338,6 +338,9 @@ ul.tabs li a.active {
 	margin-bottom: 3em;
 }
 
+.noFlightsFound .panel {
+	padding: 20px;
+}
 
 
 /*
@@ -739,6 +742,7 @@ ul.tabs li a.active {
 }
 .fare-wrapper {
 	height: 100%;
+	background-color: #eee;
 }
 .fare-wrapper .fare-block {
 	height: 100%;
@@ -904,9 +908,35 @@ ul.tabs li a.active {
 	cursor: pointer;
 }
 
+.fare-wrapper .fares {
+	background-color: #fff; 
+}
+
+.fare-wrapper .fares.opacity-hidden{
+	cursor: auto !important;
+	background-color: #eee; 
+}
+
+.fare-wrapper .fares.opacity-hidden .fare-warning{
+	cursor: auto !important;
+}
+
+.fare-wrapper .fares.opacity-hidden .cabin-class{
+	opacity: 0;
+	cursor: auto !important;
+}
+
+.fare-wrapper .nopprice-fares {
+	background-color: #fff; 
+}
+
 .fare-wrapper .fares:hover {
 	background: #2E76CF;
-	color: white;
+	color: #fff;
+}
+
+.fare-wrapper .fares.opacity-hidden:hover{
+	background-color: #eee; 
 }
 
 #listcontainer .trip.active .cabin-class .fare-display {
