@@ -236,13 +236,18 @@
     						</li>
                         </cfif>                                            
                     </cfif>
-                    <li>
-                        <cfif listLen(listRemoveDuplicates(tripCurrency)) EQ 1>
-                            <button>$#numberFormat(tripTotal, '____.__')#</button>
-                        <cfelse>
-                            <button>BOOK TRIP</button>
-                        </cfif>
-                    </li>
+                    <cfif rc.action DOES NOT CONTAIN 'air'
+                        AND rc.action DOES NOT CONTAIN 'summary'>
+
+                        <li>
+                            <cfif listLen(listRemoveDuplicates(tripCurrency)) EQ 1>
+                                <button>$#numberFormat(tripTotal, '____.__')#</button>
+                            <cfelse>
+                                <button>BOOK TRIP</button>
+                            </cfif>
+                        </li>
+                        
+                    </cfif>
                 </cfoutput>
             </ul>
         </nav>
