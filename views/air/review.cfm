@@ -1,4 +1,9 @@
 <cfoutput>
+	<cfif structKeyExists(rc, 'Select')>
+		<div class="alert alert-warning">
+			Please select confirm your cabin class and fare.
+		</div>
+	</cfif>
 	<!--- <cfdump var=#rc.Solutions# abort> --->
 	<!--- #view('air/unusedtickets')# --->
 	<div class="page-header">
