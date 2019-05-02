@@ -184,7 +184,7 @@
 								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
 								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
 								<input type="hidden" id="fare#key#" value="">
-								<div class="nopprice-fares fare-block"
+								<div class="nopprice-fares fare-block <cfif status EQ 'Unavailable'>noclick</cfif>"
 									<cfif Status EQ 'Click to price'>
 										onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 									</cfif>

@@ -908,6 +908,10 @@ ul.tabs li a.active {
 	cursor: pointer;
 }
 
+.fare-wrapper .fare-block.spacer:hover, .fare-wrapper .fare-block.noclick:hover  {
+	cursor: auto!important;
+}
+
 .fare-wrapper .fares {
 	background-color: #fff; 
 }
