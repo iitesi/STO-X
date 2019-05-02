@@ -12,10 +12,9 @@
 		</div>
 		<div class="col-sm-12" id="aircontent">
 			<div class="row">
-			<cfif NOT structIsEmpty(rc.trips)>
-				<!--- <div class="col-sm-12">
+				<div class="col-sm-12">
 					#View('air/pin')#
-				</div> --->
+				</div>
 				<div class="col-sm-12" id="hidefilterfromprint">
 					#View('air/filter2')#
 				</div>
@@ -101,14 +100,6 @@
 						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
-			<cfelse>
-				<div class="container">
-					<h3>No Flights Returned</h2>
-					<p>There were no flights found based on your search criteria.</p>
-					<p>Please <a href="#application.sPortalURL#">change your search</a> and try again.</p>
-					<br /><br /><br /><br /><br /><br />
-				</div>
-			</cfif>
 			</div>
 		</div>
 	

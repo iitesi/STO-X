@@ -12,31 +12,25 @@
 	<div class="tripSummary purchase-summary">
 
 		<div class="text-right row">
-			<div class="col-xs-offset-3 col-xs-3"><strong>Base Rate</strong></div>
-			<div class="col-xs-3"><strong>Taxes</strong></div>
-			<div class="col-xs-3"><strong>Total</strong></div>
+			<div class="col-xs-8"><strong></strong></div>
+			<div class="col-xs-4"><strong>Total</strong></div>
 		</div>
 
 		<cfset tripTotal = 0>
 		<cfset tripCurrency = 'USD'>
 
-		<!--- Dohmen to do --->
-		<!---<cfif rc.airSelected>
-
-			<div class="row text-right" id="airTotalRow">
-				<div class="col-xs-3">Flight</div>
-				<!--- Per STM-2595, changed "Base" to "ApproximateBase" since Base can be in any currency and ApproximateBase is always in USD. --->
-				<div class="col-xs-3">#numberFormat(rc.Air.ApproximateBase, '$____.__')#</div>
-				<!--- <div class="span1">#numberFormat(rc.Air.Base, '$____.__')#</div> --->
-				<div class="col-xs-3">#numberFormat(rc.Air.Taxes, '$____.__')#</div>
-				<div class="col-xs-3 text-right" id="airTotalCol">#numberFormat(rc.Air.Total, '$____.__')#</div>
+		<cfif rc.airSelected>
+			
+			<div class="text-right row">
+				<div class="col-xs-8">Flight</div>
+				<div class="col-xs-4 text-right" id="airTotalCol">#numberFormat(rc.Air[0].TotalPrice, '$____.__')#</div>
 			</div>
-			<input type="hidden" id="airTotal" value="#rc.Air.Total#">
 
-			<cfset tripTotal = tripTotal + rc.Air.Total>
+			<input type="hidden" id="airTotal" value="#rc.Air[0].TotalPrice#">
+			<cfset tripTotal = tripTotal + rc.Air[0].TotalPrice>
 			<cfset tripCurrency = 'USD'>
 
-		</cfif>--->
+		</cfif>
 		<cfif rc.hotelSelected>
 
 			<cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
@@ -55,16 +49,16 @@
 			</cfif>
 
 			<div class="row text-right" id="hotelTotalRow">
-				<div class="col-xs-3">Hotel</div>
-				<div class="col-xs-3">
+				<div class="col-xs-8">Hotel</div>
+				<!--- <div class="col-xs-3">
 					<!--- Priceline requires explicit declaration of taxes --->
 					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND isNumeric(rc.Hotel.getRooms()[1].getDailyRate())>
 						#numberFormat(rc.Hotel.getRooms()[1].getDailyRate(), '$____.__')#
 					<cfelse>
 						<!--- nothing to display ---->
 					</cfif>
-				</div>
-				<div class="col-xs-3">
+				</div> --->
+				<!--- <div class="col-xs-8">
 					<!--- Priceline requires explicit declaration of taxes with a popover disclaimer styles just-so --->
 					<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline" AND isNumeric(rc.Hotel.getRooms()[1].getTax())>
 						<cfset taxStatementTitle = "Charges for Taxes and Fees"/>
@@ -111,11 +105,11 @@
 					<cfelse>
 						#hotelText#
 					</cfif>
-				</div>
-				<div class="col-xs-3" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
+				</div> --->
+				<div class="col-xs-4" id="hotelTotalCol">#(currency EQ 'USD' ? numberFormat(hotelTotal, '$____.__') : numberFormat(hotelTotal, '____.__')&' '&currency)#</div>
 			</div>
-			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
 
+			<input type="hidden" id="hotelTotal" value="#hotelTotal#">
 			<cfset tripTotal = (currency EQ 'USD' ? tripTotal + hotelTotal : 0)>
 			<cfset tripCurrency = (tripCurrency EQ 'USD' ? currency : tripCurrency)>
 
@@ -127,10 +121,10 @@
 			<cfset vehicleTotal = rc.Vehicle.getEstimatedTotalAmount()>
 
 			<div class="row text-right" id="carTotalRow">
-				<div class="col-xs-3">Car</div>
-				<div class="col-xs-3"></div>
-				<div class="col-xs-3">Quoted at pick-up</div>
-				<div class="col-xs-3" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
+				<div class="col-xs-8">Car</div>
+				<!--- <div class="col-xs-3"></div> --->
+				<!--- <div class="col-xs-3">Quoted at pick-up</div> --->
+				<div class="col-xs-4" id="carTotalCol">#(currency EQ 'USD' ? numberFormat(vehicleTotal, '$____.__') : numberFormat(vehicleTotal, '____.__')&' '&currency)#</div>
 			</div>
 			<input type="hidden" id="carTotal" value="#vehicleTotal#">
 

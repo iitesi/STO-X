@@ -79,6 +79,10 @@
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '')>
+		<cfif rc.airSelected
+			AND NOT structKeyExists(rc.Air[0], 'TotalPrice')>
+			<cfset variables.fw.redirect('air.review?SearchID=#rc.searchID#&Select=')>
+		</cfif>
 
 		<cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'Hotel') ? true : false)>
 		<cfset rc.Hotel = (structKeyExists(rc.itinerary, 'Hotel') ? rc.itinerary.Hotel : '')>

@@ -103,7 +103,7 @@
 					<div class="container-fluid">
 					<cfloop collection="#rc.Air#" index="GroupIndex" item="Group">
 						<div class="col-sm-2 col-xs-4">
-							<img class="img-responsive carrierimg" src="assets/img/airlines/#Group.Flights[1].CarrierCode#.png">
+							<img class="img-responsive carrierimg" src="assets/img/airlines/#Group.CarrierCode#.png">
 						</div>
 						<cfloop collection="#Group.Flights#" index="FlightIndex" item="Flight">
 							<div class="summarySegment row">
