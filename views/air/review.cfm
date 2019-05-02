@@ -79,9 +79,9 @@
 			</cfloop><br>
 			
 			<cfset key = createUUID()>
-			<div onclick="submitSegment('#key#');">
+			<div>
 				<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
-				Select Fare
+				<a class="btn btn-primary" onclick="submitSegment('#key#');">Select Fare</a>
 			</div>
 
 		<cfelse>
