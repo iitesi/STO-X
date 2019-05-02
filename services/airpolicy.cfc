@@ -28,10 +28,12 @@
 			<cfloop collection="#GroupItem.Flights#" index="local.FlightIndex" item="local.FlightItem">
 				<cfif FlightItem.OutOfPolicy>
 					<cfset FlightOutOfPolicy = true>
-					<cfset arrayAppend(FlightOutOfPolicyReason, FlightItem.OutOfPolicyReason)>
-					<cfif NOT FlightItem.IsBookable>
+					<cfloop collection="#FlightItem.OutOfPolicyReason#" index="local.ReasonIndex" item="local.ReasonItem">
+						<cfset arrayAppend(FlightOutOfPolicyReason, ReasonItem)>
+					</cfloop>
+					<!--- <cfif NOT FlightItem.IsBookable>
 						<cfset FlightIsBookable = false>
-					</cfif>
+					</cfif> --->
 				</cfif>
 			</cfloop>
 		</cfloop>
