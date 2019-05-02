@@ -1,8 +1,10 @@
 <cfoutput>
 	<div class="row">
-		<cfif structKeyExists(rc, 'Order')>
+		<cfif structKeyExists(rc, 'Order')
+			AND rc.Order>
+			<br>
 			<div class="alert alert-warning">
-				Please select your segments in order.
+				Please build the air itinerary/fare in order before moving to the next section.
 			</div>
 		</cfif>
 		<div class="col-sm-12">

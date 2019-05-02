@@ -110,7 +110,7 @@
     										<li>
     											<div class="row">
     												<div class="col-sm-12">
-    													<a href="#buildURL('air?SearchID=#rc.SearchID#&Group=#i#')#"><img class="carrierimg" src="assets/img/airlines/#group.CarrierCode#_sm.png" title="#application.stAirVendors[group.CarrierCode].Name#"></a><br>
+    													<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Air&Group=#i#')#"><img class="carrierimg" src="assets/img/airlines/#group.CarrierCode#_sm.png" title="#application.stAirVendors[group.CarrierCode].Name#"></a><br>
     													#group.OriginAirportCode# - #group.DestinationAirportCode#<br>
     													#DateFormat(group.DepartureTime, 'DDD, MMM d, yyyy')#<br>
     													#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#
@@ -134,10 +134,10 @@
     								<li>
     									<div class="row">
     										<div class="col-sm-12">
-    											<a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#"><i class="material-icons">hotel</i></a><br>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel')#"><i class="material-icons">hotel</i></a><br>
     											#rc.Hotel.getPropertyName()#<br>
-    											<a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    											<a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel&Remove=1')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
     											#DateFormat(rc.filter.getCheckInDate(), 'DDD, MMM d')# to #DateFormat(rc.filter.getCheckOutDate(), 'DDD, MMM d')#<br>
                                                 <cfif rc.Hotel.getRooms()[1].getTotalForStay() GT 0>
                                                     <cfset currency = rc.Hotel.getRooms()[1].getTotalForStayCurrency()>
@@ -163,10 +163,10 @@
     								<li>
     									<div class="row">
     										<div class="col-sm-12">
-    											<a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#"><i class="material-icons">directions_car</i></a><br>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car')#"><i class="material-icons">directions_car</i></a><br>
     											#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])#<br>
-    											<a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    											<a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    											<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car&Remove=1')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
     											#rc.Filter.getCarPickUpAirport()#<br>
     											#DateFormat(rc.Filter.getCarPickUpDateTime(), 'ddd, mmm d')# at #uCase(timeFormat(rc.Filter.getCarPickUpDateTime(), 'h:mm tt'))#<br>
     											<cfif rc.Filter.getCarDifferentLocations()>
@@ -187,10 +187,10 @@
     						<li>
     							<div class="row">
     								<div class="col-sm-12">
-    		                            <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#"><i class="material-icons">hotel</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel')#"><i class="material-icons">hotel</i></a>
     		                            <cfif rc.action CONTAINS 'hotel.'>In progress<cfelse>Up next</cfif>
-    		                            <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    		                            <a href="#buildURL('hotel.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel&Remove=1')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
     								</div>
     							</div>
     						</li>
@@ -200,10 +200,10 @@
                             <li>
     							<div class="row">
     								<div class="col-sm-12">
-    		                            <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#"><i class="material-icons">directions_car</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car')#"><i class="material-icons">directions_car</i></a>
     		                            <cfif rc.action CONTAINS 'car.'>In progress<cfelse>Up next</cfif>
-    		                            <a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
-    		                            <a href="#buildURL('car.skip?SearchID=#rc.SearchID#')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">edit</i></a>
+    		                            <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car&Remove=1')#" class="cart-icon"><i class="material-icons" style="font-size:15px;">delete</i></a>
     								</div>
     							</div>
     						</li>
@@ -212,7 +212,7 @@
                             <li>
     							<div class="row">
     								<div class="col-sm-12">
-                               			<i class="material-icons">local_airport</i> <a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Add air</a>
+                               			<i class="material-icons">local_airport</i> <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Air&Add=1')#">Add air</a>
     								</div>
     							</div>
     						</li>
@@ -221,7 +221,7 @@
                             <li>
     							<div class="row">
     								<div class="col-sm-12">
-                               			<i class="material-icons blue bold">hotel</i> <a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#">Add a hotel</a>
+                               			<i class="material-icons blue bold">hotel</i> <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel&Add=1')#">Add a hotel</a>
     								</div>
     							</div>
     						</li>
@@ -230,7 +230,7 @@
                             <li>
     							<div class="row">
     								<div class="col-sm-12">
-                                		<i class="material-icons blue bold">directions_car</i> <a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">Add a car</a>
+                                		<i class="material-icons blue bold">directions_car</i> <a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car&Add=1')#">Add a car</a>
     								</div>
     							</div>
     						</li>

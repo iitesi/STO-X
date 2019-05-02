@@ -78,7 +78,7 @@
 				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 					<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
 				<cfelse>
-					<li role="presentation"><a href="#buildURL('air?SearchID=#rc.Filter.getSearchID()#&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+					<li role="presentation"><a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Air&&Group=#nLegIndex-1#')#" class="airModal" data-modal="Flights for #nLegItem#." title="#nLegItem#">
 						<!--- Show icon indicating this is the leg they selected --->
 						<cfif structKeyExists(session.searches[rc.SearchID].stSelected, nLegIndex-1)
 							AND NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])>

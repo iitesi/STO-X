@@ -21,7 +21,7 @@
             <div class="page-header">
                 <h1>{{search.hotelHeading}} <small>:: {{search.checkInDate | date:'EEE MMM dd'}} - {{search.checkOutDate | date:'EEE MMM dd'}}</small></h1>
                 <h2><a href="javascript: void(0)" ng-click="showChangeSearchWindow()" class="change-search" ><i class="fa fa-search"></i> Change Search</a></h2>
-				<span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=hotel.skip&searchId=" class="continue-link pull-right">Continue without hotel</a></span>
+				<span ng-hide="hideHotelContinueLink"><a href="/booking/index.cfm?action=main&searchId=#rc.SearchId#&Service=Hotel&Remove=1" class="continue-link pull-right">Continue without hotel</a></span>
             </div>
     </div>
 </div>

@@ -1,7 +1,8 @@
 <cfoutput>
-	<cfif structKeyExists(rc, 'Select')>
+	<cfif structKeyExists(rc, 'Order')>
+		<br>
 		<div class="alert alert-warning">
-			Please select confirm your cabin class and fare.
+			Please select the cabin and fare in order before moving to the next section.
 		</div>
 	</cfif>
 	<!--- <cfdump var=#rc.Solutions# abort> --->

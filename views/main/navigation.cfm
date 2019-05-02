@@ -75,30 +75,30 @@
 				<cfif showAirTab>
 					<!---Air--->
 					<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
-						<a href="#buildURL('air?SearchID=#rc.SearchID#')#">Air</a>
+						<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Air')#">Air</a>
 					</li>
 				<cfelseif rc.filter.getPassthrough() NEQ 1 AND NOT (structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO")>
 					<!---Air--->
 					<li <cfif rc.action CONTAINS 'air.'>class="active"</cfif>>
-						<a href="#buildURL('air.addair?SearchID=#rc.SearchID#')#">Air</a>
+						<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Air')#">Air</a>
 					</li>
 				</cfif>
 				<cfif showHotelTab>
 					<!---Hotel--->
 					<li <cfif rc.action CONTAINS 'hotel.'>class="active"</cfif>>
-						<a href="#buildURL('hotel.search?SearchID=#rc.SearchID#')#">Hotel</a>
+						<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Hotel')#">Hotel</a>
 					</li>
 				</cfif>
 				<cfif showCarTab>
 					<!---Car--->
 					<li <cfif rc.action CONTAINS 'car.'>class="active"</cfif>>
-						<a href="#buildURL('car.availability?SearchID=#rc.SearchID#')#">Car</a>
+						<a href="#buildURL('main?SearchID=#rc.SearchID#&Service=Car')#">Car</a>
 					</li>
 				</cfif>
 				<cfif showPurchaseTab>
 					<!---Purchase--->
 				    <li <cfif rc.action CONTAINS 'summary.'>class="active"</cfif>>
-				        <a href="#buildURL('summary?SearchID=#rc.SearchID#')#">Purchase</a>
+				        <a href="#buildURL('main?SearchID=#rc.SearchID#')#">Purchase</a>
 					</li>
 				</cfif>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
