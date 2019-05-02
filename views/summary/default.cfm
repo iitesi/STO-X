@@ -49,20 +49,25 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
-		<!--- Dohmen --->
-		<!--- <cfif structKeyExists(rc, 'SellErrorMessages')
-			AND NOT structIsEmpty(rc.SellErrorMessages)>
-			<cfloop collection="#rc.SellErrorMessages#" index="TravelerIndex" item="TravelerItem">
-				<cfloop collection="#TravelerItem#" index="SellIndex" item="SellItem">
-					<cfdump var=#SellItem# abort>
-					<!--- Need an example before I can finish coding.  :(  Dohmen --->
+		<cfif arrayLen(rc.SellErrorMessages)>
+			<div class="alert alert-warning clearfix">
+				<cfset MessageType = ''>
+				<cfloop collection="#rc.SellErrorMessages#" index="MessageIndex" item="MessageItem">
+					<cfdump var=#MessageItem#><br>
+					<cfif isXML(MessageItem)>
+						<cfset MessageType = 'XML'>
+					</cfif>
 				</cfloop>
-			</cfloop>
-		</cfif> --->
+				<cfif MessageType EQ 'XML'>
+					Internal Message - Developer is working on this message to be more user-friendly.  :)
+				</cfif>
+			</div>
+		</cfif>
 
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#"> 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
+
 				<div class="legs clearfix">
 					<cfset count = 0>
 					<cfloop array="#session.searches[rc.searchID].Travelers#" index="travIndex" item="trav">

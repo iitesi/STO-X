@@ -28,14 +28,21 @@
 		<cfparam name="rc.passwordConfirm" default="" />
 		<cfparam name="rc.priceQuotedError" default="0">
 
-		<!--- Dohmen --->
-		<!--- <cfif structKeyExists(session.searches[SearchId], 'Sell')
-			AND session.searches[SearchId].Sell.Messages.HasErrors>
-			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell>
-		<cfelse>
-			<cfset rc.SellErrorMessages = {}>
-		</cfif> --->
+		<cfset rc.SellErrorMessages = []>
+		<cfif structKeyExists(session.searches[SearchId], 'Sell')>
+			<cfloop collection="#session.searches[SearchId].Sell#" index="local.TravelerIndex" item="local.TravelerItem">
+				<cfloop collection="#TravelerItem.Messages.Errors#" index="local.Message1" item="local.MessageArray">
+					<cfif isArray(MessageArray)>
+						<cfloop collection="#MessageArray#" index="local.Message2" item="local.Message">
+							<cfset arrayAppend(rc.SellErrorMessages, Message)>
+						</cfloop>
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfif>
 
+		<cfset session.searches[SearchId].Sell = {}>
+		
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>

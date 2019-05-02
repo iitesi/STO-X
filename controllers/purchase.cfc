@@ -17,9 +17,10 @@
 													Itinerary = session.searches[rc.SearchID].stItinerary,
 													LowestFare = structKeyExists(session, 'LowestFare') ? session.LowestFare : 0)>
 
+				<cfset session.searches[SearchId].Sell[TravelerIndex] = Sell>
+				
 				<cfif NOT Sell.Messages.HasErrors>
 
-					<cfset session.searches[SearchId].Sell[TravelerIndex] = Sell>
 					<cfset session.searches[SearchId].Sell[TravelerIndex].Cancelled = false>
 					<cfset session.searches[SearchId].Sell[TravelerIndex].CancellationDetail = ''>
 
@@ -32,7 +33,7 @@
 							AND structKeyExists(session.searches[SearchId].Sell[TravelerIndex], 'RecordLocator')>
 
 							<cfset var CancelResponse = purchase.CancelTrip( AcctId = session.AcctId,
-																			UniversalRecordLocatorCode = rc.Sell.RecordLocator.UniversalRecordLocatorCode,
+																			UniversalRecordLocatorCode = session.searches[SearchId].Sell[TravelerIndex].RecordLocator.UniversalRecordLocatorCode,
 																			SearchId = rc.SearchId)>
 
 							<cfif structKeyExists(CancelResponse, 'IsSuccessfullyCancelled')
@@ -40,14 +41,14 @@
 								OR CancelResponse.CancellationDetail EQ 'Record Locator has already been canceled')>
 
 								<cfset session.searches[SearchId].Sell[TravelerIndex].Cancelled = true>
-								<cfset session.searches[SearchId].Sell[TravelerIndex].CancellationDetail = CancelResponse.CancellationDetail>
 								
 							<cfelse>
 
 								<cfset session.searches[SearchId].Sell[TravelerIndex].Cancelled = false>
-								<cfset session.searches[SearchId].Sell[TravelerIndex].CancellationDetail = CancelResponse.CancellationDetail>
 
 							</cfif>
+
+							<cfset session.searches[SearchId].Sell[TravelerIndex].CancellationDetail = StructKeyExists(CancelResponse, 'CancellationDetail') ? CancelResponse.CancellationDetail : ''>
 
 						</cfif>
 
@@ -60,7 +61,7 @@
 			</cfif>
 
 		</cfloop>
-		
+
 		<cfif Successful>
 			<cfset fw.redirect('confirmation?SearchID=#arguments.rc.SearchID#')>
 		<cfelse>
