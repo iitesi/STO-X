@@ -5,7 +5,7 @@
     AND rc.action DOES NOT CONTAIN 'confirmation'>
 
     <script type="text/javascript">
-        $('#main-content').toggleClass('toggled');
+        // $('#main-content').toggleClass('toggled');
     </script>
 
     <cfset rc.itinerary = session.searches[rc.searchID].stItinerary />
