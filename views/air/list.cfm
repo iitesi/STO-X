@@ -144,7 +144,7 @@
 										</cfif>
 										<div class="fares fare-block" data-refundable="#brandedFare.Refundable#"
 											<cfif brandedFare.Bookable>
-												onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#brandedFare.Refundable#','#key#');"
+												onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#brandedFare.Refundable#','#key#');"
 											</cfif>
 										>
 											<div class="cabin-class">
@@ -186,7 +186,7 @@
 								<input type="hidden" id="fare#key#" value="">
 								<div class="nopprice-fares fare-block"
 									<cfif Status EQ 'Click to price'>
-										onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
+										onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','','0','#key#');"
 									</cfif>
 								>
 									<div class="cabin-class">
