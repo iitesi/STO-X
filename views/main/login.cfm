@@ -4,7 +4,13 @@
 		data = form
 	);
 </cfscript>
-
+<style>
+#main-wrapper {
+	display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+</style>
 <div id="Main">
 	<br class="hidden-xs">
 	<br>
