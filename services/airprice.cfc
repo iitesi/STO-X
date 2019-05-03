@@ -122,6 +122,17 @@
 								</cfloop>
 							</air:AirItinerary>
 							<air:AirPricingModifiers ProhibitUnbundledFareTypes="true" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false" ProhibitNonRefundableFares="#ProhibitNonRefundableFares#">
+								<cfif arrayLen(Account.Air_PF)
+									AND Segment.CarrierCode NEQ 'Mult'
+									AND listFind(arrayToList(Account.Air_PF), Segment.CarrierCode)>
+									<air:AccountCodes>
+										<cfloop array="#Account.Air_PF#" index="local.PrivateFare">
+											<cfif getToken(PrivateFare, 2, ',') EQ Segment.CarrierCode>
+												<com:AccountCode Code="#getToken(PrivateFare, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(PrivateFare, 2, ',')#" />
+											</cfif>
+										</cfloop>
+									</air:AccountCodes>
+								</cfif>
 								<air:PermittedCabins>
 									<cfif len(PermittedCabins)>
 										<com:CabinClass Type="#PermittedCabins#" />
@@ -133,17 +144,6 @@
 										</cfloop>
 									</cfif>
 								</air:PermittedCabins>
-									<!--- AND arguments.bAccountCodes EQ 1 --->
-								<cfif arrayLen(Account.Air_PF)
-									AND arrayLen(Carrier) EQ 1>
-									<air:AccountCodes>
-										<cfloop array="#Account.Air_PF#" index="local.PrivateFare">
-											<cfif getToken(PrivateFare, 2, ',') EQ Carrier>
-												<com:AccountCode Code="#getToken(PrivateFare, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(PrivateFare, 2, ',')#" />
-											</cfif>
-										</cfloop>
-									</air:AccountCodes>
-								</cfif>
 							</air:AirPricingModifiers>
 							<!--- <cfif Account.Gov_Rates>
 								<com:SearchPassenger Code="GST" PricePTCOnly="true" Key="1">
@@ -234,12 +234,14 @@
 								<cfset Solution.Refundable = structKeyExists(AirPricingInfo.XMLAttributes, 'Refundable') ? AirPricingInfo.XMLAttributes.Refundable : false>
 								<cfset Solution.CabinClass = ''>
 								<cfset Solution.BrandedFare = ''>
+								<cfset Solution.IsContracted = false>
 
 								<cfloop collection="#AirPricingInfo.XMLChildren#" index="i" item="BookingInfo">
 
 									<cfif BookingInfo.XMLName EQ 'air:FareInfo'>
 
 										<cfset Fares[BookingInfo.XMLAttributes.Key].FareBasis = BookingInfo.XMLAttributes.FareBasis>
+										<cfset Solution.IsContracted = structKeyExists(BookingInfo.XMLAttributes, 'PrivateFare') AND BookingInfo.XMLAttributes.PrivateFare EQ 'AirlinePrivateFare' ? true : false>
 
 										<cfloop collection="#BookingInfo.XMLChildren#" index="i" item="FareInfo">
 
@@ -295,7 +297,6 @@
 											BookingCode = BookingInfo.XMLAttributes.BookingCode,
 											FareBasis = Fares[BookingInfo.XMLAttributes.FareInfoRef].FareBasis,
 											BrandedFare = structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'BrandedFare') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare : '',
-
 											Carrier = Flights[BookingInfo.XMLAttributes.SegmentRef].Carrier,
 											FlightNumber = Flights[BookingInfo.XMLAttributes.SegmentRef].FlightNumber,
 											Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin,

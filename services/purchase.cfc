@@ -46,6 +46,9 @@
 																		Traveler = Traveler,
 																		Vehicle = Vehicle)>
 
+		<!--- <cfdump var=#serializeJSON(TravelPurchase)# abort>
+		<cfdump var=#TravelPurchase# abort> --->
+
 		<cfset var Response = getKrakenService().TravelPurchase(body = TravelPurchase,
 																searchId = Filter.getSearchId())>
 
@@ -212,7 +215,7 @@
 							// SeatAssignment : {
 							// 	FlightNumber : "402"
 							// },
-							IsPrivateFare : false,
+							IsPrivateFare : Group.IsContracted,
 							BookingDetail : {
 								BrandedFareId : '',
 								BookingCode : Flight.BookingCode,
@@ -253,8 +256,6 @@
 			</cfscript>
 
 		</cfif>
-
-		<!--- Dohmen to do - IsPrivateFare --->
 
 		<cfreturn FlightPurchaseRequest>
 	</cffunction>

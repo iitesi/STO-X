@@ -73,6 +73,7 @@
 					</cfloop>
 				</cfif>
 				Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)# -
+				Contracted:  #YesNoFormat(Fare.IsContracted)# -
 				Bookable:  #YesNoFormat(Fare.IsBookable)# -
 				Out Of Policy Reasons:  #arrayToList(Fare.OutOfPolicyReason)#<br>
 				#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#<br>
