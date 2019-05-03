@@ -539,7 +539,7 @@
 								const tripFlightNumbers = $this.data('flightnumbers');
 								if(typeof tripFlightNumbers !== 'undefined' && tripFlightNumbers.length > 0){
 									const tripFlightNumbersArray = tripFlightNumbers.split(',');
-									return tripFlightNumbers.includes(filters[key]);
+									return tripFlightNumbersArray.includes(filters[key]);
 								}
 								return false;
 								break;
