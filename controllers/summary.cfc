@@ -41,7 +41,7 @@
 			</cfloop>
 		</cfif>
 
-		<cfset session.searches[SearchId].Sell = {}>
+		<!--- <cfset session.searches[SearchId].Sell = {}> --->
 		
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
