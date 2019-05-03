@@ -221,11 +221,11 @@
 			</cfif>
 
 			<!--- Hide Incorrect City Pairs --->
-			<cfif NOT Hide
+			<!--- <cfif NOT Hide
 				AND Leg DOES NOT CONTAIN Segment.OriginAirportCode&' - '&Segment.DestinationAirportCode>
 				<cfset Hide = true>
 				<cfset HideSegments = ListAppend(HideSegments, SegmentIndex, '|')>
-			</cfif>
+			</cfif> --->
 
 			<!--- Hide Results In Availability Only --->
 			<cfif NOT Hide
