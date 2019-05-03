@@ -56,12 +56,6 @@
 			var requestBody = {};
 			var leg = {};
 
-			if (len(trim(arguments.Filter.getAirlines()))) {
-				local.airlines = arguments.airlines;
-			}	else {
-				local.airlines = [];
-			}
-
 			local.Refundable = false;
 			if (arguments.Policy.Policy_AirRefRule EQ 1 AND arguments.Policy.Policy_AirNonRefRule EQ 0) {
 				local.Refundable = true;
@@ -151,8 +145,8 @@
 				OnlyRefundableFares = local.Refundable
 			}
 
-			if (arraylen(local.airlines)	EQ 1) {
-				requestBody.FlightSearchOptions.AirLinesWhiteList = local.airlines;
+			if (arguments.Filter.getAirlines() NEQ '') {
+				requestBody.FlightSearchOptions.AirLinesWhiteList = [arguments.Filter.getAirlines()];
 			}
 		</cfscript>
 

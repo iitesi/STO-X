@@ -45,11 +45,6 @@
 		<cfscript>
 			var requestBody = {};
 			var leg = {};
-			if (len(trim(arguments.Filter.getAirlines()))) {
-				local.airlines = arguments.airlines;
-			}	else {
-				local.airlines = [];
-			}
 			requestBody.Identity = {
 				ArrangerId = Filter.getUserID(),
 				TravelerName = Filter.getProfileUsername(),
@@ -63,8 +58,8 @@
 				TravelerDepartmentId = Filter.getValueID()
 			};
 			requestBody["FlightSearchOptions"] = {};
-			if(arraylen(local.airlines)	EQ 1) {
-				requestBody["FlightSearchOptions"]["AirLinesWhiteList"]	= local.airlines;
+			if (arguments.Filter.getAirlines() NEQ '') {
+				requestBody.FlightSearchOptions.AirLinesWhiteList = [arguments.Filter.getAirlines()];
 			}
 			requestBody["Leg"] = [];
 			arrayappend(requestBody["Leg"], getLeg(arguments.Filter, arguments.Group) );
