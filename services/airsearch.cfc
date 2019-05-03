@@ -22,7 +22,9 @@
 
 		<cfset var requestBody = getLowFare().getFlightSearchRequest(Policy = arguments.Policy,
 																	Filter = arguments.Filter)>
-
+		
+		<!--- <cfdump var=#serializeJSON(requestBody)# abort> --->
+		
 		<cfset var response = getStorage().getStorage(searchID = arguments.searchID,
 													request = requestBody )>
 
