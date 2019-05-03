@@ -506,8 +506,7 @@
 		}
 
 		var getFlightNumbers = function(){
-			const numbers = $("#flight_number").val();
-			return numbers.length == 0 ? [] : numbers.split(",");
+			return $.trim($("#flight_number").val());
 		}
 
 		var doFilter = function(){
@@ -537,7 +536,12 @@
 								if(filters[key].length == 0){
 									return true;
 								}
-								return $this.data('flightnumbers').includes(filters[key]);
+								const tripFlightNumbers = $this.data('flightnumbers');
+								if(typeof tripFlightNumbers !== 'undefined' && tripFlightNumbers.length > 0){
+									const tripFlightNumbersArray = tripFlightNumbers.split(',');
+									return tripFlightNumbers.includes(filters[key]);
+								}
+								return false;
 								break;
 							}
 							case 'stops': {
@@ -562,11 +566,14 @@
 							}
 							case 'connection': {
 								var airports = $this.data('connection');
-								var airportArray = airports.replace(/ /gi, '').split(',');
-								for (var a=0;a<airportArray.length;a++){
-									if(filters[key].includes(airportArray[a])){
-										return true;
+								if (typeof airports !== 'undefined' && airports.length){
+									var airportArray = airports.replace(/ /gi, '').split(',');
+									for (var a=0;a<airportArray.length;a++){
+										if(filters[key].includes(airportArray[a])){
+											return true;
+										}
 									}
+									return false;
 								}
 								return false;
 								break;
@@ -604,6 +611,7 @@
 						}
 					}
 					catch(e){
+						if(console) console.log(e)
 						return true;
 					}
 				});
