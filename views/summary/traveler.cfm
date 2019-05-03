@@ -329,8 +329,9 @@
 			<div class="controls col-sm-8 col-xs-12">
 				<select class="form-control" name="hotelNotBooked" id="hotelNotBooked">
 					<option value=""></option>
-					<!--- If not NASCAR, display the reasons that have always been displayed --->
-					<cfif rc.acctID NEQ 348>
+					<!--- If not NASCAR (348) and not C1 (581), display the reasons that have always been displayed --->
+					<cfif rc.acctID NEQ 348
+						AND rc.acctID NEQ 581>
 						<option value="A">I will book my hotel later</option>
 						<option value="B">I am attending a conference with pre-arranged hotel</option>
 						<option value="C">I have a negotiated rate that is not available online</option>
@@ -338,8 +339,16 @@
 						<option value="E">I will shop around at other websites</option>
 						<option value="F">I will be staying with family/friends</option>
 						<option value="G">I do not need a hotel for this trip </option>
+					<cfelseif rc.acctID EQ 581>
+						<option value="NHA">I will book my hotel later</option>
+				        <option value="NHB">Attending Conference with pre-arranged hotel</option>
+				        <option value="NHC">Negotiated rate was not available</option>
+				        <option value="NHD">Preferred hotel not available online</option>
+				        <option value="NHE">Will shop on other websites</option>
+				        <option value="NHF">Staying with family/friends</option>
+				        <option value="NHG">No hotel needed for trip</option>
 					<!--- If NASCAR, display the new reasons for NASCAR --->
-					<cfelse>
+					<cfelseif rc.acctID EQ 348>
 						<option value="H">Staying in a pre-arranged room block</option>
 						<option value="I">Reservation already made</option>
 						<option value="J">Staying with family/friends (business travel)</option>
