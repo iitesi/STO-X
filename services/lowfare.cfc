@@ -239,6 +239,7 @@
 	<cffunction name="parseSegments" returnType="struct" access="public">
 		<cfargument name="response" type="any" required="true">
 		<cfargument name="Group" type="any" required="true">
+		<cfargument name="CarrierCode" type="any" required="true">
 
 		<cfset var tripIndex = ''>
 		<cfset var tripItem = ''>
@@ -257,7 +258,9 @@
 		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
 
 			<cfloop collection="#tripItem.TripSegments#" index="segmentIndex" item="segmentItem">
-				<cfif segmentItem.Group EQ arguments.Group>
+				<cfif segmentItem.Group EQ arguments.Group
+					AND (arguments.CarrierCode EQ ''
+						OR arguments.CarrierCode EQ segmentItem.Flights[1].CarrierCode)>
 					<cfset segmentCount = arrayLen(segmentItem.Flights)>
 					<!--- Replace the structure with the SegmentId. --->
 					<!--- <cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId> --->

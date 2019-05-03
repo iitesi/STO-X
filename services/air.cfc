@@ -72,7 +72,8 @@
 			<cfset trips.Profiling.KrakenAirSearch = (getTickCount() - start) / 1000>
 
 			<!--- <cfdump var=#AirSearchResponse.AirAvailabilityResponses# abort> --->
-			<!--- <cfdump var=#structKeyList(AirSearchResponse)# abort> --->
+			<!--- <cfdump var=#AirSearchResponse.HasErrors# label="Errors"> --->
+			<!--- <cfdump var=#serializeJSON(AirSearchResponse.AirAvailabilityResponses)# abort> --->
 			<cfset AvailabilityResponse = {}>
 			<cfif arrayLen(AirSearchResponse.AirAvailabilityResponses)>
 				<cfif IsDefined("AirSearchResponse.AirAvailabilityResponses[#arguments.Group+1#]")>
@@ -83,10 +84,10 @@
 			</cfif>
 
 			<cfset LowFareResponse = AirSearchResponse.LowFareResponse>
+			<!--- <cfdump var=#AirSearchResponse.LowFareResponse.HasErrors# label="Errors">
+			<cfdump var=#ArrayLen(AirSearchResponse.LowFareResponse.FlightSearchResults)# abort> --->
 
 		</cfif>
-
-		<!--- <cfdump var=#local.LowFareResponse.FlightSearchResults[1]# abort> --->
 
 		<cfif arguments.SearchType EQ 'LowFare'
 			OR arguments.SearchType EQ 'AirSearch'
@@ -98,7 +99,8 @@
 
 			<cfset start = getTickCount()>
 			<cfset trips.Segments = LowFare.parseSegments( 	response = local.LowFareResponse,
-															Group = arguments.Group )>
+															Group = arguments.Group,
+															CarrierCode = arguments.Group NEQ 0 AND listFind('WN,F9,NK,G4', arguments.SelectedTrip[0].CarrierCode) ? arguments.SelectedTrip[0].CarrierCode : '' )>
 			<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
 		<cfelse>
@@ -116,7 +118,8 @@
 			<cfset start = getTickCount()>
 			<cfset trips.Segments = Availability.parseSegments( Segments = trips.Segments,
 															response = local.AvailabilityResponse,
-															Group = arguments.Group )>
+															Group = arguments.Group,
+															CarrierCode = arguments.Group NEQ 0 AND listFind('WN,F9,NK,G4', arguments.SelectedTrip[0].CarrierCode) ? arguments.SelectedTrip[0].CarrierCode : '' )>
 			<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
 		</cfif>

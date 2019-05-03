@@ -156,6 +156,8 @@
 		<cfargument name="Segments" type="any" required="true">
 		<cfargument name="response" type="any" required="true">
 		<cfargument name="Group" type="any" required="true">
+		<cfargument name="CarrierCode" type="any" required="false" default="">
+
 
 		<cfset var segmentIndex = ''>
 		<cfset var segmentItem = ''>
@@ -182,12 +184,16 @@
 		<cfloop collection="#arguments.response.Results#" index="segmentIndex" item="segmentItem">
 
 			<cfset local.SegmentId = ''>
+			<cfset local.Carriers = ''>
 			<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
 				<cfset SegmentId = listAppend(SegmentId, flightItem.Carrier&'.'&flightItem.FlightNumber, '-')>
+				<cfset Carriers = listAppend(Carriers, flightItem.Carrier)>
 			</cfloop>
 			<cfset SegmentId = 'G'&arguments.Group&'-'&SegmentId>
 
-			<cfif NOT structKeyExists(Segments, SegmentId)>
+			<cfif NOT structKeyExists(Segments, SegmentId)
+				AND (arguments.CarrierCode EQ ''
+					OR arguments.CarrierCode EQ listRemoveDuplicates(Carriers))>
 
 				<cfset flightCount = arrayLen(segmentItem)>
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
@@ -293,21 +299,30 @@
 
 			<cfloop collection="#Segments[SegmentId].Availability#" index="ClassIndex" item="ClassItem">
 
-				<cfset Available = 0>
-				<cfset FlightCount = 0>
+				<cfif structKeyExists(Segments, SegmentId)
+					AND structKeyExists(Segments[SegmentId], 'Flights')>
 
-				<cfloop collection="#Segments[SegmentId].Flights#" index="FlightIndex" item="FlightItem">
+					<cfset Available = 0>
+					<cfset FlightCount = 0>
 
-					<cfset FlightCount++>
-					<cfif structKeyExists(ClassItem, FlightItem.FlightId) 
-						AND structKeyExists(ClassItem[FlightItem.FlightId], 'Available') 
-						AND ClassItem[FlightItem.FlightId].Available>
-						<cfset Available++>
-					</cfif>
+					<cfloop collection="#Segments[SegmentId].Flights#" index="FlightIndex" item="FlightItem">
 
-				</cfloop>
+						<cfset FlightCount++>
+						<cfif structKeyExists(ClassItem, FlightItem.FlightId) 
+							AND structKeyExists(ClassItem[FlightItem.FlightId], 'Available') 
+							AND ClassItem[FlightItem.FlightId].Available>
+							<cfset Available++>
+						</cfif>
 
-				<cfset ClassItem.Available = Available EQ FlightCount ? true : false>
+					</cfloop>
+
+					<cfset ClassItem.Available = Available EQ FlightCount ? true : false>
+
+				<cfelse>
+
+					<cfset StructDelete(Segments, SegmentId)>
+
+				</cfif>
 
 			</cfloop>
 
