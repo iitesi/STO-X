@@ -3160,7 +3160,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .review-fare-grid {
 	display:flex;
 	flex-direction:column;
-	flex-wrap: wrap
+	border: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	justify-content: center;
 }
 
 @media (min-width: 799px) {
@@ -3172,16 +3175,18 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 .review-fare-column {
-	height:100%;
 	display:flex;
 	flex-direction:column;
-	margin-right:5px;
+	margin-left:5px;
+	border-left:1px solid #eee;
 	border-right:1px solid #eee;
+	max-width:350px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
-.review-fare-column:last-child {
-	margin-right:0;
-	border-right:none;
+.review-fare-column:first-child {
+	margin-left:0;
 }
 
 .review-fare-grid .heading {
@@ -3202,17 +3207,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .review-fare-grid .fare-selection-button {
 	text-align:center;
-	background:#1d5381;
+	background:#e6e6e699;
 	color:white;
 	padding:15px 10px;
 	font-size: 16px;
     font-weight: bold;
     letter-spacing: 2px;
-}
-
-.review-fare-grid .fare-selection-button:hover {
-	cursor: pointer;
-	background:#174369;
 }
 
 .review-fare-grid .out-of-policy, .review-fare-grid .contracted, 

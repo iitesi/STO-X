@@ -131,9 +131,11 @@
 						#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#
 					</div>
 					<cfset key = createUUID()>
-					<div onclick="submitSegment('#key#');" class="fare-selection-button">
+					<div class="fare-selection-button">
 						<input type="hidden" id="Fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
-						Select This Fare
+						<a href="javascript:submitSegment('#key#');" class="btn btn-primary">
+							Select This Fare
+						</a>
 					</div>
 					<div class="out-of-policy">
 						Out of Policy:  #YesNoFormat(Fare.OutOfPolicy)#
