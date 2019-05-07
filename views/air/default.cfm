@@ -1,3 +1,11 @@
+<style>
+	/** Tweak some global styles only on this page **/
+	.page-header {
+		margin-bottom:0!important;
+		border-bottom:none!important;
+	}
+</style>
+
 <cfoutput>
 	<div class="row">
 		<cfif structKeyExists(rc, 'Order')
@@ -14,7 +22,7 @@
 		</div>
 		<div class="col-sm-12" id="aircontent">
 			<div class="row">
-				<div class="col-sm-12">
+				<div class="col-sm-12 departing-segments">
 					#View('air/pin')#
 				</div>
 				<div class="col-sm-12" id="hidefilterfromprint">

@@ -2993,3 +2993,118 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	display: inline-block;
 	cursor: pointer;
 }
+
+.departing-segments {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 15px;
+}
+
+.departing-segment__arrow_box {
+	width: 250px;
+	position: relative;
+	background: #ffffff;
+	border: 1px solid #337ab7;
+	font-size: 10px;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 10px 5px;
+}
+
+.departing-segment__arrow_box:after, .departing-segment__arrow_box:before {
+	bottom: 100%;
+	left: 33%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.departing-segment__arrow_box:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-bottom-color: #ffffff;
+	border-width: 10px;
+	margin-left: -10px;
+}
+.departing-segment__arrow_box:before {
+	border-color: rgba(36, 72, 214, 0);
+	border-bottom-color: #337ab7;
+	border-width: 12px;
+	margin-left: -12px;
+}
+/* .departing-segment__arrow_box div {
+	padding: 0;
+} */
+
+.departing-segment__arrow_box .imagewrapper {
+	width: 40px;
+	flex: 0 0 40px;
+	text-align: left;
+}
+.departing-segment__arrow_box .imagewrapper .carrierimg-xs {
+	width: 36px !important;
+}
+.departing-segment__arrow_box .segment-details {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+.departing-segment__arrow_box .segment-details .segment-details-wrapper {
+	display: flex;
+	flex-direction: row;
+	padding: 1px 0;
+}
+.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-a {
+	width: 55%;
+}
+.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-b {
+	width: 25%;
+}
+.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-c {
+	flex: 1;
+}
+.departing-segment__arrow_box .operatedby {
+	font-size: 9px;
+	color: #aaa;
+	flex: 0 1 100%;
+	text-align: center;
+	text-transform: capitalize;
+}
+
+#legs li {
+	width: 250px;
+	margin-right: 10px;
+	text-align: center;
+	background-color: #eee;
+	border: 1px solid #bbb;
+	border-radius: 4px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	height: 42px;
+}
+
+#legs li:hover {
+	cursor: pointer;
+}
+
+#legs li:hover .changeme {
+	transform: translateY(-42px);
+}
+
+#legs li div.changeme {
+	padding: 10px 15px;
+}
+
+#legs li .changeme {
+    flex: 0 0 auto;
+    height: 42px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-transition: transform 100ms ease 0ms;
+    will-change: transform;
+}
