@@ -3130,3 +3130,93 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		width: 50%;
 	}
 }
+
+.fromto {
+	margin: 0 20px;
+}
+
+.trip-segment.panel {
+	width: 100%
+}
+
+
+
+.review-fare-grid {
+	display:flex;
+	flex-direction:column;
+	flex-wrap: wrap
+}
+
+@media (min-width: 799px) {
+	.review-fare-grid {
+		display:flex;
+		flex-direction:row;
+		flex-wrap: unset;
+	}
+}
+
+.review-fare-column {
+	height:100%;
+	display:flex;
+	flex-direction:column;
+	margin-right:5px;
+	border-right:1px solid #eee;
+}
+
+.review-fare-column:last-child {
+	margin-right:0;
+	border-right:none;
+}
+
+.review-fare-grid .heading {
+	text-align:center; 
+	background-color:#ddd;
+	font-weight: 800; 
+	padding:10px 20px;
+	font-size: 14px;
+}
+
+.review-fare-grid .fare-price {
+	text-align:center;
+	font-weight:700;
+	font-size:18px;
+	padding:20px;
+	align-content:center
+}
+
+.review-fare-grid .fare-selection-button {
+	text-align:center;
+	background:#1d5381;
+	color:white;
+	padding:15px 10px;
+	font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.review-fare-grid .fare-selection-button:hover {
+	cursor: pointer;
+	background:#174369;
+}
+
+.review-fare-grid .out-of-policy, .review-fare-grid .contracted, 
+.review-fare-grid .bookable, .review-fare-grid .class-details {
+	padding:5px 10px;
+}
+
+.review-fare-grid .out-of-policy {
+	margin-top: 10px;
+}
+
+.review-fare-grid .branded-details {
+	flex-grow:1;
+	padding:5px 10px; 
+}
+.review-fare-grid .branded-details .branded-fare-name {
+	font-weight: 800;
+	font-size: 14px;
+}
+.review-fare-grid .branded-details ul{
+	padding-left: 18px;
+}
+
