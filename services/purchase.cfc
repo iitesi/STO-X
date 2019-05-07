@@ -245,6 +245,7 @@
 					FlightPurchaseRequest = {
 						FlightPricingSegments : FlightPricingSegments,
 						SearchId : Filter.getSearchId(),
+						PlatingCarrier : Air[0].PlatingCarrier,
 						AirLowestFare : LowestFare,
 						ApplyUnusedTickets : structKeyExists(Filter.getUnusedTicketCarriers(), Air[0].PlatingCarrier),
 						AirOutOfPolicyReasonCode : Traveler.getBookingDetail().getAirReasonCode(),
