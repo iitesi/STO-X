@@ -3108,3 +3108,25 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
     -webkit-transition: transform 100ms ease 0ms;
     will-change: transform;
 }
+
+@media (min-width: 300px) and (max-width: 799px) {
+	.departing-segment__arrow_box {
+		width: 160px;
+	}
+	.departing-segment__arrow_box:after, .departing-segment__arrow_box:before {
+		left: 25%;
+	}
+	.departing-segment__arrow_box .segment-details .segment-details-wrapper {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-a {
+		width: 100%;
+	}
+	.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-b {
+		width: 50%;
+	}
+	.departing-segment__arrow_box .segment-details .segment-details-wrapper .segment-col-c {
+		width: 50%;
+	}
+}
