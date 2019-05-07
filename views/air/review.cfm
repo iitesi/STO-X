@@ -21,66 +21,95 @@
 		<div class="listwrapper">
 			<cfloop index="Group" from="0" to="20" >
 				<cfif structKeyExists(session.Searches[rc.SearchID].stItinerary.Air, Group)>
+					
 					<cfset Segment = session.Searches[rc.SearchID].stItinerary.Air[Group]/>
 					<cfif structKeyExists(Segment, 'Flights')>
-						<cfloop collection="#Segment.Flights#" index="FlightIndex" item="Flight">
-
-							<div class="panel panel-default trip-segment">
-								<div class="panel-heading">
-								<h3 class="panel-title">
-									<span class="mdi mdi-airplane-takeoff"></span>
-									<span>#application.stAirports[Flight.OriginAirportCode].airport#</span>
-									<span class="fromto">To</span>
-									<span class="mdi mdi-airplane-landing"></span>
-									<span>#application.stAirports[Flight.DestinationAirportCode].airport#</span>
-								</h3>
+						<cfset firstFlight = Segment.Flights[1]/>
+						<cfset lastFlight = Segment.Flights[ArrayLen(Segment.Flights)]/>
+						<div class="panel panel-default trip-segment">
+							<div class="panel-heading">
+							<h3 class="panel-title" style="position:relative;">
+								<span class="mdi mdi-airplane-takeoff"></span>
+								<span>#application.stAirports[firstFlight.OriginAirportCode].airport#</span>
+								<span class="fromto">To</span>
+								<span class="mdi mdi-airplane-landing"></span>
+								<span>#application.stAirports[lastFlight.DestinationAirportCode].airport#</span>
+								<div class="panel-date">
+									<span class="mdi mdi-calendar"></span>
+									#DateFormat(firstFlight.DepartureTime, 'ddd, mmm d, yyyy')#
 								</div>
-								<div class="panel-body">
-							
-									<!--- <cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
-										Shane Pitts - Notification for unused tickets UI.
-										<i class="material-icons">notifications</i>
-									</cfif> --->
+							</h3>
+							</div>
+							<div class="panel-body">
+								<cfset count = 0>
+						<cfloop collection="#Segment.Flights#" index="FlightIndex" item="Flight">
+							<cfset count++>
 
-									<div class="row">
-										<div class="col-xs-3 col-md-2 center">
-											<img class="carrierimg" src="assets/img/airlines/#Flight.CarrierCode#.png" title="#application.stAirVendors[Flight.CarrierCode].Name#" width="60">
+							<cfif count NEQ 1>
+								<cfset layover = dateDiff('n', previousFlight.ArrivalTime, Flight.DepartureTime)>
+								<div class="segment-stopover" data-minutes="#layover#">
+									<div class="segment-stopover-row">
+										<div>#int(layover/60)#H #layover%60#M layover</div>
+										<div class="segment-middot">&middot;</div>
+										<div>
+											<span>#application.stAirports[previousFlight.DestinationAirportCode].Airport# </span>
+											<span>&nbsp;</span>
+											<span>(#previousFlight.DestinationAirportCode#)</span></span>
 										</div>
-										<div class="col-xs-9 col-md-10">
-											<div class="row">
-												<div class="col-xs-12">
-													<span class="bold">#DateFormat(Flight.DepartureTime, 'ddd, mmm d, yyyy')#</span>
-												</div>
-												<div class="col-xs-12 col-md-6">
-													<span class="bold">#timeFormat(Flight.DepartureTime, 'h:mm tt')# - #timeFormat(Flight.ArrivalTime, 'h:mm tt')#</span>
-													<cfif Segment.Days NEQ 0>
-														<small class="red">+#Segment.Days# day#Segment.Days GT 1 ? 's' : ''#</small>
-													</cfif>
-												</div>
-												<div class="col-xs-6 col-md-3 bold">
-													#Segment.TravelTime#
-												</div>
-												<div class="col-xs-6 col-md-3 bold">
-													<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
+									</div>
+								</div>
+							</cfif>		
+							<div class="segment-details">
+								<div class="segment-details-flights">
+									<div class="segment-leg">
+										<div class="segment-leg-inner">
+											<div class="carrier-img-wrapper">
+												<img class="carrierimg" src="assets/img/airlines/#Flight.CarrierCode#.png" title="#application.stAirVendors[Flight.CarrierCode].Name#" width="60">
+											</div>
+											<div class="segment-leg-connector"></div>
+											<div class="segment-leg-details fs-s1">
+												<div class="segment-leg-time"><span>#timeFormat(Flight.DepartureTime, 'h:mm tt')# - #dateFormat(Flight.DepartureTime, 'ddd, mmm d')#</span></span></div>
+												<div class="segment-middot">&middot;</div>
+												<div class="segment-leg-airport">
+													<span>#application.stAirports[Flight.OriginAirportCode].Airport#</span>
+													<span>&nbsp;</span>
+													<span>(#Flight.OriginAirportCode#)</span>
 												</div>
 											</div>
-											<div class="row">
-												<div class="col-xs-12 col-md-6">
-													<small>#Flight.FlightNumber#</small>
+											<div class="segment-leg-time-inair fs-1">
+												<div>Flight time:&nbsp;<span>#Flight.FlightTime#</span></div>
+											</div>
+											<div class="segment-leg-details segment-leg-arrival fs-s1">
+												<div class="segment-leg-time"><span>#timeFormat(Flight.ArrivalTime, 'h:mm tt')# - #dateFormat(Flight.ArrivalTime, 'ddd, mmm d')#</span></span></div>
+												<div class="segment-middot">&middot;</div>
+												<div class="segment-leg-airport">
+													<span>#application.stAirports[Flight.DestinationAirportCode].Airport#</span>
+													<span>&nbsp;</span>
+													<span>(#Flight.DestinationAirportCode#)</span>
 												</div>
-												<div class="col-xs-6 cold-md-3">
-													<small>#Flight.OriginAirportCode#-#Flight.DestinationAirportCode#</small>
-												</div>
-												<div class="col-xs-6 col-md-3">
-													<small>#Segment.Connections#</small>
-												</div>
+											</div>
+										</div>
+										<div class="segment-leg-operation-details fs-1">
+											<div class="segment-leg-operation-vendor">#application.stAirVendors[Flight.CarrierCode].Name#</div>
+											<span class="segment-middot-sm">&middot;</span>
+											<div class="segment-leg-operation-equipment">
+												<div><span>#structKeyExists(application.stEquipment, Flight.Equipment) ? application.stEquipment[Flight.Equipment] : Flight.Equipment#</span></div>
+											</div>
+											<div class="segment-leg-operation-codes">
+												<span class="segment-middot-sm">&middot;</span>
+												<span><span>#Flight.CarrierCode#</span>&nbsp;<span>#Flight.FlightNumber#</span></span>
 											</div>
 										</div>
 									</div>
 								</div>
+								<div class="segment-details-extras">&nbsp;</div>
 							</div>
+							<cfset previousFlight = Flight>
 						</cfloop>
+					</div>
+				</div>
 					</cfif>
+				
 				</cfif>
 			</cfloop>
 		</div>

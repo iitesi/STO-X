@@ -1009,6 +1009,14 @@ ul.tabs li a.active {
 	padding-left: 90px;
 }
 
+.segment-leg-inner .carrier-img-wrapper {
+	position: absolute;
+	left: -4px;
+	top: 15px;
+}
+
+
+
 /** TODO placeholder.. come up with own graphic here **/
 .segment-leg-connector {
     background: url(//www.gstatic.com/flights/app/1x/dotted_flight_80dp.png) no-repeat 0 5px;
@@ -3139,7 +3147,15 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	width: 100%
 }
 
-
+.panel-date {
+	position:absolute;
+	right:0;
+	top:0;
+	width:175px;
+}
+.panel-date .mdi-calendar {
+	margin-right: 8px;
+}
 
 .review-fare-grid {
 	display:flex;
