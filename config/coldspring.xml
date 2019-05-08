@@ -270,6 +270,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
 	</bean>
 
+	<bean id="railsearch" class="booking.services.railsearch">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
+	</bean>
+
 	<bean id="rail" class="booking.services.rail">
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
