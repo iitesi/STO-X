@@ -769,6 +769,24 @@
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="setRailStations" output="false" returntype="void">
+
+		<cfset var RailStations = getKrakenService().RailStations() />
+
+		<cfset application.stRailStations = {}>
+
+		<cfloop collection="#RailStations#" index="local.ArrayId" item="local.Station">
+			<cfset application.stRailStations[Station.Code] = {
+				Description : Station.Description,
+				CityIndicator : Station.CityIndicator,
+				IATA : StructKeyExists(Station, 'IATA') ? Station.IATA : '',
+				Code2V : StructKeyExists(Station, 'Code2V') ? Station.Code2V : ''
+			}>
+		</cfloop>
+
+		<cfreturn />
+	</cffunction>
+
 	<!--- <cffunction name="setBlackListedCarrierPairing" output="false" hint="I query the lu_CarrierInterline table and return a list of blacklisted carriers. These carriers cannot be booked together on the same ticket.">
 
 		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
