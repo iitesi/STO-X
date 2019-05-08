@@ -30,7 +30,7 @@
 																				SearchID = arguments.SearchID,
 																				Group = arguments.Group)>
 
-			<cfset getStorage().storeAir(	searchID = arguments.searchID,
+			<cfset getStorage().store(	searchID = arguments.searchID,
 											request = local.requestBody,
 											storage = local.response )>
 		</cfif>

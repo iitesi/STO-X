@@ -33,7 +33,7 @@
 			<cfset response = getKrakenService().AirSearch(body = requestBody,
 															SearchID = arguments.SearchID)>
 
-			<cfset getStorage().storeAir(searchID = arguments.searchID,
+			<cfset getStorage().store(searchID = arguments.searchID,
 										request = requestBody,
 										storage = response )>
 		</cfif>

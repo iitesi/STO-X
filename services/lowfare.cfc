@@ -40,7 +40,7 @@
 				<cfdump var=#local.response# abort>
 			</cfif>
 
-			<cfset getStorage().storeAir(	searchID = arguments.searchID,
+			<cfset getStorage().store(	searchID = arguments.searchID,
 											request = local.requestBody,
 											storage = local.response )>
 		</cfif>
@@ -344,6 +344,10 @@
 		<!--- response.Fares : Create a distinct structure of available fares by reference key. --->
 		<!--- response.Fares[G0-B6.124.S|G1-B6.23.S] = Full fare structure. --->
 		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
+
+			<!--- <cfif tripItem.TripSegments[1].Flights[1].FlightNumber EQ '1991'>
+				<cfdump var=#tripItem# abort>
+			</cfif> --->
 
 			<cfloop collection="#tripItem.AvailableFareOptions#" index="fareIndex" item="fareItem">
 

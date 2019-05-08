@@ -48,7 +48,7 @@
 		<cfreturn local.response />
 	</cffunction>
 
-	<cffunction name="storeAir" returntype="any" access="public" output="false">
+	<cffunction name="store" returntype="any" access="public" output="false">
 		<cfargument name="searchID" required="true" type="numeric">
 		<cfargument name="request" required="true" type="any">
 		<cfargument name="storage" required="true" type="any">
