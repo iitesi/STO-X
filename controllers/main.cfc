@@ -63,7 +63,7 @@
 						AND NOT structIsEmpty(session.searches[SearchID].stItinerary.Air[SegmentIndex-1])>
 						<cfset GroupsCompleted++>
 						<cfif SetGroup>
-							<cfset rc.Group = SegmentIndex>
+							<cfset rc.Group = SegmentIndex-1>
 						</cfif>
 					</cfif>
 				</cfloop>
