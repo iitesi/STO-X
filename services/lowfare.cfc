@@ -266,15 +266,15 @@
 					<!--- <cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId> --->
 					<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
 					<cfset Segments[segmentItem.SegmentId] 						= segmentItem>
-					<cfset Segments[segmentItem.SegmentId].DepartureTimeGMT 	= segmentItem.Flights[1].DepartureTime>
-					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= left(segmentItem.Flights[1].DepartureTime, 19)>
+					<cfset Segments[segmentItem.SegmentId].DepartureTimeGMT 	= left(segmentItem.Flights[1].DepartureTimeString, 29)>
+					<cfset Segments[segmentItem.SegmentId].DepartureTime 		= left(segmentItem.Flights[1].DepartureTimeString, 19)>
 					<cfset Segments[segmentItem.SegmentId].OriginAirportCode 	= segmentItem.Flights[1].OriginAirportCode>
-					<cfset Segments[segmentItem.SegmentId].ArrivalTimeGMT 		= segmentItem.Flights[segmentCount].ArrivalTime>
-					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= left(segmentItem.Flights[segmentCount].ArrivalTime, 19)>
+					<cfset Segments[segmentItem.SegmentId].ArrivalTimeGMT 		= left(segmentItem.Flights[1].ArrivalTimeString, 29)>
+					<cfset Segments[segmentItem.SegmentId].ArrivalTime 			= left(segmentItem.Flights[segmentCount].ArrivalTimeString, 19)>
 					<cfset Segments[segmentItem.SegmentId].DestinationAirportCode = segmentItem.Flights[segmentCount].DestinationAirportCode>
 					<cfset Segments[segmentItem.SegmentId].TravelTime 			= int(segmentItem.TotalTravelTimeInMinutes/60) &'H '&segmentItem.TotalTravelTimeInMinutes%60&'M'>
 					<cfset Segments[segmentItem.SegmentId].Stops 				= segmentCount-1>
-					<cfset Segments[segmentItem.SegmentId].Days 				= dateDiff('d', segmentItem.Flights[1].DepartureTime, segmentItem.Flights[segmentCount].ArrivalTime)>
+					<cfset Segments[segmentItem.SegmentId].Days 				= dateDiff('d', left(segmentItem.Flights[1].DepartureTimeString, 19), left(segmentItem.Flights[segmentCount].ArrivalTimeString, 19))>
 					<cfset Segments[segmentItem.SegmentId].PlatingCarrier		= structKeyExists(tripItem.AvailableFareOptions[1], 'PlatingCarrier') ? tripItem.AvailableFareOptions[1].PlatingCarrier : segmentItem.Flights[1].CarrierCode>
 					<!--- Determine the overall carrier(s) and connection(s). --->
 					<cfset Carrier = ''>
@@ -293,13 +293,13 @@
 							<cfset Connections = listAppend(Connections, flightItem.DestinationAirportCode)>
 						</cfif>
 						<cfset flightItem.FlightTime = int(flightItem.FlightDurationInMinutes/60) &'H '&flightItem.FlightDurationInMinutes%60&'M'>
+						<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.CarrierCode&flightItem.FlightNumber)>
+						<cfset flightItem.DepartureTimeGMT		= left(flightItem.DepartureTimeString, 29)>
+						<cfset flightItem.DepartureTime 		= left(flightItem.DepartureTimeString, 19)>
+						<cfset flightItem.ArrivalTimeGMT		= left(flightItem.ArrivalTimeString, 29)>
+						<cfset flightItem.ArrivalTime 			= left(flightItem.ArrivalTimeString, 19)>
 						<cfset structDelete(flightItem, 'DepartureTimeString')>
 						<cfset structDelete(flightItem, 'ArrivalTimeString')>
-						<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.CarrierCode&flightItem.FlightNumber)>
-						<cfset flightItem.DepartureTimeGMT		= flightItem.DepartureTime>
-						<cfset flightItem.DepartureTime 		= left(flightItem.DepartureTime, 19)>
-						<cfset flightItem.ArrivalTimeGMT		= flightItem.ArrivalTime>
-						<cfset flightItem.ArrivalTime 			= left(flightItem.ArrivalTime, 19)>
 					</cfloop>
 					<cfset Carrier = listRemoveDuplicates(Carrier)>
 					<cfset Segments[segmentItem.SegmentId].CarrierCode = listLen(Carrier) EQ 1 ? Carrier : 'Mult'>
