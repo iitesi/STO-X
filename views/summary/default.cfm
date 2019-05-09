@@ -53,14 +53,13 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<div class="alert alert-warning clearfix">
 				<cfset MessageType = ''>
 				<cfloop collection="#rc.SellErrorMessages#" index="MessageIndex" item="MessageItem">
-					<cfdump var=#MessageItem#><br>
-					<cfif isXML(MessageItem)>
+					<cfif NOT isObject(MessageItem)>
+						<li>#MessageItem#</li>
+					<cfelseif isObject(MessageItem)>
+						<cfdump var=#MessageItem#><br>
 						<cfset MessageType = 'XML'>
 					</cfif>
 				</cfloop>
-				<cfif MessageType EQ 'XML'>
-					Internal Message - Developer is working on this message to be more user-friendly.  :)
-				</cfif>
 			</div>
 		</cfif>
 
