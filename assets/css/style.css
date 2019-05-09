@@ -1019,7 +1019,7 @@ ul.tabs li a.active {
 
 /** TODO placeholder.. come up with own graphic here **/
 .segment-leg-connector {
-    background: url(//www.gstatic.com/flights/app/1x/dotted_flight_80dp.png) no-repeat 0 5px;
+    background: url(../img/dotted_flight.png) no-repeat 0 5px;
     height: 85px;
     left: 63px;
     position: absolute;
@@ -1127,6 +1127,74 @@ ul.tabs li a.active {
 
 .baggage-fees {
 	font-size: 10px;
+}
+
+@media (min-width: 300px) and (max-width: 799px){
+	.hide-small {
+		display: none;
+	}
+	.panel.trip-segment{
+		overflow: hidden;
+	}
+	.panel.trip-segment .panel-heading {
+		padding: 0 0 0 10px;
+	}
+	.panel.trip-segment .panel-heading .panel-title {
+		padding: 0 0 0 10px;
+	}
+	.panel.trip-segment .panel-heading .panel-title .panel-date {
+		font-size: 14px;
+		position: relative;
+	}
+	.segment-details:first-child {
+		padding-top: 0;
+	}
+	.panel.trip-segment img.carrierimg {
+		width: 36px!important;
+	}
+	.segment-leg-inner {
+		padding-left: 50px;
+	}
+	.segment-leg-connector {
+		display: none;
+	}
+	
+	.segment-leg-details.fs-s1 {
+		letter-spacing: 0;
+		font-size: 12px;
+	}
+	.segment-leg-time-inair.fs-1 {
+		letter-spacing: 0;
+		font-size: 12px;
+		top: 20px;
+	}
+	.segment-leg-arrival {
+		padding-top: 24px;
+	}
+	.segment-leg-operation-details {
+		padding-left: 50px;
+	}
+	.segment-stopover {
+		padding-left: 50px;
+		margin: 10px 0;
+	}
+	.segment-stopover-row {
+		padding: 5px 0;
+		font-size: 12px;
+	}
+	.segment-details-extras {
+		display: none;
+	}
+	.segment-middot {
+		padding: 0 8px;
+		font-size: 17px;
+		line-height: 17px;
+	}
+	.segment-middot-sm {
+		padding: 0 4px;
+		font-size: 17px;
+		line-height: 17px;
+	}
 }
 
 
@@ -2282,7 +2350,12 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 ----------------------------------------------------------------------------------------------------------
 */
 
-.legs {margin: 0;padding-bottom: 1em;white-space:nowrap;}
+.legs {
+	margin: 0;
+	padding-bottom: 1em;
+	white-space:nowrap;
+	position: relative;
+}
 
 .legbtn {
 	margin-right: 1em;
@@ -2292,6 +2365,65 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	display: flex;
 }
 
+#legs .select-fare-button {
+    position: absolute;
+    right: 0;
+	top: -11px;
+}
+
+#legs .select-fare-button .btn {
+	width: 150px;
+}
+
+#fare-range-html {
+	display: block;
+}
+
+#legs .select-fare-button .mdi {
+	font-size:18px;
+	transform-origin: bottom;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	height: 25px;
+	width: 25px;
+	display: inline-block;
+}
+
+.bounce-7 {
+	animation-name: bounce-7;
+	animation-timing-function: cubic-bezier(0.280, 0.840, 0.420, 1);
+}
+@keyframes bounce-7 {
+	0%   { transform: scale(1,1)      translateY(0); }
+	10%  { transform: scale(1.1,.9)   translateY(0); }
+	30%  { transform: scale(.9,1.1)   translateY(-6px); }
+	50%  { transform: scale(1.05,.95) translateY(0); }
+	57%  { transform: scale(1,1)      translateY(-3px); }
+	64%  { transform: scale(1,1)      translateY(0); }
+	100% { transform: scale(1,1)      translateY(0); }
+}
+
+@media (min-width: 300px) and (max-width: 799px){
+	#legs {
+		padding-bottom: 0;
+	}
+	#legs li:last-child {
+		margin-right: 0;
+	}
+	#fare-range-html {
+		display: inline-block;
+		margin-right: 10px;
+	}
+	#legs .select-fare-button {
+		position: relative;
+		width: 100%;
+		margin-top: 10px;
+	}
+	#legs .select-fare-button .btn {
+		width: 100%;
+		margin-top: 10px;
+	}
+}
 
 /*
 ----------------------------------------------------------------------------------------------------------
