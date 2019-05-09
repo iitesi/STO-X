@@ -58,8 +58,6 @@
 			<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
 		</cfif>
 
-		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
-
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
 
