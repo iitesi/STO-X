@@ -105,40 +105,29 @@
 			</div>
 		</div>
 	
-		<form method="post" action="#buildURL('air')#" id="lowfareavailForm">
-			<input type="hidden" name="FlightSelected" value="1">
+		<form method="post" action="#buildURL('rail')#" id="RailForm">
+			<input type="hidden" name="RailSelected" value="1">
 			<input type="hidden" name="SearchId" value="#rc.SearchID#">
 			<input type="hidden" name="Group" value="#rc.Group#">
-			<input type="hidden" name="SegmentId" id="SegmentId" value="">
-			<input type="hidden" name="CabinClass" id="CabinClass" value="">
-			<input type="hidden" name="SegmentFareId" id="SegmentFareId" value="">
-			<input type="hidden" name="Refundable" id="Refundable" value="">
-			<input type="hidden" name="Segment" id="Segment" value="">
-			<input type="hidden" name="Fare" id="Fare" value="">
+			<input type="text" name="Rail" id="Rail" value="">
 		</form>
 		<!---#View('modal/popup')#--->
 	
 	</div>
 	</cfoutput>
 	
-	<!--- <script type="application/javascript">
+	<script type="application/javascript">
 
-		var airportCities = <cfoutput>#serializeJSON(connectingAirports)#</cfoutput>;
-		var airlines = <cfoutput>#serializeJSON(airlines)#</cfoutput>;
-
-		function submitSegment(SegmentId,CabinClass,SegmentFareId,Refundable,Key) {
+		function submitRail(Key) {
 			if (!this.classList.contains('opacity-hidden')){
-				$("#SegmentId").val(SegmentId);
-				$("#CabinClass").val(CabinClass);
-				$("#SegmentFareId").val(SegmentFareId);
-				$("#Refundable").val(Refundable);
-				$("#Segment").val($("#segment"+Key).val());
-				$("#Fare").val($("#fare"+Key).val());
-				$("#lowfareavailForm").submit();
+				$("#Rail").val($("#rail"+Key).val());
+				$("#RailForm").submit();
 			}
 		}
 
-		function sendEmail(Key) {
+	</script>
+
+<!--- 		function sendEmail(Key) {
 			$("#Email_Segment").val($("#fare"+Key).val());
 		}
 		

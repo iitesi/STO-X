@@ -11,11 +11,16 @@
 						<div class="col-xs-12">
 							<img class="carrierimg" src="assets/img/rail/#Rail.SupplierCode#.png" title="#Rail.SupplierCode#" width="60">
 						</div>
-						<div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div>
-						<!--- <div class="col-xs-12 detail-expander hidden-xs visible-lg-block"
-							data-toggle="collapse" href="##details#cleanedSegmentId#" role="button" aria-expanded="false" aria-controls="details#cleanedSegmentId#">
-							<i class="fa fa-caret-down" aria-hidden="true"></i>
-						</div> --->
+						<!--- <div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div> --->
+						<cfif Rail.Network EQ 'All'>
+							<i class="fa fa-wifi"></i>
+						</cfif>
+						<cfif Rail.QuietCar EQ 'All'>
+							<i class="fa fa-bell-slash"></i>
+						</cfif>
+						<cfif Rail.Snack EQ 'All'>
+							<i class="fa fa-cookie-bite"></i>
+						</cfif>
 					</div>
 				</div>
 				<div class="col-xs-10 col-lg-5 results-info-wrapper">
@@ -35,11 +40,7 @@
 							</cfif> --->
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-1">
-									<cfset TrainNumbers = ''>
-									<cfloop collection="#Rail.RailSegments#" index="SegmentIndex" item="Segment">
-										<cfset TrainNumbers = listAppend(TrainNumbers, Segment.TrainNumber)>
-									</cfloop>
-									#Replace(TrainNumbers, ',', ' / ', 'ALL')#
+									#Rail.TrainNumbers#
 								</div>	
 							</div>							
 						</div>
@@ -54,23 +55,22 @@
 								</div>	
 							</div>
 						</div>
-						<!--- <div class="col-xs-6 col-md-3">		
+						<div class="col-xs-6 col-md-3">		
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
-									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
+									#Rail.Stops#
 								</div>	
 								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 pr-xs-15">
-									#Segment.Connections#
-									<font color="white">#Segment.Results#</font>
+									<!--- #Segment.Connections# --->
 								</div>
 							</div>
-						</div> --->
+						</div>
 					</div>
-					<!--- <div class="row results_expanded">
+					<div class="row results_expanded">
 						<div class="col-xs-12 fs-2">
-							Departing &middot; #dateTimeFormat(createODBCDateTime(Segment.DepartureTime), 'EEE, mmm dd')#
+							Departing &middot; #dateTimeFormat(createODBCDateTime(Rail.DepartureTime), 'EEE, mmm dd')#
 						</div>	
-					</div> --->
+					</div>
 				</div>
 
 				<div class="clearfix visible-xs-block"></div>
@@ -80,35 +80,21 @@
 
 						<cfloop collection="#Rail.PricedRailFares#" index="PricingIndex" item="Pricing">
 
-							<!--- Form
-							<cfset BrandedFareIds = listAppend(BrandedFareIds, Fare.brandedFareID)>
-							<cfif Fare.Bookable>
-								<cfset key = hash(Segment.SegmentId&CabinClass&SegmentFares[CabinClass].SegmentFareId&Fare.Refundable)>
-								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-								<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
-							</cfif> --->
+							<!--- Form --->
+							<cfset key = createGUID()>
+							<input type="hidden" id="rail#key#" value="#encodeForHTML(serializeJSON(Rail))#">
 
 							<!--- Display --->
-							<div class="fares fare-block">
+							<div class="fares fare-block" onclick="submitRail.call(this, '#key#');">
 								<div class="cabin-class">
 									<div class="fs-1 cabin-description overflow-ellipse">
-										#Pricing.CabinClass#
+										#Pricing.CabinClass#<br>
+										#Pricing.FareName#
 									</div>
 									<div class="fs-2 fare-display">
 										<div class="overflow-ellipse">$#numberFormat(Pricing.TotalAmount.Value, '_,___')#</div>
 									</div>
-									<!--- <cfif Fare.OutOfPolicy>
-										<div class="col-xs-12 fs-s policy-error">
-											<div class="fare-warning"
-												role="button"
-												data-placement="top" 
-												data-toggle="tooltip" 
-												title="#arrayToList(Fare.OutOfPolicyReason)#">&nbsp;
-											</div>
-										</div>
-									<cfelse> --->
-										<div class="fs-s policy-error-hidden"></div>
-									<!--- </cfif> --->
+									<div class="fs-s policy-error-hidden"></div>
 								</div>
 
 							</div>
@@ -119,7 +105,9 @@
 
 				</div>
 			</div>
-				
+		</div>
+	</div>
+	<!--- <cfdump var=#Rail# abort> --->
 <!---			<div class="row hidden-xs visible-md-block visible-lg-block">
 				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
 					
@@ -309,7 +297,7 @@ email form injects here
 				</div>
 			</div>
 
-		</div> --->
-	</div>
+		</div>
+	</div> --->
 </cfoutput>
 <!---<cfdump var=#Flight#>--->
