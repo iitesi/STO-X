@@ -772,9 +772,9 @@
 
 	<cffunction name="setRailStations" output="false" returntype="void">
 
-		<cfset var RailStations = getKrakenService().RailStations() />
+		<cfset var RailStations = getKrakenService().RailStations()/>
 
-		<cfset application.stRailStations = {}>
+		<cfset application.stRailStations = {}/>
 
 		<cfloop collection="#RailStations#" index="local.ArrayId" item="local.Station">
 			<cfset application.stRailStations[Station.Code] = {
