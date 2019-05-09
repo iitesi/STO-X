@@ -215,6 +215,7 @@
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->
 				<cfset Flights = []>
 				<cfset Carrier = ''>
+				<cfset PlatingCarrier = ''>
 				<cfset Connections = ''>
 				<cfset FlightNumbers = ''>
 				<cfset Codeshare = ''>
@@ -246,6 +247,7 @@
 								}>
 
 					<cfset Carrier = listAppend(Carrier, flightItem.Carrier)>
+					<cfset PlatingCarrier = flightItem.Carrier>
 					<cfif structKeyExists(flightItem, 'CodeshareInfo')
 						AND structKeyExists(flightItem.CodeshareInfo, 'Value')>
 						<cfset Codeshare = listAppend(Codeshare, flightItem.CodeshareInfo.Value)>
@@ -271,7 +273,7 @@
 									TotalTravelTimeInMinutes : segmentItem[1].TravelTime,
 									Stops : flightCount-1,
 									Days : dateDiff('d', segmentItem[1].DepartureTime, segmentItem[flightCount].ArrivalTime),
-									PlatingCarrier : flightItem.Carrier,
+									PlatingCarrier : PlatingCarrier,
 									Flights : Flights,
 									CarrierCode = listLen(listRemoveDuplicates(Carrier)) EQ 1 ? listRemoveDuplicates(Carrier) : 'Mult',
 									Codeshare = replace(listRemoveDuplicates(Codeshare), ',', ', ', 'ALL'),

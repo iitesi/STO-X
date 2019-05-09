@@ -121,7 +121,17 @@
 									</cfloop>
 								</cfloop>
 							</air:AirItinerary>
-							<air:AirPricingModifiers ProhibitUnbundledFareTypes="true" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false" ProhibitNonRefundableFares="#ProhibitNonRefundableFares#">
+							<air:AirPricingModifiers
+								PlatingCarrier="#Group.PlatingCarrier#" 
+								ProhibitUnbundledFareTypes="true" 
+								ProhibitMinStayFares="false" 
+								ProhibitMaxStayFares="false" 
+								CurrencyType="USD" 
+								ProhibitAdvancePurchaseFares="false" 
+								ETicketability="Required" 
+								ProhibitNonExchangeableFares="false" 
+								ForceSegmentSelect="false" 
+								ProhibitNonRefundableFares="#ProhibitNonRefundableFares#">
 								<cfif arrayLen(Account.Air_PF)
 									AND Segment.CarrierCode NEQ 'Mult'
 									AND listFind(arrayToList(Account.Air_PF), Segment.CarrierCode)>
@@ -172,6 +182,8 @@
 				</soapenv:Envelope>
 			</cfoutput>
 		</cfsavecontent>
+
+		<!--- <cfdump var=#RequestBody# abort> --->
 
 		<cfreturn RequestBody />
 	</cffunction>

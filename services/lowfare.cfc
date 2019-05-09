@@ -294,7 +294,7 @@
 					<cfset Segments[segmentItem.SegmentId].TravelTime 			= int(segmentItem.TotalTravelTimeInMinutes/60) &'H '&segmentItem.TotalTravelTimeInMinutes%60&'M'>
 					<cfset Segments[segmentItem.SegmentId].Stops 				= segmentCount-1>
 					<cfset Segments[segmentItem.SegmentId].Days 				= dateDiff('d', left(segmentItem.Flights[1].DepartureTimeString, 19), left(segmentItem.Flights[segmentCount].ArrivalTimeString, 19))>
-					<cfset Segments[segmentItem.SegmentId].PlatingCarrier		= structKeyExists(tripItem.AvailableFareOptions[1], 'PlatingCarrier') ? tripItem.AvailableFareOptions[1].PlatingCarrier : segmentItem.Flights[1].CarrierCode>
+					<cfset Segments[segmentItem.SegmentId].PlatingCarrier		= segmentItem.Flights[segmentCount].CarrierCode>
 					<!--- Determine the overall carrier(s) and connection(s). --->
 					<cfset Carrier = ''>
 					<cfset Connections = ''>
