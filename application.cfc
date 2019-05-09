@@ -53,22 +53,14 @@
 	</cffunction>
 
 	<cffunction name="setupRequest">
-		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
-		<cfif transactionMonitorExists()>
-			<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
-		</cfif>
-
-		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
-
+		
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
-
 			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
 			<cfset request.tokenResponse = request.krakenService.refreshToken(session.StmUserToken)/>
 			<cfif request.tokenResponse.IsValid EQ True>
 				<cfset session.StmUserToken = request.tokenResponse.StmUserToken/>
 			</cfif>
-
 		</cfif>
 
 		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
@@ -187,11 +179,6 @@
 		<cfargument name="method" type="string" required="true">
 		<cfargument name="args" type="struct" required="true">
 
-		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
-		<cfif transactionMonitorExists()>
-			<cfset application.Monitor.sendTransaction("#arguments.cfcname#.#arguments.method#")>
-		</cfif>
-
 		<!--- if we are in production - lets check to see where the request is coming from
 					if its not one of our servers we'll end things with a 403  --->
 		<cfif application.fw.factory.getBean( "EnvironmentService" ).getCurrentEnvironment() EQ 'prod'>
@@ -234,19 +221,4 @@
 
 	</cffunction>
 
-	<cffunction name="transactionMonitorExists" output="false">
-
-		<cftry>
-			<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
-			<cfif !structKeyExists(application,"Monitor")>
-				<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
-			</cfif>
-			<cfreturn true>
-		<cfcatch type="any">
-			<cflog file="service-error" text="transaction monitor failed initialization: #CFCATCH.message#">
-			<cfreturn false>
-		</cfcatch>
-	</cftry>
-	
-	</cffunction>
 </cfcomponent>
