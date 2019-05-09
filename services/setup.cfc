@@ -91,6 +91,7 @@
 		<cfset local.searchfilter = getSearchService().load( arguments.searchId ) />
 
 		<cfif arguments.SearchId NEQ 0
+			AND session.SearchId NEQ arguments.SearchId
 			AND NOT validateSearchId(arguments.AcctId, arguments.UserId, arguments.SearchId)>
 			<cfdump var=#arguments.AcctId#>
 			<cfdump var=#arguments.UserId#>
