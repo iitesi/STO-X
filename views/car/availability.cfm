@@ -130,7 +130,7 @@ OR NOT rc.Filter.getAir()>
 													<img src="assets/img/clients/dhlPreferred.png">
 													<!--- CONTRACTED --->
 												</cfif>
-												<cfif stRate.EstimatedTotalAmount EQ session.searches[SearchID].lowestCarRate>
+												<cfif Round(stRate.EstimatedTotalAmount) EQ Round(session.searches[SearchID].lowestCarRate)>
 													<br /><small class="green">BEST RATE</small>
 												</cfif>
 												<cfif NOT session.searches[rc.SearchID].stCars[sCategory][sVendor].Policy>
