@@ -158,7 +158,9 @@
 		<cfargument name="Group" type="any" required="true">
 		<cfargument name="CarrierCode" type="any" required="false" default="">
 
-
+		<cfset var CarrierCode = arguments.CarrierCode>
+		<cfset var CarriersToDisplay = 'All'>
+		<cfset var NonArc = ''>
 		<cfset var segmentIndex = ''>
 		<cfset var segmentItem = ''>
 		<cfset var SegmentId = ''>
@@ -177,6 +179,12 @@
 		<cfset var segmentCount = ''>
 		<cfset var Segments = arguments.Segments>
 
+		<cfif listFind('WN,F9,NK,G4', CarrierCode)>
+			<cfset CarriersToDisplay = 'NonArc Only'>
+		<cfelseif CarrierCode NEQ ''>
+			<cfset CarriersToDisplay = 'Hide NonArc'>
+		</cfif>
+
 		<!--- <cfdump var=#response# abort="true"> --->
 
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
@@ -191,9 +199,17 @@
 			</cfloop>
 			<cfset SegmentId = 'G'&arguments.Group&'-'&SegmentId>
 
+			<cfset NonArc = false>
+			<cfif listFind('WN,F9,NK,G4', listRemoveDuplicates(Carriers))>
+				<cfset NonArc = true>
+			</cfif>
+
 			<cfif NOT structKeyExists(Segments, SegmentId)
-				AND (arguments.CarrierCode EQ ''
-					OR arguments.CarrierCode EQ listRemoveDuplicates(Carriers))>
+					AND (CarriersToDisplay EQ 'All'
+						OR (CarriersToDisplay EQ 'NonArc Only'
+							AND listRemoveDuplicates(Carriers) EQ arguments.CarrierCode)
+						OR (CarriersToDisplay EQ 'Hide NonArc'
+							AND NOT NonArc))>
 
 				<cfset flightCount = arrayLen(segmentItem)>
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->

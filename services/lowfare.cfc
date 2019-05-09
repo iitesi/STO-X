@@ -241,6 +241,9 @@
 		<cfargument name="Group" type="any" required="true">
 		<cfargument name="CarrierCode" type="any" required="true">
 
+		<cfset var CarrierCode = arguments.CarrierCode>
+		<cfset var CarriersToDisplay = 'All'>
+		<cfset var NonArc = ''>
 		<cfset var tripIndex = ''>
 		<cfset var tripItem = ''>
 		<cfset var segmentIndex = ''>
@@ -253,14 +256,30 @@
 		<cfset var FlightNumbers = ''>
 		<cfset var Segments = {}>
 
+		<cfif listFind('WN,F9,NK,G4', CarrierCode)>
+			<cfset CarriersToDisplay = 'NonArc Only'>
+		<cfelseif CarrierCode NEQ ''>
+			<cfset CarriersToDisplay = 'Hide NonArc'>
+		</cfif>
+
 		<!--- response.Segments : Create a distinct structure of available segments by reference key. --->
 		<!--- response.Segments[G0-B6.124] = Full segment structure --->
 		<cfloop collection="#arguments.response.FlightSearchResults#" index="tripIndex" item="tripItem">
 
 			<cfloop collection="#tripItem.TripSegments#" index="segmentIndex" item="segmentItem">
+
+				<cfset NonArc = false>
+				<cfif listFind('WN,F9,NK,G4', segmentItem.Flights[1].CarrierCode)>
+					<cfset NonArc = true>
+				</cfif>
+
 				<cfif segmentItem.Group EQ arguments.Group
-					AND (arguments.CarrierCode EQ ''
-						OR arguments.CarrierCode EQ segmentItem.Flights[1].CarrierCode)>
+					AND (CarriersToDisplay EQ 'All'
+						OR (CarriersToDisplay EQ 'NonArc Only'
+							AND segmentItem.Flights[1].CarrierCode EQ arguments.CarrierCode)
+						OR (CarriersToDisplay EQ 'Hide NonArc'
+							AND NOT NonArc))>
+
 					<cfset segmentCount = arrayLen(segmentItem.Flights)>
 					<!--- Replace the structure with the SegmentId. --->
 					<!--- <cfset Segments.TripSegments[segmentIndex] = segmentItem.SegmentId> --->

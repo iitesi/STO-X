@@ -100,7 +100,7 @@
 			<cfset start = getTickCount()>
 			<cfset trips.Segments = LowFare.parseSegments( 	response = local.LowFareResponse,
 															Group = arguments.Group,
-															CarrierCode = arguments.Group NEQ 0 AND listFind('WN,F9,NK,G4', arguments.SelectedTrip[0].CarrierCode) ? arguments.SelectedTrip[0].CarrierCode : '' )>
+															CarrierCode = arguments.Group NEQ 0 ? arguments.SelectedTrip[0].CarrierCode : '' )>
 			<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
 		<cfelse>
@@ -119,7 +119,7 @@
 			<cfset trips.Segments = Availability.parseSegments( Segments = trips.Segments,
 															response = local.AvailabilityResponse,
 															Group = arguments.Group,
-															CarrierCode = arguments.Group NEQ 0 AND listFind('WN,F9,NK,G4', arguments.SelectedTrip[0].CarrierCode) ? arguments.SelectedTrip[0].CarrierCode : '' )>
+															CarrierCode = arguments.Group NEQ 0 ? arguments.SelectedTrip[0].CarrierCode : '' )>
 			<cfset trips.Profiling.Segments = (getTickCount() - start) / 1000>
 
 		</cfif>
