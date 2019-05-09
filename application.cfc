@@ -54,11 +54,6 @@
 
 	<cffunction name="setupRequest">
 
-		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
-		<cfif transactionMonitorExists()>
-			<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
-		</cfif>
-
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
 			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
@@ -104,7 +99,6 @@
 	</cffunction>
 
 	<cffunction name="onMissingView" hint="I handle missing views.">
-
 		<cfreturn view( "main/notfound" )>
 	</cffunction>
 
@@ -219,11 +213,10 @@
 
 		<cfreturn />
 	</cffunction>
-	<cffunction name="setupApplicationVariables" output="false">
 
+	<cffunction name="setupApplicationVariables" output="false">
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
-
 	</cffunction>
 
 </cfcomponent>
