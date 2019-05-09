@@ -583,7 +583,7 @@
 									}
 									return false;
 								}
-								return false;
+								return true;
 								break;
 							}
 							case 'departure': {
