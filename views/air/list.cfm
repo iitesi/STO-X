@@ -27,13 +27,6 @@
 					<div class="row">
 						<div class="col-xs-12">
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
-							<cfif structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true'>
-								<div role="button" 
-								class="contracted-after"
-								data-placement="right" 
-								title="Contracted"
-								data-toggle="tooltip"></div>
-							</cfif>
 							<div class="warning-icons">
 								<cfif Segment.IsLongAndExpensive>
 									<span role="button" 
@@ -160,6 +153,7 @@
 														onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#Fare.Refundable#','#key#');"
 													</cfif>
 												>
+
 													<div class="cabin-class">
 														<div class="fs-1 cabin-description overflow-ellipse">
 															<cfif FareName NEQ ''>#FareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
@@ -167,6 +161,14 @@
 														<div class="fs-2 fare-display">
 															<div class="overflow-ellipse">$#numberFormat(Fare.TotalFare, '_,___')#</div>
 														</div>
+							<cfif Fare.PrivateFare>
+								<!--- <div role="button" 
+								class="contracted-after"
+								data-placement="right" 
+								title="Contracted"
+								data-toggle="tooltip"></div> --->
+								Contracted
+							</cfif>
 														<cfif Fare.OutOfPolicy>
 															<div class="col-xs-12 fs-s policy-error">
 																<div class="fare-warning"
