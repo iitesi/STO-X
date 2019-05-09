@@ -91,5 +91,14 @@
 			</cfloop>
 		</cfif>
 		</ul>
+		<cfif url.action eq 'air.review'>
+			<div class="select-fare-button">
+				<a href="##selectfare" class="btn btn-primary">
+					<div id="fare-range-html"></div>
+					Select Fare 
+					<span class="mdi mdi-arrow-down-circle-outline bounce-7"></span>
+				</a>
+			</div>
+		</cfif>
 	</div>
 </cfoutput>

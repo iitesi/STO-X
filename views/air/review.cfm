@@ -29,11 +29,11 @@
 						<div class="panel panel-default trip-segment">
 							<div class="panel-heading">
 							<h3 class="panel-title" style="position:relative;">
-								<span class="mdi mdi-airplane-takeoff"></span>
-								<span>#application.stAirports[firstFlight.OriginAirportCode].airport#</span>
-								<span class="fromto">To</span>
-								<span class="mdi mdi-airplane-landing"></span>
-								<span>#application.stAirports[lastFlight.DestinationAirportCode].airport#</span>
+								<span class="mdi mdi-airplane-takeoff hide-small"></span>
+								<span class="hide-small">#application.stAirports[firstFlight.OriginAirportCode].airport#</span>
+								<span class="fromto hide-small">To</span>
+								<span class="mdi mdi-airplane-landing hide-small"></span>
+								<span class="hide-small">#application.stAirports[lastFlight.DestinationAirportCode].airport#</span>
 								<div class="panel-date">
 									<span class="mdi mdi-calendar"></span>
 									#DateFormat(firstFlight.DepartureTime, 'ddd, mmm d, yyyy')#
@@ -116,12 +116,13 @@
 	</div>
 	<cfset ErrorMessage = ''>
 	<cfset FaresDisplayed = 0>
+	<cfset cabinFares = arrayNew(1)/>
+	<a name="selectfare"/>
 	<div class="panel panel-default review-fare-grid">
 
 		<cfloop collection="#rc.Solutions#" index="index" item="Fare">
 			<cfif IsStruct(Fare)>
 				<cfset FaresDisplayed++>
-
 				<div class="review-fare-column">
 					<div class="heading">
 						#Fare.CabinClass CONTAINS ',' ? 'Mixed Cabins' : Fare.CabinClass#<br>
@@ -129,6 +130,7 @@
 					</div>
 					<div class="fare-price">
 						#Fare.Currency EQ 'USD' ? '$' : Fare.Currency##NumberFormat(Fare.TotalPrice, '0')#
+						<cfscript>ArrayAppend(cabinFares,NumberFormat(Fare.TotalPrice, '0'))</cfscript>
 					</div>
 					<cfset key = createUUID()>
 					<div class="fare-selection-button">
@@ -200,6 +202,25 @@
 		$("#Fare").val($("#Fare"+Key).val());
 		$("#selectFare").submit();
 	}
+
+	$(function(){
+		try {
+			let cabinFares = <cfoutput>#serializeJSON(cabinFares)#</cfoutput>;
+			var fareRangeLink = $('#fare-range-html');
+
+			if(fareRangeLink.length && cabinFares.length){
+				cabinFares.sort();
+				let fareHtml = '$' + cabinFares[0];
+				if(cabinFares.length > 1){
+					fareHtml = fareHtml + ' to $' + cabinFares[cabinFares.length-1];
+					fareRangeLink.html(fareHtml);
+				}
+			}
+		}
+		catch(e){
+			console ? console.log(e) : '';
+		}
+	});
 </script>		
 
 <!--- <cfdump var=#session.Searches[rc.SearchID].stItinerary.Air#>
