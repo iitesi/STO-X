@@ -312,11 +312,13 @@
 			var values = [];
 			$matches.each(function(){
 				var data = $(this).data(name);
-				var items = data.replace(/ /gi,'').split(',');
-				for(var i=0;i<items.length;i++){
-					var item = $.trim(items[i]);
-					if(!values.includes(item)){
-						values.push(item);
+				if (data.length) {
+					var items = data.replace(/ /gi,'').split(',');
+					for(var i=0;i<items.length;i++){
+						var item = $.trim(items[i]);
+						if(!values.includes(item)){
+							values.push(item);
+						}
 					}
 				}
 			});
