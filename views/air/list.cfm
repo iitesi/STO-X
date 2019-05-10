@@ -399,40 +399,45 @@ email form injects here
 							</cfif>
 					  	  </div>
 						  <div>
-							<h3>Baggage Fees</h3>
 							<cfset Carriers = ''>
+							<cfset DisplayFees = 0>
 							<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
-								<cfif NOT listFind(Carriers, Flight.CarrierCode)>
+								<cfif NOT listFind(Carriers, Flight.CarrierCode)
+									AND structKeyExists(application.stAirVendors[Flight.CarrierCode], 'Bag1')>
+									<cfset DisplayFees++>
+									<cfif DisplayFees EQ 1>
+										<h3>Baggage Fees</h3>
+									</cfif>
 									<cfset Carriers = listAppend(Carriers, Flight.CarrierCode)>
-								<table class="table table-hover table-condensed baggage-fees">
-									<thead>
-									<tr>
-										<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
-										<td class="bold">Paid at online check-in</td>
-										<td class="bold">Paid at airport check-in</td>
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td>1st Checked Bag</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
-									</tr>
-									<tr>
-										<td>2nd Checked Bag</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-									</tr>
-									<tr>
-										<td>Total for 2 Bags (each way)</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-									</tr>
-									<tr>
-										<td>3+ or Oversized Bags</td>
-										<td colspan="2">Additional Fees Apply</td>
-									</tr>
-									</tbody>
+									<table class="table table-hover table-condensed baggage-fees">
+										<thead>
+										<tr>
+											<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
+											<td class="bold">Paid at online check-in</td>
+											<td class="bold">Paid at airport check-in</td>
+										</tr>
+										</thead>
+										<tbody>
+										<tr>
+											<td>1st Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
+										</tr>
+										<tr>
+											<td>2nd Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>Total for 2 Bags (each way)</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>3+ or Oversized Bags</td>
+											<td colspan="2">Additional Fees Apply</td>
+										</tr>
+										</tbody>
 									</table>
 								</cfif>
 							</cfloop>
