@@ -117,7 +117,7 @@
 	<cfset ErrorMessage = ''>
 	<cfset FaresDisplayed = 0>
 	<cfset cabinFares = arrayNew(1)/>
-	<a name="selectfare"/>
+	<a name="selectfare"></a>
 	<div class="panel panel-default review-fare-grid">
 
 		<cfloop collection="#rc.Solutions#" index="index" item="Fare">
