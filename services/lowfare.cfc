@@ -275,10 +275,12 @@
 
 				<cfif segmentItem.Group EQ arguments.Group
 					AND (CarriersToDisplay EQ 'All'
-						OR (CarriersToDisplay EQ 'NonArc Only'
-							AND segmentItem.Flights[1].CarrierCode EQ arguments.CarrierCode)
-						OR (CarriersToDisplay EQ 'Hide NonArc'
-							AND NOT NonArc))>
+						OR (NOT structKeyExists(application.stBlacklistedCarriers, arguments.CarrierCode)
+							OR NOT structKeyExists(application.stBlacklistedCarriers[arguments.CarrierCode], segmentItem.Flights[1].CarrierCode)
+							AND ((CarriersToDisplay EQ 'NonArc Only'
+									AND segmentItem.Flights[1].CarrierCode EQ arguments.CarrierCode)
+								OR (CarriersToDisplay EQ 'Hide NonArc'
+									AND NOT NonArc))))>
 
 					<cfset segmentCount = arrayLen(segmentItem.Flights)>
 					<!--- Replace the structure with the SegmentId. --->

@@ -781,12 +781,12 @@
 
 		<!--- THis list occasionally changes so we are caching it here and not putting it into the application scope --->
 		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookingDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
-			SELECT Carrier1
-			, Carrier2
+			SELECT Carrier1,
+				Carrier2
 			FROM lu_CarrierInterline
 			UNION
-			SELECT Carrier2 AS Carrier1
-			, Carrier1 AS Carrier2
+			SELECT Carrier2 AS Carrier1,
+				Carrier1 AS Carrier2
 			FROM lu_CarrierInterline
 		</cfquery>
 
@@ -801,15 +801,15 @@
 		<cfreturn />
 	</cffunction> --->
 
-	<!--- <cffunction name="setBlackListedCarrier" output="false">
+	<cffunction name="setBlackListedCarriers" output="false">
 
 		<cfquery name="local.blackListedCarrierPairing" datasource="#getBookingDSN()#" cachedwithin="#createTimeSpan(0,12,0,0)#">
-			SELECT Carrier1
-				, Carrier2
+			SELECT Carrier1,
+				Carrier2
 			FROM lu_CarrierInterline
 			UNION
-			SELECT Carrier2 AS Carrier1
-				, Carrier1 AS Carrier2
+			SELECT Carrier2 AS Carrier1,
+				Carrier1 AS Carrier2
 			FROM lu_CarrierInterline
 			ORDER BY Carrier1
 		</cfquery>
@@ -821,10 +821,10 @@
 			</cfoutput>
 		</cfoutput>
 
-		<cfset application.blacklistedCarriers = local.temp>
+		<cfset application.stBlacklistedCarriers = local.temp>
 
 		<cfreturn />
-	</cffunction> --->
+	</cffunction>
 
 	<cffunction name="authorizeRequest" output="false">
 		<cfif NOT findNoCase( ".cfc", cgi.script_name )>

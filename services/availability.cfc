@@ -198,18 +198,21 @@
 				<cfset Carriers = listAppend(Carriers, flightItem.Carrier)>
 			</cfloop>
 			<cfset SegmentId = 'G'&arguments.Group&'-'&SegmentId>
+			<cfset Carriers = listRemoveDuplicates(Carriers)>
 
 			<cfset NonArc = false>
-			<cfif listFind('WN,F9,NK,G4', listRemoveDuplicates(Carriers))>
+			<cfif listFind('WN,F9,NK,G4', Carriers)>
 				<cfset NonArc = true>
 			</cfif>
 
 			<cfif NOT structKeyExists(Segments, SegmentId)
-					AND (CarriersToDisplay EQ 'All'
-						OR (CarriersToDisplay EQ 'NonArc Only'
-							AND listRemoveDuplicates(Carriers) EQ arguments.CarrierCode)
-						OR (CarriersToDisplay EQ 'Hide NonArc'
-							AND NOT NonArc))>
+				AND (CarriersToDisplay EQ 'All'
+					OR (NOT structKeyExists(application.stBlacklistedCarriers, arguments.CarrierCode)
+						OR NOT structKeyExists(application.stBlacklistedCarriers[arguments.CarrierCode], Carriers)
+						AND ((CarriersToDisplay EQ 'NonArc Only'
+								AND Carriers EQ arguments.CarrierCode)
+							OR (CarriersToDisplay EQ 'Hide NonArc'
+								AND NOT NonArc))))>
 
 				<cfset flightCount = arrayLen(segmentItem)>
 				<!--- Create the distinct list of legs.  Also add in some overall leg information for display purposes. --->

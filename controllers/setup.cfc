@@ -49,6 +49,9 @@ setApplication
 		<cfif NOT StructKeyExists(application, 'stRailStations') OR StructIsEmpty(application.stRailStations)>
 			<cfset variables.bf.getBean("setup").setRailStations(argumentcollection=arguments.rc)>
 		</cfif>
+		<cfif NOT StructKeyExists(application, 'stBlacklistedCarriers') OR StructIsEmpty(application.stBlacklistedCarriers)>
+			<cfset variables.bf.getBean("setup").setBlackListedCarriers(argumentcollection=arguments.rc)>
+		</cfif>
 		<cfif NOT StructKeyExists(application, 'staticAssetVersion')>
 			<cfset application.staticAssetVersion = variables.bf.getBean("EnvironmentService").getStaticAssetVersion()>
 		</cfif>
