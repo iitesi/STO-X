@@ -151,6 +151,9 @@
 						</div>
 					</cfif>
 					</div>
+					<div>
+						#Fare.Refundable ? 'Refundable' : 'Non Refundable'#
+					</div>
 					<div class="contracted">
 						Contracted:  #YesNoFormat(Fare.IsContracted)#
 					</div>
