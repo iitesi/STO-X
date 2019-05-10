@@ -691,6 +691,16 @@
 				}
 			});
 
+			var allTripCount = $('#listcontainer > div.trip').length;
+			var visibleTripCount = $('#listcontainer > div.trip:visible').length;
+
+			if (allTripCount === visibleTripCount){
+				$('#clearFilters').addClass('hidden');
+			}
+			else {
+				$('#clearFilters').removeClass('hidden');
+			}
+
 		}
 
 		var getGroupValue = function(name){

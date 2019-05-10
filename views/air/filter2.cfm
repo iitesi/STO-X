@@ -169,6 +169,11 @@
 							</li>
 						</ul>
 					</li>
+					<li role="presentation" class="dropdown hidden" id="clearFilters">
+						<a href="#" class="removefilters dropdown-toggle clear-all_control__filter">
+							Clear All <span class="mdi clear_all_filters mdi-close-circle-outline"></span>
+						</a>
+					</li>
 					<!---
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Carrier <b class="caret"></b></a>

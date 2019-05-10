@@ -1287,7 +1287,12 @@ ul.tabs li a.active {
 		right: unset;
 		left: 5px;
 	}
-
+	#filterbar #clearFilters  a.dropdown-toggle {
+		width: 100% !important;
+	}
+	#filterbar #clearFilters  a.dropdown-toggle .mdi {
+		display: none !important;
+	}
 }
 
 @media (min-width: 800px) {
@@ -1784,6 +1789,20 @@ li.with-irs .irs-title {
   width: 100%;
 }
 
+#clearFilters .clear-all_control__filter {
+
+}
+#filterbar #clearFilters  a.dropdown-toggle {
+	width: 97px;
+}
+#filterbar #clearFilters  a.dropdown-toggle .mdi {
+	position: absolute;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    font-size: 23px;
+}
+
 @media (min-width: 1200px) {
 	.flight-details-header {
 		display: flex;
@@ -1842,6 +1861,7 @@ li.with-irs .irs-title {
 }
 
 @media (min-width: 300px) and (max-width: 1199px) {
+	
 	#listcontainer .trip {
 		border-top-width: 1px;
 		margin-top: 10px;
