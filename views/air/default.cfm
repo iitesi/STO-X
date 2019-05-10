@@ -547,9 +547,15 @@
 									return true;
 								}
 								const tripFlightNumbers = $this.data('flightnumbers');
-								if(typeof tripFlightNumbers !== 'undefined' && tripFlightNumbers.length > 0){
-									const tripFlightNumbersArray = tripFlightNumbers.split(',');
-									return tripFlightNumbersArray.includes(filters[key]);
+								if(typeof tripFlightNumbers !== 'undefined' ){
+									if (typeof tripFlightNumbers === 'number') {
+										return tripFlightNumbers == filters[key];
+									}
+									else if (tripFlightNumbers.includes(',')) {
+										const tripFlightNumbersArray = tripFlightNumbers.split(',');
+										return tripFlightNumbersArray.includes(filters[key]);
+									}
+									
 								}
 								return false;
 								break;
@@ -645,6 +651,7 @@
 
 
 			var filters = $('#filterbar li.dropdown');
+			
 			filters.each(function(){
 				var $filter = $(this);
 				var $anchor = $filter.find('a.dropdown-toggle');
