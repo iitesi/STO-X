@@ -63,6 +63,12 @@
 			</cfif>
 		</cfif>
 
+		<cfif NOT structKeyExists(request.context, 'additionalFooterJS')>
+			<cfscript>
+				request.context.additionalFooterJS = arrayNew(1);
+			</cfscript>
+		</cfif>
+
 		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
