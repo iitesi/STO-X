@@ -1,11 +1,19 @@
+<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css">
+<script src="/booking/assets/js/air/seatmap.js"></script>
 <style>
-	/** Tweak some global styles only on this page **/
-	.page-header {
-		margin-bottom:0!important;
-		border-bottom:none!important;
-	}
+/** Tweak some global styles only on this page **/
+.page-header {
+	margin-bottom:0!important;
+	border-bottom:none!important;
+}
+.seatMapOpener {
+	cursor:pointer;
+	font-size: 1.5rem;
+	line-height: 24px;
+	vertical-align: top;
+	white-space: nowrap;
+}
 </style>
-
 <cfoutput>
 	<div class="row">
 		<cfif structKeyExists(rc, 'Order')

@@ -1,4 +1,4 @@
-<!--- <cfdump var=#session.Filters[rc.SearchID].getUserID()# abort> --->
+
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
@@ -69,7 +69,11 @@
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-1">
 									#Segment.FlightNumbers#
-								</div>	
+									<br>
+									<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapMapModal" data-id='#serializeJson(Segment)#'>
+										<i class="material-icons">airline_seat_recline_normal</i>Seat Map
+									</a>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-xs-s fs-s overflow-ellipse">
@@ -77,7 +81,7 @@
 										OPERATED BY #Segment.Codeshare#
 									</cfif>
 								</div>	
-							</div>							
+							</div>		
 						</div>
 						<div class="clearfix visible-xs-block"></div>
 						<div class="col-xs-6 col-md-3">
