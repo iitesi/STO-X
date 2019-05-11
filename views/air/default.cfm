@@ -74,6 +74,7 @@
 						</div>
 					</div>
 				</div>
+				
 				<div class="list-view col-sm-12" id="listcontainer">
 					<cfscript>
 						airlines = {};
@@ -110,6 +111,7 @@
 						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
+				<!---cfdump var="#rc.trips.Segments#"/--->
 			</div>
 		</div>
 	
@@ -223,7 +225,7 @@
 			}
 
 			if($single.length){
-				$single.find('input[type=radio]:first').prop('checked',true);
+				$single.find('input[type=radio][defaultchecked]').prop('checked',true);
 			}
 
 			doFilter();
@@ -262,6 +264,18 @@
 
 			if ("fares" == element){
 				$matches = $('#listcontainer .fares[data-'+name+'="'+value+'"]');
+			}
+			else if("stops" == name) {
+				$matches = $('#listcontainer > div[data-'+name+']').filter(function(){
+					const $this = $(this);
+					const segmentValue = $this.data(name);
+					if (value <= 1){
+						return segmentValue <= value;
+					}
+					else {
+						return segmentValue == value;
+					}
+				})
 			}
 			else {
 				$matches = $('#listcontainer > div[data-'+name+'="'+value+'"]');
@@ -521,8 +535,8 @@
 
 		var doFilter = function(){
 			var filters = {
-				stops: getGroupValue('stops'),
-				refundable: getGroupValue('refundable'),
+				stops: Number(getGroupValue('stops')),
+				refundable: Number(getGroupValue('refundable')),
 				connection: getGroupValue('connection'),
 				layover: rangeDetails('layover'),
 				duration: rangeDetails('duration'),
@@ -561,7 +575,13 @@
 								break;
 							}
 							case 'stops': {
-								return $this.data('stops') == filters[key];
+								const thisStops = Number($this.data('stops'));
+								if (filters[key] == 2){
+									return thisStops == filters[key];
+								}
+								else {
+									return thisStops <= filters[key];
+								}
 								break;
 							}
 							case 'refundable': {
@@ -684,7 +704,9 @@
 				}
 				else if ($single.length){
 					var $selected = $single.find('input[type=radio]:checked');
-					if ($selected.val() == -1){
+					var defaultChecked = typeof $selected.attr('defaultchecked') !== 'undefined';
+					var showAsSelected = typeof $selected.attr('showasselected') !== 'undefined' && $selected.attr('showasselected') == 'true';
+					if (defaultChecked && !showAsSelected){
 						$anchor.removeClass('filtered');
 						$anchor.html($("<span/>").html($anchor.data('dflt'))).append($('<b class="caret"/>'));
 					}

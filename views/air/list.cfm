@@ -15,6 +15,7 @@
 		data-iscontracted="#structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true' ? 'true' : 'false'#"
 		data-longsegment="#Segment.IsLongSegment#"
 		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
+		data-finditmatch="#Segment.IsFindItMatch#"
 		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
 		data-flightnumbers="#Replace(ReReplace(Segment.FlightNumbers,"[^0-9/]","", "ALL"), "/", ",",  "ALL")#"
 		>
@@ -148,7 +149,9 @@
 												</cfif>
 
 												<!--- Display --->
-												<div class="fares fare-block" data-refundable="#Fare.Refundable#"
+												<div class="fares fare-block" 
+													data-refundable="#Fare.Refundable#"
+													data-privatefare="#TrueFalseFormat(Fare.PrivateFare)#"
 													<cfif Fare.Bookable>
 														onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#Fare.Refundable#','#key#');"
 													</cfif>
@@ -162,8 +165,8 @@
 								class="contracted-after"
 								data-placement="right" 
 								title="Contracted"
-								data-toggle="tooltip"></div> --->
-								<br>Contracted
+								data-toggle="tooltip"></div>
+								<br>Contracted --->
 							</cfif>
 														</div>
 														<div class="fs-2 fare-display">
