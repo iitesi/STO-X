@@ -225,7 +225,7 @@
 			}
 
 			if($single.length){
-				$single.find('input[type=radio][defaultchecked]').prop('checked',true);
+				$single.find('input[type=radio]:first').prop('checked',true);
 			}
 
 			doFilter();
@@ -705,8 +705,7 @@
 				else if ($single.length){
 					var $selected = $single.find('input[type=radio]:checked');
 					var defaultChecked = typeof $selected.attr('defaultchecked') !== 'undefined';
-					var showAsSelected = typeof $selected.attr('showasselected') !== 'undefined' && $selected.attr('showasselected') == 'true';
-					if (defaultChecked && !showAsSelected){
+					if (defaultChecked){
 						$anchor.removeClass('filtered');
 						$anchor.html($("<span/>").html($anchor.data('dflt'))).append($('<b class="caret"/>'));
 					}
