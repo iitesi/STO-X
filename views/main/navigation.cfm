@@ -30,6 +30,11 @@
 	<cfset showCarTab = false/>
 	<cfset showPurchaseTab = false/>
 </cfif>
+<cfscript>
+	arrayAppend(request.context.additionalFooterJS, "$('##navbar-collapse-1 a.mdi-ticket-account').tooltip({
+		template: ""<div class='tooltip unused-ticket-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
+	});");
+</cfscript>
 <cfoutput>
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
@@ -38,22 +43,32 @@
 					AND structKeyExists(rc, 'SearchId')
 					AND structKeyExists(session.Filters, rc.SearchId)
 					AND arrayLen(session.Filters[rc.SearchId].getUnusedTickets())>
-
-					<!--- Shane Pitts - Notification for unused tickets UI. --->
-					<!--- 
-					Hover over should read...
-					Unused Ticket(s)
-					* $346 expiring Apr 6, 2020 on United Airlines.
-					* $632 expiring Jul 7, 2020 on American Airlines.
-					<cfloop array="#session.filters[rc.SearchId].getUnusedTickets()#" index="UnusedTicketIndex" item="UnusedTicketItem">
-						<li>$#Round(UnusedTicketItem.Airfare)# expiring #DateFormat(UnusedTicketItem.ExpirationDate, 'mmm d, yyyy')# on #UnusedTicketItem.CarrierName#</li>
-					</cfloop>
-					--->
-
+					<cfsavecontent variable="ticketDetails">
+						<div class='unused-ticket-title'>Unused Ticket<cfif arrayLen(session.Filters[rc.SearchId].getUnusedTickets()) GT 1>s</cfif></div>
+						<div class='unused-ticket-wrapper'>
+						<cfloop array="#session.Filters[rc.SearchId].getUnusedTickets()#" index="UnusedTicketIndex" item="UnusedTicketItem">
+							<div class='unused-ticket'>
+								$#Round(UnusedTicketItem.Airfare)# 
+								expiring #DateFormat(UnusedTicketItem.ExpirationDate, 'mmm d, yyyy')# 
+								on #UnusedTicketItem.CarrierName#
+							</div>
+						</cfloop>
+						</div>
+					</cfsavecontent>
 					<li>
-						<span class="badge badge-notify">#arrayLen(session.Filters[rc.SearchId].getUnusedTickets())#</span>
+						<a 	class="mdi mdi-ticket-account" 
+							href="javascript:void(0);"
+							data-html="true" 
+							data-placement="bottom"
+							title="#ticketDetails#">
+							<span class="mat-badge-content mat-badge-active">
+								#arrayLen(session.Filters[rc.SearchId].getUnusedTickets())#
+							</span>
+							<span class='menu-details'>
+								Unused Ticket<cfif arrayLen(session.Filters[rc.SearchId].getUnusedTickets()) GT 1>s</cfif>
+							</span>
+						</a>
 					</li>
-
 				</cfif>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<!---Menu-for mobile STO --->
