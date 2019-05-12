@@ -3,7 +3,7 @@ var seatMapModalTemplate = `
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="width:600px;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="seatMapMapModalTitle" style="font-size:17px;font-weight:bold;">Seat Map</h5>
+                    <h5 class="modal-title" id="seatMapMapModalTitle" style="font-size:17px;font-weight:bold;"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -37,9 +37,10 @@ var SeatMap = {
 
     get: function(){
 
-        $('.modal-body').text('Loading Seat Map ...');
-
         var data = SeatMap.data;
+        
+        $('.modal-body').text('Loading Seat Map ...');
+        $('.modal-title').text('Seat Map for ' + data.FLIGHTNUMBERS + ' ' + data.SegmentRoute);
 
         var seatMapRequest = {
             TargetBranch: SeatMap.config.TargetBranch,
@@ -86,7 +87,6 @@ var SeatMap = {
             contentType: 'application/json',
             data: JSON.stringify(seatMapRequest),
             success: function(result){
-                console.log(result);
                 var body = SeatMap.draw(result);
                 $('.modal-body').html(body.prop('outerHTML'));
             }
@@ -122,6 +122,16 @@ var SeatMap = {
 
                 cabinClass = $('<div class="cabinClass">'+cabinClassHeader+'</div>');
                 cabin.append(cabinClass);
+
+                var cabinClassColumns = $('<div class="cabinClassColumns"></div>');
+                for (var s = 0; s < map.Rows[r].Seats.length; s++) {
+                    if (map.Rows[r].Seats[s].SeatColumn === '') {
+                        cabinClassColumns.append($('<div class="cabinClassSeat"></div>'));
+                    } else {
+                        cabinClassColumns.append($('<div class="cabinClassColumn">'+map.Rows[r].Seats[s].SeatColumn+'</div>'));
+                    }
+                }
+                cabin.append(cabinClassColumns);
             }
 
             var row = $('<div class="cabinClassRow"></div>');
