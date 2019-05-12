@@ -6,11 +6,11 @@
 <style>
 /** Tweak some global styles only on this page **/
 .page-header {
-	margin-bottom:0!important;
-	border-bottom:none!important;
+	margin-bottom: 0 !important;
+	border-bottom: none !important;
 }
 .seatMapOpener {
-	cursor:pointer;
+	cursor: pointer;
 	font-size: 1.5rem;
 	line-height: 24px;
 	vertical-align: top;

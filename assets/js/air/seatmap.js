@@ -90,69 +90,65 @@ var SeatMap = {
 
     draw: function(data){
 
-        // table rows
-        var rows = [];
-
         // temp sshrink to 1 map
-        seatMap = data.SeatMaps[0];
+        map = data.SeatMaps[0];
 
         // airplane container
         var seatmap = $('<div id="seatmap"></div>');
         var plane = $('<div id="plane"></div>');
         var cabin = $('<div id="cabin"></div>');
 
-        // main table structure
-        var table = $('<table></table>');
+        // main structure
+        var lastCabinClass = '';
 
-            // wingrow in the right
-            var wingRowRight = $('<tr class="wingRowRight"></tr>');
-            for (var i=0; i < 10; i++) {
-                var wingCol = $('<td></td>');
-                wingRowRight.append(wingCol);
+        for (var r = 0; r < map.Rows.length; r++) {
+
+            var rowNumber = r+1;
+
+            // separating and labeling the cabin class
+            if (map.Rows[r].CabinClass != lastCabinClass) {
+                cabinClass = $('<div class="cabinClass">'+map.Rows[r].CabinClass+'</div>');
+                cabin.append(cabinClass);
+                if (rowNumber > 1) rowNumber++;
             }
-            table.append(wingRowRight);
 
-            // reverse for display
-            seatMap.ColumnHeaders.reverse();
-            
-            // fill in the seats by column (A,B,D, ,E,F,G) etc
-            for (var c = 0; c < seatMap.ColumnHeaders.length; c++) {
-                var row = $('<tr></tr>');
-                if (seatMap.ColumnHeaders[c] === '') {
-                    row.append($('<td class="colHeaderGalley">'+seatMap.ColumnHeaders[c]+'</td>'));
+            // an actual row of seats on the plane
+            var row = $('<div class="cabinClassRow"></div>');
+            var seats =  map.Rows[r].Seats;
+            var seatType = '';
+
+            for (var s = 0; s < seats.length; s++) {
+
+                var seatData = seats[s];
+
+                if (seatData.IsAvailable) {
+                    seatType = 'available';
                 } else {
-                    row.append($('<td class="colHeader">'+seatMap.ColumnHeaders[c]+'</td>'));
+                    seatType = 'unavailable';
                 }
-                for (var r = 0; r < 20; r++) {
-                    for (var s = 0; s < seatMap.Rows[r].Seats.length; s++) {
-                        var seatData = seatMap.Rows[r].Seats[s];
-                        if (seatData.SeatColumn === seatMap.ColumnHeaders[c]) {
-                            if (seatData.SeatColumn === '') {
-                                var seat = $('<td class="noSeatGalley"></td>');
-                            } else {
-                                var seat = $('<td class="seatAvailable" title="'+seatData.SeatCode+'" alt="'+seatData.SeatCode+'"></td>');
-                            }
-                            row.append(seat);
-                        }
-                    }
+
+                if (map.Rows[r].CabinClass === 'F') {
+                    seatType += ' first';
                 }
-                rows.push(row);
-            }
-            table.append(rows);
 
-            // wingrow in the left
-            var wingRowLeft = $('<tr class="wingRowLeft"></tr>');
-            for (var i=0; i < 10; i++) {
-                var wingCol = $('<td></td>');
-                wingRowLeft.append(wingCol);
-            }
-            table.append(wingRowRight);
+                if (seatData.SeatType === 0) {
+                    var seat = $('<div class="cabinClassSeat galley">'+rowNumber.toString()+'</div>');
+                } else {
+                    var seat = $('<div class="cabinClassSeat"></div>');
+                    var button = $('<button class="'+seatType+'">'+seatData.SeatCode+'</button>');
+                    seat.append(button);
+                }
 
-            // assemble it all
-            cabin.append(table);
-            plane.append(cabin);
-            plane.append($('<div style="clear: both;"></div>'));
-            seatmap.append(plane);
+                row.append(seat);
+            }
+
+            lastCabinClass = map.Rows[r].CabinClass;
+            cabin.append(row);
+        }
+
+        // assemble it all
+        plane.append(cabin);
+        seatmap.append(plane);
 
         return seatmap;
     },
