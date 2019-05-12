@@ -78,7 +78,7 @@
 						<ul class="dropdown-menu dropdown-menu-right singlefilterwrapper">
 							<li>
 								<div class="md-radio">
-									<input id="stops-a" checked class="singlefilter" type="radio" name="stops" value="-1" data-title="Any number of stops" title="Any number of stops">
+									<input id="stops-a" defaultchecked class="singlefilter" type="radio" name="stops" value="-1" data-title="Any number of stops" title="Any number of stops">
 									<label for="stops-a">Any Number of Stops</label>
 								</div>
 							</li>
@@ -90,8 +90,8 @@
 							</li>
 							<li>
 								<div class="md-radio">
-									<input id="stops-1" class="singlefilter" type="radio" name="stops" value="1" data-title="1 Stop" title="1 Stop">
-									<label for="stops-1">1 Stop</label>
+									<input id="stops-1" checked class="singlefilter" type="radio" name="stops" value="1" data-title="1 Stop or less" title="1 Stop or less">
+									<label for="stops-1">0-1 Stops</label>
 								</div>
 							</li>
 							<li>
@@ -151,7 +151,7 @@
 							</li>	
 							<li>
 								<div class="md-radio">
-									<input id="refundable-a" checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
+									<input id="refundable-a" defaultchecked checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
 									<label for="refundable-a">Any Fare Type</label>
 								</div>
 							</li>

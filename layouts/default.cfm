@@ -292,6 +292,15 @@
 			</script>
 		</cfoutput>
 	</cfif>
+	<cfif structKeyExists(rc, 'additionalFooterJS') AND arrayLen(rc.additionalFooterJS) GT 0>
+		<cfoutput>
+			<script type="text/javascript">
+			<cfloop array="#rc.additionalFooterJS#" index="afjsidx" item="footerJs">
+				#footerJs#
+			</cfloop>
+		</script>
+		</cfoutput>
+	</cfif>
 	</body>
 	</html>
 </cfif>

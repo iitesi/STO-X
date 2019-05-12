@@ -2825,6 +2825,74 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	RESPONSIVE CHANGES
 ----------------------------------------------------------------------------------------------------------
 */
+#navbar-collapse-1 a.mdi-ticket-account {
+	font-size: 20px;
+}
+#navbar-collapse-1 a.mdi-ticket-account .menu-details {
+	display: inline-block;
+	font-size: 14px;
+	text-transform: none;
+	top: -2px;
+    position: relative;
+}
+#navbar-collapse-1 a.mdi-ticket-account .mat-badge-content {
+	font-size: 12px;
+	position: relative;
+    text-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    transition: transform .2s ease-in-out;
+    transform: scale(.8);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	pointer-events: none;
+	color: #fff;
+	background: #f44336;
+	font-weight: 600;
+    font-size: 12px;
+	font-family: Roboto,"Helvetica Neue",sans-serif;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+	top: 2px;
+	right: 0;
+}
+#navbar-collapse-1 a.mdi-ticket-account:hover .mat-badge-content {
+	transform: scale(1);
+}
+.unused-ticket-tooltip .tooltip-inner {
+	/* width: 350px; */
+	max-width: unset;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding: 10px 20px;
+}
+.unused-ticket-tooltip .tooltip-inner .unused-ticket-title {
+	font-weight: 700;
+	font-size: 14px;
+	border-bottom: 1px solid #353535;
+	padding: 0 0 5px 0;
+}
+.unused-ticket-tooltip .tooltip-inner .unused-ticket-wrapper {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.unused-ticket-tooltip .tooltip-inner .unused-ticket {
+	color: #eee;
+	font-size: 12px;
+	width: 100%;
+	text-align: left;
+	white-space:nowrap;
+	border-bottom: 1px solid #353535;
+	padding:5px 0;
+}
+.unused-ticket-tooltip .tooltip-inner .unused-ticket:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
 .navbar-brand>img {
 	height: 100%;
 }
@@ -2853,6 +2921,14 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 @media (min-width: 768px) {
+	#navbar-collapse-1 a.mdi-ticket-account .mat-badge-content {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+	}
+	#navbar-collapse-1 a.mdi-ticket-account .menu-details {
+		display: none;
+	}
 	#navbar-collapse-1>ul>li.active {
 		border-top: 4px solid #2E76CF;
 		margin-top: -4px;
