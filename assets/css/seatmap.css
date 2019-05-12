@@ -1,14 +1,14 @@
-.wingRowTop {
+.wingRowRight {
     position:absolute;
     border-collapse: collapse;
-    border-spacing: 0px;    
-    margin-top: -37px;    
+    border-spacing: 0px;
+    margin-top: -37px;
     -webkit-transform: skew(-25deg);
 	   -moz-transform: skew(-25deg);
 	     -o-transform: skew(-25deg);
     transform: skew(-25deg);
 }
-.wingRowBottom {
+.wingRowLeft {
     position:absolute;
     border-collapse: collapse;
     border-spacing: 0px;
@@ -16,11 +16,11 @@
     -webkit-transform: skew(25deg);
 	   -moz-transform: skew(25deg);
 	     -o-transform: skew(25deg);
-    transform: skew(25deg);  
+    transform: skew(25deg);
 }
 
-#seatmap { 
-    position: relative; 
+#seatmap {
+    position: relative;
 }
 #seatmap table {
     border-collapse: separate;
@@ -28,12 +28,7 @@
 }
 
 #plane {
-	width: 565px;
-	height: 187px;
-	background: #fff;
-    border: solid 1px #aaa;
-	border-radius: 80px 0 0 80px;
-    z-index: 1;
+	
 }
     #plane .rows {
         width: 30px;
@@ -47,7 +42,7 @@
             text-align: right;
         }
 
-#cabin { 
+#cabin {
     background-color: #dedede;
     border: none;
     border-left: double 3px #aaa;
@@ -67,9 +62,11 @@
     #cabin td.noSeatGalley     { background-color: transparent; border: none; width: 10px; height: 10px;  }
     #cabin td.noSeatStorage    { background-color: #aaa; }
     #cabin td.noSeatLavatory   { background-color: #aaa; }
+    #cabin td.colHeader        { font-weight: bold; border: none; }
+    #cabin td.colHeaderGalley  {  }
 
 #cabin tr:first-child td,
-#cabin tr:last-child td { height: 30px; border: none; border-radius: 0; }
+#cabin tr:last-child td { border: none; }
 
 #cabin tr:first-child td.wingSeat,
 #cabin tr:last-child td.wingSeat{ border: none; }

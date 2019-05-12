@@ -1,5 +1,8 @@
 <link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css">
 <script src="/booking/assets/js/air/seatmap.js"></script>
+<script>
+	SeatMap.config.StmUserToken = '<cfoutput>#session.StmUserToken#</cfoutput>';
+</script>
 <style>
 /** Tweak some global styles only on this page **/
 .page-header {

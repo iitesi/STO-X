@@ -26,7 +26,13 @@ var SeatMap = {
 
     data: {},
 
-    get: function() {
+    config: {
+        StmUserToken: ''
+    },
+
+    get: function(){
+
+        $('.modal-body').text('Loading Seat Map ...');
 
         var data = SeatMap.data;
 
@@ -63,28 +69,98 @@ var SeatMap = {
         }
 
         $.ajax({
-            url: 'http://krakenqa.shortstravel.int/api/FlightSearchByTrip/SeatMap/',
+            url: 'http://krakenqa.shortstravel.int/api/FlightSearchByTrip/SeatMap/Plane/',
             method: 'POST',
             headers: {
                 'ApplicationId':'c95e0bb9-ab96-448e-bece-aa4ab0af25af',
                 'SecretKey':'aI0IvR75y226ca+qRz9dPAs7pMZGXoEhaDZc8VhXp6k=',
-                'stm-user-token':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImdrZXJuZW4iLCJuYW1laWQiOiIzNzYzODMiLCJBY2NvdW50SWQiOiIxIiwiRGVwYXJ0bWVudElkIjoiMTM1MTQiLCJuYmYiOjE1NTc1NjIyNjUsImV4cCI6MTU1NzU2NDA2NSwiaWF0IjoxNTU3NTYyMjY1LCJpc3MiOiJLcmFrZW4iLCJhdWQiOiJTVE9WRSJ9.pm0O_O335aBmbrG24wbAfWYtJmqmdhch0DV6nqrPoIg',
+                'stm-user-token': SeatMap.config.StmUserToken,
                 'Content-Type':'application/json'
             },
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(seatMapRequest),
             success: function(result){
-                var modal = $('#seatMapMapModal');
-                $('.modal-body',modal).html("result");
+                console.log(result);
+                var body = SeatMap.draw(result);
+                $('.modal-body').html(body.prop('outerHTML'));
             }
         });
+    },
+
+    draw: function(data){
+
+        // table rows
+        var rows = [];
+
+        // temp sshrink to 1 map
+        seatMap = data.SeatMaps[0];
+
+        // airplane container
+        var seatmap = $('<div id="seatmap"></div>');
+        var plane = $('<div id="plane"></div>');
+        var cabin = $('<div id="cabin"></div>');
+
+        // main table structure
+        var table = $('<table></table>');
+
+            // wingrow in the right
+            var wingRowRight = $('<tr class="wingRowRight"></tr>');
+            for (var i=0; i < 10; i++) {
+                var wingCol = $('<td></td>');
+                wingRowRight.append(wingCol);
+            }
+            table.append(wingRowRight);
+
+            // reverse for display
+            seatMap.ColumnHeaders.reverse();
+            
+            // fill in the seats by column (A,B,D, ,E,F,G) etc
+            for (var c = 0; c < seatMap.ColumnHeaders.length; c++) {
+                var row = $('<tr></tr>');
+                if (seatMap.ColumnHeaders[c] === '') {
+                    row.append($('<td class="colHeaderGalley">'+seatMap.ColumnHeaders[c]+'</td>'));
+                } else {
+                    row.append($('<td class="colHeader">'+seatMap.ColumnHeaders[c]+'</td>'));
+                }
+                for (var r = 0; r < 20; r++) {
+                    for (var s = 0; s < seatMap.Rows[r].Seats.length; s++) {
+                        var seatData = seatMap.Rows[r].Seats[s];
+                        if (seatData.SeatColumn === seatMap.ColumnHeaders[c]) {
+                            if (seatData.SeatColumn === '') {
+                                var seat = $('<td class="noSeatGalley"></td>');
+                            } else {
+                                var seat = $('<td class="seatAvailable" title="'+seatData.SeatCode+'" alt="'+seatData.SeatCode+'"></td>');
+                            }
+                            row.append(seat);
+                        }
+                    }
+                }
+                rows.push(row);
+            }
+            table.append(rows);
+
+            // wingrow in the left
+            var wingRowLeft = $('<tr class="wingRowLeft"></tr>');
+            for (var i=0; i < 10; i++) {
+                var wingCol = $('<td></td>');
+                wingRowLeft.append(wingCol);
+            }
+            table.append(wingRowRight);
+
+            // assemble it all
+            cabin.append(table);
+            plane.append(cabin);
+            plane.append($('<div style="clear: both;"></div>'));
+            seatmap.append(plane);
+
+        return seatmap;
     },
 
     init: function(){
         $(document).ready(function() {
             document.body.insertAdjacentHTML('beforeend',seatMapModalTemplate);
-		    $('.seatMapOpener').click(function () {
+            $('.seatMapOpener').click(function () {
                 SeatMap.data = $(this).data('id');
                 SeatMap.get();
             });
