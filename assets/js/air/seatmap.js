@@ -40,7 +40,7 @@ var SeatMap = {
         var data = SeatMap.data;
         
         $('.modal-body').text('Loading Seat Map ...');
-        $('.modal-title').text('Seat Map for ' + data.FLIGHTNUMBERS + ' ' + data.SegmentRoute);
+        $('.modal-title').text('Seat Map for ' + data.SegmentRoute + ' ' + data.FLIGHTNUMBERS);
 
         var seatMapRequest = {
             TargetBranch: SeatMap.config.TargetBranch,
@@ -95,86 +95,110 @@ var SeatMap = {
 
     draw: function(data){
 
-        // temp sshrink to 1 map
-        map = data.SeatMaps[0];
+        var tabs = $('<ul class="nav nav-tabs"></ul>');
+        var content = $('<div class="tab-content"></div>');
 
-        var seatmap = $('<div id="seatmap"></div>');
-        var plane = $('<div id="plane"></div>');
-        var cabin = $('<div id="cabin"></div>');
+        maps = data.SeatMaps;
 
-        var lastCabinClass = '';
+        for (m = 0; m < maps.length; m++) {
+               
+            var map = maps[m];
 
-        for (var r = 0; r < map.Rows.length; r++) {
+            var seatmap = $('<div id="seatmap"></div>');
+            var plane = $('<div id="plane"></div>');
+            var cabin = $('<div id="cabin"></div>');
 
-            if (map.Rows[r].CabinClass != lastCabinClass) {
+            var lastCabinClass = '';
 
-                if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
-                    var cabinClassHeader = 'First Class';
-                } else if (map.Rows[r].CabinClass === 'J' && map.CarrierCode === 'B6') {
-                    var cabinClassHeader = 'JetBlue MINT';
-                } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
-                    var cabinClassHeader = 'Business Class';
-                } else if (map.Rows[r].CabinClass === 'W' && map.CarrierCode === 'DL') {
-                    var cabinClassHeader = 'Delta Comfort';
-                } else {
-                    var cabinClassHeader = 'Main Cabin';
-                }
+            for (var r = 0; r < map.Rows.length; r++) {
 
-                cabinClass = $('<div class="cabinClass">'+cabinClassHeader+'</div>');
-                cabin.append(cabinClass);
+                if (map.Rows[r].CabinClass != lastCabinClass) {
 
-                var cabinClassColumns = $('<div class="cabinClassColumns"></div>');
-                for (var s = 0; s < map.Rows[r].Seats.length; s++) {
-                    if (map.Rows[r].Seats[s].SeatColumn === '') {
-                        cabinClassColumns.append($('<div class="cabinClassSeat"></div>'));
+                    if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
+                        var cabinClassHeader = 'First Class';
+                    } else if (map.Rows[r].CabinClass === 'J' && map.CarrierCode === 'B6') {
+                        var cabinClassHeader = 'JetBlue MINT';
+                    } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
+                        var cabinClassHeader = 'Business Class';
+                    } else if (map.Rows[r].CabinClass === 'W' && map.CarrierCode === 'DL') {
+                        var cabinClassHeader = 'Delta Comfort';
                     } else {
-                        cabinClassColumns.append($('<div class="cabinClassColumn">'+map.Rows[r].Seats[s].SeatColumn+'</div>'));
+                        var cabinClassHeader = 'Main Cabin';
                     }
+
+                    cabinClass = $('<div class="cabinClass">'+cabinClassHeader+'</div>');
+                    cabin.append(cabinClass);
+
+                    var cabinClassColumns = $('<div class="cabinClassColumns"></div>');
+                    for (var s = 0; s < map.Rows[r].Seats.length; s++) {
+                        if (map.Rows[r].Seats[s].SeatColumn === '') {
+                            cabinClassColumns.append($('<div class="cabinClassSeat"></div>'));
+                        } else {
+                            cabinClassColumns.append($('<div class="cabinClassColumn">'+map.Rows[r].Seats[s].SeatColumn+'</div>'));
+                        }
+                    }
+                    cabin.append(cabinClassColumns);
                 }
-                cabin.append(cabinClassColumns);
+
+                var row = $('<div class="cabinClassRow"></div>');
+                var seats =  map.Rows[r].Seats;
+                var seatType = '';
+
+                for (var s = 0; s < seats.length; s++) {
+
+                    var seatData = seats[s];
+
+                    if (seatData.SeatType === 2 && seatData.IsAvailable) {
+                        seatType = 'preferential';
+                    } else if (seatData.IsAvailable) {
+                        seatType = 'available';
+                    } else {
+                        seatType = 'unavailable';
+                    }
+
+                    if (map.Rows[r].CabinClass === 'F') {
+                        seatType += ' first';
+                    } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
+                        seatType += ' business';
+                    }
+
+                    if (seatData.SeatType === 0) {
+                        var seat = $('<div class="cabinClassSeat galley">'+map.Rows[r].RowNumber.toString()+'</div>');
+                    } else {
+                        var seat = $('<div class="cabinClassSeat"></div>');
+                        var button = $('<button class="'+seatType+'">'+seatData.SeatCode+'</button>');
+                        seat.append(button);
+                    }
+
+                    row.append(seat);
+                }
+
+                lastCabinClass = map.Rows[r].CabinClass;
+                cabin.append(row);
             }
 
-            var row = $('<div class="cabinClassRow"></div>');
-            var seats =  map.Rows[r].Seats;
-            var seatType = '';
+            plane.append(cabin);
+            seatmap.append(plane);
 
-            for (var s = 0; s < seats.length; s++) {
-
-                var seatData = seats[s];
-
-                if (seatData.SeatType === 2 && seatData.IsAvailable) {
-                    seatType = 'preferential';
-                } else if (seatData.IsAvailable) {
-                    seatType = 'available';
-                } else {
-                    seatType = 'unavailable';
-                }
-
-                if (map.Rows[r].CabinClass === 'F') {
-                    seatType += ' first';
-                } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
-                    seatType += ' business';
-                }
-
-                if (seatData.SeatType === 0) {
-                    var seat = $('<div class="cabinClassSeat galley">'+map.Rows[r].RowNumber.toString()+'</div>');
-                } else {
-                    var seat = $('<div class="cabinClassSeat"></div>');
-                    var button = $('<button class="'+seatType+'">'+seatData.SeatCode+'</button>');
-                    seat.append(button);
-                }
-
-                row.append(seat);
+            if (m === 0) {
+                var active = ' class="active"';
+            } else {
+                var active = '';
             }
 
-            lastCabinClass = map.Rows[r].CabinClass;
-            cabin.append(row);
+            var tab = $('<li'+active+'><a data-toggle="tab" href="#'+map.CarrierCode+map.FlightNumber+'">'+map.CarrierCode+map.FlightNumber+'</a></li>');
+            var pane = $('<div class="tab-pane fade in active" id="'+map.CarrierCode+map.FlightNumber+'"></div>');
+
+            tabs.append(tab);
+            pane.append(seatmap);
+            content.append(pane);
         }
 
-        plane.append(cabin);
-        seatmap.append(plane);
+        var container = $('<div></div>');
+        container.append(tabs);
+        container.append(content);
 
-        return seatmap;
+        return container;
     },
 
     init: function(){
