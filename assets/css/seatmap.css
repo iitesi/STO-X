@@ -6,9 +6,16 @@
     text-align: -moz-center; 
     text-align: -webkit-center; }
 
-    #seatmap #plane { width:65%; padding: 5px; background: #888888; }
+    #seatmap #plane { 
+        width:65%;
+        padding: 5px;
+        background: #888888;
+        border-radius: 5px; }
 
-        #seatmap #plane #cabin { background: #000000; padding-right: 5px; }
+        #seatmap #plane #cabin { 
+            background: #000000;
+            padding-right: 5px;
+            border-radius: 5px; }
 
         #cabin .cabinClass {
             font-size: 17px;
@@ -40,5 +47,33 @@
         #cabin .unavailable { background: #888888 !important; color: #000000 !important; cursor: not-allowed !important; }
         #cabin .available { background: #1565c0; color: #ffffff; }
         #cabin .available:hover { background: #1e88e5; border-width: 2px; }
+        #cabin .preferential { background: #2e7d32; color: #ffffff; }
+        #cabin .preferential:hover { background: #43a047; border-width: 2px; }
         #cabin .first { height: 42px !important; background: #ffffff; color: #000000; }
         #cabin .first:hover { background: #ffffff; color: #000000; border-color: #888888; border-width: 2px; }
+        #cabin .business { height: 42px !important; background: #ffffff; color: #000000; }
+        #cabin .business:hover { background: #ffffff; color: #000000; border-color: #888888; border-width: 2px; }
+
+#wingsDown {
+    left: 152px;
+    width: 80px;
+    position: relative;
+    height: 50px;
+    -webkit-transform: skew(20deg);
+        -moz-transform: skew(20deg);
+            -o-transform: skew(20deg);
+    transform: skew(20deg);
+    background: #333;
+}
+
+#wingsUp {
+    left: 152px;
+    width: 80px;
+    position: relative;
+    height: 50px;
+    -webkit-transform: skew(-20deg);
+        -moz-transform: skew(-20deg);
+            -o-transform: skew(-20deg);
+    transform: skew(-20deg);
+    background: #333;
+}

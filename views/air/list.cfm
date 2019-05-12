@@ -1,4 +1,3 @@
-
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 

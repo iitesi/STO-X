@@ -1,7 +1,14 @@
+<cfset krakenService = application.fw.factory.getBean('KrakenService')/>
 <link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css">
 <script src="/booking/assets/js/air/seatmap.js"></script>
 <script>
+	SeatMap.config.KrakenBaseUrl = '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>';
+	SeatMap.config.ApplicationId = '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>';
+	SeatMap.config.SecretKey = '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>';
 	SeatMap.config.StmUserToken = '<cfoutput>#session.StmUserToken#</cfoutput>';
+	SeatMap.config.TargetBranch = '<cfoutput>#rc.Account.sBranch#</cfoutput>';
+	SeatMap.config.AccountId = '<cfoutput>#session.acctId#</cfoutput>';
+	SeatMap.config.UserId = '<cfoutput>#session.userId#</cfoutput>';
 </script>
 <style>
 /** Tweak some global styles only on this page **/
@@ -180,7 +187,7 @@
 				else {
 					c.removeClass('reverse');
 				}
-			} 
+			}
 
 			divList.sort(function(a, b){
 				return ($(a).data(dataelement)-$(b).data(dataelement)) * direction;
