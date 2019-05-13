@@ -70,7 +70,7 @@
 								<div class="col-xs-12 text-muted fs-1">
 									#Segment.FlightNumbers#
 									<br>
-									<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapMapModal" data-id='#serializeJson(Segment)#'>
+									<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
 										<i class="material-icons">airline_seat_recline_normal</i>Seat Map
 									</a>
 								</div>

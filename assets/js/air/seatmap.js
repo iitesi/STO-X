@@ -1,9 +1,9 @@
 var seatMapModalTemplate = `
-    <div class="modal fade" id="seatMapMapModal" tabindex="-1" role="dialog" aria-labelledby="seatMapMapModalTitle" aria-hidden="true">
+    <div class="modal fade" id="seatMapModal" tabindex="-1" role="dialog" aria-labelledby="seatMapModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="width:500px;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="seatMapMapModalTitle" style="font-size:17px;font-weight:bold;"></h5>
+                    <h5 class="modal-title" id="seatMapModalTitle" style="font-size:17px;font-weight:bold;"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -100,6 +100,11 @@ var SeatMap = {
             success: function(result){
                 var body = SeatMap.draw(result);
                 $('.modal-body').html(body.prop('outerHTML'));
+            },
+            statusCode: {
+                401: function() {
+                    window.location.href = '/booking/?index=main.login'
+                }
             }
         });
     },
@@ -117,6 +122,7 @@ var SeatMap = {
             var map = maps[m];
 
             var seatmap = $('<div id="seatmap"></div>');
+            var nosecone = $('<div id="nosecone"></div>');
             var plane = $('<div id="plane"></div>');
             var cabin = $('<div id="cabin"></div>');
 
@@ -199,6 +205,7 @@ var SeatMap = {
 
             plane.append(cabin);
             seatmap.append(plane);
+            seatmap.prepend(nosecone);
 
             if (m === 0) {
                 var activeTab = ' class="active"';
