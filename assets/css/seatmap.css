@@ -74,3 +74,4 @@
 #seatMapLegend .availableBox { display: inline-block; background: #1565c0; height:15px; width: 15px; }
 #seatMapLegend .unavailableBox { display: inline-block; background: #888888; height:15px; width: 15px; }
 #seatMapLegend .preferentialBox { display: inline-block; background: #2e7d32; height:15px; width: 15px; }
+#seatMapLegend .wingBox { display: inline-block; color: #000000; font-weight: bold; }

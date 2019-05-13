@@ -26,7 +26,8 @@ var legendTemplate = `
         <tr>
             <td><span class="preferentialBox"/>&nbsp Preferred</td>
             <td><span class="availableBox"/>&nbsp Available</td>
-            <td><span class="unavailableBox"/>&nbsp Unavailable</td>  
+            <td><span class="unavailableBox"/>&nbsp Unavailable</td>
+            <td><span class="wingBox">W</span>&nbsp Wing Row</td>
         <tr>
     </table>
 `;
@@ -128,7 +129,7 @@ var SeatMap = {
                     if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
                         var cabinClassHeader = 'First Class';
                     } else if (map.Rows[r].CabinClass === 'J' && map.CarrierCode === 'B6') {
-                        var cabinClassHeader = 'JetBlue MINT';
+                        var cabinClassHeader = 'jetBlue MINT';
                     } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
                         var cabinClassHeader = 'Business Class';
                     } else if (map.Rows[r].CabinClass === 'W' && map.CarrierCode === 'DL') {
@@ -173,21 +174,19 @@ var SeatMap = {
                         seatType = 'unavailable';
                     }
 
-                    /* disabling wing indicators for now
                     if (map.Rows[r].IsWingRow && seatData.IsWindow && seatData.SeatColumn === SeatColumns[0]) {
-                        seatChars = ' wingLeft';
+                        seatChars = ' W';
                     } else if (map.Rows[r].IsWingRow && seatData.IsWindow && seatData.SeatColumn === SeatColumns[SeatColumns.length-1]) {
-                        seatChars = ' wingRight';
+                        seatChars = ' W';
                     } else {
-                        seatChars = '';
+                        seatChars = '&nbsp;';
                     }
-                    */
 
                     if (seatData.SeatType === 0) {
                         var seat = $('<div class="cabinClassSeat galley">'+map.Rows[r].RowNumber.toString()+'</div>');
                     } else {
-                        var seat = $('<div class="cabinClassSeat'+seatChars+'"></div>');
-                        var button = $('<button class="'+seatType+'">'+seatData.SeatCode+'</button>');
+                        var seat = $('<div class="cabinClassSeat"></div>');
+                        var button = $('<button class="'+seatType+'">'+seatChars+'</button>');
                         seat.append(button);
                     }
 
@@ -210,7 +209,7 @@ var SeatMap = {
             }
 
             var tab = $('<li'+activeTab+'><a data-toggle="tab" href="#menu'+m+'">'+map.CarrierCode+map.FlightNumber+'</a></li>');
-            var pane = $('<div class="tab-pane fade'+activePane+'" id="'+m+'"></div>');
+            var pane = $('<div class="tab-pane fade'+activePane+'" id="menu'+m+'"></div>');
 
             tabs.append(tab);
             pane.append(seatmap);
