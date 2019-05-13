@@ -1,6 +1,6 @@
 <cfset krakenService = application.fw.factory.getBean('KrakenService')/>
-<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css">
-<script src="/booking/assets/js/air/seatmap.js"></script>
+<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
+<script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 <script>
 	SeatMap.config.KrakenBaseUrl = '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>';
 	SeatMap.config.ApplicationId = '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>';

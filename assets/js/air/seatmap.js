@@ -1,7 +1,7 @@
 var seatMapModalTemplate = `
     <div class="modal fade" id="seatMapMapModal" tabindex="-1" role="dialog" aria-labelledby="seatMapMapModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="width:600px;">
+            <div class="modal-content" style="width:500px;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="seatMapMapModalTitle" style="font-size:17px;font-weight:bold;"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -19,6 +19,16 @@ var seatMapModalTemplate = `
             </div>
         </div>
     </div>
+`;
+
+var legendTemplate = `
+    <table id="seatMapLegend" align="center">
+        <tr>
+            <td><span class="preferentialBox"/>&nbsp Preferred</td>
+            <td><span class="availableBox"/>&nbsp Available</td>
+            <td><span class="unavailableBox"/>&nbsp Unavailable</td>  
+        <tr>
+    </table>
 `;
 
 var SeatMap = {
@@ -95,6 +105,7 @@ var SeatMap = {
 
     draw: function(data){
 
+        var legend = $.parseHTML(legendTemplate);
         var tabs = $('<ul class="nav nav-tabs"></ul>');
         var content = $('<div class="tab-content"></div>');
 
@@ -129,6 +140,11 @@ var SeatMap = {
                     cabinClass = $('<div class="cabinClass">'+cabinClassHeader+'</div>');
                     cabin.append(cabinClass);
 
+                    SeatColumns = [];
+                    for (var s = 0; s < map.Rows[r].Seats.length; s++) {
+                        SeatColumns.push(map.Rows[r].Seats[s].SeatColumn);
+                    }
+
                     var cabinClassColumns = $('<div class="cabinClassColumns"></div>');
                     for (var s = 0; s < map.Rows[r].Seats.length; s++) {
                         if (map.Rows[r].Seats[s].SeatColumn === '') {
@@ -143,6 +159,7 @@ var SeatMap = {
                 var row = $('<div class="cabinClassRow"></div>');
                 var seats =  map.Rows[r].Seats;
                 var seatType = '';
+                var seatChars = '';
 
                 for (var s = 0; s < seats.length; s++) {
 
@@ -156,16 +173,20 @@ var SeatMap = {
                         seatType = 'unavailable';
                     }
 
-                    if (map.Rows[r].CabinClass === 'F') {
-                        seatType += ' first';
-                    } else if (map.Rows[r].CabinClass === 'C' || map.Rows[r].CabinClass === 'J') {
-                        seatType += ' business';
+                    /* disabling wing indicators for now
+                    if (map.Rows[r].IsWingRow && seatData.IsWindow && seatData.SeatColumn === SeatColumns[0]) {
+                        seatChars = ' wingLeft';
+                    } else if (map.Rows[r].IsWingRow && seatData.IsWindow && seatData.SeatColumn === SeatColumns[SeatColumns.length-1]) {
+                        seatChars = ' wingRight';
+                    } else {
+                        seatChars = '';
                     }
+                    */
 
                     if (seatData.SeatType === 0) {
                         var seat = $('<div class="cabinClassSeat galley">'+map.Rows[r].RowNumber.toString()+'</div>');
                     } else {
-                        var seat = $('<div class="cabinClassSeat"></div>');
+                        var seat = $('<div class="cabinClassSeat'+seatChars+'"></div>');
                         var button = $('<button class="'+seatType+'">'+seatData.SeatCode+'</button>');
                         seat.append(button);
                     }
@@ -181,13 +202,15 @@ var SeatMap = {
             seatmap.append(plane);
 
             if (m === 0) {
-                var active = ' class="active"';
+                var activeTab = ' class="active"';
+                var activePane = ' in active';
             } else {
-                var active = '';
+                var activeTab = '';
+                var activePane = '';
             }
 
-            var tab = $('<li'+active+'><a data-toggle="tab" href="#'+map.CarrierCode+map.FlightNumber+'">'+map.CarrierCode+map.FlightNumber+'</a></li>');
-            var pane = $('<div class="tab-pane fade in active" id="'+map.CarrierCode+map.FlightNumber+'"></div>');
+            var tab = $('<li'+activeTab+'><a data-toggle="tab" href="#menu'+m+'">'+map.CarrierCode+map.FlightNumber+'</a></li>');
+            var pane = $('<div class="tab-pane fade'+activePane+'" id="'+m+'"></div>');
 
             tabs.append(tab);
             pane.append(seatmap);
@@ -195,6 +218,7 @@ var SeatMap = {
         }
 
         var container = $('<div></div>');
+        container.append(legend);
         container.append(tabs);
         container.append(content);
 
