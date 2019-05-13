@@ -1,4 +1,3 @@
-<!--- <cfdump var=#session.Filters[rc.SearchID].getUserID()# abort> --->
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
@@ -11,31 +10,39 @@
 		data-first="#structKeyExists(SegmentFares, 'First') ? SegmentFares.First.TotalFare : 1000000#"
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
+		data-segmentid="#Segment.Segmentid#"
+		data-iscontracted="#structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true' ? 'true' : 'false'#"
+		data-longsegment="#Segment.IsLongSegment#"
+		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
+		data-finditmatch="#Segment.IsFindItMatch#"
+		data-unusedticketmatch="#structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)#"
+		data-flightnumbers="#Replace(ReReplace(Segment.FlightNumbers,"[^0-9/]","", "ALL"), "/", ",",  "ALL")#"
 		>
 		<cfset cleanedSegmentId = replace(replace(Segment.SegmentId, '-', '', 'ALL'), '.', '', 'ALL')>
+		<input type="hidden" name="segmentJSON" value="#encodeForHTML(serializeJSON(Segment))#" />
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-xs-2 col-lg-1 center airline-col">
+				<div class="col-xs-2 col-lg-1 center airline-col #structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true'  ? 'iscontracted' : ''#">
 					<div class="row">
 						<div class="col-xs-12">
-							<cfif Segment.IsLongAndExpensive>
-								<span role="button" 
-									data-placement="right" 
-									data-toggle="tooltip" title="Better economy fare and shorter travel times available."
-									class="mdi mdi-alert flight-result-warning"></span>
-							</cfif>
-							<cfif Segment.IsLongSegment>
-								<span role="button" 
-									data-placement="right" 
-									data-toggle="tooltip" title="Segment is more than twice as long as the shortest travel time available."
-									class="mdi mdi-alert flight-result-warning"></span>
-							</cfif>
-							<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
-								<!--- Shane Pitts - Notification for unused tickets UI. --->
-								<i class="material-icons">notifications</i>
-							</cfif>
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
+							<div class="warning-icons">
+								<cfif Segment.IsLongAndExpensive>
+									<span role="button" 
+										data-placement="right" 
+										data-toggle="tooltip" title="Better economy fare and shorter travel times available."
+										class="mdi mdi-cash-multiple flight-result-warning"></span>
+								</cfif>
+								<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
+									<!--- Shane Pitts - Notification for unused tickets UI. --->
+									<span role="button" 
+										data-placement="right" 
+										data-toggle="tooltip" title="Unused tickets exist for this carrier."
+										class="mdi mdi-ticket-account unused-ticket-alert"></span>
+								</cfif>
+							</div>
+							
 						</div>
 						<div class="col-xs-12 hidden-xs visible-lg-block">&nbsp;</div>
 						<div class="col-xs-12 detail-expander hidden-xs visible-lg-block"
@@ -46,7 +53,7 @@
 				</div>
 				<div class="col-xs-10 col-lg-5 results-info-wrapper">
 					<div class="row results_collapsed">
-						<div class="col-xs-12 col-lg-6 ">
+						<div class="col-xs-12 col-md-6 ">
 							<div class="row">
 								<div class="col-xs-12 fs-2 fs-xs-2">
 									#timeFormat(Segment.DepartureTime, 'h:mm tt')# - #timeFormat(Segment.ArrivalTime, 'h:mm tt')#
@@ -62,7 +69,11 @@
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-1">
 									#Segment.FlightNumbers#
-								</div>	
+									<br>
+									<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
+										<i class="material-icons">airline_seat_recline_normal</i>Seat Map
+									</a>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-xs-s fs-s overflow-ellipse">
@@ -70,28 +81,35 @@
 										OPERATED BY #Segment.Codeshare#
 									</cfif>
 								</div>	
-							</div>							
+							</div>		
 						</div>
 						<div class="clearfix visible-xs-block"></div>
-						<div class="col-xs-6 col-lg-3">
+						<div class="col-xs-6 col-md-3">
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
-									#Segment.TravelTime#
+									#Segment.TravelTime# 
+									<cfif Segment.IsLongSegment>
+										<span role="button" 
+											data-placement="right" 
+											data-toggle="tooltip"
+											title="Segment is more than twice as long as the shortest travel time available."
+											class="hidden-xs mdi mdi-timer-sand long-flight-alert"></span>
+									</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">
 									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
 								</div>	
 							</div>
 						</div>
-						<div class="col-xs-6 col-lg-3">		
+						<div class="col-xs-6 col-md-3">		
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
-									<cfif Segment.Results NEQ 'Both'>#Segment.Results#</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 pr-xs-15">
 									#Segment.Connections#
-								</div>	
+									<font color="white">#Segment.Results#</font>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -101,115 +119,149 @@
 						</div>	
 					</div>
 				</div>
+
 				<div class="clearfix visible-xs-block"></div>
 				<div class="col-xs-12 col-lg-6">
 
 					<div class="row fare-wrapper">
-						<cfset BrandedFareIds = ''>
-						<cfloop list="Economy,PremiumEconomy,Business,First" index="CabinClass">
-							<cfif structKeyExists(SegmentFares, CabinClass)>
-								<!--- <cfdump var=#SegmentFares[CabinClass]# abort> --->
-								<cfloop collection="#SegmentFares[CabinClass]#" index="brandedFareName" item="brandedFare">
-									<cfif brandedFareName NEQ 'TotalFare'
-										AND brandedFareName NEQ 'SegmentFareId'
-										AND brandedFareName NEQ 'SegmentId'>
-										<!--- <cfdump var=#brandedFare# abort> --->
-										<cfset BrandedFareIds = listAppend(BrandedFareIds, brandedFare.brandedFareID)>
-										<cfif brandedFare.Bookable>
-											<cfset key = hash(Segment.SegmentId&CabinClass&SegmentFares[CabinClass].SegmentFareId&brandedFare.Refundable)>
-											<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-											<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(brandedFare))#">
-										</cfif>
-										<div class="fares fare-block" data-refundable="#brandedFare.Refundable#"
-											<cfif brandedFare.Bookable>
-												onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#brandedFare.Refundable#','#key#');"
-											</cfif>
-										>
-											<div class="cabin-class">
-												<div class="fs-1 cabin-description overflow-ellipse">
-													<cfif brandedFareName NEQ ''>#brandedFareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
-												</div>
-												<div class="fs-2 fare-display">
-													<div class="overflow-ellipse">$#numberFormat(brandedFare.TotalFare, '_,___')#</div>
-												</div>
-												<cfif brandedFare.OutOfPolicy>
-													<div class="col-xs-12 fs-s policy-error">
-														<div class="fare-warning"
-															role="button"
-															data-placement="top" 
-															data-toggle="tooltip" 
-															title="#arrayToList(brandedFare.OutOfPolicyReason)#">&nbsp;
-														
-														</div>
-														<!---
-														<span  role="button" 
-															class="badge badge-pill warning fare-warning"
-															data-placement="top" 
-															data-toggle="tooltip" 
-															title="#arrayToList(brandedFare.OutOfPolicyReason)#">
-															<i class="fa fas fa-exclamation" aria-hidden="true"></i>
-														</span>
-													--->
-													
-													</div>
-												<cfelse>
-													<div class="fs-s policy-error-hidden"></div>
-												</cfif>
-											</div>												
-										</div>
-									</cfif>
-								</cfloop>
-							<cfelseif structKeyExists(Segment, 'Availability')
-								AND structKeyExists(Segment.Availability, CabinClass)>
 
-								<cfset key = hash(Segment.SegmentId&CabinClass&0)>
-								<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-								<input type="hidden" id="fare#key#" value="">
-								<div class="nopprice-fares fare-block"
-									onclick="submitSegment('#Segment.SegmentId#','#CabinClass#','','0','#key#');"
-								>
-									<div class="cabin-class">
-										<div class="fs-1 cabin-description overflow-ellipse">
-											#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
-										</div>
-										<div class="fs-2 fare-display">
-											<div class="overflow-ellipse fs-s">
-												<cfif structKeyExists(Segment.Availability, CabinClass)
-												AND Segment.Availability[CabinClass].Count>
-												Click to price
-											<cfelseif structKeyExists(Segment.Availability, CabinClass)
-												AND NOT Segment.Availability[CabinClass].Count>
-												Unavailable
-											</cfif>
-											</div>
-										</div>
-										<div class="fs-s policy-error-hidden">
-											&nbsp;
-										</div>
-									</div>												
-								</div>
-							<cfelse>
-								<div class="spacer fare-block">
-									&nbsp;
-								</div>
+						<cfloop from="0" to="0" index="Refundable">
+
+							<cfset BrandedFareIds = ''>
+
+							<cfloop list="Economy,PremiumEconomy,Business,First" index="CabinClass">
+
+								<cfset DisplayedFare = false>
+
+								<cfif structKeyExists(SegmentFares, CabinClass)>
+
+									<cfloop collection="#SegmentFares[CabinClass]#" index="FareName" item="Fare">
+
+										<cfif FareName NEQ 'TotalFare'
+											AND FareName NEQ 'SegmentFareId'
+											AND FareName NEQ 'SegmentId'>
+
+											<cfif Fare.Refundable EQ TrueFalseFormat(Refundable)>
+
+												<!--- Form --->
+												<cfset BrandedFareIds = listAppend(BrandedFareIds, Fare.brandedFareID)>
+												<cfif Fare.Bookable>
+													<cfset key = hash(Segment.SegmentId&CabinClass&SegmentFares[CabinClass].SegmentFareId&Fare.Refundable)>
+													<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+													<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Fare))#">
+												</cfif>
+
+												<!--- Display --->
+												<div class="fares fare-block" 
+													data-refundable="#Fare.Refundable#"
+													data-privatefare="#TrueFalseFormat(Fare.PrivateFare)#"
+													<cfif Fare.Bookable>
+														onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#Fare.Refundable#','#key#');"
+													</cfif>
+												>
+
+													<div class="cabin-class">
+														<div class="fs-1 cabin-description overflow-ellipse">
+															<cfif FareName NEQ ''>#FareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
+							<cfif Fare.PrivateFare>
+								<!--- <div role="button" 
+								class="contracted-after"
+								data-placement="right" 
+								title="Contracted"
+								data-toggle="tooltip"></div>
+								<br>Contracted --->
 							</cfif>
-						</cfloop>
+														</div>
+														<div class="fs-2 fare-display">
+															<div class="overflow-ellipse">$#numberFormat(Fare.TotalFare, '_,___')#</div>
+														</div>
+
+														<cfif Fare.OutOfPolicy>
+															<div class="col-xs-12 fs-s policy-error">
+																<div class="fare-warning"
+																	role="button"
+																	data-placement="top" 
+																	data-toggle="tooltip" 
+																	title="#arrayToList(Fare.OutOfPolicyReason)#">&nbsp;
+																</div>
+															</div>
+														<cfelse>
+															<div class="fs-s policy-error-hidden"></div>
+														</cfif>
+													</div>
+
+												</div>
+
+											</cfif>
+
+										</cfif>
+
+										<cfset DisplayedFare = true>
+
+									</cfloop>
+
+								</cfif>
+
+								<cfif NOT DisplayedFare
+									AND structKeyExists(Segment, 'Availability')
+									AND structKeyExists(Segment.Availability, CabinClass)>
+
+									<cfif structKeyExists(Segment.Availability, CabinClass)
+										AND Segment.Availability[CabinClass].Available>
+										<cfset Status = 'Click to price'>
+									<cfelseif structKeyExists(Segment.Availability, CabinClass)
+										AND NOT Segment.Availability[CabinClass].Available>
+										<cfset Status = 'Unavailable'>
+									</cfif>
+
+									<!--- Form --->
+									<cfset key = hash(Segment.SegmentId&CabinClass&Refundable)>
+									<input type="hidden" id="segment#key#" value="#encodeForHTML(serializeJSON(Segment))#">
+									<input type="hidden" id="fare#key#" value="">
+
+									<!--- Display --->
+									<div class="nopprice-fares fare-block <cfif status EQ 'Unavailable'>noclick</cfif>"
+										<cfif Status EQ 'Click to price'>
+											onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','','#Refundable#','#key#');"
+										</cfif>
+									>
+										<div class="cabin-class">
+											<div class="fs-1 cabin-description overflow-ellipse">
+												#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#
+											</div>
+											<div class="fs-2 fare-display">
+												<div class="overflow-ellipse fs-s">
+													#Status#
+												</div>
+											</div>
+											<div class="fs-s policy-error-hidden">
+												&nbsp;
+											</div>
+										</div>												
+									</div>
+
+								<cfelseif NOT DisplayedFare
+									AND (NOT structKeyExists(Segment, 'Availability')
+									OR NOT structKeyExists(Segment.Availability, CabinClass))>
+
+									<div class="spacer fare-block">
+										&nbsp;
+									</div>
+									
+								</cfif>
+
+							</cfloop><!--- Cabin Loop --->
+
+						</cfloop><!--- Refundable Flag --->
+
 					</div>
 
 				</div>
 			</div>
 				
-			<div class="row hidden-xs visible-lg-block">
+			<div class="row hidden-xs visible-md-block visible-lg-block">
 				<div class="col-xs-12 collapse flight-details-container" id="details#cleanedSegmentId#">
-					<!--- <cfdump var=#Segment# abort> --->
-					<!--- Shane - New code, please fix :) --->
-					<!--- <cfset key = hash(Segment.SegmentId)>
-					<input type="hidden" id="fare#key#" value="#encodeForHTML(serializeJSON(Segment))#">
-					<div class="col-xs-3 panel panel-default" onclick="sendEmail('#key#');" >
-						Send Email
-					</div>
-					<br> --->
-
+					
 					<cfset count = 0>
 					<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
 						<cfset count++>
@@ -271,11 +323,11 @@
 											<span><span>#Flight.CarrierCode#</span>&nbsp;<span>#Flight.FlightNumber#</span></span>
 										</div>
 									</div>
-									<div class="segment-leg-operation-operatedby fs-s overflow-ellipse">
+									<!--- <div class="segment-leg-operation-operatedby fs-s overflow-ellipse">
 										<cfif structKeyExists(Flight, 'CodeshareInfo')>
 											OPERATED BY #Flight.CodeshareInfo.Value#
 										</cfif>
-									</div>
+									</div> --->
 								</div>
 								#count == 0 ? active : ''#
 								<!--- <cfif Segment.SegmentId EQ 'G0-DL.2544-DL.2342'>
@@ -284,7 +336,7 @@
 								#Segment.SegmentId# --->
 							</div>
 							<div class="segment-details-extras">
-								<!--- TODO Hide for now? --->
+								<!--- TODO Hide for now?
 								<ul>
 									<li><span></span> <span> Carry-on bags restricted </span>
 									</li>
@@ -292,7 +344,7 @@
 									<li> Wi-Fi</li>
 									<li> In-seat power outlet</li>
 									<li> Stream media to your device</li>
-								</ul>
+								</ul> --->
 							</div>
 						</div>
 						<cfset previousFlight = Flight>
@@ -302,7 +354,7 @@
 							<cfif len(BrandedFareIds) GT 0
 								OR structKeyExists(Segment, 'Availability')>
 								<cfset paneldetails = "">
-								<ul class="nav nav-tabs" role="tablist">
+								<ul class="nav nav-tabs flight-detail-tabs" role="tablist">
 								<cfset count = 0>
 								<cfloop list="#BrandedFareIds#" index="BrandedFareId">
 									<cfif BrandedFareId NEQ 0>
@@ -329,50 +381,69 @@
 									</li>
 									<cfsavecontent variable="subdetail"><div role="tabpanel" class="tab-pane #count == 0 ? 'active' : ''#" id="#cabinuuid#">
 										<cfloop collection="#Segment.Availability#" index="CabinName" item="CabinItem">
-											<strong>#CabinName NEQ 'PremiumEconomy' ? CabinName : 'Premium Economy'#</strong> - #CabinItem.String#<br><br>
+											<cfloop collection="#CabinItem#" index="FlightNumber" item="FlightItem">
+
+												<cfif FlightNumber NEQ 'Available'>
+													<strong>#CabinName NEQ 'PremiumEconomy' ? CabinName : 'Premium Economy'# on #Replace(FlightNumber, '.', '')#</strong> - #FlightItem.String#<br><br>
+												</cfif>
+
+											</cfloop>
 										</cfloop>
 									</div></cfsavecontent>
 									<cfset paneldetails = "#paneldetails##subdetail#">
 								</cfif>
+								<li role="presentation" class="">
+									<cfset tabuuid = "f#createUUID()#">
+									<a href="###tabuuid#" aria-controls="#tabuuid#" role="tab" data-tab="emailform" data-toggle="tab">Email</a>
+								</li>
+								<cfsavecontent variable="emailtab"><div role="tabpanel" class="tab-pane" id="#tabuuid#">
+email form injects here
+								</div></cfsavecontent>
+								<cfset paneldetails = "#paneldetails##emailtab#">
 								</ul>
 								<div class="tab-content branded-cabin-details">#paneldetails#</div>
 							</cfif>
 					  	  </div>
 						  <div>
-							<h3>Baggage Fees</h3>
 							<cfset Carriers = ''>
+							<cfset DisplayFees = 0>
 							<cfloop collection="#Segment.Flights#" index="flightIndex" item="Flight">
-								<cfif NOT listFind(Carriers, Flight.CarrierCode)>
+								<cfif NOT listFind(Carriers, Flight.CarrierCode)
+									AND structKeyExists(application.stAirVendors[Flight.CarrierCode], 'Bag1')>
+									<cfset DisplayFees++>
+									<cfif DisplayFees EQ 1>
+										<h3>Baggage Fees</h3>
+									</cfif>
 									<cfset Carriers = listAppend(Carriers, Flight.CarrierCode)>
-								<table class="table table-hover table-condensed baggage-fees">
-									<thead>
-									<tr>
-										<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
-										<td class="bold">Paid at online check-in</td>
-										<td class="bold">Paid at airport check-in</td>
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td>1st Checked Bag</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
-									</tr>
-									<tr>
-										<td>2nd Checked Bag</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-									</tr>
-									<tr>
-										<td>Total for 2 Bags (each way)</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
-										<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
-									</tr>
-									<tr>
-										<td>3+ or Oversized Bags</td>
-										<td colspan="2">Additional Fees Apply</td>
-									</tr>
-									</tbody>
+									<table class="table table-hover table-condensed baggage-fees">
+										<thead>
+										<tr>
+											<td class="bold">#application.stAirVendors[Flight.CarrierCode].Name#</td>
+											<td class="bold">Paid at online check-in</td>
+											<td class="bold">Paid at airport check-in</td>
+										</tr>
+										</thead>
+										<tbody>
+										<tr>
+											<td>1st Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1)#</td>
+										</tr>
+										<tr>
+											<td>2nd Checked Bag</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>Total for 2 Bags (each way)</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].Bag1 + application.stAirVendors[Flight.CarrierCode].Bag2)#</td>
+											<td>#DollarFormat(application.stAirVendors[Flight.CarrierCode].CheckInBag1 + application.stAirVendors[Flight.CarrierCode].CheckInBag2)#</td>
+										</tr>
+										<tr>
+											<td>3+ or Oversized Bags</td>
+											<td colspan="2">Additional Fees Apply</td>
+										</tr>
+										</tbody>
 									</table>
 								</cfif>
 							</cfloop>

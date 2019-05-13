@@ -86,6 +86,8 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 
 	<bean id="Itinerary" class="booking.services.Itinerary" />
 
+	<bean id="AirPolicy" class="booking.services.AirPolicy" />
+
 	<bean id="setup" class="booking.services.setup" >
 		<constructor-arg name="assetURL"><bean factory-bean="EnvironmentService" factory-method="getAssetURL" /></constructor-arg>
 		<constructor-arg name="bookingDSN"><bean factory-bean="EnvironmentService" factory-method="getBookingDSN" /></constructor-arg>
@@ -249,7 +251,7 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="air" class="booking.services.air">
 		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
 		<constructor-arg name="availability"><ref bean="availability" /></constructor-arg>
-		<constructor-arg name="rail"><ref bean="rail" /></constructor-arg>
+		<constructor-arg name="airsearch"><ref bean="airsearch" /></constructor-arg>
 	</bean>
 
 	<bean id="lowfare" class="booking.services.lowfare">
@@ -260,6 +262,18 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
 	<bean id="availability" class="booking.services.availability">
 		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
 		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+	</bean>
+
+	<bean id="airsearch" class="booking.services.airsearch">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
+	</bean>
+
+	<bean id="railsearch" class="booking.services.railsearch">
+		<constructor-arg name="KrakenService"><ref bean="KrakenService" /></constructor-arg>
+		<constructor-arg name="Storage"><ref bean="Storage" /></constructor-arg>
+		<constructor-arg name="lowfare"><ref bean="lowfare" /></constructor-arg>
 	</bean>
 
 	<bean id="rail" class="booking.services.rail">
@@ -298,8 +312,12 @@ ARE MADE IN THE FINDIT CONFIG AS IT USES BOOKING CODE
   </bean>
 
 	<bean id="KrakenService" class="com.kraken.KrakenService">
-		<constructor-arg name="krakenLoginUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenLoginUri" /></constructor-arg>
-		<constructor-arg name="krakenFlightSearchUri"><bean factory-bean="EnvironmentService" factory-method="getKrakenFlightSearchUri" /></constructor-arg>
+		<constructor-arg name="krakenBaseUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenBaseUrl" /></constructor-arg>
+		<constructor-arg name="krakenAuthenticationUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenAuthenticationUrl" /></constructor-arg>
+		<constructor-arg name="krakenTravelSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenTravelSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenHotelSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenHotelSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenVehicleSearchUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenVehicleSearchUrl" /></constructor-arg>
+		<constructor-arg name="krakenPurchaseUrl"><bean factory-bean="EnvironmentService" factory-method="getKrakenPurchaseUrl" /></constructor-arg>
 		<constructor-arg name="krakenApplicationId"><bean factory-bean="EnvironmentService" factory-method="getKrakenApplicationId" /></constructor-arg>
 		<constructor-arg name="krakenSecretKey"><bean factory-bean="EnvironmentService" factory-method="getKrakenSecretKey" /></constructor-arg>
   </bean>

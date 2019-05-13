@@ -210,7 +210,8 @@
 #main-content .page-header {
 	border-bottom-color: #d0d0d0;
 	border-bottom-style: dotted;
-	margin: 0 10px 20px; padding: 0;
+	margin: 15px 0;
+	padding: 0;
 }
 
 #main-content .page-header h1 {
@@ -229,6 +230,14 @@
 	font-size: 18px;
 	margin-top: 10px;
 }*/
+html, body{ 
+	height:100%; 
+	margin:0; 
+}
+body {
+	display:flex; 
+  	flex-direction:column; 
+}
 
 #main-content {
 	margin-bottom: 40px;
@@ -236,8 +245,12 @@
 
 #footer {
 	font-size: 13px;
-	position: relative;
+	/* position: relative; */
 	background-color: #333;
+	margin-top:auto; 
+	/* position: absolute;
+	width: 100%;
+	bottom: 0; */
 }
 
 #footer:before {

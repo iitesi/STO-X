@@ -13,7 +13,7 @@
 	<cffunction name="doPurchase" output="false">
 		<cfargument name="Filter" requred="true" />
 		<cfargument name="Traveler" requred="true" />
-		<cfargument name="bookingDSN" requred="true" />
+		<cfargument name="LowestFare" requred="true" />
 
 		<cfset var Filter = arguments.Filter>
 		<cfset var Traveler = arguments.Traveler>
@@ -35,7 +35,8 @@
 
 		<cfset TravelPurchase.FlightPurchaseRequest = createFlightPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
-																		Air = Air)>
+																		Air = Air,
+																		LowestFare = LowestFare)>
 
 		<cfset TravelPurchase.HotelPurchaseRequest = createHotelPurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
@@ -44,6 +45,9 @@
 		<cfset TravelPurchase.VehiclePurchaseRequest = createVehiclePurchaseRequest(Filter = Filter,
 																		Traveler = Traveler,
 																		Vehicle = Vehicle)>
+
+		<!--- <cfdump var=#serializeJSON(TravelPurchase)# abort>
+		<cfdump var=#TravelPurchase# abort> --->
 
 		<cfset var Response = getKrakenService().TravelPurchase(body = TravelPurchase,
 																searchId = Filter.getSearchId())>
@@ -126,7 +130,7 @@
 
 		</cfscript>
 
-		<!--- <cfdump var=#TravelerSharedData# abort> --->
+		<!--- Dohmen DepartmentId --->
 
 		<cfreturn TravelerSharedData>
 	</cffunction>
@@ -176,79 +180,83 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Air" requred="true" />
 
+		<cfset var Filter = arguments.Filter>
+		<cfset var Traveler = arguments.Traveler>
+		<cfset var Air = arguments.Air>
 		<cfset var FlightPricingSegments = []>
 		<cfset var Flights = {}>
 		<cfset var FlightsArray = []>
 		<cfset var FlightStruct = {}>
 		<cfset var FlightPurchaseRequest = {}>
 
-		<cfloop collection="#Air#" index="local.GroupIndex" item="local.Group">
+		<cfif NOT structIsEmpty(Air) 
+			AND Traveler.getBookingDetail().getAirNeeded()>
 
-			<cfloop collection="#Group.Flights#" index="local.index" item="local.Flight">
+			<cfloop collection="#Air#" index="local.GroupIndex" item="local.Group">
 
-				<cfset FlightStruct = {}>
+				<cfloop collection="#Group.Flights#" index="local.index" item="local.Flight">
 
-				<cfscript>
-					FlightStruct = { 
-						outOfPolicy : false,
-						originAirportCode : Flight.originAirportCode,
-						destinationAirportCode : Flight.destinationAirportCode,
-						departureDateTime : Flight.DepartureTimeGMT,
-						arrivalDateTime : Flight.ArrivalTimeGMT,
-						flightNumber : Flight.flightNumber,
-						carrierCode : Flight.carrierCode,
-						//equipment : "321",
-						//changeOfPlane : false,
-						BookingCode : Flight.BookingCode,
-						CabinClass : Flight.CabinClass,
-						isPreferred : false,
-						DepartureTime : Flight.DepartureTimeGMT,
-						ArrivalTime : Flight.ArrivalTimeGMT,
-						// SeatAssignment : {
-						// 	FlightNumber : "402"
-						// },
-						IsPrivateFare : false,
-						BookingDetail : {
-							BrandedFareId : '',
+					<cfset FlightStruct = {}>
+
+					<cfscript>
+						FlightStruct = { 
+							outOfPolicy : Flight.OutOfPolicy ? false : true,
+							originAirportCode : Flight.originAirportCode,
+							destinationAirportCode : Flight.destinationAirportCode,
+							departureDateTime : Flight.DepartureTimeGMT,
+							arrivalDateTime : Flight.ArrivalTimeGMT,
+							flightNumber : Flight.flightNumber,
+							carrierCode : Flight.carrierCode,
 							BookingCode : Flight.BookingCode,
-							FareBasis : Flight.FareBasis
-						}
-					};
+							CabinClass : Flight.CabinClass,
+							isPreferred : Flight.IsPreferred,
+							DepartureTime : Flight.DepartureTimeGMT,
+							ArrivalTime : Flight.ArrivalTimeGMT,
+							// SeatAssignment : {
+							// 	FlightNumber : "402"
+							// },
+							IsPrivateFare : Group.IsContracted,
+							BookingDetail : {
+								BrandedFareId : '',
+								BookingCode : Flight.BookingCode,
+								FareBasis : Flight.FareBasis
+							}
+						};
 
-					arrayAppend(FlightsArray, FlightStruct);
+						arrayAppend(FlightsArray, FlightStruct);
 
-				</cfscript>
+					</cfscript>
+
+				</cfloop>
+
+				<cfset Flights.Flights = FlightsArray>
+				<cfset Flights.Group = GroupIndex>
+				<cfset arrayAppend(FlightPricingSegments, Flights)>
+
+				<cfset FlightsArray = []>
+				<cfset Flights = {}>
 
 			</cfloop>
 
-			<cfset Flights.Flights = FlightsArray>
-			<cfset Flights.Group = GroupIndex>
-			<cfset arrayAppend(FlightPricingSegments, Flights)>
+			<cfscript>
 
-			<cfset FlightsArray = []>
-			<cfset Flights = {}>
+				if (NOT structIsEmpty(Air)) {
 
-		</cfloop>
+					FlightPurchaseRequest = {
+						FlightPricingSegments : FlightPricingSegments,
+						SearchId : Filter.getSearchId(),
+						PlatingCarrier : Air[0].PlatingCarrier,
+						AirLowestFare : LowestFare,
+						ApplyUnusedTickets : structKeyExists(Filter.getUnusedTicketCarriers(), Air[0].PlatingCarrier),
+						AirOutOfPolicyReasonCode : Traveler.getBookingDetail().getAirReasonCode(),
+						HotelNotBookedReasonCode : Traveler.getBookingDetail().getHotelNotBooked(),
+						FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getAirFOPID()) ? Traveler.getBookingDetail().getAirFOPID() : getToken(Traveler.getBookingDetail().getAirFOPID(), 2, '_')
+					}
 
-		<cfscript>
+				};
+			</cfscript>
 
-			if (NOT structIsEmpty(Air)) {
-
-				FlightPurchaseRequest = {
-					FlightPricingSegments : FlightPricingSegments,
-					SearchId : Filter.getSearchId(),
-					AirLowestFare : 338.37,
-					ApplyUnusedTickets : structKeyExists(Filter.getUnusedTicketCarriers(), Air[0].PlatingCarrier),
-					AirOutOfPolicyReasonCode : "",
-					HotelNotBookedReasonCode : Traveler.getBookingDetail().getHotelNotBooked(),
-					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getAirFOPID()) ? Traveler.getBookingDetail().getAirFOPID() : getToken(Traveler.getBookingDetail().getAirFOPID(), 2, '_')
-				}
-
-			};
-		</cfscript>
-
-		<!--- Dohmen to do - AirOutOfPolicyReasonCode --->
-		<!--- Dohmen to do - HotelNotBookedReasonCode --->
+		</cfif>
 
 		<cfreturn FlightPurchaseRequest>
 	</cffunction>
@@ -258,16 +266,13 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Hotel" requred="true" />
 
-		<!--- Dohmen Multiple hotel rooms?
-		arguments.Traveler.getBookingDetail().getHotelSpecialRequests(),"[^0-9A-Za-z\s]","","all")) --->
-
 		<cfscript>
 			var Filter = arguments.Filter;
 			var Traveler = arguments.Traveler;
 			var Hotel = arguments.Hotel;
 			var HotelPurchaseRequest = {};
 
-			if (NOT structIsEmpty(Hotel)) {
+			if (NOT structIsEmpty(Hotel) AND Traveler.getBookingDetail().getHotelNeeded()) {
 
 				HotelPurchaseRequest = {
 					HotelProperty : {  
@@ -277,11 +282,6 @@
 					CheckinDate : dateFormat(Filter.getCheckInDate(), 'yyyy-mm-dd'),
 					CheckoutDate : dateFormat(Filter.getCheckOutDate(), 'yyyy-mm-dd'),
 					RateDetail : {
-						//Dohmen Daily same as Average?  Check with Juan
-						averageRateDuringStay : {  
-							currencyCode : Hotel.getRooms()[1].getDailyRateCurrency(),
-							value : Hotel.getRooms()[1].getDailyRate()
-						},
 						totalForStay : {  
 							currencyCode : Hotel.getRooms()[1].getTotalForStayCurrency(),
 							value : Hotel.getRooms()[1].getTotalForStay()
@@ -289,10 +289,8 @@
 						isContractedRate : Hotel.getRooms()[1].getIsCorporateRate(),
 						isGovermentRate : Hotel.getRooms()[1].getIsGovernmentRate(),
 						outOfPolicy : Hotel.getRooms()[1].getIsInPolicy() ? false : true,
-						//Dohmen plan type and rate id the same?
-						rateId : Hotel.getRooms()[1].getRatePlanType(),
 						depositRequired : Hotel.getRooms()[1].getDepositRequired(),
-						//description : "Regular Rate, Junior Suite, 1 King",
+						//Dohmen - Question out to Juan on Guarentee logic.
 						reservationRequirement : "Guarantee",
 						RatePlanType : Hotel.getRooms()[1].getRatePlanType(),
 						CorporateDiscount : {
@@ -303,6 +301,8 @@
 					},
 					SearchId : Filter.getSearchId(),
 					HotelOutOfPolicyReasonCode : Traveler.getBookingDetail().getHotelReasonCode(),
+					HotelExceptionCode : Traveler.getBookingDetail().getUDID112(),
+					SpecialRequest = Traveler.getBookingDetail().getHotelSpecialRequests(),
 					FormOfPaymentId : isNumeric(Traveler.getBookingDetail().getHotelFOPID()) ? Traveler.getBookingDetail().getHotelFOPID() : getToken(Traveler.getBookingDetail().getHotelFOPID(), 2, '_')
 				};
 
@@ -320,34 +320,13 @@
 		<cfargument name="Traveler" requred="true" />
 		<cfargument name="Vehicle" requred="true" />
 
-<!--- 
-
-	<cfif arguments.Vehicle.getPickUpLocationType() NEQ 'Airport'
-		AND arguments.Vehicle.getPickUpLocationType() NEQ 'Terminal'
-		AND arguments.Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport'>
-
-		PickupLocationType="#arguments.Vehicle.getPickUpLocationType()#"
-		PickupLocationNumber="#arguments.Vehicle.getPickUpLocationID()#"
-
-	</cfif>
-
-		<cfif arguments.Vehicle.getDropOffLocationType() NEQ 'Airport'
-			AND arguments.Vehicle.getDropOffLocationType() NEQ 'Terminal'
-			AND arguments.Vehicle.getDropOffLocationType() NEQ 'ShuttleOffAirport'>
-
-			ReturnLocationType="#arguments.Vehicle.getDropOffLocationType()#"
-			ReturnLocationNumber="#arguments.Vehicle.getDropOffLocationID()#"
-
-		</cfif>
- --->
-
 		<cfscript>
 			var Filter = arguments.Filter;
 			var Traveler = arguments.Traveler;
 			var Vehicle = arguments.Vehicle;
 			var VehiclePurchaseRequest = structNew('linked');
 
-			if (NOT structIsEmpty(Vehicle)) {
+			if (NOT structIsEmpty(Vehicle) AND Traveler.getBookingDetail().getCarNeeded()) {
 				VehiclePurchaseRequest = {
 					AirConditioning : Vehicle.getAirConditioning(),
 					Category : "Car",
@@ -371,9 +350,12 @@
 						},
 					},
 					VehicleOutOfPolicyReasonCode : Traveler.getBookingDetail().getCarReasonCode(),
+					VehicleExceptionCode : Traveler.getBookingDetail().getUDID111(),
 					// Dohmen To Do
 					Carrier : '',
-					FlightNumber : ''
+					FlightNumber : '',
+					HotelNotBookedReasonCode = Traveler.getBookingDetail().getHotelNotBooked(),
+					HotelWhereStayingNotOnItinerary = Traveler.getBookingDetail().getHotelWhereStaying()
 				};
 
 				if (len(Vehicle.getPickUpLocationID()) AND Vehicle.getPickUpLocationType() NEQ 'Airport' AND Vehicle.getPickUpLocationType() NEQ 'Terminal' AND Vehicle.getPickUpLocationType() NEQ 'ShuttleOffAirport') {

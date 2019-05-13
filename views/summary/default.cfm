@@ -46,41 +46,27 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 <cfoutput>
 	<div id="summaryForm">
 
-		<span style="float:right">
-			<cfif NOT rc.hotelSelected
-				AND rc.Filter.getAirType() NEQ 'MD'
-				AND session.DepartmentPreferences.STOHotel NEQ 0>
-				<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#">
-					<span class="fa fa-lg fa-plus"></span> Add Hotel
-				</a>&nbsp;&nbsp;&nbsp;&nbsp;
-			</cfif>
-
-			<cfif NOT rc.vehicleSelected
-				AND rc.Filter.getAirType() NEQ 'MD'
-				AND len(rc.Filter.getCarPickupAirport())
-				AND session.DepartmentPreferences.STOCar NEQ 0>
-				<a href="#buildURL('summary?searchID=#rc.searchID#')#&add=car">
-					<span class="fa fa-lg fa-plus"></span> Add Car
-				</a>
-			</cfif>
-		</span>
-
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->
-		<cfif NOT structIsEmpty(rc.SellErrorMessages)>
-			<cfloop list="#structKeyList(rc.SellErrorMessages)#" index="i">
-				<cfif isArray(rc.SellErrorMessages[i]) AND arrayLen(rc.SellErrorMessages[i])>
-					<cfloop array="#rc.SellErrorMessages[i]#" index="MessageIndex" item="Message">
-						#Message#<br>
-					</cfloop>
-				</cfif>
-			</cfloop>
+		<cfif arrayLen(rc.SellErrorMessages)>
+			<div class="alert alert-warning clearfix">
+				<cfset MessageType = ''>
+				<cfloop collection="#rc.SellErrorMessages#" index="MessageIndex" item="MessageItem">
+					<cfif NOT isObject(MessageItem)>
+						<li>#MessageItem#</li>
+					<cfelseif isObject(MessageItem)>
+						<cfdump var=#MessageItem#><br>
+						<cfset MessageType = 'XML'>
+					</cfif>
+				</cfloop>
+			</div>
 		</cfif>
 
 		<form method="post" class="form-horizontal" id="purchaseForm" action="#buildURL('summary?searchID=#rc.searchID#')#"> 
 		<cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>
 			<div class="page-header">
+
 				<div class="legs clearfix">
 					<cfset count = 0>
 					<cfloop array="#session.searches[rc.searchID].Travelers#" index="travIndex" item="trav">
@@ -119,7 +105,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<input type="hidden" name="valueID" id="valueID" value="#rc.Filter.getValueID()#">
 			<input type="hidden" name="airSelected" id="airSelected" value="#rc.airSelected#">
 			<input type="hidden" name="requireHotelCarFee" id="requireHotelCarFee" value="#rc.account.Require_Hotel_Car_Fee#">
-			<!--- Dohmen to do --->
 			<input type="hidden" name="carriers" id="carriers" value='[#(rc.airSelected ? '"'&rc.Air[0].PlatingCarrier&'"' : '')#]'>
 			<input type="hidden" name="platingcarrier" id="platingcarrier" value=#(rc.airSelected ? rc.Air[1].platingCarrier : '')#>
 			<input type="hidden" name="hotelSelected" id="hotelSelected" value="#rc.hotelSelected#">

@@ -33,44 +33,58 @@
 	}>
 
 	<cffunction name="setupApplication">
-		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory')
-				.init( defaultProperties = { currentServerName=cgi.server_name }) />
+
+		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init( defaultProperties = { currentServerName=cgi.server_name }) />
 		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
 		<cfset setBeanFactory(bf)>
 		<cfset controller('setup.setApplication')>
 		<cfset setupApplicationVariables()>
+
 	</cffunction>
 
 	<cffunction name="setupSession">
+
 		<cfset session.searches = {}/>
 		<cfset session.filters = {}/>
 		<cfset session.aMessages = []/>
 		<cfset controller('setup.setAcctID')/>
 		<cfset controller('setup.setAccount')/>
+
 	</cffunction>
 
 	<cffunction name="setupRequest">
-		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
-		<cfif transactionMonitorExists()>
-			<cfset application.Monitor.sendTransaction(getFullyQualifiedAction())>
+
+		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
+			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
+			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
+			<cfset request.tokenResponse = request.krakenService.refreshToken(session.StmUserToken)/>
+			<cfif request.tokenResponse.IsValid EQ True>
+				<cfset session.StmUserToken = request.tokenResponse.StmUserToken/>
+			</cfif>
 		</cfif>
-		<cfset rc.addNewRelicBrowserJS = getBeanFactory().getBean( "EnvironmentService" ).getEnableNewRelicBrowser()>
+
+		<cfif NOT structKeyExists(request.context, 'additionalFooterJS')>
+			<cfscript>
+				request.context.additionalFooterJS = arrayNew(1);
+			</cfscript>
+		</cfif>
 
 		<cfif listFind("main.logout,main.login,oauth.login",request.context.action)>
 			<cfset controller('setup.setAcctID')/>
 			<cfset controller('setup.setAccount')/>
 		<cfelse>
+			
 			<cfset var actionList = 'main.notfound,main.menu,main.trips,main.search,main.contact,setup.resetPolicy,setup.setPolicy'>
-			<cfif request.context.action EQ 'setup.resetPolicy'>
-				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
-			<cfelseif request.context.action EQ 'setup.resetAirports'>
-				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
-			<cfelseif (NOT structKeyExists(request.context, 'SearchID')
+
+			<cfif (NOT structKeyExists(request.context, 'SearchID')
 				OR NOT isNumeric(request.context.searchID))
-				AND !ListFind(local.actionList,request.context.action)>
+				AND !ListFind(local.actionList, request.context.action)>
+
 				<cfset var action = ListFirst(request.context.action,".")>
 				<cflocation url="#buildURL( "main.notfound" )#" addtoken="false">
+
 			<cfelse>
+
 				<cfset application.fw.factory.getBean("setup").authorizeRequest(request)>
 				<cfset controller('setup.setSearchID')/>
 				<cfset controller('setup.setFilter')/>
@@ -82,9 +96,10 @@
 				<cfset controller('setup.setGroup')/>
 				<cfset controller('setup.setAccountIds')/>
 				<cfset controller('setup.setInvoiceTableSuffix')/>
-				<cfset controller('setup.setBlackListedCarrierPairing')/>
+
 			</cfif>
 		</cfif>
+
 		<cfset controller('setup.cleanOutOldSearchIDs')/>
 
 	</cffunction>
@@ -159,7 +174,7 @@
 			 <cfset super.onError( arguments.exception, arguments.eventName )>
 		 </cfif>
 
-		<cfif listFindNoCase('local,qa', application.fw.factory.getBean('EnvironmentService').getCurrentEnvironment())>
+		<cfif listFindNoCase('local,qa,beta', application.fw.factory.getBean('EnvironmentService').getCurrentEnvironment())>
 			<cfdump var="#local.errorException#" />
 		</cfif>
 	</cffunction>
@@ -168,11 +183,6 @@
 		<cfargument name="cfcname" type="string" required="true">
 		<cfargument name="method" type="string" required="true">
 		<cfargument name="args" type="struct" required="true">
-
-		<!---Transaction monitoring.  What monitors are enabled are controlled via ColdSpring --->
-		<cfif transactionMonitorExists()>
-			<cfset application.Monitor.sendTransaction("#arguments.cfcname#.#arguments.method#")>
-		</cfif>
 
 		<!--- if we are in production - lets check to see where the request is coming from
 					if its not one of our servers we'll end things with a 403  --->
@@ -209,22 +219,10 @@
 
 		<cfreturn />
 	</cffunction>
+
 	<cffunction name="setupApplicationVariables" output="false">
 		<cfset application.gmtOffset = '6:00'>
 		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
 	</cffunction>
 
-	<cffunction name="transactionMonitorExists" output="false">
-		<cftry>
-			<!---SETS UP A 'SMART' TRANSACTION LOGGER BASED ON ENV - CREATED AS A SINGLETON--->
-			<cfif !structKeyExists(application,"Monitor")>
-				<cfset application.Monitor = getBeanFactory().getBean('Monitor')>
-			</cfif>
-			<cfreturn true>
-		<cfcatch type="any">
-			<cflog file="service-error" text="transaction monitor failed initialization: #CFCATCH.message#">
-			<cfreturn false>
-		</cfcatch>
-	</cftry>
-	</cffunction>
 </cfcomponent>

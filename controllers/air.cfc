@@ -8,18 +8,33 @@
 	<cfproperty name="lowFare" setter="true" getter="false">
 	<cfproperty name="lowFareavail" setter="true" getter="false">
 	<cfproperty name="Itinerary" setter="true" getter="false">
+	<cfproperty name="AirPolicy" setter="true" getter="false">
 
 	<cffunction name="default" output="false" hint="I assemble low fares for display.">
 		<cfargument name="rc">
 
 		<cfset var SearchID = SearchID>
-		<cfset var Group = structKeyExists(arguments.rc, 'Group') AND arguments.rc.Group NEQ '' ? arguments.rc.Group : 0>
+
+		<cfif NOT structKeyExists(arguments.rc, 'Group') OR arguments.rc.Group EQ ''>
+			<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=0')>
+		</cfif>
+
+		<cfset var Group = arguments.rc.Group>
 
 		<cfloop array="#arguments.rc.Filter.getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
 			<cfif SegmentIndex-1 GTE Group>
 				<cfset session.searches[SearchID].stItinerary.Air[SegmentIndex-1] = {}>
 			</cfif>
 		</cfloop>
+
+		<cfif Group NEQ 0
+			AND (NOT structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+			OR NOT structKeyExists(session.searches[SearchID].stItinerary.Air, Group-1)
+			OR structIsEmpty(session.searches[SearchID].stItinerary.Air[Group-1]))>
+			
+			<cfset fw.redirect('air?SearchID=#arguments.rc.SearchID#&Group=#Group-1#&Order=')>
+
+		</cfif>
 
 		<cfif structKeyExists(rc, 'FlightSelected')>
 
@@ -46,8 +61,7 @@
 												Filter = arguments.rc.Filter,
 												SearchID = SearchID,
 												Group = Group,
-												SelectedTrip = session.searches[SearchID].stItinerary.Air,
-												cabins = '')><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
+												SelectedTrip = session.searches[SearchID].stItinerary.Air)><!---(structKeyExists(arguments.rc, 'sCabins') ? arguments.rc.sCabins : '')--->
 
 		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
 		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>
@@ -106,6 +120,14 @@
 														Itinerary = session.searches[SearchID].stItinerary.Air,
 														Solutions = Solutions,
 														CabinClass = 'First')>
+
+		<cfset Solutions = variables.airpolicy.checkPolicy(Itinerary = session.searches[SearchID].stItinerary.Air,
+														Solutions = Solutions,
+														LowestFare = session.LowestFare,
+														Account = rc.Account,
+														Policy = rc.Policy)>
+
+		<cfset Solutions = variables.airpolicy.removeDuplicates(Solutions = Solutions)>
 
 		<cfset rc.Solutions = Solutions>
 

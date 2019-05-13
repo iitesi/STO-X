@@ -28,13 +28,21 @@
 		<cfparam name="rc.passwordConfirm" default="" />
 		<cfparam name="rc.priceQuotedError" default="0">
 
-		<cfif structKeyExists(session.searches[SearchId], 'Sell')
-			AND session.searches[SearchId].Sell.Messages.HasErrors>
-			<cfset rc.SellErrorMessages = session.searches[SearchId].Sell.Messages.Errors>
-		<cfelse>
-			<cfset rc.SellErrorMessages = {}>
+		<cfset rc.SellErrorMessages = []>
+		<cfif structKeyExists(session.searches[SearchId], 'Sell')>
+			<cfloop collection="#session.searches[SearchId].Sell#" index="local.TravelerIndex" item="local.TravelerItem">
+				<cfloop collection="#TravelerItem.Messages.Errors#" index="local.Message1" item="local.MessageArray">
+					<cfif isArray(MessageArray)>
+						<cfloop collection="#MessageArray#" index="local.Message2" item="local.Message">
+							<cfset arrayAppend(rc.SellErrorMessages, Message)>
+						</cfloop>
+					</cfif>
+				</cfloop>
+			</cfloop>
 		</cfif>
 
+		<cfset session.searches[SearchId].Sell = {}>
+		
 		<cfset rc.errors = {}>
 		<cfif rc.remove EQ 1>
 			<cfset structDelete(session.searches[rc.searchID].Travelers, rc.travelerNumber)>
@@ -78,6 +86,10 @@
 
 		<cfset rc.airSelected = (structKeyExists(rc.itinerary, 'Air') ? true : false)>
 		<cfset rc.Air = (structKeyExists(rc.itinerary, 'Air') ? rc.itinerary.Air : '')>
+		<cfif rc.airSelected
+			AND NOT structKeyExists(rc.Air[0], 'TotalPrice')>
+			<cfset variables.fw.redirect('air.review?SearchID=#rc.searchID#&Select=')>
+		</cfif>
 
 		<cfset rc.hotelSelected = (structKeyExists(rc.itinerary, 'Hotel') ? true : false)>
 		<cfset rc.Hotel = (structKeyExists(rc.itinerary, 'Hotel') ? rc.itinerary.Hotel : '')>
@@ -756,7 +768,8 @@
 																			, searchID = rc.searchID
 																			, password = rc.password
 																			, passwordConfirm = rc.passwordConfirm
-																			, action = rc.trigger )>
+																			, action = rc.trigger
+																			, TravelerNumber = rc.TravelerNumber )>
 			<cfif structIsEmpty(rc.errors)>
 				<cfif isNumeric(left(rc.trigger, 1))>
 					<cfset variables.fw.redirect('summary?searchID=#rc.searchID#&travelerNumber=#(left(rc.trigger, 1))#')>

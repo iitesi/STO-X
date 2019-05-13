@@ -36,6 +36,10 @@
 
 		<!--- <cfdump var=#cfhttp.filecontent#> --->
 
+		<cfif NOT structKeyExists(cfhttp, 'filecontent')>
+			<cfdump var=#cfhttp# abort>
+		</cfif>
+
 		<cfset var Solutions = parse(Itinerary = arguments.Itinerary,
 									Response = cfhttp.filecontent,
 									Solutions = arguments.Solutions)>
@@ -75,6 +79,7 @@
 				<cfset FlightCount++>
 				<cfset Carrier = listAppend(Carrier, Segment.CarrierCode)>
 				<cfif NOT len(CabinClass) 
+					AND structKeyExists(Itinerary[GroupIndex], 'Fare')
 					AND isStruct(Itinerary[GroupIndex].Fare)>
 
 					<cfset BookingCodeCount++>
@@ -116,7 +121,28 @@
 									</cfloop>
 								</cfloop>
 							</air:AirItinerary>
-							<air:AirPricingModifiers ProhibitUnbundledFareTypes="true" ProhibitMinStayFares="false" ProhibitMaxStayFares="false" CurrencyType="USD" ProhibitAdvancePurchaseFares="false" ETicketability="Required" ProhibitNonExchangeableFares="false" ForceSegmentSelect="false" ProhibitNonRefundableFares="#ProhibitNonRefundableFares#">
+							<air:AirPricingModifiers
+								PlatingCarrier="#Group.PlatingCarrier#" 
+								ProhibitUnbundledFareTypes="true" 
+								ProhibitMinStayFares="false" 
+								ProhibitMaxStayFares="false" 
+								CurrencyType="USD" 
+								ProhibitAdvancePurchaseFares="false" 
+								ETicketability="Required" 
+								ProhibitNonExchangeableFares="false" 
+								ForceSegmentSelect="false" 
+								ProhibitNonRefundableFares="#ProhibitNonRefundableFares#">
+								<cfif arrayLen(Account.Air_PF)
+									AND Segment.CarrierCode NEQ 'Mult'
+									AND listFind(arrayToList(Account.Air_PF), Segment.CarrierCode)>
+									<air:AccountCodes>
+										<cfloop array="#Account.Air_PF#" index="local.PrivateFare">
+											<cfif getToken(PrivateFare, 2, ',') EQ Segment.CarrierCode>
+												<com:AccountCode Code="#getToken(PrivateFare, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(PrivateFare, 2, ',')#" />
+											</cfif>
+										</cfloop>
+									</air:AccountCodes>
+								</cfif>
 								<air:PermittedCabins>
 									<cfif len(PermittedCabins)>
 										<com:CabinClass Type="#PermittedCabins#" />
@@ -128,17 +154,6 @@
 										</cfloop>
 									</cfif>
 								</air:PermittedCabins>
-									<!--- AND arguments.bAccountCodes EQ 1 --->
-								<cfif arrayLen(Account.Air_PF)
-									AND arrayLen(Carrier) EQ 1>
-									<air:AccountCodes>
-										<cfloop array="#Account.Air_PF#" index="local.PrivateFare">
-											<cfif getToken(PrivateFare, 2, ',') EQ Carrier>
-												<com:AccountCode Code="#getToken(PrivateFare, 3, ',')#" ProviderCode="1V" SupplierCode="#getToken(PrivateFare, 2, ',')#" />
-											</cfif>
-										</cfloop>
-									</air:AccountCodes>
-								</cfif>
 							</air:AirPricingModifiers>
 							<!--- <cfif Account.Gov_Rates>
 								<com:SearchPassenger Code="GST" PricePTCOnly="true" Key="1">
@@ -168,6 +183,8 @@
 			</cfoutput>
 		</cfsavecontent>
 
+		<!--- <cfdump var=#RequestBody# abort> --->
+
 		<cfreturn RequestBody />
 	</cffunction>
 
@@ -185,6 +202,14 @@
 		<cfset var TotalPrice = 0>
 
 		<cfset Response = Response.XMLRoot.XMLChildren[1].XMLChildren[1].XMLChildren>
+
+		<cfloop collection="#Response#" index="i" item="ResponseItem">
+			<cfif ResponseItem.XMLName EQ 'faultstring'>
+
+				<cfset ArrayAppend(Solutions, ResponseItem.XMLText)>
+
+			</cfif>
+		</cfloop>
 
 		<cfloop collection="#Response#" index="i" item="ResponseItem">
 			<cfif ResponseItem.XMLName EQ 'air:AirItinerary'>
@@ -221,12 +246,14 @@
 								<cfset Solution.Refundable = structKeyExists(AirPricingInfo.XMLAttributes, 'Refundable') ? AirPricingInfo.XMLAttributes.Refundable : false>
 								<cfset Solution.CabinClass = ''>
 								<cfset Solution.BrandedFare = ''>
+								<cfset Solution.IsContracted = false>
 
 								<cfloop collection="#AirPricingInfo.XMLChildren#" index="i" item="BookingInfo">
 
 									<cfif BookingInfo.XMLName EQ 'air:FareInfo'>
 
 										<cfset Fares[BookingInfo.XMLAttributes.Key].FareBasis = BookingInfo.XMLAttributes.FareBasis>
+										<cfset Solution.IsContracted = structKeyExists(BookingInfo.XMLAttributes, 'PrivateFare') AND BookingInfo.XMLAttributes.PrivateFare EQ 'AirlinePrivateFare' ? true : false>
 
 										<cfloop collection="#BookingInfo.XMLChildren#" index="i" item="FareInfo">
 
@@ -277,18 +304,22 @@
 
 									<cfelseif BookingInfo.XMLName EQ 'air:BookingInfo'>
 
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].CabinClass = BookingInfo.XMLAttributes.CabinClass>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].BookingCode = BookingInfo.XMLAttributes.BookingCode>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].FareBasis = Fares[BookingInfo.XMLAttributes.FareInfoRef].FareBasis>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].BrandedFare = Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Carrier = Flights[BookingInfo.XMLAttributes.SegmentRef].Carrier>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].FlightNumber = Flights[BookingInfo.XMLAttributes.SegmentRef].FlightNumber>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Destination = Flights[BookingInfo.XMLAttributes.SegmentRef].Destination>
-										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId].Wifi = structKeyExists(Flights[BookingInfo.XMLAttributes.SegmentRef], 'Wifi') ? true : false>
-										<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] =  structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'Description') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].Description : ''>
+										<cfset Solution.Flights[Flights[BookingInfo.XMLAttributes.SegmentRef].FightId] = {
+											CabinClass = BookingInfo.XMLAttributes.CabinClass,
+											BookingCode = BookingInfo.XMLAttributes.BookingCode,
+											FareBasis = Fares[BookingInfo.XMLAttributes.FareInfoRef].FareBasis,
+											BrandedFare = structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'BrandedFare') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare : '',
+											Carrier = Flights[BookingInfo.XMLAttributes.SegmentRef].Carrier,
+											FlightNumber = Flights[BookingInfo.XMLAttributes.SegmentRef].FlightNumber,
+											Origin = Flights[BookingInfo.XMLAttributes.SegmentRef].Origin,
+											Destination = Flights[BookingInfo.XMLAttributes.SegmentRef].Destination,
+											Wifi = structKeyExists(Flights[BookingInfo.XMLAttributes.SegmentRef], 'Wifi') ? true : false
+										}>
+										<cfif structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'BrandedFare')>
+											<cfset Solution[Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare] =  structKeyExists(Fares[BookingInfo.XMLAttributes.FareInfoRef], 'Description') ? Fares[BookingInfo.XMLAttributes.FareInfoRef].Description : ''>
+											<cfset Solution.BrandedFare = listAppend(Solution.BrandedFare, Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare)>
+										</cfif>
 										<cfset Solution.CabinClass = listAppend(Solution.CabinClass, BookingInfo.XMLAttributes.CabinClass)>
-										<cfset Solution.BrandedFare = listAppend(Solution.BrandedFare, Fares[BookingInfo.XMLAttributes.FareInfoRef].BrandedFare)>
 
 									<cfelseif BookingInfo.XMLName EQ 'air:PassengerType'>
 

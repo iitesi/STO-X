@@ -1,29 +1,11 @@
-<cfset krakenService = application.fw.factory.getBean('KrakenService')/>
-<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
-<script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
-<script>
-	SeatMap.config.KrakenBaseUrl = '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>';
-	SeatMap.config.ApplicationId = '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>';
-	SeatMap.config.SecretKey = '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>';
-	SeatMap.config.StmUserToken = '<cfoutput>#session.StmUserToken#</cfoutput>';
-	SeatMap.config.TargetBranch = '<cfoutput>#rc.Account.sBranch#</cfoutput>';
-	SeatMap.config.AccountId = '<cfoutput>#session.acctId#</cfoutput>';
-	SeatMap.config.UserId = '<cfoutput>#session.userId#</cfoutput>';
-</script>
 <style>
-/** Tweak some global styles only on this page **/
-.page-header {
-	margin-bottom: 0 !important;
-	border-bottom: none !important;
-}
-.seatMapOpener {
-	cursor: pointer;
-	font-size: 1.5rem;
-	line-height: 24px;
-	vertical-align: top;
-	white-space: nowrap;
-}
+	/** Tweak some global styles only on this page **/
+	.page-header {
+		margin-bottom:0!important;
+		border-bottom:none!important;
+	}
 </style>
+
 <cfoutput>
 	<div class="row">
 		<cfif structKeyExists(rc, 'Order')
@@ -35,21 +17,18 @@
 		</cfif>
 		<div class="col-sm-12">
 			<div class="page-header">
-				#View('air/legs')#
+				#View('rail/legs')#
 			</div>
 		</div>
 		<div class="col-sm-12" id="aircontent">
 			<div class="row">
 				<div class="col-sm-12 departing-segments">
-					#View('air/pin')#
+					#View('rail/pin')#
 				</div>
 				<div class="col-sm-12" id="hidefilterfromprint">
-					#View('air/filter2')#
+					#View('rail/filter2')#
 				</div>
-				<cfset variables.Fares = rc.trips.Fares>
-				<cfset variables.BrandedFares = rc.trips.BrandedFares>
-				<!--- Needs to be in the variables scope to be passed into the view. --->
-				<cfset variables.trips = rc.trips>
+				<!--- 
 				<div class="col-lg-12 hidden-xs visible-lg-block listcontainer-header">
 					<div class="panel panel-default">
 						<div class="row">
@@ -92,14 +71,10 @@
 						</div>
 					</div>
 				</div>
-				
+				--->
 				<div class="list-view col-sm-12" id="listcontainer">
-					<cfscript>
-						airlines = {};
-						connectingAirports = {};
-					</cfscript>
-					<cfloop collection="#rc.trips.Segments#" index="segmentIndex" item="variables.Segment">
-						<cfscript>
+					<cfloop collection="#rc.trips#" index="RailIndex" item="variables.Rail">
+						<!--- <cfscript>
 							if( structKeyExists(variables.Segment, 'Connections')){
 								connectionCodes = listToArray(variables.Segment.Connections);
 								for (i=1; i <= arrayLen(connectionCodes);i=i+1) {
@@ -115,11 +90,9 @@
 									structInsert(airlines, carrierCode, application.stAirVendors[carrierCode].Name)
 								}
 							}						
-						</cfscript>
-						<cfset variables.SegmentFares = structKeyExists(rc.trips.SegmentFares, segmentIndex) ? rc.trips.SegmentFares[segmentIndex] : {}>
-						<cfset variables.Fares = structKeyExists(rc.trips.Fares, segmentIndex) ? rc.trips.Fares[segmentIndex] : {}>
-						<cfif left(segmentIndex, 2) EQ 'G'&rc.group>
-							#View('air/list')#
+						</cfscript> --->
+						<cfif Rail.Group EQ rc.Group>
+							#View('rail/list')#
 						</cfif>
 					</cfloop>
 				</div>
@@ -129,20 +102,14 @@
 						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
-				<!---cfdump var="#rc.trips.Segments#"/--->
 			</div>
 		</div>
 	
-		<form method="post" action="#buildURL('air')#" id="lowfareavailForm">
-			<input type="hidden" name="FlightSelected" value="1">
+		<form method="post" action="#buildURL('rail')#" id="RailForm">
+			<input type="hidden" name="RailSelected" value="1">
 			<input type="hidden" name="SearchId" value="#rc.SearchID#">
 			<input type="hidden" name="Group" value="#rc.Group#">
-			<input type="hidden" name="SegmentId" id="SegmentId" value="">
-			<input type="hidden" name="CabinClass" id="CabinClass" value="">
-			<input type="hidden" name="SegmentFareId" id="SegmentFareId" value="">
-			<input type="hidden" name="Refundable" id="Refundable" value="">
-			<input type="hidden" name="Segment" id="Segment" value="">
-			<input type="hidden" name="Fare" id="Fare" value="">
+			<input type="text" name="Rail" id="Rail" value="">
 		</form>
 		<!---#View('modal/popup')#--->
 	
@@ -151,22 +118,16 @@
 	
 	<script type="application/javascript">
 
-		var airportCities = <cfoutput>#serializeJSON(connectingAirports)#</cfoutput>;
-		var airlines = <cfoutput>#serializeJSON(airlines)#</cfoutput>;
-
-		function submitSegment(SegmentId,CabinClass,SegmentFareId,Refundable,Key) {
+		function submitRail(Key) {
 			if (!this.classList.contains('opacity-hidden')){
-				$("#SegmentId").val(SegmentId);
-				$("#CabinClass").val(CabinClass);
-				$("#SegmentFareId").val(SegmentFareId);
-				$("#Refundable").val(Refundable);
-				$("#Segment").val($("#segment"+Key).val());
-				$("#Fare").val($("#fare"+Key).val());
-				$("#lowfareavailForm").submit();
+				$("#Rail").val($("#rail"+Key).val());
+				$("#RailForm").submit();
 			}
 		}
 
-		function sendEmail(Key) {
+	</script>
+
+<!--- 		function sendEmail(Key) {
 			$("#Email_Segment").val($("#fare"+Key).val());
 		}
 		
@@ -187,7 +148,7 @@
 				else {
 					c.removeClass('reverse');
 				}
-			}
+			} 
 
 			divList.sort(function(a, b){
 				return ($(a).data(dataelement)-$(b).data(dataelement)) * direction;
@@ -283,18 +244,6 @@
 			if ("fares" == element){
 				$matches = $('#listcontainer .fares[data-'+name+'="'+value+'"]');
 			}
-			else if("stops" == name) {
-				$matches = $('#listcontainer > div[data-'+name+']').filter(function(){
-					const $this = $(this);
-					const segmentValue = $this.data(name);
-					if (value <= 1){
-						return segmentValue <= value;
-					}
-					else {
-						return segmentValue == value;
-					}
-				})
-			}
 			else {
 				$matches = $('#listcontainer > div[data-'+name+'="'+value+'"]');
 			}
@@ -344,13 +293,11 @@
 			var values = [];
 			$matches.each(function(){
 				var data = $(this).data(name);
-				if (data.length) {
-					var items = data.replace(/ /gi,'').split(',');
-					for(var i=0;i<items.length;i++){
-						var item = $.trim(items[i]);
-						if(!values.includes(item)){
-							values.push(item);
-						}
+				var items = data.replace(/ /gi,'').split(',');
+				for(var i=0;i<items.length;i++){
+					var item = $.trim(items[i]);
+					if(!values.includes(item)){
+						values.push(item);
 					}
 				}
 			});
@@ -553,8 +500,8 @@
 
 		var doFilter = function(){
 			var filters = {
-				stops: Number(getGroupValue('stops')),
-				refundable: Number(getGroupValue('refundable')),
+				stops: getGroupValue('stops'),
+				refundable: getGroupValue('refundable'),
 				connection: getGroupValue('connection'),
 				layover: rangeDetails('layover'),
 				duration: rangeDetails('duration'),
@@ -579,27 +526,15 @@
 									return true;
 								}
 								const tripFlightNumbers = $this.data('flightnumbers');
-								if(typeof tripFlightNumbers !== 'undefined' ){
-									if (typeof tripFlightNumbers === 'number') {
-										return tripFlightNumbers == filters[key];
-									}
-									else if (tripFlightNumbers.includes(',')) {
-										const tripFlightNumbersArray = tripFlightNumbers.split(',');
-										return tripFlightNumbersArray.includes(filters[key]);
-									}
-									
+								if(typeof tripFlightNumbers !== 'undefined' && tripFlightNumbers.length > 0){
+									const tripFlightNumbersArray = tripFlightNumbers.split(',');
+									return tripFlightNumbersArray.includes(filters[key]);
 								}
 								return false;
 								break;
 							}
 							case 'stops': {
-								const thisStops = Number($this.data('stops'));
-								if (filters[key] == 2){
-									return thisStops == filters[key];
-								}
-								else {
-									return thisStops <= filters[key];
-								}
+								return $this.data('stops') == filters[key];
 								break;
 							}
 							case 'refundable': {
@@ -629,7 +564,7 @@
 									}
 									return false;
 								}
-								return true;
+								return false;
 								break;
 							}
 							case 'departure': {
@@ -689,7 +624,6 @@
 
 
 			var filters = $('#filterbar li.dropdown');
-			
 			filters.each(function(){
 				var $filter = $(this);
 				var $anchor = $filter.find('a.dropdown-toggle');
@@ -722,8 +656,7 @@
 				}
 				else if ($single.length){
 					var $selected = $single.find('input[type=radio]:checked');
-					var defaultChecked = typeof $selected.attr('defaultchecked') !== 'undefined';
-					if (defaultChecked){
+					if ($selected.val() == -1){
 						$anchor.removeClass('filtered');
 						$anchor.html($("<span/>").html($anchor.data('dflt'))).append($('<b class="caret"/>'));
 					}
@@ -736,16 +669,6 @@
 					}
 				}
 			});
-
-			var allTripCount = $('#listcontainer > div.trip').length;
-			var visibleTripCount = $('#listcontainer > div.trip:visible').length;
-
-			if (allTripCount === visibleTripCount){
-				$('#clearFilters').addClass('hidden');
-			}
-			else {
-				$('#clearFilters').removeClass('hidden');
-			}
 
 		}
 
@@ -833,11 +756,11 @@
 			setActive($(this), true);
 		});
 
-</script>
+</script> --->
 	
-<div class="row hidden">
+<!--- <div class="row hidden">
 	<cfoutput>#View('air/email')#</cfoutput>
-</div>
+</div> --->
 	
 <!--- <div class="row">
 	<cfdump var=#structKeyList(rc.trips)#>
