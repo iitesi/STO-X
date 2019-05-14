@@ -148,7 +148,7 @@ var SeatMap = {
                         var cabinClassHeader = 'Main Cabin';
                     }
 
-                    cabinClass = $('<div class="cabinClass">'+cabinClassHeader+'</div>');
+                    cabinClass = $('<div class="cabinClass" alt="Class Code: '+map.Rows[r].CabinClass+'" title="Class Code: '+map.Rows[r].CabinClass+'">'+cabinClassHeader+'</div>');
                     cabin.append(cabinClass);
 
                     SeatColumns = [];
