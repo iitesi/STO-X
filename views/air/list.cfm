@@ -1,3 +1,4 @@
+<cfparam name="Segment.IsFindItMatch" default="false"/>
 <cfoutput>
 	<div class="panel panel-default trip" 
 		data-stops="#Segment.Stops LTE 2 ? Segment.Stops : 2#" 
