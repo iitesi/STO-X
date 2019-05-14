@@ -50,7 +50,7 @@ var SeatMap = {
 
         var data = SeatMap.data;
         
-        $('.modal-body').text('Loading Seat Map ...');
+        $('.modal-body').html('<i class="fa fa-spinner fa-spin"></i><span>Loading Seat Map ...</span>');
         $('.modal-title').text('Seat Map for ' + data.SegmentRoute + ' ' + data.FLIGHTNUMBERS);
 
         var seatMapRequest = {
