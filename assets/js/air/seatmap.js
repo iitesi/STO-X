@@ -123,6 +123,7 @@ var SeatMap = {
 
             var seatmap = $('<div id="seatmap"></div>');
             var nosecone = $('<div id="nosecone"></div>');
+            var tailsection = $('<div id="tailsection"></div>');
             var plane = $('<div id="plane"></div>');
             var cabin = $('<div id="cabin"></div>');
 
@@ -132,7 +133,10 @@ var SeatMap = {
 
                 if (map.Rows[r].CabinClass != lastCabinClass) {
 
-                    if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
+                    // gettin hacky widdit til i can fix this in kraken
+                    if (map.Rows[map.Rows.length-1].CabinClass === 'F') {
+                        var cabinClassHeader = 'Main Cabin';
+                    } else if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
                         var cabinClassHeader = 'First Class';
                     } else if (map.Rows[r].CabinClass === 'J' && map.CarrierCode === 'B6') {
                         var cabinClassHeader = 'jetBlue MINT';
@@ -200,12 +204,14 @@ var SeatMap = {
                 }
 
                 lastCabinClass = map.Rows[r].CabinClass;
+
                 cabin.append(row);
             }
 
             plane.append(cabin);
             seatmap.append(plane);
             seatmap.prepend(nosecone);
+            seatmap.append(tailsection);
 
             if (m === 0) {
                 var activeTab = ' class="active"';
