@@ -209,10 +209,10 @@
 	$(function(){
 		try {
 			let cabinFares = <cfoutput>#serializeJSON(cabinFares)#</cfoutput>;
+			cabinFares = cabinFares.map(a => Number(a)).sort(function(a, b){return a - b});
 			var fareRangeLink = $('#fare-range-html');
 
 			if(fareRangeLink.length && cabinFares.length){
-				cabinFares.sort();
 				let fareHtml = '$' + cabinFares[0];
 				if(cabinFares.length > 1){
 					fareHtml = fareHtml + ' to $' + cabinFares[cabinFares.length-1];
