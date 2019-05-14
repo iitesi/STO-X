@@ -149,15 +149,15 @@
 								<div class="irs-title">Trip Length</div>
 								<input type="text" class="js-range-slider" id="duration-range-slider" name="duration-range" value="" />
 							</li>	
-							<li>
+							<!--li>
 								<div class="md-radio">
 									<input id="refundable-a" defaultchecked checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="-1" data-title="Any Fare Type" title="Any Fare Type">
 									<label for="refundable-a">Any Fare Type</label>
 								</div>
-							</li>
+							</li-->
 							<li>
 								<div class="md-radio">
-									<input id="refundable-0" class="singlefilter" type="radio" name="refundable" data-element="fares" value="0" data-title="0" title="Non Refundable">
+									<input id="refundable-0" defaultchecked checked class="singlefilter" type="radio" name="refundable" data-element="fares" value="0" data-title="0" title="Non Refundable">
 									<label for="refundable-0">Non Refundable</label>
 								</div>
 							</li>

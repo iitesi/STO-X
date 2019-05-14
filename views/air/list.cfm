@@ -126,7 +126,7 @@
 
 					<div class="row fare-wrapper">
 
-						<cfloop from="0" to="0" index="Refundable">
+						<cfloop from="0" to="1" index="Refundable">
 
 							<cfset BrandedFareIds = ''>
 
@@ -153,7 +153,7 @@
 												</cfif>
 
 												<!--- Display --->
-												<div class="fares fare-block" 
+												<div class="fares fare-block #Fare.Refundable eq 0 ? '' : 'hidden'#" 
 													data-refundable="#Fare.Refundable#"
 													data-privatefare="#TrueFalseFormat(Fare.PrivateFare)#"
 													<cfif Fare.Bookable>
@@ -164,14 +164,14 @@
 													<div class="cabin-class">
 														<div class="fs-1 cabin-description overflow-ellipse">
 															<cfif FareName NEQ ''>#FareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
-							<cfif Fare.PrivateFare>
-								<!--- <div role="button" 
-								class="contracted-after"
-								data-placement="right" 
-								title="Contracted"
-								data-toggle="tooltip"></div>
-								<br>Contracted --->
-							</cfif>
+															<cfif Fare.PrivateFare>
+																<!--- <div role="button" 
+																class="contracted-after"
+																data-placement="right" 
+																title="Contracted"
+																data-toggle="tooltip"></div--->
+																<br>Contracted
+															</cfif>
 														</div>
 														<div class="fs-2 fare-display">
 															<div class="overflow-ellipse">$#numberFormat(Fare.TotalFare, '_,___')#</div>
@@ -221,10 +221,11 @@
 									<input type="hidden" id="fare#key#" value="">
 
 									<!--- Display --->
-									<div class="nopprice-fares fare-block <cfif status EQ 'Unavailable'>noclick</cfif>"
+									<div class="nopprice-fares fare-block #status EQ 'Unavailable' ? 'noclick' : ''# #Refundable eq 0 ? '' : 'hidden'#"
 										<cfif Status EQ 'Click to price'>
 											onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','','#Refundable#','#key#');"
 										</cfif>
+										data-refundable="#Refundable#"
 									>
 										<div class="cabin-class">
 											<div class="fs-1 cabin-description overflow-ellipse">
@@ -245,7 +246,8 @@
 									AND (NOT structKeyExists(Segment, 'Availability')
 									OR NOT structKeyExists(Segment.Availability, CabinClass))>
 
-									<div class="spacer fare-block">
+									<div class="spacer fare-block #Refundable eq 0 ? '' : 'hidden'#"
+										data-refundable="#Refundable#">
 										&nbsp;
 									</div>
 									
