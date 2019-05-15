@@ -552,7 +552,43 @@
 						)
 					AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
 						OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
-					<cfset local.error[field] = '' />
+					
+					
+					
+					<cfset local.error[field] = local.OU.getOUType() & ' at pos 1'/>
+
+
+					<cfscript>
+
+						// debugging OU stuff
+						writeDump(local.error[field]);
+						writeDump(local.field);
+						writeDump(local.OU.getOUName());
+						writeDump(local.OU.getOUDisplay());
+						writeDump(local.OU.getOURequired());
+						writeDump(local.OU.getOURequiredProfileOnly());
+						writeDump(arguments.Traveler.getUserID());
+						writeDump(local.OU.getOURequiredCBAOnly());
+						writeDump(arguments.Traveler.getBookingDetail().getAirNeeded());
+						writeDump(arguments.Traveler.getBookingDetail().getNewAirCC());
+						writeDump(arguments.Traveler.getBookingDetail().getAirFOPID());
+						writeDump(arguments.Traveler.getBookingDetail().getHotelNeeded());
+						writeDump(arguments.Traveler.getBookingDetail().getNewHotelCC());
+						writeDump(arguments.Traveler.getBookingDetail().getHotelFOPID());
+
+						writeDump(local.OU.getOUFreeform());
+						writeDump(local.OU.getValueReport())
+						writeDump(local.OU.getOUFreeform());
+						writeDump(local.OU.getValueID());
+
+						writeDump((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0));
+						writeDump((local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)));
+
+						writeDump(local.OU);
+						abort;
+
+					</cfscript>
+
 				</cfif>
 
 				<cfif local.OU.getOUFreeform() EQ 1
@@ -568,14 +604,14 @@
 							OR (local.patternCharacter EQ 'A' AND REFind("[A-Za-z]", local.stringCharacter, 1) NEQ 1)
 							OR (local.patternCharacter EQ 'x' AND REFind("[^a-zA-Z0-9\s]", local.stringCharacter, 1) EQ 1)
 							OR (REFind("[^A-Za-z|^0-9]", local.patternCharacter, 1) EQ 1 AND local.patternCharacter NEQ local.stringCharacter)>
-							<cfset local.error[field] = '' />
+							<cfset local.error[field] = local.OU.getOUType() & ' at pos 2'/>
 							<cfbreak>
 						</cfif>
 					</cfloop>
 					<cfif len(trim( local.OU.getValueReport() )) GT 0
 						AND (len(trim( local.OU.getValueReport() )) GT local.OU.getOUMax()
 						OR len(trim( local.OU.getValueReport() )) LT local.OU.getOUMin())>
-						<cfset local.error[field] = '' />
+						<cfset local.error[field] = local.OU.getOUType() & ' at pos 3'/>
 					</cfif>
 				</cfif>
 			</cfif>
