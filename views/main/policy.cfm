@@ -62,7 +62,7 @@
 			</cfoutput>
 			</ul>
 		</div>
-	</div><!-- /.row -- >
+	</div><!-- /.row -->
 </cfif>
 
 <cfif StructKeyExists(rc,'debugPolicy') AND rc.debugPolicy>
