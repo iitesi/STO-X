@@ -134,7 +134,8 @@ var SeatMap = {
                 if (map.Rows[r].CabinClass != lastCabinClass) {
 
                     // gettin hacky widdit til i can fix this in kraken
-                    if (map.Rows[map.Rows.length-1].CabinClass === 'F') {
+                    var lastCabinClass = map.Rows[map.Rows.length-1].CabinClass;
+                    if (lastCabinClass === 'F' || lastCabinClass === 'J') {
                         var cabinClassHeader = 'Main Cabin';
                     } else if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
                         var cabinClassHeader = 'First Class';
