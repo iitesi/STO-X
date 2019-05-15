@@ -1456,7 +1456,8 @@ ul.tabs li a.active {
 }
 
 #resultsCount span {
-	margin-right: 10px;
+	margin-right: 5px;
+	margin-left: 5px;
 }
 
 #filterDuration .dropdown-menu, #filterTimes .dropdown-menu, #filterMore .dropdown-menu {
