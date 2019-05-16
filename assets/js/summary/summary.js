@@ -47,6 +47,10 @@ $(document).ready(function(){
 
 	// Get traveler from session and populate the form
 	function getTraveler() {
+
+		var userID = $( "#userID" ).val();
+		var isGuest = (userID == 0);
+
 		$.ajax({type:"POST",
 			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{
@@ -55,9 +59,16 @@ $(document).ready(function(){
 					},
 			dataType: 'json',
 			success:function(traveler) {
+
+				//console.log('getTraveler()...response');
+				//console.log(traveler);
+
 				loadTraveler(traveler, 'initial');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+					if (isGuest && traveler.orgUnit[i].OUID == 925) { // Employee ID
+						traveler.orgUnit[i].valueReport = traveler.orgUnit[i].OUDefault;
+					}
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {
@@ -89,6 +100,13 @@ $(document).ready(function(){
 
 	// On change find the other traveler's data
 	$( "#userID" ).on('change', function() {
+
+		var userID = $( "#userID" ).val();
+		var isGuest = (userID == 0);
+		
+		//console.log('userID onChange()...');
+		//console.log(userID);
+
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
 		$( "#carSpinner" ).show();
@@ -97,15 +115,22 @@ $(document).ready(function(){
 			url: 'RemoteProxy.cfc?method=loadFullUser',
 			data: 	{
 						  acctID : acctID
-						, userID : $( "#userID" ).val() 
+						, userID : userID
 						, arrangerID : arrangerID
 						, vendor : $( "#vendor" ).val()
 					},
 			dataType: 'json',
 			success:function(traveler) {
+
+				//console.log('userID onChange()...response');
+				//console.log(traveler);
+
 				loadTraveler(traveler, 'change');
 				$( "#orgUnits" ).html('');
-				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) { 
+				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
+					if (isGuest && traveler.orgUnit[i].OUID == 925) { // Employee ID
+						traveler.orgUnit[i].valueReport = traveler.orgUnit[i].OUDefault;
+					}
 					createForm(traveler.orgUnit[i]);
 				}
 				if (acctID == 348) {

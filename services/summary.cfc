@@ -553,14 +553,12 @@
 					AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
 						OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
 					
-					
-					
 					<cfset local.error[field] = local.OU.getOUType() & ' at pos 1'/>
-
 
 					<cfscript>
 
 						// debugging OU stuff
+						/* stashing...
 						writeDump(local.error[field]);
 						writeDump(local.field);
 						writeDump(local.OU.getOUName());
@@ -586,6 +584,7 @@
 
 						writeDump(local.OU);
 						abort;
+						*/
 
 					</cfscript>
 
