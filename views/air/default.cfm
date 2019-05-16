@@ -604,16 +604,16 @@
 							}
 							case 'refundable': {
 								if (filters[key] == 0) {
-									$('.fares[data-refundable=0]').removeClass('opacity-hidden');
-									$('.fares[data-refundable=1]').addClass('opacity-hidden');
+									$('.fares[data-refundable=0]').removeClass('hidden');
+									$('.fares[data-refundable=1]').addClass('hidden');
 								}
 								if (filters[key] == 1) {
-									$('.fares[data-refundable=0]').addClass('opacity-hidden');
-									$('.fares[data-refundable=1]').removeClass('opacity-hidden');
+									$('.fares[data-refundable=0]').addClass('hidden');
+									$('.fares[data-refundable=1]').removeClass('hidden');
 								}
 								if (filters[key] == -1) {
-									$('.fares[data-refundable=0]').removeClass('opacity-hidden');
-									$('.fares[data-refundable=1]').removeClass('opacity-hidden');
+									$('.fares[data-refundable=0]').removeClass('hidden');
+									$('.fares[data-refundable=1]').removeClass('hidden');
 								}
 								return true;
 								break;
