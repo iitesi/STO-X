@@ -29,7 +29,10 @@ OR NOT rc.Filter.getAir()>
 	<div>
 		<cfoutput>
 			#view('car/search')#
-			#view('car/filter')#
+			<!--- ROLLBACK: If something isn't working correctly with the new one.
+			simply comment out the next line and uncomment out the original filter  --->
+			#view('car/pill-filter')#
+			<!---#view('car/filter')#--->
 		</cfoutput>
 	</div>
 	<cfoutput>
