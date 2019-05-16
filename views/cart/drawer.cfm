@@ -239,13 +239,14 @@
                     <cfif rc.action DOES NOT CONTAIN 'air'
                         AND rc.action DOES NOT CONTAIN 'summary'>
 
-                        <li>
-                            <cfif listLen(listRemoveDuplicates(tripCurrency)) EQ 1>
-                                <button>$#numberFormat(tripTotal, '____.__')#</button>
-                            <cfelse>
-                                <button>BOOK TRIP</button>
-                            </cfif>
-                        </li>
+                        <cfif len(trim(tripTotal))>
+                            <div class="select-fare-button" style="padding-left:15px;">
+                                <a href="?action=summary&SearchID=#rc.SearchID#" class="btn btn-primary">
+                                    $#numberFormat(tripTotal, '____.__')#&nbsp;
+                                    Check Out
+                                </a>
+                            </div>
+                        </cfif>
                         
                     </cfif>
                 </cfoutput>

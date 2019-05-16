@@ -86,13 +86,6 @@
 					</cfif>
 				</cfif>
 
-				<!--- Remove future segments already selected if they are changing a previous segment. --->
-				<cfloop array="#session.Filters[rc.SearchId].getLegsForTrip()#" index="local.SegmentIndex" item="local.SegmentItem">
-					<cfif SegmentIndex-1 GTE rc.Group>
-						<cfset session.searches[SearchID].stItinerary.Air[SegmentIndex-1] = {}>
-					</cfif>
-				</cfloop>
-
 				<!--- Move them back a segment if they haven't selected one for the previous segment. --->
 				<cfif rc.Group NEQ 0
 					AND (NOT structKeyExists(session.searches[SearchID].stItinerary, 'Air')
