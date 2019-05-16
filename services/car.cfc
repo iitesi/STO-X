@@ -60,9 +60,17 @@
 			AND (arguments.Filter.getArrivalDateTimeActual() IS "Anytime"
 				OR arguments.Filter.getArrivalDateTime() EQ arguments.Filter.getCarDropoffDateTime()
 				OR arguments.Filter.getArrivalDateTime() LT arguments.Filter.getCarDropoffDateTime())
-			AND arguments.Filter.getAirType() EQ 'RT'>
+				AND arguments.Filter.getAirType() EQ 'RT'>
+		
+				<cfif structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+					AND structKeyExists(session.searches[SearchID].stItinerary.Air[1], 'DepartureTime')>
+					<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air[1].DepartureTime )>
+				<cfelseif structKeyExists(session.searches[SearchID].stItinerary, 'Air')
+					AND structKeyExists(session.searches[SearchID].stItinerary.Air[0], 'DepartureTime')>
+				<cfelse>
+					<cfset variables.fw.redirect('main.search')/>
+				</cfif>
 
-			<cfset arguments.Filter.setCarDropoffDateTime( session.searches[SearchID].stItinerary.Air[1].DepartureTime )>
 		</cfif>
 
 		<cfset session.Filters[ searchID ] = arguments.Filter>

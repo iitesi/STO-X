@@ -521,15 +521,20 @@
 		<cfset var ShortestTravelTime = 100000>
 
 		<!--- Mark segments as poor if they are longer and more expensive. --->
-
 		<cfloop collection="#arguments.SegmentFares#" index="fareIndex" item="fareItem">
 			<cfif structKeyExists(fareItem, 'Economy')>
-				<cfset Economy = {}>
-				<cfset Economy.TotalFare = fareItem.Economy.TotalFare>
-				<cfset Economy.TotalTravelTimeInMinutes = Segments[fareItem.Economy.SegmentId].TotalTravelTimeInMinutes>
-				<cfset Economy.CarrierCode =Segments[fareItem.Economy.SegmentId].CarrierCode>
-				<cfset Economy.SegmentId = fareItem.Economy.SegmentId>
-				<cfset DepartureTime = Segments[fareItem.Economy.SegmentId].DepartureTime>
+				<cfset Economy = {
+					TotalFare = fareItem.Economy.TotalFare,
+					SegmentId = fareItem.Economy.SegmentId,
+					TotalTravelTimeInMinutes = '',
+					CarrierCode = ''
+				}/>
+				<cfset DepartureTime = ''/>
+				<cfif structKeyExists(Segments, fareItem.Economy.SegmentId)>>
+					<cfset Economy.TotalTravelTimeInMinutes = Segments[fareItem.Economy.SegmentId].TotalTravelTimeInMinutes/>
+					<cfset Economy.CarrierCode = Segments[fareItem.Economy.SegmentId].CarrierCode/>
+					<cfset DepartureTime = Segments[fareItem.Economy.SegmentId].DepartureTime/>
+				</cfif>
 				<cfparam name="TempSegments['#Segments[#fareItem.Economy.SegmentId#].DepartureTime&Economy.CarrierCode#']" default="#arrayNew()#">
 				<cfset arrayAppend(TempSegments[Segments[fareItem.Economy.SegmentId].DepartureTime&Economy.CarrierCode], Economy)>
 			</cfif>
