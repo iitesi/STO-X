@@ -552,7 +552,42 @@
 						)
 					AND ((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0)
 						OR (local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)))>
+					
 					<cfset local.error[field] = '' />
+
+					<cfscript>
+
+						// debugging OU stuff
+						/* stashing...
+						writeDump(local.error[field]);
+						writeDump(local.field);
+						writeDump(local.OU.getOUName());
+						writeDump(local.OU.getOUDisplay());
+						writeDump(local.OU.getOURequired());
+						writeDump(local.OU.getOURequiredProfileOnly());
+						writeDump(arguments.Traveler.getUserID());
+						writeDump(local.OU.getOURequiredCBAOnly());
+						writeDump(arguments.Traveler.getBookingDetail().getAirNeeded());
+						writeDump(arguments.Traveler.getBookingDetail().getNewAirCC());
+						writeDump(arguments.Traveler.getBookingDetail().getAirFOPID());
+						writeDump(arguments.Traveler.getBookingDetail().getHotelNeeded());
+						writeDump(arguments.Traveler.getBookingDetail().getNewHotelCC());
+						writeDump(arguments.Traveler.getBookingDetail().getHotelFOPID());
+
+						writeDump(local.OU.getOUFreeform());
+						writeDump(local.OU.getValueReport())
+						writeDump(local.OU.getOUFreeform());
+						writeDump(local.OU.getValueID());
+
+						writeDump((local.OU.getOUFreeform() EQ 1 AND len(trim( local.OU.getValueReport() )) EQ 0));
+						writeDump((local.OU.getOUFreeform() NEQ 1 AND (len(trim( local.OU.getValueID() )) EQ 0 OR local.OU.getValueID() EQ 0 OR local.OU.getValueID() EQ -1)));
+
+						writeDump(local.OU);
+						abort;
+						*/
+
+					</cfscript>
+
 				</cfif>
 
 				<cfif local.OU.getOUFreeform() EQ 1
