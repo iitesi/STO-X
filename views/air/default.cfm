@@ -129,7 +129,7 @@
 						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
-				<!---cfdump var="#rc.trips.Segments#"/--->
+				<a href="#buildURL('air?SearchId=#rc.SearchId#&Group=#rc.Group#&ShowAll=true')#">Show Hidden Flights</a>
 			</div>
 		</div>
 	
