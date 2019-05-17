@@ -47,6 +47,7 @@
 					#View('air/filter2')#
 				</div>
 				<cfset variables.Fares = rc.trips.Fares>
+				<cfset variables.stItinerary = rc.stItinerary>
 				<cfset variables.BrandedFares = rc.trips.BrandedFares>
 				<!--- Needs to be in the variables scope to be passed into the view. --->
 				<cfset variables.trips = rc.trips>
