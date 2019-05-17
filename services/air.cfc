@@ -25,6 +25,7 @@
 		<cfargument name="SelectedTrip" default="">
 		<cfargument name="SearchType" default="AirSearch"><!--- Options:  AirSearch, LowFare, Availability, Both --->
 		<cfargument name="refundable" required="false" default="false">
+		<cfargument name="ShowAll" required="false" default="false">
 
 		<cfset var start = 0>
 		<cfset var AvailabilityResponse = {}>
@@ -153,15 +154,19 @@
 
 		</cfif>
 
-		<cfset local.Segments = applyModifiers(Segments = StructCopy(trips.Segments),
-												Leg = Filter.getLegsForTrip()[Group+1])>
+		<cfif NOT arguments.ShowAll>
 
-		<!--- Make sure that not all flights are cleared out. --->
-		<cfif NOT structIsEmpty(local.Segments)>
-			<cfset trips.Segments = local.Segments>
-		<cfelse>
-			<cfset trips.Segments = applyMinModifiers(Segments = StructCopy(trips.Segments),
+			<cfset local.Segments = applyModifiers(Segments = StructCopy(trips.Segments),
 													Leg = Filter.getLegsForTrip()[Group+1])>
+
+			<!--- Make sure that not all flights are cleared out. --->
+			<cfif NOT structIsEmpty(local.Segments)>
+				<cfset trips.Segments = local.Segments>
+			<cfelse>
+				<cfset trips.Segments = applyMinModifiers(Segments = StructCopy(trips.Segments),
+														Leg = Filter.getLegsForTrip()[Group+1])>
+			</cfif>
+
 		</cfif>
 
 		<cfif arguments.Group EQ 0>
