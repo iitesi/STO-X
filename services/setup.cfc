@@ -348,7 +348,7 @@
 				SELECT Acct_ID
 				, Account_Name
 				, Delivery_AON
-				, (SELECT Account_Logo
+				, (SELECT Acct_Logo
 						FROM Corporate_Production.dbo.Accounts
 						WHERE Acct_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.AcctID#" />) AS Logo
 				<!--- , Logo --->
@@ -421,7 +421,7 @@
 			</cfloop>
 
 			<cfquery name="local.qLogo" datasource="#getCorporateProductionDSN()#">
-				SELECT account_logo
+				SELECT acct_logo account_logo
 				FROM accounts
 				WHERE Acct_ID = <cfqueryparam value="#arguments.AcctID#" cfsqltype="cf_sql_integer">
 			</cfquery>
