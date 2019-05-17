@@ -6,7 +6,7 @@
 	<cfif listFindNoCase("r.local",cgi.server_name)>
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfset local.returnURL = "http://#cgi.server_name#" />
-	<cfelseif listFindNoCase("sto,sto.shortstravel.com,beta,beta.shortstravel.com,stohotels,www.stohotels.com,railoq,railoqa.shortstravel.com",cgi.server_name)>
+	<cfelseif listFindNoCase("beta,beta.shortstravel.com,stohotels,www.stohotels.com,railoq,railoqa.shortstravel.com",cgi.server_name)>
 		<cfset local.secureURL = "https://europaqa.shortstravel.com" />
 		<cfset local.returnURL = "https://#cgi.server_name#" />
 	<cfelse>
