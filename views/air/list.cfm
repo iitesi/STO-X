@@ -73,7 +73,7 @@
 									<cfif NOT Segment.FlightNumbers contains "WN" AND NOT Segment.FlightNumbers contains "F9">
 										<br>
 										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
-											<i class="material-icons">airline_seat_recline_normal</i>Preview Seats
+											Preview Seats
 										</a>
 									</cfif>
 								</div>

@@ -18,7 +18,7 @@
 }
 .seatMapOpener {
 	cursor: pointer;
-	font-size: 1.5rem;
+	font-size: 1.25rem;
 	line-height: 24px;
 	vertical-align: top;
 	white-space: nowrap;
