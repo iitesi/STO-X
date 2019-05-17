@@ -36,7 +36,6 @@
 										class="mdi mdi-cash-multiple flight-result-warning"></span>
 								</cfif>
 								<cfif structKeyExists(session.Filters[rc.SearchId].getUnusedTicketCarriers(), Segment.CarrierCode)>
-									<!--- Shane Pitts - Notification for unused tickets UI. --->
 									<span role="button" 
 										data-placement="right" 
 										data-toggle="tooltip" title="Unused tickets exist for this carrier."
@@ -100,7 +99,12 @@
 									</cfif>
 								</div>	
 								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">
-									#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
+									<cfif rc.Group NEQ 0 
+										AND stItinerary.Air[rc.Group-1].DestinationAirportCode NEQ Segment.OriginAirportCode>
+										<span style="color:red">#Segment.OriginAirportCode#</span>-#Segment.DestinationAirportCode#
+									<cfelse>
+										#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
+									</cfif>
 								</div>	
 							</div>
 						</div>
