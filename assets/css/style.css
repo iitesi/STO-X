@@ -858,7 +858,7 @@ ul.tabs li a.active {
 	padding: 0;
 }
 
-.airline-col.iscontracted::after {
+.airline-col.ispreferred::after {
     content: '';
     position: absolute;
     top: 1px;
@@ -867,7 +867,7 @@ ul.tabs li a.active {
     border-style: solid;
 }
 
-.airline-col.iscontracted::after {
+.airline-col.ispreferred::after {
     border-width: 0.6em;
     border-left-color: #2e6da4;
     border-top-color: #2e6da4;
