@@ -254,6 +254,8 @@
 		<cfset var Carrier = ''>
 		<cfset var Connections = ''>
 		<cfset var FlightNumbers = ''>
+		<cfset var Layover = ''>
+		<cfset var LayoverTime = ''>
 		<cfset var Segments = {}>
 
 		<cfif listFind('WN,F9,NK,G4', CarrierCode)>
@@ -302,6 +304,7 @@
 					<cfset Connections = ''>
 					<cfset FlightNumbers = ''>
 					<cfset Codeshare = ''>
+					<cfset Layover = ''>
 					<cfloop collection="#segmentItem.Flights#" index="flightIndex" item="flightItem">
 						<cfset Carrier = listAppend(Carrier, flightItem.CarrierCode)>
 						<cfif structKeyExists(flightItem, 'CodeshareInfo')
@@ -319,6 +322,10 @@
 						<cfset flightItem.DepartureTime 		= left(flightItem.DepartureTimeString, 19)>
 						<cfset flightItem.ArrivalTimeGMT		= left(flightItem.ArrivalTimeString, 29)>
 						<cfset flightItem.ArrivalTime 			= left(flightItem.ArrivalTimeString, 19)>
+						<cfif flightIndex NEQ 1>
+							<cfset LayoverTime = dateDiff('n', segmentItem.Flights[flightIndex-1].ArrivalTime, FlightItem.DepartureTime)>
+							<cfset Layover = listAppend(Layover, segmentItem.Flights[flightIndex-1].DestinationAirportCode & ' ' & int(LayoverTime/60) & 'H ' & LayoverTime%60 & 'M')>
+						</cfif>
 						<cfset structDelete(flightItem, 'DepartureTimeString')>
 						<cfset structDelete(flightItem, 'ArrivalTimeString')>
 					</cfloop>
@@ -327,6 +334,7 @@
 					<cfset Segments[segmentItem.SegmentId].Codeshare = replace(listRemoveDuplicates(Codeshare), ',', ', ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].Connections = replace(Connections, ',', ', ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL')>
+					<cfset Segments[segmentItem.SegmentId].Layover = replace(Layover, ',', ' <br> ', 'ALL')>
 					<cfset Segments[segmentItem.SegmentId].IsLongAndExpensive = false>
 					<cfset Segments[segmentItem.SegmentId].IsLongSegment = false>
 					<cfset Segments[segmentItem.SegmentId].Results = 'LowFare'>
