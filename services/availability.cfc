@@ -171,6 +171,8 @@
 		<cfset var Connections = ''>
 		<cfset var FlightNumbers = ''>
 		<cfset var Codeshare = ''>
+		<cfset var Layover = ''>
+		<cfset var LayoverTime = ''>
 		<cfset var Flights = []>
 		<cfset var Flight = {}>
 		<cfset var BookingCodeIndex = ''>
@@ -222,6 +224,7 @@
 				<cfset Connections = ''>
 				<cfset FlightNumbers = ''>
 				<cfset Codeshare = ''>
+				<cfset Layover = ''>
 
 				<!--- Determine the overall carrier(s) and connection(s). --->
 				<cfloop collection="#segmentItem#" index="flightIndex" item="flightItem">
@@ -260,6 +263,10 @@
 					<cfif flightCount NEQ flightIndex>
 						<cfset Connections = listAppend(Connections, flightItem.Destination)>
 					</cfif>
+					<cfif flightIndex NEQ 1>
+						<cfset LayoverTime = dateDiff('n', segmentItem[flightIndex-1].ArrivalTime, FlightItem.DepartureTime)>
+						<cfset Layover = listAppend(Layover, segmentItem[flightIndex-1].Destination & ' ' & int(LayoverTime/60) & 'H ' & LayoverTime%60 & 'M')>
+					</cfif>
 					<cfset FlightNumbers = listAppend(FlightNumbers, flightItem.Carrier&flightItem.FlightNumber)>
 					<cfset arrayAppend(Flights, Flight)>
 
@@ -281,6 +288,7 @@
 									CarrierCode = listLen(listRemoveDuplicates(Carrier)) EQ 1 ? listRemoveDuplicates(Carrier) : 'Mult',
 									Codeshare = replace(listRemoveDuplicates(Codeshare), ',', ', ', 'ALL'),
 									Connections = replace(Connections, ',', ', ', 'ALL'),
+									Layover = replace(Layover, ',', ' <br> ', 'ALL'),
 									FlightNumbers = replace(FlightNumbers, ',', ' / ', 'ALL'),
 									IsLongAndExpensive = false,
 									IsLongSegment = false,
