@@ -566,6 +566,10 @@
 			};
 			// console.log(filters);
 			var filterKeys = Object.keys(filters);
+			// Special handling of whether or not to show nonstop flights after the connections fields
+			// have been interacted with.
+			const allConectingAirportsChecked = $("#connection-all").is(":checked");
+
 			$('#listcontainer > div').each(function(){
 				var $this = $(this);
 
@@ -620,13 +624,20 @@
 								break;
 							}
 							case 'connection': {
-								var airports = $this.data('connection');
-								if (typeof airports !== 'undefined' && airports.length){
-									var airportArray = airports.replace(/ /gi, '').split(',');
-									for (var a=0;a<airportArray.length;a++){
-										if(filters[key].includes(airportArray[a])){
-											return true;
+								// make sure that we don't filter out non-stop
+								if(allConectingAirportsChecked){
+									return true;
+								}
+								if(Array.isArray(filters[key]) && filters[key].length > 0){
+									var airports = $this.data('connection');
+									if (typeof airports !== 'undefined' && airports.length){
+										var airportArray = airports.replace(/ /gi, '').split(',');
+										for (var a=0;a<airportArray.length;a++){
+											if(filters[key].includes(airportArray[a])){
+												return true;
+											}
 										}
+										return false;
 									}
 									return false;
 								}
