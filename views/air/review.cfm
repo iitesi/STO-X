@@ -155,7 +155,7 @@
 						#Fare.Refundable ? 'Refundable' : 'Non Refundable'#
 					</div>
 					<div class="contracted">
-						Contracted:  #YesNoFormat(Fare.IsContracted)#
+						Contracted:  #YesNoFormat(Fare.IsPrivateFare)#
 					</div>
 					<div class="bookable">
 						Bookable:  #YesNoFormat(Fare.IsBookable)#

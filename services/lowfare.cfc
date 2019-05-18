@@ -473,7 +473,7 @@
 									AND fareItem.IsBookable )>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].TotalFare = fareItem.TotalFare.Value>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].Refundable = fareItem.IsRefundable ? 1 : 0>
-								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].PrivateFare = fareItem.IsPrivateFare>
+								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].IsPrivateFare = fareItem.IsPrivateFare>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].OutOfPolicy = fareItem.OutOfPolicy>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].OutOfPolicyReason = fareItem.OutOfPolicyReason>
 								<cfset SegmentFares[groupItem.SegmentId][groupItem.CabinCode][groupItem.BrandedFareName].BrandedFareId = groupItem.BrandedFareId>

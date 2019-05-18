@@ -215,7 +215,7 @@
 							// SeatAssignment : {
 							// 	FlightNumber : "402"
 							// },
-							IsPrivateFare : Group.IsContracted,
+							IsPrivateFare : Group.IsPrivateFare,
 							BookingDetail : {
 								BrandedFareId : '',
 								BookingCode : Flight.BookingCode,
