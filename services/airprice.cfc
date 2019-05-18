@@ -246,14 +246,14 @@
 								<cfset Solution.Refundable = structKeyExists(AirPricingInfo.XMLAttributes, 'Refundable') ? AirPricingInfo.XMLAttributes.Refundable : false>
 								<cfset Solution.CabinClass = ''>
 								<cfset Solution.BrandedFare = ''>
-								<cfset Solution.IsContracted = false>
+								<cfset Solution.IsPrivateFare = false>
 
 								<cfloop collection="#AirPricingInfo.XMLChildren#" index="i" item="BookingInfo">
 
 									<cfif BookingInfo.XMLName EQ 'air:FareInfo'>
 
 										<cfset Fares[BookingInfo.XMLAttributes.Key].FareBasis = BookingInfo.XMLAttributes.FareBasis>
-										<cfset Solution.IsContracted = structKeyExists(BookingInfo.XMLAttributes, 'PrivateFare') AND BookingInfo.XMLAttributes.PrivateFare EQ 'AirlinePrivateFare' ? true : false>
+										<cfset Solution.IsPrivateFare = structKeyExists(BookingInfo.XMLAttributes, 'PrivateFare') AND BookingInfo.XMLAttributes.PrivateFare EQ 'AirlinePrivateFare' ? true : false>
 
 										<cfloop collection="#BookingInfo.XMLChildren#" index="i" item="FareInfo">
 

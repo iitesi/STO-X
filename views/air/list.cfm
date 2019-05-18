@@ -12,7 +12,7 @@
 		data-connection="#Segment.Connections#"
 		data-airline="#Segment.CarrierCode#"
 		data-segmentid="#Segment.Segmentid#"
-		data-iscontracted="#structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true' ? 'true' : 'false'#"
+		data-iscontracted="#structKeyExists(Segment, "IsPrivateFare") AND Segment.IsPrivateFare EQ 'true' ? 'true' : 'false'#"
 		data-longsegment="#Segment.IsLongSegment#"
 		data-longandexpensivesegment="#Segment.IsLongAndExpensive#"
 		data-finditmatch="#Segment.IsFindItMatch#"
@@ -24,7 +24,7 @@
 	  	<div class="panel-body">
 			<div class="row flight-details-header">
 				<!---<span class="#ribbonclass#"></span>--->		
-				<div class="col-xs-2 col-lg-1 center airline-col #structKeyExists(Segment, "IsContracted") AND Segment.IsContracted EQ 'true'  ? 'iscontracted' : ''#">
+				<div class="col-xs-2 col-lg-1 center airline-col #structKeyExists(Segment, "IsPrivateFare") AND Segment.IsPrivateFare EQ 'true'  ? 'iscontracted' : ''#">
 					<div class="row">
 						<div class="col-xs-12">
 							<img class="carrierimg" src="assets/img/airlines/#Segment.CarrierCode#.png" title="#application.stAirVendors[Segment.CarrierCode].Name#" width="60">
@@ -161,7 +161,7 @@
 												<!--- Display --->
 												<div class="fares fare-block #Fare.Refundable eq 0 ? '' : 'hidden'#" 
 													data-refundable="#Fare.Refundable#"
-													data-privatefare="#TrueFalseFormat(Fare.PrivateFare)#"
+													data-privatefare="#TrueFalseFormat(Fare.IsPrivateFare)#"
 													<cfif Fare.Bookable>
 														onclick="submitSegment.call(this, '#Segment.SegmentId#','#CabinClass#','#SegmentFares[CabinClass].SegmentFareId#','#Fare.Refundable#','#key#');"
 													</cfif>
@@ -170,7 +170,7 @@
 													<div class="cabin-class">
 														<div class="fs-1 cabin-description overflow-ellipse">
 															<cfif FareName NEQ ''>#FareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
-															<cfif Fare.PrivateFare>
+															<cfif Fare.IsPrivateFare>
 																<!--- <div role="button" 
 																class="contracted-after"
 																data-placement="right" 
