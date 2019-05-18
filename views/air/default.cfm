@@ -130,7 +130,17 @@
 						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
-				<a href="#buildURL('air?SearchId=#rc.SearchId#&Group=#rc.Group#&ShowAll=true')#">Show Hidden Flights</a>
+
+				<div class="col-sm-12 show-hide-flights-btn">
+					<cfif StructKeyExists(rc,'ShowAll') AND rc.ShowAll eq 'true'>
+						<a href="#buildURL('air?SearchId=#rc.SearchId#&Group=#rc.Group#')#"
+						class="btn btn-primary">Hide Undesirable Flights</a>
+					<cfelse>
+						<a href="#buildURL('air?SearchId=#rc.SearchId#&Group=#rc.Group#&ShowAll=true')#"
+						class="btn btn-primary">Show Hidden Flights</a>
+					</cfif>
+				</div>
+				
 			</div>
 		</div>
 	
