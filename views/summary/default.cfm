@@ -170,6 +170,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			    </div>
 			</div>
+			<script src="assets/js/travelers-autocomplete.js?v=#application.staticAssetVersion#"></script>
 			<script src="assets/js/summary/summary.js?v=#application.staticAssetVersion#"></script>
 		</form>
 	</div>

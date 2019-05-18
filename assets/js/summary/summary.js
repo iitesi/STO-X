@@ -251,6 +251,7 @@ $(document).ready(function(){
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
+		$( "#userID" ).attr('data-initialvalue', traveler.userId ).trigger('changevalue');
 		if ($( "#userID" ).val() == null) {
 			$( "#userID" ).val(0);
 		}
