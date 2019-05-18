@@ -66,7 +66,8 @@
 
 		<cfset rc.User = variables.general.getUser(UserId = arguments.rc.Filter.getUserId())>
 		<cfset rc.Profile = variables.general.getUser(UserId = arguments.rc.Filter.getProfileId())>
-
+		<cfset rc.stItinerary = session.searches[SearchID].stItinerary>
+		
 		<cfreturn />
 	</cffunction>
 
