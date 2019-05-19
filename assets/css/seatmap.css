@@ -96,3 +96,11 @@
 
 .tab-content { margin-top: 2px !important; }
 .fa-spinner { margin-right: 10px; }
+
+.seatMapOpener {
+	cursor: pointer;
+	font-size: 1.25rem;
+	line-height: 24px;
+	vertical-align: top;
+	white-space: nowrap;
+}

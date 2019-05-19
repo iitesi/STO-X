@@ -35,6 +35,24 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 <!--- // STM-4242 ======================================================= --->
 
+<cfset krakenService = application.fw.factory.getBean('KrakenService')/>
+<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
+<script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
+<script>
+	var config = {
+		DoSelectionActions: true,
+        IsFullPlaneRequest: false,
+		KrakenSeatMapUrl: '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>api/FlightSearchByTrip/SeatMap/',
+		ApplicationId: '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>',
+		SecretKey: '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>',
+		StmUserToken: '<cfoutput>#session.StmUserToken#</cfoutput>',
+		TargetBranch: '<cfoutput>#rc.Account.sBranch#</cfoutput>',
+		AccountId: '<cfoutput>#session.acctId#</cfoutput>',
+		UserId: '<cfoutput>#session.userId#</cfoutput>'
+	};
+	SeatMap.init(config);
+</script>
+
 <!--- to do : move css once it is completed --->
 <style>
 .form-horizontal select, textarea, input {

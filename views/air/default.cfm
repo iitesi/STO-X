@@ -2,26 +2,22 @@
 <link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
 <script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 <script>
-	SeatMap.config.KrakenBaseUrl = '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>';
-	SeatMap.config.ApplicationId = '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>';
-	SeatMap.config.SecretKey = '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>';
-	SeatMap.config.StmUserToken = '<cfoutput>#session.StmUserToken#</cfoutput>';
-	SeatMap.config.TargetBranch = '<cfoutput>#rc.Account.sBranch#</cfoutput>';
-	SeatMap.config.AccountId = '<cfoutput>#session.acctId#</cfoutput>';
-	SeatMap.config.UserId = '<cfoutput>#session.userId#</cfoutput>';
+	var config = {
+		KrakenSeatMapUrl: '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>api/FlightSearchByTrip/SeatMap/Plane/',
+		ApplicationId: '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>',
+		SecretKey: '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>',
+		StmUserToken: '<cfoutput>#session.StmUserToken#</cfoutput>',
+		TargetBranch: '<cfoutput>#rc.Account.sBranch#</cfoutput>',
+		AccountId: '<cfoutput>#session.acctId#</cfoutput>',
+		UserId: '<cfoutput>#session.userId#</cfoutput>'
+	};
+	SeatMap.init(config);
 </script>
 <style>
 /** Tweak some global styles only on this page **/
 .page-header {
 	margin-bottom: 0 !important;
 	border-bottom: none !important;
-}
-.seatMapOpener {
-	cursor: pointer;
-	font-size: 1.25rem;
-	line-height: 24px;
-	vertical-align: top;
-	white-space: nowrap;
 }
 </style>
 <cfoutput>
