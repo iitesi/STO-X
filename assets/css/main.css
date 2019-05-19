@@ -20,14 +20,15 @@
 ================================================== */
 
 #main-header {
-	background-color: #292929;
+	/* background-color: #292929; */
 	padding-top: 3px;
+	box-shadow: 0 2px 9px -4px rgba(0, 0, 0, 0.50)
 }
 
 #header-top {
-	background-color: #333;
-	background-image: url(../img/noise.png);
-	border-top: 1px solid #555;
+	/* background-color: #333; */
+	/* background-image: url(../img/noise.png); */
+	/* border-top: 1px solid #555; */
 }
 
 #header-top .tagline {
@@ -240,17 +241,13 @@ body {
 }
 
 #main-content {
-	margin-bottom: 40px;
+	padding-bottom: 40px;
+	box-shadow: inset 0px -10px 10px -11px rgba(0, 0, 0, 0.50)
 }
 
 #footer {
 	font-size: 13px;
-	/* position: relative; */
-	background-color: #333;
 	margin-top:auto; 
-	/* position: absolute;
-	width: 100%;
-	bottom: 0; */
 }
 
 #footer:before {
@@ -263,8 +260,8 @@ body {
 }
 
 #footer-top {
-	padding: 30px 0;
-	color: #aaa;
+	padding: 15px 0 30px 0;
+	color: rgb(66, 66, 66);
 }
 
 #footer-top h3 {
@@ -275,15 +272,11 @@ body {
 #footer-top .form input,
 #footer-top .form textarea {
 	width: 100%;
-	color: #ddd;
-	border-color: #222;
-	background-color: #444;
 }
 
 #footer-bottom {
-	background-color: #282828;
-	color: #aaa;
-	border-top: 1px solid #3f3f3f;
+	background-color: #f5f5f5;
+	color: rgb(66, 66, 66);
 	padding: 32px 0;
 }
 
@@ -304,11 +297,11 @@ body {
 }
 
 .footer-nav li a {
-	color: #aaa;
+	/* color: #aaa; */
 }
 
 .footer-nav li a:hover {
-	color: #fff;
+	/* color: #fff; */
 }
 
 /* #Sidebar

@@ -7,13 +7,13 @@
 			<!--
 			.watermark {
 				font-size:50px;
-				z-index:-1;
+				z-index:1;
 				font-weight:bold;
 				position: fixed;
 				bottom: 0;
 				right: 0;
-				padding:20px;
-				color:##eee;
+				padding:0 20px 0 0;
+				color:##fff;
 			}
 			-->
 			</style>
@@ -24,15 +24,15 @@
 			<style type="text/css">
 			<!--
 			.dev-dropdown {
-				position: absolute;
+				/* position: absolute;
 				top: 0px;
 				right: 50px;
-				padding:20px;
+				padding:20px; */
 				color:##eee;
 			}
 			-->
 			</style>
-			<div class="dropdown dev-dropdown">
+			<div class="dropdown dev-dropdown dropup">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="##">Developers <b class="caret"></b></a>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 					<li>
@@ -41,29 +41,31 @@
 					<!--- <li>
 						<a href="index.cfm?#cgi.query_string#&reinit=true">Reset Application Vars</a>
 					</li> --->
-					<li class="divider"></li>
-					<li>
-						<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=5" target="_blank">View Top 2 Logs</a>
-					</li>
-					<li>
-						<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=10" target="_blank">View Top 10 Logs</a>
-					</li>
-					<li class="divider"></li>
-					<li>
-						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=storage')#" target="_blank">View Storage</a>
-					</li>
-					<li>
-						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=trips')#" target="_blank">View Trips</a>
-					</li>
-					<li>
-						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=avail')#" target="_blank">View Schedule</a>
-					</li>
-					<li>
-						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=cars')#" target="_blank">View Cars</a>
-					</li>
-					<li>
-						<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=travelers')#" target="_blank">View Travelers</a>
-					</li>
+					<cfif structKeyExists(rc, "searchID")>
+						<li class="divider"></li>
+						<li>
+							<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=5" target="_blank">View Top 2 Logs</a>
+						</li>
+						<li>
+							<a href="http://railoqa/loglive.cfm?searchID=#rc.searchID#&top=10" target="_blank">View Top 10 Logs</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=storage')#" target="_blank">View Storage</a>
+						</li>
+						<li>
+							<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=trips')#" target="_blank">View Trips</a>
+						</li>
+						<li>
+							<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=avail')#" target="_blank">View Schedule</a>
+						</li>
+						<li>
+							<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=cars')#" target="_blank">View Cars</a>
+						</li>
+						<li>
+							<a href="#buildURL('main.lookup?searchID=#rc.searchID#&view=travelers')#" target="_blank">View Travelers</a>
+						</li>
+					</cfif>
 				</ul>
 			</div>
 		</cfif>

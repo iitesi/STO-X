@@ -80,7 +80,7 @@
 			<header id="main-header">
 
 				<div id="header-top">
-					<nav class="navbar navbar-inverse">
+					<nav class="navbar">
   							<!-- Brand and toggle get grouped for better mobile display -->
  							<div class="navbar-header">
  							  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
@@ -243,8 +243,11 @@
 
 				<div id="footer-bottom">
 					<div class="container">
-						<div class="eight columns">
+						<div class="eight col-xs-8">
 							Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
+						</div>
+						<div class="col-xs-4">
+							<cfoutput>#view('main/developers')#</cfoutput>
 						</div>
 					</div>
 				</div>
@@ -257,12 +260,10 @@
 			<h3><i class="fa fa-plane"></i> FLIGHT DETAILS</h3>
 		</div>
 		<div class="modal-body"></div>
-
+		
 	</div>
 
-	<cfoutput>
-		#view('main/developers')#
-	</cfoutput>
+	
 
 	<cfif application.es.getCurrentEnvironment() EQ "prod">
 		<!--- on the new login screen these may not yet be defined --->
