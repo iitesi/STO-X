@@ -278,7 +278,26 @@ body {
 #footer-top .form textarea {
 	width: 100%;
 }
-
+#footer-top .footer-policy-wrapper {
+	
+}
+#footer-top .footer-policy-wrapper > div {
+	padding-right: 0!important;
+	padding-left: 0!important;
+	text-align: center;
+	padding-bottom: 15px;
+}
+#footer-top .footer-policy-wrapper h3 {
+	background-image: linear-gradient(to bottom,#337ab7 0,#265a88 100%);
+	color: white;
+	text-align: center;
+	justify-content: center;
+}
+#footer-top .footer-policy-wrapper ul {
+	width: 75%;
+	margin: 0 auto;
+	text-align: left;
+}
 #footer-bottom {
 	background-color: #f5f5f5;
 	color: rgb(66, 66, 66);
@@ -878,6 +897,11 @@ body {
 
 /* #Media Queries
 ================================================== */
+@media only screen and (min-width: 767px) {
+	.copyright {
+		text-align: right;
+	}
+}
 
 @media only screen and (max-width: 767px) {
 	.blog .post .side {

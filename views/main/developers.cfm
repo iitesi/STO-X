@@ -13,9 +13,10 @@
 				bottom: 0;
 				right: 0;
 				padding:0 20px 0 0;
-				color:##fff;
+				color:##ddd;
 			}
 			-->
+			
 			</style>
 			<div class="watermark"><cfoutput>#uCase(application.es.getCurrentEnvironment())#</cfoutput></div>
 		</cfif>
@@ -24,17 +25,17 @@
 			<style type="text/css">
 			<!--
 			.dev-dropdown {
-				/* position: absolute;
-				top: 0px;
-				right: 50px;
-				padding:20px; */
 				color:##eee;
+				position: fixed;
+				bottom: 26px;
+				right: 52px;
+				z-index: 100;
 			}
 			-->
 			</style>
 			<div class="dropdown dev-dropdown dropup">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="##">Developers <b class="caret"></b></a>
-				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dLabel">
 					<li>
 						<a href="index.cfm?#cgi.query_string#&reload=true">Reload Application</a>
 					</li>

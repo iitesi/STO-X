@@ -229,27 +229,25 @@
 
 			<footer id="footer">
 				<div id="footer-top">
-					<div class="container">
-						<cfoutput>
-					    	<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
-								<a href="mailto:#rc.filter.getSiteEmail()#">QUESTIONS/COMMENTS</a><br />
-					    	<cfelse>
-								#View('main/policy')#
-								#View('main/unusedtickets')#
-							</cfif>
-						</cfoutput>
-					</div>
+					<cfoutput>
+						<cfif structKeyExists(rc, "filter") AND rc.filter.getPassthrough() EQ 1>
+							<a href="mailto:#rc.filter.getSiteEmail()#">QUESTIONS/COMMENTS</a><br />
+						<cfelse>
+							#View('main/policy')#
+							#View('main/unusedtickets')#
+						</cfif>
+					</cfoutput>
 				</div>
 
 				<div id="footer-bottom">
 					<div class="row">
-						<div class="eight col-xs-12 col-sm-4">
+						<div class="eight col-xs-12 col-sm-6 copyright">
 							Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
 						</div>
-						<div class="eight col-xs-12 col-sm-4">
+						<div class="eight col-xs-12 col-sm-6">
 							All Rights Reserved.
 						</div>
-						<div class="hidden-xs col-sm-4">
+						<div class="hidden-xs devmenu">
 							<cfoutput>#view('main/developers')#</cfoutput>
 						</div>
 					</div>
