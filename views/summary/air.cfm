@@ -12,7 +12,6 @@
 			<div class="pull-right"><a href="#buildURL('air?SearchID=#rc.searchID#')#" style="color:##666">change <span class="fa fa-times"></a></div><br>
 		</cfif>
 
-
 		<div class="tripsummary-detail">
 			<div class="row">
 				<div class="col-xs-12">					
@@ -107,11 +106,6 @@
 						</div>
 						<cfloop collection="#Group.Flights#" index="FlightIndex" item="Flight">
 							<div class="summarySegment row">
-								<!--- <cfif count EQ 1>
-									<div class="col-xs-12">
-										<strong>#dateFormat(Flight.DepartureTime, 'ddd, mmm d')#</strong>
-									</div>
-								</cfif> --->
 								<div class="col-lg-2 col-sm-3" title="#application.stAirVendors[Flight.CarrierCode].Name# Flt ###Flight.FlightNumber#">
 									#Flight.CarrierCode# #Flight.FlightNumber#
 								</div>
@@ -126,10 +120,13 @@
 								</div>
 								<div class="col-lg-2 col-sm-3">
 									<cfif NOT listFind('WN,F9', Flight.CarrierCode)><!--- Exclude Southwest and Frontier --->
-										Seat Map
+										<a class="seatMapOpener" id="link_seatFlight#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+											Select Seat
+										</a>
+										<input type="hidden" id="input_seatFlight#Flight.FlightNumber#" name="input_seatFlight#Flight.FlightNumber#" value=""/>
 									</cfif>
-								</div> 
-								<hr class="visible-xs-block" />
+								</div>
+								<hr class="visible-xs-block"/>
 							</div>
 						</cfloop>
 					</cfloop>

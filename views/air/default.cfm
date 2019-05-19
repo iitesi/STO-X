@@ -3,7 +3,7 @@
 <script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 <script>
 	var config = {
-		KrakenBaseUrl: '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>',
+		KrakenSeatMapUrl: '<cfoutput>#krakenService.getKrakenBaseUrl()#</cfoutput>api/FlightSearchByTrip/SeatMap/Plane/',
 		ApplicationId: '<cfoutput>#krakenService.getKrakenApplicationId()#</cfoutput>',
 		SecretKey: '<cfoutput>#krakenService.getKrakenSecretKey()#</cfoutput>',
 		StmUserToken: '<cfoutput>#session.StmUserToken#</cfoutput>',
@@ -18,13 +18,6 @@
 .page-header {
 	margin-bottom: 0 !important;
 	border-bottom: none !important;
-}
-.seatMapOpener {
-	cursor: pointer;
-	font-size: 1.25rem;
-	line-height: 24px;
-	vertical-align: top;
-	white-space: nowrap;
 }
 </style>
 <cfoutput>

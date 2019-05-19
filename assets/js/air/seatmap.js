@@ -37,7 +37,9 @@ var SeatMap = function(){
     var data = {};
 
     var config = {
-        KrakenBaseUrl: '',
+        DoSelectionActions: false,
+        IsFullPlaneRequest: true,
+        KrakenSeatMapUrl: '',
         ApplicationId: '',
         SecretKey: '',
         StmUserToken: '',
@@ -88,7 +90,7 @@ var SeatMap = function(){
             }
 
             $.ajax({
-                url: config.KrakenBaseUrl+'api/FlightSearchByTrip/SeatMap/Plane/',
+                url: config.KrakenSeatMapUrl,
                 method: 'POST',
                 headers: {
                     'ApplicationId': config.ApplicationId,
@@ -133,12 +135,17 @@ var SeatMap = function(){
 
                 for (var r = 0; r < map.Rows.length; r++) {
 
+                    if (map.Rows[r].CabinClass === null || typeof map.Rows[r].CabinClass === 'undefined') {
+                        map.Rows[r].CabinClass = data.Flights[0].BookingCode;
+                    }
+
                     if (map.Rows[r].CabinClass != lastCabinClass) {
 
                         var lastCabinClass = map.Rows[map.Rows.length-1].CabinClass;
                         var cabinClassHeader = '';
 
-                        if (lastCabinClass === 'F' || lastCabinClass === 'J') {
+                        // TODO: Move this chunk of logic into Kraken
+                        if (config.IsFullPlaneRequest && (lastCabinClass === 'F' || lastCabinClass === 'J')) {
                             cabinClassHeader = 'Main Cabin';
                         } else if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
                             cabinClassHeader = 'First Class';
@@ -199,8 +206,12 @@ var SeatMap = function(){
                         if (seatData.SeatType === 0) {
                             var seat = $('<div class="cabinClassSeat galley">'+map.Rows[r].RowNumber.toString()+'</div>');
                         } else {
+                            var clickAction = '';
+                            if (config.DoSelectionActions && seatType != 'unavailable') {
+                                clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+seatData.SeatCode+"');";
+                            }
                             var seat = $('<div class="cabinClassSeat"></div>');
-                            var button = $('<button class="'+seatType+'">'+seatChars+'</button>');
+                            var button = $('<button class="'+seatType+'" onclick="'+clickAction+'">'+seatChars+'</button>');
                             seat.append(button);
                         }
 
@@ -241,7 +252,18 @@ var SeatMap = function(){
             return container;
         },
 
+        setSeat: function(flightNumber, seatCode){
+            $('#link_seatFlight'+flightNumber).text(seatCode);
+            $('#input_seatFlight'+flightNumber).val(seatCode);
+            $('.close',$('#seatMapModal')).click();
+        },
+
         setData: function(_data){
+            if (!Array.isArray(_data.Flights)) {
+                _data = {
+                    Flights: [_data]
+                };
+            }
             data = _data;
         },
 
