@@ -57,7 +57,7 @@
                     name: 'User_ID_Label',
                     type: 'text',
                     class: 'form-control',
-                    placeholder: 'Myself   (type \'Guest\' or search by travler name)'
+                    placeholder: 'Myself   (type \'Guest\' or search by traveler name)'
                 }));
                 $this.prepend($('<input/>',{
                     id: settings.elementName,
@@ -75,6 +75,7 @@
                     select: function (event, ui) {
                         event.preventDefault();
                         $("#" + settings.elementName).val(ui.item.value).trigger("change");
+                        // console.log('setting hidden userID = ' + ui.item.value);
                     }
                 }).on('input', function(){
                     const $this = $(this);
@@ -82,11 +83,12 @@
                     if (!val.length){
                         const initialValue = $("#" + settings.elementName).attr('data-initialvalue');
                         $("#" + settings.elementName).val(initialValue).trigger("change");
-                        setValueFromId(mappedUserList, initialValue);
+                        //setValueFromId(mappedUserList, initialValue);
                     }
                 });
                 $("#" + settings.elementName).on("changevalue", function(){
                     setValueFromId(mappedUserList, $(this).val());
+                    // console.log('updating username from userID = ' + $(this).val());
                   })
             }
             else {

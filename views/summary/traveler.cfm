@@ -5,7 +5,7 @@
 	<div class="form-group" id="userIDDiv">
 		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>
 		<div class="col-sm-8 col-xs-12">
-			<div id="travler-control">
+			<div id="traveler-control">
 				<span id="nameChange">
 					<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
 				</span>
@@ -22,7 +22,7 @@
 					}
 				}
 				$(function(){
-					$("##travler-control").travelersAutocomplete({
+					$("##traveler-control").travelersAutocomplete({
 						elementName: 'userID',
 						query:travelersResults,
 						userId:'',
