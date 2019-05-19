@@ -177,7 +177,7 @@
 			$("#Email_Segment").val($("#fare"+Key).val());
 		}
 		
-		function sortTrips(dataelement) {
+		function sortTrips(dataelement, unusedAlwaysFirst) {
 			var divList = $('.trip');
 			var direction = 1;
 			var c = $('.listcontainer-header').find('[rel='+dataelement+']');
@@ -196,9 +196,21 @@
 				}
 			}
 
-			divList.sort(function(a, b){
-				return ($(a).data(dataelement)-$(b).data(dataelement)) * direction;
-			});
+			if (unusedAlwaysFirst){
+				divList.sort(function(a, b){
+					const aUnused = $(a).data('unusedticketmatch');
+					const bUnused = $(b).data('unusedticketmatch');
+					const aElement = $(a).data(dataelement);
+					const bElement = $(b).data(dataelement);
+					return aUnused === bUnused ? aElement - bElement : aUnused ? -1 : 1;
+				});
+			}
+			else {
+				divList.sort(function(a, b){
+					return ($(a).data(dataelement)-$(b).data(dataelement)) * direction;
+				});
+			}
+			
 			$("#listcontainer").html(divList);
 			postFilter();
 		}
@@ -796,9 +808,10 @@
 			});
 			$('#flight_number').val('').trigger('blur');
 			runFilters();
+			sortTrips('economy', true); // let's reset to our original view after resetting all filters
 		});
 
-		sortTrips('economy');
+		sortTrips('economy', true);
 		postFilter();
 
 		// hide modal window if user hits the back button
