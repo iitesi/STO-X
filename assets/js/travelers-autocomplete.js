@@ -74,14 +74,14 @@
                     },
                     select: function (event, ui) {
                         event.preventDefault();
-                        $("#" + settings.elementName).val(ui.item.value);
+                        $("#" + settings.elementName).val(ui.item.value).trigger("change");
                     }
                 }).on('input', function(){
                     const $this = $(this);
                     const val = $.trim($this.val());
                     if (!val.length){
                         const initialValue = $("#" + settings.elementName).attr('data-initialvalue');
-                        $("#" + settings.elementName).val(initialValue);
+                        $("#" + settings.elementName).val(initialValue).trigger("change");
                         setValueFromId(mappedUserList, initialValue);
                     }
                 });
