@@ -25,6 +25,10 @@
 	box-shadow: 0 2px 9px -4px rgba(0, 0, 0, 0.50)
 }
 
+#main-header  .navbar-toggle .icon-bar {
+	background-color: #333 !important;
+}
+
 #header-top {
 	/* background-color: #333; */
 	/* background-image: url(../img/noise.png); */
@@ -914,6 +918,7 @@ body {
 @media only screen and (max-width: 480px) {
 	#footer-bottom {
 		text-align: center;
+		padding:10px 0;
 	}
 
 	.footer-nav,

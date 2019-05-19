@@ -242,11 +242,14 @@
 				</div>
 
 				<div id="footer-bottom">
-					<div class="container">
-						<div class="eight col-xs-8">
-							Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>. All Rights Reserved.
+					<div class="row">
+						<div class="eight col-xs-12 col-sm-4">
+							Copyright Short's Travel Management <cfoutput>#Year(Now())#</cfoutput>
 						</div>
-						<div class="col-xs-4">
+						<div class="eight col-xs-12 col-sm-4">
+							All Rights Reserved.
+						</div>
+						<div class="hidden-xs col-sm-4">
 							<cfoutput>#view('main/developers')#</cfoutput>
 						</div>
 					</div>
