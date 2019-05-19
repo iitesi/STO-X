@@ -5,23 +5,32 @@
 	<div class="form-group" id="userIDDiv">
 		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>
 		<div class="col-sm-8 col-xs-12">
-			<select name="userID" id="userID" class="form-control">
-			<!--- Do not allow Georgetown to book on behalf of a guest traveler --->
-			<cfif structKeyExists(rc, "acctID") AND rc.acctID NEQ 303>
-				<option value="0">GUEST TRAVELER</option>
-			</cfif>
-			<cfloop query="rc.allTravelers">
-				<cfif len(rc.allTravelers.Name_Suffix)>
-					<cfset travelerName = "#rc.allTravelers.Last_Name# #rc.allTravelers.Name_Suffix#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
-				<cfelse>
-					<cfset travelerName = "#rc.allTravelers.Last_Name#/#rc.allTravelers.First_Name# #rc.allTravelers.Middle_Name#" />
-				</cfif>
-				<option value="#rc.allTravelers.User_ID#">#travelerName#</option>
-			</cfloop>
-			</select>
-			<span id="nameChange">
-				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
-			</span>
+			<div id="travler-control">
+				<span id="nameChange">
+					<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
+				</span>
+			</div> 	
+			<script>
+				let travelersResults = {COLUMNS:[],DATA:[]};
+				try {	
+					travelersResults = <cfoutput>#serializeJSON(rc.allTravelers)#</cfoutput>;	
+				}
+				catch(e){
+					if(console){
+						console.log("Failed to create travelersResults object from query");
+						console.log(e);
+					}
+				}
+				$(function(){
+					$("##travler-control").travelersAutocomplete({
+						elementName: 'userID',
+						query:travelersResults,
+						userId:'',
+						accountId:'#StructKeyExists(rc,'acctid') ? rc.acctid : ""#',
+						queryLimit:100
+					});
+				});
+			</script>	
 		</div>
 	</div>
 

@@ -99,13 +99,13 @@ $(document).ready(function(){
 	}
 
 	// On change find the other traveler's data
-	$( "#userID" ).on('change', function() {
+	$( "#summaryForm" ).on('change', "#userID", function() {
 
 		var userID = $( "#userID" ).val();
 		var isGuest = (userID == 0);
 		
-		//console.log('userID onChange()...');
-		//console.log(userID);
+		// console.log('userID onChange()...');
+		// console.log(userID);
 
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
@@ -251,6 +251,7 @@ $(document).ready(function(){
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
+		$( "#userID" ).attr('data-initialvalue', traveler.userId ).trigger('changevalue');
 		if ($( "#userID" ).val() == null) {
 			$( "#userID" ).val(0);
 		}
@@ -272,7 +273,7 @@ $(document).ready(function(){
 		else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
-		if (traveler.bookingDetail.createProfile == 1 && $("#userID") == 0) {
+		if (traveler.bookingDetail.createProfile == 1 && $("#userID").val() == 0) {
 			$( "#createProfileDiv" ).show();
 			$( "#createProfile" ).attr( 'checked', true );
 			$( "#usernameDiv" ).show();
