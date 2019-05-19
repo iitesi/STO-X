@@ -983,12 +983,30 @@ ul.tabs li a.active {
 }
 
 .segment-details-extras ul {
-
+	list-style-type: none;
+	padding-left:0;
+	margin-left:0;
 }
 
 .segment-details-extras ul li {
 	font-size: 12px;
 	line-height: 14px;
+	padding-left:0;
+	margin-left:0;
+}
+
+.segment-details-extras ul li a.seatMapOpener {
+	cursor: pointer;
+    line-height: 24px;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.segment-details-extras ul li i {
+	font-size: 20px;
+    margin-right: 5px;
 }
 
 .segment-stopover {
