@@ -250,14 +250,14 @@ body {
 	margin-top:auto; 
 }
 
-#footer:before {
+/* #footer:before {
 	content: '';
 	border: 10px solid transparent;
 	border-top-color: #fff;
 	position: absolute;
 	left: 50%; top: 0;
 	margin-left: -10px;
-}
+} */
 
 #footer-top {
 	padding: 15px 0 30px 0;
