@@ -69,12 +69,6 @@
 							<div class="row">
 								<div class="col-xs-12 text-muted fs-1">
 									#Segment.FlightNumbers#
-									<cfif NOT Segment.FlightNumbers contains "WN" AND NOT Segment.FlightNumbers contains "F9">
-										<br>
-										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
-											Preview Seats
-										</a>
-									</cfif>
 								</div>
 							</div>
 							<div class="row">
@@ -312,6 +306,7 @@
 												<span>&nbsp;</span>
 												<span>(#Flight.DestinationAirportCode#)</span>
 											</div>
+											
 										</div>
 									</div>
 									<div class="segment-leg-operation-details fs-1">
@@ -340,15 +335,13 @@
 								#Segment.SegmentId# --->
 							</div>
 							<div class="segment-details-extras">
-								<!--- TODO Hide for now?
 								<ul>
-									<li><span></span> <span> Carry-on bags restricted </span>
-									</li>
-									<li> Average legroom (31 in)</li>
-									<li> Wi-Fi</li>
-									<li> In-seat power outlet</li>
-									<li> Stream media to your device</li>
-								</ul> --->
+									<cfif NOT Segment.FlightNumbers contains "WN" AND NOT Segment.FlightNumbers contains "F9"><li>
+										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
+											<i class="mdi mdi-seat-recline-normal" aria-hidden="true"></i> View Available Seats
+										</a>
+									</li></cfif>
+								</ul>
 							</div>
 						</div>
 						<cfset previousFlight = Flight>
