@@ -170,8 +170,8 @@
 													<div class="cabin-class">
 														<div class="fs-1 cabin-description overflow-ellipse">
 															<cfif FareName NEQ ''>#FareName#<cfelse>#CabinClass EQ 'PremiumEconomy' ? 'Premium Economy' : CabinClass#</cfif>
-															<cfif Fare.PrivateFare>
-															<br>Contracted
+															<cfif structKeyExists(Fare,'IsPrivateFare') AND Fare.IsPrivateFare>
+																<br>Contracted
 															</cfif>
 														</div>
 														<div class="fs-2 fare-display">
