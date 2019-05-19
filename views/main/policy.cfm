@@ -1,5 +1,5 @@
 <cfif structKeyExists(rc, 'Policy') AND NOT structIsEmpty(rc.Policy)>
-    <div class="row">
+    <div class="row footer-policy-wrapper">
         <div class="col-md-4 col-sm-6">
 			<h3>Air Policy</h3>
 			<ul>
