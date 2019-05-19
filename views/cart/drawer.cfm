@@ -146,6 +146,7 @@
                                                     <cfset currency = rc.Hotel.getRooms()[1].getBaseRateCurrency()>
                                                     <cfset hotelTotal = rc.Hotel.getRooms()[1].getBaseRate()>
                                                 <cfelse>
+                                                    <cfset nights = dateDiff('d', rc.Filter.getCheckInDate(), rc.Filter.getCheckOutDate())>
                                                     <cfset currency = rc.Hotel.getRooms()[1].getDailyRateCurrency()>
                                                     <cfset hotelTotal = rc.Hotel.getRooms()[1].getDailyRate()*nights>
                                                 </cfif>
