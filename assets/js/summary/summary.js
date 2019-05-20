@@ -103,6 +103,9 @@ $(document).ready(function(){
 
 		var userID = $( "#userID" ).val();
 		var isGuest = (userID == 0);
+
+		console.log(userID);
+		console.log(isGuest);
 		
 		// console.log('userID onChange()...');
 		// console.log(userID);
@@ -121,6 +124,8 @@ $(document).ready(function(){
 					},
 			dataType: 'json',
 			success:function(traveler) {
+
+				traveler.userId = userID;
 
 				//console.log('userID onChange()...response');
 				//console.log(traveler);
@@ -248,6 +253,12 @@ $(document).ready(function(){
 	});
 
 	function loadTraveler(traveler, loadMethod) {
+
+		// one last check for guest
+		if (typeof traveler.userId === 'undefined') {
+			traveler.userId = 0;
+		}
+
 		$( "#createProfileDiv" ).hide();
 		$( "#usernameDiv" ).hide();
 		$( "#userID" ).val( traveler.userId );
