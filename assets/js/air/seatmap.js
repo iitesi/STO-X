@@ -22,7 +22,7 @@ var seatMapModalTemplate = `
 `;
 
 var legendTemplate = `
-    <table id="seatMapLegend" align="center">
+    <table class="seatMapLegend" align="center">
         <tr>
             <td><span class="preferentialBox"/>&nbsp Preferred</td>
             <td><span class="availableBox"/>&nbsp Available</td>
@@ -55,7 +55,7 @@ var SeatMap = function(){
             var requestData = data;
             
             $('.modal-body').html('<i class="fa fa-spinner fa-spin"></i><span>Loading Seat Map ...</span>');
-            $('.modal-title').text('Seat Map for ' + requestData.SegmentRoute + ' ' + requestData.FLIGHTNUMBERS);
+            $('.modal-title').text('Seat Map for ' + requestData.SegmentRoute + ' ' + requestData.FlightNumbers);
 
             var seatMapRequest = {
                 TargetBranch: config.TargetBranch,
@@ -125,11 +125,11 @@ var SeatMap = function(){
                 
                 var map = maps[m];
 
-                var seatmap = $('<div id="seatmap"></div>');
-                var nosecone = $('<div id="nosecone"></div>');
-                var tailsection = $('<div id="tailsection"></div>');
-                var plane = $('<div id="plane"></div>');
-                var cabin = $('<div id="cabin"></div>');
+                var seatmap = $('<div class="seatmap"></div>');
+                var nosecone = $('<div class="nosecone"></div>');
+                var tailsection = $('<div class="tailsection"></div>');
+                var plane = $('<div class="plane"></div>');
+                var cabin = $('<div class="cabin"></div>');
 
                 var lastCabinClass = '';
 
@@ -208,7 +208,8 @@ var SeatMap = function(){
                         } else {
                             var clickAction = '';
                             if (config.DoSelectionActions && seatType != 'unavailable') {
-                                clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+seatData.SeatCode+"');";
+                                console.log(map);
+                                clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+map.OriginAirportCode+"','"+seatData.SeatCode+"','"+seatData.SeatType+"');";
                             }
                             var seat = $('<div class="cabinClassSeat"></div>');
                             var button = $('<button class="'+seatType+'" onclick="'+clickAction+'">'+seatChars+'</button>');
@@ -228,7 +229,7 @@ var SeatMap = function(){
                 seatmap.prepend(nosecone);
                 seatmap.append(tailsection);
 
-                if (m === 0) {
+                if (m == 0) {
                     var activeTab = ' class="active"';
                     var activePane = ' in active';
                 } else {
@@ -252,9 +253,9 @@ var SeatMap = function(){
             return container;
         },
 
-        setSeat: function(flightNumber, seatCode){
-            $('#link_seatFlight'+flightNumber).text(seatCode);
-            $('#input_seatFlight'+flightNumber).val(seatCode);
+        setSeat: function(flightNumber, originAirportCode, seatCode, seatType){
+            $('#link_seatId_'+flightNumber+'_'+originAirportCode).text(seatCode);
+            $('#seatId_'+flightNumber+'_'+originAirportCode).val(seatCode+':'+seatType);
             $('.close',$('#seatMapModal')).click();
         },
 

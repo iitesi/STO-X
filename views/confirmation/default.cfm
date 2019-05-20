@@ -117,22 +117,30 @@
 
 	<cfelse>
 
-		Your trip has been cancelled.
+		<div style="width:100%; text-align:center;">
 
-		<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+			<br><br>
 
-			<cfif NOT Sell.Cancelled>
+			Your trip has been cancelled.
 
-				<a class="btn btn-secondary btn-lg" href="#buildURL('purchase.canceltrip?SearchId=#SearchId#&CancelTrip=#Sell.RecordLocator.UniversalRecordLocatorCode#&TravelerNumber=#TravelerIndex#')#">Cancel Trip</a>
-				<cfif structCount(session.searches[rc.SearchId].Sell) GT 1>
-					for #session.searches[rc.SearchID].Travelers[TravelerIndex].getFirstName()# #session.searches[rc.SearchID].Travelers[TravelerIndex].getLastName()#<br>
+			<br><br>
+
+			<cfloop collection="#session.searches[rc.SearchId].Sell#" index="TravelerIndex" item="Sell">
+
+				<cfif NOT Sell.Cancelled>
+
+					<a class="btn btn-secondary btn-lg" href="#buildURL('purchase.canceltrip?SearchId=#SearchId#&CancelTrip=#Sell.RecordLocator.UniversalRecordLocatorCode#&TravelerNumber=#TravelerIndex#')#">Cancel Trip</a>
+					<cfif structCount(session.searches[rc.SearchId].Sell) GT 1>
+						for #session.searches[rc.SearchID].Travelers[TravelerIndex].getFirstName()# #session.searches[rc.SearchID].Travelers[TravelerIndex].getLastName()#<br>
+					</cfif>
+
 				</cfif>
 
-			</cfif>
+				<a class="btn btn-primary btn-lg" href="https://viewtrip.travelport.com/itinerary?loc=#Sell.RecordLocator.ProviderRecordLocatorCode#&lName=#session.searches[rc.searchID].Travelers[TravelerIndex].getLastName()#" target="_blank">View Your Trip</a>
 
-			<a class="btn btn-primary btn-lg" href="https://viewtrip.travelport.com/itinerary?loc=#Sell.RecordLocator.ProviderRecordLocatorCode#&lName=#session.searches[rc.searchID].Travelers[TravelerIndex].getLastName()#" target="_blank">View Your Trip</a>
+			</cfloop>
 
-		</cfloop>
+			</div>
 
 	</cfif>
 

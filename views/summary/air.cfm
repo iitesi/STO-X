@@ -189,12 +189,13 @@
 												<li>
 													Cabin: #uCase(Replace(Flight.CabinClass, 'Premium', 'Premium '))#
 												</li>
-												<cfif NOT listFind('WN,F9', Flight.CarrierCode)><li>
-													<a class="seatMapOpener" id="link_seatFlight#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
-														<i class="mdi mdi-seat-legroom-normal"></i> Select Seat
-													</a>
-													<input type="hidden" id="input_seatFlight#Flight.FlightNumber#" name="input_seatFlight#Flight.FlightNumber#" value=""/>
-												</li></cfif>
+												<cfif NOT listFind('WN,F9', Flight.CarrierCode)><li><!--- Exclude Southwest and Frontier --->
+            										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+            											<i class="mdi mdi-seat-legroom-normal"></i> Select Seat
+            										</a>
+            										<input type="hidden" id="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" name="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" value=""/>
+            										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#',',')/>
+            									</li></cfif>
 											</ul>
 										</div>
 									</div>
@@ -206,7 +207,6 @@
 						</cfif>
 					</cfloop>
 				</div>
-				<!--- <input type="hidden" name="seatFieldNames" id="seatFieldNames" value=""> --->
 
 				<div class="col s12 m3">
 					<div class="panel panel-primary air-purchase-details">
