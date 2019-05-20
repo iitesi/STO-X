@@ -55,7 +55,7 @@
 	<cffunction name="setupRequest">
 
 		<!--- TODO: temporary until I can revisit removing from env.xml --->
-		<cfparam name="application.staticAssetVersion" default="1.0.8"/>
+		<cfparam name="application.staticAssetVersion" default="1.0.9"/>
 
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">

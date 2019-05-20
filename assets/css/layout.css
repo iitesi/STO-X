@@ -9,8 +9,8 @@
  *
  */
 
-@import url('typography.css?staticAssetVersion=1.0.8');
-@import url('main.css?staticAssetVersion=1.0.8');
+@import url('typography.css?staticAssetVersion=1.0.9');
+@import url('main.css?staticAssetVersion=1.0.9');
 
 /*7:53 AM Tuesday, July 16, 2013 - Jim Priest - jpriest@shortstravel.com
 I disabled these styles which all relate to the custom theme and I don't believe we are using any of these components*/
