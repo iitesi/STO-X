@@ -95,7 +95,12 @@
 								<div class="col-xs-6 col-lg-12 text-muted fs-1 p-xs-0 pl-xs-15">
 									<cfif rc.Group NEQ 0 
 										AND stItinerary.Air[rc.Group-1].DestinationAirportCode NEQ Segment.OriginAirportCode>
-										<span style="color:red">#Segment.OriginAirportCode#</span>-#Segment.DestinationAirportCode#
+										<span 
+											role="button" 
+											data-placement="right" 
+											data-toggle="tooltip"
+											title="Double-check: Different departure airport than arrival may require ground transportation"
+											class="departure-airport-alert">#Segment.OriginAirportCode#</span>-#Segment.DestinationAirportCode#
 									<cfelse>
 										#Segment.OriginAirportCode#-#Segment.DestinationAirportCode#
 									</cfif>

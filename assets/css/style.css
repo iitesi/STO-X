@@ -645,6 +645,10 @@ ul.tabs li a.active {
 	color: #a94442;
 }
 
+.departure-airport-alert {
+	color: #b71c1c;
+}
+
 .detail-expander {
 	opacity: 0.3;
 }

@@ -543,8 +543,13 @@
 					<cfset Economy.CarrierCode = Segments[fareItem.Economy.SegmentId].CarrierCode/>
 					<cfset DepartureTime = Segments[fareItem.Economy.SegmentId].DepartureTime/>
 				</cfif>
-				<cfparam name="TempSegments['#Segments[#fareItem.Economy.SegmentId#].DepartureTime&Economy.CarrierCode#']" default="#arrayNew()#">
-				<cfset arrayAppend(TempSegments[Segments[fareItem.Economy.SegmentId].DepartureTime&Economy.CarrierCode], Economy)>
+				<cftry><!--- adding try/catch/eat until we can talk this thru. getting a lot of errors on this one in prod --->
+					<cfparam name="TempSegments['#Segments[#fareItem.Economy.SegmentId#].DepartureTime&Economy.CarrierCode#']" default="#arrayNew()#">
+					<cfset arrayAppend(TempSegments[Segments[fareItem.Economy.SegmentId].DepartureTime&Economy.CarrierCode], Economy)>
+					<cfcatch type="any">
+						<!--- SegmentId doesn't exist --->
+					</cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 

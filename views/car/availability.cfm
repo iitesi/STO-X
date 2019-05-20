@@ -74,7 +74,6 @@ OR NOT rc.Filter.getAir()>
 				</cfloop>
 			</thead> 
 			<tbody>
-				<cfset local.carAssetPath = Replace(getDirectoryFromPath(getCurrentTemplatePath()),'\views\car\','')> 
 				<cfloop collection="#session.searches[rc.SearchID].stCarCategories#" item="sCategory">
 					<cfset stCar = session.searches[rc.SearchID].stCars[sCategory]>
 
@@ -87,23 +86,15 @@ OR NOT rc.Filter.getAir()>
 
 								<tr id="row#LCase(sCategory)#">
 									<td class="carTypeCol hiddenOnList" data-th="#vehicleClass#">
-
-
-											<span class="carType">#vehicleClass#</span><br />
-
-											<!--- Had to add the style width below for IE. --->
-											<cfif FileExists(expandPath('#local.carAssetPath#\assets\img\cars\#sCategory#.jpg'))>
-												<img alt="#sCategory#" src="assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;">
-											</cfif>
-											<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
-												<br /><small class="green">PREFERRED</small>
-											</cfif>
-
+										<span class="carType">#vehicleClass#</span><br/>
+										<img alt="#sCategory#" src="/booking/assets/img/cars/#sCategory#.jpg" width="86" style="width:86px;" onerror="$(this).remove();">
+										<cfif ArrayFind(rc.Policy.aCarSizes, sCategory)>
+											<br /><small class="green">PREFERRED</small>
+										</cfif>
 									</td>
 
 								<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="sVendor">
 									<td <cfif ArrayFind(application.Accounts[session.AcctID].aPreferredCar, sVendor)>class="preferredVendor"</cfif>  id="#LCase(sCategory)##LCase(sVendor)#" data-th="#StructKeyExists(application.stCarVendors, sVendor) ? application.stCarVendors[sVendor] : 'No Car Vendor found'#<cfif session.searches[rc.SearchID].stCarVendors[sVendor].Location EQ "ShuttleOffAirport">(Shuttle Off Terminal)</cfif>">
-
 
 											<cfif StructKeyExists(session.searches[rc.SearchID].stCars[sCategory], sVendor)>
 												<cfset buttonType="btn-primary" />

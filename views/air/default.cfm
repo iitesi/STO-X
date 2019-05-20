@@ -236,7 +236,7 @@
 			template: '<div class="tooltip faretooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
 		$('#page-content-wrapper').tooltip({
-			selector: '.long-flight-alert[data-toggle="tooltip"]',
+			selector: '.long-flight-alert[data-toggle="tooltip"], .departure-airport-alert[data-toggle="tooltip"]',
 			template: '<div class="tooltip long-flight-alert-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
 		}); 
 		$('#main-content').tooltip({
