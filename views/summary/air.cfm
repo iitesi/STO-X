@@ -121,11 +121,11 @@
 								</div>
 								<div class="col-lg-2 col-sm-3">
 									<cfif NOT listFind('WN,F9', Flight.CarrierCode)><!--- Exclude Southwest and Frontier --->
-										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
 											Select Seat
 										</a>
-										<input type="hidden" id="seatId_#Flight.FlightNumber#" name="seatId_#Flight.FlightNumber#" value=""/>
-										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#',',')/>
+										<input type="hidden" id="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" name="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" value=""/>
+										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#',',')/>
 									</cfif>
 								</div>
 								<hr class="visible-xs-block"/>

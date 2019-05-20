@@ -208,7 +208,8 @@ var SeatMap = function(){
                         } else {
                             var clickAction = '';
                             if (config.DoSelectionActions && seatType != 'unavailable') {
-                                clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+seatData.SeatCode+"');";
+                                console.log(map);
+                                clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+map.OriginAirportCode+"','"+seatData.SeatCode+"','"+seatData.SeatType+"');";
                             }
                             var seat = $('<div class="cabinClassSeat"></div>');
                             var button = $('<button class="'+seatType+'" onclick="'+clickAction+'">'+seatChars+'</button>');
@@ -252,9 +253,9 @@ var SeatMap = function(){
             return container;
         },
 
-        setSeat: function(flightNumber, seatCode){
-            $('#link_seatId_'+flightNumber).text(seatCode);
-            $('#seatId_'+flightNumber).val(seatCode);
+        setSeat: function(flightNumber, originAirportCode, seatCode, seatType){
+            $('#link_seatId_'+flightNumber+'_'+originAirportCode).text(seatCode);
+            $('#seatId_'+flightNumber+'_'+originAirportCode).val(seatCode+':'+seatType);
             $('.close',$('#seatMapModal')).click();
         },
 

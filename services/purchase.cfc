@@ -221,10 +221,12 @@
 							}
 						};
 
-						if (structKeyExists(Seats, "seatId_#Flight.FlightNumber#")) {
+						if (structKeyExists(Seats, "seatId_#Flight.FlightNumber#_#Flight.originAirportCode#")) {
 							FlightStruct.SeatAssignment = {
 								FlightNumber : Flight.FlightNumber,
-								SeatId : Seats["seatId_#Flight.FlightNumber#"]
+								DepartureDateTime : Flight.DepartureTimeGMT,
+								SeatId : listFirst(Seats["seatId_#Flight.FlightNumber#_#Flight.originAirportCode#"],':'),
+								SeatType : listLast(Seats["seatId_#Flight.FlightNumber#_#Flight.originAirportCode#"],':')
 							}
 						}
 
