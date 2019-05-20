@@ -150,6 +150,7 @@ $(document).ready(function(){
 					loadPayments(traveler, 'serviceFee');
 					$( "#serviceFeeSpinner" ).hide();
 				}
+
 			}
 		});
 	});
@@ -473,7 +474,9 @@ $(document).ready(function(){
 			}
 		}
 		recalculateTotal();
-
+		if(M){
+			M.updateTextFields();
+		}
 	}
 
 	function createForm(orgunit) {
@@ -490,7 +493,7 @@ $(document).ready(function(){
 				var hidden = '';
 			}
 
-			var div = '<div class="form-group'+hidden;
+			var div = '<div class="controls input-field col s12'+hidden;
 			if ($.inArray(inputName, errors.split(",")) >= 0) {
 				div += ' error';
 			}
@@ -500,25 +503,17 @@ $(document).ready(function(){
 				div += '<p>' + orgunit.OUSTOVerbiage + '</p>'
 			}
 
-			div += '<label class="control-label col-sm-4 col-xs-12" for="' + inputName + '">' + orgunit.OUName;
-			if (orgunit.OURequired == 1  || (orgunit.OURequiredGuestOnly ==1 && userID == 0) || (orgunit.OURequiredProfileOnly ==1 && userID != 0)) {
-				div += ' *</label>';
-			}
-			else {
-				div += '&nbsp;&nbsp;</label>';
-			}
-			div += '<div class="controls col-sm-8 col-xs-12">';
 			if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')){
-				div += '<input class="form-control" type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
+				div += '<input type="text" name="' + inputName + '" id="' + inputName + '" maxlength="' + orgunit.OUMax + '" value="' + orgunit.valueReport + '">';
 			}
 			else if(orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1'){
 				div += '<span>'+orgunit.valueReport+'</span>';
 				div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueReport + '">';
 			}
 			else if((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
-				div += '<select class="form-control" name="' + inputName + '" id="' + inputName + '"';
+				div += '<select name="' + inputName + '" id="' + inputName + '"';
 				div += '>';
-				div += '<option value="-1"></option>';
+				div += '<option value="-1" disabled selected>Select</option>';
 					if (orgunit.ouValues.length) {
 						for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
 							div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';
@@ -533,7 +528,13 @@ $(document).ready(function(){
 				div += '<span>'+orgunit.valueDisplay+'</span>';
 				div += '<input type="hidden" name="' + inputName + '" id="' + inputName + '" value="' + orgunit.valueID + '">';
 			}
-			div += '</div>';
+			div += '<label for="' + inputName + '">' + orgunit.OUName;
+			if (orgunit.OURequired == 1  || (orgunit.OURequiredGuestOnly ==1 && userID == 0) || (orgunit.OURequiredProfileOnly ==1 && userID != 0)) {
+				div += ' *</label>';
+			}
+			else {
+				div += '</label>';
+			}
 			div += '</div>';
 			$( "#orgUnits" ).append( div );
 			if ((orgunit.OUFreeform == 1 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 1 && orgunit.OUUpdate != '1' && orgunit.valueReport == '')) {
@@ -544,6 +545,10 @@ $(document).ready(function(){
 				if(inputName == 'custom' && acctID != 1 && arrangerAdmin != 1 && arrangerSTMEmployee != 1 && orgunit.valueID != '' && orgunit.valueID != 0 && orgunit.valueID != -1){
 					$( "#" + inputName ).attr( "disabled", true );
 				}
+			}
+
+			if(M && $('#orgUnits select').length) {
+				$('#orgUnits select').formSelect();
 			}
 		}
 	 

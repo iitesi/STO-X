@@ -1989,9 +1989,29 @@ li.with-irs .irs-title {
 	color: #211922;
 	min-height:70px;
 	border:4px solid #FFF;
+	margin-bottom: 20px;
+	background-color: #fff;
+}
+.summarydiv.nooffset {
+	position: relative;
+	box-shadow: none;
+	color: #211922;
+	min-height:70px;
+	border:none;
+	margin-bottom: 1em;
+	background-color: unset;
+}
+
+.summarydiv.nooffset .childcontainer {
+	position: relative;
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	color: #211922;
+	min-height:70px;
+	border:4px solid #FFF;
 	margin-bottom: 1em;
 	background-color: #fff;
 }
+
 .summarydiv .disclaimer {
 	display: block;
 	width: 100%;
@@ -2004,7 +2024,7 @@ li.with-irs .irs-title {
 	display: inline-block;
 }
 .tripsummary-detail {
-	padding-left: 15px;
+	/* padding-left: 15px; */
 }
 .tripsummary-detail:last-child {
 	padding-bottom: 0px;
@@ -3493,4 +3513,158 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 
 .show-hide-flights-btn {
 	margin-top: 15px;
+}
+
+/** Summary page overrides to clean up for responsive **/
+
+
+
+#page-content-wrapper.container {
+	width: unset !important;
+}
+.summarydiv.container-fluid {
+	padding: 0;
+	margin: 0 0 20px 0;
+}
+#travelerForm {
+	padding-right: unset;
+	padding-left: unset;
+}
+#summaryForm .input-field.with-icon {
+	display: flex;
+}
+#summaryForm .input-field.with-icon .select-wrapper {
+	flex:1;
+}
+
+#summaryForm .input-field.with-icon .mdi {
+	font-size: 23px;
+	line-height: 44px;
+	margin-left: 15px;
+}
+
+#summaryForm .input-field i, #summaryForm .input-field a[rel=popleft] {
+	line-height: 1.5em;
+}
+#summaryForm .controls.dob-vo {
+	display: flex;
+}
+
+#summaryForm .controls.dob-vo .mask-icon {
+	margin-right: 12px;
+}
+#orgUnits {
+	margin-top:20px;
+}
+.mb0 {
+	margin-bottom: 0 !important;
+}
+.ui-autocomplete.ui-widget.ui-widget-content {
+	background-color: white;
+	border-radius: 0;
+}
+.ui-autocomplete.ui-widget.ui-widget-content .ui-state-focus {
+	background: none;
+	border: none;
+	background-color: #eee;
+	border-radius: 0;
+}
+#sidebar-wrapper {
+	margin-right: -345px;
+}
+.noMiddleNameLabel {
+	line-height: 12px !important;
+	font-size: 12px !important;
+	padding-left: 25px !important;
+}
+.new-profile-notes {
+	font-weight: 700;
+	font-style: italic;
+	color: #5d5d5d;
+}
+.air-purchase-details h3 {
+	text-align: right;
+	font-weight: 900;
+	color: #fffdd7;
+}
+.air-purchase-details ul {
+	padding-left: 15px;
+	list-style-type: disc;
+}
+.air-purchase-details ul li {
+	padding: 5px 0;
+}
+.air-purchase-details .alert-danger {
+	color: black;
+}
+#summaryForm .seatMapOpener {
+	justify-content: left;
+	font-size: 14px;
+	line-height: 16px;
+	padding-top: 10px;
+}
+
+@media (min-width: 300px) and (max-width: 798px){
+	
+	#summaryForm .select-wrapper input.select-dropdown {
+		font-size: 13px;
+	}
+
+	#summaryForm .segment-details {
+		display: flex;
+		flex-direction: column;
+	}
+	#summaryForm .segment-details-extras {
+		display:block;
+		padding-left: 60px;
+		padding-right: 0;
+		margin-top:10px;
+	}
+	#summaryForm .segment-leg-inner {
+		padding-left: 60px;
+	}
+	#summaryForm .segment-leg-inner .fs-s1{
+		text-align: left;
+	}
+	#summaryForm .segment-leg-details {
+		flex-direction: column;
+	}
+	#summaryForm .segment-details-flights .segment-middot {
+		display:none;
+	}
+	#summaryForm .segment-details-flights .segment-middot-sm {
+		display:none;
+	}
+	#summaryForm .segment-leg-time-inair.fs-1 {
+		top: auto;
+		margin: 10px 0;
+		position: relative;
+	}
+	#summaryForm .segment-leg-operation-details {
+		flex-wrap: wrap;
+		padding-left: 60px;
+	}
+	#summaryForm .segment-leg-connector {
+		display: block;
+		left: 35px;
+	}
+	#summaryForm .segment-leg-operation-details > div {
+		margin-right: 5px;
+	}
+	#summaryForm .segment-leg-details.segment-leg-arrival {
+		padding-top: 0;
+	}
+	#summaryForm #specialRequests {
+		font-size: 13px;
+	}
+
+	label[for=specialRequest] {
+		top: -10px;
+	}
+	#summaryForm .seatMapOpener {
+	    justify-content: left;
+		font-size: 12px;
+		line-height: 14px;
+		padding-top: 10px;
+	}
 }

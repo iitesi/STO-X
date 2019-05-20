@@ -1,69 +1,66 @@
 <cfoutput>
 
-	<h2>TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
+	<div class="row">
+		<h2 class="col s12">TRAVELER <cfif arrayLen(session.searches[rc.searchID].Travelers) GT 1>###rc.travelerNumber#</cfif></h2>
+	</div>
+	<script>
+		let travelersResults = {COLUMNS:[],DATA:[]};
+		try {	
+			travelersResults = <cfoutput>#serializeJSON(rc.allTravelers)#</cfoutput>;	
+		}
+		catch(e){
+			if(console){
+				console.log("Failed to create travelersResults object from query");
+				console.log(e);
+			}
+		}
+		$(function(){
+			$("##traveler-control").travelersAutocomplete({
+				elementName: 'userID',
+				query:travelersResults,
+				userId:'',
+				accountId:'#StructKeyExists(rc,'acctid') ? rc.acctid : ""#',
+				queryLimit:100
+			});
+		});
+	</script>
 
-	<div class="form-group" id="userIDDiv">
-		<label class="control-label col-sm-4 col-xs-12" for="userID">Change Traveler&nbsp;&nbsp;</label>
-		<div class="col-sm-8 col-xs-12">
-			<div id="traveler-control">
-				<span id="nameChange">
-					<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="##"></a>
-				</span>
-			</div> 	
-			<script>
-				let travelersResults = {COLUMNS:[],DATA:[]};
-				try {	
-					travelersResults = <cfoutput>#serializeJSON(rc.allTravelers)#</cfoutput>;	
-				}
-				catch(e){
-					if(console){
-						console.log("Failed to create travelersResults object from query");
-						console.log(e);
-					}
-				}
-				$(function(){
-					$("##traveler-control").travelersAutocomplete({
-						elementName: 'userID',
-						query:travelersResults,
-						userId:'',
-						accountId:'#StructKeyExists(rc,'acctid') ? rc.acctid : ""#',
-						queryLimit:100
-					});
-				});
-			</script>	
+	<div class="mb0 row #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#" id="userIDDiv">
+		<div class="input-field with-icon col s12" id="traveler-control">
+			<a rel="popleft" class="fa fa-lg fa-info-circle" data-original-title="Traveler Name Change" data-content="If you need to change your name, please return to the travel portal under the profile section and make the appropriate changes. You will then need to create a new booking. If you are booking on behalf of someone else please click on your company logo, and select 'Book on behalf of another traveler' then select the traveler from the drop down menu, before you check for flight options." href="javascript:void(0);"></a>
+			<label for="userID">Change Traveler</label>
 		</div>
 	</div>
 
 	<div id="fullNameDiv" class=" #(structKeyExists(rc.errors, 'fullName') ? 'error' : '')#">
-		<div class="form-group">
-			<label class="control-label col-sm-4 col-xs-12" for="firstName">First Name *</label>
-			<div class="col-sm-8 col-xs-12">
-				<input type="text" name="firstName" id="firstName"  class="form-control">
+		<div class="row mb0">
+			<div class="input-field col s12">
+				<input type="text" name="firstName" id="firstName">
+				<label for="firstName">First Name *</label>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="control-label col-sm-4 col-xs-12" for="middleName">Middle Name</label>
-			<div class="col-sm-3 col-xs-12">
-				<input type="text" name="middleName" id="middleName" class="form-control">
+		<div class="row mb0">
+			<div class="input-field col s8">
+				<input type="text" name="middleName" id="middleName">
+				<label for="middleName">Middle Name</label>
 			</div>
-			<div class="checkbox col-sm-5">
-				<label>
-					<input type="checkbox"  name="noMiddleName" id="noMiddleName" value="1">
-					No Middle Name
+			<div class="input-field col s4">
+				<label for="noMiddleName">
+					<input type="checkbox" class="filled-in" name="noMiddleName" id="noMiddleName" value="1">
+					<span class="noMiddleNameLabel">No Middle Name</span>
 				</label>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="control-label col-sm-4 col-xs-12" for="lastName">Last Name *</label>
-			<div class="col-sm-8 col-xs-12">
-				<input type="text" name="lastName" id="lastName" class="form-control">
+		<div class="row mb0">
+			<div class="input-field col s12">
+				<input type="text" name="lastName" id="lastName">
+				<label for="lastName">Last Name *</label>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="control-label col-sm-4 col-xs-12" for="suffix">Suffix</label>
-			<div class="col-sm-3 col-xs-6">
-				<select name="suffix" id="suffix" class="form-control">
-					<option value=""></option>
+		<div class="row mb0">
+			<div class="input-field col s12">
+				<select name="suffix" id="suffix">
+					<option value="" disabled selected>Choose an option</option>
 					<option value="JR">JR</option>
 					<option value="SR">SR</option>
 					<option value="II">II</option>
@@ -71,7 +68,9 @@
 					<option value="IV">IV</option>
 					<option value="V">V</option>
 					<option value="VI">VI</option>
+					<option value="F">Female</option>
 				</select>
+				<label for="suffix">Suffix</label>
 			</div>
 		</div>
 	</div>
@@ -82,80 +81,81 @@
 		</div>
 	</div>
 
-	<div class="form-group #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
-		<label class="control-label col-sm-4 col-xs-12" for="phoneNumber">Business Phone *</label>
-		<div class=" col-sm-8 col-xs-12">
-			<input type="tel" name="phoneNumber" id="phoneNumber" class="form-control">
+	<div class="row mb0 #(structKeyExists(rc.errors, 'phoneNumber') ? 'error' : '')#">
+		<div class="input-field col s12">
+			<input type="tel" name="phoneNumber" id="phoneNumber" class="validate">
+			<label for="phoneNumber">Business Phone *</label>
 		</div>
 	</div>
 
-	<div class="form-group #(structKeyExists(rc.errors, 'wirelessPhone') ? 'error' : '')#">
-		<label class="control-label col-sm-4 col-xs-12" for="wirelessPhone">Mobile Phone *</label>
-		<div class="col-sm-8 col-xs-12">
-			<input type="tel" name="wirelessPhone" id="wirelessPhone" class="form-control">
+	<div class="row mb0 #(structKeyExists(rc.errors, 'wirelessPhone') ? 'error' : '')#">
+		<div class="input-field col s12">
+			<input type="tel" name="wirelessPhone" id="wirelessPhone" class="validate">
+			<label for="wirelessPhone">Mobile Phone *</label>
 		</div>
 	</div>
 
-	<div class="form-group #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
-		<label class="control-label col-sm-4 col-xs-12" for="email">Email *</label>
-		<div class="col-sm-8 col-xs-12">
-			<input type="email" class="form-control email-vo" name="email" id="email" style="display:none;"/>
+	<div class="row mb0 #(structKeyExists(rc.errors, 'email') ? 'error' : '')#">
+		<div class="input-field with-icon col s12">
+			<input type="email" class="form-control email-vo validate" name="email" id="email" style="display:none;"/>
 			<i class="material-icons mask-icon email-vo" style="display:none" title="Hide"
 				onclick="$('.email-v').show();$('.email-vo').hide();">visibility_off</i>
 			<input type="email" class="form-control email-v" value="**********" readonly/>
 			<i class="material-icons mask-icon email-v" title="Show"
 				onclick="$('.email-vo').show();$('.email-v').hide();">visibility</i>
+			<label for="email">Email *</label>
 		</div>
 	</div>
 
-	<div class="form-group #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
-		<label class="control-label col-sm-4 col-xs-12" for="ccEmails">CC Email&nbsp;&nbsp;</label>
-		<div class="col-sm-8 col-xs-12">
-			<input type="email" class="form-control ccEmails-vo" name="ccEmails" id="ccEmails" style="display:none;"/>
+	<div class="row mb0 #(structKeyExists(rc.errors, 'ccEmails') ? 'error' : '')#">
+		<div class="input-field with-icon col s12">
+			<input type="email" class="form-control ccEmails-vo validate" name="ccEmails" id="ccEmails" style="display:none;"/>
 			<i class="material-icons mask-icon ccEmails-vo" style="display:none" title="Hide"
 				onclick="$('.ccEmails-v').show();$('.ccEmails-vo').hide();">visibility_off</i>
 			<input type="email" class="form-control ccEmails-v" value="**********" readonly/>
 			<i class="material-icons mask-icon ccEmails-v" title="Show"
 				onclick="$('.ccEmails-vo').show();$('.ccEmails-v').hide();">visibility</i>
+			<label for="ccEmails">CC Email</label>
 		</div>
 	</div>
 
 	<cfif rc.airSelected OR rc.vehicleSelected>
-		<div class="form-group #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
-			<label class="control-label col-sm-4 col-xs-12" for="month">Birth Date *</label>
-			<div class="controls dob-v">
-				<div class="col-sm-8 col-xs-12">
-					<input type="text" name="dob_mask" class="form-control" value="**/**/****" readonly/>
-					<i class="material-icons mask-icon dob-v" title="Show"
-						onclick="$('.dob-vo').show();$('.dob-v').hide();">visibility</i>
-				</div>
+		<div class="row mb0 #(structKeyExists(rc.errors, 'birthdate') ? 'error' : '')#">
+			<div class="input-field with-icon col s12 controls dob-v">
+				<label for="dob_mask">Birth Date *</label>
+				<input type="text" name="dob_mask" id="dob_mask" value="**/**/****" readonly/>
+				<i class="material-icons mask-icon dob-v" title="Show"
+					onclick="$('.dob-vo').show();$('.dob-v').hide();">visibility</i>
 			</div>
 			<div class="controls dob-vo" style="display:none;">
-				<div class="col-sm-2">
-					<select name="month" id="month" class="form-control">
-					<option value=""></option>
+				<div class="input-field col s5">
+					<select name="month" id="month">
+					<option value="" disabled selected>Select</option>
 					<cfloop from="1" to="12" index="i">
 						<option value="#i#">#MonthAsString(i)#</option>
 					</cfloop>
 					</select>
+					<label for="month">Month *</label>
 				</div>
-				<div class="col-sm-2">
-					<select name="day" id="day" class="form-control">
-					<option value=""></option>
-					<cfloop from="1" to="31" index="i">
-						<option value="#i#">#i#</option>
-					</cfloop>
+				<div class="input-field col s3">
+					<select name="day" id="day">
+						<option value="" disabled selected>Select</option>
+						<cfloop from="1" to="31" index="i">
+							<option value="#i#">#i#</option>
+						</cfloop>
 					</select>
+					<label for="day">Day *</label>
 				</div>
-				<div class="col-sm-2">
-					<select name="year" id="year" class="form-control">
-					<option value=""></option>
-					<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
-						<option value="#i#">#i#</option>
-					</cfloop>
+				<div class="input-field col s4">
+					<select name="year" id="year">
+						<option value="" disabled selected>Select</option>
+						<cfloop from="#Year(Now())#" to="#Year(Now())-100#" step="-1" index="i">
+							<option value="#i#">#i#</option>
+						</cfloop>
 					</select>
+					<label for="year">Year *</label>
 				</div>
-				<div class="col-sm-1">
+				<div class="input-field">
 					<i class="material-icons mask-icon dob-vo" title="Hide"
 						onclick="$('.dob-v').show();$('.dob-vo').hide();">visibility_off</i>
 				</div>
@@ -164,41 +164,41 @@
 	</cfif>
 	
 	<cfif rc.airSelected>
-		<div class="form-group #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
-			<label class="control-label col-sm-4 col-xs-12" for="gender">Gender *</label>
-			 <div class="col-sm-8 col-xs-12">
-				<select name="gender" id="gender" class="form-control">
-				<option value=""></option>
-				<option value="M">Male</option>
-				<option value="F">Female</option>
+		<div class="row mb0 #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
+			<div class="input-field col s12">
+				<select name="gender" id="gender">
+					<option value="" disabled selected>Choose an option</option>
+					<option value="M">Male</option>
+					<option value="F">Female</option>
 				</select>
+				<label for="gender">Gender *</label>
 			</div>
 		</div>
 	</cfif>
 
 	<cfif rc.airSelected>
-		<div class="form-group">
-			<label class="control-label col-sm-4 col-xs-12" for="redress">Traveler Redress ##&nbsp;&nbsp;</label>
-			<div class="controls col-sm-8 col-xs-12">
-				<input type="text" name="redress" id="redress" class="form-control">
-				<a rel="popover" class="blue fa fa-lg fa-info-circle" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="##"></a>
+		<div class="row mb0">
+			<div class="input-field with-icon col s12">
+				<input type="text" name="redress" id="redress">
+				<label for="redress">Traveler Redress ##</label>
+				<a rel="popleft" class="fa fa-lg fa-info-circle" data-original-title="Redress Number" data-content="A redress number is a unique number issued by the Transportation Security Administration (TSA) to passengers who have experienced secondary security screenings at airports because they have names similar to or the same as names on the current terrorist watch list. If you have been given a redress number by the TSA, you are required to enter it on this page." href="javascript:void(0);"></a>
 			</div>
 		</div>
 
-		<div class="form-group #(structKeyExists(rc.errors, 'travelNumber') ? 'error' : '')#">
-			<label class="control-label col-sm-4 col-xs-12" for="travelNumber">Known Traveler ##&nbsp;&nbsp;</label>
-			<div class="controls col-sm-8 col-xs-12">
-				<input type="text" name="travelNumber" id="travelNumber" class="form-control">
+		<div class="row mb0 #(structKeyExists(rc.errors, 'travelNumber') ? 'error' : '')#">
+			<div class="input-field with-icon col s12 mb0">
 				<input type="hidden" name="travelNumberType" id="travelNumberType" value="TrustedTraveler">
-				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="##"></a>
-				<cfif len(rc.KTLinks)>
-					&nbsp;<div style="display: inline-table;">#rc.KTLinks#</div>
-				</cfif>
+				<input type="text" name="travelNumber" id="travelNumber">
+				<label for="travelNumber">Known Traveler ##</label>
+				<a rel="popleft" class="fa fa-lg fa-info-circle" data-original-title="Known Traveler" data-content="A Known Traveler Number is a unique number issued by the U.S. Government to uniquely identify passengers who participate in a known traveler program (e.g. Global Entry, SENTRI, NEXUS). For more information, visit <a href='http://www.tsa.gov/tsa-precheck/participation-tsa-precheck' target='_blank'>http://www.tsa.gov/tsa-precheck/participation-tsa-precheck</a>." href="javascript:void(0);"></a>
 			</div>
+			<cfif len(rc.KTLinks)>
+				<div class="col s12">#rc.KTLinks#</div>
+			</cfif>
 		</div>
 	</cfif>
 
-	<div id="orgUnits"> </div>
+	<div id="orgUnits" class="row mb0"></div>
 
 	<cfif rc.travelerNumber EQ 1>
 
@@ -256,59 +256,47 @@
 
 	</cfif>
 
-	<div class="form-group" id="saveProfileDiv">
-		<label class="control-label" for="saveProfile"></label>
-		<div class="col-sm-offset-4 col-sm-8">
-			<div class="checkbox">
-				<label class="saveProfile">
-					<input type="checkbox" name="saveProfile" id="saveProfile" value="1">
-					Save changes to profile
-				</label>
-			</div>
+	<div class="row" id="saveProfileDiv">
+		<div class="input-field col s12">
+			<label for="saveProfile">
+				<input type="checkbox" class="filled-in" name="saveProfile" id="saveProfile" value="1">
+				<span>Save Changes To Profile</span>
+			</label>
 		</div>
 	</div>
 
-	<div class="form-group" id="createProfileDiv">
-		<label class="control-label" for="createProfile"></label>
-		<div class="col-sm-offset-4 col-sm-8">
-			<div class="checkbox">
-				<label class="createProfile">
-					<input type="checkbox" name="createProfile" id="createProfile" value="1" />
-					Create a profile and save this information for my next reservation
-				</label>
-			</div>
+	<div class="row" id="createProfileDiv">
+		<div class="input-field col s12">
+			<label for="createProfile">
+				<input type="checkbox" class="filled-in" name="createProfile" id="createProfile" value="1">
+				<span>Create a profile and save this information for my next reservation</span>
+			</label>
 		</div>
 	</div>
 
-	<div class="" id="usernameDiv">
-		<div class="form-group">
-			<p><b>NOTE: Click "Create Profile" to save a profile regardless of whether the reservation is purchased.</b></p>
-			<label class="control-label col-sm-4 col-xs-12" for="username">Username</label>
-			<div class="col-sm-8 col-xs-12">
-				<input class="form-control" type="text" name="username_disabled" id="username_disabled" disabled />
-				<input type="hidden" name="username" id="username" />
-			</div>
+	<div class="row" id="usernameDiv">
+		<div class="input-field col s12 mb0 new-profile-notes">
+			NOTE: Click "Create Profile" to save a profile regardless of whether the reservation is purchased.
+		</div>
+		<div class="input-field col s12">
+			<input type="hidden" name="username" id="username">
+			<input type="text" name="username_disabled" id="username_disabled" disabled />
+			<label for="username_disabled">Username</label>
 		</div>
 
-		<div class="form-group #(structKeyExists(rc.errors, 'password') ? 'error' : '')#">
-			<label class="control-label  col-sm-4 col-xs-12" for="password">Password</label>
-			<div class=" col-sm-8 col-xs-12">
-				<input type="password" name="password" class="form-control" id="password" />
-				<a rel="popover" class="blue fa fa-lg fa-info-cicle" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="##"></a>
-			</div>
+		<div class="input-field with-icon col s12 #(structKeyExists(rc.errors, 'password') ? 'error' : '')#">
+			<input type="password" name="password" id="password" />
+			<a rel="popleft" class="fa fa-lg fa-info-cicle" data-original-title="Password Requirements" data-content="<ul><li>Must be a minimum of 8 characters</li><li>Must contain three of the four items below:</li><li style='list-style-type:none;'><ul><li>Upper case letter</li><li>Lower case letter</li><li>Number</li><li>Special character</li></ul></li></ul>" href="javascript:void(0);"></a>
+			<label for="password">Password</label>
 		</div>
 
-		<div class="form-group #(structKeyExists(rc.errors, 'passwordConfirm') ? 'error' : '')#">
-			<label class="control-label col-sm-4 col-xs-12" for="passwordConfirm">Verify Password</label>
-			<div class=" col-sm-8 col-xs-12">
-				<input class="form-group" type="password" name="passwordConfirm" id="passwordConfirm" />
-			</div>
+		<div class="input-field col s12 #(structKeyExists(rc.errors, 'passwordConfirm') ? 'error' : '')#">
+			<input type="password" name="passwordConfirm" id="passwordConfirm" />
+			<label for="passwordConfirm">Verify Password</label>
 		</div>
-
-		<div class="form-group">
-			<div class="controls">
-				<input type="submit" name="trigger" id="profileButton" class="btn btn-primary" value="CREATE PROFILE">
-			</div>
+		
+		<div class="input-field col s12">
+			<button class="btn waves-effect waves-light" id="profileButton" type="submit" name="trigger">Create Profile</button>
 		</div>
 	</div>
 
