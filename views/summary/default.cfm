@@ -37,6 +37,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 <cfset krakenService = application.fw.factory.getBean('KrakenService')/>
 <link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
+<link rel="stylesheet" href="/booking/assets/css/materialize.css">
 <script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 <script>
 	var config = {
@@ -150,14 +151,14 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						</div>
 					</div>
 
-					<div class="summarydiv container-fluid">
-						<div id="airDiv" class="clearfix">
+					<div class="summarydiv nooffset container-fluid">
+						<div id="airDiv" class="clearfix childcontainer">
 							#View('summary/air')#
 						</div>
-						<div id="hotelDiv" class="clearfix">
+						<div id="hotelDiv" class="clearfix childcontainer">
 							#View('summary/hotel')#
 						</div>
-						<div id="carDiv" class="clearfix">
+						<div id="carDiv" class="clearfix childcontainer">
 							#View('summary/vehicle')#
 						</div>
 					</div>
@@ -190,6 +191,12 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			</div>
 			<script src="assets/js/travelers-autocomplete.js?v=#application.staticAssetVersion#"></script>
 			<script src="assets/js/summary/summary.js?v=#application.staticAssetVersion#"></script>
+			<script src="assets/js/materialize.js"></script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('.input-field select').formSelect();
+				});
+			</script>
 		</form>
 	</div>
 

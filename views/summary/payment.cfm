@@ -7,7 +7,7 @@
 		<div class="form-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="airFOPID"><strong>Flight Payment *</strong></label>
 			<div class="controls col-sm-8 col-xs-12" id="airFOPIDDiv">
-				<i id="airSpinner" class="blue fa fa-spin fa-spinner"></i>
+				<i id="airSpinner" class="fa fa-spin fa-spinner"></i>
 				<select class="form-control" name="airFOPID" id="airFOPID">
 				</select>
 			</div>
@@ -92,7 +92,7 @@
 
 		</div>
 
-		<div class="blue bold text-right">
+		<div class="bold text-right">
 			<!--- Dohmen to do --->
 			<!--- <a rel="popover" data-original-title="Flight change/cancellation policy"
 				data-content="
@@ -122,7 +122,7 @@
 		<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeFOPID') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="serviceFeeFOPID"><strong>Service Fees Payment *</strong></label>
 			<div class="controls col-sm-8 col-xs-12" id="serviceFeeFOPIDDiv">
-				<i id="serviceFeeSpinner" class="blue fa fa-spin fa-spinner"></i>
+				<i id="serviceFeeSpinner" class="fa fa-spin fa-spinner"></i>
 				<select class="form-control" name="serviceFeeFOPID" id="serviceFeeFOPID">
 				</select>
 			</div>
@@ -216,7 +216,7 @@
 		<div class="form-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
 			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
 			<div class="col-sm-8 col-xs-12" id="hotelFOPIDDiv">
-				<i id="hotelSpinner" class="blue fa fa-spin fa-spinner"></i>
+				<i id="hotelSpinner" class="fa fa-spin fa-spinner"></i>
 				<select class="form-control" name="hotelFOPID" id="hotelFOPID">
 				</select>
 			</div>
@@ -293,7 +293,7 @@
 			</cfif>
 		</cfsavecontent>
 		<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
-			<div class="blue bold text-right">
+			<div class="bold text-center">
 				<a rel="popover" href="javascript:$('##displayHotelCancellationPolicy').modal('show');" />
 					Hotel payment and cancellation policy
 				</a>
@@ -316,7 +316,7 @@
 				</div>
 			</div>
 		<cfelse>
-			<div class="blue bold text-right">
+			<div class="bold text-center">
 				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
 					Hotel payment and cancellation policy
 				</a>
@@ -332,13 +332,13 @@
 		<div class="form-group">
 			<label class="control-label col-sm-4 col-xs-12" for="carFOPID"><strong>Car Payment *</strong></label>
 			<div class="controls col-sm-8 col-xs-12">
-				<i id="carSpinner" class="blue fa fa-spin fa-spinner"></i>
+				<i id="carSpinner" class="fa fa-spin fa-spinner"></i>
 				<select name="carFOPID" id="carFOPID" class="form-control">
 				</select>
 			</div>
 		</div>
 
-		<div class="blue bold text-right">
+		<div class="bold text-center">
 			<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
 				Car payment and cancellation policy
 			</a>

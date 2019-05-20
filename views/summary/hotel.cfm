@@ -2,7 +2,7 @@
 
 	<cfif rc.hotelSelected>
 		<br class="clearfix">
-		<div class="pull-right"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="fa fa-times"></a></div><br>
+		<div class="pull-right"><a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" style="color:##666">change / remove <span class="mdi mdi-restart"></span></a></div><br>
 
 				<div class="tripsummary-detail">
 					<div class="row">
