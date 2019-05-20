@@ -188,8 +188,9 @@
 		<cfset var FlightsArray = []>
 		<cfset var FlightStruct = {}>
 		<cfset var FlightPurchaseRequest = {}>
+		<cfset var Seats = Traveler.getBookingDetail().getSeats()>
 
-		<cfif NOT structIsEmpty(Air) 
+		<cfif NOT structIsEmpty(Air)
 			AND Traveler.getBookingDetail().getAirNeeded()>
 
 			<cfloop collection="#Air#" index="local.GroupIndex" item="local.Group">
@@ -212,9 +213,6 @@
 							isPreferred : Flight.IsPreferred,
 							DepartureTime : Flight.DepartureTimeGMT,
 							ArrivalTime : Flight.ArrivalTimeGMT,
-							// SeatAssignment : {
-							// 	FlightNumber : "402"
-							// },
 							IsPrivateFare : Group.IsPrivateFare,
 							BookingDetail : {
 								BrandedFareId : '',
@@ -222,6 +220,13 @@
 								FareBasis : Flight.FareBasis
 							}
 						};
+
+						if (structKeyExists(Seats, "seatId_#Flight.FlightNumber#")) {
+							FlightStruct.SeatAssignment = {
+								FlightNumber : Flight.FlightNumber,
+								SeatId : Seats["seatId_#Flight.FlightNumber#"]
+							}
+						}
 
 						arrayAppend(FlightsArray, FlightStruct);
 
