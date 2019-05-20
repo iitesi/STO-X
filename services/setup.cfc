@@ -90,13 +90,10 @@
 
 		<cfset local.searchfilter = getSearchService().load( arguments.searchId ) />
 
-		<cfif arguments.SearchId NEQ 0
+		<cfif arguments.SearchId NEQ 0 AND structKeyExists(session, "SearchId")
 			AND session.SearchId NEQ arguments.SearchId
 			AND NOT validateSearchId(arguments.AcctId, arguments.UserId, arguments.SearchId)>
-			<cfdump var=#arguments.AcctId#>
-			<cfdump var=#arguments.UserId#>
-			<cfdump var=#arguments.SearchId#>
-			<cfdump var='URL ID' abort>
+			<cfdump var='Error: Not a valid SearchId' abort>
 		</cfif>
 
 		<cfif arguments.SearchID NEQ 0>

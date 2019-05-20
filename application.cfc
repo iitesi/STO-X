@@ -54,8 +54,12 @@
 
 	<cffunction name="setupRequest">
 
-		<!--- TODO: temporary until I can revisit removing from env.xml --->
-		<cfparam name="application.staticAssetVersion" default="1.0.9"/>
+		<!--- TODO: app vars getting dropped somehwere? check a few common objs and reset app --->
+		<cfif (NOT structKeyExists(application, "stAirports") OR structIsEmpty(application.stAirports))
+			OR (NOT structKeyExists(application, "stHotelVendors") OR structIsEmpty(application.stHotelVendors))
+			OR NOT structKeyExists(application, "staticAssetVersion")>
+			<cfset setupApplication()/>
+		</cfif>
 
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
