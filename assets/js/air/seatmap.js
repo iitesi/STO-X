@@ -22,7 +22,7 @@ var seatMapModalTemplate = `
 `;
 
 var legendTemplate = `
-    <table id="seatMapLegend" align="center">
+    <table class="seatMapLegend" align="center">
         <tr>
             <td><span class="preferentialBox"/>&nbsp Preferred</td>
             <td><span class="availableBox"/>&nbsp Available</td>
@@ -55,7 +55,7 @@ var SeatMap = function(){
             var requestData = data;
             
             $('.modal-body').html('<i class="fa fa-spinner fa-spin"></i><span>Loading Seat Map ...</span>');
-            $('.modal-title').text('Seat Map for ' + requestData.SegmentRoute + ' ' + requestData.FLIGHTNUMBERS);
+            $('.modal-title').text('Seat Map for ' + requestData.SegmentRoute + ' ' + requestData.FlightNumbers);
 
             var seatMapRequest = {
                 TargetBranch: config.TargetBranch,
@@ -125,11 +125,11 @@ var SeatMap = function(){
                 
                 var map = maps[m];
 
-                var seatmap = $('<div id="seatmap"></div>');
-                var nosecone = $('<div id="nosecone"></div>');
-                var tailsection = $('<div id="tailsection"></div>');
-                var plane = $('<div id="plane"></div>');
-                var cabin = $('<div id="cabin"></div>');
+                var seatmap = $('<div class="seatmap"></div>');
+                var nosecone = $('<div class="nosecone"></div>');
+                var tailsection = $('<div class="tailsection"></div>');
+                var plane = $('<div class="plane"></div>');
+                var cabin = $('<div class="cabin"></div>');
 
                 var lastCabinClass = '';
 
@@ -228,7 +228,7 @@ var SeatMap = function(){
                 seatmap.prepend(nosecone);
                 seatmap.append(tailsection);
 
-                if (m === 0) {
+                if (m == 0) {
                     var activeTab = ' class="active"';
                     var activePane = ' in active';
                 } else {
@@ -253,8 +253,8 @@ var SeatMap = function(){
         },
 
         setSeat: function(flightNumber, seatCode){
-            $('#link_seatFlight'+flightNumber).text(seatCode);
-            $('#input_seatFlight'+flightNumber).val(seatCode);
+            $('#link_seatId_'+flightNumber).text(seatCode);
+            $('#seatId_'+flightNumber).val(seatCode);
             $('.close',$('#seatMapModal')).click();
         },
 

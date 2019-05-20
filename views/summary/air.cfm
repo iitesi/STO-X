@@ -100,6 +100,7 @@
 			 <div class="row">
 				<div class="col-sm-9 col-xs-8">
 					<div class="container-fluid">
+					<cfset seatFieldNames = ''/>
 					<cfloop collection="#rc.Air#" index="GroupIndex" item="Group">
 						<div class="col-sm-2 col-xs-4">
 							<img class="img-responsive carrierimg" src="assets/img/airlines/#Group.CarrierCode#.png">
@@ -120,19 +121,20 @@
 								</div>
 								<div class="col-lg-2 col-sm-3">
 									<cfif NOT listFind('WN,F9', Flight.CarrierCode)><!--- Exclude Southwest and Frontier --->
-										<a class="seatMapOpener" id="link_seatFlight#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
 											Select Seat
 										</a>
-										<input type="hidden" id="input_seatFlight#Flight.FlightNumber#" name="input_seatFlight#Flight.FlightNumber#" value=""/>
+										<input type="hidden" id="seatId_#Flight.FlightNumber#" name="seatId_#Flight.FlightNumber#" value=""/>
+										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#',',')/>
 									</cfif>
 								</div>
 								<hr class="visible-xs-block"/>
 							</div>
 						</cfloop>
 					</cfloop>
+					<input type="hidden" name="seatFieldNames" id="seatFieldNames" value="#seatFieldNames#"/>
 					</div>
 				</div>
-				<!--- <input type="hidden" name="seatFieldNames" id="seatFieldNames" value=""> --->
 
 				<div class="col-sm-3 col-xs-12">
 					<span class="blue bold large">
