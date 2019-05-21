@@ -70,7 +70,7 @@ setApplication
 
 		<cfif structCount(session.searches) GT 1>
 			<cfloop collection="#structKeyList(session.searches)#" index="local.SearchId">
-				<cfif searchId NEQ arguments.rc.SearchID>
+				<cfif structKeyExists(arguments.rc, "SearchId") AND searchId NEQ arguments.rc.SearchID>
 					<cfset structDelete(session.searches, searchId)>
 				</cfif>
 			</cfloop>
@@ -82,27 +82,24 @@ setApplication
 	<cffunction name="setSearchID" output="false" hint="I set the search ID.">
 		<cfargument name="rc">
 
-		<!--- <cfset rc.SearchID = (StructKeyExists(arguments.rc, 'SearchID') ? arguments.rc.SearchID : 0)> --->
 		<cfset var SearchID = (StructKeyExists(session, 'SearchID') ? session.SearchID : 0)>
 
-		<cfif structKeyExists(arguments.rc, 'SearchId')
-			AND SearchId NEQ arguments.rc.SearchId
-			AND arguments.rc.AcctId NEQ 0
-			AND arguments.rc.UserId NEQ 0
-			AND arguments.rc.SearchId NEQ 0
-			AND arguments.rc.Requery>
+		<cftry>
+			<cfif structKeyExists(arguments.rc, 'SearchId')
+				AND SearchId NEQ arguments.rc.SearchId
+				AND arguments.rc.AcctId NEQ 0
+				AND arguments.rc.UserId NEQ 0
+				AND arguments.rc.SearchId NEQ 0
+				AND arguments.rc.Requery>
 
-			<cfset SearchID = variables.bf.getBean("setup").validateSearchId( AcctId = arguments.rc.AcctId, 
-																			UserId = arguments.rc.UserId, 
-																			SearchId = arguments.rc.SearchId)>
-
-		</cfif>
-		
-		<!--- <cfdump var=#arguments.rc.AcctId#>
-		<cfdump var=#arguments.rc.UserId#>
-		<cfdump var=#arguments.rc.SearchId#>
-		<cfdump var=#arguments.rc.Requery#>
-		<cfdump var=#SearchID# abort> --->
+				<cfset SearchID = variables.bf.getBean("setup").validateSearchId( AcctId = arguments.rc.AcctId, 
+																				UserId = arguments.rc.UserId, 
+																				SearchId = arguments.rc.SearchId)/>
+			</cfif>
+			<cfcatch type="any">
+				<cfdump var='Error: Not a valid SearchId' abort>
+			</cfcatch>
+		</cftry>
 
 		<cfreturn SearchID />
 	</cffunction>

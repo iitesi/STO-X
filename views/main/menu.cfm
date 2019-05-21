@@ -75,6 +75,27 @@
 								</tr>
 							</table>
 						</div>
+						<div class="badge" onclick="window.location='?action=main.releasenotes'" style="cursor:pointer;padding:15px 13px 15px 15px;text-align:left;white-space:nowrap;">
+							<table width="100%" cellspacing="0" cellpadding="0" align="center">
+								<tr>
+									<td valign="top" style="width:35px;">
+										<button type="submit" class="btn btn-primary">
+											<span class="glyphicon glyphicon-list"></span>
+										</button>
+									</td>
+									<td style="padding-left:10px;text-align:left;">
+										<span style="display:inline-block;padding:0 0 5px 0;font-size:13px;font-weight:bold;color:##696969;white-space:normal;word-wrap:break-word;">
+											Release Notes
+											<cfif !structKeyExists(cookie, "releasenotes") OR cookie.releasenotes NEQ application.releaseVersion>
+												<sup style="color:green;"><i>New!</i></sup>
+											</cfif>
+										</span>
+										<br>
+										<span style="display:inline-block;padding:0 0 0 0;font-size:11px;font-weight:normal;white-space:normal;word-wrap:break-word;">Release notes and info about known issues.</span>
+									</td>
+								</tr>
+							</table>
+						</div>
 					</cfoutput>
 				</div>
 			</div>
