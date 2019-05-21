@@ -9,7 +9,13 @@
 
 		<cfif NOT rc.filter.getFindIt()
 			OR rc.policy.Policy_FindItChangeAir>
-			<div class="pull-right"><a href="#buildURL('air?SearchID=#rc.searchID#')#" style="color:##666">change <span class="mdi mdi-restart"></span></a></div><br>
+			<div class="pull-right">
+				<a href="#buildURL('air?SearchID=#rc.searchID#')#" 
+					rel="popleft"
+					data-content="Change"
+					class="btn-floating btn-small waves-effect waves-light red" 
+					><i class="mdi mdi-restart"></i></a>
+			</div>
 		</cfif>
 
 		<div class="tripsummary-detail">
@@ -101,6 +107,7 @@
 			</div> <!-- /.row -->
 			 <div class="row">
 				<div class="col s12 m9">
+					<cfset seatFieldNames = ''/>
 					<cfloop index="Group" from="0" to="20" >
 						<cfif structKeyExists(rc.Air, Group)>
 							
@@ -209,7 +216,7 @@
 				</div>
 
 				<div class="col s12 m3">
-					<div class="panel panel-primary air-purchase-details">
+					<div class="panel panel-primary summary-purchase-details">
 						<div class="panel-heading">
 							<h3 class="panel-title">
 								#dollarFormat(rc.Air[0].TotalPrice)#
@@ -296,8 +303,8 @@
 			<cfif 1 eq 1 OR rc.showAll
 				OR rc.Policy.Policy_AllowRequests>
 				<div class="input-field col s12">					
-					<input name="specialRequests" id="specialRequests" class="form-control" type="text" placeholder="Add notes for our Travel Consultants (unused ticket credits, etc.)<!--- #(rc.fees.requestFee NEQ 0 ? 'for a #DollarFormat(rc.fees.requestFee)# fee' : '')# --->" >
-					<label for="specialRequest" >Notes for our Travel Consultants (unused ticket credits, etc.)</label>
+					<input name="specialRequests" id="specialRequests" class="form-control" type="text" >
+					<label for="specialRequest" >Notes to Travel Consultants (unused ticket credits, etc.)</label>
 				</div>
 			</cfif>
 		</div> <!-- / .row -->
