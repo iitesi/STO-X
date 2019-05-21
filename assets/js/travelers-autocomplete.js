@@ -4,7 +4,7 @@
             query: {},
             userId: -1,
             accountId: -1,
-            queryLimit: 200,
+            queryLimit: 100,
             elementName: 'UserID'
         };
 

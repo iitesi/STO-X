@@ -1,44 +1,45 @@
 <cfcomponent extends="org.corfield.framework">
 
-	<cfset this.name = "booking_" & hash(getCurrentTemplatePath())>
-	<cfset this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath())>
-	<cfset this.sessionManagement = true>
-	<!--- <cfset this.sessionStorage="sessionCache"> --->
-	<cfset this.applicationManagement = true>
+	<cfscript>
+		this.name = "booking_" & hash(getCurrentTemplatePath());
+		this.mappings["booking"] = getDirectoryFromPath(getCurrentTemplatePath());
+		this.sessionManagement = true;
+		this.applicationManagement = true;
 
-	<cfset variables.framework = {
-		action = 'action',
-		applicationKey = 'fw',
-		baseURL = 'useCgiScriptName',
-		cacheFileExists = false,
-		defaultItem = 'default',
-		defaultSection = 'main',
-		defaultSubsystem = 'home',
-		error = 'main.error',
-		generateSES = false,
-		home = 'main.default',
-		maxNumContextsPreserved = 10,
-		password = 'true',
-		preserveKeyURLKey = 'fw1pk',
-		reload = 'reload',
-		reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? true : false),
-		SESOmitIndex = false,
-		siteWideLayoutSubsystem = 'common',
-		subsystemDelimiter = ':',
-		suppressImplicitService = true,
-		trace = false,
-		unhandledExtensions = 'cfc',
-		unhandledPaths = '/external',
-		usingSubsystems = false
-	}>
+		variables.framework = {
+			action = 'action',
+			applicationKey = 'fw',
+			baseURL = 'useCgiScriptName',
+			cacheFileExists = false,
+			defaultItem = 'default',
+			defaultSection = 'main',
+			defaultSubsystem = 'home',
+			error = 'main.error',
+			generateSES = false,
+			home = 'main.default',
+			maxNumContextsPreserved = 10,
+			password = 'true',
+			preserveKeyURLKey = 'fw1pk',
+			reload = 'reload',
+			reloadApplicationOnEveryRequest = (cgi.server_name EQ 'r.local' ? true : false),
+			SESOmitIndex = false,
+			siteWideLayoutSubsystem = 'common',
+			subsystemDelimiter = ':',
+			suppressImplicitService = true,
+			trace = false,
+			unhandledExtensions = 'cfc',
+			unhandledPaths = '/external',
+			usingSubsystems = false
+		};
+	</cfscript>
 
 	<cffunction name="setupApplication">
 
-		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init( defaultProperties = { currentServerName=cgi.server_name }) />
-		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml') ) />
-		<cfset setBeanFactory(bf)>
-		<cfset controller('setup.setApplication')>
-		<cfset setupApplicationVariables()>
+		<cfset local.bf = createObject('component','coldspring.beans.DefaultXmlBeanFactory').init(defaultProperties = { currentServerName=cgi.server_name })/>
+		<cfset bf.loadBeans( expandPath('/booking/config/coldspring.xml'))/>
+		<cfset setBeanFactory(bf)/>
+		<cfset controller('setup.setApplication')/>
+		<cfset setupApplicationVariables()/>
 
 	</cffunction>
 
@@ -50,18 +51,6 @@
 		<cfset controller('setup.setAcctID')/>
 		<cfset controller('setup.setAccount')/>
 
-	</cffunction>
-
-	<cffunction name="IsAppInitted" returntype="boolean">
-		<cfscript>
-			// seeing missing app vars in the logs, check a few common ones until we can diagnose
-			if ((!structKeyExists(application, "stAirports") || structIsEmpty(application.stAirports))
-				|| (! structKeyExists(application, "stHotelVendors") || structIsEmpty(application.stHotelVendors))
-				|| !structKeyExists(application, "staticAssetVersion")) {
-				return false;
-			}
-			return true;
-		</cfscript>
 	</cffunction>
 
 	<cffunction name="setupRequest">
@@ -233,9 +222,23 @@
 	</cffunction>
 
 	<cffunction name="setupApplicationVariables" output="false">
-		<cfset application.gmtOffset = '6:00'>
-		<cfset application.releaseVersion = "4.5.1.1"/>
-		<cfset application.es = getBeanFactory().getBean('EnvironmentService') />
+		<cfscript>
+			application.gmtOffset = '6:00';
+			application.releaseVersion = "4.5.1.1";
+			application.es = getBeanFactory().getBean('EnvironmentService');
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="IsAppInitted" returntype="boolean">
+		<cfscript>
+			// seeing missing app vars in the logs, check a few common ones until we can diagnose
+			if ((!structKeyExists(application, "stAirports") || structIsEmpty(application.stAirports))
+				|| (! structKeyExists(application, "stHotelVendors") || structIsEmpty(application.stHotelVendors))
+				|| !structKeyExists(application, "staticAssetVersion")) {
+				return false;
+			}
+			return true;
+		</cfscript>
 	</cffunction>
 
 </cfcomponent>

@@ -70,7 +70,7 @@ setApplication
 
 		<cfif structCount(session.searches) GT 1>
 			<cfloop collection="#structKeyList(session.searches)#" index="local.SearchId">
-				<cfif searchId NEQ arguments.rc.SearchID>
+				<cfif structKeyExists(arguments.rc, "SearchId") AND searchId NEQ arguments.rc.SearchID>
 					<cfset structDelete(session.searches, searchId)>
 				</cfif>
 			</cfloop>

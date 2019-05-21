@@ -255,13 +255,6 @@
 			<cfset session.SearchId = 0>
 		</cfif>
 
-		<!--- <cfdump var=#arguments#>
-		<cfdump var=#arguments.AcctId#>
-		<cfdump var=#arguments.UserId#>
-		<cfdump var=#arguments.SearchId#>
-		<cfdump var=# session.searches[arguments.SearchID]#>
-		<cfdump var='URL ID' abort> --->
-
 		<cfreturn local.searchfilter/>
 	</cffunction>
 

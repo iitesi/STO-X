@@ -54,16 +54,14 @@ $(document).ready(function(){
 		$.ajax({type:"POST",
 			url: '/booking/RemoteProxy.cfc?method=getSearchTraveler',
 			data:	{
-						  travelerNumber : travelerNumber
-						, searchID : searchID
-					},
+					travelerNumber : travelerNumber
+				, searchID : searchID
+			},
 			dataType: 'json',
 			success:function(traveler) {
 
-				//console.log('getTraveler()...response');
-				//console.log(traveler);
-
 				loadTraveler(traveler, 'initial');
+
 				$( "#orgUnits" ).html('');
 				for( var i=0, l=traveler.orgUnit.length; i<l; i++ ) {
 					if (isGuest && traveler.orgUnit[i].OUID == 925) { // Employee ID
@@ -104,12 +102,6 @@ $(document).ready(function(){
 		var userID = $( "#userID" ).val();
 		var isGuest = (userID == 0);
 
-		console.log(userID);
-		console.log(isGuest);
-		
-		// console.log('userID onChange()...');
-		// console.log(userID);
-
 		$( "#airSpinner" ).show();
 		$( "#hotelSpinner" ).show();
 		$( "#carSpinner" ).show();
@@ -126,9 +118,6 @@ $(document).ready(function(){
 			success:function(traveler) {
 
 				traveler.userId = userID;
-
-				//console.log('userID onChange()...response');
-				//console.log(traveler);
 
 				loadTraveler(traveler, 'change');
 				$( "#orgUnits" ).html('');
