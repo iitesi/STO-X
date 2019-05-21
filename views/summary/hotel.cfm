@@ -70,7 +70,7 @@
 							<a href="javascript:void(0);" 
 							rel="popover"
 							data-content="#rc.Hotel.getRooms()[1].getOutOfPolicyMessage()#"
-							class="btn-small btn-floating waves-effect waves-light blue-grey" 
+							class="btn-small btn-floating waves-effect waves-light blue darken-3" 
 							><i class="mdi mdi-alert-circle-outline"></i></a>
 						</div>
 					</cfif>

@@ -139,7 +139,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv nooffset container-fluid" >
+					<div class="summarydiv container-fluid" >
 						<span class="disclaimer">
 							<a href="javascript:void(0);" 
 							rel="popleft"
@@ -147,11 +147,11 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 							class="btn-floating btn-small waves-effect waves-light red" 
 							><i class="mdi mdi-asterisk"></i></a>
 						</span>
-						<div id="travelerForm" class="col-md-6 childcontainer">
+						<div id="travelerForm" class="col-md-6 ">
 							#View('summary/traveler')#
 							<br>
 						</div>
-						<div id="paymentForm" class="col-md-6 childcontainer">
+						<div id="paymentForm" class="col-md-6 ">
 							#view( 'summary/payment' )#
 							<br>
 						</div>
