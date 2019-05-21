@@ -3533,7 +3533,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	padding: 0;
 	margin: 0 0 1em 0;
 }
-#travelerForm {
+#travelerForm, #paymentForm {
 	padding-right: unset;
 	padding-left: unset;
 }
