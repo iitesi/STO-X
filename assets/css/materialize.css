@@ -5728,6 +5728,7 @@
     z-index: -1;
   }
   
+  /*
   .modal {
     display: none;
     position: fixed;
@@ -5753,9 +5754,9 @@
     }
   }
   
-  /* .modal h1, .modal h2, .modal h3, .modal h4 {
+  .modal h1, .modal h2, .modal h3, .modal h4 {
     margin-top: 0;
-  } */
+  }
   
   .modal .modal-content {
     padding: 24px;
@@ -5820,7 +5821,7 @@
     border-radius: 0;
     will-change: bottom, opacity;
   }
-  
+  */
   .collapsible {
     border-top: 1px solid #ddd;
     border-right: 1px solid #ddd;
