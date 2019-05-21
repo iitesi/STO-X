@@ -107,7 +107,7 @@
 			</div> <!-- /.row -->
 			 <div class="row">
 				<div class="col s12 m9">
-				    <cfset seatFieldNames = ''/>
+					<cfset seatFieldNames = ''/>
 					<cfloop index="Group" from="0" to="20" >
 						<cfif structKeyExists(rc.Air, Group)>
 							
@@ -196,19 +196,19 @@
 												<li>
 													Cabin: #uCase(Replace(Flight.CabinClass, 'Premium', 'Premium '))#
 												</li>
-												<cfif NOT listFind('WN,F9', Flight.CarrierCode)><li>
-													<a class="seatMapOpener" id="link_seatFlight#Flight.FlightNumber#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
-														<i class="mdi mdi-seat-legroom-normal"></i> Select Seat
-													</a>
-													<input type="hidden" id="input_seatFlight#Flight.FlightNumber#" name="input_seatFlight#Flight.FlightNumber#" value=""/>
-												</li></cfif>
+												<cfif NOT listFind('WN,F9', Flight.CarrierCode)><li><!--- Exclude Southwest and Frontier --->
+            										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+            											<i class="mdi mdi-seat-legroom-normal"></i> Select Seat
+            										</a>
+            										<input type="hidden" id="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" name="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" value=""/>
+            										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#',',')/>
+            									</li></cfif>
 											</ul>
 										</div>
 									</div>
 									<cfset previousFlight = Flight>
 								</cfloop>
 							</div>
-					<cfset seatFieldNames = ''/>
 						</div>
 							</cfif>
 						</cfif>
