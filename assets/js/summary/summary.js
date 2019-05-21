@@ -839,9 +839,9 @@ $(document).ready(function(){
 			$( "#hotelCCYear" ).val( $( "#airCCYear" ).val() );
 			$( "#hotelBillingName" ).val( $( "#airBillingName" ).val() );
 			var hotelCCMonthYear = $( "#airCCMonthDisplay" ).val() + ' ' + $( "#airCCYear" ).val();
-			$( "#copyAirCCNumber" ).html( $( "#airCCNumber" ).val() );
-			$( "#copyAirCCMonthYear" ).html( hotelCCMonthYear );
-			$( "#copyAirBillingName" ).html( $( "#airBillingName" ).val() );
+			$( "#copyAirCCNumber" ).val( $( "#airCCNumber" ).val() );
+			$( "#copyAirCCMonthYear" ).val( hotelCCMonthYear );
+			$( "#copyAirBillingName" ).val( $( "#airBillingName" ).val() );
 		}
 		else {
 			$( "#newHotelCC" ).val( 0 );
@@ -856,9 +856,12 @@ $(document).ready(function(){
 			$( "#hotelCCMonthDisplay" ).val( '' );
 			$( "#hotelCCYear" ).val( '' );
 			$( "#hotelBillingName" ).val( '' );
-			$( "#copyAirCCNumber" ).html( '' );
-			$( "#copyAirCCMonthYear" ).html( '' );
-			$( "#copyAirBillingName" ).html( '' );
+			$( "#copyAirCCNumber" ).val( '' );
+			$( "#copyAirCCMonthYear" ).val( '' );
+			$( "#copyAirBillingName" ).val( '' );
+		}
+		if(M){
+			M.updateTextFields();
 		}
 	})
 
