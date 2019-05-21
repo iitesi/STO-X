@@ -5,7 +5,7 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h1 class="panel-title">Contact info</h1>
+					<h1 class="panel-title">Contact Info</h1>
 				</div>
 				<div class="panel-body" style="padding:25px;">
 					<cfoutput query="qryContactInfo">

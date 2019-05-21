@@ -1,5 +1,6 @@
 <div id="developers">
 <cfoutput>
+	<div style="width:100%;text-align:center;display:none;">#cgi.server_name#</div>
 	<cftry>
 		<cfif application.es.getCurrentEnvironment() NEQ "prod"
 			AND rc.Filter.getAcctID() NEQ 441>
