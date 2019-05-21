@@ -139,15 +139,21 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 			<div id="traveler" class="tab_content">
 				<p>
-					<div class="summarydiv container-fluid" >
-						<div class="row">
-						 <span class="disclaimer">* denotes required fields</span>
-							<div id="travelerForm" class="col-md-6">
-								#View('summary/traveler')#
-							</div>
-							<div id="paymentForm" class="col-md-6">
-								#view( 'summary/payment' )#
-							</div>
+					<div class="summarydiv nooffset container-fluid" >
+						<span class="disclaimer">
+							<a href="javascript:void(0);" 
+							rel="popleft"
+							data-content="Denotes Required Field"
+							class="btn-floating btn-small waves-effect waves-light red" 
+							><i class="mdi mdi-asterisk"></i></a>
+						</span>
+						<div id="travelerForm" class="col-md-6 childcontainer">
+							#View('summary/traveler')#
+							<br>
+						</div>
+						<div id="paymentForm" class="col-md-6 childcontainer">
+							#view( 'summary/payment' )#
+							<br>
 						</div>
 					</div>
 
@@ -155,17 +161,17 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 						<div id="airDiv" class="clearfix childcontainer">
 							#View('summary/air')#
 						</div>
-						<div id="hotelDiv" class="clearfix childcontainer">
+						<div id="hotelDiv" class="clearfix childcontainer <cfif NOT rc.hotelSelected>hide</cfif>">
 							#View('summary/hotel')#
 						</div>
-						<div id="carDiv" class="clearfix childcontainer">
+						<div id="carDiv" class="clearfix childcontainer <cfif NOT rc.vehicleSelected>hide</cfif>">
 							#View('summary/vehicle')#
 						</div>
 					</div>
 					<cfif StructKeyExists(rc,"TravelMessages") AND ArrayLen(rc.TravelMessages) GT 0>
 						#view('summary/messages')#
 					</cfif>
-					<div class="container-fluid">
+					<div class="summarydiv container-fluid nooffset">
 						<div class="row">
 							<div class="col-xs-12" >
 								<div class="alert alert-success hide" id="unusedTicketsDiv">

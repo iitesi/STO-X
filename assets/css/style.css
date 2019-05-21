@@ -1962,7 +1962,9 @@ li.with-irs .irs-title {
 .tripSummary{
 		margin: 10px 5px !important;
 }
-
+.tripSummary .row {
+	margin-bottom: 10px;
+}
 .row.total {
 	border-top: 1px solid #bbb;
 }
@@ -1992,17 +1994,17 @@ li.with-irs .irs-title {
 	margin-bottom: 20px;
 	background-color: #fff;
 }
-.summarydiv.nooffset {
+.summarydiv.container-fluid.nooffset {
 	position: relative;
 	box-shadow: none;
 	color: #211922;
 	min-height:70px;
 	border:none;
-	margin-bottom: 1em;
+	margin-bottom: 0;
 	background-color: unset;
 }
 
-.summarydiv.nooffset .childcontainer {
+.summarydiv.container-fluid.nooffset .childcontainer {
 	position: relative;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	color: #211922;
@@ -2013,11 +2015,13 @@ li.with-irs .irs-title {
 }
 
 .summarydiv .disclaimer {
-	display: block;
+	/* display: block;
 	width: 100%;
 	text-align: right;
-	padding-right: 1em;
-    font-size: 12px;
+	padding-right: 1em; */
+	font-size: 12px;
+	float: right;
+	margin: 4px;
 }
 .summarydiv .form-control {
 	width: 90%;
@@ -2029,6 +2033,9 @@ li.with-irs .irs-title {
 .tripsummary-detail:last-child {
 	padding-bottom: 0px;
 	border-bottom: 0px;
+}
+.tripsummary-detail > div:last-child {
+	margin-bottom: 0px;
 }
 .padded {
 	padding-top: 1em;
@@ -3524,7 +3531,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 .summarydiv.container-fluid {
 	padding: 0;
-	margin: 0 0 20px 0;
+	margin: 0 0 1em 0;
 }
 #travelerForm {
 	padding-right: unset;
@@ -3582,19 +3589,19 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	font-style: italic;
 	color: #5d5d5d;
 }
-.air-purchase-details h3 {
+.summary-purchase-details h3 {
 	text-align: right;
 	font-weight: 900;
 	color: #fffdd7;
 }
-.air-purchase-details ul {
+.summary-purchase-details ul {
 	padding-left: 15px;
 	list-style-type: disc;
 }
-.air-purchase-details ul li {
+.summary-purchase-details ul li {
 	padding: 5px 0;
 }
-.air-purchase-details .alert-danger {
+.summary-purchase-details .alert-danger {
 	color: black;
 }
 #summaryForm .seatMapOpener {
@@ -3603,7 +3610,60 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	line-height: 16px;
 	padding-top: 10px;
 }
+#summaryForm .btn-floating.btn-small {
+	font-size: 20px!important;
+	line-height: 20px!important;
+	width: 24px!important;
+	height: 24px!important;
+}
+#summaryForm .btn-floating.btn-small i.mdi {
+	font-size: 18px!important;
+	line-height: 24px!important;
+}
+.w100 {
+	width: 100%
+}
+.priceline-terms-card .card-action {
+	padding-top: 20px!important;
+	padding-bottom: 20px!important;
+}
+.priceline-terms-card .card-action .input-field {
+	position: static;
 
+}
+.priceline-terms-card .card-action .input-field label {
+	padding-left: 15px;
+}
+.priceline-terms-card .card-action .input-field label span {
+	font-size: 1.5rem;
+	line-height: 20px;
+}
+.card-content p {
+	margin-bottom: 10px !important;
+}
+.hotel-details-card .row {
+	margin-bottom: 5px;
+}
+.hotel-details-card .row .col {
+	padding: 5px 0 !important;
+}
+#travelerButton {
+	display: flex;
+	justify-content: center;
+}
+#travelerButton i {
+	font-size: 2rem;
+	margin-left: 10px;
+}
+@media (min-width: 799px) {
+	.hotel-details-card {
+		margin: 0 !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		border: 1px solid #ddd !important;
+		border-radius: 4px !important;
+	}
+}
 @media (min-width: 300px) and (max-width: 798px){
 	
 	#summaryForm .select-wrapper input.select-dropdown {
@@ -3637,7 +3697,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 	#summaryForm .segment-leg-time-inair.fs-1 {
 		top: auto;
-		margin: 10px 0;
+		margin: 12px 0;
+		font-size: 9px;
 		position: relative;
 	}
 	#summaryForm .segment-leg-operation-details {
@@ -3654,6 +3715,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	#summaryForm .segment-leg-details.segment-leg-arrival {
 		padding-top: 0;
 	}
+	#summaryForm .input-field.with-icon {
+		padding-right: 0!important;
+	}
 	#summaryForm #specialRequests {
 		font-size: 13px;
 	}
@@ -3666,5 +3730,55 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		font-size: 12px;
 		line-height: 14px;
 		padding-top: 10px;
+	}
+
+	#summaryForm .btn-floating.btn-small {
+		width: 18px !important;
+		height: 18px !important;
+		font-size: 1rem!important;
+		line-height: 18px !important;
+	}
+	#summaryForm .btn-floating.btn-small i.mdi {
+		font-size: 1rem!important;
+		line-height: 18px !important;
+	}
+	#summaryForm .priceline-terms-card {
+
+	}
+	#summaryForm .priceline-terms-card .card-content{
+		padding: 16px
+	}
+	#summaryForm .priceline-terms-card .card-title {
+		font-size: 13px;
+		line-height: 15px;
+	}
+	#summaryForm .priceline-terms-card h4 {
+		font-size: 14px;
+		border-bottom: 1px dashed white;
+	}
+	#summaryForm .priceline-terms-card h4 + p{
+		font-size: 12px;
+	}
+	.priceline-terms-card .card-action {
+		padding-top: 30px!important;
+		padding-bottom: 30px!important;
+	}
+	#summaryForm .priceline-terms-card .card-action label span {
+		font-size: 12px;
+		line-height: 14px;
+	}
+	#summaryForm #agreeToTermsError {
+		text-align: center;
+		padding-bottom: 12px;
+	}
+	.card-content .row {
+		margin:5px 0!important;
+	}
+	.np-sm {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+	.w100-sm {
+		width: 100%
 	}
 }

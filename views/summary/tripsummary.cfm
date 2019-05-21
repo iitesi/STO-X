@@ -148,8 +148,8 @@
 			<cfset tripTotal = tripTotal + rc.fees.fee>
 
 			<div class="row text-right" id="bookingTotalRow">
-				<div class="col-xs-8 blue"><strong>Trip cost for current traveler</strong></div>
-				<div class="col-xs-4 blue" id="totalCol">
+				<div class="col-xs-8 blue-text"><strong>Trip cost for current traveler</strong></div>
+				<div class="col-xs-4 blue-text" id="totalCol">
 					<strong>#numberFormat(tripTotal, '$____.__')#</strong>
 				</div>
 			</div>
