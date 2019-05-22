@@ -5223,10 +5223,10 @@
     line-height: inherit;
   }
   
-  .btn:focus, .btn-large:focus, .btn-small:focus,
+  /* .btn:focus, .btn-large:focus, .btn-small:focus,
   .btn-floating:focus {
-    background-color: #1d7d74;
-  }
+    background-color: #286090;
+  } */
   
   .btn, .btn-large, .btn-small {
     text-decoration: none;
@@ -5234,8 +5234,8 @@
     background-color: #337ab7;
     text-align: center;
     letter-spacing: .5px;
-    -webkit-transition: background-color .2s ease-out;
-    transition: background-color .2s ease-out;
+    /* -webkit-transition: background-color .2s ease-out;
+    transition: background-color .2s ease-out; */
     cursor: pointer;
   }
   
