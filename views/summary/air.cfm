@@ -106,6 +106,11 @@
 							<img class="img-responsive carrierimg" src="assets/img/airlines/#Group.CarrierCode#.png">
 						</div>
 						<cfset Seats = rc.Traveler.getBookingDetail().getSeats()/>
+						<cfif isArray(Seats) AND arrayIsEmpty(Seats)>
+							<cfset Seats = {}/>
+						<cfelseif isArray(Seats)>
+							<cfset Seats = Seats[0]/>
+						</cfif>
 						<cfloop collection="#Group.Flights#" index="FlightIndex" item="Flight">
 							<div class="summarySegment row">
 								<div class="col-lg-2 col-sm-3" title="#application.stAirVendors[Flight.CarrierCode].Name# Flt ###Flight.FlightNumber#">
@@ -123,7 +128,7 @@
 								<div class="col-lg-2 col-sm-3">
 									<cfif NOT listFind('WN,F9', Flight.CarrierCode)><!--- Exclude Southwest and Frontier --->
 										<cfset seatId = "seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#"/>
-										<cfif structKeyExists(Seats,"#seatId#")>
+										<cfif structKeyExists(Seats,seatId)>
 											<cfset seatIdValue = Seats["#seatId#"]/>
 										<cfelse>
 											<cfset seatIdValue = ""/>
