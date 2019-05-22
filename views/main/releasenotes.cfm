@@ -14,8 +14,8 @@
 								<h3>5/21/2019<h3>
                                 <ul>
                                     <li>Fixed issue with seat assignments lost on purchase page when form validation fails</li>
-									<li>Added retry logic to async seat map calls to handle intermittent api call failures</li>
-									<li>Added better static asset cache controls to ensure new features are seen without having to clear browsser cache</li>
+									<li>Added retry logic to async seat map calls to handle intermittent uAPI call failures</li>
+									<li>Added better static asset cache controls to ensure new features are seen without having to clear browser cache</li>
                                 </ul>
 							</div>
 						</p>
