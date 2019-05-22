@@ -1,12 +1,7 @@
-<cfset session.userId = 0/>
-<!--- TODO: STM-7280 STO and SSO account configurability --->
-<cftry>
-<cfif session.acctId eq 532>
-	<cflocation url="?action=dycom.login" addtoken="false">
-<cfelse>
-	<cflocation url="?action=main.login" addtoken="false">
-</cfif>
-<cfcatch type="any">
-	<cflocation url="?action=main.login" addtoken="false">
-</cfcatch>
-</cftry>
+<cfscript>
+	session.AcctId = 0;
+	session.UserId = 0;
+	session.User = {};
+	session.IsAuthorized = false;
+	location("/booking/index.cfm?action=main.login",false);
+</cfscript>
