@@ -29,6 +29,11 @@
 									Username and Password not found. Please contact online support.
 								</p>
 							</cfif>
+							<cfif isDefined("sessionTimeOut")>
+								<p style="color:red;font-weight:bold;text-align:center;">
+									Your session has timed out. Please sign on again.
+								</p>
+							</cfif>
 							<div class="form-group">
 								<label for="username">Username:</label>
 								<input type="text" name="username" id="username" class="form-control" placeholder="Username" autofocus="" required="required">

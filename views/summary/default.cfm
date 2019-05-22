@@ -36,8 +36,8 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 <!--- // STM-4242 ======================================================= --->
 
 <cfset krakenService = application.fw.factory.getBean('KrakenService')/>
-<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>">
-<script src="/booking/assets/js/air/seatmap.js?staticAssetVersion=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
+<link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?v=<cfoutput>#application.staticAssetVersion#</cfoutput>">
+<script src="/booking/assets/js/air/seatmap.js?v=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
 <script>
 	var config = {
 		DoSelectionActions: true,

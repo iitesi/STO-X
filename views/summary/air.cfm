@@ -105,6 +105,7 @@
 						<div class="col-sm-2 col-xs-4">
 							<img class="img-responsive carrierimg" src="assets/img/airlines/#Group.CarrierCode#.png">
 						</div>
+						<cfset Seats = rc.Traveler.getBookingDetail().getSeats()/>
 						<cfloop collection="#Group.Flights#" index="FlightIndex" item="Flight">
 							<div class="summarySegment row">
 								<div class="col-lg-2 col-sm-3" title="#application.stAirVendors[Flight.CarrierCode].Name# Flt ###Flight.FlightNumber#">
@@ -121,11 +122,21 @@
 								</div>
 								<div class="col-lg-2 col-sm-3">
 									<cfif NOT listFind('WN,F9', Flight.CarrierCode)><!--- Exclude Southwest and Frontier --->
-										<a class="seatMapOpener" id="link_seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
-											Select Seat
+										<cfset seatId = "seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#"/>
+										<cfif structKeyExists(Seats,"#seatId#")>
+											<cfset seatIdValue = Seats["#seatId#"]/>
+										<cfelse>
+											<cfset seatIdValue = ""/>
+										</cfif>
+										<a class="seatMapOpener" id="link_#seatId#" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
+											<cfif len(trim(seatIdValue))>
+												#listFirst(seatIdValue,":")#
+											<cfelse>
+												Select Seat
+											</cfif>
 										</a>
-										<input type="hidden" id="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" name="seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#" value=""/>
-										<cfset seatFieldNames = listAppend(seatFieldNames,'seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#',',')/>
+										<input type="hidden" id="#seatId#" name="#seatId#" value="#seatIdValue#"/>
+										<cfset seatFieldNames = listAppend(seatFieldNames,"#seatId#",",")/>
 									</cfif>
 								</div>
 								<hr class="visible-xs-block"/>

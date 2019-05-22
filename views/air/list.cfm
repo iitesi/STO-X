@@ -342,7 +342,7 @@
 							<div class="segment-details-extras">
 								<ul>
 									<cfif NOT Segment.FlightNumbers contains "WN" AND NOT Segment.FlightNumbers contains "F9"><li>
-										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Segment)#'>
+										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>
 											<i class="mdi mdi-seat-recline-normal" aria-hidden="true"></i> View Available Seats
 										</a>
 									</li></cfif>

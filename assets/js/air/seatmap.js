@@ -48,6 +48,9 @@ var SeatMap = function(){
         UserId: 0
     };
 
+    var maxTries = 3;
+    var currTries = 0;
+
     return {
 
         get: function(){
@@ -55,7 +58,7 @@ var SeatMap = function(){
             var requestData = data;
             
             $('.modal-body').html('<i class="fa fa-spinner fa-spin"></i><span>Loading Seat Map ...</span>');
-            $('.modal-title').text('Seat Map for ' + requestData.SegmentRoute + ' ' + requestData.FlightNumbers);
+            $('.modal-title').text('Seat Map for ' + requestData.Flights[0].CarrierCode + ' ' + requestData.Flights[0].FlightNumber + ' ' + requestData.Flights[0].OriginAirportCode + '-' + requestData.Flights[0].DestinationAirportCode);
 
             var seatMapRequest = {
                 TargetBranch: config.TargetBranch,
@@ -102,12 +105,22 @@ var SeatMap = function(){
                 contentType: 'application/json',
                 data: JSON.stringify(seatMapRequest),
                 success: function(result){
-                    var body = SeatMap.draw(result);
-                    $('.modal-body').html(body.prop('outerHTML'));
+                    var hasRows = result.SeatMaps[0].Rows.length;
+                    if (!hasRows && currTries < maxTries) {
+                        currTries++;
+                        SeatMap.get();
+                    } else {
+                        if (!hasRows) {
+                            var body = $('<p class="notFound">Sorry, no seat map available for this flight.</p>');
+                        } else {
+                            var body = SeatMap.draw(result);
+                        }
+                        $('.modal-body').html(body.prop('outerHTML'));
+                    }
                 },
                 statusCode: {
                     401: function() {
-                        window.location.href = '/booking/?index=main.login'
+                        window.location.href = '/booking/index.cfm?action=main.login&sessionTimeOut=true'
                     }
                 }
             });
@@ -208,7 +221,6 @@ var SeatMap = function(){
                         } else {
                             var clickAction = '';
                             if (config.DoSelectionActions && seatType != 'unavailable') {
-                                console.log(map);
                                 clickAction = "SeatMap.setSeat('"+map.FlightNumber+"','"+map.OriginAirportCode+"','"+seatData.SeatCode+"','"+seatData.SeatType+"');";
                             }
                             var seat = $('<div class="cabinClassSeat"></div>');
@@ -281,6 +293,7 @@ var SeatMap = function(){
             $(document).ready(function() {
                 document.body.insertAdjacentHTML('beforeend',seatMapModalTemplate);
                 $('.seatMapOpener').click(function () {
+                    currTries = 0;
                     SeatMap.setData($(this).data('id'));
                     SeatMap.get();
                 });
