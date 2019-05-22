@@ -180,7 +180,8 @@
 				</div>
 
 				<div class="loyalty row">
-					<div class="input-field">					
+					<div class="col hide-on-small m2">&nbsp;</div>
+					<div class="input-field col s12 m7">					
 						<label for="carFF">#uCase(application.stCarVendors[rc.Vehicle.getVendorCode()])# LOYALTY ##</label>
 						<input type="text" name="carFF" id="carFF" maxlength="20">
 					</div>
