@@ -1,6 +1,7 @@
 <cfset qryFutureTrips = application.fw.factory.getBean("TripManager").getFutureTrips(userId=session.userId)/>
 <div class="container-fluid" id="Main">
 	<br><br>
+	<cfdump var="#session#">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">

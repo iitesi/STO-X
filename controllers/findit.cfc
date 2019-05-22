@@ -11,6 +11,9 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
+		<cfdump var="#session#"/>
+		<cfdump var="#rc#"/>
+
 		<cfquery name="local.getTrip" datasource="#variables.bookingDSN#">
 			SELECT tripData
 			FROM FindItOptions

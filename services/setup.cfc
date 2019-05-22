@@ -93,7 +93,7 @@
 		<cfif arguments.SearchId NEQ 0 AND structKeyExists(session, "SearchId")
 			AND session.SearchId NEQ arguments.SearchId
 			AND NOT validateSearchId(arguments.AcctId, arguments.UserId, arguments.SearchId)>
-			<cfdump var='Error: Not a valid SearchId' abort>
+			<cfdump var='Controller Error: Not a valid SearchId' abort>
 		</cfif>
 
 		<cfif arguments.SearchID NEQ 0>

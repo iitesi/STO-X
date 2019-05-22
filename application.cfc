@@ -59,6 +59,10 @@
 			<cfset setupApplication()/>
 		</cfif>
 
+		<cfif request.context.action EQ "findIt.default" AND structKeyExists(url,"t")>
+			<cfdump var="#request#" abort/>
+		</cfif>
+
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
 			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>

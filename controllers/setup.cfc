@@ -68,7 +68,7 @@ setApplication
 	<cffunction name="cleanOutOldSearchIDs" output="false" hint="I set the search ID.">
 		<cfargument name="rc">
 
-		<cfif structCount(session.searches) GT 1>
+		<cfif structKeyExists(session,"searches") AND structCount(session.searches) GT 1>
 			<cfloop collection="#structKeyList(session.searches)#" index="local.SearchId">
 				<cfif structKeyExists(arguments.rc, "SearchId") AND searchId NEQ arguments.rc.SearchID>
 					<cfset structDelete(session.searches, searchId)>
@@ -97,7 +97,7 @@ setApplication
 																				SearchId = arguments.rc.SearchId)/>
 			</cfif>
 			<cfcatch type="any">
-				<cfdump var='Error: Not a valid SearchId' abort>
+				<cfdump var='Service Error: Not a valid SearchId' abort>
 			</cfcatch>
 		</cftry>
 
