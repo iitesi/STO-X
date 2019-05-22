@@ -279,7 +279,8 @@ body {
 	width: 100%;
 }
 #footer-top .footer-policy-wrapper {
-	
+	margin-left: 0;
+	margin-right: 0;
 }
 #footer-top .footer-policy-wrapper > div {
 	padding-right: 0!important;
@@ -303,7 +304,10 @@ body {
 	color: rgb(66, 66, 66);
 	padding: 25px 0;
 }
-
+#footer-bottom > .row{
+	margin-left: 0;
+	margin-right: 0;
+}
 .footer-nav {
 	float: right;
 }
