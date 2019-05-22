@@ -3496,12 +3496,13 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 .user-circle-wrapper {
-	margin-top: 6px;
+	margin: 6px 0 0 15px;
     padding: 7px;
     border: 1px solid #888888;
     border-radius: 50%;
-	background: #e8e8e8;
-	text-align: center;
+    background: #e8e8e8;
+    text-align: center;
+    width: 35px;
 }
 
 .user-circle-wrapper:hover {

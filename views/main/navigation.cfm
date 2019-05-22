@@ -42,6 +42,25 @@
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
 			<ul class="nav navbar-nav navbar-right">
+				<cfif structKeyExists(session, "User")>
+					<li>
+						<div class="user-circle-wrapper">
+							<cfset firstName = session.User.getFirstName()/>
+							<cfset lastName = session.User.getLastName()/>
+							<cfset fullName = firstName & ' ' & lastName/>
+							<cfset initials = left(firstName,1) & left(lastName,1)/>
+							<a class="user-circle"
+								href="javascript:void(0);"
+								data-html="true" 
+								data-placement="bottom"
+								title="#fullName#">
+								<span class="mat-badge-content mat-badge-active">
+									#initials#
+								</span>
+							</a>
+						</div>
+					</li>
+				</cfif>
 				<cfif structKeyExists(session, 'Filters')
 					AND structKeyExists(rc, 'SearchId')
 					AND structKeyExists(session.Filters, rc.SearchId)
@@ -126,25 +145,6 @@
 					<li>
 						<a href="#buildURL('main.logout')#">Logout</a>
 					</li>
-					<cfif structKeyExists(session, "User")>
-						<li>
-							<div class="user-circle-wrapper">
-								<cfset firstName = session.User.getFirstName()/>
-								<cfset lastName = session.User.getLastName()/>
-								<cfset fullName = firstName & ' ' & lastName/>
-								<cfset initials = left(firstName,1) & left(lastName,1)/>
-								<a class="user-circle"
-									href="javascript:void(0);"
-									data-html="true" 
-									data-placement="bottom"
-									title="#fullName#">
-									<span class="mat-badge-content mat-badge-active">
-										#initials#
-									</span>
-								</a>
-							</div>
-						</li>
-					</cfif>
 				</cfif>
 			</ul>
 		</div><!-- /.navbar-collapse -->
