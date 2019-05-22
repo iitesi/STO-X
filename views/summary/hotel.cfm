@@ -222,7 +222,7 @@
 									<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
 										<li><span class="red-text">#rc.Hotel.getRooms()[1].getPPNRateDescription()#</span></li>
 									<cfelseif rc.Hotel.getRooms()[1].getDepositRequired()>
-										<li><<span class="red-text">This rate requires payment at time of booking.</span></li>
+										<li><span class="red-text">This rate requires payment at time of booking.</span></li>
 									</cfif>
 								</ul>
 								<cfif UCASE(rc.Hotel.getRooms()[1].getAPISource()) EQ "PRICELINE">
