@@ -1164,6 +1164,9 @@ ul.tabs li a.active {
 	.panel.trip-segment .panel-heading .panel-title {
 		padding: 0 0 0 10px;
 	}
+	.panel.trip-segment .panel-body {
+		padding: 6px;
+	}
 	.panel.trip-segment .panel-heading .panel-title .panel-date {
 		font-size: 14px;
 		position: relative;
@@ -1175,12 +1178,15 @@ ul.tabs li a.active {
 		width: 36px!important;
 	}
 	.segment-leg-inner {
-		padding-left: 50px;
+		padding-left: 40px;
 	}
 	.segment-leg-connector {
 		display: none;
 	}
-	
+	.panel.trip-segment .segment-leg {
+		font-weight: normal;
+		font-family: helvetica;
+	}
 	.segment-leg-details.fs-s1 {
 		letter-spacing: 0;
 		font-size: 12px;
@@ -1194,10 +1200,10 @@ ul.tabs li a.active {
 		padding-top: 24px;
 	}
 	.segment-leg-operation-details {
-		padding-left: 50px;
+		padding-left: 40px;
 	}
 	.segment-stopover {
-		padding-left: 50px;
+		padding-left: 40px;
 		margin: 10px 0;
 	}
 	.segment-stopover-row {
@@ -3726,6 +3732,27 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 @media (min-width: 300px) and (max-width: 798px){
 	
+	#page-content-wrapper.container {
+		padding-left: 0!important;
+		padding-right: 0!important;
+	}
+
+	#main-content .page-header {
+		margin: 0!important;
+	}
+
+	#legs .nav>li {
+		height: 28px;
+		border-radius: 0;
+	}
+	#legs .nav>li>a {
+		padding: 6px;
+		border-radius: 0;
+		font-size: 10px;
+	}
+	#aircontent .departing-segments {
+		margin-top:10px;
+	}
 	#summaryForm .select-wrapper input.select-dropdown {
 		font-size: 13px;
 	}
