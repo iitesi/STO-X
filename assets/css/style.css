@@ -1187,9 +1187,9 @@ ul.tabs li a.active {
 		font-weight: normal;
 		font-family: helvetica;
 	}
-	.segment-leg-details.fs-s1 {
-		letter-spacing: 0;
+	.fs-s1 {
 		font-size: 12px;
+		font-weight: 400;
 	}
 	.segment-leg-time-inair.fs-1 {
 		letter-spacing: 0;

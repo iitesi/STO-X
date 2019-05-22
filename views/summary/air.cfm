@@ -110,6 +110,11 @@
 							
 							<cfset Segment = rc.Air[Group]/>
 							<cfset Seats = rc.Traveler.getBookingDetail().getSeats()/>
+							<cfif isArray(Seats) AND arrayIsEmpty(Seats)>
+								<cfset Seats = {}/>
+							<cfelseif isArray(Seats)>
+								<cfset Seats = Seats[0]/>
+							</cfif>
 							<cfif structKeyExists(Segment, 'Flights')>
 								<cfset firstFlight = Segment.Flights[1]/>
 								<cfset lastFlight = Segment.Flights[ArrayLen(Segment.Flights)]/>
@@ -196,7 +201,7 @@
 														</li>
 														<cfif NOT listFind('WN,F9', Flight.CarrierCode)><li><!--- Exclude Southwest and Frontier --->
 															<cfset seatId = "seatId_#Flight.FlightNumber#_#Flight.OriginAirportCode#"/>
-															<cfif ArrayFind(Seats,"#seatId#")>
+															<cfif structKeyExists(Seats,seatId)>
 																<cfset seatIdValue = Seats["#seatId#"]/>
 															<cfelse>
 																<cfset seatIdValue = ""/>
