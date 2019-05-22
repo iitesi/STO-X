@@ -56,7 +56,7 @@
 						AND rc.Policy.Policy_AirLostSavings EQ 1)>
 
 						<div class="row mb0">
-							<div class="input-field col s12">
+							<div class="input-field col s12 #(structKeyExists(rc.errors, 'lostSavings') ? 'error' : '')#">
 								<select name="lostSavings" id="lostSavings">
 									<option value="" disabled selected>Select Reason for Not Booking the Lowest Fare</option>
 									<cfloop query="rc.qOutOfPolicy">

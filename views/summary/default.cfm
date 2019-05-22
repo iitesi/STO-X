@@ -64,7 +64,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 
 <cfoutput>
 	<div id="summaryForm">
-
+<cfdump  var="#rc.errors#">
 		<h1>Purchase Reservation</h1>
 
 		<!--- Shane - Style Travelport error messages.  We need to work with Angela to determine verbiage. --->

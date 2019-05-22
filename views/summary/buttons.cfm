@@ -1,7 +1,7 @@
 <cfoutput>
 	<div class="row payment-buttons">
 		<div class="col-lg-offset-8 col-lg-2 col-sm-3 col-sm-offset-6 text-right np-sm">
-			<button type="submit" name="trigger" id="travelerButton" class="btn btn-primary w100-sm">
+			<button type="submit" name="trigger" id="travelerButton" class="btn btn-primary w100-sm" value="ADD A TRAVELER">
 				ADD A TRAVELER
 				<i class="mdi mdi-account-multiple-plus"></i>
 			</button>
