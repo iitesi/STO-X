@@ -11,6 +11,14 @@
 					<cfoutput>
 						<p>
 							<div style="padding:5px 0 0 0;font-size:13px;white-space:normal;word-wrap:break-word;">
+								<h3>5/21/2019<h3>
+                                <ul>
+                                    <li>Fixed issues with seat assignments lost on purchase page when validation fails</li>
+                                </ul>
+							</div>
+						</p>
+						<p>
+							<div style="padding:5px 0 0 0;font-size:13px;white-space:normal;word-wrap:break-word;">
 								<h3>5/20/2019<h3>
                                 <ul>
                                     <li>Fixed issue booking for other profiled travelers and guest traveler</li>
