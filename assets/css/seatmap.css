@@ -104,3 +104,18 @@
 	vertical-align: top;
 	white-space: nowrap;
 }
+
+@media (min-width: 300px) and (max-width: 799px){
+    #seatMapModal .modal-content {
+        width: 100% !important;
+    }
+    #seatMapModal .modal-content .modal-header {
+        padding: 10px;
+    }
+    #seatMapModal .modal-content .modal-header button.close {
+        position: absolute;
+        top:5px;
+        right: 5px;
+        padding: 10px;
+    }
+}
