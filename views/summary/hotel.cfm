@@ -1,17 +1,9 @@
 <cfoutput>
 
 	<cfif rc.hotelSelected>
-		<div class="pull-right">
-			<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" 
-			rel="popleft"
-			data-content="Change or Cancel"
-			class="btn-floating btn-small waves-effect waves-light red" 
-			><i class="mdi mdi-restart"></i></a>
-		</div>
-
 			<div class="tripsummary-detail">
-				<div class="row">
-					<div class="col s12">
+				<div class="row mb0 header">
+					<div class="col s11">
 						<!--- If DHL --->
 						<cfif rc.Filter.getAcctID() EQ 497 OR rc.Filter.getAcctID() EQ 499>
 							<cfif rc.Hotel.getPreferredProperty()>
@@ -49,14 +41,22 @@
 						</cfif>
 						<h2>HOTEL</h2>
 					</div>
+					<div class="col s1">
+						<a href="#buildURL('hotel.search?SearchID=#rc.searchID#')#" 
+						rel="popleft"
+						data-content="Change or Cancel"
+						class="btn-floating btn-small waves-effect waves-light red  pull-right" 
+						><i class="mdi mdi-restart"></i></a>
+					</div>
 				</div>
-				<div class="row">
-					<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
-					<!--- All accounts when out of policy --->
-					<cfif rc.showAll
-						OR (NOT isInPolicy
-						AND rc.Policy.Policy_HotelReasonCode)>
-
+				<cfset OOPSelects = ""/>
+			
+				<cfset isInPolicy = rc.Hotel.getRooms()[1].getIsInPolicy()>
+				<!--- All accounts when out of policy --->
+				<cfif rc.showAll
+					OR (NOT isInPolicy
+					AND rc.Policy.Policy_HotelReasonCode)>
+					<cfsavecontent variable="OOPSelects">#OOPSelects#
 						<div class="input-field col s11 m5">
 							<select name="hotelReasonCode" id="hotelReasonCode">
 								<option value="" disabled selected>Select Reason for Booking Out of Policy</option>
@@ -73,11 +73,13 @@
 							class="btn-small btn-floating waves-effect waves-light blue darken-3" 
 							><i class="mdi mdi-alert-circle-outline"></i></a>
 						</div>
-					</cfif>
+					</cfsavecontent>
+				</cfif>
 
-					<!--- State of Texas --->
-					<cfif rc.showAll
-						OR rc.Filter.getAcctID() EQ 235>
+				<!--- State of Texas --->
+				<cfif rc.showAll
+					OR rc.Filter.getAcctID() EQ 235>
+						<cfsavecontent variable="OOPSelects">#OOPSelects#
 						<div class="input-field col s12 m6">
 							<select name="udid112" id="udid112">
 								<option value="" disabled selected>Select an Exception Code</option>
@@ -90,9 +92,11 @@
 						<div class="col s12 m6 right">
 							<a href="http://www.window.state.tx.us/procurement/prog/stmp/exceptions-to-the-use-of-stmp-contracts/" target="_blank">View explanation of codes</a>
 						</div>
-					</cfif>
-
-				</div> <!-- /.row -->
+						</cfsavecontent>
+				</cfif>
+				<cfif len(OOPSelects)>
+				<div class="row">#OOPSelects#</div>
+				</cfif>
 				<div class="row">
 					<div class="col hide-on-small-only m2">
 						<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
@@ -101,7 +105,7 @@
 					</div>
 
 					<div class="col s12 m7">
-						<div class="card hotel-details-card z-depth-1">
+						<div class="card summary-details-card z-depth-1">
 							<cfif findNoCase('https://', rc.Hotel.getSignatureImage())>
 								<div class="card-image hide-on-med-and-up show-on-small">
 									<img class="img-responsive" alt="#rc.Hotel.getPropertyName()#" src="#rc.Hotel.getSignatureImage()#">

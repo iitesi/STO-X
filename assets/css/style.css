@@ -2043,6 +2043,19 @@ li.with-irs .irs-title {
 .tripsummary-detail > div:last-child {
 	margin-bottom: 0px;
 }
+.tripsummary-detail .header h2 {
+	padding-top: 10px;
+	padding-left: 50px;
+}
+.tripsummary-detail .header .ribbon {
+	position: absolute;
+	float: none;
+	margin-left: 0;
+}
+.tripsummary-detail .header.air-header h2 {
+	padding-top: 10px;
+	padding-left: 10px;
+}
 .padded {
 	padding-top: 1em;
 	padding-bottom: 1em;
@@ -3647,10 +3660,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 .card-content p {
 	margin-bottom: 10px !important;
 }
-.hotel-details-card .row {
+.summary-details-card .row {
 	margin-bottom: 5px;
 }
-.hotel-details-card .row .col {
+.summary-details-card .row .col {
 	padding: 5px 0 !important;
 }
 #travelerButton {
@@ -3662,7 +3675,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	margin-left: 10px;
 }
 @media (min-width: 799px) {
-	.hotel-details-card {
+	.summary-details-card {
 		margin: 0 !important;
 		box-shadow: none !important;
 		-webkit-box-shadow: none !important;
@@ -3732,11 +3745,6 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 @media (min-width: 300px) and (max-width: 798px){
 	
-	#page-content-wrapper.container {
-		padding-left: 0!important;
-		padding-right: 0!important;
-	}
-
 	#main-content .page-header {
 		margin: 0!important;
 	}
