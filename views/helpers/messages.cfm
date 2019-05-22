@@ -1,4 +1,5 @@
-<cfset messages = rc.message.getAllMessages()>
+<cfset rc.message.init()/>
+<cfset messages = rc.message.getAllMessages()/>
 <cfparam name="rc.priceQuotedError" default="0">
 <cfif messages.recordCount GT 0 or 1 eq 1>
 	<cfif rc.priceQuotedError eq 1>

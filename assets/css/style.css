@@ -2848,6 +2848,9 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	RESPONSIVE CHANGES
 ----------------------------------------------------------------------------------------------------------
 */
+#navbar-collapse-1 a.logged-in-user-circle {
+	
+}
 #navbar-collapse-1 a.mdi-ticket-account {
 	font-size: 20px;
 }
@@ -2884,7 +2887,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 #navbar-collapse-1 a.mdi-ticket-account:hover .mat-badge-content {
 	transform: scale(1);
 }
-.unused-ticket-tooltip .tooltip-inner {
+.navbar-tooltip .tooltip-inner {
 	/* width: 350px; */
 	max-width: unset;
 	display: flex;
@@ -2892,18 +2895,18 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	overflow: hidden;
 	padding: 10px 20px;
 }
-.unused-ticket-tooltip .tooltip-inner .unused-ticket-title {
+.navbar-tooltip .tooltip-inner .unused-ticket-title {
 	font-weight: 700;
 	font-size: 14px;
 	border-bottom: 1px solid #353535;
 	padding: 0 0 5px 0;
 }
-.unused-ticket-tooltip .tooltip-inner .unused-ticket-wrapper {
+.navbar-tooltip .tooltip-inner .unused-ticket-wrapper {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 }
-.unused-ticket-tooltip .tooltip-inner .unused-ticket {
+.navbar-tooltip .tooltip-inner .unused-ticket {
 	color: #eee;
 	font-size: 12px;
 	width: 100%;
@@ -2912,7 +2915,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	border-bottom: 1px solid #353535;
 	padding:5px 0;
 }
-.unused-ticket-tooltip .tooltip-inner .unused-ticket:last-child {
+.navbar-tooltip .tooltip-inner .unused-ticket:last-child {
 	border-bottom: none;
 	padding-bottom: 0;
 }

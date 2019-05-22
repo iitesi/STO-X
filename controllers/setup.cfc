@@ -66,17 +66,15 @@ setApplication
 	</cffunction>
 
 	<cffunction name="cleanOutOldSearchIDs" output="false" hint="I set the search ID.">
-		<cfargument name="rc">
-
-		<cfif structCount(session.searches) GT 1>
+		<cfargument name="rc"/>
+		<cfif structKeyExists(session, "searches") AND structCount(session.searches) GT 1>
 			<cfloop collection="#structKeyList(session.searches)#" index="local.SearchId">
 				<cfif structKeyExists(arguments.rc, "SearchId") AND searchId NEQ arguments.rc.SearchID>
-					<cfset structDelete(session.searches, searchId)>
+					<cfset structDelete(session.searches, searchId)/>
 				</cfif>
 			</cfloop>
 		</cfif>
-
-		<cfreturn />
+		<cfreturn/>
 	</cffunction>
 
 	<cffunction name="setSearchID" output="false" hint="I set the search ID.">

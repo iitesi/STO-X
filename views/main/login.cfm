@@ -1,4 +1,6 @@
 <cfscript>
+	// clear old sessions
+	structClear(session);
 	// service handles auth and redirects
 	application.fw.factory.getBean("AuthService").authenticate(
 		data = form

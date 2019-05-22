@@ -32,7 +32,10 @@
 </cfif>
 <cfscript>
 	arrayAppend(request.context.additionalFooterJS, "$('##navbar-collapse-1 a.mdi-ticket-account').tooltip({
-		template: ""<div class='tooltip unused-ticket-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
+		template: ""<div class='tooltip navbar-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
+	});");
+	arrayAppend(request.context.additionalFooterJS, "$('##navbar-collapse-1 a.logged-in-user-circle').tooltip({
+		template: ""<div class='tooltip navbar-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
 	});");
 </cfscript>
 <cfoutput>
@@ -121,10 +124,22 @@
 						<a href="#buildURL('main.contact')#">Contact</a>
 					</li>
 					<li>
+						<a 	class="mdi logged-in-user-circle" 
+							href="javascript:void(0);"
+							data-html="true" 
+							data-placement="bottom"
+							title="Garett Kernen">
+							<span class="mat-badge-content mat-badge-active">
+								username: #rc.Filter.getUserId()#
+							</span>
+						</a>
+					</li>
+					<li>
 						<a href="#buildURL('main.logout')#">Logout</a>
 					</li>
 				</cfif>
 			</ul>
+			<cfdump var="#session#">
 		</div><!-- /.navbar-collapse -->
 	</cfif>
 </cfoutput>

@@ -392,7 +392,10 @@
 
 			<cfset local.stTemp.CouldYou = local.extendedInfo.CouldYou>
 			<cfset local.stTemp.AccountBrand = local.extendedInfo.Account_Brand>
-			<cfset local.stTemp.sBranch = local.Branches[local.qAccount.PCC_Booking]>
+			<cfset local.stTemp.sBranch = ""/>
+			<cfif structKeyExists(local.Branches, local.qAccount.PCC_Booking)>
+				<cfset local.stTemp.sBranch = local.Branches[local.qAccount.PCC_Booking]/>
+			</cfif>
 			<cfset local.stTemp.Air_PF = ListToArray(local.stTemp.Air_PF, '~')>
 
 			<cfquery name="local.qOutOfPolicy" datasource="#getCorporateProductionDSN()#">
