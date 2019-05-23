@@ -3,6 +3,8 @@
 	<br><br>
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
+			<h1 style="color: red">This page is a temporary My Trips viewing.</h1>
+			<h1 style="color: red">Will be moved to new landing page experience under development.</h1>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h1 class="panel-title">My Trips</h1>
