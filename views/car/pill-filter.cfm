@@ -64,13 +64,14 @@
 				// OR (fltrCarCategorySelectAll is false and that category is checked)
 				// AND in policy, show
 				// Else, hide
+				let allVendors = $('#vendor-all').hasClass('active');
+				let allCategories = $('#types-all').hasClass('active');
 
+				// console.log(`All Vendors: ${allVendors}`);
+				// console.log(`All Categories: ${allCategories}`);
 				for (loopcnt = 0; loopcnt <= (carresults.length-1); loopcnt++) {
 					var car = carresults[loopcnt];
-
 					var inpolicy = ((policy == false) || (policy == true && car[3] == 1)) ? true : false;
-					let allVendors = $('#vendor-all').is(':checked');
-					let allCategories = $('#types-all').is(':checked');
 
 					if (((allVendors && allCategories)
 						|| ((!allVendors && ($( "#fltrVendor" + car[2] ).is(':checked') == true))
@@ -87,9 +88,9 @@
 						$( "#" + car[0] ).addClass('hidden');
 					}
 				}
+				// console.log('./carresults loop --------------------------------------')
 				for (loopcnt = 0; loopcnt <= (carcategories.length-1); loopcnt++) {
 					var category = carcategories[loopcnt];
-
 					var inpolicy = ((policy == false) || (policy == true && category[1] == 1)) ? true : false;
 
 					if (($("#types-all").is(':checked') || ($( "#fltrCategory" + category[0] ).is(':checked') == true)) && inpolicy) {
@@ -106,25 +107,25 @@
 						$('#row' + category).addClass('hidden');
 					}
 				}
+				// console.log('./carcategories loop --------------------------------------')
 				for (loopcnt = 0; loopcnt <= (carvendors.length-1); loopcnt++) {
 					var vendor = carvendors[loopcnt];
-
 					var inpolicy = ((policy == false) || (policy == true && vendor[1] == 1)) ? true : false;
-
-					if (($("#vendor-all").is(':checked') || ($( "#fltrVendor" + vendor[0] ).is(':checked') == true)) && inpolicy) {
+					if (allVendors || ($( "#fltrVendor" + vendor[0] ).is(':checked') && inpolicy)) {
 						$( '#vendor' + vendor[0] ).removeClass('hidden');
 					}
 					else {
 						$( '#vendor' + vendor[0] ).addClass('hidden');
 					}
 				}
+				// console.log('./carvendors loop--------------------------------------')
 
 				if(nCount == 0) {
 					if(carresults.length == 0) {
-						$("#noSearchResults").show();
+						$("#noSearchResults").removeClass("hidden").show();
 					}
 					else {
-						$("#noFilteredResults").show();
+						$("#noFilteredResults").removeClass("hidden").show();
 					}
 					$("#vendorRow").hide();
 					$("#categoryRow").hide();
@@ -190,15 +191,38 @@
 				$('#filterbar').trigger('runsearch');
 			});
 			
+			$('#filterbar').on('click', '.multifilter', function (e) {
+				var $link = $(this);
+				var $wrapper = $link.parents('.multifilterwrapper');
+				var $inputs = $wrapper.find('input[type=checkbox].multifilter');
+				var $checkedInputs = $wrapper.find('input[type=checkbox].multifilter:checked');
+				var $switch = $wrapper.find('.switch-input');
+
+				if($switch.length){
+					var switchOn = $checkedInputs.length == 0 ? false : $checkedInputs.length == $inputs.length ? true : false;
+					$switch.prop('checked', switchOn);
+					if (switchOn){
+						if(!$switch.hasClass('active')){
+							$switch.addClass('active')
+						} 
+					}
+					else {
+						$switch.removeClass('active')
+					}
+				}
+				$('#filterbar').trigger('runsearch');
+			});
 
 			$('#filterbar').on('click', '.switch-label', function (e) {
 				e.stopImmediatePropagation();
 				var $label = $(this);
-				var $item = $label.prev();
-				var $wrapper = $item.parents('.multifilterwrapper');
-				
+				var $wrapper = $label.parents('.multifilterwrapper');
+				var $switch = $wrapper.find('.switch-input');
+				$switch.toggleClass('active');
+				var onOff = $switch.is(":checked");
+
 				$wrapper.find('.multifilter').each(function(){
-					$(this).prop('checked',!$item.is(':checked'));
+					$(this).prop('checked',!onOff);
 				});
 
 				$('#filterbar').trigger('runsearch');
@@ -313,7 +337,7 @@
 						<a href="#" class="dropdown-toggle" data-dflt="Vendors">Vendors <b class="caret"></b></a>
 						<ul class="dropdown-menu multifilterwrapper" data-type="checkbox" data-name="vendor">
 							<li>
-								<input type="checkbox" checked id="vendor-all" name="vendor-all" class="switch-input">
+								<input type="checkbox" checked id="vendor-all" name="vendor-all" class="switch-input active">
 								<label for="vendor-all" class="switch-label">All Vendors</label>
 							</li>
 							<cfloop collection="#session.searches[rc.SearchID].stCarVendors#" item="vendorCode">
@@ -343,7 +367,7 @@
 						<a href="#" class="dropdown-toggle" data-dflt="Types">Car Types <b class="caret"></b></a>
 						<ul class="dropdown-menu multifilterwrapper" data-type="checkbox" data-name="types">
 							<li>
-								<input type="checkbox" checked id="types-all" name="types-all" class="switch-input">
+								<input type="checkbox" checked id="types-all" name="types-all" class="switch-input active">
 								<label for="types-all" class="switch-label">All Types</label>
 							</li>
 							<li class="vehicleTypeWrapper">
