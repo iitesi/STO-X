@@ -120,7 +120,7 @@ var SeatMap = function(){
                 },
                 statusCode: {
                     401: function() {
-                        window.location.href = '/booking/index.cfm?action=main.login&sessionTimeOut=true'
+                        window.location.href = '/booking/index.cfm?action=main.login&sessionTimeOut'
                     }
                 }
             });

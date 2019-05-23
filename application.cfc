@@ -59,6 +59,29 @@
 			<cfset setupApplication()/>
 		</cfif>
 
+		<!--- FindIt request rediredted w/ token --->
+		<cfif (request.context.action EQ "findIt.default"
+				AND structKeyExists(url,"t"))
+				AND structKeyExists(url,"searchId")
+				AND (NOT structKeyExists(session, "IsAuthorized")
+					OR (structKeyExists(session, "IsAuthorized")
+						AND session.IsAuthorized EQ false))>
+			<cfset session.SearchId = url.SearchId/> 
+			<cfset var authService = getBeanFactory().getBean('AuthService').authenticate(
+				redirectOnSuccesstUrl = '/booking/index.cfm?#cgi.query_string#'
+			)/>
+		<!--- C1 FindIt request w/o token (not yet acquired via SSO) --->
+		<cfelseif (structKeyExists(url, "acctId") AND url.acctId EQ 581)
+			AND (request.context.action EQ "findIt.default"
+			AND NOT structKeyExists(url,"t"))
+			AND structKeyExists(url,"searchId")
+			AND (NOT structKeyExists(session, "IsAuthorized")
+				OR (structKeyExists(session, "IsAuthorized")
+					AND session.IsAuthorized EQ false))>
+			<cfset var returnUrl = URLEncodedFormat("https://sto.shortstravel.com/booking/index.cfm?#cgi.query_string#")/>
+			<cflocation url="https://authentication01.shortstravel.com/CapitalOne?ReturnUrl=#returnUrl#" addtoken="false"/>
+		</cfif>
+
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
 			AND structKeyExists(session, "StmUserToken") AND session.StmUserToken NEQ "">
 			<cfset request.krakenService = getBeanFactory().getBean("KrakenService")/>
@@ -224,7 +247,8 @@
 	<cffunction name="setupApplicationVariables" output="false">
 		<cfscript>
 			application.gmtOffset = '6:00';
-			application.releaseVersion = "4.5.1.2";
+			application.releaseVersion = "4.5.1.3";
+			application.staticAssetVersion = application.releaseVersion;
 			application.es = getBeanFactory().getBean('EnvironmentService');
 		</cfscript>
 	</cffunction>
