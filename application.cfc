@@ -80,6 +80,12 @@
 					AND session.IsAuthorized EQ false))>
 			<cfset var returnUrl = URLEncodedFormat("https://sto.shortstravel.com/booking/index.cfm?#cgi.query_string#")/>
 			<cflocation url="https://authentication01.shortstravel.com/CapitalOne?ReturnUrl=#returnUrl#" addtoken="false"/>
+		<!--- already signed in and requesting FindIt --->
+		<cfelseif request.context.action EQ "findIt.default" 
+			AND structKeyExists(url,"searchId")
+			AND (structKeyExists(session, "IsAuthorized")
+					AND session.IsAuthorized EQ true)>
+			<cfset session.SearchId = url.searchId/>
 		</cfif>
 
 		<cfif structKeyExists(session, "isAuthorized") AND session.isAuthorized EQ True
