@@ -3506,6 +3506,7 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 .user-circle-wrapper:hover {
+	border: 2px solid #888888;
     background: #f5f5f5;
 }
 

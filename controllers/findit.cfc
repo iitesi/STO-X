@@ -11,6 +11,7 @@
 	<cffunction name="default" output="false">
 		<cfargument name="rc">
 
+		<!---
 		<cfquery name="local.getTrip" datasource="#variables.bookingDSN#">
 			SELECT tripData
 			FROM FindItOptions
@@ -63,6 +64,8 @@
 			<cfset rc.message.addError('The flight from FindIt is no longer available.')>
 			<cfset variables.fw.redirect('air.lowfare?searchID=#rc.searchID#&reQuery=true')>
 		</cfif>
+		--->
+
 	</cffunction>
 
 	<cffunction name="send" output="false">
