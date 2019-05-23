@@ -3937,20 +3937,24 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		flex: 1;	
 	}
 }
+
 .user-circle-wrapper {
-	margin: 6px 0 0 15px;
-    padding: 7px;
+	margin: 6px 0 0 0;
     border: 1px solid #888888;
     border-radius: 50%;
     background: #e8e8e8;
     text-align: center;
-    width: 35px;
+	width: 35px;
+	height: 35px;
 }
 
 .user-circle-wrapper:hover {
+	border: 2px solid #888888;
 	background: #f5f5f5;
 }
 
 .user-circle-wrapper a.user-circle {
 	text-decoration: none;
+	display: inline-block;
+	margin-top: 7px;
 }

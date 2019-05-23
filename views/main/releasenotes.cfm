@@ -11,6 +11,17 @@
 					<cfoutput>
 						<p>
 							<div style="padding:5px 0 0 0;font-size:13px;white-space:normal;word-wrap:break-word;">
+								<h3>5/22/2019<h3>
+                                <ul>
+                                    <li>Fixed issue in pricing on purchase for certain air segment types</li>
+									<li>Added support for private rental car locations</li>
+									<li>Fixed issue with resetting traveler autocomplete back to logged in user on new search</li>
+									<li>Added badge to top nav that shows user's initials and when hovered reveals full name</li>
+                                </ul>
+							</div>
+						</p>
+						<p>
+							<div style="padding:5px 0 0 0;font-size:13px;white-space:normal;word-wrap:break-word;">
 								<h3>5/21/2019<h3>
                                 <ul>
                                     <li>Fixed issue with seat assignments lost on purchase page when form validation fails</li>
