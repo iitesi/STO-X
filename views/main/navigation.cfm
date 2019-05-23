@@ -32,13 +32,35 @@
 </cfif>
 <cfscript>
 	arrayAppend(request.context.additionalFooterJS, "$('##navbar-collapse-1 a.mdi-ticket-account').tooltip({
-		template: ""<div class='tooltip unused-ticket-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
+		template: ""<div class='tooltip navbar-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
+	});");
+	arrayAppend(request.context.additionalFooterJS, "$('##navbar-collapse-1 a.user-circle').tooltip({
+		template: ""<div class='tooltip navbar-tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>""
 	});");
 </cfscript>
 <cfoutput>
 	<cfif structKeyExists(rc, 'Filter') AND IsObject(rc.Filter)>
 		 <div class="collapse navbar-collapse" id="navbar-collapse-1" >
 			<ul class="nav navbar-nav navbar-right">
+				<cfif structKeyExists(session, "User")>
+					<li>
+						<div class="user-circle-wrapper">
+							<cfset firstName = session.User.getFirstName()/>
+							<cfset lastName = session.User.getLastName()/>
+							<cfset fullName = firstName & ' ' & lastName/>
+							<cfset initials = left(firstName,1) & left(lastName,1)/>
+							<a class="user-circle"
+								href="javascript:void(0);"
+								data-html="true" 
+								data-placement="bottom"
+								title="#fullName#">
+								<span class="mat-badge-content mat-badge-active">
+									#initials#
+								</span>
+							</a>
+						</div>
+					</li>
+				</cfif>
 				<cfif structKeyExists(session, 'Filters')
 					AND structKeyExists(rc, 'SearchId')
 					AND structKeyExists(session.Filters, rc.SearchId)
