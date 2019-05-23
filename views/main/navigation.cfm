@@ -94,18 +94,18 @@
 				</cfif>
 				<cfif structKeyExists(cookie,"loginOrigin") AND cookie.loginOrigin EQ "STO">
 					<!---Menu-for mobile STO --->
-					<li>
+					<li <cfif rc.action CONTAINS 'main.menu'>class="active"</cfif>>
 						<a href="#buildURL('main.menu')#">Home</a>
 					</li>
-					<li>
+					<li <cfif rc.action CONTAINS 'main.search'>class="active"</cfif>>
 						<a href="#buildURL('main.search')#">Search</a>
 					</li>
-					<li>
+					<li <cfif rc.action CONTAINS 'main.trips'>class="active"</cfif>>
 						<a href="#buildURL('main.trips')#">My Trips</a>
 					</li>
 				<cfelseif rc.filter.getPassthrough() EQ 0 AND rc.filter.getFindit() EQ 0>
 					<!---Home--->
-					<li>
+					<li <cfif rc.action CONTAINS 'main.menu'>class="active"</cfif>>
 						<a href="#application.sPortalURL#">Home</a>
 					</li>
 				</cfif>

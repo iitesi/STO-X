@@ -38,6 +38,7 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 <cfset krakenService = application.fw.factory.getBean('KrakenService')/>
 <link rel="stylesheet" type="text/css" href="/booking/assets/css/seatmap.css?v=<cfoutput>#application.staticAssetVersion#</cfoutput>">
 <script src="/booking/assets/js/air/seatmap.js?v=<cfoutput>#application.staticAssetVersion#</cfoutput>"></script>
+<link rel="stylesheet" href="/booking/assets/css/materialize.css?v=<cfoutput>#application.staticAssetVersion#</cfoutput>">
 <script>
 	var config = {
 		DoSelectionActions: true,
@@ -139,32 +140,38 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv container-fluid" >
-						<div class="row">
-						 <span class="disclaimer">* denotes required fields</span>
-							<div id="travelerForm" class="col-md-6">
-								#View('summary/traveler')#
-							</div>
-							<div id="paymentForm" class="col-md-6">
-								#view( 'summary/payment' )#
-							</div>
+						<span class="disclaimer">
+							<a href="javascript:void(0);" 
+							rel="popleft"
+							data-content="Denotes Required Field"
+							class="btn-floating btn-small waves-effect waves-light red" 
+							><i class="mdi mdi-asterisk"></i></a>
+						</span>
+						<div id="travelerForm" class="col-md-6 ">
+							#View('summary/traveler')#
+							<br>
+						</div>
+						<div id="paymentForm" class="col-md-6 ">
+							#view( 'summary/payment' )#
+							<br>
 						</div>
 					</div>
 
-					<div class="summarydiv container-fluid">
-						<div id="airDiv" class="clearfix">
+					<div class="summarydiv nooffset container-fluid">
+						<div id="airDiv" class="clearfix childcontainer">
 							#View('summary/air')#
 						</div>
-						<div id="hotelDiv" class="clearfix">
+						<div id="hotelDiv" class="clearfix childcontainer <cfif NOT rc.hotelSelected>hide</cfif>">
 							#View('summary/hotel')#
 						</div>
-						<div id="carDiv" class="clearfix">
+						<div id="carDiv" class="clearfix childcontainer <cfif NOT rc.vehicleSelected>hide</cfif>">
 							#View('summary/vehicle')#
 						</div>
 					</div>
 					<cfif StructKeyExists(rc,"TravelMessages") AND ArrayLen(rc.TravelMessages) GT 0>
 						#view('summary/messages')#
 					</cfif>
-					<div class="container-fluid">
+					<div class="summarydiv container-fluid nooffset">
 						<div class="row">
 							<div class="col-xs-12" >
 								<div class="alert alert-success hide" id="unusedTicketsDiv">
@@ -190,6 +197,12 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			</div>
 			<script src="assets/js/travelers-autocomplete.js?v=#application.staticAssetVersion#"></script>
 			<script src="assets/js/summary/summary.js?v=#application.staticAssetVersion#"></script>
+			<script src="assets/js/materialize.js"></script>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('.input-field select').formSelect();
+				});
+			</script>
 		</form>
 	</div>
 
