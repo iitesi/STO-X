@@ -37,8 +37,44 @@
 <div id="hotel-search-wrapper" ng-app="hotelSearch">
 	<div ng-view></div>
 </div>
-
-
+<script>
+	$(function(){
+		$('body').on('click', '#filterbar .dropdown-toggle', function (e) {
+			var $target = $(e.target);
+			var $ddown = $target.parent();
+			var $others = $('#filterbar a.dropdown-toggle').parent().filter(function(){
+				return $(this).attr('id') != $ddown.attr('id');
+			})
+			$others.removeClass('open')
+			$(this).parent().toggleClass('open');
+		});
+		$('body').on('click', function (e) {
+			var $target = $(e.target);
+			var $ddown = $target.closest('.dropdown');
+			if (!$ddown.length){
+				$('#filterbar .dropdown.open').removeClass('open')
+			}
+		});
+	});
+</script>
+<style>
+	#filterChains ul.dropdown-menu {
+		width:350px;
+	}
+	#filterAmenities ul.dropdown-menu {
+		width:350px;
+	}
+	#filterVendorName ul.dropdown-menu {
+		width:400px;
+	}
+	#filterRatings  ul.dropdown-menu {
+		width:200px;
+	}
+	#filterbar .nav-pills .dropdown.active a.dropdown-toggle {
+		border-color: #337ab7!important;
+		background-color:#eee!important;
+	}
+</style>
 <div id="infoBox" style="visibility:hidden; position:absolute; top:0px; left:0px; width:260px; z-index:10000; font-family:Arial; font-size:10px">
   <div id="infoboxText" style="background-color:White; border-style:solid; border-width:medium; border-color:DarkOrange; min-height:100px; position:absolute; top:0px; left:23px; width:240px; ">
 	<b id="infoboxTitle" style="position:absolute; top:10px; left:10px; width:220px;"></b>

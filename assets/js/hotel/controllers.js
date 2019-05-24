@@ -65,6 +65,16 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 	}
 
 
+$scope.isFiltered = function() {
+	return $scope.filtersApplied.vendors ||
+		$scope.filtersApplied.amenities ||
+		$scope.filtersApplied.vendorName ||
+		$scope.filtersApplied.rating ||
+		$scope.filtersApplied.inPolicy ||
+		$scope.filtersApplied.noSoldOut
+
+}
+
 	/* Methods that this controller uses to get work done */
 	$scope.loadSearch = function( searchId ){
 
@@ -374,6 +384,12 @@ controllers.controller( "HotelCtrl", function( $scope, $location, SearchService,
 			}
 		}
 
+	}
+
+	$scope.clearPropertyName = function() {
+		$scope.propertyNameFilterValue = '';
+		$scope.filtersVisible.vendorName = false;
+		$scope.filterHotels();
 	}
 
 	$scope.clearFilters = function(){
