@@ -59,3 +59,28 @@ var waitingDialog = waitingDialog || (function ($) {
     };
 
 })(jQuery);
+
+$.urlParam = function (name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+                      .exec(window.location.search);
+    return (results !== null) ? results[1] || 0 : false;
+}
+
+var nextPageLoaderMessages = {
+    "main.login": "Let's Get Booking...",
+    "main.search": "IGNORE",
+    "air": "Updating Your Air Itinerary...",
+    "air.review": "Updating Your Air Itinerary...",
+    "hotel.search": "Updating Your Hotel Itinerary...",
+    "car.availability": "Updating Your Car Itinerary...",
+    "summary": "Booking Your Trip..."
+};
+
+function newRequestLoader(){
+    var nextPageLoaderMessage = nextPageLoaderMessages[$.urlParam('action')];
+    setTimeout(function(){
+        if (nextPageLoaderMessage !== "IGNORE") {
+            waitingDialog.show(nextPageLoaderMessage);
+        }
+    },3000);
+}

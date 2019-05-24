@@ -262,7 +262,7 @@
 						</div>
 					</div>
 				</div> <!-- /.loyalty.row -->
-				<cfif 1 eq 1 OR rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
+				<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Priceline">
 					<div class="row">
 						<div class="col s12">
 							<div class="card priceline-terms-card z-depth-0">
