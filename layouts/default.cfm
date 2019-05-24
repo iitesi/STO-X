@@ -68,14 +68,27 @@
 			
 			<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 			<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/ion.rangeSlider.min.js?v=201703094"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=201703094"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/responsive-paginate.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/js.cookie.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/ion.rangeSlider.min.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/new-request-loader.js?v=#application.staticAssetVersion#"></script>
 		</cfoutput>
+		<script>
+			function newRequestLoader(){
+				setTimeout(function(){
+					var nextPageLoadingMessage = $('#nextPageLoadingMessage').text();
+					if (nextPageLoadingMessage.length) {
+						waitingDialog.show(nextPageLoadingMessage);
+					} else {
+						waitingDialog.show();
+					}
+				},3000);
+			}
+		</script>
 	</head>
-	<body>
+	<body onbeforeunload="newRequestLoader();">
 		<div id="main-wrapper" class="wide">
 			<header id="main-header">
 
