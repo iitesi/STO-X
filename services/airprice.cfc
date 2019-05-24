@@ -26,7 +26,8 @@
 														CabinClass = arguments.CabinClass,
 														ProhibitNonRefundableFares = arguments.ProhibitNonRefundableFares)>
 		
-		<!--- <cfdump var=#RequestBody#> --->
+		<!--- <cfdump var="Basic #ToBase64(TMC.getUAPIUserName()&':'&TMC.getUAPIPassword())#"/>												 --->
+		<!--- <cfdump var=#RequestBody# abort/> --->
 		
 		<cfhttp method="post" url="https://americas.universal-api.travelport.com/B2BGateway/connect/uAPI/AirService">
 			<cfhttpparam type="header" name="Authorization" value="Basic #ToBase64(TMC.getUAPIUserName()&':'&TMC.getUAPIPassword())#" />
@@ -102,8 +103,8 @@
 							<com:BillingPointOfSaleInfo OriginApplication="UAPI"/>
 							<air:AirItinerary>
 								<cfset var FlightCount = 0>
-								<cfloop collection="#Itinerary#" index="local.GroupIndex" item="local.Group">
-									<cfloop collection="#Group.Flights#" index="local.SegmentIndex" item="local.Segment">
+								<cfloop from="0" to="#Itinerary.count() - 1#" index="local.GroupIndex">
+									<cfloop collection="#Itinerary[GroupIndex].Flights#" index="local.SegmentIndex" item="local.Segment">
 										<cfset var FlightCount++>
 										<air:AirSegment 
 											Key="#FlightCount#T" 
