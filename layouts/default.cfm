@@ -73,13 +73,12 @@
 			<script type="text/javascript" charset="UTF-8" src="assets/js/drawer.min.js?v=#application.staticAssetVersion#"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/ion.rangeSlider.min.js?v=#application.staticAssetVersion#"></script>
 			<script type="text/javascript" charset="UTF-8" src="assets/js/booking.js?v=#application.staticAssetVersion#"></script>
-			<script type="text/javascript" charset="UTF-8" src="assets/js/new-request-loader.js?v=#application.staticAssetVersion#"></script>
+			<script type="text/javascript" charset="UTF-8" src="assets/js/nextpageloader.js?v=#application.staticAssetVersion#"></script>
 		</cfoutput>
 	</head>
-	<body onbeforeunload="newRequestLoader();">
+	<body onbeforeunload="nextPageLoader();">
 		<div id="main-wrapper" class="wide">
 			<header id="main-header">
-
 				<div id="header-top">
 					<nav class="navbar">
   							<!-- Brand and toggle get grouped for better mobile display -->

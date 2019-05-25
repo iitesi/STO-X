@@ -1,4 +1,4 @@
-var waitingDialog = waitingDialog || (function ($) {
+var nextPageLoaderDialog = nextPageLoaderDialog || (function ($) {
     'use strict';
 
     // Creating modal dialog's DOM
@@ -60,7 +60,7 @@ var waitingDialog = waitingDialog || (function ($) {
 
 })(jQuery);
 
-$.urlParam = function (name) {
+var getUrlParam = function(name) {
     var results = new RegExp('[\?&]' + name + '=([^&#]*)')
                       .exec(window.location.search);
     return (results !== null) ? results[1] || 0 : false;
@@ -76,11 +76,11 @@ var nextPageLoaderMessages = {
     "summary": "Booking Your Trip..."
 };
 
-function newRequestLoader(){
-    var nextPageLoaderMessage = nextPageLoaderMessages[$.urlParam('action')];
-    setTimeout(function(){
-        if (nextPageLoaderMessage !== "IGNORE") {
-            waitingDialog.show(nextPageLoaderMessage);
+var nextPageLoader = function() {
+    var nextPageLoaderMessage = nextPageLoaderMessages[getUrlParam('action')];
+    setTimeout(function() {
+        if (nextPageLoaderMessage !== 'IGNORE') {
+            nextPageLoaderDialog.show(nextPageLoaderMessage);
         }
     },3000);
 }
