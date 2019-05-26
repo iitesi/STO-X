@@ -248,6 +248,35 @@
 				filterCar().then(updateCount);
 			});
 
+			/** sort the location's by vendor **/
+			const pul = $("#pickUpLocationKey option").sort(function(o1,o2){
+				const $o1 = $(o1);
+				const $o2 = $(o2);
+				if ($o1.val().length == 0) return -1;
+				if ($o1.data('vendorname') == $o2.data('vendorname')){
+					return $o1.data('distance') - $o2.data('distance');
+				}
+				else {
+					return $o1.data('vendorname').localeCompare($o2.data('vendorname'));
+				}
+			});
+			$("#pickUpLocationKey").html(pul);
+
+			if ($("#dropOffLocationKey").length) {
+				const pul = $("#dropOffLocationKey option").sort(function(o1,o2){
+					const $o1 = $(o1);
+					const $o2 = $(o2);
+					if ($o1.val().length == 0) return -1;
+					if ($o1.data('vendorname') == $o2.data('vendorname')){
+						return $o1.data('distance') - $o2.data('distance');
+					}
+					else {
+						return $o1.data('vendorname').localeCompare($o2.data('vendorname'));
+					}
+				});
+				$("#dropOffLocationKey").html(pul);
+			}
+			
 			// first run on load
 			$('#filterbar').trigger('runsearch');
 			
@@ -498,14 +527,17 @@
 											<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
 											<div class="col-sm-8 col-xs-12">
 												<select id="pickUpLocationKey" name="pickUpLocationKey" class="filterby form-control" onChange="submit();">
-													<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
+													<option data-vendor="" value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 													<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 														<cfif (rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city)
 															OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
 															OR (vehicleLocation.distance LTE 30)>
 															<!--- If the car vendor exists in the zeus.booking.RCAR table --->
 															<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
-																<option data-vendor="#vehicleLocation.vendorCode#" value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+																<option 
+																data-vendorname="#application.stCarVendors[vehicleLocation.vendorCode]#"
+																data-distance="#vehicleLocation.distance#"
+																data-vendor="#vehicleLocation.vendorCode#" value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 																</option>
 															<!--- <cfelse>
 																<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
@@ -525,14 +557,17 @@
 											<label for="dropOffLocationKey" class="control-label col-sm-4 col-xs-12">Drop-off Location</label>
 											<div class="col-sm-8 col-xs-12">
 												<select id="dropOffLocationKey" name="dropOffLocationKey" class="filterby form-control" onChange="submit();">
-													<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
+													<option data-vendor="" value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 													<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 														<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
 															OR (listFindNoCase(application.sCityCodes, vehicleLocation.city) NEQ 0)
 															OR (vehicleLocation.distance LTE 30)>
 															<!--- If the car vendor exists in the zeus.booking.RCAR table --->
 															<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
-																<option data-vendor="#vehicleLocation.vendorCode#" value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+																<option data-vendorname="#application.stCarVendors[vehicleLocation.vendorCode]#" 
+																data-vendor="#vehicleLocation.vendorCode#" 
+																data-distance="#vehicleLocation.distance#"
+																value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 																</option>
 															<cfelse>
 																<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
