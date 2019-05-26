@@ -136,15 +136,31 @@
 					$("#vendorRow").show();
 					$("#categoryRow").show();
 				}
-
+				postFilter();
 				dfd.resolve();
 
 			}
 			catch(e){
+				postFilter();
 				dfd.resolve();
 			}
 
 			return dfd;
+		}
+
+		function postFilter() {
+			syncVendorToLocation();
+		}
+
+		function syncVendorToLocation() {
+			var vendorInputsSelected = $("input[type=checkbox][id^=fltrVendor]:checked");
+			var selectedVendors = vendorInputsSelected.map(function(){
+				return this.value;
+			}).get();
+
+			$("#pickUpLocationKey option, #dropOffLocationKey option").each(function(){
+				$(this).toggle(selectedVendors.includes($(this).data('vendor')));
+			});
 		}
 
 		function updateCount(){
@@ -481,7 +497,7 @@
 										<div class="form-group">
 											<label for="pickUpLocationKey" class="control-label col-sm-4 col-xs-12">Pick-up Location</label>
 											<div class="col-sm-8 col-xs-12">
-												<select name="pickUpLocationKey" class="filterby form-control" onChange="submit();">
+												<select id="pickUpLocationKey" name="pickUpLocationKey" class="filterby form-control" onChange="submit();">
 													<option value="">#rc.Filter.getCarPickUpAirport()# Terminal</option>
 													<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarPickUpAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 														<cfif (rc.Filter.getCarPickUpAirport() EQ vehicleLocation.city)
@@ -489,7 +505,7 @@
 															OR (vehicleLocation.distance LTE 30)>
 															<!--- If the car vendor exists in the zeus.booking.RCAR table --->
 															<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
-																<option value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+																<option data-vendor="#vehicleLocation.vendorCode#" value="#vehicleLocationIndex#" <cfif rc.pickUpLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 																</option>
 															<!--- <cfelse>
 																<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
@@ -508,7 +524,7 @@
 										<div class="form-group">
 											<label for="dropOffLocationKey" class="control-label col-sm-4 col-xs-12">Drop-off Location</label>
 											<div class="col-sm-8 col-xs-12">
-												<select name="dropOffLocationKey" class="filterby form-control" onChange="submit();">
+												<select id="dropOffLocationKey" name="dropOffLocationKey" class="filterby form-control" onChange="submit();">
 													<option value="">#rc.Filter.getCarDropoffAirport()# Terminal</option>
 													<cfloop array="#session.searches[rc.searchID].vehicleLocations[rc.Filter.getCarDropoffAirport()]#" index="vehicleLocationIndex" item="vehicleLocation">
 														<cfif (rc.Filter.getCarDropoffAirport() EQ vehicleLocation.city)
@@ -516,7 +532,7 @@
 															OR (vehicleLocation.distance LTE 30)>
 															<!--- If the car vendor exists in the zeus.booking.RCAR table --->
 															<cfif structKeyExists(application.stCarVendors, vehicleLocation.vendorCode)>
-																<option value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
+																<option data-vendor="#vehicleLocation.vendorCode#" value="#vehicleLocationIndex#" <cfif rc.dropOffLocationKey EQ vehicleLocationIndex>selected</cfif>>#application.stCarVendors[vehicleLocation.vendorCode]# - #vehicleLocation.street# (#vehicleLocation.city#)
 																</option>
 															<cfelse>
 																<cfset emailHTML = "Car Vendor Code: " & vehicleLocation.vendorCode & "<br />Address: " & vehicleLocation.street & "(" & vehicleLocation.city & ")<br />Search ID: " & rc.searchID />
