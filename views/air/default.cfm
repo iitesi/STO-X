@@ -124,7 +124,7 @@
 				<div class="col-sm-12 noFlightsFound">
 					<div class="panel panel-default">
 						<h1>No Flights Available</h1>
-						<p>No flights are available for your filtered criteria. <a href="##" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
+						<p>No flights are available for your filtered criteria. <a href="javascript:void(0);" class="removefilters"><i class="fa fa-refresh"></i> Clear Filters</a> to see all results.</p>
 					</div>
 				</div>
 
