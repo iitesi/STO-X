@@ -6,6 +6,14 @@
 	<cfif rc.airSelected>
 		<div id="airPayment">
 
+			<cfif structKeyExists(rc.errors, 'airFOPID')>
+				<div class="row error z-depth-0">
+					<div class="col s12">
+						* You must select an air payment method, or enter a new card to continue.
+					</div>
+				</div>
+			</cfif>
+
 			<div class="form-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
 				<label class="control-label col-sm-4 col-xs-12" for="airFOPID"><strong>Flight Payment *</strong></label>
 				<div class="controls col-sm-8 col-xs-12" id="airFOPIDDiv">
@@ -109,7 +117,7 @@
 						<cfelse>
 							Changes USD #rc.Air.changePenalty# for reissue
 						</cfif>
-					" href="##"/>
+					" href="javascript:void(0);"/>
 					Flight change/cancellation policy
 				</a> --->
 			</div>
@@ -118,6 +126,14 @@
 	</cfif>
 	<cfif !rc.airSelected AND rc.account.Require_Hotel_Car_Fee>
 		<div id="serviceFeePayment">
+
+		<cfif structKeyExists(rc.errors, 'serviceFeeFOPID')>
+			<div class="row error z-depth-0">
+				<div class="col s12">
+					* You must select an service fee payment method, or enter a new card to continue.
+				</div>
+			</div>
+		</cfif>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeFOPID') ? 'error' : '')#">
 			<label class="control-label col-sm-4 col-xs-12" for="serviceFeeFOPID"><strong>Service Fees Payment *</strong></label>
@@ -210,6 +226,14 @@
 
 	<cfif rc.hotelSelected>
 		<div id="hotelPayment">
+
+		<cfif structKeyExists(rc.errors, 'hotelFOPID')>
+			<div class="row error z-depth-0">
+				<div class="col s12">
+					* You must select an hotel payment method, or enter a new card to continue.
+				</div>
+			</div>
+		</cfif>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
 			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
@@ -315,7 +339,7 @@
 			</div>
 		<cfelse>
 			<div class="bold text-center">
-				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="##" />
+				<a rel="popover" data-original-title="Hotel payment and cancellation policy" data-content="#hotelPolicies#" href="javascript:void(0);" />
 					Hotel payment and cancellation policy
 				</a>
 			</div>
@@ -337,7 +361,7 @@
 			</div>
 
 			<div class="bold text-center">
-				<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="##" />
+				<a rel="popover" data-original-title="Car payment and cancellation policy" data-content="Payment is taken by the vendor. You may cancel at anytime for no fee." href="javascript:void(0);" />
 					Car payment and cancellation policy
 				</a>
 			</div>
