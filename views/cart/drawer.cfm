@@ -128,7 +128,7 @@
                                                                         <cfif structCount(rc.Air) EQ i+1
                                                                             AND structKeyExists(rc.Air[0], 'TotalPrice')>
                                                                             <div class="total">
-                                                                                #numberFormat(rc.Air[0].TotalPrice, '____.__')#
+                                                                                #(currency EQ 'USD' ? DollarFormat(rc.Air[0].TotalPrice) : numberFormat(rc.Air[0].TotalPrice, '____.__')&' '&currency)#
                                                                             </div>
                                                                             
                                                                             <cfset tripTotal = tripTotal + rc.Air[0].TotalPrice>
@@ -323,6 +323,26 @@
                             </li>
                         </cfif>
                         
+                    </cfif>
+                    <cfif rc.action CONTAINS 'summary'>
+                        <cfif len(trim(tripTotal))>
+                            <li>
+                                <div class="col s12">
+                                    <div class="card horizontal total-content">
+                                        <div class="card-image darken-2">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </div>
+                                        <div class="card-stacked">
+                                            <div class="card-content ">
+                                                <div class="item-information">
+                                                    Trip: $#numberFormat(tripTotal, '____.__')#
+                                                 </div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </cfif>                        
                     </cfif>
                 </cfoutput>
             </ul>

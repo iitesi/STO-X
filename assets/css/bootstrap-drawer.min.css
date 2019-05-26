@@ -254,7 +254,23 @@
     position: relative;
   }
 
+  #sidebar-wrapper .card.total-content .card-content {
+    padding: 24px;
+    text-align: right;
+  }
 
+  #sidebar-wrapper .card.total-content {
+    margin-bottom: 25px;
+  }
+
+  #sidebar-wrapper .card.total-content .card-image {
+    background-color: #777;
+    color: white;
+  }
+
+  #sidebar-wrapper .card.total-content .card-content {
+    background-color: #f3f3f3;
+  }
   
   .card-content h4 {
       font-size: 16px;
