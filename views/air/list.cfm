@@ -80,7 +80,7 @@
 							</div>		
 						</div>
 						<div class="clearfix visible-xs-block"></div>
-						<div class="col-xs-6 col-md-3">
+						<div class="col-xs-6 col-md-3 xs-fs-12">
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									#Segment.TravelTime# 
@@ -107,12 +107,12 @@
 								</div>	
 							</div>
 						</div>
-						<div class="col-xs-6 col-md-3">		
+						<div class="col-xs-6 col-md-3 xs-fs-12">		
 							<div class="row">
 								<div class="col-xs-6 col-lg-12 fs-xs-1 fs-lg-2 p-xs-0 pl-xs-15">
 									<cfif Segment.Stops EQ 0>Nonstop<cfelseif Segment.Stops EQ 1>1 stop<cfelse>#Segment.Stops# stops</cfif>
 								</div>	
-								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 pr-xs-15">
+								<div class="col-xs-6 col-lg-12 fs-1 text-muted p-xs-0 ">
 									#Segment.Layover#
 									<font color="white">#Segment.Results#</font>
 								</div>
@@ -339,7 +339,7 @@
 								</cfif>
 								#Segment.SegmentId# --->
 							</div>
-							<div class="segment-details-extras">
+							<div class="segment-details-extras hidden-xs">
 								<ul>
 									<cfif NOT Segment.FlightNumbers contains "WN" AND NOT Segment.FlightNumbers contains "F9"><li>
 										<a class="seatMapOpener" data-toggle="modal" data-target="##seatMapModal" data-id='#serializeJson(Flight)#'>

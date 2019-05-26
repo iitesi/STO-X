@@ -1943,13 +1943,18 @@ li.with-irs .irs-title {
 	.fs-xs-2 {
 		font-size: 14px !important;
 		font-weight: 600;
-	}
-	
-	.fs-xs-1 {
-		font-size: 12px;
+	}	
+	.fs-1 {
+		font-size: 11px;
 		font-weight: 500;
 	}
-	
+	.fs-xs-1 {
+		font-size: 11px;
+		font-weight: 500;
+	}
+	.fs-1.text-muted, .fs-xs-1.text-muted {
+		color: rgb(85,85,85) !important;
+	}	
 	.fs-xs-s {
 		font-size:8px;
 		font-weight: 400;
@@ -3743,10 +3748,17 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	}
 	
 }
+
 @media (min-width: 300px) and (max-width: 798px){
 	
 	#main-content .page-header {
 		margin: 0!important;
+	}
+
+	#main-content .page-header h1 {
+		padding-right: 30px;
+		line-height: 20px;
+		font-size: 14px;
 	}
 
 	#legs .nav>li {
@@ -3765,49 +3777,49 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		font-size: 13px;
 	}
 
-	#summaryForm .segment-details {
+	 .segment-details {
 		display: flex;
 		flex-direction: column;
 	}
-	#summaryForm .segment-details-extras {
+	 .segment-details-extras {
 		display:block;
 		padding-left: 60px;
 		padding-right: 0;
 		margin-top:10px;
 	}
-	#summaryForm .segment-leg-inner {
+	 .segment-leg-inner {
 		padding-left: 60px;
 	}
-	#summaryForm .segment-leg-inner .fs-s1{
+	 .segment-leg-inner .fs-s1{
 		text-align: left;
 	}
-	#summaryForm .segment-leg-details {
+	 .segment-leg-details {
 		flex-direction: column;
 	}
-	#summaryForm .segment-details-flights .segment-middot {
+	 .segment-details-flights .segment-middot {
 		display:none;
 	}
-	#summaryForm .segment-details-flights .segment-middot-sm {
+	 .segment-details-flights .segment-middot-sm {
 		display:none;
 	}
-	#summaryForm .segment-leg-time-inair.fs-1 {
+	 .segment-leg-time-inair.fs-1 {
 		top: auto;
 		margin: 12px 0;
 		font-size: 9px;
 		position: relative;
 	}
-	#summaryForm .segment-leg-operation-details {
+	 .segment-leg-operation-details {
 		flex-wrap: wrap;
 		padding-left: 60px;
 	}
-	#summaryForm .segment-leg-connector {
+	 .segment-leg-connector {
 		display: block;
 		left: 35px;
 	}
-	#summaryForm .segment-leg-operation-details > div {
+	 .segment-leg-operation-details > div {
 		margin-right: 5px;
 	}
-	#summaryForm .segment-leg-details.segment-leg-arrival {
+	 .segment-leg-details.segment-leg-arrival {
 		padding-top: 0;
 	}
 	#summaryForm .input-field.with-icon {
