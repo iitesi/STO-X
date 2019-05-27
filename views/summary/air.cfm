@@ -252,7 +252,7 @@
 										<cfelse>
 											Changes USD #rc.Air[0].changePenalty# for reissue
 										</cfif> --->
-									" href="##"/>
+									" href="javascript:void(0);"/>
 									Flight change/cancellation policy
 								</a>
 								</li>

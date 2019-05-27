@@ -183,7 +183,7 @@
 									</cfloop>
 								</cfsavecontent>
 								<span class="blue bold">
-									<a rel="popover" data-original-title="Hotel rate changes" data-content="#hotelRateChanges#" href="##" />
+									<a rel="popover" data-original-title="Hotel rate changes" data-content="#hotelRateChanges#" href="javascript:void(0);" />
 										Hotel nightly rate variances
 									</a>
 								</span>

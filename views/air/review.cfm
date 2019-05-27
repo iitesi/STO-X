@@ -102,7 +102,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="segment-details-extras">&nbsp;</div>
+								<div class="segment-details-extras hidden-xs">&nbsp;</div>
 							</div>
 							<cfset previousFlight = Flight>
 						</cfloop>

@@ -187,19 +187,19 @@
 
 
 							  </button>
-							  <a class="navbar-brand" href="##">Filter</a>
+							  <a class="navbar-brand" href="javascript:void(0);">Filter</a>
 						</div>
 						<div class="collapse navbar-collapse" id="filter-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li><a href="##" id="btnCarVendor" class="filterby carFilterBy" title="Click to view/hide filters">Vendors <i class="fa fa-caret-down"></i></a></li>
-								<li><a href="##" id="btnCarCategory" class="filterby carFilterBy" title="Click to view/hide filters">Car Types <i class="fa fa-caret-down"></i></a></li>
-								<li><a href="##" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
-								<li><a href="##" id="btnLocation" class="filterby carFilterBy" title="Click to view/hide filters"><cfif rc.Filter.getCarDifferentLocations() EQ 1>Pickup/Dropoff Location<cfelse>Pickup Location</cfif> <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="javascript:void(0);" id="btnCarVendor" class="filterby carFilterBy" title="Click to view/hide filters">Vendors <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="javascript:void(0);" id="btnCarCategory" class="filterby carFilterBy" title="Click to view/hide filters">Car Types <i class="fa fa-caret-down"></i></a></li>
+								<li><a href="javascript:void(0);" id="btnPolicy" class="filterby" title="Click to view/hide in-policy cars">In Policy</a></li>
+								<li><a href="javascript:void(0);" id="btnLocation" class="filterby carFilterBy" title="Click to view/hide filters"><cfif rc.Filter.getCarDifferentLocations() EQ 1>Pickup/Dropoff Location<cfelse>Pickup Location</cfif> <i class="fa fa-caret-down"></i></a></li>
 							</ul>
 
 							<ul class="nav navbar-nav navbar-right">
 								<li><p class="navbar-text filter"><span id="numFiltered"></span> of <span id="numTotal"></span> cars displayed</p></li>
-								<li><a href="##" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
+								<li><a href="javascript:void(0);" id="clearFilters" name="clearFilters" class="pull-right"><i class="icon-refresh"></i> Clear Filters</a></li>
 							</ul>
 
 						</div>

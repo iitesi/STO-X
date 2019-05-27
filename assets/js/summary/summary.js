@@ -1124,3 +1124,11 @@ $(".removePaymentModal").click(function() {
 	$("#removeIframe").attr("src", newSrc);
 	$("#removePaymentWindow").modal('show');
 });
+
+$('body').on('click', function (e) {
+	$('[data-toggle="popover"],[data-toggle="popleft"]').each(function () {
+			if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+					$(this).popover('hide');
+			}
+	});
+});

@@ -24,7 +24,7 @@
 		<cfelse>
 			<cfset frameSrc = application.searchWidgetURL  & '?acctid=#rc.filter.getAcctID()#&userid=#rc.filter.getUserId()#&token=#session.cookieToken#&date=#session.cookieDate#' />
 		</cfif>
-		<h2><a href="##" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
+		<h2><a href="javascript:void(0);" class="change-search searchModalButton" data-framesrc="#frameSrc#&amp;modal=true&amp;requery=true&amp;" title="Search again"><i class="fa fa-search"></i> Change Search</a></h2>
 	</cfif>
 </cfoutput>
 
@@ -78,7 +78,7 @@
 				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>
 					<li role="presentation" class="active"><a href="">#nLegItem#</a></li>
 				<cfelse>
-					<li role="presentation" onclick="document.location.href='#buildURL('main?SearchID=#rc.SearchID#&Service=Air&&Group=#nLegIndex-1#')#'"><a href="##" class="airModal changeme" data-modal="Flights for #nLegItem#." title="#nLegItem#">
+					<li role="presentation" onclick="document.location.href='#buildURL('main?SearchID=#rc.SearchID#&Service=Air&&Group=#nLegIndex-1#')#'"><a href="javascript:void(0);" class="airModal changeme" data-modal="Flights for #nLegItem#." title="#nLegItem#">
 						<!--- Show icon indicating this is the leg they selected --->
 						<cfif structKeyExists(session.searches[rc.SearchID].stSelected, nLegIndex-1)
 							AND NOT StructIsEmpty(session.searches[rc.SearchID].stSelected[nLegIndex-1])>
