@@ -72,8 +72,7 @@ var nextPageLoaderMessages = {
     "air": "Updating Your Air Itinerary...",
     "air.review": "Updating Your Air Itinerary...",
     "hotel.search": "Updating Your Hotel Itinerary...",
-    "car.availability": "Updating Your Car Itinerary...",
-    "summary": "Booking Your Trip..."
+    "car.availability": "Updating Your Car Itinerary..."
 };
 
 var nextPageLoader = function() {
