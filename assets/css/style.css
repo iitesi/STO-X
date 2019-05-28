@@ -3970,3 +3970,10 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 	display: inline-block;
 	margin-top: 7px;
 }
+
+/*
+* Bootstrap style gets stepped on by materiaze
+*/
+.modal-body .progress {
+	height: 20px !important;
+}

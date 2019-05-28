@@ -127,10 +127,14 @@
                                                                         <div>#TimeFormat(group.DepartureTime, 'h:mm tt')# - #TimeFormat(group.ArrivalTime, 'h:mm tt')#</div>
                                                                         <cfif structCount(rc.Air) EQ i+1
                                                                             AND structKeyExists(rc.Air[0], 'TotalPrice')>
+                                                                            <cfif structKeyExists(Group, "Currency")>
+                                                                                <cfset Currency = Group.Currency/>
+                                                                            <cfelse>
+                                                                                <cfset Currency = "USD"/>
+                                                                            </cfif>
                                                                             <div class="total">
-                                                                                #(currency EQ 'USD' ? DollarFormat(rc.Air[0].TotalPrice) : numberFormat(rc.Air[0].TotalPrice, '____.__')&' '&currency)#
+                                                                                #(Currency EQ 'USD' ? DollarFormat(rc.Air[0].TotalPrice) : numberFormat(rc.Air[0].TotalPrice, '____.__')&' '&Currency)#
                                                                             </div>
-                                                                            
                                                                             <cfset tripTotal = tripTotal + rc.Air[0].TotalPrice>
                                                                             <cfset tripCurrency = listAppend(tripCurrency, 'USD')>
                                                                         </cfif>
