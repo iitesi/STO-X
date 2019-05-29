@@ -155,13 +155,6 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 			<div id="traveler" class="tab_content">
 				<p>
 					<div class="summarydiv container-fluid" >
-						<span class="disclaimer">
-							<a href="javascript:void(0);" 
-							rel="popleft"
-							data-content="Denotes Required Field"
-							class="btn-floating btn-small waves-effect waves-light red" 
-							><i class="mdi mdi-asterisk"></i></a>
-						</span>
 						<div id="travelerForm" class="col-md-6 ">
 							#View('summary/traveler')#
 							<br>
