@@ -59,7 +59,22 @@ after 1 month in case we are seeing excess hits charges from Travelport) --->
 .form-horizontal select, textarea, input {
 	padding: 0px;
 }
-.hideElement{display:none;}
+.hideElement{
+	display: none;
+}
+<!--- Sizes w/ mixed css are wonky --->
+#purchaseForm label {
+	font-size: 1.5rem !important;
+	font-weight: normal !important;
+}
+#paymentForm label {
+	font-size: 1.25rem !important;
+	font-weight: normal !important;
+}
+#purchaseForm input {
+	font-size: 1.25rem !important;
+	font-weight: normal !important;
+}
 </style>
 
 <cfoutput>

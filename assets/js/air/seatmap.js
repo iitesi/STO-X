@@ -160,7 +160,8 @@ var SeatMap = function(){
                         // TODO: Move this chunk of logic into Kraken
                         if (config.IsFullPlaneRequest && (lastCabinClass === 'F' || lastCabinClass === 'J')) {
                             cabinClassHeader = 'Main Cabin';
-                        } else if (map.Rows[r].CabinClass === 'F' || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
+                        } else if ((map.Rows[r].CabinClass === 'F' || map.Rows[r].CabinClass === 'I') 
+                            || (map.Rows[r].CabinClass === 'C' && map.CarrierCode === 'DL')) {
                             cabinClassHeader = 'First Class';
                         } else if (map.Rows[r].CabinClass === 'J' && map.CarrierCode === 'B6') {
                             cabinClassHeader = 'jetBlue MINT';

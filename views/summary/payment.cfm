@@ -15,7 +15,7 @@
 			</cfif>
 
 			<div class="form-group #(structKeyExists(rc.errors, 'airFOPID') ? 'error' : '')#">
-				<label class="control-label col-sm-4 col-xs-12" for="airFOPID"><strong>Flight Payment *</strong></label>
+				<label class="control-label col-sm-4 col-xs-12" for="airFOPID">Flight Payment *</label>
 				<div class="controls col-sm-8 col-xs-12" id="airFOPIDDiv">
 					<i id="airSpinner" class="fa fa-spin fa-spinner"></i>
 					<select class="form-control" name="airFOPID" id="airFOPID">
@@ -136,7 +136,7 @@
 		</cfif>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'serviceFeeFOPID') ? 'error' : '')#">
-			<label class="control-label col-sm-4 col-xs-12" for="serviceFeeFOPID"><strong>Service Fees Payment *</strong></label>
+			<label class="control-label col-sm-4 col-xs-12" for="serviceFeeFOPID">Service Fees Payment *</label>
 			<div class="controls col-sm-8 col-xs-12" id="serviceFeeFOPIDDiv">
 				<i id="serviceFeeSpinner" class="fa fa-spin fa-spinner"></i>
 				<select class="form-control" name="serviceFeeFOPID" id="serviceFeeFOPID">
@@ -236,7 +236,7 @@
 		</cfif>
 
 		<div class="form-group #(structKeyExists(rc.errors, 'hotelFOPID') ? 'error' : '')#">
-			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID"><strong>Hotel Payment *</strong></label>
+			<label class="control-label  col-sm-4 col-xs-12" for="hotelFOPID">Hotel Payment *</label>
 			<div class="col-sm-8 col-xs-12" id="hotelFOPIDDiv">
 				<i id="hotelSpinner" class="fa fa-spin fa-spinner"></i>
 				<select class="form-control" name="hotelFOPID" id="hotelFOPID">
@@ -352,7 +352,7 @@
 		<div id="carPayment">
 
 			<div class="form-group">
-				<label class="control-label col-sm-4 col-xs-12" for="carFOPID"><strong>Car Payment *</strong></label>
+				<label class="control-label col-sm-4 col-xs-12" for="carFOPID">Car Payment *</label>
 				<div class="controls col-sm-8 col-xs-12">
 					<i id="carSpinner" class="fa fa-spin fa-spinner"></i>
 					<select name="carFOPID" id="carFOPID" class="form-control">

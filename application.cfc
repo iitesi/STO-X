@@ -253,7 +253,7 @@
 	<cffunction name="setupApplicationVariables" output="false">
 		<cfscript>
 			application.gmtOffset = "6:00";
-			application.releaseVersion = "4.5.1.5";
+			application.releaseVersion = "4.5.1.6";
 			application.staticAssetVersion = application.releaseVersion;
 			application.es = getBeanFactory().getBean('EnvironmentService');
 		</cfscript>

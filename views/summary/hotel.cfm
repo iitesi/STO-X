@@ -247,7 +247,7 @@
 					<div class="col s12 m6">
 						<cfif rc.Hotel.getRooms()[1].getAPISource() EQ "Travelport">
 							<div class="input-field">
-								<label for="hotelFF">#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# LOYALTY ##</label>
+								<label for="hotelFF">#uCase(application.stHotelVendors[rc.Hotel.getChainCode()])# Loyalty ##</label>
 								<input type="text" name="hotelFF" id="hotelFF" maxlength="20">
 							</div>
 						<cfelse>
@@ -257,7 +257,7 @@
 					</div>
 					<div class="col s12 m6">
 						<div class="input-field">
-							<label for="hotelSpecialRequests">HOTEL SPECIAL REQUESTS</label>
+							<label for="hotelSpecialRequests">Special Requests</label>
 							<input type="text" name="hotelSpecialRequests" id="hotelSpecialRequests" maxlength="50" class="form-control">
 						</div>
 					</div>
