@@ -263,15 +263,16 @@ $(document).ready(function(){
 		$( "#middleName" ).val( traveler.middleName );
 		if (traveler.noMiddleName == 1) {
 			$( "#noMiddleName" ).attr( 'checked', true );
-		}
-		else {
-			$( "#noMiddleName" ).attr( 'checked', false );
-
+		} else {
+			if (!traveler.middleName) {
+				$( "#noMiddleName" ).attr( 'checked', true );
+			} else {
+				$( "#noMiddleName" ).attr( 'checked', false );
+			}
 		}
 		if (traveler.bookingDetail.saveProfile == 1) {
 			$( "#saveProfile" ).attr( 'checked', true );
-		}
-		else {
+		} else {
 			$( "#saveProfile" ).attr( 'checked', false );
 		}
 		if (traveler.bookingDetail.createProfile == 1 && $("#userID").val() == 0) {
@@ -513,7 +514,7 @@ $(document).ready(function(){
 			else if((orgunit.OUFreeform == 0 && orgunit.OUUpdate == '1') || (orgunit.OUFreeform == 0 && orgunit.OUUpdate != '1' && orgunit.valueID == '')) {
 				div += '<select name="' + inputName + '" id="' + inputName + '"';
 				div += '>';
-				div += '<option value="-1" disabled selected>Select</option>';
+				div += '<option value="-1" disabled selected>Select an option</option>';
 					if (orgunit.ouValues.length) {
 						for( var i=0, l=orgunit.ouValues.length; i<l; i++ ) {
 							div += '<option value="' + orgunit.ouValues[i].valueID + '">' + orgunit.ouValues[i].valueDisplay + '</option>';

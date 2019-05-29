@@ -72,7 +72,6 @@
 <cfoutput>
 	<div id="legs" class="legs clearfix">
 		<ul class="nav nav-pills">
-
 		<cfif rc.Filter.getAirType() NEQ 'OW' AND rc.Filter.getAirType() NEQ 'MD'>
 			<cfloop array="#rc.Filter.getLegsForTrip()#" index="nLegIndex" item="nLegItem">
 				<cfif structKeyExists(rc,"group") AND rc.group EQ nLegIndex-1>

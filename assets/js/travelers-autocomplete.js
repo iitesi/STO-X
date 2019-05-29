@@ -4,7 +4,7 @@
             query: {},
             userId: -1,
             accountId: -1,
-            queryLimit: 100,
+            queryLimit: 0,
             elementName: 'UserID'
         };
 
@@ -50,7 +50,7 @@
             let mappedUserList = !settings.query.DATA ? [] : settings.query.DATA.map(function(i){return ({value:i[0],label:displayName(i)});});
 
             if (mappedUserList.length > settings.queryLimit){
-                mappedUserList.push({label:'Guest',value:0});
+                mappedUserList.push({label:'Guest Traveler',value:0});
                 mappedUserList.push({label:'Myself',value:settings.userId});
                 $this.prepend($('<input/>',{
                     id: 'User_ID_Label',

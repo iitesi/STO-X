@@ -20,7 +20,7 @@
 				query:travelersResults,
 				userId:'',
 				accountId:'#StructKeyExists(rc,'acctid') ? rc.acctid : ""#',
-				queryLimit:100
+				queryLimit:0
 			});
 		});
 	</script>
@@ -167,7 +167,7 @@
 		<div class="row mb0 #(structKeyExists(rc.errors, 'gender') ? 'error' : '')#">
 			<div class="input-field col s12">
 				<select name="gender" id="gender">
-					<option value="" disabled selected>Choose an option</option>
+					<option value="" disabled>Choose an option</option>
 					<option value="M">Male</option>
 					<option value="F">Female</option>
 				</select>

@@ -2460,9 +2460,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 }
 
 #legs .select-fare-button {
-    position: absolute;
-    right: 0;
-	top: -11px;
+	margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #legs .select-fare-button .btn {
@@ -2509,9 +2508,8 @@ HEADER AND BREADCRUMB, RESPONSIVE ITEMS
 		margin-right: 10px;
 	}
 	#legs .select-fare-button {
-		position: relative;
-		width: 100%;
 		margin-top: 10px;
+		margin-bottom: 10px;
 	}
 	#legs .select-fare-button .btn {
 		width: 100%;
